@@ -30,7 +30,7 @@ import java.util.List;
 public interface MToolBarContributions {
 
 	/**
-	 * Returns the value of the '<em><b>Tool Bar Contributions</b></em>' reference list.
+	 * Returns the value of the '<em><b>Tool Bar Contributions</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -38,8 +38,8 @@ public interface MToolBarContributions {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Tool Bar Contributions</em>' reference list.
-	 * @model
+	 * @return the value of the '<em>Tool Bar Contributions</em>' containment reference list.
+	 * @model containment="true"
 	 * @generated
 	 */
 	List<MToolBarContribution> getToolBarContributions();

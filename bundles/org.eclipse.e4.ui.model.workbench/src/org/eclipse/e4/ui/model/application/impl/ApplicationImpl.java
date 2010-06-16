@@ -179,7 +179,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	protected EList<MMenuContribution> menuContributions;
 
 	/**
-	 * The cached value of the '{@link #getToolBarContributions() <em>Tool Bar Contributions</em>}' reference list.
+	 * The cached value of the '{@link #getToolBarContributions() <em>Tool Bar Contributions</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getToolBarContributions()
@@ -189,7 +189,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	protected EList<MToolBarContribution> toolBarContributions;
 
 	/**
-	 * The cached value of the '{@link #getTrimContributions() <em>Trim Contributions</em>}' reference list.
+	 * The cached value of the '{@link #getTrimContributions() <em>Trim Contributions</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTrimContributions()
@@ -392,7 +392,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 */
 	public List<MToolBarContribution> getToolBarContributions() {
 		if (toolBarContributions == null) {
-			toolBarContributions = new EObjectResolvingEList<MToolBarContribution>(MToolBarContribution.class, this, ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS);
+			toolBarContributions = new EObjectContainmentEList<MToolBarContribution>(MToolBarContribution.class, this, ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS);
 		}
 		return toolBarContributions;
 	}
@@ -404,7 +404,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 */
 	public List<MTrimContribution> getTrimContributions() {
 		if (trimContributions == null) {
-			trimContributions = new EObjectResolvingEList<MTrimContribution>(MTrimContribution.class, this, ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS);
+			trimContributions = new EObjectContainmentEList<MTrimContribution>(MTrimContribution.class, this, ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS);
 		}
 		return trimContributions;
 	}
@@ -453,6 +453,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return ((InternalEList<?>)getDescriptors()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
 				return ((InternalEList<?>)getMenuContributions()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+				return ((InternalEList<?>)getToolBarContributions()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
+				return ((InternalEList<?>)getTrimContributions()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__ADDONS:

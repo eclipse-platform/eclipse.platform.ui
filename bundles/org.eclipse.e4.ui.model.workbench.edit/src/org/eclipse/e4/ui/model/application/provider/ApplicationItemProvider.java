@@ -72,8 +72,6 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			addContextPropertyDescriptor(object);
 			addVariablesPropertyDescriptor(object);
 			addBindingContextsPropertyDescriptor(object);
-			addToolBarContributionsPropertyDescriptor(object);
-			addTrimContributionsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -145,50 +143,6 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Tool Bar Contributions feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addToolBarContributionsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ToolBarContributions_toolBarContributions_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ToolBarContributions_toolBarContributions_feature", "_UI_ToolBarContributions_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS,
-				 true,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Trim Contributions feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addTrimContributionsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_TrimContributions_trimContributions_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_TrimContributions_trimContributions_feature", "_UI_TrimContributions_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS,
-				 true,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -206,6 +160,8 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			childrenFeatures.add(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 			childrenFeatures.add(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
 			childrenFeatures.add(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
+			childrenFeatures.add(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
+			childrenFeatures.add(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
 		}
@@ -271,6 +227,8 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
 			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
+			case ApplicationPackageImpl.APPLICATION__TOOL_BAR_CONTRIBUTIONS:
+			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
@@ -323,6 +281,16 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS,
+				 MMenuFactory.INSTANCE.createToolBarContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS,
+				 MMenuFactory.INSTANCE.createTrimContribution()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS,
 				 MCommandsFactory.INSTANCE.createCommand()));
 
@@ -345,7 +313,9 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 
 		boolean qualify =
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
-			childFeature == MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS;
+			childFeature == MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS ||
+			childFeature == MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS ||
+			childFeature == MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS;
 
 		if (qualify) {
 			return getString

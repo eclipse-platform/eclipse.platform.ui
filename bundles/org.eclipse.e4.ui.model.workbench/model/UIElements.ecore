@@ -301,7 +301,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarContributions">
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolBarContributions"
-            upperBound="-1" eType="#//ui/menu/ToolBarContribution"/>
+            upperBound="-1" eType="#//ui/menu/ToolBarContribution" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimContribution">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -312,7 +312,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TrimContributions">
         <eStructuralFeatures xsi:type="ecore:EReference" name="trimContributions"
-            upperBound="-1" eType="#//ui/menu/TrimContribution"/>
+            upperBound="-1" eType="#//ui/menu/TrimContribution" containment="true"/>
       </eClassifiers>
     </eSubpackages>
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"

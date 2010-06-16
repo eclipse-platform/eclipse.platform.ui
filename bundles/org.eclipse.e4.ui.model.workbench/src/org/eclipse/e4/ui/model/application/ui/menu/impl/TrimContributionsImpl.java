@@ -14,9 +14,13 @@ import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
@@ -34,7 +38,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  */
 public class TrimContributionsImpl extends EObjectImpl implements MTrimContributions {
 	/**
-	 * The cached value of the '{@link #getTrimContributions() <em>Trim Contributions</em>}' reference list.
+	 * The cached value of the '{@link #getTrimContributions() <em>Trim Contributions</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getTrimContributions()
@@ -69,9 +73,23 @@ public class TrimContributionsImpl extends EObjectImpl implements MTrimContribut
 	 */
 	public List<MTrimContribution> getTrimContributions() {
 		if (trimContributions == null) {
-			trimContributions = new EObjectResolvingEList<MTrimContribution>(MTrimContribution.class, this, MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
+			trimContributions = new EObjectContainmentEList<MTrimContribution>(MTrimContribution.class, this, MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
 		}
 		return trimContributions;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MenuPackageImpl.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS:
+				return ((InternalEList<?>)getTrimContributions()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**

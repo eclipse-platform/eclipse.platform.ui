@@ -364,7 +364,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__MENU_CONTRIBUTIONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
-	 * The feature id for the '<em><b>Tool Bar Contributions</b></em>' reference list.
+	 * The feature id for the '<em><b>Tool Bar Contributions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -373,7 +373,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__TOOL_BAR_CONTRIBUTIONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
-	 * The feature id for the '<em><b>Trim Contributions</b></em>' reference list.
+	 * The feature id for the '<em><b>Trim Contributions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
