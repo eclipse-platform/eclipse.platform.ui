@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -42,7 +44,9 @@ final class MenuPersistence extends RegistryPersistence {
 
 	private MApplication application;
 	private IEclipseContext appContext;
-	private ArrayList<MenuAdditionCacheEntry> contributions = new ArrayList<MenuAdditionCacheEntry>();
+	private ArrayList<MenuAdditionCacheEntry> cacheEntries = new ArrayList<MenuAdditionCacheEntry>();
+	private ArrayList<ActionSet> actionContributions = new ArrayList<ActionSet>();
+	private ArrayList<MMenuContribution> menuContributions = new ArrayList<MMenuContribution>();
 
 	/**
 	 * Constructs a new instance of {@link MenuPersistence}.
@@ -59,10 +63,10 @@ final class MenuPersistence extends RegistryPersistence {
 	}
 
 	public final void dispose() {
-		for (MenuAdditionCacheEntry mc : contributions) {
-			mc.dispose();
-		}
-		contributions.clear();
+		application.getMenuContributions().removeAll(menuContributions);
+		menuContributions.clear();
+		cacheEntries.clear();
+		actionContributions.clear();
 		super.dispose();
 	}
 
@@ -99,8 +103,16 @@ final class MenuPersistence extends RegistryPersistence {
 		// Read legacy 3.2 'trim' additions
 		readTrimAdditions();
 
+		ArrayList<MMenuContribution> contributions = new ArrayList<MMenuContribution>();
 		// read the 3.3 menu additions
-		readAdditions();
+		readAdditions(contributions);
+
+		// convert actionSets to MenuContributions
+		readActionSets(contributions);
+
+		// can I rationalize them?
+		MenuHelper.mergeContributions(contributions, menuContributions);
+		application.getMenuContributions().addAll(menuContributions);
 	}
 
 	//
@@ -165,9 +177,9 @@ final class MenuPersistence extends RegistryPersistence {
 		// }
 	}
 
-	public void readAdditions() {
+	public void readAdditions(ArrayList<MMenuContribution> contributions) {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		ArrayList configElements = new ArrayList();
+		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
 
 		final IConfigurationElement[] menusExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_MENUS);
@@ -178,22 +190,17 @@ final class MenuPersistence extends RegistryPersistence {
 				configElements.add(menusExtensionPoint[i]);
 			}
 		}
-		Comparator comparer = new Comparator() {
-			public int compare(Object o1, Object o2) {
-				IConfigurationElement c1 = (IConfigurationElement) o1;
-				IConfigurationElement c2 = (IConfigurationElement) o2;
-				return c1.getNamespaceIdentifier().compareToIgnoreCase(
-						c2.getNamespaceIdentifier());
+		Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
+			public int compare(IConfigurationElement c1, IConfigurationElement c2) {
+				return c1.getNamespaceIdentifier().compareToIgnoreCase(c2.getNamespaceIdentifier());
 			}
 		};
 		Collections.sort(configElements, comparer);
 
-		Iterator i = configElements.iterator();
+		Iterator<IConfigurationElement> i = configElements.iterator();
 		while (i.hasNext()) {
-			final IConfigurationElement configElement = (IConfigurationElement) i
-					.next();
-			
-			
+			final IConfigurationElement configElement = i.next();
+
 			if (isProgramaticContribution(configElement)) {
 				// newFactory = new ProxyMenuAdditionCacheEntry(
 				// configElement
@@ -202,13 +209,12 @@ final class MenuPersistence extends RegistryPersistence {
 				E4Util.unsupported("Programmatic Contribution Factories not supported"); //$NON-NLS-1$
 
 			} else {
-				MenuAdditionCacheEntry menuContribution = new MenuAdditionCacheEntry(application, appContext,
-						configElement,
-						configElement
-								.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
+				MenuAdditionCacheEntry menuContribution = new MenuAdditionCacheEntry(application,
+						appContext, configElement,
+						configElement.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
 						configElement.getNamespaceIdentifier());
-				contributions.add(menuContribution);
-				menuContribution.addToModel();
+				cacheEntries.add(menuContribution);
+				menuContribution.addToModel(contributions);
 			}
 		}
 	}
@@ -222,5 +228,26 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	private boolean isProgramaticContribution(IConfigurationElement menuAddition) {
 		return menuAddition.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) != null;
+	}
+
+	private void readActionSets(ArrayList<MMenuContribution> contributions) {
+		final IExtensionRegistry registry = Platform.getExtensionRegistry();
+		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
+
+		configElements.addAll(Arrays.asList(registry
+				.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_ACTION_SETS)));
+
+		Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
+			public int compare(IConfigurationElement c1, IConfigurationElement c2) {
+				return c1.getNamespaceIdentifier().compareToIgnoreCase(c2.getNamespaceIdentifier());
+			}
+		};
+		Collections.sort(configElements, comparer);
+
+		for (IConfigurationElement element : configElements) {
+			ActionSet actionSet = new ActionSet(application, appContext, element);
+			actionContributions.add(actionSet);
+			actionSet.addToModel(contributions);
+		}
 	}
 }

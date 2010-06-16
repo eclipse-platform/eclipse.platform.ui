@@ -171,9 +171,32 @@ public class MenuHelper {
 		return key;
 	}
 
+	public static void printContributions(ArrayList<MMenuContribution> contributions) {
+		for (MMenuContribution c : contributions) {
+			System.out.println("\n" + c); //$NON-NLS-1$
+			for (MMenuElement element : c.getChildren()) {
+				printElement(1, element);
+			}
+		}
+	}
+
+	private static void printElement(int level, MMenuElement element) {
+		for (int i = 0; i < level; i++) {
+			System.out.print('\t');
+		}
+		System.out.println(element);
+		if (element instanceof MMenu) {
+			for (MMenuElement item : ((MMenu) element).getChildren()) {
+				printElement(level + 1, item);
+			}
+		}
+	}
+
 	public static void mergeContributions(ArrayList<MMenuContribution> contributions,
 			ArrayList<MMenuContribution> result) {
 		HashMap<String, ArrayList<MMenuContribution>> buckets = new HashMap<String, ArrayList<MMenuContribution>>();
+		System.out.println("mergeContributions: " + contributions.size()); //$NON-NLS-1$
+		printContributions(contributions);
 		for (MMenuContribution contribution : contributions) {
 			String key = getKey(contribution);
 			ArrayList<MMenuContribution> slot = buckets.get(key);
@@ -206,6 +229,7 @@ public class MenuHelper {
 				result.add(toContribute);
 			}
 		}
+		System.out.println("mergeContributions: final size: " + result.size()); //$NON-NLS-1$
 	}
 
 	public static void mergeActionSetContributions(ArrayList<MMenuContribution> contributions,

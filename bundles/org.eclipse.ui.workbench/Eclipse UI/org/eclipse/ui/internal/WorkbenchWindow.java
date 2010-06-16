@@ -449,13 +449,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			mainMenu.setElementId("org.eclipse.ui.main.menu"); //$NON-NLS-1$
 
 			model.setMainMenu(mainMenu);
-			Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget());
-			shell.setMenuBar(menu);
 		}
 
 		if (mainMenu.getChildren().isEmpty()) {
 			fill(mainMenu, menuManager);
 		}
+
+		Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget());
+		shell.setMenuBar(menu);
 
 		MTrimBar trimBar = getTopTrim();
 		if (trimBar.getChildren().isEmpty()) {

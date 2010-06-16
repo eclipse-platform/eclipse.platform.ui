@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -45,7 +46,7 @@ public class MenuServiceFilter implements Listener {
 	final public static String MC_POPUP = "menuContribution:popup";
 	final public static String MC_MENU = "menuContribution:menu";
 
-	public static boolean DEBUG = false;
+	public static boolean DEBUG = true;
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
 		System.err.println(msg + ": " + menu + ": " + menuModel);
@@ -101,6 +102,10 @@ public class MenuServiceFilter implements Listener {
 
 	private void handleMenu(final Event event, final Menu menu,
 			final MMenu menuModel) {
+		if ((menu.getStyle() & SWT.BAR) != 0) {
+			// don't process the menu bar, it's not fair :-)
+			return;
+		}
 		switch (event.type) {
 		case SWT.Show:
 			if (DEBUG) {
@@ -124,7 +129,7 @@ public class MenuServiceFilter implements Listener {
 		}
 	}
 
-	private void showMenu(final Event event, final Menu menu,
+	public void showMenu(final Event event, final Menu menu,
 			final MMenu menuModel) {
 		final IEclipseContext parentContext = modelService
 				.getContainingContext(menuModel);
@@ -174,7 +179,7 @@ public class MenuServiceFilter implements Listener {
 		}
 	}
 
-	private void hidePopup(Event event, Menu menu, MPopupMenu menuModel) {
+	public void hidePopup(Event event, Menu menu, MPopupMenu menuModel) {
 		final IEclipseContext popupContext = menuModel.getContext();
 		final IEclipseContext parentContext = popupContext.getParent();
 		final IEclipseContext originalChild = (IEclipseContext) popupContext
@@ -190,7 +195,7 @@ public class MenuServiceFilter implements Listener {
 		}
 	}
 
-	private void showPopup(final Event event, final Menu menu,
+	public void showPopup(final Event event, final Menu menu,
 			final MPopupMenu menuModel) {
 		final IEclipseContext popupContext = menuModel.getContext();
 		final IEclipseContext parentContext = popupContext.getParent();
@@ -230,8 +235,16 @@ public class MenuServiceFilter implements Listener {
 		if (DEBUG) {
 			trace("render", menu, menuModel);
 		}
+		MMenuElement lastVisibleItem = null;
 		for (MMenuElement element : menuModel.getChildren()) {
-			renderer.createGui(element, menu);
+			boolean skip = element instanceof MMenuSeparator
+					&& lastVisibleItem instanceof MMenuSeparator;
+			if (!skip) {
+				renderer.createGui(element, menu);
+				if (element.isVisible()) {
+					lastVisibleItem = element;
+				}
+			}
 		}
 	}
 
@@ -313,7 +326,7 @@ public class MenuServiceFilter implements Listener {
 		}
 	}
 
-	private void showRenderedMenu(final Event event, final Menu menu,
+	public void showRenderedMenu(final Event event, final Menu menu,
 			final MRenderedMenu menuModel) {
 		if (!(menuModel.getContributionManager() instanceof MenuManager)) {
 			return;
@@ -347,7 +360,7 @@ public class MenuServiceFilter implements Listener {
 		event.doit = false;
 	}
 
-	private void cleanUp(final Menu menu) {
+	public void cleanUp(final Menu menu) {
 		if (DEBUG) {
 			trace("cleanUp", menu, null);
 		}

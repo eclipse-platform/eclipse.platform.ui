@@ -12,6 +12,7 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.util.ArrayList;
 import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -56,7 +57,6 @@ public class MenuAdditionCacheEntry {
 	// private IEclipseContext appContext;
 	private IConfigurationElement configElement;
 	private MenuLocationURI location;
-	private MMenuContribution menuContribution;
 
 	private MToolBarContribution toolBarContribution;
 
@@ -185,8 +185,6 @@ public class MenuAdditionCacheEntry {
 				MMenu element = createMenuAddition(items[i]);
 				element.getTags().add(filter);
 				container.getChildren().add(element);
-				addMenuChildren(element, items[i], filter);
-				// newItem = createMenuAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
 				E4Util.unsupported("Toolbar: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
 			}
@@ -214,12 +212,14 @@ public class MenuAdditionCacheEntry {
 			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
 				MToolBarElement element = createToolBarCommandAddition(items[i]);
 				container.getChildren().add(element);
+
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
 				MToolBarElement element = createToolBarSeparatorAddition(items[i]);
 				container.getChildren().add(element);
 			}
 		}
 	}
+
 
 	private void addTrimChildren(final MElementContainer<MTrimElement> container,
 			IConfigurationElement parent) {
@@ -231,7 +231,7 @@ public class MenuAdditionCacheEntry {
 		}
 	}
 
-	public void addToModel() {
+	public void addToModel(ArrayList<MMenuContribution> contributions) {
 		if (inToolbar()) {
 			String path = location.getPath();
 			if (path.equals(MAIN_TOOLBAR) || path.equals(TRIM_COMMAND1)
@@ -264,10 +264,9 @@ public class MenuAdditionCacheEntry {
 				addToolBarChildren(toolBarContribution, configElement);
 				application.getToolBarContributions().add(toolBarContribution);
 			}
-
 			return;
 		}
-		menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
 		String idContrib = MenuHelper.getId(configElement);
 		if (idContrib != null && idContrib.length() > 0) {
 			menuContribution.setElementId(idContrib);
@@ -290,12 +289,36 @@ public class MenuAdditionCacheEntry {
 		menuContribution.getTags().add(filter);
 		menuContribution.setVisibleWhen(MenuHelper.getVisibleWhen(configElement));
 		addMenuChildren(menuContribution, configElement, filter);
-		application.getMenuContributions().add(menuContribution);
+		contributions.add(menuContribution);
+		processMenuChildren(contributions, configElement, filter);
 	}
 
-	public void dispose() {
-		application.getMenuContributions().remove(menuContribution);
-		application.getToolBarContributions().remove(toolBarContribution);
-		application.getTrimContributions().remove(trimContribution);
+	/**
+	 * @param contributions
+	 * @param element
+	 * @param filter
+	 */
+	private void processMenuChildren(ArrayList<MMenuContribution> contributions,
+			IConfigurationElement element, String filter) {
+		IConfigurationElement[] menus = element.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
+		if (menus.length == 0) {
+			return;
+		}
+		for (IConfigurationElement menu : menus) {
+			MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+			String idContrib = MenuHelper.getId(menu);
+			if (idContrib != null && idContrib.length() > 0) {
+				menuContribution.setElementId(idContrib);
+			}
+			menuContribution.setParentID(idContrib);
+			menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
+			menuContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
+			menuContribution.getTags().add(filter);
+			menuContribution.setVisibleWhen(MenuHelper.getVisibleWhen(menu));
+			addMenuChildren(menuContribution, menu, filter);
+			contributions.add(menuContribution);
+			processMenuChildren(contributions, menu, filter);
+		}
 	}
+
 }
