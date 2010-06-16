@@ -1,6 +1,6 @@
 
 .MTrimmedWindow { 
-    background-color: #F0F0F0 #E5E5E5 100%; 
+    background-color: #E8E8E8;
     margin-top: 12px;
     margin-bottom: 2px;
     margin-left: 10px;
@@ -12,6 +12,7 @@
     unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
     outer-keyline-color: #FFFFFF;
 	inner-keyline-color: #FFFFFF;
+	font-size: 12;
 }
 
 .MTrimBar  {
@@ -19,7 +20,11 @@
 }
 
 .MPartStack.active {
-	unselected-tabs-color: #E2E2E2 #EBEBEC #FFFFFF 100% 100%;
-    	outer-keyline-color: #C4C5C1;
+	unselected-tabs-color: #F6F6F6 #D3D3D3 #D1D1D1 #D1D1D1 #D6D6D6 #D6D6D6 #FFFFFF 20% 45% 60% 70% 100% 100%;
+    outer-keyline-color: #B8C7E5;
 	inner-keyline-color: #FFFFFF;
+}
+
+#PerspectiveSwitcher {
+	background-color: #F0F0F0 #E8E8E8 100%;
 }
