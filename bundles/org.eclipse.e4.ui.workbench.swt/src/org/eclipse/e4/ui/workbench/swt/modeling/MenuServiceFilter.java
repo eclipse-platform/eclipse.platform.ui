@@ -23,6 +23,7 @@ import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -33,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
+import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -45,10 +47,9 @@ public class MenuServiceFilter implements Listener {
 	final public static String MC_POPUP = "menuContribution:popup";
 	final public static String MC_MENU = "menuContribution:menu";
 
-	public static boolean DEBUG = true;
-
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
-		System.err.println(msg + ": " + menu + ": " + menuModel);
+		WorkbenchSWTActivator.trace(Policy.MENUS, msg + ": " + menu + ": "
+				+ menuModel, null);
 	}
 
 	private static Method aboutToShow;
@@ -107,22 +108,16 @@ public class MenuServiceFilter implements Listener {
 		}
 		switch (event.type) {
 		case SWT.Show:
-			if (DEBUG) {
-				trace("handleMenu.Show", menu, menuModel);
-			}
+			trace("handleMenu.Show", menu, menuModel);
 			cleanUp(menu);
 			showMenu(event, menu, menuModel);
 			break;
 		case SWT.Hide:
-			if (DEBUG) {
-				trace("handleMenu.Hide", menu, menuModel);
-			}
+			trace("handleMenu.Hide", menu, menuModel);
 			// TODO we'll clean up on show
 			break;
 		case SWT.Dispose:
-			if (DEBUG) {
-				trace("handleMenu.Dispose", menu, menuModel);
-			}
+			trace("handleMenu.Dispose", menu, menuModel);
 			cleanUp(menu);
 			break;
 		}
@@ -157,22 +152,16 @@ public class MenuServiceFilter implements Listener {
 			final MPopupMenu menuModel) {
 		switch (event.type) {
 		case SWT.Show:
-			if (DEBUG) {
-				trace("handleContextMenu.Show", menu, menuModel);
-			}
+			trace("handleContextMenu.Show", menu, menuModel);
 			cleanUp(menu);
 			showPopup(event, menu, menuModel);
 			break;
 		case SWT.Hide:
-			if (DEBUG) {
-				trace("handleContextMenu.Hide", menu, menuModel);
-			}
+			trace("handleContextMenu.Hide", menu, menuModel);
 			hidePopup(event, menu, menuModel);
 			break;
 		case SWT.Dispose:
-			if (DEBUG) {
-				trace("handleContextMenu.Dispose", menu, menuModel);
-			}
+			trace("handleContextMenu.Dispose", menu, menuModel);
 			cleanUp(menu);
 			break;
 		}
@@ -231,18 +220,14 @@ public class MenuServiceFilter implements Listener {
 	}
 
 	private void render(final Menu menu, final MMenu menuModel) {
-		if (DEBUG) {
-			trace("render", menu, menuModel);
-		}
+		trace("render", menu, menuModel);
 		for (MMenuElement element : menuModel.getChildren()) {
 			renderer.createGui(element, menu);
 		}
 	}
 
 	private void unrender(final MMenu menuModel) {
-		if (DEBUG) {
-			trace("unrender", (Widget) menuModel.getWidget(), menuModel);
-		}
+		trace("unrender", (Widget) menuModel.getWidget(), menuModel);
 		for (MMenuElement element : menuModel.getChildren()) {
 			renderer.removeGui(element);
 		}
@@ -283,10 +268,8 @@ public class MenuServiceFilter implements Listener {
 	private void removeMenuContributions(final MMenu menuModel,
 			final ArrayList<MMenuElement> menuContributionsToRemove) {
 		for (MMenuElement item : menuContributionsToRemove) {
-			if (DEBUG) {
-				trace("removeMenuContributions " + item,
-						(Widget) menuModel.getWidget(), menuModel);
-			}
+			trace("removeMenuContributions " + item,
+					(Widget) menuModel.getWidget(), menuModel);
 			menuModel.getChildren().remove(item);
 		}
 	}
@@ -296,22 +279,16 @@ public class MenuServiceFilter implements Listener {
 		// Do nothing here for the moment, except process any cleanups
 		switch (event.type) {
 		case SWT.Show:
-			if (DEBUG) {
-				trace("handlerRenderedMenu.Show", menu, menuModel);
-			}
+			trace("handlerRenderedMenu.Show", menu, menuModel);
 			cleanUp(menu);
 			showRenderedMenu(event, menu, menuModel);
 			break;
 		case SWT.Hide:
-			if (DEBUG) {
-				trace("handlerRenderedMenu.Hide", menu, menuModel);
-			}
+			trace("handlerRenderedMenu.Hide", menu, menuModel);
 			// TODO don't care
 			break;
 		case SWT.Dispose:
-			if (DEBUG) {
-				trace("handlerRenderedMenu.Dispose", menu, menuModel);
-			}
+			trace("handlerRenderedMenu.Dispose", menu, menuModel);
 			cleanUp(menu);
 			break;
 		}
@@ -324,9 +301,6 @@ public class MenuServiceFilter implements Listener {
 		}
 
 		MenuManager manager = (MenuManager) menuModel.getContributionManager();
-		if (DEBUG) {
-			trace("showRenderedMenu: " + manager, menu, menuModel);
-		}
 		Method handleAboutToShow = getAboutToShow();
 		try {
 			handleAboutToShow.invoke(manager);
@@ -352,17 +326,13 @@ public class MenuServiceFilter implements Listener {
 	}
 
 	public void cleanUp(final Menu menu) {
-		if (DEBUG) {
-			trace("cleanUp", menu, null);
-		}
+		trace("cleanUp", menu, null);
 		if (pendingCleanup.isEmpty()) {
 			return;
 		}
 		Runnable cleanUp = pendingCleanup.remove(menu);
 		if (cleanUp != null) {
-			if (DEBUG) {
-				trace("cleanUp.run()", menu, null);
-			}
+			trace("cleanUp.run()", menu, null);
 			cleanUp.run();
 		}
 	}

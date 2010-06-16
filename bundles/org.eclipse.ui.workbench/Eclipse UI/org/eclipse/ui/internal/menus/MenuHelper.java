@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
@@ -27,13 +28,17 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
 
 public class MenuHelper {
+
+	public static void trace(String msg, Throwable error) {
+		WorkbenchSWTActivator.trace(Policy.MENUS, msg, error);
+	}
 
 	public static final String ACTION_SET_CMD_PREFIX = "AS::"; //$NON-NLS-1$
 	public static final String MAIN_MENU_ID = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
@@ -173,7 +178,7 @@ public class MenuHelper {
 
 	public static void printContributions(ArrayList<MMenuContribution> contributions) {
 		for (MMenuContribution c : contributions) {
-			System.out.println("\n" + c); //$NON-NLS-1$
+			trace("\n" + c, null); //$NON-NLS-1$
 			for (MMenuElement element : c.getChildren()) {
 				printElement(1, element);
 			}
@@ -181,10 +186,12 @@ public class MenuHelper {
 	}
 
 	private static void printElement(int level, MMenuElement element) {
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < level; i++) {
-			System.out.print('\t');
+			buf.append('\t');
 		}
-		System.out.println(element);
+		buf.append(element.toString());
+		trace(buf.toString(), null);
 		if (element instanceof MMenu) {
 			for (MMenuElement item : ((MMenu) element).getChildren()) {
 				printElement(level + 1, item);
@@ -195,7 +202,7 @@ public class MenuHelper {
 	public static void mergeContributions(ArrayList<MMenuContribution> contributions,
 			ArrayList<MMenuContribution> result) {
 		HashMap<String, ArrayList<MMenuContribution>> buckets = new HashMap<String, ArrayList<MMenuContribution>>();
-		System.out.println("mergeContributions: " + contributions.size()); //$NON-NLS-1$
+		trace("mergeContributions size: " + contributions.size(), null); //$NON-NLS-1$
 		printContributions(contributions);
 		for (MMenuContribution contribution : contributions) {
 			String key = getKey(contribution);
@@ -229,7 +236,7 @@ public class MenuHelper {
 				result.add(toContribute);
 			}
 		}
-		System.out.println("mergeContributions: final size: " + result.size()); //$NON-NLS-1$
+		trace("mergeContributions: final size: " + result.size(), null); //$NON-NLS-1$
 	}
 
 	public static void mergeActionSetContributions(ArrayList<MMenuContribution> contributions,
@@ -370,7 +377,7 @@ public class MenuHelper {
 			return ItemType.RADIO;
 		}
 		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
-			E4Util.unsupported("Failed to get style for " + IWorkbenchRegistryConstants.STYLE_PULLDOWN); //$NON-NLS-1$
+			trace("Failed to get style for " + IWorkbenchRegistryConstants.STYLE_PULLDOWN, null); //$NON-NLS-1$
 			// return CommandContributionItem.STYLE_PULLDOWN;
 		}
 		return ItemType.PUSH;
@@ -439,7 +446,7 @@ public class MenuHelper {
 		item.setLabel(text);
 		MCommand cmd = getCommandById(app, cmdId);
 		if (cmd == null) {
-			E4Util.unsupported("Failed to find command: " + cmdId); //$NON-NLS-1$
+			trace("Failed to find command: " + cmdId, null); //$NON-NLS-1$
 			return null;
 		}
 		item.setCommand(cmd);
