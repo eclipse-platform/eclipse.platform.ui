@@ -19,10 +19,21 @@ import java.util.Set;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 
-abstract class Computation {
-	Map<IEclipseContext, Set<String>> dependencies = new HashMap<IEclipseContext, Set<String>>();
+abstract public class Computation {
 
-	void addDependency(IEclipseContext context, String name) {
+	/**
+	 * Computations must define equals because they are stored in a set.
+	 */
+	public abstract boolean equals(Object arg0);
+
+	/**
+	 * Computations must define hashCode because they are stored in a set.
+	 */
+	public abstract int hashCode();
+
+	protected Map<IEclipseContext, Set<String>> dependencies = new HashMap<IEclipseContext, Set<String>>();
+
+	public void addDependency(IEclipseContext context, String name) {
 		Set<String> properties = dependencies.get(context);
 		if (properties == null) {
 			properties = new HashSet<String>(4);
@@ -31,67 +42,22 @@ abstract class Computation {
 		properties.add(name);
 	}
 
-	final void clear(IEclipseContext context, String name) {
-		doClear();
-		stopListening(context, name);
-	}
-
-	protected void doClear() {
-		// nothing to do in default computation
-	}
-
 	protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
 		// nothing to do in default computation
 	}
 
-	/**
-	 * Computations must define equals because they are stored in a set.
-	 */
-	public abstract boolean equals(Object arg0);
-
-	final void handleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
-		IEclipseContext context = event.getContext();
-
+	public void handleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
 		String name = event.getName();
+		IEclipseContext context = event.getContext();
 		Set<String> names = dependencies.get(context);
-		if (name == null && event.getEventType() == ContextChangeEvent.DISPOSE) {
-			clear(context, null);
-			doHandleInvalid(event, scheduled);
-		} else if (names != null && names.contains(name)) {
-			clear(context, name);
+
+		boolean contextDisposed = (event.getEventType() == ContextChangeEvent.DISPOSE);
+		boolean affected = (names == null) ? false : names.contains(name);
+
+		if (contextDisposed || affected) {
+			stopListening(context, name);
 			doHandleInvalid(event, scheduled);
 		}
-	}
-
-	final void handleUninjected(ContextChangeEvent event, List<Scheduled> scheduled) {
-		doHandleInvalid(event, scheduled);
-	}
-
-	/**
-	 * Computations must define hashCode because they are stored in a set.
-	 */
-	public abstract int hashCode();
-
-	private String mapToString(Map<IEclipseContext, Set<String>> map) {
-		StringBuffer result = new StringBuffer('{');
-		for (Iterator<Map.Entry<IEclipseContext, Set<String>>> it = map.entrySet().iterator(); it.hasNext();) {
-			Map.Entry<IEclipseContext, Set<String>> entry = it.next();
-			result.append(entry.getKey());
-			result.append("->("); //$NON-NLS-1$
-			Set<String> set = entry.getValue();
-			for (Iterator<String> it2 = set.iterator(); it2.hasNext();) {
-				String name = it2.next();
-				result.append(name);
-				if (it2.hasNext()) {
-					result.append(',');
-				}
-			}
-			result.append(')');
-			if (it.hasNext()) {
-				result.append(',');
-			}
-		}
-		return result.toString();
 	}
 
 	/**
@@ -106,10 +72,7 @@ abstract class Computation {
 		originatingContext.listeners.remove(this);
 	}
 
-	void startListening(EclipseContext originatingContext) {
-		if (DebugHelper.DEBUG_LISTENERS)
-			System.out.println("[context] " + toString() + " now listening to: " + mapToString(dependencies));//$NON-NLS-1$ //$NON-NLS-2$
-
+	public void startListening(EclipseContext originatingContext) {
 		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
 			EclipseContext c = (EclipseContext) it.next();
 			Computation existingComputation = c.listeners.get(this);
@@ -130,17 +93,13 @@ abstract class Computation {
 			originatingContext.listeners.remove(this);
 	}
 
-	protected void stopListening(IEclipseContext context, String name) {
+	public void stopListening(IEclipseContext context, String name) {
 		if (name == null) {
-			if (DebugHelper.DEBUG_LISTENERS)
-				System.out.println("[context] " + toString() + " no longer listening to " + context);//$NON-NLS-1$ //$NON-NLS-2$
 			dependencies.remove(context);
 			return;
 		}
 		Set<String> properties = dependencies.get(context);
 		if (properties != null) {
-			if (DebugHelper.DEBUG_LISTENERS)
-				System.out.println("[context] " + toString() + " no longer listening to " + context + ',' + name);//$NON-NLS-1$ //$NON-NLS-2$
 			properties.remove(name);
 			// if we no longer track any values in the context, remove dependency
 			if (properties.isEmpty())

@@ -42,118 +42,6 @@ public class EclipseContext implements IEclipseContext {
 	 */
 	public static final String DEBUG_STRING = "debugString"; //$NON-NLS-1$
 
-	static class TrackableComputationExt extends Computation implements IContextRecorder {
-
-		private ContextChangeEvent cachedEvent;
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
-		public int hashCode() {
-			return 31 + ((runnable == null) ? 0 : runnable.hashCode());
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			TrackableComputationExt other = (TrackableComputationExt) obj;
-			if (runnable == null) {
-				if (other.runnable != null)
-					return false;
-			} else if (!runnable.equals(other.runnable))
-				return false;
-			return true;
-		}
-
-		private RunAndTrack runnable;
-
-		public TrackableComputationExt(RunAndTrack runnable) {
-			this.runnable = runnable;
-		}
-
-		final protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduledList) {
-			int eventType = event.getEventType();
-			if (eventType == ContextChangeEvent.INITIAL || eventType == ContextChangeEvent.DISPOSE) {
-				// process right away
-				update(event);
-			} else {
-				// schedule processing
-				scheduledList.add(new Scheduled(this, event));
-			}
-		}
-
-		public boolean update(ContextChangeEvent event) {
-			// is this a structural event?
-			// structural changes: INITIAL, DISPOSE, UNINJECTED are always processed right away
-			int eventType = event.getEventType();
-			if ((runnable instanceof RunAndTrackExt) && ((RunAndTrackExt) runnable).batchProcess()) {
-				if ((eventType == ContextChangeEvent.ADDED) || (eventType == ContextChangeEvent.REMOVED)) {
-					cachedEvent = event;
-					EclipseContext eventsContext = (EclipseContext) event.getContext();
-					eventsContext.addWaiting(this);
-					return true;
-				}
-			}
-			Computation oldComputation = currentComputation.get();
-			currentComputation.set(this);
-			boolean result = true;
-			try {
-				if (cachedEvent != null) {
-					if (runnable instanceof RunAndTrackExt)
-						result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments(), this);
-					else {
-						if (eventType == ContextChangeEvent.DISPOSE)
-							runnable.disposed(cachedEvent.getContext());
-						else
-							result = runnable.changed(cachedEvent.getContext());
-					}
-					cachedEvent = null;
-				}
-				if (eventType != ContextChangeEvent.UPDATE) {
-					if (runnable instanceof RunAndTrackExt)
-						result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments(), this);
-					else {
-						if (eventType == ContextChangeEvent.DISPOSE)
-							runnable.disposed(event.getContext());
-						else
-							result = runnable.changed(event.getContext());
-					}
-				}
-			} finally {
-				currentComputation.set(oldComputation);
-			}
-			EclipseContext eventsContext = (EclipseContext) event.getContext();
-			if (result && eventType != ContextChangeEvent.DISPOSE)
-				startListening(eventsContext);
-			else
-				removeAll(eventsContext);
-			return result;
-		}
-
-		public String toString() {
-			return "TrackableComputationExt(" + runnable + ')'; //$NON-NLS-1$
-		}
-
-		public void startAcessRecording() {
-			currentComputation.set(this);
-		}
-
-		public void stopAccessRecording() {
-			currentComputation.set(null);
-		}
-	}
-
 	static class Scheduled {
 
 		public TrackableComputationExt runnable;
@@ -421,10 +309,9 @@ public class EclipseContext implements IEclipseContext {
 			for (Iterator<String> it = localValueComputations.keySet().iterator(); it.hasNext();) {
 				String key = it.next();
 				if (key.equals(name)) {
-					Object removed = localValueComputations.get(key);
-					if (removed instanceof ValueComputation) {
-						((ValueComputation) removed).clear(this, name);
-					}
+					ValueComputation removed = localValueComputations.get(key);
+					if (removed != null)
+						removed.stopListening(this, name);
 					it.remove();
 				}
 			}
@@ -687,5 +574,9 @@ public class EclipseContext implements IEclipseContext {
 		synchronized (notifyOnDisposal) {
 			notifyOnDisposal.add(listener);
 		}
+	}
+
+	static public ThreadLocal<Computation> localComputation() {
+		return currentComputation;
 	}
 }

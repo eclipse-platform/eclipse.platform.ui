@@ -16,12 +16,31 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 
 public class ValueComputation extends Computation {
-	Object cachedValue;
-	IEclipseContext context;
-	String name;
-	boolean valid;
-	IContextFunction function;
-	EclipseContext originatingContext;
+
+	static class CycleException extends RuntimeException {
+		private static final long serialVersionUID = 1L;
+		private final String cycleMessage;
+
+		CycleException(String cycleMessage) {
+			super("Cycle while computing value"); //$NON-NLS-1$
+			this.cycleMessage = cycleMessage;
+		}
+
+		String getCycleMessage() {
+			return cycleMessage;
+		}
+
+		public String toString() {
+			return "\n" + cycleMessage + '\n'; //$NON-NLS-1$
+		}
+	}
+
+	private Object cachedValue;
+	private IEclipseContext context;
+	private String name;
+	private boolean valid;
+	private IContextFunction function;
+	private EclipseContext originatingContext;
 	private boolean computing; // cycle detection
 
 	public ValueComputation(IEclipseContext context, IEclipseContext originatingContext, String name, IContextFunction computedValue) {
@@ -31,11 +50,6 @@ public class ValueComputation extends Computation {
 		this.function = computedValue;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -46,11 +60,6 @@ public class ValueComputation extends Computation {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -82,30 +91,9 @@ public class ValueComputation extends Computation {
 		return true;
 	}
 
-	static class CycleException extends RuntimeException {
-		private static final long serialVersionUID = 1L;
-		private final String cycleMessage;
-
-		CycleException(String cycleMessage) {
-			super("Cycle while computing value"); //$NON-NLS-1$
-			this.cycleMessage = cycleMessage;
-		}
-
-		String getCycleMessage() {
-			return cycleMessage;
-		}
-
-		public String toString() {
-			return "\n" + cycleMessage + '\n'; //$NON-NLS-1$
-		}
-	}
-
-	final protected void doClear() {
+	protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
 		valid = false;
 		cachedValue = null;
-	}
-
-	final protected void doHandleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
 		int eventType = event.getEventType();
 		// if the originating context is being disposed, remove this value computation completely
 		if (eventType == ContextChangeEvent.DISPOSE) {
@@ -121,13 +109,12 @@ public class ValueComputation extends Computation {
 		originatingContext.invalidate(name, eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType, event.getOldValue(), scheduled);
 	}
 
-	final Object get() {
-		if (valid) {
+	public Object get() {
+		if (valid)
 			return cachedValue;
-		}
-		if (this.computing) {
+		if (this.computing)
 			throw new CycleException(this.toString());
-		}
+
 		Computation oldComputation = EclipseContext.currentComputation.get();
 		EclipseContext.currentComputation.set(this);
 		computing = true;
