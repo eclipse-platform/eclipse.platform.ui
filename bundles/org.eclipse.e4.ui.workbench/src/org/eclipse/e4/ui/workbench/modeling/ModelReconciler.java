@@ -298,6 +298,42 @@ public abstract class ModelReconciler {
 			.getMenuItem_Mnemonics().getName();
 
 	/**
+	 * Attribute defined by MTrimContribution (value is <code>parentId</code>).
+	 */
+	public static final String TRIMCONTRIBUTION_PARENTID_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getTrimContribution_ParentId().getName();
+
+	/**
+	 * Attribute defined by MTrimContribution (value is <code>positionInParent</code>).
+	 */
+	public static final String TRIMCONTRIBUTION_POSITIONINPARENT_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getTrimContribution_PositionInParent().getName();
+
+	/**
+	 * Attribute defined by MTrimContributions (value is <code>trimContributions</code>).
+	 */
+	public static final String TRIMCONTRIBUTIONS_TRIMCONTRIBUTIONS_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getTrimContributions_TrimContributions().getName();
+
+	/**
+	 * Attribute defined by MToolBarContribution (value is <code>parentId</code>).
+	 */
+	public static final String TOOLBARCONTRIBUTION_PARENTID_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getToolBarContribution_ParentId().getName();
+
+	/**
+	 * Attribute defined by MToolBarContribution (value is <code>positionInParent</code>).
+	 */
+	public static final String TOOLBARCONTRIBUTION_POSITIONINPARENT_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getToolBarContribution_PositionInParent().getName();
+
+	/**
+	 * Attribute defined by MToolBarContributions (value is <code>toolBarContributions</code>).
+	 */
+	public static final String TOOLBARCONTRIBUTIONS_TOOLBARCONTRIBUTIONS_ATTNAME = MenuPackageImpl.eINSTANCE
+			.getToolBarContributions_ToolBarContributions().getName();
+
+	/**
 	 * Attribute defined by MMenuContributions (value is <code>menuContributions</code>).
 	 */
 	public static final String MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME = MenuPackageImpl.eINSTANCE

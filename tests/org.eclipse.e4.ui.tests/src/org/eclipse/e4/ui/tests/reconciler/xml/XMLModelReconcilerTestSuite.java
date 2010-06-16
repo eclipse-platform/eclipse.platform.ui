@@ -43,8 +43,12 @@ public class XMLModelReconcilerTestSuite extends TestSuite {
 		addTestSuite(XMLModelReconcilerPartTest.class);
 		addTestSuite(XMLModelReconcilerPartDescriptorTest.class);
 		addTestSuite(XMLModelReconcilerPlaceholderTest.class);
+		addTestSuite(XMLModelReconcilerToolBarContributionTest.class);
+		addTestSuite(XMLModelReconcilerToolBarContributionsTest.class);
 		addTestSuite(XMLModelReconcilerToolBarTest.class);
 		addTestSuite(XMLModelReconcilerTrimContainerTest.class);
+		addTestSuite(XMLModelReconcilerTrimContributionTest.class);
+		addTestSuite(XMLModelReconcilerTrimContributionsTest.class);
 		addTestSuite(XMLModelReconcilerUIElementTest.class);
 		addTestSuite(XMLModelReconcilerUIItemTest.class);
 		addTestSuite(XMLModelReconcilerWindowTest.class);

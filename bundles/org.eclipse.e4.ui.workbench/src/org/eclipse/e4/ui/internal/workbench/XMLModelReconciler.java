@@ -56,6 +56,10 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.IDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
@@ -277,10 +281,27 @@ public class XMLModelReconciler extends ModelReconciler {
 			return AdvancedPackageImpl.eINSTANCE.getPlaceholder_Ref();
 		} else if (featureName.equals(MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME)) {
 			return MenuPackageImpl.eINSTANCE.getMenuContributions_MenuContributions();
-		} else if (featureName.equals(MENUCONTRIBUTION_POSITIONINPARENT_ATTNAME)) {
+		} else if (featureName.equals(MENUCONTRIBUTION_POSITIONINPARENT_ATTNAME)
+				|| featureName.equals(TOOLBARCONTRIBUTION_POSITIONINPARENT_ATTNAME)
+				|| featureName.equals(TRIMCONTRIBUTION_POSITIONINPARENT_ATTNAME)) {
+			// technically all three names are the same
+
+			if (object instanceof MToolBarContribution) {
+				return MenuPackageImpl.eINSTANCE.getToolBarContribution_PositionInParent();
+			} else if (object instanceof MTrimContribution) {
+				return MenuPackageImpl.eINSTANCE.getTrimContribution_PositionInParent();
+			}
 			return MenuPackageImpl.eINSTANCE.getMenuContribution_PositionInParent();
 		} else if (featureName.equals(MENUCONTRIBUTION_PARENTID_ATTNAME)) {
 			return MenuPackageImpl.eINSTANCE.getMenuContribution_ParentID();
+		} else if (featureName.equals(TOOLBARCONTRIBUTION_PARENTID_ATTNAME)
+				|| featureName.equals(TRIMCONTRIBUTION_PARENTID_ATTNAME)) {
+			// technically both names are the same
+
+			if (object instanceof MTrimContribution) {
+				return MenuPackageImpl.eINSTANCE.getTrimContribution_ParentId();
+			}
+			return MenuPackageImpl.eINSTANCE.getToolBarContribution_ParentId();
 		} else if (featureName.equals(MENUITEM_MNEMONICS_ATTNAME)) {
 			return MenuPackageImpl.eINSTANCE.getMenuItem_Mnemonics();
 		} else if (featureName.equals(PARAMETER_NAME_ATTNAME)) {
@@ -289,6 +310,10 @@ public class XMLModelReconciler extends ModelReconciler {
 			return CommandsPackageImpl.eINSTANCE.getParameter_Value();
 		} else if (featureName.equals(COREEXPRESSION_COREEXPRESSIONID_ATTNAME)) {
 			return UiPackageImpl.eINSTANCE.getCoreExpression_CoreExpressionId();
+		} else if (featureName.equals(TOOLBARCONTRIBUTIONS_TOOLBARCONTRIBUTIONS_ATTNAME)) {
+			return MenuPackageImpl.eINSTANCE.getToolBarContributions_ToolBarContributions();
+		} else if (featureName.equals(TRIMCONTRIBUTIONS_TRIMCONTRIBUTIONS_ATTNAME)) {
+			return MenuPackageImpl.eINSTANCE.getTrimContributions_TrimContributions();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
@@ -404,6 +429,24 @@ public class XMLModelReconciler extends ModelReconciler {
 		if (object instanceof MMenuContributions) {
 			for (MMenuContribution contribution : ((MMenuContributions) object)
 					.getMenuContributions()) {
+				if (constructDeltas(deltas, references, (EObject) contribution, element, id)) {
+					return true;
+				}
+			}
+		}
+
+		if (object instanceof MToolBarContributions) {
+			for (MToolBarContribution contribution : ((MToolBarContributions) object)
+					.getToolBarContributions()) {
+				if (constructDeltas(deltas, references, (EObject) contribution, element, id)) {
+					return true;
+				}
+			}
+		}
+
+		if (object instanceof MTrimContributions) {
+			for (MTrimContribution contribution : ((MTrimContributions) object)
+					.getTrimContributions()) {
 				if (constructDeltas(deltas, references, (EObject) contribution, element, id)) {
 					return true;
 				}
@@ -1175,6 +1218,66 @@ public class XMLModelReconciler extends ModelReconciler {
 			return menuContributionsChanged ? null : reference.eContainer();
 		}
 
+		if (reference instanceof MToolBarContribution) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+
+			boolean toolBarContributionsChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key == rootObject) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(
+								TOOLBARCONTRIBUTIONS_TOOLBARCONTRIBUTIONS_ATTNAME)) {
+							List<?> commands = (List<?>) change.getValue();
+							for (Object command : commands) {
+								if (command == reference) {
+									return key;
+								}
+							}
+
+							toolBarContributionsChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			return toolBarContributionsChanged ? null : reference.eContainer();
+		}
+
+		if (reference instanceof MTrimContribution) {
+			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
+					.getObjectChanges();
+
+			boolean toolBarContributionsChanged = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key == rootObject) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(
+								TRIMCONTRIBUTIONS_TRIMCONTRIBUTIONS_ATTNAME)) {
+							List<?> commands = (List<?>) change.getValue();
+							for (Object command : commands) {
+								if (command == reference) {
+									return key;
+								}
+							}
+
+							toolBarContributionsChanged = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			return toolBarContributionsChanged ? null : reference.eContainer();
+		}
+
 		if (reference instanceof MBindingTable) {
 			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
 					.getObjectChanges();
@@ -1838,7 +1941,11 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a Command has multiple (command) parameters
 				featureName.equals(COMMAND_PARAMETERS_ATTNAME) ||
 				// a HandledItem has multiple parameters
-				featureName.equals(HANDLEDITEM_PARAMETERS_ATTNAME);
+				featureName.equals(HANDLEDITEM_PARAMETERS_ATTNAME) ||
+				// a ToolBarContributions has multiple tool bar contributions
+				featureName.equals(TOOLBARCONTRIBUTIONS_TOOLBARCONTRIBUTIONS_ATTNAME) ||
+				// a TrimContributions has multiple trim contributions
+				featureName.equals(TRIMCONTRIBUTIONS_TRIMCONTRIBUTIONS_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {
