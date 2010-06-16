@@ -36,4 +36,5 @@ public interface IThemeEngine {
 	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
 	public CSSEngine getCSSEngine();
 	public void restore(String alternate);
+	public ITheme getActiveTheme();
 }

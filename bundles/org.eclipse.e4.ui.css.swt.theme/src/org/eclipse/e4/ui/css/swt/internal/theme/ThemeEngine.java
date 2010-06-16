@@ -363,4 +363,8 @@ public class ThemeEngine implements IThemeEngine {
 			setTheme(alternateTheme, false);
 		}
 	}
+	
+	public ITheme getActiveTheme() {
+		return currentTheme;
+	}
 }
