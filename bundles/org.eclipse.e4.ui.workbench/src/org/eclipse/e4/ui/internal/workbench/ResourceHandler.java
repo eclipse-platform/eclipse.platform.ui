@@ -203,15 +203,13 @@ public class ResourceHandler implements IModelResourceHandler {
 				MApplication appElement = (MApplication) resource.getContents().get(0);
 				// Add model items described in the model extension point
 				// This has to be done before commands are put into the context
-				ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
-				extProcessor.addModelExtensions();
+				// ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
+				// extProcessor.addModelExtensions();
 
-				IEclipseContext context = this.context.createChild();
 				this.context.set(MApplication.class, appElement);
 				ModelAssembler contribProcessor = ContextInjectionFactory.make(
 						ModelAssembler.class, context);
 				contribProcessor.processModel();
-				context.dispose();
 
 				File file = new File(restoreLocation.toFileString());
 				reconciler = new XMLModelReconciler();
@@ -251,8 +249,11 @@ public class ResourceHandler implements IModelResourceHandler {
 		// Add model items described in the model extension point
 		// This has to be done before commands are put into the context
 		MApplication appElement = (MApplication) resource.getContents().get(0);
-		ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
-		extProcessor.addModelExtensions();
+
+		this.context.set(MApplication.class, appElement);
+		ModelAssembler contribProcessor = ContextInjectionFactory.make(ModelAssembler.class,
+				context);
+		contribProcessor.processModel();
 
 		return resource;
 	}
