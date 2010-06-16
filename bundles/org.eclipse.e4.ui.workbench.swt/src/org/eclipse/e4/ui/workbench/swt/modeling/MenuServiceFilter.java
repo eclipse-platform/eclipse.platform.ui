@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -140,7 +141,7 @@ public class MenuServiceFilter implements Listener {
 		pendingCleanup.put(menu, new Runnable() {
 			public void run() {
 				if (!menu.isDisposed()) {
-					unrender(menuModel);
+					unrender(menuContributionsToRemove);
 				}
 				removeMenuContributions(menuModel, menuContributionsToRemove);
 			}
@@ -211,7 +212,7 @@ public class MenuServiceFilter implements Listener {
 		pendingCleanup.put(menu, new Runnable() {
 			public void run() {
 				if (!menu.isDisposed()) {
-					unrender(menuModel);
+					unrender(menuContributionsToRemove);
 				}
 				removeMenuContributions(menuModel, menuContributionsToRemove);
 			}
@@ -226,9 +227,9 @@ public class MenuServiceFilter implements Listener {
 		}
 	}
 
-	private void unrender(final MMenu menuModel) {
-		trace("unrender", (Widget) menuModel.getWidget(), menuModel);
-		for (MMenuElement element : menuModel.getChildren()) {
+	private void unrender(final List<MMenuElement> menuModel) {
+		trace("unrender", null, null);
+		for (MMenuElement element : menuModel) {
 			renderer.removeGui(element);
 		}
 	}
