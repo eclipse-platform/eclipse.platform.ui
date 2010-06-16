@@ -11,12 +11,9 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Map;
-import org.eclipse.e4.ui.model.application.*;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MModelComponent;
-import org.eclipse.e4.ui.model.application.MModelComponents;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -78,8 +75,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 		switch (eClass.getClassifierID()) {
 			case ApplicationPackageImpl.STRING_TO_STRING_MAP: return (EObject)createStringToStringMap();
 			case ApplicationPackageImpl.APPLICATION: return (EObject)createApplication();
-			case ApplicationPackageImpl.MODEL_COMPONENTS: return (EObject)createModelComponents();
-			case ApplicationPackageImpl.MODEL_COMPONENT: return (EObject)createModelComponent();
 			case ApplicationPackageImpl.ADDON: return (EObject)createAddon();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -130,26 +125,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MApplication createApplication() {
 		ApplicationImpl application = new ApplicationImpl();
 		return application;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MModelComponents createModelComponents() {
-		ModelComponentsImpl modelComponents = new ModelComponentsImpl();
-		return modelComponents;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MModelComponent createModelComponent() {
-		ModelComponentImpl modelComponent = new ModelComponentImpl();
-		return modelComponent;
 	}
 
 	/**

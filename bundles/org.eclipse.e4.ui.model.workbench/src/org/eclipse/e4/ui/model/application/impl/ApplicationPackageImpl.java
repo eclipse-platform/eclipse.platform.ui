@@ -17,11 +17,9 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.MModelComponent;
-import org.eclipse.e4.ui.model.application.MModelComponents;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.ecore.EAttribute;
@@ -473,179 +471,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int CONTRIBUTION_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl <em>Model Components</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponents()
-	 * @generated
-	 */
-	public static final int MODEL_COMPONENTS = 4;
-
-	/**
-	 * The feature id for the '<em><b>Components</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENTS__COMPONENTS = 0;
-
-	/**
-	 * The feature id for the '<em><b>Imports</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENTS__IMPORTS = 1;
-
-	/**
-	 * The number of structural features of the '<em>Model Components</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENTS_FEATURE_COUNT = 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl <em>Model Component</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ModelComponentImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponent()
-	 * @generated
-	 */
-	public static final int MODEL_COMPONENT = 5;
-
-	/**
-	 * The feature id for the '<em><b>Descriptors</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__DESCRIPTORS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
-
-	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__ELEMENT_ID = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__TAGS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__HANDLERS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Binding Tables</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__BINDING_TABLES = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Root Context</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__ROOT_CONTEXT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Menu Contributions</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__MENU_CONTRIBUTIONS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__POSITION_IN_PARENT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Parent ID</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__PARENT_ID = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__CHILDREN = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 8;
-
-	/**
-	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__COMMANDS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 9;
-
-	/**
-	 * The feature id for the '<em><b>Processor</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__PROCESSOR = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 10;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT__BINDINGS = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 11;
-
-	/**
-	 * The number of structural features of the '<em>Model Component</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MODEL_COMPONENT_FEATURE_COUNT = BasicPackageImpl.PART_DESCRIPTOR_CONTAINER_FEATURE_COUNT + 12;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.AddonImpl <em>Addon</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -653,7 +478,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getAddon()
 	 * @generated
 	 */
-	public static final int ADDON = 6;
+	public static final int ADDON = 4;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -717,7 +542,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	public static final int IECLIPSE_CONTEXT = 7;
+	public static final int IECLIPSE_CONTEXT = 5;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -746,20 +571,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass contributionEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass modelComponentsEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass modelComponentEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -825,9 +636,9 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) instanceof CommandsPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI) : CommandsPackageImpl.eINSTANCE);
 		UiPackageImpl theUiPackage = (UiPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) instanceof UiPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI) : UiPackageImpl.eINSTANCE);
 		MenuPackageImpl theMenuPackage = (MenuPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) instanceof MenuPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI) : MenuPackageImpl.eINSTANCE);
-		org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl theBasicPackage = (org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI) instanceof org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI) : org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eINSTANCE);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) instanceof BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) : BasicPackageImpl.eINSTANCE);
 		AdvancedPackageImpl theAdvancedPackage = (AdvancedPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) instanceof AdvancedPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(AdvancedPackageImpl.eNS_URI) : AdvancedPackageImpl.eINSTANCE);
-		BasicPackageImpl theBasicPackage_1 = (BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) instanceof BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI) : BasicPackageImpl.eINSTANCE);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) instanceof org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI) : org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE);
 
 		// Create package meta-data objects
 		theApplicationPackage.createPackageContents();
@@ -1025,135 +836,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MModelComponents <em>Model Components</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Model Components</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponents
-	 * @generated
-	 */
-	public EClass getModelComponents() {
-		return modelComponentsEClass;
-	}
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponents#getComponents <em>Components</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Components</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponents#getComponents()
-	 * @see #getModelComponents()
-	 * @generated
-	 */
-	public EReference getModelComponents_Components() {
-		return (EReference)modelComponentsEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponents#getImports <em>Imports</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Imports</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponents#getImports()
-	 * @see #getModelComponents()
-	 * @generated
-	 */
-	public EReference getModelComponents_Imports() {
-		return (EReference)modelComponentsEClass.getEStructuralFeatures().get(1);
-	}
-
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MModelComponent <em>Model Component</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Model Component</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponent
-	 * @generated
-	 */
-	public EClass getModelComponent() {
-		return modelComponentEClass;
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MModelComponent#getPositionInParent <em>Position In Parent</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Position In Parent</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getPositionInParent()
-	 * @see #getModelComponent()
-	 * @generated
-	 */
-	public EAttribute getModelComponent_PositionInParent() {
-		return (EAttribute)modelComponentEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MModelComponent#getParentID <em>Parent ID</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Parent ID</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getParentID()
-	 * @see #getModelComponent()
-	 * @generated
-	 */
-	public EAttribute getModelComponent_ParentID() {
-		return (EAttribute)modelComponentEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponent#getChildren <em>Children</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Children</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getChildren()
-	 * @see #getModelComponent()
-	 * @generated
-	 */
-	public EReference getModelComponent_Children() {
-		return (EReference)modelComponentEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponent#getCommands <em>Commands</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Commands</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getCommands()
-	 * @see #getModelComponent()
-	 * @generated
-	 */
-	public EReference getModelComponent_Commands() {
-		return (EReference)modelComponentEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MModelComponent#getProcessor <em>Processor</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Processor</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getProcessor()
-	 * @see #getModelComponent()
-	 * @generated
-	 */
-	public EAttribute getModelComponent_Processor() {
-		return (EAttribute)modelComponentEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponent#getBindings <em>Bindings</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Bindings</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getBindings()
-	 * @see #getModelComponent()
-	 * @generated
-	 */
-	public EReference getModelComponent_Bindings() {
-		return (EReference)modelComponentEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MAddon <em>Addon</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1225,18 +907,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEAttribute(contributionEClass, CONTRIBUTION__OBJECT);
 		createEReference(contributionEClass, CONTRIBUTION__PERSISTED_STATE);
 
-		modelComponentsEClass = createEClass(MODEL_COMPONENTS);
-		createEReference(modelComponentsEClass, MODEL_COMPONENTS__COMPONENTS);
-		createEReference(modelComponentsEClass, MODEL_COMPONENTS__IMPORTS);
-
-		modelComponentEClass = createEClass(MODEL_COMPONENT);
-		createEAttribute(modelComponentEClass, MODEL_COMPONENT__POSITION_IN_PARENT);
-		createEAttribute(modelComponentEClass, MODEL_COMPONENT__PARENT_ID);
-		createEReference(modelComponentEClass, MODEL_COMPONENT__CHILDREN);
-		createEReference(modelComponentEClass, MODEL_COMPONENT__COMMANDS);
-		createEAttribute(modelComponentEClass, MODEL_COMPONENT__PROCESSOR);
-		createEReference(modelComponentEClass, MODEL_COMPONENT__BINDINGS);
-
 		addonEClass = createEClass(ADDON);
 
 		// Create data types
@@ -1269,8 +939,8 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		// Obtain other dependent packages
 		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
 		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
-		BasicPackageImpl theBasicPackage_1 = (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
-		org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl theBasicPackage = (org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eNS_URI);
+		org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl theBasicPackage_1 = (org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eNS_URI);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
 		MenuPackageImpl theMenuPackage = (MenuPackageImpl)EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
 
 		// Add subpackages
@@ -1304,11 +974,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		g1 = createEGenericType(theMenuPackage.getTrimContributions());
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		contributionEClass.getESuperTypes().add(this.getApplicationElement());
-		modelComponentEClass.getESuperTypes().add(theBasicPackage_1.getPartDescriptorContainer());
-		modelComponentEClass.getESuperTypes().add(this.getApplicationElement());
-		modelComponentEClass.getESuperTypes().add(theCommandsPackage.getHandlerContainer());
-		modelComponentEClass.getESuperTypes().add(theCommandsPackage.getBindingTableContainer());
-		modelComponentEClass.getESuperTypes().add(theMenuPackage.getMenuContributions());
 		addonEClass.getESuperTypes().add(this.getContribution());
 
 		// Initialize classes and features; add operations and parameters
@@ -1328,18 +993,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		initEAttribute(getContribution_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getContribution_Object(), ecorePackage.getEJavaObject(), "object", null, 0, 1, MContribution.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getContribution_PersistedState(), this.getStringToStringMap(), null, "persistedState", null, 0, -1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
-		initEClass(modelComponentsEClass, MModelComponents.class, "ModelComponents", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getModelComponents_Components(), this.getModelComponent(), null, "components", null, 0, -1, MModelComponents.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getModelComponents_Imports(), this.getApplicationElement(), null, "imports", null, 0, -1, MModelComponents.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-
-		initEClass(modelComponentEClass, MModelComponent.class, "ModelComponent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getModelComponent_PositionInParent(), ecorePackage.getEString(), "positionInParent", "", 0, 1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
-		initEAttribute(getModelComponent_ParentID(), ecorePackage.getEString(), "parentID", null, 1, 1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getModelComponent_Children(), theUiPackage.getUIElement(), null, "children", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getModelComponent_Commands(), theCommandsPackage.getCommand(), null, "commands", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getModelComponent_Processor(), ecorePackage.getEString(), "processor", null, 0, 1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getModelComponent_Bindings(), theCommandsPackage.getKeyBinding(), null, "bindings", null, 0, -1, MModelComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(addonEClass, MAddon.class, "Addon", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -1474,90 +1127,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference CONTRIBUTION__PERSISTED_STATE = eINSTANCE.getContribution_PersistedState();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl <em>Model Components</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponents()
-		 * @generated
-		 */
-		public static final EClass MODEL_COMPONENTS = eINSTANCE.getModelComponents();
-
-		/**
-		 * The meta object literal for the '<em><b>Components</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference MODEL_COMPONENTS__COMPONENTS = eINSTANCE.getModelComponents_Components();
-
-		/**
-		 * The meta object literal for the '<em><b>Imports</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference MODEL_COMPONENTS__IMPORTS = eINSTANCE.getModelComponents_Imports();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl <em>Model Component</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ModelComponentImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponent()
-		 * @generated
-		 */
-		public static final EClass MODEL_COMPONENT = eINSTANCE.getModelComponent();
-
-		/**
-		 * The meta object literal for the '<em><b>Position In Parent</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute MODEL_COMPONENT__POSITION_IN_PARENT = eINSTANCE.getModelComponent_PositionInParent();
-
-		/**
-		 * The meta object literal for the '<em><b>Parent ID</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute MODEL_COMPONENT__PARENT_ID = eINSTANCE.getModelComponent_ParentID();
-
-		/**
-		 * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference MODEL_COMPONENT__CHILDREN = eINSTANCE.getModelComponent_Children();
-
-		/**
-		 * The meta object literal for the '<em><b>Commands</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference MODEL_COMPONENT__COMMANDS = eINSTANCE.getModelComponent_Commands();
-
-		/**
-		 * The meta object literal for the '<em><b>Processor</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute MODEL_COMPONENT__PROCESSOR = eINSTANCE.getModelComponent_Processor();
-
-		/**
-		 * The meta object literal for the '<em><b>Bindings</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EReference MODEL_COMPONENT__BINDINGS = eINSTANCE.getModelComponent_Bindings();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.AddonImpl <em>Addon</em>}' class.

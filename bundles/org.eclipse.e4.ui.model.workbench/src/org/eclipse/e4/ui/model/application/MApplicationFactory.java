@@ -37,24 +37,6 @@ public interface MApplicationFactory {
 	MApplication createApplication();
 
 	/**
-	 * Returns a new object of class '<em>Model Components</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Model Components</em>'.
-	 * @generated
-	 */
-	MModelComponents createModelComponents();
-
-	/**
-	 * Returns a new object of class '<em>Model Component</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Model Component</em>'.
-	 * @generated
-	 */
-	MModelComponent createModelComponent();
-
-	/**
 	 * Returns a new object of class '<em>Addon</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

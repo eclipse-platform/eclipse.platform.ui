@@ -16,8 +16,6 @@ import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.MModelComponent;
-import org.eclipse.e4.ui.model.application.MModelComponents;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
@@ -142,23 +140,6 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackageImpl.MODEL_COMPONENTS: {
-				MModelComponents modelComponents = (MModelComponents)theEObject;
-				T1 result = caseModelComponents(modelComponents);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ApplicationPackageImpl.MODEL_COMPONENT: {
-				MModelComponent modelComponent = (MModelComponent)theEObject;
-				T1 result = caseModelComponent(modelComponent);
-				if (result == null) result = casePartDescriptorContainer(modelComponent);
-				if (result == null) result = caseApplicationElement(modelComponent);
-				if (result == null) result = caseHandlerContainer(modelComponent);
-				if (result == null) result = caseBindingTableContainer(modelComponent);
-				if (result == null) result = caseMenuContributions(modelComponent);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case ApplicationPackageImpl.ADDON: {
 				MAddon addon = (MAddon)theEObject;
 				T1 result = caseAddon(addon);
@@ -228,36 +209,6 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseContribution(MContribution object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Model Components</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Model Components</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseModelComponents(MModelComponents object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Model Component</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Model Component</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseModelComponent(MModelComponent object) {
 		return null;
 	}
 

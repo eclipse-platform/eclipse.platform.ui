@@ -123,52 +123,6 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponents} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ModelComponentsItemProvider modelComponentsItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponents}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createModelComponentsAdapter() {
-		if (modelComponentsItemProvider == null) {
-			modelComponentsItemProvider = new ModelComponentsItemProvider(this);
-		}
-
-		return modelComponentsItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MModelComponent} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ModelComponentItemProvider modelComponentItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.MModelComponent}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createModelComponentAdapter() {
-		if (modelComponentItemProvider == null) {
-			modelComponentItemProvider = new ModelComponentItemProvider(this);
-		}
-
-		return modelComponentItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.MAddon} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -292,8 +246,6 @@ public class ApplicationItemProviderAdapterFactory extends ApplicationAdapterFac
 	public void dispose() {
 		if (stringToStringMapItemProvider != null) stringToStringMapItemProvider.dispose();
 		if (applicationItemProvider != null) applicationItemProvider.dispose();
-		if (modelComponentsItemProvider != null) modelComponentsItemProvider.dispose();
-		if (modelComponentItemProvider != null) modelComponentItemProvider.dispose();
 		if (addonItemProvider != null) addonItemProvider.dispose();
 	}
 
