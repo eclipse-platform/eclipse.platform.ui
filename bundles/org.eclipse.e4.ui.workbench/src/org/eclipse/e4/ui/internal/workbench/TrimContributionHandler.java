@@ -38,15 +38,12 @@ public class TrimContributionHandler {
 
 	private EventHandler trimWidgetHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			Object value = event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			if (value == null) {
-				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-				if (element instanceof MTrimBar) {
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (element instanceof MTrimBar) {
+				Object value = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+				if (value == null) {
 					cleanUp((MTrimBar) element);
-				}
-			} else {
-				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-				if (element instanceof MTrimBar) {
+				} else {
 					contribute((MTrimBar) element);
 				}
 			}
