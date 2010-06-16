@@ -43,6 +43,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -314,6 +315,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MenuPackageImpl.eINSTANCE.getToolBarContributions_ToolBarContributions();
 		} else if (featureName.equals(TRIMCONTRIBUTIONS_TRIMCONTRIBUTIONS_ATTNAME)) {
 			return MenuPackageImpl.eINSTANCE.getTrimContributions_TrimContributions();
+		} else if (featureName.equals(PERSPECTIVE_WINDOWS_ATTNAME)) {
+			return AdvancedPackageImpl.eINSTANCE.getPerspective_Windows();
 		}
 
 		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
@@ -364,6 +367,14 @@ public class XMLModelReconciler extends ModelReconciler {
 		if (object instanceof MElementContainer<?>) {
 			for (Object child : ((MElementContainer<?>) object).getChildren()) {
 				if (constructDeltas(deltas, references, (EObject) child, element, id)) {
+					return true;
+				}
+			}
+		}
+
+		if (object instanceof MPerspective) {
+			for (MWindow window : ((MPerspective) object).getWindows()) {
+				if (constructDeltas(deltas, references, (EObject) window, element, id)) {
 					return true;
 				}
 			}
@@ -1549,6 +1560,13 @@ public class XMLModelReconciler extends ModelReconciler {
 							}
 							newElement = true;
 							break;
+						} else if (change.getFeatureName().equals(PERSPECTIVE_WINDOWS_ATTNAME)) {
+							EList<?> value = (EList<?>) change.getValue();
+							if (value.contains(reference)) {
+								return key;
+							}
+							newElement = true;
+							break;
 						}
 					}
 					break;
@@ -1559,6 +1577,23 @@ public class XMLModelReconciler extends ModelReconciler {
 						EList<?> value = (EList<?>) change.getValue();
 						if (value.contains(reference)) {
 							return key;
+						}
+					}
+				}
+			}
+
+			if (reference instanceof MWindow) {
+				for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+					EObject key = entry.getKey();
+					if (key instanceof MPerspective) {
+						for (FeatureChange change : entry.getValue()) {
+							if (change.getFeatureName().equals(PERSPECTIVE_WINDOWS_ATTNAME)) {
+								EList<?> value = (EList<?>) change.getValue();
+								if (value.contains(reference)) {
+									return key;
+								}
+								break;
+							}
 						}
 					}
 				}
@@ -1945,7 +1980,9 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a ToolBarContributions has multiple tool bar contributions
 				featureName.equals(TOOLBARCONTRIBUTIONS_TOOLBARCONTRIBUTIONS_ATTNAME) ||
 				// a TrimContributions has multiple trim contributions
-				featureName.equals(TRIMCONTRIBUTIONS_TRIMCONTRIBUTIONS_ATTNAME);
+				featureName.equals(TRIMCONTRIBUTIONS_TRIMCONTRIBUTIONS_ATTNAME) ||
+				// a Perspective has multiple windows
+				featureName.equals(PERSPECTIVE_WINDOWS_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {

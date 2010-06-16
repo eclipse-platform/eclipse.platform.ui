@@ -400,6 +400,12 @@ public abstract class ModelReconciler {
 			.getCoreExpression_CoreExpressionId().getName();
 
 	/**
+	 * Attribute defined by MPerspective (value is <code>windows</code>).
+	 */
+	public static final String PERSPECTIVE_WINDOWS_ATTNAME = AdvancedPackageImpl.eINSTANCE
+			.getPerspective_Windows().getName();
+
+	/**
 	 * Begin recording changes on the specified object. All changes contained within child elements
 	 * of the object will also be recorded. When the desired changes have been captured,
 	 * {@link #serialize()} should be called.
