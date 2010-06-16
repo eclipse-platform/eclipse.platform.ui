@@ -530,7 +530,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		ToolBar tb;
 		MToolBar tbModel = part.getToolbar();
-		if (tbModel != null && !tbModel.getChildren().isEmpty()) {
+		if (tbModel != null) {
 			if (tbModel.getWidget() != null) {
 				ToolBar oldTB = (ToolBar) tbModel.getWidget();
 				if (oldTB.getParent() instanceof CTabFolder) {
