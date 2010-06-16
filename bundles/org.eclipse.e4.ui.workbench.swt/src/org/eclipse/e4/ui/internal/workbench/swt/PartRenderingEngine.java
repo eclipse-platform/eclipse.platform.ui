@@ -101,7 +101,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			// If the parent isn't displayed who cares?
 			MElementContainer<?> parent = changedElement.getParent();
-			if (parent != null && !parent.isToBeRendered())
+			if (parent == null || parent.getWidget() == null)
 				return;
 
 			if (changedElement.isToBeRendered()) {
