@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -47,6 +49,8 @@ final class MenuPersistence extends RegistryPersistence {
 	private ArrayList<MenuAdditionCacheEntry> cacheEntries = new ArrayList<MenuAdditionCacheEntry>();
 	private ArrayList<ActionSet> actionContributions = new ArrayList<ActionSet>();
 	private ArrayList<MMenuContribution> menuContributions = new ArrayList<MMenuContribution>();
+	private ArrayList<MToolBarContribution> toolBarContributions = new ArrayList<MToolBarContribution>();
+	private ArrayList<MTrimContribution> trimContributions = new ArrayList<MTrimContribution>();
 
 	/**
 	 * Constructs a new instance of {@link MenuPersistence}.
@@ -64,6 +68,8 @@ final class MenuPersistence extends RegistryPersistence {
 
 	public final void dispose() {
 		application.getMenuContributions().removeAll(menuContributions);
+		application.getToolBarContributions().removeAll(toolBarContributions);
+		application.getTrimContributions().removeAll(trimContributions);
 		menuContributions.clear();
 		cacheEntries.clear();
 		actionContributions.clear();
@@ -105,7 +111,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 		ArrayList<MMenuContribution> contributions = new ArrayList<MMenuContribution>();
 		// read the 3.3 menu additions
-		readAdditions(contributions);
+		readAdditions(contributions, toolBarContributions, trimContributions);
 
 		// convert actionSets to MenuContributions
 		readActionSets(contributions);
@@ -113,6 +119,9 @@ final class MenuPersistence extends RegistryPersistence {
 		// can I rationalize them?
 		MenuHelper.mergeContributions(contributions, menuContributions);
 		application.getMenuContributions().addAll(menuContributions);
+
+		application.getToolBarContributions().addAll(toolBarContributions);
+		application.getTrimContributions().addAll(trimContributions);
 	}
 
 	//
@@ -177,7 +186,9 @@ final class MenuPersistence extends RegistryPersistence {
 		// }
 	}
 
-	public void readAdditions(ArrayList<MMenuContribution> contributions) {
+	public void readAdditions(ArrayList<MMenuContribution> menuContributions,
+			ArrayList<MToolBarContribution> toolBarContributions,
+			ArrayList<MTrimContribution> trimContributions) {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
 
@@ -214,7 +225,8 @@ final class MenuPersistence extends RegistryPersistence {
 						configElement.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI),
 						configElement.getNamespaceIdentifier());
 				cacheEntries.add(menuContribution);
-				menuContribution.addToModel(contributions);
+				menuContribution.addToModel(menuContributions, toolBarContributions,
+						trimContributions);
 			}
 		}
 	}

@@ -50,7 +50,7 @@ public class CleanupAddon {
 				final MElementContainer<?> container = (MElementContainer<?>) changedObj;
 				if (container instanceof MApplication || container instanceof MWindow
 						|| container instanceof MPerspectiveStack
-						|| container instanceof MMenuElement) {
+						|| container instanceof MMenuElement || container instanceof MTrimBar) {
 					return;
 				}
 

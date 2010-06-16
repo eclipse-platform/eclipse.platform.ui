@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
@@ -52,6 +53,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
@@ -206,6 +208,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private boolean shellActivated = false;
 
 	ProgressRegion progressRegion = null;
+
+	private List<MTrimElement> workbenchTrimElements = new ArrayList<MTrimElement>();
 
 	private HeapStatus heapStatus;
 
@@ -459,25 +463,32 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		shell.setMenuBar(menu);
 
 		MTrimBar trimBar = getTopTrim();
-		if (trimBar.getChildren().isEmpty()) {
-			fill(trimBar, getCoolBarManager2());
+		fill(trimBar, getCoolBarManager2());
 
-			MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-			spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
-			spacerControl
-					.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.SpacerToolControl"); //$NON-NLS-1$
+		MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+		spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
+		spacerControl
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.SpacerToolControl"); //$NON-NLS-1$
 
-			MToolControl switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-			switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
-			switcherControl
-					.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
+		MToolControl switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+		switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
+		switcherControl
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
 
-			trimBar.getChildren().add(spacerControl);
-			trimBar.getChildren().add(switcherControl);
-		}
+		trimBar.getChildren().add(spacerControl);
+		trimBar.getChildren().add(switcherControl);
+
+		workbenchTrimElements.add(spacerControl);
+		workbenchTrimElements.add(switcherControl);
 
 		createProgressIndicator(shell);
 		createHeapStatus(shell);
+	}
+
+	@PreDestroy
+	void destroy() {
+		MTrimBar trimBar = getTopTrim();
+		trimBar.getChildren().removeAll(workbenchTrimElements);
 	}
 
 	private MTrimBar getTopTrim() {
@@ -585,11 +596,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				toolBar.setElementId(item.getId());
 				fill(toolBar, manager2);
 				container.getChildren().add(toolBar);
+				workbenchTrimElements.add(toolBar);
 			} else if (item instanceof IContributionManager) {
 				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 				toolBar.setElementId(item.getId());
 				fill(toolBar, (IContributionManager) item);
 				container.getChildren().add(toolBar);
+				workbenchTrimElements.add(toolBar);
 			} else if (item instanceof AbstractGroupMarker) {
 				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
 				separator.setToBeRendered(item.isVisible());
@@ -599,6 +612,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				toolBar.setElementId(item.getId());
 				toolBar.getChildren().add(separator);
 				container.getChildren().add(toolBar);
+				workbenchTrimElements.add(toolBar);
 			}
 		}
 	}

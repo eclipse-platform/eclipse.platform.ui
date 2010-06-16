@@ -128,8 +128,9 @@ public final class ContributionsAnalyzer {
 		return true;
 	}
 
-	public static void addTrimBarContributions(final MTrimBar trimBar,
+	public static List<MTrimElement> addTrimBarContributions(final MTrimBar trimBar,
 			final List<MTrimContribution> toContribute) {
+		List<MTrimElement> contributions = new ArrayList<MTrimElement>();
 		boolean done = toContribute.size() == 0;
 		while (!done) {
 			ArrayList<MTrimContribution> curList = new ArrayList<MTrimContribution>(toContribute);
@@ -137,7 +138,7 @@ public final class ContributionsAnalyzer {
 			toContribute.clear();
 
 			for (MTrimContribution menuContribution : curList) {
-				if (!processAddition(trimBar, menuContribution)) {
+				if (!processAddition(trimBar, menuContribution, contributions)) {
 					toContribute.add(menuContribution);
 				}
 			}
@@ -145,10 +146,11 @@ public final class ContributionsAnalyzer {
 			// if the list hasn't changed at all (no hope)
 			done = (toContribute.size() == 0) || (toContribute.size() == retryCount);
 		}
+		return contributions;
 	}
 
 	private static boolean processAddition(final MTrimBar toolBarModel,
-			MTrimContribution toolBarContribution) {
+			MTrimContribution toolBarContribution, List<MTrimElement> contributions) {
 		int idx = getIndex(toolBarModel, toolBarContribution.getPositionInParent());
 		if (idx == -1) {
 			return false;
@@ -159,6 +161,7 @@ public final class ContributionsAnalyzer {
 				trace("addToolBarContribution " + copy, toolBarModel.getWidget(), toolBarModel); //$NON-NLS-1$
 			}
 			toolBarModel.getChildren().add(idx++, copy);
+			contributions.add(copy);
 		}
 		return true;
 	}

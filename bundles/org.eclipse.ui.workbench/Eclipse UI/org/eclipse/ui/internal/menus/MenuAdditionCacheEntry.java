@@ -224,14 +224,22 @@ public class MenuAdditionCacheEntry {
 	private void addTrimChildren(final MElementContainer<MTrimElement> container,
 			IConfigurationElement parent) {
 		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-		addToolBarChildren(toolBar, parent);
+		IConfigurationElement[] items = parent.getChildren();
+		for (int i = 0; i < items.length; i++) {
+			String itemType = items[i].getName();
+			if (itemType.equals("toolbar")) { //$NON-NLS-1$
+				addToolBarChildren(toolBar, items[i]);
+			}
+		}
 
 		if (!toolBar.getChildren().isEmpty()) {
 			container.getChildren().add(toolBar);
 		}
 	}
 
-	public void addToModel(ArrayList<MMenuContribution> contributions) {
+	public void addToModel(ArrayList<MMenuContribution> menuContributions,
+			ArrayList<MToolBarContribution> toolBarContributions,
+			ArrayList<MTrimContribution> trimContributions) {
 		if (inToolbar()) {
 			String path = location.getPath();
 			if (path.equals(MAIN_TOOLBAR) || path.equals(TRIM_COMMAND1)
@@ -249,6 +257,7 @@ public class MenuAdditionCacheEntry {
 				}
 				trimContribution.setPositionInParent(query);
 				addTrimChildren(trimContribution, configElement);
+				trimContributions.add(trimContribution);
 			} else {
 				toolBarContribution = MenuFactoryImpl.eINSTANCE.createToolBarContribution();
 				String idContrib = MenuHelper.getId(configElement);
@@ -262,7 +271,7 @@ public class MenuAdditionCacheEntry {
 				}
 				toolBarContribution.setPositionInParent(query);
 				addToolBarChildren(toolBarContribution, configElement);
-				application.getToolBarContributions().add(toolBarContribution);
+				toolBarContributions.add(toolBarContribution);
 			}
 			return;
 		}
@@ -289,8 +298,8 @@ public class MenuAdditionCacheEntry {
 		menuContribution.getTags().add(filter);
 		menuContribution.setVisibleWhen(MenuHelper.getVisibleWhen(configElement));
 		addMenuChildren(menuContribution, configElement, filter);
-		contributions.add(menuContribution);
-		processMenuChildren(contributions, configElement, filter);
+		menuContributions.add(menuContribution);
+		processMenuChildren(menuContributions, configElement, filter);
 	}
 
 	/**
