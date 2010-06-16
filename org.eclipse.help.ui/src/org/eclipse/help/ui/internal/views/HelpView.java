@@ -56,8 +56,6 @@ public class HelpView extends ViewPart implements IPartListener2,
 		reusableHelpPart.createControl(parent, toolkit);
 		reusableHelpPart.setDefaultContextHelpText(Messages.HelpView_defaultText); 
 		reusableHelpPart.showPage(getFirstPage());
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-	         "org.eclipse.help.ui.helpView"); //$NON-NLS-1$
 		IWorkbenchWindow window = getSite().getPage().getWorkbenchWindow();
 		if (window == null)
 			return;
