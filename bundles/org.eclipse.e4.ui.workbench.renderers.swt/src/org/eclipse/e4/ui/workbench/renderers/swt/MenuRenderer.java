@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -18,7 +17,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
@@ -76,6 +75,9 @@ public class MenuRenderer extends SWTPartRenderer {
 		Object menuModel = container;
 		if ((obj instanceof Menu) && (((Menu) obj).getStyle() & SWT.BAR) != 0
 				&& (menuModel instanceof MMenu)) {
+			if (container.getChildren().isEmpty()) {
+				return;
+			}
 			// this is a crazy fill and run
 			IEclipseContext ctx = getContext(container);
 			MenuServiceFilter filter = ctx.get(MenuServiceFilter.class);
@@ -83,40 +85,13 @@ public class MenuRenderer extends SWTPartRenderer {
 			return;
 		}
 		if (container.getChildren().size() == 0) {
-			Menu parent = null;
-			if (obj instanceof Menu) {
-				parent = (Menu) obj;
-			} else if (obj instanceof MenuItem) {
-				MenuItem item = (MenuItem) obj;
-				if (item.getMenu() == null) {
-					item.setMenu(new Menu(item));
-				}
-				parent = item.getMenu();
-			}
-			MenuItem empty = new MenuItem(parent, SWT.PUSH);
-			empty.setText("(placeholder)"); //$NON-NLS-1$
-			empty.setEnabled(false);
-			return;
+			MMenuSeparator sep = MenuFactoryImpl.eINSTANCE
+					.createMenuSeparator();
+			sep.setElementId("placeholder"); //$NON-NLS-1$
+			container.getChildren().add(sep);
 		}
 
-		List<MUIElement> parts = container.getChildren();
-		if (parts != null) {
-			MUIElement lastVisibleItem = null;
-			IPresentationEngine renderer = (IPresentationEngine) context
-					.get(IPresentationEngine.class.getName());
-			MUIElement[] plist = parts.toArray(new MUIElement[parts.size()]);
-			for (int i = 0; i < plist.length; i++) {
-				MUIElement childME = plist[i];
-				boolean skip = lastVisibleItem instanceof MMenuSeparator
-						&& childME instanceof MMenuSeparator;
-				if (!skip) {
-					renderer.createGui(childME);
-					if (childME.isVisible()) {
-						lastVisibleItem = childME;
-					}
-				}
-			}
-		}
+		super.processContents(container);
 	}
 
 	private void setItemText(MMenu model, MenuItem item) {

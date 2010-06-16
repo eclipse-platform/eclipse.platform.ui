@@ -28,7 +28,6 @@ import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -235,16 +234,8 @@ public class MenuServiceFilter implements Listener {
 		if (DEBUG) {
 			trace("render", menu, menuModel);
 		}
-		MMenuElement lastVisibleItem = null;
 		for (MMenuElement element : menuModel.getChildren()) {
-			boolean skip = element instanceof MMenuSeparator
-					&& lastVisibleItem instanceof MMenuSeparator;
-			if (!skip) {
-				renderer.createGui(element, menu);
-				if (element.isVisible()) {
-					lastVisibleItem = element;
-				}
-			}
+			renderer.createGui(element, menu);
 		}
 	}
 
