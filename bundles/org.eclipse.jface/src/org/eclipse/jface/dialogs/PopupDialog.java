@@ -990,10 +990,11 @@ public class PopupDialog extends Window {
 		boolean oldListenToDeactivate = listenToDeactivate;
 		listenToDeactivate = false;
 		if (tracker.open()) {
-			if (shell != null && !shell.isDisposed()) {
+			if (!shell.isDisposed()) {
 				shell.setBounds(tracker.getRectangles()[0]);
 			}
 		}
+		tracker.dispose();
 		listenToDeactivate = oldListenToDeactivate;
 	}
 
