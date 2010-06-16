@@ -16,6 +16,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.services.IServiceLocator;
@@ -50,7 +51,7 @@ public class ActionBars extends SubActionBars {
 	 */
 	public IToolBarManager getToolBarManager() {
 		if (toolbarManager == null) {
-			toolbarManager = new ToolBarManager(null);
+			toolbarManager = new ToolBarManager(SWT.FLAT | SWT.RIGHT | SWT.WRAP);
 		}
 		return toolbarManager;
 	}
