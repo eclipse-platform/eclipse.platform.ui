@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -45,6 +44,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -293,6 +293,27 @@ public class QuickAccessDialog extends PopupDialog {
 					TableItem selection= table.getSelection()[0];
 					if (selection.equals(o))
 						handleSelection();
+				}
+			}
+		});
+		table.addMouseMoveListener(new MouseMoveListener() {
+			TableItem lastItem = null;
+
+			public void mouseMove(MouseEvent e) {
+				if (table.equals(e.getSource())) {
+					Object o = table.getItem(new Point(e.x, e.y));
+					if (lastItem == null ^ o == null) {
+						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(
+								SWT.CURSOR_HAND));
+					}
+					if (o instanceof TableItem) {
+						if (!o.equals(lastItem)) {
+							lastItem = (TableItem) o;
+							table.setSelection(new TableItem[] { lastItem });
+						}
+					} else if (o == null) {
+						lastItem = null;
+					}
 				}
 			}
 		});

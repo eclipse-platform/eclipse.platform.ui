@@ -11,7 +11,12 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.core.runtime.Platform;
-
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
@@ -46,14 +51,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StringMatcher;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabItem;
@@ -284,6 +281,10 @@ public abstract class AbstractTableInformationControl {
 				}
                 if (table.equals(e.getSource()) & ++divCount == ignoreEventCount) {
                     Object o = table.getItem(new Point(e.x, e.y));
+                    if (fLastItem == null ^ o == null) {
+						table.setCursor(o == null ? null : table.getDisplay().getSystemCursor(
+								SWT.CURSOR_HAND));
+                    }
                     if (o instanceof TableItem && lastY != e.y) {
                         lastY = e.y;
                         if (!o.equals(fLastItem)) {
@@ -304,6 +305,8 @@ public abstract class AbstractTableInformationControl {
                                 table.setSelection(new TableItem[] { fLastItem });
                             }
                         }
+                    } else if (o == null) {
+                        fLastItem = null;
                     }
                 }
             }
