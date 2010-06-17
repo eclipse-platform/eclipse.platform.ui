@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
+import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.MenuItem;
@@ -64,10 +65,10 @@ public abstract class MenuItemRenderer extends SWTPartRenderer {
 		public boolean changed(IEclipseContext context) {
 			try {
 				item.setVisible(EvaluationResult.FALSE != exp.evaluate(ec));
-				//System.err.println("" + item.isVisible() + ": " + item); //$NON-NLS-1$//$NON-NLS-2$
 			} catch (CoreException e) {
 				item.setVisible(false);
-				e.printStackTrace();
+				WorkbenchSWTActivator.trace(
+						"/trace/menus", "VisibleRAT failed", e); //$NON-NLS-1$//$NON-NLS-2$
 			}
 			return participating;
 		}
