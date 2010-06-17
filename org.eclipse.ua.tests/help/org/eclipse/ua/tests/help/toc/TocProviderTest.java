@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,9 +40,16 @@ public class TocProviderTest extends TestCase {
 		}
 		assertNotNull("User Assistance Tests not found", uaToc);
 		ITopic[] children = uaToc.getTopics();
-		ITopic lastChild = children[children.length - 1];
-		assertEquals("Generated Parent", lastChild.getLabel());
-		assertEquals(4, lastChild.getSubtopics().length);
+		int generatedParentTopics = 0;
+		for (int i = 0; i < children.length; i++) {
+			ITopic child = children[i];
+			if ("Generated Parent".equals(child.getLabel())) {
+				generatedParentTopics++;
+				assertEquals(4, child.getSubtopics().length);
+			}
+		}
+		assertEquals(1, generatedParentTopics);
+		
 	}
 
 }
