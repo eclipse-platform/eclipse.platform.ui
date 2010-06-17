@@ -88,4 +88,25 @@
             label="Press the Show in Table of Contents button. Verify that the correct page is selecetd in the table fo contents.">
       </subitem>
    </item>
+   <item
+         title="Entries in Index">
+      <description>
+         Verify that the index is filtered correctly
+      </description>
+      <subitem
+            label="Show the index view">
+      </subitem>
+      <subitem
+            label="Verify that  &apos;bundle&apos; is not displayed">
+      </subitem>
+      <subitem
+            label="Verify that keyword1 is displayed">
+      </subitem>
+      <subitem
+            label="Verify that keyword3 is displayed and has two subentries - topic2 and topic3">
+      </subitem>
+      <subitem
+            label="Verify that &apos;PDE&apos; is not displayed">
+      </subitem>
+   </item>
 </cheatsheet>
