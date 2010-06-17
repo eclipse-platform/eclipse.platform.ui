@@ -368,7 +368,9 @@ public class CTabRendering extends CTabFolderRenderer {
 		System.arraycopy(points, 0, tmpPoints, 0, index);
 		gc.fillPolygon(tmpPoints);
 		gc.drawLine(selectionX1, selectionY1, selectionX2, selectionY2);
-		gc.setForeground(new Color(gc.getDevice(), 182, 188, 204));
+		Color tempBorder = new Color(gc.getDevice(), 182, 188, 204);
+		gc.setForeground(tempBorder);
+		tempBorder.dispose();
 		if (active)
 			gc.drawPolyline(tmpPoints);
 		Rectangle rect = null;
@@ -459,7 +461,9 @@ public class CTabRendering extends CTabFolderRenderer {
 			int[] tmpPoints = new int[index];
 			System.arraycopy(points, 0, tmpPoints, 0, index);
 			gc.fillPolygon(tmpPoints);
-			gc.setForeground(new Color(gc.getDevice(), 182, 188, 204));
+			Color tempBorder = new Color(gc.getDevice(), 182, 188, 204);
+			gc.setForeground(tempBorder);
+			tempBorder.dispose();
 			if (active) {
 				gc.drawPolyline(tmpPoints);
 			} else {
@@ -614,13 +618,16 @@ public class CTabRendering extends CTabFolderRenderer {
 		} else {
 			ImageData data = new ImageData(60, 60, 32, new PaletteData(
 					0xFF0000, 0xFF00, 0xFF));
-			shadowImage = new Image(display, data);
-			GC gc = new GC(shadowImage);
-			gc.setBackground(new Color(display, new RGB(128, 128, 128)));
+			Image tmpImage = shadowImage = new Image(display, data);
+			GC gc = new GC(tmpImage);
+			Color shadowColor = new Color(display, new RGB(128, 128, 128));
+			gc.setBackground(shadowColor);
 			drawTabBody(gc, new Rectangle(0, 0, 60, 60), SWT.None);
-			ImageData blured = blur(shadowImage, 5, 25);
+			ImageData blured = blur(tmpImage, 5, 25);
 			shadowImage = new Image(display, blured);
 			display.setData(E4_SHADOW_IMAGE, shadowImage);
+			tmpImage.dispose();
+			shadowColor.dispose();
 			display.disposeExec(new Runnable() {
 				public void run() {
 					Object obj = display.getData(E4_SHADOW_IMAGE);

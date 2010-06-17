@@ -198,6 +198,13 @@ public class PerspectiveSwitcher {
 			}
 		});
 
+		toolParent.addDisposeListener(new DisposeListener() {
+
+			public void widgetDisposed(DisposeEvent e) {
+				borderColor.dispose();
+			}
+		});
+
 		comp.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
@@ -578,10 +585,11 @@ public class PerspectiveSwitcher {
 		r.intersect(clipping);
 		gc.setClipping(r);
 		Image b = toolParent.getBackgroundImage();
-		if (b != null)
+		if (b != null && !b.isDisposed())
 			gc.drawImage(b, 0, 0);
 
 		r.dispose();
+		clipping.dispose();
 		// // gc.fillRectangle(bounds);
 		// Rectangle mappedBounds = e.display.map(comp, comp.getParent(), bounds);
 		// ((Composite) toolParent).drawBackground(gc, bounds.x, bounds.y, bounds.width,
