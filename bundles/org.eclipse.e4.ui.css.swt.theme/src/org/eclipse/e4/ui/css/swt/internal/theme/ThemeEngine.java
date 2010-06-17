@@ -264,17 +264,6 @@ public class ThemeEngine implements IThemeEngine {
 				}
 			}
 
-			if (restore) {
-				IEclipsePreferences pref = getPreferences();
-				pref.put(THEMEID_KEY, theme.getId());
-				try {
-					pref.flush();
-				} catch (BackingStoreException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-
 			this.currentTheme = theme;
 			engine.reset();
 
@@ -319,6 +308,17 @@ public class ThemeEngine implements IThemeEngine {
 				} finally {
 					s.setRedraw(true);
 				}
+			}
+		}
+		
+		if (restore) {
+			IEclipsePreferences pref = getPreferences();
+			pref.put(THEMEID_KEY, theme.getId());
+			try {
+				pref.flush();
+			} catch (BackingStoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
