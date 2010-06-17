@@ -173,44 +173,44 @@ Performing simple searching.
             <param name="path" value="tasks/helpC.xml">
             </param>
          </task>
-      </taskGroup>
-      <taskGroup kind="sequence" name="Criteria Tests" skip="true">
-         <intro>
-            <b>Introduction</b>
-         </intro>
-         <onCompletion>
-            <b>Conclusion</b>
-         </onCompletion>
-         <task kind="cheatsheet" name="Start Eclipse with Criteria" skip="true">
+         <taskGroup kind="sequence" name="Help Scenarion D: Criteria Tests" skip="true">
             <intro>
                <b>Introduction</b>
             </intro>
             <onCompletion>
                <b>Conclusion</b>
             </onCompletion>
-            <param name="path" value="tasks/criteria1.xml">
-            </param>
-         </task>
-         <task kind="cheatsheet" name="Define a criteria based scope" skip="true">
-            <intro>
-               <b>Introduction</b>
-            </intro>
-            <onCompletion>
-               <b>Conclusion</b>
-            </onCompletion>
-            <param name="path" value="tasks/criteria2.xml">
-            </param>
-         </task>
-         <task kind="cheatsheet" name="Filtered Help" skip="false">
-            <intro>
-               <b>Introduction</b>
-            </intro>
-            <onCompletion>
-               <b>Conclusion</b>
-            </onCompletion>
-            <param name="path" value="tasks/criteria3.xml">
-            </param>
-         </task>
+            <task kind="cheatsheet" name="D0: Start Eclipse with Criteria" skip="true">
+               <intro>
+                  <b>Introduction</b>
+               </intro>
+               <onCompletion>
+                  <b>Conclusion</b>
+               </onCompletion>
+               <param name="path" value="tasks/criteria1.xml">
+               </param>
+            </task>
+            <task kind="cheatsheet" name="D1: Define a criteria based scope" skip="true">
+               <intro>
+                  <b>Introduction</b>
+               </intro>
+               <onCompletion>
+                  <b>Conclusion</b>
+               </onCompletion>
+               <param name="path" value="tasks/criteria2.xml">
+               </param>
+            </task>
+            <task kind="cheatsheet" name="D2: Filtered Help" skip="false">
+               <intro>
+                  <b>Introduction</b>
+               </intro>
+               <onCompletion>
+                  <b>Conclusion</b>
+               </onCompletion>
+               <param name="path" value="tasks/criteria3.xml">
+               </param>
+            </task>
+         </taskGroup>
       </taskGroup>
       <taskGroup name="Cheat Sheet Tests" skip="false">
          <intro>
