@@ -173,7 +173,7 @@ Performing simple searching.
             <param name="path" value="tasks/helpC.xml">
             </param>
          </task>
-         <taskGroup kind="sequence" name="Help Scenarion D: Criteria Tests" skip="true">
+         <taskGroup kind="sequence" name="Help Scenario D: Criteria Tests" skip="true">
             <intro>
                <b>Introduction</b>
             </intro>
