@@ -248,6 +248,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 				public void mouseMove(MouseEvent e) {
 					if (fTable.equals(e.getSource())) {
 						Object o= fTable.getItem(new Point(e.x, e.y));
+						if (fLastItem == null ^ o == null) {
+							fTable.setCursor(o == null ? null : fTable.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+						}
 						if (o instanceof TableItem) {
 							TableItem item= (TableItem) o;
 							if (!o.equals(fLastItem)) {
@@ -268,6 +271,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 									fTable.setSelection(new TableItem[] { fLastItem });
 								}
 							}
+						} else if (o == null) {
+							fLastItem= null;
 						}
 					}
 				}
