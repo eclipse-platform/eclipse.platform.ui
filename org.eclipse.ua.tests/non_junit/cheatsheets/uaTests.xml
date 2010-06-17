@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-    Copyright (c) 2005, 2010 IBM Corporation and others.
-    All rights reserved. This program and the accompanying materials
-    are made available under the terms of the Eclipse Public License v1.0
-    which accompanies this distribution, and is available at
-    http://www.eclipse.org/legal/epl-v10.html
-   
-    Contributors:
-        IBM Corporation - initial API and implementation
- -->
 <compositeCheatsheet name="User Assistance Test Suite">
    <taskGroup kind="set" name="All Tests" skip="false">
       <intro>
@@ -191,7 +181,7 @@ Performing simple searching.
          <onCompletion>
             <b>Conclusion</b>
          </onCompletion>
-         <task kind="cheatsheet" name="Start Eclipse with Criteria" skip="false">
+         <task kind="cheatsheet" name="Start Eclipse with Criteria" skip="true">
             <intro>
                <b>Introduction</b>
             </intro>
@@ -201,7 +191,7 @@ Performing simple searching.
             <param name="path" value="tasks/criteria1.xml">
             </param>
          </task>
-         <task kind="cheatsheet" name="Define a criteria based scope" skip="false">
+         <task kind="cheatsheet" name="Define a criteria based scope" skip="true">
             <intro>
                <b>Introduction</b>
             </intro>
@@ -209,6 +199,16 @@ Performing simple searching.
                <b>Conclusion</b>
             </onCompletion>
             <param name="path" value="tasks/criteria2.xml">
+            </param>
+         </task>
+         <task kind="cheatsheet" name="Filtered Help" skip="false">
+            <intro>
+               <b>Introduction</b>
+            </intro>
+            <onCompletion>
+               <b>Conclusion</b>
+            </onCompletion>
+            <param name="path" value="tasks/criteria3.xml">
             </param>
          </task>
       </taskGroup>

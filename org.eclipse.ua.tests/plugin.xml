@@ -475,6 +475,10 @@
             file="data/help/toc/filteredToc/nonPrimaryToc.xml"
             primary="false">
       </toc>
+      <toc
+            file="data/help/criteria/criterialetters.xml"
+            primary="false">
+      </toc>
    </extension>
 
    <extension point= "org.eclipse.help.contentExtension"> 
