@@ -330,7 +330,7 @@ public class TrimStack {
 			showHover(false, null);
 			inhibitHover = true;
 
-			Composite showShell = getShell(SHOW_SHELL, trimStackTB.getShell());
+			Shell showShell = getShell(SHOW_SHELL, trimStackTB.getShell());
 			ctf.setParent(showShell);
 
 			showShell.getDisplay().addFilter(SWT.MouseDown, mouseDownListener);
@@ -346,8 +346,7 @@ public class TrimStack {
 			setShellLocation(showShell);
 
 			showShell.layout(true);
-			showShell.moveAbove(null);
-			showShell.setVisible(true);
+			showShell.open();
 		} else {
 			if (showShell != null) {
 				showShell.setVisible(false);
