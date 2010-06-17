@@ -20,12 +20,13 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -48,9 +49,14 @@ public class CleanupAddon {
 			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
 			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				final MElementContainer<?> container = (MElementContainer<?>) changedObj;
-				if (container instanceof MApplication || container instanceof MWindow
-						|| container instanceof MPerspectiveStack
+				MUIElement containerParent = container.getParent();
+				// Determine the elements that should *not* ever be auto-destroyed
+				if (container instanceof MApplication || container instanceof MPerspectiveStack
 						|| container instanceof MMenuElement || container instanceof MTrimBar) {
+					return;
+				}
+
+				if (container instanceof MWindow && containerParent instanceof MApplication) {
 					return;
 				}
 
@@ -74,13 +80,17 @@ public class CleanupAddon {
 							// Remove it from the model if it has no children at all
 							if (container.getChildren().size() == 0) {
 								MElementContainer<MUIElement> parent = container.getParent();
-								if (container instanceof MToolBar) {
-									// may be null if it's a part's toolbar
-									if (parent != null) {
-										parent.getChildren().remove(container);
-									}
-								} else {
+								if (parent != null) {
 									parent.getChildren().remove(container);
+								} else if (container instanceof MWindow) {
+									// Must be a Detached Window
+									MUIElement eParent = (MUIElement) ((EObjectImpl) container)
+											.eContainer();
+									if (eParent instanceof MPerspective) {
+										((MPerspective) eParent).getWindows().remove(container);
+									} else if (eParent instanceof MWindow) {
+										((MWindow) eParent).getWindows().remove(container);
+									}
 								}
 							}
 						}

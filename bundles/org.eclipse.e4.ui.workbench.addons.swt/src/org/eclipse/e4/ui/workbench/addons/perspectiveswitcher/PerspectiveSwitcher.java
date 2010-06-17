@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -22,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -449,7 +451,32 @@ public class PerspectiveSwitcher {
 
 	private void closePerspective(MPerspective persp) {
 		MPerspectiveStack ps = getPerspectiveStack();
+
+		for (MWindow win : persp.getWindows()) {
+			win.setToBeRendered(false);
+		}
+
+		// Remove any minimized stacks for this perspective
+		List<MTrimBar> bars = modelService.findElements(window, null, MTrimBar.class, null);
+		List<MToolControl> toRemove = new ArrayList<MToolControl>();
+		for (MTrimBar bar : bars) {
+			for (MUIElement barKid : bar.getChildren()) {
+				if (!(barKid instanceof MToolControl))
+					continue;
+				String id = barKid.getElementId();
+				if (id != null && id.contains(persp.getElementId())) {
+					toRemove.add((MToolControl) barKid);
+				}
+			}
+		}
+
+		for (MToolControl toolControl : toRemove) {
+			toolControl.setToBeRendered(false);
+			toolControl.getParent().getChildren().remove(toolControl);
+		}
+
 		persp.setToBeRendered(false);
+
 		ps.getChildren().remove(persp);
 
 		removePerspectiveItem(persp);

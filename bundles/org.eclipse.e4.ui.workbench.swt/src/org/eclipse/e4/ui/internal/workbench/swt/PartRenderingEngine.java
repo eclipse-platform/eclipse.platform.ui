@@ -98,9 +98,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			MUIElement changedElement = (MUIElement) event
 					.getProperty(UIEvents.EventTags.ELEMENT);
+			MElementContainer<?> parent = changedElement.getParent();
+
+			// Handle Detached Windows
+			if (parent == null && changedElement instanceof MWindow) {
+				parent = (MElementContainer<?>) ((EObjectImpl) changedElement)
+						.eContainer();
+			}
 
 			// If the parent isn't displayed who cares?
-			MElementContainer<?> parent = changedElement.getParent();
 			if (parent == null || parent.getWidget() == null)
 				return;
 
