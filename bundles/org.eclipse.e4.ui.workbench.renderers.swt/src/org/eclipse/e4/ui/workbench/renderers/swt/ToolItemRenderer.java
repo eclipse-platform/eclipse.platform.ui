@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -78,7 +79,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
 				toolItem.setImage(getImage(itemModel));
 			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
-				toolItem.setToolTipText(itemModel.getTooltip());
+				toolItem.setToolTipText(getToolTipText(itemModel));
 				toolItem.setImage(getImage(itemModel));
 			}
 		}
@@ -175,6 +176,34 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		}
 	}
 
+	private String getToolTipText(MItem item) {
+		String text = item.getTooltip();
+		if (item instanceof MHandledItem) {
+			MHandledItem handledItem = (MHandledItem) item;
+			IEclipseContext context = getContext(item);
+			EBindingService bs = (EBindingService) context
+					.get(EBindingService.class.getName());
+			ParameterizedCommand cmd = handledItem.getWbCommand();
+			if (cmd == null) {
+				cmd = generateParameterizedCommand(handledItem, context);
+			}
+			TriggerSequence sequence = bs.getBestSequenceFor(handledItem
+					.getWbCommand());
+			if (sequence != null) {
+				if (text == null) {
+					try {
+						text = cmd.getName();
+					} catch (NotDefinedException e) {
+						return null;
+					}
+				}
+				text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
+			}
+			return text;
+		}
+		return text;
+	}
+
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MToolItem) || !(parent instanceof ToolBar))
 			return null;
@@ -200,8 +229,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		if (itemModel.getLabel() != null)
 			newItem.setText(itemModel.getLabel());
 
-		if (itemModel.getTooltip() != null)
-			newItem.setToolTipText(itemModel.getTooltip());
+		newItem.setToolTipText(getToolTipText(itemModel));
 
 		newItem.setImage(getImage((MUILabel) element));
 
