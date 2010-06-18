@@ -501,8 +501,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		List<MTrimBar> trimBars = model.getTrimBars();
 		if (trimBars.size() == 0) {
 			MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-			trimBars.add(trimBar);
 			trimBar.setElementId("org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
+			trimBars.add(trimBar);
 			return trimBar;
 		}
 		return trimBars.get(0);
