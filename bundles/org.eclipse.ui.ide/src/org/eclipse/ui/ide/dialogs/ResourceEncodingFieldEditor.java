@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -88,7 +89,7 @@ public final class ResourceEncodingFieldEditor extends
 	 * @param charsetResource
 	 *            must be an <code>IContainer</code> or an <code>IFile</code>.
 	 *  @param groupTitle
-	 *  		  the title for the field editor's control. If groupTitle is 
+	 *  		  the title for the field editor's control. If groupTitle is
 	 *            <code>null</code> the control will be unlabelled
 	 *            (by default a {@link Composite} instead of a {@link Group}.
 	 * 
@@ -318,6 +319,14 @@ public final class ResourceEncodingFieldEditor extends
 					return NLS
 							.bind(
 									IDEWorkbenchMessages.ResourceInfo_fileContainerEncodingFormat,
+									getDefaultEnc());
+				}
+
+				IContentType contentType = description.getContentType();
+				if (contentType != null && contentType.getDefaultCharset() == description.getCharset()) {
+					return NLS
+							.bind(
+									IDEWorkbenchMessages.ResourceInfo_fileContentTypeEncodingFormat,
 									getDefaultEnc());
 				}
 

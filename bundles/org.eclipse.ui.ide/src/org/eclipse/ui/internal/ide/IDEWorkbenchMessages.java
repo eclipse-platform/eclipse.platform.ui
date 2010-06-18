@@ -624,6 +624,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_lastModified;
 	public static String ResourceInfo_fileEncodingTitle;
 	public static String ResourceInfo_fileContentEncodingFormat;
+	public static String ResourceInfo_fileContentTypeEncodingFormat;
 	public static String ResourceInfo_fileContainerEncodingFormat;
 	public static String ResourceInfo_containerEncodingFormat;
 	public static String ResourceInfo_exWarning;
