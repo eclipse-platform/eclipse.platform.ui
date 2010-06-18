@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
@@ -40,9 +41,13 @@ public final class ContributionsAnalyzer {
 			final ArrayList<MMenuElement> menuContributionsToRemove) {
 
 		HashSet<String> existingMenuIds = new HashSet<String>();
+		HashSet<String> existingSeparatorNames = new HashSet<String>();
 		for (MMenuElement child : menuModel.getChildren()) {
-			if (child instanceof MMenu) {
-				existingMenuIds.add(child.getElementId());
+			String elementId = child.getElementId();
+			if (child instanceof MMenu && elementId != null) {
+				existingMenuIds.add(elementId);
+			} else if (child instanceof MMenuSeparator && elementId != null) {
+				existingSeparatorNames.add(elementId);
 			}
 		}
 
@@ -54,7 +59,7 @@ public final class ContributionsAnalyzer {
 
 			for (MMenuContribution menuContribution : curList) {
 				if (!processAddition(menuModel, menuContributionsToRemove, menuContribution,
-						existingMenuIds)) {
+						existingMenuIds, existingSeparatorNames)) {
 					toContribute.add(menuContribution);
 				}
 			}
@@ -66,13 +71,18 @@ public final class ContributionsAnalyzer {
 
 	private static boolean processAddition(final MMenu menuModel,
 			final ArrayList<MMenuElement> menuContributionsToRemove,
-			MMenuContribution menuContribution, final HashSet<String> existingMenuIds) {
+			MMenuContribution menuContribution, final HashSet<String> existingMenuIds,
+			HashSet<String> existingSeparatorNames) {
 		int idx = getIndex(menuModel, menuContribution.getPositionInParent());
 		if (idx == -1) {
 			return false;
 		}
 		for (MMenuElement item : menuContribution.getChildren()) {
 			if (item instanceof MMenu && existingMenuIds.contains(item.getElementId())) {
+				// skip this, it's already there
+				continue;
+			} else if (item instanceof MMenuSeparator
+					&& existingSeparatorNames.contains(item.getElementId())) {
 				// skip this, it's already there
 				continue;
 			}

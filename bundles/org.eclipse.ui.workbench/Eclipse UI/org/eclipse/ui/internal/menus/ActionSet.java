@@ -126,9 +126,10 @@ public class ActionSet {
 		IConfigurationElement[] children = element.getChildren();
 		for (IConfigurationElement sepAddition : children) {
 			String name = sepAddition.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+			String tag = sepAddition.getName();
 			MMenuElement sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
 			sep.setElementId(name);
-			if (!MenuHelper.isSeparatorVisible(sepAddition)) {
+			if ("groupMarker".equals(tag)) { //$NON-NLS-1$
 				sep.setVisible(false);
 			}
 			menuContribution.getChildren().add(sep);

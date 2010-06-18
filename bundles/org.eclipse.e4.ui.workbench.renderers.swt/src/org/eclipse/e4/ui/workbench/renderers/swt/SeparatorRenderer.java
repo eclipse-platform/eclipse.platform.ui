@@ -39,14 +39,17 @@ public class SeparatorRenderer extends SWTPartRenderer {
 				menu = ((MenuItem) widget).getMenu();
 			}
 			if (menu != null) {
-
+				// determine the index at which we should create the new item
+				int addIndex = calcVisibleIndex(element);
 				// this shouldn't happen, but it might
-				newSep = new MenuItem(menu, SWT.SEPARATOR);
+				newSep = new MenuItem(menu, SWT.SEPARATOR, addIndex);
 			}
 		} else if (element instanceof MToolBarSeparator) {
 			ToolBar tb = parent instanceof ToolBar ? (ToolBar) parent
 					: (ToolBar) element.getParent().getWidget();
-			newSep = new ToolItem(tb, SWT.SEPARATOR);
+			// determine the index at which we should create the new item
+			int addIndex = calcVisibleIndex(element);
+			newSep = new ToolItem(tb, SWT.SEPARATOR, addIndex);
 		}
 
 		return newSep;

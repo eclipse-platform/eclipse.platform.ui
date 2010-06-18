@@ -187,6 +187,11 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		return -1;
 	}
 
+	protected int calcIndex(MUIElement element) {
+		MElementContainer<MUIElement> parent = element.getParent();
+		return parent.getChildren().indexOf(element);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 

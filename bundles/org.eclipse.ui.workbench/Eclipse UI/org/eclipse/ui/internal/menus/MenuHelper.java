@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -229,7 +230,10 @@ public class MenuHelper {
 				}
 				Object[] array = item.getChildren().toArray();
 				for (int c = 0; c < array.length; c++) {
-					toContribute.getChildren().add((MMenuElement) array[c]);
+					MMenuElement me = (MMenuElement) array[c];
+					if (!containsMatching(toContribute.getChildren(), me)) {
+						toContribute.getChildren().add(me);
+					}
 				}
 			}
 			if (toContribute != null) {
@@ -237,6 +241,17 @@ public class MenuHelper {
 			}
 		}
 		trace("mergeContributions: final size: " + result.size(), null); //$NON-NLS-1$
+	}
+
+	private static boolean containsMatching(List<MMenuElement> children, MMenuElement me) {
+		for (MMenuElement element : children) {
+			if (Util.equals(me.getElementId(), element.getElementId())
+					&& element.getClass().isInstance(me)
+					&& (element instanceof MMenuSeparator || element instanceof MMenu)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public static void mergeActionSetContributions(ArrayList<MMenuContribution> contributions,
