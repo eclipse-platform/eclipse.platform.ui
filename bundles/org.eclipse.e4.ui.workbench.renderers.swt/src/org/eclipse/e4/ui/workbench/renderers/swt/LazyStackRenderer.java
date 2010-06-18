@@ -170,7 +170,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 						+ ')';
 			MToolControl trimCtrl = (MToolControl) modelService.find(trimId,
 					window);
-			if (trimCtrl != null) {
+			if (trimCtrl != null && trimCtrl.getObject() != null) {
 				IEclipseContext ctxt = EclipseContextFactory.create();
 				ctxt.set("show", false); //$NON-NLS-1$
 				ContextInjectionFactory.invoke(trimCtrl.getObject(),
@@ -255,7 +255,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			}
 		}
 
-		// Hide any minimized stacks
+		// Show any minimized stacks
 		if (element instanceof MPartStack && !element.isVisible()) {
 			MWindow window = modelService.getTopLevelWindowFor(element);
 			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$

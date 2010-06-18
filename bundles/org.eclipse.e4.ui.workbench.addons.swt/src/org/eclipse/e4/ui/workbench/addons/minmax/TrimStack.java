@@ -138,6 +138,9 @@ public class TrimStack {
 			if (theStack == null || trimStackTB == null || parentElement != theStack)
 				return;
 
+			if (!changedElement.isToBeRendered())
+				return;
+
 			trimStackTB.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					updateTrimStackItems();
@@ -163,6 +166,23 @@ public class TrimStack {
 		}
 	};
 
+	private EventHandler widgetHandler = new EventHandler() {
+		@SuppressWarnings("restriction")
+		public void handleEvent(org.osgi.service.event.Event event) {
+			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (changedObj != theStack)
+				return;
+
+			if (theStack.getWidget() != null) {
+				trimStackTB.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						updateTrimStackItems();
+					}
+				});
+			}
+		}
+	};
+
 	private MTrimBar bar;
 
 	@PostConstruct
@@ -174,6 +194,9 @@ public class TrimStack {
 				toBeRenderedHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
+		eventBroker.subscribe(
+				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
+				widgetHandler);
 	}
 
 	@PreDestroy
@@ -181,6 +204,7 @@ public class TrimStack {
 		eventBroker.unsubscribe(toBeRenderedHandler);
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(selectionHandler);
+		eventBroker.unsubscribe(widgetHandler);
 	}
 
 	@PostConstruct
@@ -232,22 +256,15 @@ public class TrimStack {
 		if (trimStackTB == null || trimStackTB.isDisposed())
 			return;
 
+		CTabFolder ctf = (CTabFolder) theStack.getWidget();
+		if (ctf == null)
+			return;
+
 		// Remove any current items except the 'restore' button
 		while (trimStackTB.getItemCount() > 1) {
 			trimStackTB.getItem(trimStackTB.getItemCount() - 1).dispose();
 		}
 
-		CTabFolder ctf = (CTabFolder) theStack.getWidget();
-		if (ctf == null) {
-			// Try again...this is *really* dangerous since it'll chase its tail forever if the
-			// stack never gets rendered
-			trimStackTB.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					updateTrimStackItems();
-				}
-			});
-			return;
-		}
 		CTabItem[] items = ctf.getItems();
 		for (CTabItem item : items) {
 			ToolItem newItem = new ToolItem(trimStackTB, SWT.CHECK);
@@ -367,9 +384,11 @@ public class TrimStack {
 			}
 
 			// Button Hack to show a 'restore' button while avoiding the 'minimized' layout
-			ctf.setMinimizeVisible(true);
-			ctf.setMaximizeVisible(false);
-			ctf.setMaximized(false);
+			if (ctf != null) {
+				ctf.setMinimizeVisible(true);
+				ctf.setMaximizeVisible(false);
+				ctf.setMaximized(false);
+			}
 
 			inhibitHover = false;
 		}
