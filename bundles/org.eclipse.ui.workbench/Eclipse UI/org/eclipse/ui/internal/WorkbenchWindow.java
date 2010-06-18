@@ -73,6 +73,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
+import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
@@ -461,6 +462,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget());
 		shell.setMenuBar(menu);
+
+		// this is a crazy fill and run
+		IEclipseContext ctx = model.getContext();
+		MenuServiceFilter filter = ctx.get(MenuServiceFilter.class);
+		filter.showMenu(null, menu, mainMenu);
 
 		MTrimBar trimBar = getTopTrim();
 		fill(trimBar, getCoolBarManager2());
