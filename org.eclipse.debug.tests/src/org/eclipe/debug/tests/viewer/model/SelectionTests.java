@@ -17,6 +17,8 @@ import junit.framework.TestCase;
 
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -31,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
 /** 
  * Tests to verify that the viewer properly handles selection changes.
  */
-abstract public class SelectionTests extends TestCase {
+abstract public class SelectionTests extends TestCase implements ITestModelUpdatesListenerConstants {
     Display fDisplay;
     Shell fShell;
     ITreeModelViewer fViewer;
@@ -113,6 +115,69 @@ abstract public class SelectionTests extends TestCase {
         assertEquals(selection, viewerSelection);
     }
 
+    /**
+     * In this test verify that selection policy can prevent selection
+     * from being set and verify that a FORCE flag can override the selection
+     * policy.
+     */
+    public void testSelectionPolicy() {
+        // Create the model and populate the view.
+        final TestModel model = makeMultiLevelModel();
+        
+        // Set the selection and verify it.
+        TreeSelection selection_3_3_3 = new TreeSelection(model.findElement("3.3.3"));
+        fViewer.setSelection(selection_3_3_3, true, false);
+        assertEquals(selection_3_3_3, fViewer.getSelection());
+
+        model.setSelectionPolicy(new IModelSelectionPolicy() {
+            
+            public ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
+                return null;
+            }
+            
+            public boolean overrides(ISelection existing, ISelection candidate, IPresentationContext context) {
+                return false;
+            }
+            
+            public boolean isSticky(ISelection selection, IPresentationContext context) {
+                return true;
+            }
+            
+            public boolean contains(ISelection selection, IPresentationContext context) {
+                return true;
+            }
+        });
+
+        // Attempt to change selection and verify that old selection is still valid.
+        TreeSelection selection_3_3_1 = new TreeSelection(model.findElement("3.3.1"));
+        fViewer.setSelection(selection_3_3_1, true, false);
+        assertEquals(selection_3_3_3, fViewer.getSelection());
+
+        // Now attempt to *force* selection and verify that new selection was set.
+        fViewer.setSelection(selection_3_3_1, true, true);
+        assertEquals(selection_3_3_1, fViewer.getSelection());
+        
+        // Create the an update delta to attempt to change selection back to 
+        // 3.3.3 and verify that selection did not get overriden.
+        TreePath path_3_3_3 = model.findElement("3.3.3");
+        ModelDelta baseDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        ModelDelta delta_3_3_3 = model.getElementDelta(baseDelta, path_3_3_3, false);
+        delta_3_3_3.setFlags(IModelDelta.SELECT);
+        fViewer.updateViewer(baseDelta);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        assertEquals(selection_3_3_1, fViewer.getSelection());
+
+        // Add the *force* flag to the selection delta and update viewer again.
+        // Verify that selection did change.
+        delta_3_3_3.setFlags(IModelDelta.SELECT | IModelDelta.FORCE);
+        fViewer.updateViewer(baseDelta);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        assertEquals(selection_3_3_3, fViewer.getSelection());
+    }
+
+    
     /**
      * In this test:
      * - set a seleciton to an element 

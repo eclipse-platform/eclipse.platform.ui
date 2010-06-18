@@ -345,7 +345,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		ITreeModelContentProviderTarget treeViewer = getViewer();
 		// check if selection is allowed
 		IStructuredSelection candidate = new TreeSelection(getViewerTreePath(delta));
-		if (!treeViewer.overrideSelection(treeViewer.getSelection(), candidate)) {
+		if ((delta.getFlags() & IModelDelta.FORCE) == 0 && 
+		    !treeViewer.overrideSelection(treeViewer.getSelection(), candidate)) 
+		{
 			return;
 		}
 		// empty the selection before replacing elements to avoid materializing elements (@see bug 305739)
@@ -371,7 +373,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 			}
 		}
 		TreePath selectionPath = getViewerTreePath(delta);
-		if (treeViewer.trySelection(new TreeSelection(selectionPath), false, true)) {
+		if (treeViewer.trySelection(new TreeSelection(selectionPath), false, (delta.getFlags() | IModelDelta.FORCE) == 0)) {
 	        cancelRestore(selectionPath, IModelDelta.SELECT);
 		}
 	}

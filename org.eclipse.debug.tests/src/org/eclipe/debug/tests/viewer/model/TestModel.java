@@ -31,6 +31,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory2;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
@@ -44,7 +46,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @since 3.6
  */
-public class TestModel implements IElementContentProvider, IElementLabelProvider, IModelProxyFactory2 , IElementMementoProvider {
+public class TestModel implements IElementContentProvider, IElementLabelProvider, IModelProxyFactory2 , IElementMementoProvider, IModelSelectionPolicyFactory {
     
     public static class TestElement extends PlatformObject {
         private final TestModel fModel;
@@ -155,6 +157,8 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     private Object fInput = null;
     private TreePath fRootPath = TreePath.EMPTY;
     private ModelProxy fModelProxy;
+    private IModelSelectionPolicy fModelSelectionPolicy;
+    
     
     /**
      * Constructor private.  Use static factory methods instead. 
@@ -163,6 +167,14 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     
     public TestElement getRootElement() {
         return fRoot;
+    }
+    
+    public void setSelectionPolicy(IModelSelectionPolicy modelSelectionPolicy) {
+        fModelSelectionPolicy = modelSelectionPolicy;
+    }
+    
+    public IModelSelectionPolicy createModelSelectionPolicyAdapter(Object element, IPresentationContext context) {
+        return fModelSelectionPolicy;
     }
     
     public ModelDelta getBaseDelta(ModelDelta rootDelta) {
