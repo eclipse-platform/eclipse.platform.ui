@@ -261,16 +261,20 @@ public class TrimStack {
 					MUIElement me = (MUIElement) cti.getData(AbstractPartRenderer.OWNING_ME);
 					if (me instanceof MPlaceholder)
 						me = ((MPlaceholder) me).getRef();
+					boolean show = item.getSelection();
 					partService.activate((MPart) me);
-					showStack(item.getSelection());
+					showStack(show);
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e) {
 					ToolItem item = (ToolItem) e.widget;
 					CTabItem cti = (CTabItem) item.getData();
-					theStack.setSelectedElement((MStackElement) cti
-							.getData(AbstractPartRenderer.OWNING_ME));
-					showStack(true);
+					MUIElement me = (MUIElement) cti.getData(AbstractPartRenderer.OWNING_ME);
+					if (me instanceof MPlaceholder)
+						me = ((MPlaceholder) me).getRef();
+					boolean show = item.getSelection();
+					partService.activate((MPart) me);
+					showStack(show);
 				}
 			});
 		}
