@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.workbench.swt;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
@@ -17,6 +19,7 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -55,6 +58,13 @@ public class ShellActivationListener implements Listener {
 		Shell shell = (Shell) event.widget;
 		Object obj = shell.getData(AbstractPartRenderer.OWNING_ME);
 		if (obj instanceof MWindow) {
+			if (event.type == SWT.Deactivate) {
+				Object local = ((MWindow) obj).getContext().getLocal(
+						IContextConstants.ACTIVE_CHILD);
+				WorkbenchSWTActivator.trace("/trace/workbench",
+						"setting mwindow context " + local, null);
+				shell.setData(ECLIPSE_CONTEXT_PREV_CHILD, local);
+			}
 			return;
 		}
 
@@ -74,23 +84,45 @@ public class ShellActivationListener implements Listener {
 	}
 
 	private void activate(Shell shell) {
-		IEclipseContext parentContext = getParentContext(shell);
-		IEclipseContext shellContext = getShellContext(shell, parentContext);
+		final IEclipseContext parentContext = getParentContext(shell);
+		final IEclipseContext shellContext = getShellContext(shell,
+				parentContext);
 
-		Object tmp = parentContext.getLocal(IContextConstants.ACTIVE_CHILD);
-		shell.setData(ECLIPSE_CONTEXT_PREV_CHILD, tmp);
-		parentContext.set(IContextConstants.ACTIVE_CHILD, shellContext);
+		SafeRunner.run(new ISafeRunnable() {
+			public void run() throws Exception {
+				parentContext.set(IContextConstants.ACTIVE_CHILD, shellContext);
+			}
+
+			public void handleException(Throwable exception) {
+				WorkbenchSWTActivator.trace("/trace/workbench",
+						"failed setting dialog child", exception);
+			}
+		});
+
 	}
 
 	private void deactivate(Shell shell) {
-		final IEclipseContext tmp = (IEclipseContext) shell
-				.getData(ECLIPSE_CONTEXT_PREV_CHILD);
-		if (tmp == null) {
+		Shell parent = (Shell) shell.getParent();
+		if (parent == null) {
 			return;
 		}
-		shell.setData(ECLIPSE_CONTEXT_PREV_CHILD, null);
+		final IEclipseContext prevChild = (IEclipseContext) parent
+				.getData(ECLIPSE_CONTEXT_PREV_CHILD);
+		if (prevChild == null) {
+			return;
+		}
 		final IEclipseContext parentContext = getParentContext(shell);
-		parentContext.set(IContextConstants.ACTIVE_CHILD, tmp);
+		SafeRunner.run(new ISafeRunnable() {
+			public void run() throws Exception {
+				parentContext.set(IContextConstants.ACTIVE_CHILD, prevChild);
+			}
+
+			public void handleException(Throwable exception) {
+				WorkbenchSWTActivator.trace("/trace/workbench",
+						"failed resetting previous child", exception);
+			}
+		});
+
 	}
 
 	private IEclipseContext getShellContext(final Shell shell,
