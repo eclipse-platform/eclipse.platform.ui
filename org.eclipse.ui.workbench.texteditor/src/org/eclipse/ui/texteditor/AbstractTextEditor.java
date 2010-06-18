@@ -192,6 +192,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.actions.CommandNotMappedException;
 import org.eclipse.ui.actions.ContributedAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
@@ -2528,10 +2529,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Key binding support for the quick assist assistant.
-	 *
 	 * @since 3.5
 	 */
 	private KeyBindingSupportForAssistant fKeyBindingSupportForContentAssistant;
+
+	/**
+	 * The save action.
+	 * @since 3.7
+	 */
+	private IWorkbenchAction fSaveAction;
 
 
 	/**
@@ -4331,6 +4337,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fInformationPresenter= null;
 		}
 
+		if (fSaveAction != null) {
+			fSaveAction.dispose();
+			fSaveAction= null;
+		}
+
 		super.dispose();
 	}
 
@@ -5510,7 +5521,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void createActions() {
 
-        ResourceAction action;
+		ResourceAction action;
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
@@ -5634,7 +5645,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_INCREMENTAL_REVERSE);
 		setAction(ITextEditorActionConstants.FIND_INCREMENTAL_REVERSE, action);
 
-		setAction(ITextEditorActionConstants.SAVE, ActionFactory.SAVE.create(getSite().getWorkbenchWindow()));
+		fSaveAction= ActionFactory.SAVE.create(getSite().getWorkbenchWindow());
+		setAction(ITextEditorActionConstants.SAVE, fSaveAction);
 
 		action= new RevertToSavedAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Revert.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
