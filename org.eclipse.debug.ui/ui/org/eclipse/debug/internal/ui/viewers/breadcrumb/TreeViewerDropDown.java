@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - ongoing bug fixes and enhancements
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.breadcrumb;
 
@@ -139,6 +140,10 @@ public abstract class TreeViewerDropDown {
             public void mouseMove(MouseEvent e) {
                 if (tree.equals(e.getSource())) {
                     Object o= tree.getItem(new Point(e.x, e.y));
+					if (fLastItem == null ^ o == null) {
+						tree.setCursor(o == null ? null : tree.getDisplay()
+								.getSystemCursor(SWT.CURSOR_HAND));
+					}
                     if (o instanceof TreeItem) {
                         TreeItem currentItem= (TreeItem) o;
                         if (!o.equals(fLastItem)) {
@@ -184,6 +189,8 @@ public abstract class TreeViewerDropDown {
                                 }
                             }
                         }
+					} else if (o == null) {
+						fLastItem = null;
                     }
                 }
             }
