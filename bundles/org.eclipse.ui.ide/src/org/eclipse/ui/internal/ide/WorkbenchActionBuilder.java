@@ -301,10 +301,10 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             }
         };
         /*
-         * In order to ensure that the pin action toolbar sets its size 
+         * In order to ensure that the pin action toolbar sets its size
          * correctly, the pin action should set its visiblity before we call updatePinActionToolbar().
          * 
-         * In other words we always want the PinActionContributionItem to be notified before the 
+         * In other words we always want the PinActionContributionItem to be notified before the
          * WorkbenchActionBuilder.
          */
         WorkbenchPlugin.getDefault().getPreferenceStore()
@@ -409,11 +409,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             helpToolBar.add(new Separator(IWorkbenchActionConstants.GROUP_HELP));
 //            helpToolBar.add(searchComboItem);
               // Add the group for applications to contribute
-            helpToolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_APP));              
+            helpToolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_APP));
             // Add to the cool bar manager
             coolBar.add(actionBarConfigurer.createToolBarContributionItem(helpToolBar,
                     IWorkbenchActionConstants.TOOLBAR_HELP));
-        }        
+        }
 
     }
 
@@ -796,6 +796,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         showInQuickMenu.dispose();
         newQuickMenu.dispose();
         
+		super.dispose();
+
         // null out actions to make leak debugging easier
         closeAction = null;
         closeAllAction = null;
@@ -863,8 +865,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         prefListener = null;
         propPrefListener = null;
         introAction = null;
-        
-        super.dispose();
     }
 
     void updateModeLine(final String text) {
@@ -1164,7 +1164,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         
         // See if a welcome page is specified.
         // Optimization: if welcome pages were found on a previous run, then just add the action.
-        String quickStartKey = IDEActionFactory.QUICK_START.getId(); 
+        String quickStartKey = IDEActionFactory.QUICK_START.getId();
         String showQuickStart = prefs.getString(quickStartKey);
         if (sameState && "true".equals(showQuickStart)) { //$NON-NLS-1$
             quickStartAction = IDEActionFactory.QUICK_START.create(window);
@@ -1428,7 +1428,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         		ISharedImages.IMG_TOOL_DELETE,
         		ISharedImages.IMG_TOOL_DELETE_DISABLED,
         		WorkbenchMessages.Workbench_delete,
-        		WorkbenchMessages.Workbench_deleteToolTip, 
+        		WorkbenchMessages.Workbench_deleteToolTip,
         		IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION);
     }
     
