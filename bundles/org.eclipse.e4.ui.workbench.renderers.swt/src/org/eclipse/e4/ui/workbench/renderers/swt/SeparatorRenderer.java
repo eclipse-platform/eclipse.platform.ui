@@ -39,6 +39,13 @@ public class SeparatorRenderer extends SWTPartRenderer {
 				menu = ((MenuItem) widget).getMenu();
 			}
 			if (menu != null) {
+				int objIndex = calcIndex(element);
+				if (objIndex == element.getParent().getChildren().size() - 1) {
+					return null;
+				}
+				if (element.getParent().getChildren().get(objIndex + 1) instanceof MMenuSeparator) {
+					return null;
+				}
 				// determine the index at which we should create the new item
 				int addIndex = calcVisibleIndex(element);
 				// this shouldn't happen, but it might
