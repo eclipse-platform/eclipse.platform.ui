@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -65,5 +66,27 @@ public class PerspectiveRenderer extends SWTPartRenderer {
 		for (MWindow dw : persp.getWindows()) {
 			renderer.createGui(dw, shell);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#getUIContainer
+	 * (org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	@Override
+	public Object getUIContainer(MUIElement element) {
+		if (!(element instanceof MWindow))
+			return super.getUIContainer(element);
+
+		MPerspective persp = (MPerspective) ((EObjectImpl) element)
+				.eContainer();
+		if (persp.getWidget() instanceof Composite) {
+			Composite comp = (Composite) persp.getWidget();
+			return comp.getShell();
+		}
+
+		return null;
 	}
 }
