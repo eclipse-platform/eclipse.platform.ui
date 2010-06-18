@@ -27,7 +27,9 @@ public class SeparatorRenderer extends SWTPartRenderer {
 
 	public Object createWidget(final MUIElement element, Object parent) {
 		Widget newSep = null;
-
+		if (!element.isVisible()) {
+			return null;
+		}
 		if (element instanceof MMenuSeparator) {
 			Menu menu = null;
 			Object widget = element.getParent().getWidget();
@@ -37,6 +39,7 @@ public class SeparatorRenderer extends SWTPartRenderer {
 				menu = ((MenuItem) widget).getMenu();
 			}
 			if (menu != null) {
+
 				// this shouldn't happen, but it might
 				newSep = new MenuItem(menu, SWT.SEPARATOR);
 			}
