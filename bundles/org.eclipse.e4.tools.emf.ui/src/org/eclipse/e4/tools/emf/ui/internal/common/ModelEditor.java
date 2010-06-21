@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
+
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -131,19 +133,17 @@ public class ModelEditor {
 	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 
 	public static final String VIRTUAL_PART_MENU = ModelEditor.class.getName() + ".VIRTUAL_PART_MENU"; //$NON-NLS-1$
-//	public static final String VIRTUAL_MODEL_COMPONENT_CHILDREN = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMPONENT_CHILDREN"; //$NON-NLS-1$
 	public static final String VIRTUAL_HANDLER = ModelEditor.class.getName() + ".VIRTUAL_HANDLER"; //$NON-NLS-1$
 	public static final String VIRTUAL_BINDING_TABLE = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
 	public static final String VIRTUAL_COMMAND = ModelEditor.class.getName() + ".VIRTUAL_COMMAND"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_WINDOWS"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOW_CONTROLS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_CONTROLS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PART_DESCRIPTORS = ModelEditor.class.getName() + ".VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
-//	public static final String VIRTUAL_MODEL_COMP_COMMANDS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_COMMANDS"; //$NON-NLS-1$
-//	public static final String VIRTUAL_MODEL_COMP_BINDINGS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_COMP_BINDINGS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = ModelEditor.class.getName() + ".VIRTUAL_PARTDESCRIPTOR_MENU"; //$NON-NLS-1$
 	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = ModelEditor.class.getName() + ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
 	public static final String VIRTUAL_ADDONS = ModelEditor.class.getName() + ".VIRTUAL_ADDONS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MENU_CONTRIBUTIONS = ModelEditor.class.getName() + ".VIRTUAL_MENU_CONTRIBUTIONS"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_SHARED_ELEMENTS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_SHARED_ELEMENTS"; //$NON-NLS-1$
 	
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
@@ -421,6 +421,7 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS, new VWindowTrimEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_ADDONS, new VApplicationAddons(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_MENU_CONTRIBUTIONS, new VMenuContributionsEditor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_WINDOW_SHARED_ELEMENTS, new VWindowSharedElementsEditor(modelProvider.getEditingDomain(), this));
 	}
 
 	private void registerVirtualEditor(String id, AbstractComponentEditor editor) {
