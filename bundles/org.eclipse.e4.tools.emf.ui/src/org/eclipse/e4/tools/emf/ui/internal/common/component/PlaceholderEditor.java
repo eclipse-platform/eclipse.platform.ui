@@ -10,6 +10,20 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
+import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.SharedElementsDialog;
+
+import org.eclipse.swt.events.SelectionEvent;
+
+import org.eclipse.swt.events.SelectionAdapter;
+
+import org.eclipse.swt.events.SelectionAdapter;
+
+import org.eclipse.swt.widgets.Button;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -38,9 +52,13 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
-
-	public PlaceholderEditor(EditingDomain editingDomain) {
+	private IModelResource resource;
+	private ModelEditor editor;
+	
+	public PlaceholderEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource) {
 		super(editingDomain);
+		this.resource = resource;
+		this.editor = editor;
 	}
 
 	@Override
@@ -120,9 +138,18 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+			
+			final Button b = new Button(parent, SWT.PUSH);
+			b.setText(Messages.PlaceholderEditor_FindReference);
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					SharedElementsDialog dialog = new SharedElementsDialog(b.getShell(),editor,(MPlaceholder) getMaster().getValue(), resource);
+					dialog.open();
+				}
+			});
 		}
 
 		return parent;

@@ -266,6 +266,7 @@ public class Messages {
 	public static String PlaceholderEditor_Label;
 	public static String PlaceholderEditor_Descriptor;
 	public static String PlaceholderEditor_Id;
+	public static String PlaceholderEditor_FindReference;
 	
 	public static String ToolBarEditor_Label;
 	public static String ToolBarEditor_Description;
@@ -347,6 +348,7 @@ public class Messages {
 	public static String FeatureSelectionDialog_DialogTitle;
 	public static String FeatureSelectionDialog_DialogMessage;
 
+	
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
