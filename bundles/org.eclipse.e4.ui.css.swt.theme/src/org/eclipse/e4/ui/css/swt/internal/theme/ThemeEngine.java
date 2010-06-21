@@ -91,7 +91,7 @@ public class ThemeEngine implements IThemeEngine {
 				if (ce.getName().equals("stylesheet")) {
 					IConfigurationElement[] cces = ce.getChildren("themeid");
 					if (cces.length == 0) {
-						registerStylsheet("platform:/plugin/"
+						registerStylesheet("platform:/plugin/"
 								+ ce.getContributor().getName() + "/"
 								+ ce.getAttribute("uri"));
 
@@ -108,7 +108,7 @@ public class ThemeEngine implements IThemeEngine {
 						for (int i = 0; i < cces.length; i++) {
 							themes[i] = cces[i].getAttribute("refid");
 						}
-						registerStylsheet(
+						registerStylesheet(
 								"platform:/plugin/"
 										+ ce.getContributor().getName() + "/"
 										+ ce.getAttribute("uri"), themes);
@@ -144,7 +144,7 @@ public class ThemeEngine implements IThemeEngine {
 		return theme;
 	}
 
-	public synchronized void registerStylsheet(String uri, String... themes) {
+	public synchronized void registerStylesheet(String uri, String... themes) {
 		Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
 		String osname = bundle.getBundleContext().getProperty("osgi.os");
 		String wsname = bundle.getBundleContext().getProperty("ogsi.ws");

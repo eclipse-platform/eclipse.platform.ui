@@ -21,7 +21,7 @@ public interface IThemeEngine {
 	
 	public ITheme registerTheme(String id, String label, String basestylesheetURI);
 
-	public void registerStylsheet(String uri, String... themes);
+	public void registerStylesheet(String uri, String... themes);
 
 	public void registerResourceLocator(IResourceLocator locator,
 			String... themes);
