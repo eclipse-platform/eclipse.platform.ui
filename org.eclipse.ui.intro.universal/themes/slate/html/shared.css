@@ -16,6 +16,10 @@ body { font-family : Arial, sans-serif; }
 
 H1, H2, H3, H4, p, a { color : #4D4D4D; }
 
+ body {
+	background-color : #FFFFFF;
+}
+
 /* The label part of the folding section */
 .section-title-link .section-title {
 	display : inline;
