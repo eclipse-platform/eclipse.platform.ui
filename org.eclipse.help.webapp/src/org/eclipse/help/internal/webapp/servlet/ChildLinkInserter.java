@@ -42,9 +42,7 @@ public class ChildLinkInserter {
 	}
 	
 	public void addContents(String encoding) throws IOException {	
-	    ITopic topic = getTopic();
-	    if (topic == null || topic.getHref() == null) return;
-	    ITopic[] subtopics = topic.getSubtopics();
+	    ITopic[] subtopics = getSubtopics();
 	    if (subtopics.length == 0) {
 	    	return;
 	    }
@@ -77,20 +75,22 @@ public class ChildLinkInserter {
 		}
 	}
 	
-	private ITopic getTopic() {
+	private ITopic[] getSubtopics() {
 		String locale = UrlUtil.getLocale(req, null);
 		String pathInfo = req.getPathInfo();
 		String servletPath = req.getServletPath();
-		if ("/nav".equals(servletPath)) return null; //$NON-NLS-1$
-		String topicPath= servletPath + pathInfo;
-		int[] path = UrlUtil.getTopicPath(topicPath, locale );
-		if (path == null || path.length == 1) return null;
-		Toc[] tocs = HelpPlugin.getTocManager().getTocs(locale.toString());
-		ITopic topic = tocs[path[0]].getTopics()[path[1]];
-		for (int i = 2; i < path.length; i++) {
-			topic = topic.getSubtopics()[path[i]];
+		if ("/nav".equals(servletPath)) return new ITopic[0]; //$NON-NLS-1$
+		Toc[] tocs =  HelpPlugin.getTocManager().getTocs(locale);
+		for (int i = 0; i < tocs.length; i++) {
+			if (pathInfo.equals(tocs[i].getTopic())) {
+				return tocs[i].getTopics();
+			}
+			ITopic topic = tocs[i].getTopic(pathInfo);
+			if (topic != null) {
+				return topic.getSubtopics();
+			}
 		}
-		return topic;
+		return   new ITopic[0];
 	}
 	
 	private String getBackpath(String path) {
@@ -106,16 +106,14 @@ public class ChildLinkInserter {
 	}
 
 	public void addStyle() throws UnsupportedEncodingException, IOException {
-		ITopic topic = getTopic();
-		if (topic != null && topic.getHref() != null) {
-			ITopic[] subtopics = topic.getSubtopics();
-			for (int i = 0; i < subtopics.length; ++i) {
-				if (ScopeUtils.showInTree(subtopics[i], scope)) {
-					out.write(HAS_CHILDREN.getBytes(UTF_8));
-					return;
-				}
+		ITopic[] subtopics = getSubtopics();
+		for (int i = 0; i < subtopics.length; ++i) {
+			if (ScopeUtils.showInTree(subtopics[i], scope)) {
+				out.write(HAS_CHILDREN.getBytes(UTF_8));
+				return;
 			}
 		}
+
 		out.write(NO_CHILDREN.getBytes(UTF_8));
 	}
 
