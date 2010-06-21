@@ -86,7 +86,9 @@ public class LocalHelpPage extends RootScopePage {
 		searchAll.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				contentTree.getTree().setEnabled(false);
-				criteriaTree.getTree().setEnabled(false);
+				if (criteriaTree != null) {
+				    criteriaTree.getTree().setEnabled(false);
+				}
 			}
 		});
 
@@ -98,7 +100,10 @@ public class LocalHelpPage extends RootScopePage {
 		searchSelected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				contentTree.getTree().setEnabled(true);
-				criteriaTree.getTree().setEnabled(true);
+				if (criteriaTree != null) {
+				    criteriaTree.getTree().setEnabled(true);
+
+				}
 			}
 		});
 
