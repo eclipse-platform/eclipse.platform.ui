@@ -24,8 +24,8 @@ Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="0.9.0";visibil
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.ui.internal.workbench;x-friends:="org.eclipse.e4.ui.workbench.fragment,org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.e4.ui.workbench.swt",
- org.eclipse.e4.ui.workbench;x-internal:=true,
- org.eclipse.e4.ui.workbench.modeling;x-internal:=true
+ org.eclipse.e4.ui.workbench;x-friends:="org.eclipse.e4.ui.workbench.swt",
+ org.eclipse.e4.ui.workbench.modeling;x-friends:="org.eclipse.e4.ui.workbench.swt"
 Bundle-Activator: org.eclipse.e4.ui.internal.workbench.Activator
 Service-Component: OSGI-INF/progress.xml, OSGI-INF/partService.xml, OSGI-INF/modelService.xml, OSGI-INF/selectionLookup.xml, OSGI-INF/selectionService.xml
 Import-Package: com.ibm.icu.text;version="3.8.1",
