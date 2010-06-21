@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -271,10 +273,9 @@ public class PartStackEditor extends AbstractComponentEditor {
 				}
 			});
 			childrenDropDown.setInput(new EClass[] {
-//					BasicPackageImpl.Literals.PART_SASH_CONTAINER,
-//					BasicPackageImpl.Literals.PART_STACK,
 					BasicPackageImpl.Literals.PART,
-					BasicPackageImpl.Literals.INPUT_PART
+					BasicPackageImpl.Literals.INPUT_PART,
+					AdvancedPackageImpl.Literals.PLACEHOLDER
 			});
 			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
 			
