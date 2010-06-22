@@ -169,12 +169,78 @@ public class MenuHelper {
 		return null;
 	}
 
-	private static String getKey(MMenuContribution contribution) {
-		String key = contribution.getParentID();
-		key = key + "?" //$NON-NLS-1$
-				+ (contribution.getPositionInParent() == null ? "after=additions" //$NON-NLS-1$
-						: contribution.getPositionInParent());
-		return key;
+	static class Key {
+		private MMenuContribution contribution;
+		private int tag = -1;
+		private int hc = -1;
+
+		public Key(MMenuContribution mc) {
+			this.contribution = mc;
+			mc.setWidget(this);
+		}
+
+		int getSchemeTag() {
+			if (tag == -1) {
+				List<String> tags = contribution.getTags();
+				if (tags.contains("scheme:menu")) { //$NON-NLS-1$
+					tag = 1;
+				} else if (tags.contains("scheme:popup")) { //$NON-NLS-1$
+					tag = 2;
+				} else if (tags.contains("scheme:toolbar")) { //$NON-NLS-1$
+					tag = 3;
+				} else {
+					tag = 0;
+				}
+			}
+			return tag;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof Key)) {
+				return false;
+			}
+			Key other = (Key) obj;
+			MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
+			Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
+			MCoreExpression vexp2 = (MCoreExpression) other.contribution.getVisibleWhen();
+			Object exp2 = vexp2 == null ? null : vexp2.getCoreExpression();
+			return Util.equals(contribution.getParentID(), other.contribution.getParentID())
+					&& Util.equals(contribution.getPositionInParent(),
+							other.contribution.getPositionInParent())
+					&& getSchemeTag() == other.getSchemeTag() && Util.equals(exp1, exp2);
+		}
+
+		@Override
+		public int hashCode() {
+			if (hc == -1) {
+				MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
+				Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
+				hc = Util.hashCode(contribution.getParentID());
+				hc = hc * 87 + Util.hashCode(contribution.getPositionInParent());
+				hc = hc * 87 + getSchemeTag();
+				hc = hc * 87 + Util.hashCode(exp1);
+			}
+			return hc;
+		}
+
+		@Override
+		public String toString() {
+			return "Key " + contribution.getParentID() + "--" + contribution.getPositionInParent() //$NON-NLS-1$ //$NON-NLS-2$
+					+ "--" + getSchemeTag() + "--" + contribution.getVisibleWhen(); //$NON-NLS-1$//$NON-NLS-2$
+		}
+	}
+
+	private static Key getKey(MMenuContribution contribution) {
+		if (contribution.getWidget() instanceof Key) {
+			return (Key) contribution.getWidget();
+		}
+		return new Key(contribution);
 	}
 
 	public static void printContributions(ArrayList<MMenuContribution> contributions) {
@@ -202,11 +268,12 @@ public class MenuHelper {
 
 	public static void mergeContributions(ArrayList<MMenuContribution> contributions,
 			ArrayList<MMenuContribution> result) {
-		HashMap<String, ArrayList<MMenuContribution>> buckets = new HashMap<String, ArrayList<MMenuContribution>>();
+		HashMap<Key, ArrayList<MMenuContribution>> buckets = new HashMap<Key, ArrayList<MMenuContribution>>();
 		trace("mergeContributions size: " + contributions.size(), null); //$NON-NLS-1$
 		printContributions(contributions);
+		// first pass, sort by parentId?position,scheme,visibleWhen
 		for (MMenuContribution contribution : contributions) {
-			String key = getKey(contribution);
+			Key key = getKey(contribution);
 			ArrayList<MMenuContribution> slot = buckets.get(key);
 			if (slot == null) {
 				slot = new ArrayList<MMenuContribution>();
@@ -217,7 +284,7 @@ public class MenuHelper {
 		Iterator<MMenuContribution> i = contributions.iterator();
 		while (i.hasNext() && !buckets.isEmpty()) {
 			MMenuContribution contribution = i.next();
-			String key = getKey(contribution);
+			Key key = getKey(contribution);
 			ArrayList<MMenuContribution> slot = buckets.remove(key);
 			if (slot == null) {
 				continue;
@@ -237,6 +304,7 @@ public class MenuHelper {
 				}
 			}
 			if (toContribute != null) {
+				toContribute.setWidget(null);
 				result.add(toContribute);
 			}
 		}
@@ -469,5 +537,9 @@ public class MenuHelper {
 			item.setIconURI(iconUri);
 		}
 		return item;
+	}
+
+	public static String getDescription(IConfigurationElement configElement) {
+		return configElement.getAttribute(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
 	}
 }
