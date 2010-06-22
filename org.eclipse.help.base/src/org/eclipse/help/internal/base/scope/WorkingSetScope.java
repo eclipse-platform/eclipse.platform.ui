@@ -143,13 +143,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 					toc = (IToc) uae;
 					uae = null;
 				} else if (uae instanceof IIndexEntry) {
-					for (int i = 0; i < elements.length; i++) {
-						AdaptableHelpResource adaptable = elements[i];
-						if (adaptable.getTopic(topic.getHref()) != null) {
-							return true;
-						}
-					}
-					return false;
+					return isHrefInScope(topic.getHref());
 				} else {					
 					if (uae instanceof ITopic) {
 					    topics.add(uae);
@@ -175,6 +169,24 @@ public class WorkingSetScope extends AbstractHelpScope {
 				adaptable = (AdaptableHelpResource) parent;
 			} else {
 				adaptable = null;
+			}
+		}
+		return false;
+	}
+
+	private boolean isHrefInScope(String href) {
+		String anchorlessHref;
+		int index = href.indexOf('#');
+		if (index != -1) {
+			anchorlessHref = href.substring(0, index);
+		} else {
+			anchorlessHref = href;
+		}
+
+		for (int i = 0; i < elements.length; i++) {
+			AdaptableHelpResource adaptable = elements[i];
+			if (adaptable.getTopic(anchorlessHref) != null) {
+				return true;
 			}
 		}
 		return false;
