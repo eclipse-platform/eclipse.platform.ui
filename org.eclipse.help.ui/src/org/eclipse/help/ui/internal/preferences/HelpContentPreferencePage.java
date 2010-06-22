@@ -102,9 +102,11 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		currentBlock.getRemoteICviewer().getRemoteICList().removeAllRemoteICs(currentBlock.getRemoteICList());
 		currentBlock.getRemoteICviewer().getRemoteICList().loadDefaultPreferences();
 		currentBlock.restoreDefaultButtons();
-		searchLocalHelpOnly.setSelection(!(new DefaultPreferenceFileHandler().isRemoteHelpOn()));
-		searchLocalHelpFirst.setSelection(new DefaultPreferenceFileHandler().isRemoteHelpPreferred());
-		searchLocalHelpLast.setSelection(new DefaultPreferenceFileHandler().isRemoteHelpPreferred());
+		boolean remoteHelpOn = new DefaultPreferenceFileHandler().isRemoteHelpOn();
+		boolean remoteHelpPreferred = new DefaultPreferenceFileHandler().isRemoteHelpPreferred();
+		searchLocalHelpOnly.setSelection(!remoteHelpOn);
+		searchLocalHelpFirst.setSelection(remoteHelpOn && !remoteHelpPreferred);
+		searchLocalHelpLast.setSelection(remoteHelpOn && remoteHelpPreferred);
 		changeListener.handleEvent(null);
 	}
 
