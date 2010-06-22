@@ -15,7 +15,9 @@ import java.io.IOException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
@@ -25,6 +27,7 @@ import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.internal.workbench.ActiveChildLookupFunction;
 import org.eclipse.e4.ui.internal.workbench.ActivePartLookupFunction;
@@ -309,6 +312,15 @@ public class E4Application implements IApplication {
 			}
 		});
 		appContext.set(EPartService.PART_SERVICE_ROOT, new ContextFunction() {
+			private void log() {
+				StatusReporter statusReporter = (StatusReporter) appContext
+						.get(StatusReporter.class.getName());
+				statusReporter.report(new Status(IStatus.ERROR,
+						WorkbenchSWTActivator.PI_RENDERERS,
+						"Internal error, please post the trace to bug 315270",
+						new Exception()), StatusReporter.LOG);
+			}
+
 			@Override
 			public Object compute(IEclipseContext context) {
 				MContext perceivedRoot = (MContext) context.get(MWindow.class
@@ -317,13 +329,19 @@ public class E4Application implements IApplication {
 					perceivedRoot = (MContext) context.get(MApplication.class
 							.getName());
 					if (perceivedRoot == null) {
-						return null;
+						log();
+						IEclipseContext ctxt = (IEclipseContext) appContext
+								.getLocal(IContextConstants.ACTIVE_CHILD);
+						return ctxt.get(MWindow.class);
 					}
 				}
 
 				IEclipseContext current = perceivedRoot.getContext();
 				if (current == null) {
-					return null;
+					log();
+					IEclipseContext ctxt = (IEclipseContext) appContext
+							.getLocal(IContextConstants.ACTIVE_CHILD);
+					return ctxt.get(MWindow.class);
 				}
 
 				IEclipseContext next = (IEclipseContext) current
@@ -346,8 +364,12 @@ public class E4Application implements IApplication {
 				// we need to consider detached windows
 				MUIElement window = (MUIElement) current.get(MWindow.class
 						.getName());
-				if (window == null)
-					return null;
+				if (window == null) {
+					log();
+					IEclipseContext ctxt = (IEclipseContext) appContext
+							.getLocal(IContextConstants.ACTIVE_CHILD);
+					return ctxt.get(MWindow.class);
+				}
 				MElementContainer<?> parent = window.getParent();
 				while (parent != null && !(parent instanceof MApplication)) {
 					window = parent;
