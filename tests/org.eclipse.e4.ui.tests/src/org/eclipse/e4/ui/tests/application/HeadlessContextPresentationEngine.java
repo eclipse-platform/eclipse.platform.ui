@@ -186,7 +186,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				}
 			}
 
-			if (parentContext.getLocal(IContextConstants.ACTIVE_CHILD) == null) {
+			if (parentContext != null
+					&& parentContext.getLocal(IContextConstants.ACTIVE_CHILD) == null) {
 				parentContext.set(IContextConstants.ACTIVE_CHILD,
 						createdContext);
 			}
