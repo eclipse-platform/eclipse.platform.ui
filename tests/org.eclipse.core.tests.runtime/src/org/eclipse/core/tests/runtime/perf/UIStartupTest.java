@@ -15,8 +15,6 @@ import org.eclipse.test.performance.*;
 
 public class UIStartupTest extends TestCase {
 
-	static private final String EXPLANATION = "Performance decrease caused by a change to how the tests are installed. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=294094 for details.";
-
 	public static Test suite() {
 		return new TestSuite(UIStartupTest.class);
 	}
@@ -30,9 +28,7 @@ public class UIStartupTest extends TestCase {
 		try {
 			meter.stop();
 			Performance performance = Performance.getDefault();
-			//TODO remove from global summary due to bug 294094. This should be re-enabled in 3.7.
-			//			performance.tagAsGlobalSummary(meter, "Core UI Startup", Dimension.ELAPSED_PROCESS);
-			performance.setComment(meter, Performance.EXPLAINS_DEGRADATION_COMMENT, EXPLANATION);
+			performance.tagAsGlobalSummary(meter, "Core UI Startup", Dimension.ELAPSED_PROCESS);
 			meter.commit();
 			performance.assertPerformanceInRelativeBand(meter, Dimension.ELAPSED_PROCESS, -50, 5);
 		} finally {
