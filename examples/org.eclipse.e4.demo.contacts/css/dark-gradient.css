@@ -9,6 +9,7 @@
  * Contributors:
  *     Kai Tödter - initial implementation
  ******************************************************************************/
+
 Label {
 	font: Verdana 8px;
 	color: rgb(240, 240, 240);
@@ -45,7 +46,7 @@ Table {
 	font: Verdana 8px;
 }
 
-ToolBar {
+.MTrimBar {
 	background-color: #777777 #373737 #202020 50% 50%;
 	color: white;
 	font: Verdana 8px;
