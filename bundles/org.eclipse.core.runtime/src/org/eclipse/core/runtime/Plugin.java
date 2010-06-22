@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Map;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
@@ -387,6 +388,12 @@ public abstract class Plugin implements BundleActivator {
 	 * @deprecated Replaced by InstanceScope.getNode(&lt;bundleId&gt;).flush()
 	 */
 	public final void savePluginPreferences() {
+		
+		Location instance = InternalPlatform.getDefault().getInstanceLocation();
+		if (instance == null || !instance.isSet())
+			// If the instance area is not set there is no point in getting or setting the preferences.
+			// There is nothing to save in this case.
+			return;
 		// populate the "preferences" instance variable. We still might
 		// need to save them because someone else might have
 		// made changes via the OSGi APIs.
