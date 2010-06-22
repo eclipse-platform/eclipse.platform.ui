@@ -28,6 +28,7 @@ import org.eclipse.e4.core.internal.tests.contexts.inject.ContextInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.DisposingReferencedContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ExtraDependenciesTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.GroupedUpdatesTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.InjectStaticContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.InjectionUpdateTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ParentContextDisposalTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ProviderInjectionTest;
@@ -70,6 +71,7 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(ParentContextDisposalTest.class);
 		addTestSuite(ComplexDisposalTest.class);
 		addTestSuite(DisposeClassLinkTest.class);
+		addTestSuite(InjectStaticContextTest.class);
 
 		// Contexts injection
 		addTestSuite(AnnotationsInjectionTest.class);

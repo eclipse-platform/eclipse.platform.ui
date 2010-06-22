@@ -31,14 +31,16 @@ abstract public class Requestor implements IRequestor {
 
 	final private IInjector injector;
 	final private PrimaryObjectSupplier primarySupplier;
+	private PrimaryObjectSupplier tempSupplier;
 
 	protected Object[] actualArgs;
 
 	public abstract IObjectDescriptor[] getDependentObjects();
 
-	public Requestor(AccessibleObject reflectionObject, IInjector injector, PrimaryObjectSupplier primarySupplier, Object requestingObject, boolean track) {
+	public Requestor(AccessibleObject reflectionObject, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		this.injector = injector;
 		this.primarySupplier = primarySupplier;
+		this.tempSupplier = tempSupplier;
 		if (requestingObject != null)
 			objectRef = new WeakReference<Object>(requestingObject);
 		else
@@ -54,6 +56,14 @@ abstract public class Requestor implements IRequestor {
 
 	public PrimaryObjectSupplier getPrimarySupplier() {
 		return primarySupplier;
+	}
+
+	public PrimaryObjectSupplier getTempSupplier() {
+		return tempSupplier;
+	}
+
+	public void clearTempSupplier() {
+		tempSupplier = null; // don't keep temporary suppliers in memory after initial processing
 	}
 
 	public Object getRequestingObject() {

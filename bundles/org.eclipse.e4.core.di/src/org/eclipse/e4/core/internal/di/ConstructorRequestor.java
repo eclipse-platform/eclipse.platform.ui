@@ -23,8 +23,8 @@ public class ConstructorRequestor extends Requestor {
 
 	final private Constructor<?> constructor;
 
-	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, PrimaryObjectSupplier primarySupplier) {
-		super(null, injector, primarySupplier, null, false /* do not track */);
+	public ConstructorRequestor(Constructor<?> constructor, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier) {
+		super(null, injector, primarySupplier, tempSupplier, null, false /* do not track */);
 		this.constructor = constructor;
 	}
 

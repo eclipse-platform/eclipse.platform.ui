@@ -56,9 +56,13 @@ public class InjectorImpl implements IInjector {
 	private Map<Class<?>, Set<Binding>> bindings = new HashMap<Class<?>, Set<Binding>>();
 
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
+		inject(object, objectSupplier, null);
+	}
+
+	public void inject(Object object, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier) {
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
-		processClassHierarchy(object, objectSupplier, false /* no static */, true /* track */, true /* normal order */, requestors);
+		processClassHierarchy(object, objectSupplier, tempSupplier, true /* track */, true /* normal order */, requestors);
 
 		// if we are not establishing any links to the injected object (nothing to inject,
 		// or constructor only), create a pseudo-link to track supplier's disposal
@@ -68,10 +72,10 @@ public class InjectorImpl implements IInjector {
 				haveLink = true;
 		}
 		if (!haveLink)
-			requestors.add(new ClassRequestor(object.getClass(), this, objectSupplier, object, true));
+			requestors.add(new ClassRequestor(object.getClass(), this, objectSupplier, tempSupplier, object, true));
 
 		// Then ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		resolveRequestorArgs(requestors, objectSupplier, false, true);
+		resolveRequestorArgs(requestors, objectSupplier, tempSupplier, false, true);
 
 		// Call requestors in order
 		for (Requestor requestor : requestors) {
@@ -82,7 +86,12 @@ public class InjectorImpl implements IInjector {
 
 		// We call @PostConstruct after injection. This means that is is called 
 		// as a part of both #make() and #inject().
-		processAnnotated(PostConstruct.class, object, object.getClass(), objectSupplier, new ArrayList<Class<?>>(5));
+		processAnnotated(PostConstruct.class, object, object.getClass(), objectSupplier, tempSupplier, new ArrayList<Class<?>>(5));
+
+		// remove references to the temporary suppliers
+		for (Requestor requestor : requestors) {
+			requestor.clearTempSupplier();
+		}
 	}
 
 	private void rememberInjectedObject(Object object, PrimaryObjectSupplier objectSupplier) {
@@ -135,12 +144,13 @@ public class InjectorImpl implements IInjector {
 	public void uninject(Object object, PrimaryObjectSupplier objectSupplier) {
 		if (!forgetInjectedObject(object, objectSupplier))
 			return; // not injected at this time
+		processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<Class<?>>(5));
 		// Two stages: first, go and collect {requestor, descriptor[] }
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
-		processClassHierarchy(object, objectSupplier, false /* no static */, true /* track */, false /* inverse order */, requestors);
+		processClassHierarchy(object, objectSupplier, null, true /* track */, false /* inverse order */, requestors);
 		// might still need to get resolved values from secondary suppliers
 		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		resolveRequestorArgs(requestors, null, true /* fill with nulls */, false);
+		resolveRequestorArgs(requestors, null, null, true /* fill with nulls */, false);
 
 		// Call requestors in order
 		for (Requestor requestor : requestors) {
@@ -149,25 +159,29 @@ public class InjectorImpl implements IInjector {
 	}
 
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, PrimaryObjectSupplier objectSupplier) {
-		Object result = invokeUsingClass(object, object.getClass(), qualifier, IInjector.NOT_A_VALUE, objectSupplier, true);
+		Object result = invokeUsingClass(object, object.getClass(), qualifier, IInjector.NOT_A_VALUE, objectSupplier, null, true);
 		if (result == IInjector.NOT_A_VALUE)
 			throw new InjectionException("Unable to find matching method to invoke"); //$NON-NLS-1$
 		return result;
 	}
 
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier) {
-		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, false);
+		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, null, false);
 	}
 
-	private Object invokeUsingClass(Object userObject, Class<?> currentClass, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, boolean throwUnresolved) {
+	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier localSupplier) {
+		return invokeUsingClass(object, object.getClass(), qualifier, defaultValue, objectSupplier, localSupplier, false);
+	}
+
+	private Object invokeUsingClass(Object userObject, Class<?> currentClass, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean throwUnresolved) {
 		Method[] methods = currentClass.getDeclaredMethods();
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
 			if (method.getAnnotation(qualifier) == null)
 				continue;
-			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
+			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject, false);
 
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, false);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1) {
 				if (throwUnresolved)
@@ -181,18 +195,25 @@ public class InjectorImpl implements IInjector {
 		if (superClass == null)
 			return defaultValue;
 
-		return invokeUsingClass(userObject, superClass, qualifier, defaultValue, objectSupplier, throwUnresolved);
+		return invokeUsingClass(userObject, superClass, qualifier, defaultValue, objectSupplier, tempSupplier, throwUnresolved);
 	}
 
 	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier) {
+		Class<?> implementationClass = getImplementationClass(clazz);
+		return clazz.cast(internalMake(implementationClass, objectSupplier, null));
+	}
+
+	private Class<?> getImplementationClass(Class<?> clazz) {
 		IObjectDescriptor descriptor = new ObjectDescriptor(clazz, null);
 		Binding binding = findBinding(descriptor);
-		Class<?> implementationClass;
 		if (binding == null)
-			implementationClass = getDesiredClass(descriptor.getDesiredType());
-		else
-			implementationClass = binding.getImplementationClass();
-		return clazz.cast(internalMake(implementationClass, objectSupplier));
+			return getDesiredClass(descriptor.getDesiredType());
+		return binding.getImplementationClass();
+	}
+
+	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier) {
+		Class<?> implementationClass = getImplementationClass(clazz);
+		return clazz.cast(internalMake(implementationClass, objectSupplier, staticSupplier));
 	}
 
 	public Object makeFromProvider(IObjectDescriptor descriptor, PrimaryObjectSupplier objectSupplier) {
@@ -208,11 +229,10 @@ public class InjectorImpl implements IInjector {
 			if (result[0] != IInjector.NOT_A_VALUE)
 				return result[0];
 		}
-		return internalMake(implementationClass, objectSupplier);
+		return internalMake(implementationClass, objectSupplier, null);
 	}
 
-	private Object internalMake(Class<?> clazz, PrimaryObjectSupplier objectSupplier) {
-
+	private Object internalMake(Class<?> clazz, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier) {
 		boolean isSingleton = clazz.isAnnotationPresent(Singleton.class);
 		if (isSingleton) {
 			synchronized (singletonCache) {
@@ -244,15 +264,15 @@ public class InjectorImpl implements IInjector {
 			if (!constructor.isAnnotationPresent(Inject.class) && constructor.getParameterTypes().length != 0)
 				continue;
 
-			ConstructorRequestor requestor = new ConstructorRequestor(constructor, this, objectSupplier);
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false, false);
+			ConstructorRequestor requestor = new ConstructorRequestor(constructor, this, objectSupplier, tempSupplier);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, false);
 			if (unresolved(actualArgs) != -1)
 				continue;
 			requestor.setResolvedArgs(actualArgs);
 
 			Object newInstance = requestor.execute();
 			if (newInstance != null) {
-				inject(newInstance, objectSupplier);
+				inject(newInstance, objectSupplier, tempSupplier);
 				if (isSingleton) {
 					synchronized (singletonCache) { // TBD this is not quite right, synch the method
 						singletonCache.put(clazz, newInstance);
@@ -267,7 +287,7 @@ public class InjectorImpl implements IInjector {
 	public void resolveArguments(IRequestor requestor) {
 		ArrayList<Requestor> list = new ArrayList<Requestor>(1);
 		list.add((Requestor) requestor);
-		resolveRequestorArgs(list, ((Requestor) requestor).getPrimarySupplier(), true, false /* no nested track */);
+		resolveRequestorArgs(list, ((Requestor) requestor).getPrimarySupplier(), ((Requestor) requestor).getTempSupplier(), true, false /* no nested track */);
 	}
 
 	public void disposed(PrimaryObjectSupplier objectSupplier) {
@@ -284,7 +304,6 @@ public class InjectorImpl implements IInjector {
 			}
 		}
 		for (int i = 0; i < count; i++) {
-			processAnnotated(PreDestroy.class, objects[i], objects[i].getClass(), objectSupplier, new ArrayList<Class<?>>(5));
 			if (objects[i] instanceof IDisposable)
 				((IDisposable) objects[i]).dispose();
 			uninject(objects[i], objectSupplier);
@@ -292,9 +311,9 @@ public class InjectorImpl implements IInjector {
 		forgetSupplier(objectSupplier);
 	}
 
-	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, boolean fillNulls, boolean track) {
+	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean track) {
 		for (Requestor requestor : requestors) {
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, fillNulls, track);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, fillNulls, track);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved == -1) {
 				requestor.setResolvedArgs(actualArgs);
@@ -318,7 +337,7 @@ public class InjectorImpl implements IInjector {
 		throw new InjectionException(tmp.toString());
 	}
 
-	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, boolean fillNulls, boolean track) {
+	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean track) {
 		IObjectDescriptor[] descriptors = requestor.getDependentObjects();
 
 		// 0) initial fill - all are unresolved
@@ -336,7 +355,20 @@ public class InjectorImpl implements IInjector {
 			descriptors[i] = null; // mark as used
 		}
 
-		// 2) use the primary supplier
+		// 2) use the temporary supplier
+		if (tempSupplier != null) {
+			Object[] tempSupplierArgs = tempSupplier.get(descriptors, requestor, false /* no tracking */, requestor.shouldGroupUpdates());
+			for (int i = 0; i < actualArgs.length; i++) {
+				if (descriptors[i] == null)
+					continue; // already resolved
+				if (tempSupplierArgs[i] != NOT_A_VALUE) {
+					actualArgs[i] = tempSupplierArgs[i];
+					descriptors[i] = null; // mark as used
+				}
+			}
+		}
+
+		// 3) use the primary supplier
 		if (objectSupplier != null) {
 			Object[] primarySupplierArgs = objectSupplier.get(descriptors, requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
 			for (int i = 0; i < actualArgs.length; i++) {
@@ -349,7 +381,7 @@ public class InjectorImpl implements IInjector {
 			}
 		}
 
-		// 3) try extended suppliers
+		// 4) try extended suppliers
 		for (int i = 0; i < actualArgs.length; i++) {
 			if (descriptors[i] == null)
 				continue; // already resolved
@@ -363,13 +395,13 @@ public class InjectorImpl implements IInjector {
 			}
 		}
 
-		// 4) try the bindings
+		// 5) try the bindings
 		for (int i = 0; i < actualArgs.length; i++) {
 			if (descriptors[i] == null)
 				continue; // already resolved
 			Binding binding = findBinding(descriptors[i]);
 			if (binding != null) {
-				actualArgs[i] = internalMake(binding.getImplementationClass(), objectSupplier);
+				actualArgs[i] = internalMake(binding.getImplementationClass(), objectSupplier, tempSupplier);
 				if (actualArgs[i] != NOT_A_VALUE)
 					descriptors[i] = null; // mark as used
 			}
@@ -384,7 +416,7 @@ public class InjectorImpl implements IInjector {
 					continue;
 				Object result = null;
 				try {
-					result = internalMake(getDesiredClass(descriptors[i].getDesiredType()), objectSupplier);
+					result = internalMake(getDesiredClass(descriptors[i].getDesiredType()), objectSupplier, tempSupplier);
 				} catch (InjectionException e) {
 					// ignore
 				}
@@ -465,31 +497,31 @@ public class InjectorImpl implements IInjector {
 		return -1;
 	}
 
-	private void processClassHierarchy(Object userObject, PrimaryObjectSupplier objectSupplier, boolean processStatic, boolean track, boolean normalOrder, List<Requestor> requestors) {
-		processClass(userObject, objectSupplier, (userObject == null) ? null : userObject.getClass(), new ArrayList<Class<?>>(5), processStatic, track, normalOrder, requestors);
+	private void processClassHierarchy(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean track, boolean normalOrder, List<Requestor> requestors) {
+		processClass(userObject, objectSupplier, tempSupplier, (userObject == null) ? null : userObject.getClass(), new ArrayList<Class<?>>(5), track, normalOrder, requestors);
 	}
 
 	/**
 	 * Make the processor visit all declared members on the given class and all superclasses
 	 */
-	private void processClass(Object userObject, PrimaryObjectSupplier objectSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean processStatic, boolean track, boolean normalOrder, List<Requestor> requestors) {
+	private void processClass(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean track, boolean normalOrder, List<Requestor> requestors) {
 		// order: superclass, fields, methods
 		if (objectsClass != null) {
 			Class<?> superClass = objectsClass.getSuperclass();
 			if (superClass != null && !superClass.getName().equals(JAVA_OBJECT)) {
 				classHierarchy.add(objectsClass);
-				processClass(userObject, objectSupplier, superClass, classHierarchy, processStatic, track, normalOrder, requestors);
+				processClass(userObject, objectSupplier, tempSupplier, superClass, classHierarchy, track, normalOrder, requestors);
 				classHierarchy.remove(objectsClass);
 			}
 		}
 		boolean injectedStaticFields;
 		boolean injectedStaticMethods;
 		if (normalOrder) {
-			injectedStaticFields = processFields(userObject, objectSupplier, objectsClass, processStatic, track, requestors);
-			injectedStaticMethods = processMethods(userObject, objectSupplier, objectsClass, classHierarchy, processStatic, track, requestors);
+			injectedStaticFields = processFields(userObject, objectSupplier, tempSupplier, objectsClass, track, requestors);
+			injectedStaticMethods = processMethods(userObject, objectSupplier, tempSupplier, objectsClass, classHierarchy, track, requestors);
 		} else {
-			injectedStaticMethods = processMethods(userObject, objectSupplier, objectsClass, classHierarchy, processStatic, track, requestors);
-			injectedStaticFields = processFields(userObject, objectSupplier, objectsClass, processStatic, track, requestors);
+			injectedStaticMethods = processMethods(userObject, objectSupplier, tempSupplier, objectsClass, classHierarchy, track, requestors);
+			injectedStaticFields = processFields(userObject, objectSupplier, tempSupplier, objectsClass, track, requestors);
 		}
 		if (injectedStaticFields || injectedStaticMethods)
 			rememberInjectedStatic(objectsClass);
@@ -517,7 +549,7 @@ public class InjectorImpl implements IInjector {
 	/**
 	 * Make the processor visit all declared fields on the given class.
 	 */
-	private boolean processFields(Object userObject, PrimaryObjectSupplier objectSupplier, Class<?> objectsClass, boolean processStatic, boolean track, List<Requestor> requestors) {
+	private boolean processFields(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, boolean track, List<Requestor> requestors) {
 		boolean injectedStatic = false;
 		Field[] fields = objectsClass.getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
@@ -529,7 +561,7 @@ public class InjectorImpl implements IInjector {
 			}
 			if (!field.isAnnotationPresent(Inject.class))
 				continue;
-			requestors.add(new FieldRequestor(field, this, objectSupplier, userObject, track));
+			requestors.add(new FieldRequestor(field, this, objectSupplier, tempSupplier, userObject, track));
 		}
 		return injectedStatic;
 	}
@@ -537,7 +569,7 @@ public class InjectorImpl implements IInjector {
 	/**
 	 * Make the processor visit all declared methods on the given class.
 	 */
-	private boolean processMethods(final Object userObject, PrimaryObjectSupplier objectSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean processStatic, boolean track, List<Requestor> requestors) {
+	private boolean processMethods(final Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean track, List<Requestor> requestors) {
 		boolean injectedStatic = false;
 		Method[] methods = objectsClass.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
@@ -551,7 +583,7 @@ public class InjectorImpl implements IInjector {
 			}
 			if (!method.isAnnotationPresent(Inject.class))
 				continue;
-			requestors.add(new MethodRequestor(method, this, objectSupplier, userObject, track));
+			requestors.add(new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject, track));
 		}
 		return injectedStatic;
 	}
@@ -690,11 +722,11 @@ public class InjectorImpl implements IInjector {
 		return str1.equals(str2);
 	}
 
-	private void processAnnotated(Class<? extends Annotation> annotation, Object userObject, Class<?> objectClass, PrimaryObjectSupplier objectSupplier, ArrayList<Class<?>> classHierarchy) {
+	private void processAnnotated(Class<? extends Annotation> annotation, Object userObject, Class<?> objectClass, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, ArrayList<Class<?>> classHierarchy) {
 		Class<?> superClass = objectClass.getSuperclass();
 		if (superClass != null && !superClass.getName().equals(JAVA_OBJECT)) {
 			classHierarchy.add(objectClass);
-			processAnnotated(annotation, userObject, superClass, objectSupplier, classHierarchy);
+			processAnnotated(annotation, userObject, superClass, objectSupplier, tempSupplier, classHierarchy);
 			classHierarchy.remove(objectClass);
 		}
 		Method[] methods = objectClass.getDeclaredMethods();
@@ -705,8 +737,8 @@ public class InjectorImpl implements IInjector {
 			if (isOverridden(method, classHierarchy))
 				continue;
 
-			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, userObject, false);
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, false, false);
+			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, false);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1) {
 				if (method.isAnnotationPresent(Optional.class))

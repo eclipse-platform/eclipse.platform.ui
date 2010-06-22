@@ -95,6 +95,18 @@ public interface IInjector {
 	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
+	 * Call the annotated method on an object, injecting the parameters from the suppliers.
+	 * @param object the object on which the method should be called
+	 * @param qualifier the annotation tagging method to be called
+	 * @param defaultValue a value to be returned if the method cannot be called, might be <code>null</code>
+	 * @param objectSupplier primary object supplier
+	 * @param localSupplier primary object supplier, values override objectSupplier
+	 * @return the return value of the method call, might be <code>null</code>
+	 * @throws InjectionException if an exception occurred while performing this operation
+	 */
+	public Object invoke(Object object, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier localSupplier) throws InjectionException;
+
+	/**
 	 * Obtain an instance of the specified class and inject it with the data from the supplier.
 	 * @param <T> the type of the object to be created
 	 * @param clazz the class to be instantiated
@@ -105,6 +117,24 @@ public interface IInjector {
 	 * @see Singleton
 	 */
 	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier) throws InjectionException;
+
+	/**
+	 * Obtain an instance of the specified class and inject it with the data from the supplier.
+	 * <p>
+	 * If values for the same key present in both the object supplier and the static supplier, the values from
+	 * the static supplier are injected. Injected values from the static supplier are not tracked and no links
+	 * between the static supplier and the object are established.
+	 * </p> 
+	 * @param <T> the type of the object to be created
+	 * @param clazz the class to be instantiated
+	 * @param objectSupplier primary object supplier for the injection
+	 * @param staticSupplier additional object supplier for the injection, changes in injected values are not tracked
+	 * @return an instance of the specified class
+	 * @throws InjectionException if an exception occurred while performing this operation
+	 * @see Scope
+	 * @see Singleton
+	 */
+	public <T> T make(Class<T> clazz, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier staticSupplier) throws InjectionException;
 
 	/**
 	 * Creates a binding for the specified class and adds it to the injector. 

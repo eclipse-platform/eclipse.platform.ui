@@ -32,8 +32,8 @@ public class ClassRequestor extends Requestor {
 
 	private String clazzName;
 
-	public ClassRequestor(Class<?> clazz, IInjector injector, PrimaryObjectSupplier primarySupplier, Object requestingObject, boolean track) {
-		super(null, injector, primarySupplier, requestingObject, track);
+	public ClassRequestor(Class<?> clazz, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
+		super(null, injector, primarySupplier, tempSupplier, requestingObject, track);
 		if (clazz != null)
 			clazzName = clazz.getSimpleName();
 	}

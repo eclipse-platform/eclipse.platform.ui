@@ -23,8 +23,8 @@ public class MethodRequestor extends Requestor {
 
 	final private Method method;
 
-	public MethodRequestor(Method method, IInjector injector, PrimaryObjectSupplier primarySupplier, Object requestingObject, boolean track) {
-		super(method, injector, primarySupplier, requestingObject, track);
+	public MethodRequestor(Method method, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
+		super(method, injector, primarySupplier, tempSupplier, requestingObject, track);
 		this.method = method;
 	}
 

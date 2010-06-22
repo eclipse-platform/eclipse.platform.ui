@@ -20,8 +20,8 @@ public class FieldRequestor extends Requestor {
 
 	final private Field field;
 
-	public FieldRequestor(Field field, IInjector injector, PrimaryObjectSupplier primarySupplier, Object requestingObject, boolean track) {
-		super(field, injector, primarySupplier, requestingObject, track);
+	public FieldRequestor(Field field, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
+		super(field, injector, primarySupplier, tempSupplier, requestingObject, track);
 		this.field = field;
 	}
 

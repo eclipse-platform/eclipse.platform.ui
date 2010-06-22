@@ -102,6 +102,28 @@ final public class ContextInjectionFactory {
 	}
 
 	/**
+	 * Call a method, injecting the parameters from two contexts. This method is useful when the method needs
+	 * to receive some values not present in the context. In this case a local context can be created and
+	 * populated with additional values.
+	 * <p>
+	 * If values for the same key present in both the context and the local context, the values from
+	 * the local context are injected.
+	 * </p> 
+	 * @param object The object to perform injection on
+	 * @param qualifier the annotation tagging method to be called
+	 * @param context The context to obtain injected values from
+	 * @param localContext The context to obtain addition injected values from
+	 * @param defaultValue A value to be returned if the method cannot be called, might be <code>null</code>
+	 * @return the return value of the method call, might be <code>null</code>
+	 * @throws InjectionException if an exception occurred while performing this operation
+	 */
+	static public Object invoke(Object object, Class<? extends Annotation> qualifier, IEclipseContext context, IEclipseContext localContext, Object defaultValue) throws InjectionException {
+		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
+		PrimaryObjectSupplier tempSupplier = ContextObjectSupplier.getObjectSupplier(localContext, injector);
+		return injector.invoke(object, qualifier, defaultValue, supplier, tempSupplier);
+	}
+
+	/**
 	 * Un-injects the context from the object.
 	 * 
 	 * @param object The domain object previously injected with the context
@@ -119,6 +141,7 @@ final public class ContextInjectionFactory {
 	 * will be reused.
 	 * </p>
 	 * @param clazz The class to be instantiated
+	 * @param context The context to obtain injected values from
 	 * @return an instance of the specified class
 	 * @throws InjectionException if an exception occurred while performing this operation
 	 * @see Scope
@@ -127,5 +150,29 @@ final public class ContextInjectionFactory {
 	static public <T> T make(Class<T> clazz, IEclipseContext context) throws InjectionException {
 		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
 		return injector.make(clazz, supplier);
+	}
+
+	/**
+	 * Obtain an instance of the specified class and inject it with the context. This method
+	 * allows extra values that don't need to be tracked to be passed to the object using staticContext.
+	 * <p>
+	 * If values for the same key present in both the context and the static context, the values from
+	 * the static context are injected.
+	 * </p> 
+	 * <p>
+	 * Class'es scope dictates if a new instance of the class will be created, or existing instance
+	 * will be reused.
+	 * </p>
+	 * @param clazz The class to be instantiated
+	 * @param context The context to obtain injected values from
+	 * @param staticContext The context containing extra values; not tracked
+	 * @return an instance of the specified class
+	 * @throws InjectionException if an exception occurred while performing this operation
+	 * @see #make(Class, IEclipseContext)
+	 */
+	static public <T> T make(Class<T> clazz, IEclipseContext context, IEclipseContext staticContext) throws InjectionException {
+		PrimaryObjectSupplier supplier = ContextObjectSupplier.getObjectSupplier(context, injector);
+		PrimaryObjectSupplier tempSupplier = ContextObjectSupplier.getObjectSupplier(staticContext, injector);
+		return injector.make(clazz, supplier, tempSupplier);
 	}
 }
