@@ -561,4 +561,48 @@ public class ModelServiceImpl implements EModelService {
 
 		return null; // Ooops!
 	}
+
+	public void removePerspectiveModel(MPerspective persp, MWindow window) {
+		if (persp == null)
+			return;
+
+		for (MWindow win : persp.getWindows()) {
+			win.setToBeRendered(false);
+		}
+
+		// Remove any minimized stacks for this perspective
+		List<MTrimBar> bars = findElements(window, null, MTrimBar.class, null);
+		List<MToolControl> toRemove = new ArrayList<MToolControl>();
+		for (MTrimBar bar : bars) {
+			for (MUIElement barKid : bar.getChildren()) {
+				if (!(barKid instanceof MToolControl))
+					continue;
+				String id = barKid.getElementId();
+				if (id != null && id.contains(persp.getElementId())) {
+					toRemove.add((MToolControl) barKid);
+				}
+			}
+		}
+
+		for (MToolControl toolControl : toRemove) {
+			toolControl.setToBeRendered(false);
+			toolControl.getParent().getChildren().remove(toolControl);
+		}
+
+		persp.setToBeRendered(false);
+
+		MUIElement psElement = persp.getParent();
+		MPerspectiveStack ps = (MPerspectiveStack) psElement;
+		ps.getChildren().remove(persp);
+
+		if (ps.getSelectedElement() == persp) {
+			for (MPerspective p : ps.getChildren()) {
+				if (p != persp && p.isToBeRendered()) {
+					ps.setSelectedElement(p);
+					return;
+				}
+			}
+			ps.setSelectedElement(null);
+		}
+	}
 }

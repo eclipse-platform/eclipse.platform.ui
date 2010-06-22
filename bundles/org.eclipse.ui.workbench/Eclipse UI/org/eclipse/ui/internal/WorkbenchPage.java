@@ -11,12 +11,6 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.e4.ui.workbench.UIEvents;
-
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,6 +40,10 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -1044,10 +1042,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (openedPerspectives.size() == 1) {
 			closeAllPerspectives(saveParts, closePage);
 		} else {
-			// TODO Auto-generated method stub
+			// Remove from caches
 			sortedPerspectives.remove(desc);
 			openedPerspectives.remove(desc);
 		}
+
+		// Clear up the model
+		MPerspective persp = (MPerspective) modelService.find(desc.getId(), window);
+		modelService.removePerspectiveModel(persp, window);
 	}
 
 	/*
@@ -1979,8 +1981,20 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * is activated in the new layout for consistent user context.
      */
     public void resetPerspective() {
-		// FIXME compat resetPerspective
-		E4Util.unsupported("resetPerspective"); //$NON-NLS-1$
+		MPerspectiveStack perspStack = getPerspectiveStack();
+		MPerspective persp = perspStack.getSelectedElement();
+		if (persp == null)
+			return;
+
+		// HACK!! the 'perspective' field doesn't match reality...
+		IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry()
+				.findPerspectiveWithId(persp.getElementId());
+		if (desc == null)
+			return;
+
+		// For now just close and re-open it
+		closePerspective(desc, true, false);
+		setPerspective(desc);
 	}
 
 

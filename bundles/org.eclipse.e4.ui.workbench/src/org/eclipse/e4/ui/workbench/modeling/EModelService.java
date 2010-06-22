@@ -200,4 +200,5 @@ public interface EModelService {
 
 	public MTrimBar getTrim(MTrimmedWindow window, SideValue sv);
 
+	public void removePerspectiveModel(MPerspective persp, MWindow window);
 }

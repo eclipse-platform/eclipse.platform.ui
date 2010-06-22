@@ -11,7 +11,6 @@
 
 package org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -23,7 +22,6 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -60,6 +58,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -468,46 +467,11 @@ public class PerspectiveSwitcher {
 	}
 
 	private void closePerspective(MPerspective persp) {
-		MPerspectiveStack ps = getPerspectiveStack();
-
-		for (MWindow win : persp.getWindows()) {
-			win.setToBeRendered(false);
-		}
-
-		// Remove any minimized stacks for this perspective
-		List<MTrimBar> bars = modelService.findElements(window, null, MTrimBar.class, null);
-		List<MToolControl> toRemove = new ArrayList<MToolControl>();
-		for (MTrimBar bar : bars) {
-			for (MUIElement barKid : bar.getChildren()) {
-				if (!(barKid instanceof MToolControl))
-					continue;
-				String id = barKid.getElementId();
-				if (id != null && id.contains(persp.getElementId())) {
-					toRemove.add((MToolControl) barKid);
-				}
-			}
-		}
-
-		for (MToolControl toolControl : toRemove) {
-			toolControl.setToBeRendered(false);
-			toolControl.getParent().getChildren().remove(toolControl);
-		}
-
-		persp.setToBeRendered(false);
-
-		ps.getChildren().remove(persp);
+		IWorkbenchPage page = persp.getContext().get(IWorkbenchPage.class);
+		IPerspectiveDescriptor desc = getDescriptorFor(persp.getElementId());
+		page.closePerspective(desc, true, false);
 
 		removePerspectiveItem(persp);
-
-		if (ps.getSelectedElement() == persp) {
-			for (MPerspective p : ps.getChildren()) {
-				if (p != persp && p.isToBeRendered()) {
-					ps.setSelectedElement(p);
-					return;
-				}
-			}
-			ps.setSelectedElement(null);
-		}
 	}
 
 	private void addResetItem(final Menu menu) {
@@ -518,8 +482,8 @@ public class PerspectiveSwitcher {
 				final MPerspective persp = (MPerspective) menu.getData();
 				if (persp == null)
 					return;
-				closePerspective(persp);
-				openPerspective((PerspectiveDescriptor) getDescriptorFor(persp.getElementId()));
+				IWorkbenchPage page = persp.getContext().get(IWorkbenchPage.class);
+				page.resetPerspective();
 			}
 		});
 	}
