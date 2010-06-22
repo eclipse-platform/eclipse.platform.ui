@@ -56,7 +56,7 @@
       </theme>
    </extension>
    <extension
-         id="id1"
+         id="modelContribution"
          point="org.eclipse.e4.workbench.model">
       <processor
             beforefragment="true"
