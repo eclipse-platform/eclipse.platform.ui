@@ -87,6 +87,7 @@ public class PerspectiveSwitcher {
 	@Inject
 	private MWindow window;
 
+	private MToolControl psME;
 	private ToolBar psTB;
 	private Composite comp;
 	private Image backgroundImage;
@@ -98,7 +99,12 @@ public class PerspectiveSwitcher {
 		public void handleEvent(Event event) {
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
-			if (!(changedElement instanceof MPerspectiveStack))
+			if (psME == null || !(changedElement instanceof MPerspectiveStack))
+				return;
+
+			MWindow perspWin = modelService.getTopLevelWindowFor(changedElement);
+			MWindow switcherWin = modelService.getTopLevelWindowFor(psME);
+			if (perspWin != switcherWin)
 				return;
 
 			MPerspectiveStack perspStack = (MPerspectiveStack) changedElement;
@@ -116,7 +122,12 @@ public class PerspectiveSwitcher {
 		public void handleEvent(Event event) {
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
-			if (!(changedElement instanceof MPerspective))
+			if (psME == null || !(changedElement instanceof MPerspective))
+				return;
+
+			MWindow perspWin = modelService.getTopLevelWindowFor(changedElement);
+			MWindow switcherWin = modelService.getTopLevelWindowFor(psME);
+			if (perspWin != switcherWin)
 				return;
 
 			MPerspective persp = (MPerspective) changedElement;
@@ -141,7 +152,13 @@ public class PerspectiveSwitcher {
 				if (added instanceof MPerspectiveStack) {
 				}
 			}
-			if (!(changedObj instanceof MPerspectiveStack))
+
+			if (psME == null || !(changedObj instanceof MPerspectiveStack))
+				return;
+
+			MWindow perspWin = modelService.getTopLevelWindowFor((MUIElement) changedObj);
+			MWindow switcherWin = modelService.getTopLevelWindowFor(psME);
+			if (perspWin != switcherWin)
 				return;
 
 			if (UIEvents.EventTypes.ADD.equals(eventType)) {
@@ -176,6 +193,7 @@ public class PerspectiveSwitcher {
 
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl toolControl) {
+		psME = toolControl;
 		borderColor = new Color(parent.getDisplay(), 170, 176, 191);
 		comp = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
