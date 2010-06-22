@@ -35,6 +35,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
@@ -254,7 +255,8 @@ public class PartServiceImpl implements EPartService {
 
 			modelService.bringToTop(getWindow(), part);
 
-			if (oldSelectedElement != part) {
+			if (oldSelectedElement != part && parent.getChildren().contains(part)
+					&& parent instanceof MGenericStack<?>) {
 				internalFixContext(part, oldSelectedElement);
 			}
 		}
