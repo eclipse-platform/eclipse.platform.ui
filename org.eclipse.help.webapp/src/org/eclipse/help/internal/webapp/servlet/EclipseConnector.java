@@ -188,7 +188,11 @@ public class EclipseConnector {
 			}
 
 			transferContent(is, out);
-			out.close();
+			try {
+			    out.close();
+			} catch (IOException ioe) {
+				//  Bug 314324 - do not report an error
+			}
 			is.close();
 
 		} catch (Exception e) {
