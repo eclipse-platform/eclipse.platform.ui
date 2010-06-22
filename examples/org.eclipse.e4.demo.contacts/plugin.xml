@@ -49,5 +49,28 @@
             id="org.eclipse.e4.demo.contacts.themes.brightgradient"
             label="Bright Gradient Theme">
       </theme>
+      <theme
+            basestylesheeturi="css/blue-gradient.css"
+            id="org.eclipse.e4.demo.contacts.themes.blue"
+            label="Blue Gradient Theme">
+      </theme>
+   </extension>
+   <extension
+         id="id1"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+            beforefragment="true"
+            class="org.eclipse.e4.demo.contacts.processors.MenuThemeProcessor">
+         <element
+               id="menu:org.eclipse.ui.main.menu">
+         </element>
+      </processor>
+      <processor
+            beforefragment="true"
+            class="org.eclipse.e4.demo.contacts.processors.ToolbarThemeProcessor">
+         <element
+               id="toolbar:org.eclipse.ui.main.toolbar">
+         </element>
+      </processor>
    </extension>
 </plugin>

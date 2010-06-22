@@ -16,28 +16,18 @@
         <children xsi:type="menu:DirectMenuItem" xmi:id="_SeXUEu8EEd6FC9cDb6iV7g" elementId="_SeXUEu8EEd6FC9cDb6iV7g" label="Direct Exit" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_SeXUE-8EEd6FC9cDb6iV7g" elementId="_SeXUE-8EEd6FC9cDb6iV7g" label="Exit" command="contacts.exit"/>
       </children>
-      <children xsi:type="menu:Menu" xmi:id="_SeXUFO8EEd6FC9cDb6iV7g" elementId="_SeXUFO8EEd6FC9cDb6iV7g" label="Theme">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_SeXUFe8EEd6FC9cDb6iV7g" elementId="_SeXUFe8EEd6FC9cDb6iV7g" label="Dark Theme" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/dark.png" command="contacts.darkTheme"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_SeXUFu8EEd6FC9cDb6iV7g" elementId="_SeXUFu8EEd6FC9cDb6iV7g" label="Bright Theme" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/bright.png" command="contacts.brightTheme"/>
-      </children>
     </mainMenu>
     <trimBars xmi:id="_SeXUAu8EEd6FC9cDb6iV7g" elementId="_SeXUAu8EEd6FC9cDb6iV7g">
       <children xsi:type="menu:ToolBar" xmi:id="toolbar:org.eclipse.ui.main.toolbar" elementId="toolbar:org.eclipse.ui.main.toolbar">
         <children xsi:type="menu:DirectToolItem" xmi:id="_SeXUBO8EEd6FC9cDb6iV7g" elementId="_SeXUBO8EEd6FC9cDb6iV7g" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" tooltip="Save" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler"/>
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_GSEXIHk5Ed-55voCTyIpVQ"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_SeXUBu8EEd6FC9cDb6iV7g" elementId="_SeXUBu8EEd6FC9cDb6iV7g" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/bright.png" tooltip="Bright Theme" command="contacts.brightTheme"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_SeXUB-8EEd6FC9cDb6iV7g" elementId="_SeXUB-8EEd6FC9cDb6iV7g" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/dark.png" tooltip="Dark Theme" command="contacts.darkTheme"/>
       </children>
     </trimBars>
   </children>
   <handlers xmi:id="_SeXUF-8EEd6FC9cDb6iV7g" elementId="_SeXUF-8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" command="contacts.exit"/>
   <handlers xmi:id="_SeXUGO8EEd6FC9cDb6iV7g" elementId="_SeXUGO8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler" command="contacts.save"/>
   <handlers xmi:id="_SeXUGe8EEd6FC9cDb6iV7g" elementId="_SeXUGe8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DeleteContactHandler" command="contacts.delete"/>
-  <handlers xmi:id="_SeXUGu8EEd6FC9cDb6iV7g" elementId="_SeXUGu8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DarkThemeHandler" command="contacts.darkTheme"/>
-  <handlers xmi:id="_SeXUG-8EEd6FC9cDb6iV7g" elementId="_SeXUG-8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.BrightThemeHandler" command="contacts.brightTheme"/>
+  <handlers xmi:id="_SeXUG=8EEd6FC9cDb6iV7g" elementId="_SeXUG=8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SwitchThemeHandler" command="contacts.switchTheme"/>
   <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="_SeXUEO8EEd6FC9cDb6iV7x" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
-    <bindings xmi:id="_SeXUHO8EEd6FC9cDb6iV7g" keySequence="CTRL+D" elementId="_SeXUHO8EEd6FC9cDb6iV7g" command="contacts.darkTheme"/>
-    <bindings xmi:id="_SeXUHe8EEd6FC9cDb6iV7g" keySequence="CTRL+L" elementId="_SeXUHe8EEd6FC9cDb6iV7g" command="contacts.brightTheme"/>
     <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="CTRL+S" elementId="_SeXUHu8EEd6FC9cDb6iV7g" command="contacts.save"/>
     <bindings xmi:id="_SeXUH-8EEd6FC9cDb6iV7g" keySequence="Delete" elementId="_SeXUH-8EEd6FC9cDb6iV7g" command="contacts.delete"/>
     <bindings xmi:id="_SeXUIO8EEd6FC9cDb6iV7g" keySequence="CTRL+5 X" elementId="_SeXUIO8EEd6FC9cDb6iV7g" command="contacts.exit"/>
@@ -48,8 +38,9 @@
   </rootContext>
   <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
   <commands xmi:id="contacts.exit" elementId="contacts.exit" commandName="Exit" description=""/>
-  <commands xmi:id="contacts.darkTheme" elementId="contacts.darkTheme" commandName="Dark Theme"/>
-  <commands xmi:id="contacts.brightTheme" elementId="contacts.brightTheme" commandName="Bright Theme" description=""/>
   <commands xmi:id="contacts.save" elementId="contacts.save" commandName="Save" description=""/>
   <commands xmi:id="contacts.delete" elementId="contacts.delete" commandName="Delete" description=""/>
+  <commands xmi:id="contacts.switchTheme" elementId="contacts.switchTheme" commandName="Switch Theme" description="">
+    <parameters xmi:id="contacts.commands.switchtheme.themeid" elementId="contacts.commands.switchtheme.themeid" name="Theme Id" typeId="" optional="false"/>
+  </commands>
 </application:Application>
