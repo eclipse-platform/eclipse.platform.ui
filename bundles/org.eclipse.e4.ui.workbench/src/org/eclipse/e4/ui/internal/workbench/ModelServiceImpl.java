@@ -98,7 +98,8 @@ public class ModelServiceImpl implements EModelService {
 		// Search Trim
 		if (searchRoot instanceof MTrimmedWindow) {
 			MTrimmedWindow tw = (MTrimmedWindow) searchRoot;
-			for (MTrimBar bar : tw.getTrimBars()) {
+			List<MTrimBar> bars = tw.getTrimBars();
+			for (MTrimBar bar : bars) {
 				findElementsRecursive(bar, id, type, tagsToMatch, elements);
 			}
 		}
@@ -216,11 +217,12 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		if (parent != null) {
+			((MElementContainer<MUIElement>) parent).setSelectedElement(element);
+
 			// Force the element to be rendered
 			if (!element.isToBeRendered())
 				element.setToBeRendered(true);
 
-			((MElementContainer<MUIElement>) parent).setSelectedElement(element);
 			bringToTop(window, parent);
 		}
 	}
