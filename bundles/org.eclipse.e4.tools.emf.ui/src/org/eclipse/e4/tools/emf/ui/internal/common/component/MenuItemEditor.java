@@ -62,7 +62,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 			if (menuImage == null) {
 				try {
-					menuImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/MenuItem.gif")); //$NON-NLS-1$
+					menuImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/MenuItem.gif")); //$NON-NLS-1$
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

@@ -44,7 +44,7 @@ public class MenuSeparatorEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if (separatorImage == null) {
 			try {
-				separatorImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.ui.model.workbench.edit/icons/full/obj16/MenuSeparator.gif")); //$NON-NLS-1$
+				separatorImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/MenuSeparator.gif")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
