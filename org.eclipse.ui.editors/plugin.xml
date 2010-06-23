@@ -489,7 +489,7 @@
 	       definitionId="org.eclipse.ui.edit.text.delimiter.windows"
 	       label="%convertDelimiters.Windows.label"
 	       class="org.eclipse.ui.internal.editors.text.ConvertLineDelimitersToWindows"
-	       tooltip="%convertDelimiters.Unix.description"
+	       tooltip="%convertDelimiters.Windows.description"
 	       menubarPath="file/converstLineDelimitersTo/lineDelimitersConversion"
 	       id="org.eclipse.ui.edit.text.delimiter.windows">
 	 	 </action>
