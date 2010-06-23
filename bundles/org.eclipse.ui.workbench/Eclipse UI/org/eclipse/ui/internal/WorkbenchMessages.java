@@ -443,30 +443,31 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_RunInBackgroundToolTip;
 
 	// --- Appearance ---
-	public static String ViewsPreference_currentPresentation;
-	public static String ViewsPreference_currentPresentationFormat;
-	public static String ViewsPreference_presentationConfirm_title;
-	public static String ViewsPreference_presentationConfirm_message;
-	public static String ViewsPreference_presentationConfirm_yes;
-	public static String ViewsPreference_presentationConfirm_no;
-	public static String ViewsPreference_editors;
-	public static String ViewsPreference_editors_top;
-	public static String ViewsPreference_editors_bottom;
-	public static String ViewsPreference_views;
-	public static String ViewsPreference_views_top;
-	public static String ViewsPreference_views_bottom;
-	public static String ViewsPreference_perspectiveBar;
-	public static String ViewsPreference_perspectiveBar_topRight;
-	public static String ViewsPreference_perspectiveBar_topLeft;
-	public static String ViewsPreference_perspectiveBar_left;
-	public static String ViewsPreference_traditionalTabs;
-	public static String ViewsPreference_currentTheme;
-	public static String ViewsPreference_currentThemeDescription;
-	public static String ViewsPreference_currentThemeFormat;
-	public static String ViewsPreference_enableAnimations;
-	public static String ViewsPreference_useColoredLabels;
-	public static String ViewsPreference_override;
-	public static String ViewsPreference_restartRequestJobName;
+	public static String ViewsPreferencePage_Theme;
+	// public static String ViewsPreference_currentPresentation;
+	// public static String ViewsPreference_currentPresentationFormat;
+	// public static String ViewsPreference_presentationConfirm_title;
+	// public static String ViewsPreference_presentationConfirm_message;
+	// public static String ViewsPreference_presentationConfirm_yes;
+	// public static String ViewsPreference_presentationConfirm_no;
+	// public static String ViewsPreference_editors;
+	// public static String ViewsPreference_editors_top;
+	// public static String ViewsPreference_editors_bottom;
+	// public static String ViewsPreference_views;
+	// public static String ViewsPreference_views_top;
+	// public static String ViewsPreference_views_bottom;
+	// public static String ViewsPreference_perspectiveBar;
+	// public static String ViewsPreference_perspectiveBar_topRight;
+	// public static String ViewsPreference_perspectiveBar_topLeft;
+	// public static String ViewsPreference_perspectiveBar_left;
+	// public static String ViewsPreference_traditionalTabs;
+	// public static String ViewsPreference_currentTheme;
+	// public static String ViewsPreference_currentThemeDescription;
+	// public static String ViewsPreference_currentThemeFormat;
+	// public static String ViewsPreference_enableAnimations;
+	// public static String ViewsPreference_useColoredLabels;
+	// public static String ViewsPreference_override;
+	// public static String ViewsPreference_restartRequestJobName;
 	
 	// --- File Editors ---
 	public static String FileEditorPreference_fileTypes;
