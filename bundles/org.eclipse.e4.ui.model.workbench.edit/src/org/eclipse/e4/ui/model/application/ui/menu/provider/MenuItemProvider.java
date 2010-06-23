@@ -324,11 +324,6 @@ public class MenuItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MBasicFactory.INSTANCE.createStackElement()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MAdvancedFactory.INSTANCE.createPlaceholder()));
 
 		newChildDescriptors.add

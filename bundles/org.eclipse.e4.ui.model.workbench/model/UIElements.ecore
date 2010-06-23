@@ -356,7 +356,8 @@
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/UIElement"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="StackElement" eSuperTypes="#//ui/UIElement"/>
+      <eClassifiers xsi:type="ecore:EClass" name="StackElement" abstract="true" interface="true"
+          eSuperTypes="#//ui/UIElement"/>
     </eSubpackages>
     <eSubpackages name="advanced" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"
         nsPrefix="advanced">

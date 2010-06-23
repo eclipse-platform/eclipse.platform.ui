@@ -510,11 +510,6 @@ public class WindowItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
-				 MBasicFactory.INSTANCE.createStackElement()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
 				 MApplicationFactory.INSTANCE.createApplication()));
 
 		newChildDescriptors.add
