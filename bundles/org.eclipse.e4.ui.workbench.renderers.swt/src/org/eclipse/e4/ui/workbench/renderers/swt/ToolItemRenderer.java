@@ -37,11 +37,17 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
@@ -57,6 +63,9 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	Logger logger;
 	@Inject
 	IEventBroker eventBroker;
+
+	@Inject
+	private IPresentationEngine engine;
 
 	private EventHandler itemUpdater = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -283,6 +292,34 @@ public class ToolItemRenderer extends SWTPartRenderer {
 						item.setSelected(((ToolItem) e.widget).getSelection());
 					}
 				});
+			} else if (me instanceof MToolItem) {
+				final MMenu mmenu = ((MToolItem) me).getMenu();
+				if (mmenu != null) {
+					final ToolItem ti = (ToolItem) me.getWidget();
+					ti.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							if (e.detail == SWT.ARROW) {
+								Menu menu = (Menu) engine.createGui(mmenu, ti
+										.getParent().getShell());
+
+								Rectangle itemBounds = ti.getBounds();
+								Point displayAt = ti.getParent().toDisplay(
+										itemBounds.x,
+										itemBounds.y + itemBounds.height);
+								menu.setLocation(displayAt);
+								menu.setVisible(true);
+
+								Display display = menu.getDisplay();
+								while (!menu.isDisposed() && menu.isVisible()) {
+									if (!display.readAndDispatch()) {
+										display.sleep();
+									}
+								}
+								menu.dispose();
+							}
+						}
+					});
+				}
 			}
 		}
 
