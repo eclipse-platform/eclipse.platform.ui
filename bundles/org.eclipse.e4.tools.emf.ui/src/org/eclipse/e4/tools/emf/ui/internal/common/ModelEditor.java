@@ -10,6 +10,10 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VToolBarContributionsEditor;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarContributionEditor;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
 
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
@@ -143,6 +147,7 @@ public class ModelEditor {
 	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = ModelEditor.class.getName() + ".VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
 	public static final String VIRTUAL_ADDONS = ModelEditor.class.getName() + ".VIRTUAL_ADDONS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MENU_CONTRIBUTIONS = ModelEditor.class.getName() + ".VIRTUAL_MENU_CONTRIBUTIONS"; //$NON-NLS-1$
+	public static final String VIRTUAL_TOOLBAR_CONTRIBUTIONS = ModelEditor.class.getName() + ".VIRTUAL_TOOLBAR_CONTRIBUTIONS"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOW_SHARED_ELEMENTS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_SHARED_ELEMENTS"; //$NON-NLS-1$
 	
 
@@ -421,6 +426,7 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS, new VWindowTrimEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_ADDONS, new VApplicationAddons(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_MENU_CONTRIBUTIONS, new VMenuContributionsEditor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_TOOLBAR_CONTRIBUTIONS, new VToolBarContributionsEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_WINDOW_SHARED_ELEMENTS, new VWindowSharedElementsEditor(modelProvider.getEditingDomain(), this));
 	}
 
@@ -474,6 +480,8 @@ public class ModelEditor {
 		registerEditor(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, new HandledMenuItemEditor(modelProvider.getEditingDomain(), project, modelProvider));
 		registerEditor(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(MenuPackageImpl.Literals.MENU_CONTRIBUTION, new MenuContributionEditor(modelProvider.getEditingDomain(),project, this));
+		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION, new ToolBarContributionEditor(modelProvider.getEditingDomain(),project, this));
+		
 		
 		registerEditor(BasicPackageImpl.Literals.PART, new PartEditor(modelProvider.getEditingDomain(), project));
 		registerEditor(BasicPackageImpl.Literals.WINDOW, new WindowEditor(modelProvider.getEditingDomain(), project));

@@ -24,6 +24,8 @@ public class Messages {
 	public static String ApplicationEditor_Commands;
 	public static String ApplicationEditor_Windows;
 	public static String ApplicationEditor_Addons;
+	public static String ApplicationEditor_MenuContributions;
+	public static String ApplicationEditor_ToolBarContributions;
 
 	public static String BindingTableEditor_Label;
 	public static String BindingTableEditor_Description;
@@ -348,6 +350,7 @@ public class Messages {
 	public static String FeatureSelectionDialog_DialogTitle;
 	public static String FeatureSelectionDialog_DialogMessage;
 
+	
 	
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

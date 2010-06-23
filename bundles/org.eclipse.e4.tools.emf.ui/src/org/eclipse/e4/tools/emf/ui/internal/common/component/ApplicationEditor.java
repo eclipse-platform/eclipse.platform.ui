@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -50,7 +52,9 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private IListProperty PART_DESCRIPTOR_CONTAINER__DESCRIPTORS = EMFProperties.list(BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private IListProperty APPLICATION__ADDONS = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
-
+	private IListProperty MENU_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
+	private IListProperty TOOLBAR_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
+	
 	public ApplicationEditor(EditingDomain editingDomain) {
 		super(editingDomain);
 	}
@@ -167,6 +171,20 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				return true;
 			}
 
+		});
+		
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_MENU_CONTRIBUTIONS, MENU_CONTRIBUTIONS,  element, Messages.ApplicationEditor_MenuContributions ) { 
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+		});
+		
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_TOOLBAR_CONTRIBUTIONS, TOOLBAR_CONTRIBUTIONS,  element, Messages.ApplicationEditor_ToolBarContributions ) { 
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
 		});
 
 		return list;
