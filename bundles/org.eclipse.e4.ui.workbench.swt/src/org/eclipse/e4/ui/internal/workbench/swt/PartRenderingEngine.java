@@ -62,6 +62,7 @@ import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -624,6 +625,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 					}
 					// long endTime = System.currentTimeMillis();
 					// System.out.println("Render: " + (endTime - startTime));
+					// tell the app context we are starting so the splash is
+					// torn down
+					IApplicationContext ac = appContext
+							.get(IApplicationContext.class);
+					if (ac != null)
+						ac.applicationRunning();
 				} else if (uiRoot instanceof MUIElement) {
 					if (uiRoot instanceof MWindow) {
 						testShell = (Shell) createGui((MUIElement) uiRoot);
@@ -641,6 +648,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 							(IWorkbench) runContext.get(IWorkbench.class
 									.getName()));
 				}
+
 				// Spin the event loop until someone disposes the display
 				while (((testShell != null && !testShell.isDisposed()) || (!theApp
 						.getChildren().isEmpty() && someAreVisible(theApp
