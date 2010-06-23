@@ -12,9 +12,11 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
@@ -27,12 +29,15 @@ import org.eclipse.osgi.service.debug.DebugTrace;
 public final class WorkbenchLogger extends Logger {
 	protected DebugTrace trace;
 	protected FrameworkLog log;
+	private String bundleName;
 
 	/**
 	 * Creates a new workbench logger
 	 */
-	public WorkbenchLogger() {
+	@Inject
+	public WorkbenchLogger(@Optional @Named("logger.bundlename") String bundleName) {
 		super();
+		this.bundleName = bundleName == null ? Activator.PI_WORKBENCH : bundleName;
 	}
 
 	public void debug(Throwable t) {
@@ -44,8 +49,7 @@ public final class WorkbenchLogger extends Logger {
 	}
 
 	public void error(Throwable t, String message) {
-		log(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
-				message, t));
+		log(new Status(IStatus.ERROR, bundleName, message, t));
 	}
 
 	/**
@@ -79,8 +83,7 @@ public final class WorkbenchLogger extends Logger {
 	}
 
 	public void info(Throwable t, String message) {
-		log(new Status(IStatus.INFO, Activator.getDefault().getBundle().getSymbolicName(), message,
-				t));
+		log(new Status(IStatus.INFO, bundleName, message, t));
 	}
 
 	public boolean isDebugEnabled() {
@@ -122,7 +125,7 @@ public final class WorkbenchLogger extends Logger {
 	@Inject
 	public void setDebugOptions(DebugOptions options) {
 		if (options != null) {
-			this.trace = options.newDebugTrace(Activator.PI_WORKBENCH, WorkbenchLogger.class);
+			this.trace = options.newDebugTrace(bundleName, WorkbenchLogger.class);
 		}
 	}
 
@@ -144,7 +147,6 @@ public final class WorkbenchLogger extends Logger {
 	}
 
 	public void warn(Throwable t, String message) {
-		log(new Status(IStatus.WARNING, Activator.getDefault().getBundle().getSymbolicName(),
-				message, t));
+		log(new Status(IStatus.WARNING, bundleName, message, t));
 	}
 }

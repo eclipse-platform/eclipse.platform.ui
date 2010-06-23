@@ -142,6 +142,8 @@ public class E4Workbench implements IWorkbench {
 		return appModel;
 	}
 
+	// FIXME We should have one place to setup the generic context stuff (see
+	// E4Application#createDefaultContext())
 	public static IEclipseContext createWorkbenchContext(final IEclipseContext applicationContext,
 			IExtensionRegistry registry, IExceptionHandler exceptionHandler,
 			IContributionFactory contributionFactory) {

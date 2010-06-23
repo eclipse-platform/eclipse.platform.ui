@@ -26,11 +26,13 @@ import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.internal.workbench.ActiveChildLookupFunction;
 import org.eclipse.e4.ui.internal.workbench.ActivePartLookupFunction;
+import org.eclipse.e4.ui.internal.workbench.DefaultLoggerProvider;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.ExceptionHandler;
 import org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory;
@@ -263,6 +265,8 @@ public class E4Application implements IApplication {
 	public void stop() {
 	}
 
+	// FIXME We should have one place to setup the generic context stuff (see
+	// E4Application#createDefaultContext())
 	public static IEclipseContext createDefaultContext() {
 		// FROM: WorkbenchApplication
 		// parent of the global workbench context is an OSGi service
@@ -280,10 +284,16 @@ public class E4Application implements IApplication {
 				contributionFactory);
 
 		appContext
-			.set(Logger.class.getName(), ContextInjectionFactory.make(
-				WorkbenchLogger.class, appContext));
+				.set(Logger.class.getName(), ContextInjectionFactory.make(
+						WorkbenchLogger.class, appContext));
 		appContext.set(Adapter.class.getName(),
 				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
+
+		// No default log provider available
+		if (appContext.get(ILoggerProvider.class) == null) {
+			appContext.set(ILoggerProvider.class, ContextInjectionFactory.make(
+					DefaultLoggerProvider.class, appContext));
+		}
 
 		// setup for commands and handlers
 		appContext.set(ContextManager.class.getName(), new ContextManager());
