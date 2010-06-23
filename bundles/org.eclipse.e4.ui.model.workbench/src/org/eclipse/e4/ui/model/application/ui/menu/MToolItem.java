@@ -28,25 +28,25 @@ package org.eclipse.e4.ui.model.application.ui.menu;
 public interface MToolItem extends MItem, MToolBarElement {
 
 	/**
-	 * Returns the value of the '<em><b>Menu</b></em>' reference.
+	 * Returns the value of the '<em><b>Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Menu</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Menu</em>' reference.
+	 * @return the value of the '<em>Menu</em>' containment reference.
 	 * @see #setMenu(MMenu)
-	 * @model
+	 * @model containment="true"
 	 * @generated
 	 */
 	MMenu getMenu();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu <em>Menu</em>}' reference.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu <em>Menu</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Menu</em>' reference.
+	 * @param value the new value of the '<em>Menu</em>' containment reference.
 	 * @see #getMenu()
 	 * @generated
 	 */

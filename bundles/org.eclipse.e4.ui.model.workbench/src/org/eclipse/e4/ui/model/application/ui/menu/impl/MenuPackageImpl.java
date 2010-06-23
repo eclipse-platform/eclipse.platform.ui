@@ -2045,7 +2045,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_ITEM__TYPE = ITEM__TYPE;
 
 	/**
-	 * The feature id for the '<em><b>Menu</b></em>' reference.
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2625,7 +2625,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_TOOL_ITEM__TYPE = TOOL_ITEM__TYPE;
 
 	/**
-	 * The feature id for the '<em><b>Menu</b></em>' reference.
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2833,7 +2833,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_TOOL_ITEM__TYPE = TOOL_ITEM__TYPE;
 
 	/**
-	 * The feature id for the '<em><b>Menu</b></em>' reference.
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4247,10 +4247,10 @@ public class MenuPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu <em>Menu</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu <em>Menu</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Menu</em>'.
+	 * @return the meta object for the containment reference '<em>Menu</em>'.
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.MToolItem#getMenu()
 	 * @see #getToolItem()
 	 * @generated
@@ -4781,7 +4781,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		initEClass(handledMenuItemEClass, MHandledMenuItem.class, "HandledMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(toolItemEClass, MToolItem.class, "ToolItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEReference(getToolItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, MToolItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getToolItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, MToolItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(toolBarEClass, MToolBar.class, "ToolBar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -5029,7 +5029,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		public static final EClass TOOL_ITEM = eINSTANCE.getToolItem();
 
 		/**
-		 * The meta object literal for the '<em><b>Menu</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Menu</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
