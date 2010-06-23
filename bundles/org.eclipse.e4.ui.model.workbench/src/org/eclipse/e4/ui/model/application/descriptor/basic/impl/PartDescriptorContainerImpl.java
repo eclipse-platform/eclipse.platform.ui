@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class PartDescriptorContainerImpl extends EObjectImpl implements MPartDescriptorContainer {
+public abstract class PartDescriptorContainerImpl extends EObjectImpl implements MPartDescriptorContainer {
 	/**
 	 * The cached value of the '{@link #getDescriptors() <em>Descriptors</em>}' containment reference list.
 	 * <!-- begin-user-doc -->

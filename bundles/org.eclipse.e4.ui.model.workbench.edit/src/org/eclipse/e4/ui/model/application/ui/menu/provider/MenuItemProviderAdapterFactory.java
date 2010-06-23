@@ -330,29 +330,6 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected MenuContributionsItemProvider menuContributionsItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createMenuContributionsAdapter() {
-		if (menuContributionsItemProvider == null) {
-			menuContributionsItemProvider = new MenuContributionsItemProvider(this);
-		}
-
-		return menuContributionsItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -422,29 +399,6 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ToolBarContributionsItemProvider toolBarContributionsItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createToolBarContributionsAdapter() {
-		if (toolBarContributionsItemProvider == null) {
-			toolBarContributionsItemProvider = new ToolBarContributionsItemProvider(this);
-		}
-
-		return toolBarContributionsItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -465,29 +419,6 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		}
 
 		return trimContributionItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected TrimContributionsItemProvider trimContributionsItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createTrimContributionsAdapter() {
-		if (trimContributionsItemProvider == null) {
-			trimContributionsItemProvider = new TrimContributionsItemProvider(this);
-		}
-
-		return trimContributionsItemProvider;
 	}
 
 	/**
@@ -600,13 +531,10 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		if (handledToolItemItemProvider != null) handledToolItemItemProvider.dispose();
 		if (directToolItemItemProvider != null) directToolItemItemProvider.dispose();
 		if (toolBarSeparatorItemProvider != null) toolBarSeparatorItemProvider.dispose();
-		if (menuContributionsItemProvider != null) menuContributionsItemProvider.dispose();
 		if (renderedMenuItemProvider != null) renderedMenuItemProvider.dispose();
 		if (renderedToolBarItemProvider != null) renderedToolBarItemProvider.dispose();
 		if (toolBarContributionItemProvider != null) toolBarContributionItemProvider.dispose();
-		if (toolBarContributionsItemProvider != null) toolBarContributionsItemProvider.dispose();
 		if (trimContributionItemProvider != null) trimContributionItemProvider.dispose();
-		if (trimContributionsItemProvider != null) trimContributionsItemProvider.dispose();
 	}
 
 }

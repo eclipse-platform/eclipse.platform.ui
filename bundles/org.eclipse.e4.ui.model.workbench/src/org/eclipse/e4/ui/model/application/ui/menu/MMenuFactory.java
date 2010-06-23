@@ -127,15 +127,6 @@ public interface MMenuFactory {
 	MToolBarSeparator createToolBarSeparator();
 
 	/**
-	 * Returns a new object of class '<em>Contributions</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Contributions</em>'.
-	 * @generated
-	 */
-	MMenuContributions createMenuContributions();
-
-	/**
 	 * Returns a new object of class '<em>Rendered Menu</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -163,15 +154,6 @@ public interface MMenuFactory {
 	MToolBarContribution createToolBarContribution();
 
 	/**
-	 * Returns a new object of class '<em>Tool Bar Contributions</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Tool Bar Contributions</em>'.
-	 * @generated
-	 */
-	MToolBarContributions createToolBarContributions();
-
-	/**
 	 * Returns a new object of class '<em>Trim Contribution</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -179,14 +161,5 @@ public interface MMenuFactory {
 	 * @generated
 	 */
 	MTrimContribution createTrimContribution();
-
-	/**
-	 * Returns a new object of class '<em>Trim Contributions</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Trim Contributions</em>'.
-	 * @generated
-	 */
-	MTrimContributions createTrimContributions();
 
 } //MMenuFactory

@@ -17,7 +17,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
@@ -25,11 +24,9 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -100,13 +97,10 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.HANDLED_TOOL_ITEM: return (EObject)createHandledToolItem();
 			case MenuPackageImpl.DIRECT_TOOL_ITEM: return (EObject)createDirectToolItem();
 			case MenuPackageImpl.TOOL_BAR_SEPARATOR: return (EObject)createToolBarSeparator();
-			case MenuPackageImpl.MENU_CONTRIBUTIONS: return (EObject)createMenuContributions();
 			case MenuPackageImpl.RENDERED_MENU: return (EObject)createRenderedMenu();
 			case MenuPackageImpl.RENDERED_TOOL_BAR: return (EObject)createRenderedToolBar();
 			case MenuPackageImpl.TOOL_BAR_CONTRIBUTION: return (EObject)createToolBarContribution();
-			case MenuPackageImpl.TOOL_BAR_CONTRIBUTIONS: return (EObject)createToolBarContributions();
 			case MenuPackageImpl.TRIM_CONTRIBUTION: return (EObject)createTrimContribution();
-			case MenuPackageImpl.TRIM_CONTRIBUTIONS: return (EObject)createTrimContributions();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -257,16 +251,6 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMenuContributions createMenuContributions() {
-		MenuContributionsImpl menuContributions = new MenuContributionsImpl();
-		return menuContributions;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public MRenderedMenu createRenderedMenu() {
 		RenderedMenuImpl renderedMenu = new RenderedMenuImpl();
 		return renderedMenu;
@@ -297,29 +281,9 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MToolBarContributions createToolBarContributions() {
-		ToolBarContributionsImpl toolBarContributions = new ToolBarContributionsImpl();
-		return toolBarContributions;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public MTrimContribution createTrimContribution() {
 		TrimContributionImpl trimContribution = new TrimContributionImpl();
 		return trimContribution;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MTrimContributions createTrimContributions() {
-		TrimContributionsImpl trimContributions = new TrimContributionsImpl();
-		return trimContributions;
 	}
 
 	/**

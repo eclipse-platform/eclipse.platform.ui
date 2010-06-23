@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class TrimContributionsImpl extends EObjectImpl implements MTrimContributions {
+public abstract class TrimContributionsImpl extends EObjectImpl implements MTrimContributions {
 	/**
 	 * The cached value of the '{@link #getTrimContributions() <em>Trim Contributions</em>}' containment reference list.
 	 * <!-- begin-user-doc -->

@@ -260,7 +260,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ui/menu/ToolItem #//ui/menu/HandledItem"/>
       <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//ui/menu/ToolItem #//Contribution"/>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarSeparator" eSuperTypes="#//ui/menu/ToolBarElement"/>
-      <eClassifiers xsi:type="ecore:EClass" name="MenuContributions">
+      <eClassifiers xsi:type="ecore:EClass" name="MenuContributions" abstract="true">
         <eStructuralFeatures xsi:type="ecore:EReference" name="menuContributions"
             upperBound="-1" eType="#//ui/menu/MenuContribution" containment="true"/>
       </eClassifiers>
@@ -281,7 +281,7 @@
           <eTypeArguments eClassifier="#//ui/menu/ToolBarElement"/>
         </eGenericSuperTypes>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="ToolBarContributions">
+      <eClassifiers xsi:type="ecore:EClass" name="ToolBarContributions" abstract="true">
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolBarContributions"
             upperBound="-1" eType="#//ui/menu/ToolBarContribution" containment="true"/>
       </eClassifiers>
@@ -292,7 +292,7 @@
           <eTypeArguments eClassifier="#//ui/basic/TrimElement"/>
         </eGenericSuperTypes>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="TrimContributions">
+      <eClassifiers xsi:type="ecore:EClass" name="TrimContributions" abstract="true">
         <eStructuralFeatures xsi:type="ecore:EReference" name="trimContributions"
             upperBound="-1" eType="#//ui/menu/TrimContribution" containment="true"/>
       </eClassifiers>
@@ -399,7 +399,7 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirtyable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer">
+      <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer" abstract="true">
         <eStructuralFeatures xsi:type="ecore:EReference" name="descriptors" upperBound="-1"
             eType="#//descriptor/basic/PartDescriptor" containment="true"/>
       </eClassifiers>

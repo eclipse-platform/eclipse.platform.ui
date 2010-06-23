@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.model.application.descriptor.basic.impl;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -72,7 +71,6 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case BasicPackageImpl.PART_DESCRIPTOR: return (EObject)createPartDescriptor();
-			case BasicPackageImpl.PART_DESCRIPTOR_CONTAINER: return (EObject)createPartDescriptorContainer();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -86,16 +84,6 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	public MPartDescriptor createPartDescriptor() {
 		PartDescriptorImpl partDescriptor = new PartDescriptorImpl();
 		return partDescriptor;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MPartDescriptorContainer createPartDescriptorContainer() {
-		PartDescriptorContainerImpl partDescriptorContainer = new PartDescriptorContainerImpl();
-		return partDescriptorContainer;
 	}
 
 	/**

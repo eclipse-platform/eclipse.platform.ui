@@ -100,29 +100,6 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected PartDescriptorContainerItemProvider partDescriptorContainerItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createPartDescriptorContainerAdapter() {
-		if (partDescriptorContainerItemProvider == null) {
-			partDescriptorContainerItemProvider = new PartDescriptorContainerItemProvider(this);
-		}
-
-		return partDescriptorContainerItemProvider;
-	}
-
-	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -222,7 +199,6 @@ public class BasicItemProviderAdapterFactory extends BasicAdapterFactory impleme
 	 */
 	public void dispose() {
 		if (partDescriptorItemProvider != null) partDescriptorItemProvider.dispose();
-		if (partDescriptorContainerItemProvider != null) partDescriptorContainerItemProvider.dispose();
 	}
 
 }

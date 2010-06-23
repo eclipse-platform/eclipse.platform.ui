@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class ToolBarContributionsImpl extends EObjectImpl implements MToolBarContributions {
+public abstract class ToolBarContributionsImpl extends EObjectImpl implements MToolBarContributions {
 	/**
 	 * The cached value of the '{@link #getToolBarContributions() <em>Tool Bar Contributions</em>}' containment reference list.
 	 * <!-- begin-user-doc -->

@@ -24,7 +24,7 @@ import java.util.List;
  * </ul>
  * </p>
  *
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface MPartDescriptorContainer {

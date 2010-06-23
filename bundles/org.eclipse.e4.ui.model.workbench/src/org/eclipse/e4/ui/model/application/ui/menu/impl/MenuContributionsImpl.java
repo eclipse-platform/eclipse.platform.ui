@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class MenuContributionsImpl extends EObjectImpl implements MMenuContributions {
+public abstract class MenuContributionsImpl extends EObjectImpl implements MMenuContributions {
 	/**
 	 * The cached value of the '{@link #getMenuContributions() <em>Menu Contributions</em>}' containment reference list.
 	 * <!-- begin-user-doc -->

@@ -36,13 +36,4 @@ public interface MBasicFactory {
 	 */
 	MPartDescriptor createPartDescriptor();
 
-	/**
-	 * Returns a new object of class '<em>Part Descriptor Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Part Descriptor Container</em>'.
-	 * @generated
-	 */
-	MPartDescriptorContainer createPartDescriptorContainer();
-
 } //MBasicFactory
