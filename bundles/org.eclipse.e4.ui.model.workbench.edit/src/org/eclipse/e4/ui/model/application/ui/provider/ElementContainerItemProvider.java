@@ -175,11 +175,6 @@ public class ElementContainerItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
-				 MMenuFactory.INSTANCE.createHandledItem()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MMenuFactory.INSTANCE.createMenuSeparator()));
 
 		newChildDescriptors.add

@@ -41,7 +41,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class HandledItemImpl extends ItemImpl implements MHandledItem {
+public abstract class HandledItemImpl extends ItemImpl implements MHandledItem {
 	/**
 	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
 	 * <!-- begin-user-doc -->

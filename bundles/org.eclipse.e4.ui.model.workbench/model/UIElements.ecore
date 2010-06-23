@@ -212,7 +212,7 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
             eType="#//ui/menu/ItemType"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="HandledItem" eSuperTypes="#//ui/menu/Item">
+      <eClassifiers xsi:type="ecore:EClass" name="HandledItem" abstract="true" eSuperTypes="#//ui/menu/Item">
         <eStructuralFeatures xsi:type="ecore:EReference" name="command" eType="#//commands/Command"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="wbCommand" eType="#//commands/ParameterizedCommand"
             transient="true"/>

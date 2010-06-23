@@ -29,7 +29,7 @@ import org.eclipse.e4.ui.model.application.commands.MParameter;
  * </ul>
  * </p>
  *
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface MHandledItem extends MItem {
