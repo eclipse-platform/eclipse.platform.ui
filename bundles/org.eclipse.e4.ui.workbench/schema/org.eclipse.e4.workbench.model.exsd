@@ -18,7 +18,6 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="snippet" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="fragment" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="processor" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
@@ -43,28 +42,6 @@
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="snippet">
-      <complexType>
-         <attribute name="uri" type="string">
-            <annotation>
-               <documentation>
-                  An XMI snippet to add to the parent.  Element must specify either uri or processor.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="processor" type="string">
-            <annotation>
-               <documentation>
-                  A processor that can update the model.  Element must specify either uri or processor.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.e4.ui.workbench.modeling.IModelExtension"/>
                </appInfo>
             </annotation>
          </attribute>
