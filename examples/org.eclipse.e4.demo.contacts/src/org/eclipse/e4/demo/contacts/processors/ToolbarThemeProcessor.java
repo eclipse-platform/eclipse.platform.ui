@@ -69,6 +69,7 @@ public class ToolbarThemeProcessor extends AbstractThemeProcessor {
 			MParameter themeId, String iconURI) {
 		MHandledToolItem toolItem = MMenuFactory.INSTANCE
 				.createHandledToolItem();
+		toolItem.setTooltip(name);
 		toolItem.setCommand(switchCommand);
 		toolItem.getParameters().add(themeId);
 		if (iconURI != null) {
