@@ -26,6 +26,7 @@ public class Messages {
 	public static String ApplicationEditor_Addons;
 	public static String ApplicationEditor_MenuContributions;
 	public static String ApplicationEditor_ToolBarContributions;
+	public static String ApplicationEditor_TrimContributions;
 
 	public static String BindingTableEditor_Label;
 	public static String BindingTableEditor_Description;
@@ -349,6 +350,7 @@ public class Messages {
 	public static String FeatureSelectionDialog_ShellTitle;
 	public static String FeatureSelectionDialog_DialogTitle;
 	public static String FeatureSelectionDialog_DialogMessage;
+
 
 	
 	

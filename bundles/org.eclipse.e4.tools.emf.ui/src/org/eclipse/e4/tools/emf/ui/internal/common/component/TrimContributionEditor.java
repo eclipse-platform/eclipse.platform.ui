@@ -10,83 +10,108 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
-
 import org.eclipse.emf.ecore.EObject;
 
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
-
-import org.eclipse.emf.ecore.EClass;
-
-import org.eclipse.jface.viewers.LabelProvider;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer;
-import org.eclipse.e4.ui.model.application.ui.SideValue;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.databinding.EMFDataBindingContext;
+
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+
+import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.emf.databinding.EMFProperties;
-import org.eclipse.emf.databinding.FeaturePath;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
+import java.util.List;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIconDialogEditor;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class TrimBarEditor extends AbstractComponentEditor {
+import org.eclipse.swt.SWT;
 
+import org.eclipse.core.databinding.observable.value.WritableValue;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.eclipse.emf.databinding.EMFDataBindingContext;
+
+import org.eclipse.emf.edit.domain.EditingDomain;
+
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+
+public class TrimContributionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
 	private ModelEditor editor;
-
+	private IProject project;
+	
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+	
+	private static class Struct {
+		private final String label;
+		private final EClass eClass;
+		private final boolean separator;
 
-	public TrimBarEditor(EditingDomain editingDomain, ModelEditor editor) {
+		public Struct(String label, EClass eClass, boolean separator) {
+			this.label = label;
+			this.eClass = eClass;
+			this.separator = separator;
+		}
+	}
+	
+	public TrimContributionEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
 		super(editingDomain);
 		this.editor = editor;
+		this.project = project;
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
 		if( image == null ) {
 			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/WindowTrim.gif")); //$NON-NLS-1$
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/TrimContribution.gif")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -98,12 +123,17 @@ public class TrimBarEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Window Trim";
+		return "Trim Contribution";
+	}
+
+	@Override
+	public String getDetailLabel(Object element) {
+		return null;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Window Trim bla bla bla";
+		return "Trim Contribution Bla Bla Bla Bla";
 	}
 
 	@Override
@@ -116,9 +146,8 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context,
-			WritableValue master) {
-		parent = new Composite(parent,SWT.NONE);
+	private Composite createForm(Composite parent, EMFDataBindingContext context2, WritableValue master) {
+		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
@@ -126,30 +155,40 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Id");
+			l.setText(Messages.MenuContributionEditor_Id);
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
+			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+		}
+		
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.MenuContributionEditor_ParentId);
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TRIM_CONTRIBUTION__PARENT_ID).observeDetail(getMaster()));
 		}
 
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Side");
+			l.setText(Messages.MenuContributionEditor_Position);
 
-			ComboViewer viewer = new ComboViewer(parent);
-			viewer.setContentProvider(new ArrayContentProvider());
-			viewer.setInput(SideValue.values());
-			GridData gd = new GridData();
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
-			viewer.getControl().setLayoutData(gd);
-			IObservableValue sideValueObs = EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.GENERIC_TRIM_CONTAINER__SIDE).observeDetail(master);
-			context.bindValue(ViewerProperties.singleSelection().observe(viewer), sideValueObs);
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.TRIM_CONTRIBUTION__POSITION_IN_PARENT).observeDetail(getMaster()));
 		}
 
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -279,30 +318,14 @@ public class TrimBarEditor extends AbstractComponentEditor {
 			});
 		}
 		
+		ControlFactory.createTagsWidget(parent, this); 
+
 		return parent;
 	}
 
 	@Override
 	public IObservableList getChildList(Object element) {
 		return ELEMENT_CONTAINER__CHILDREN.observe(element);
-	}
-
-	@Override
-	public String getDetailLabel(Object element) {
-		MGenericTrimContainer<?> trim = (MGenericTrimContainer<?>) element;
-		
-		if( trim.getSide() != null ) {
-			return trim.getSide().toString();
-		}
-		
-		return null;
-	}
-	
-	@Override
-	public FeaturePath[] getLabelProperties() {
-		return new FeaturePath[] {
-			FeaturePath.fromList(UiPackageImpl.Literals.GENERIC_TRIM_CONTAINER__SIDE)	
-		};
 	}
 
 }

@@ -54,6 +54,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private IListProperty APPLICATION__ADDONS = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
 	private IListProperty MENU_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS);
 	private IListProperty TOOLBAR_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
+	private IListProperty TRIM_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
 	
 	public ApplicationEditor(EditingDomain editingDomain) {
 		super(editingDomain);
@@ -181,6 +182,13 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 		
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_TOOLBAR_CONTRIBUTIONS, TOOLBAR_CONTRIBUTIONS,  element, Messages.ApplicationEditor_ToolBarContributions ) { 
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+		});
+		
+		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_TRIM_CONTRIBUTIONS, TRIM_CONTRIBUTIONS,  element, Messages.ApplicationEditor_TrimContributions ) { 
 			@Override
 			protected boolean accepted(Object o) {
 				return true;
