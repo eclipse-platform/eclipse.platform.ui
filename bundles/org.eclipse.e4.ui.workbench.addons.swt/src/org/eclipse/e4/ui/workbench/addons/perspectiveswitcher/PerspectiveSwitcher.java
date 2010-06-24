@@ -123,6 +123,10 @@ public class PerspectiveSwitcher {
 
 	private EventHandler toBeRenderedHandler = new EventHandler() {
 		public void handleEvent(Event event) {
+			if (psTB.isDisposed()) {
+				return;
+			}
+
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
 			if (psME == null || !(changedElement instanceof MPerspective))
@@ -147,6 +151,10 @@ public class PerspectiveSwitcher {
 
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(Event event) {
+			if (psTB.isDisposed()) {
+				return;
+			}
+
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
 
