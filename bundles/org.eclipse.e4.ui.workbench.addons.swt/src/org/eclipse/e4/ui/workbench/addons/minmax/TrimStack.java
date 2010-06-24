@@ -38,6 +38,8 @@ import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -65,6 +67,15 @@ public class TrimStack {
 
 	MPartStack theStack;
 	private Composite hostPane;
+
+	ControlListener caResizeListener = new ControlListener() {
+		public void controlResized(ControlEvent e) {
+			setPaneLocation(hostPane);
+		}
+
+		public void controlMoved(ControlEvent e) {
+		}
+	};
 
 	private Listener mouseDownListener = new Listener() {
 		public void handleEvent(Event event) {
@@ -328,6 +339,7 @@ public class TrimStack {
 			ctf.setParent(hostPane);
 
 			hostPane.getDisplay().addFilter(SWT.MouseDown, mouseDownListener);
+			getShellClientComposite().addControlListener(caResizeListener);
 
 			// Button Hack to show a 'restore' button while avoiding the 'minimized' layout
 			ctf.setMinimizeVisible(false);
@@ -350,6 +362,7 @@ public class TrimStack {
 				updateSelection(null);
 
 				hostPane.getDisplay().removeFilter(SWT.MouseDown, mouseDownListener);
+				getShellClientComposite().removeControlListener(caResizeListener);
 
 				// capture the current shell's bounds
 				Point size = hostPane.getSize();
@@ -366,13 +379,17 @@ public class TrimStack {
 		}
 	}
 
+	Composite getShellClientComposite() {
+		Shell theShell = trimStackTB.getShell();
+		TrimmedPartLayout tpl = (TrimmedPartLayout) theShell.getLayout();
+		return tpl.clientArea;
+	}
+
 	/**
 	 * @param showShell2
 	 */
 	private void setPaneLocation(Composite someShell) {
-		Shell theShell = trimStackTB.getShell();
-		TrimmedPartLayout tpl = (TrimmedPartLayout) theShell.getLayout();
-		Rectangle caRect = tpl.clientArea.getBounds();
+		Rectangle caRect = getShellClientComposite().getBounds();
 
 		Point paneSize = hostPane.getSize();
 		Point loc = new Point(0, 0);
