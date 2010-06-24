@@ -10,6 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -48,8 +53,8 @@ public class HandlerEditor extends AbstractComponentEditor {
 	private IModelResource resource;
 	private IProject project;
 
-	public HandlerEditor(EditingDomain editingDomain, IModelResource resource, IProject project) {
-		super(editingDomain);
+	public HandlerEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource, IProject project) {
+		super(editingDomain,editor);
 		this.resource = resource;
 		this.project = project;
 	}
@@ -93,6 +98,12 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -104,7 +115,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);

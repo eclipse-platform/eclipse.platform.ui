@@ -10,6 +10,19 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.edit.command.SetCommand;
+
+import org.eclipse.core.databinding.property.value.IValueProperty;
+
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map.Entry;
@@ -64,9 +77,11 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 	
 	private IListProperty PART__MENUS = EMFProperties.list(BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS);
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
+	private IValueProperty PART__TOOLBAR = EMFProperties.value(BasicPackageImpl.Literals.PART_DESCRIPTOR__TOOLBAR);
+	private Button createRemoveToolBar;
 
-	public PartDescriptorEditor(EditingDomain editingDomain, IProject project) {
-		super(editingDomain);
+	public PartDescriptorEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
+		super(editingDomain,editor);
 		this.project = project;
 	}
 
@@ -101,6 +116,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			composite = createForm(parent,context, getMaster());
 		}
 		getMaster().setValue(object);
+		createRemoveToolBar.setSelection(((MPartDescriptor)object).getToolbar() != null);
 		return composite;
 	}
 
@@ -110,6 +126,13 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -121,7 +144,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(master));			
 		}
-
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -186,6 +209,26 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 					dialog.open();
 				}
 			});
+		}
+		
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.PartEditor_ToolBar);
+			
+			createRemoveToolBar = new Button(parent, SWT.CHECK);
+			createRemoveToolBar.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					MPartDescriptor window = (MPartDescriptor) getMaster().getValue();
+					if( window.getToolbar() == null ) {
+						addToolBar();
+					} else {
+						removeToolBar();
+					}
+				}
+			});
+			createRemoveToolBar.setLayoutData(new GridData(GridData.BEGINNING,GridData.CENTER,false,false,2,1));
 		}
 		
 		// ------------------------------------------------------------
@@ -356,9 +399,25 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		return parent;
 	}
 
+	private void addToolBar() {
+		MToolBar menu = MMenuFactory.INSTANCE.createToolBar();
+		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__TOOLBAR, menu);
+		if( cmd.canExecute() ) {
+			getEditingDomain().getCommandStack().execute(cmd);
+		}
+	}
+	
+	private void removeToolBar() {
+		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__TOOLBAR, null);
+		if( cmd.canExecute() ) {
+			getEditingDomain().getCommandStack().execute(cmd);
+		}
+	}
+
+	
 	@Override
-	public IObservableList getChildList(Object element) {
-		WritableList list = new WritableList();
+	public IObservableList getChildList(final Object element) {
+		final WritableList list = new WritableList();
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_PARTDESCRIPTOR_MENU, PART__MENUS, element, Messages.PartDescriptorEditor_Menus) {
 
 			@Override
@@ -377,6 +436,31 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 
 		});
 
+		MPartDescriptor window = (MPartDescriptor) element;
+		if( window.getToolbar() != null ) {
+			list.add(0,window.getToolbar());
+		}
+		
+		PART__TOOLBAR.observe(element).addValueChangeListener(new IValueChangeListener() {
+			
+			public void handleValueChange(ValueChangeEvent event) {
+				if( event.diff.getOldValue() != null ) {
+					list.remove(event.diff.getOldValue());
+					if( getMaster().getValue() == element ) {
+						createRemoveToolBar.setSelection(false);	
+					}
+					
+				}
+				
+				if( event.diff.getNewValue() != null ) {
+					list.add(0,event.diff.getNewValue());
+					if( getMaster().getValue() == element ) {
+						createRemoveToolBar.setSelection(true);	
+					}
+				}
+			}
+		});
+		
 		return list;
 	}
 

@@ -10,6 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import org.eclipse.core.databinding.observable.DisposeEvent;
+import org.eclipse.core.databinding.observable.IDisposeListener;
+
+import org.eclipse.core.databinding.observable.DisposeEvent;
+import org.eclipse.core.databinding.observable.IDisposeListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -31,17 +37,21 @@ public abstract class VirtualEntry<M> {
 		this.originalParent = originalParent;
 		this.label = label;
 		this.list = new WritableList();
-		IObservableList origList = property.observe(originalParent);
+		final IObservableList origList = property.observe(originalParent);
 		list.addAll(cleanedList(origList));
 
-		origList.addListChangeListener(new IListChangeListener() {
+		final IListChangeListener listener = new IListChangeListener() {
 
 			public void handleListChange(ListChangeEvent event) {
-				List<Object> clean = cleanedList(event.getObservableList());
-				ListDiff diff = Diffs.computeListDiff(VirtualEntry.this.list, clean);
-				diff.applyTo(VirtualEntry.this.list);
+				if( ! VirtualEntry.this.list.isDisposed() ) {
+					List<Object> clean = cleanedList(event.getObservableList());
+					ListDiff diff = Diffs.computeListDiff(VirtualEntry.this.list, clean);
+					diff.applyTo(VirtualEntry.this.list);					
+				}
 			}
-		});
+		};
+		
+		origList.addListChangeListener(listener);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -10,6 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -65,8 +70,8 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private IModelResource resource;
 
-	public KeyBindingEditor(EditingDomain editingDomain, IModelResource resource) {
-		super(editingDomain);
+	public KeyBindingEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource) {
+		super(editingDomain,editor);
 		this.resource = resource;
 	}
 
@@ -110,6 +115,12 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -121,7 +132,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);

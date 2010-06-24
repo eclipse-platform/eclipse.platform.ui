@@ -10,6 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -42,8 +48,8 @@ public class AddonsEditor extends AbstractComponentEditor {
 	private IProject project;
 	private Image image;
 	
-	public AddonsEditor(EditingDomain editingDomain, IProject project) {
-		super(editingDomain);
+	public AddonsEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
+		super(editingDomain,editor);
 		this.project = project;
 	}
 
@@ -95,6 +101,12 @@ public class AddonsEditor extends AbstractComponentEditor {
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+
+		
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);
+			return parent;
+		}
 
 		{
 			Label l = new Label(parent, SWT.NONE);

@@ -10,6 +10,27 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EPackage;
+
+import java.util.ArrayList;
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+
+import org.eclipse.core.databinding.observable.list.WritableList;
+
 import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 
 
@@ -53,14 +74,13 @@ import org.eclipse.swt.widgets.Label;
 public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 	private IListProperty MODEL_FRAGMENTS__FRAGMENTS = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
-
+	private IListProperty MODEL_FRAGMENTS__IMPORTS = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
+	
 	private Composite composite;
 	private Image image;
-	private ModelEditor editor;
 
 	public ModelFragmentsEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 	}
 
 	@Override
@@ -98,6 +118,147 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 	private Composite createForm(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
+		
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Imports");
+			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			
+			final TableViewer viewer = new TableViewer(parent);
+			viewer.setContentProvider(new ObservableListContentProvider());
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = 200;
+			viewer.getControl().setLayoutData(gd);
+			
+			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
+			viewer.setInput(prop.observeDetail(getMaster()));
+
+			Composite buttonComp = new Composite(parent, SWT.NONE);
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			GridLayout gl = new GridLayout(2, false);
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
+			buttonComp.setLayout(gl);
+
+			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Up");
+			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
+							Object obj = s.getFirstElement();
+							MModelFragments container = (MModelFragments) getMaster().getValue();
+							int idx = container.getImports().indexOf(obj) - 1;
+							if (idx >= 0) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, obj, idx);
+
+								if (cmd.canExecute()) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+
+						}
+					}
+				}
+			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Down");
+			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
+							Object obj = s.getFirstElement();
+							MModelFragments container = (MModelFragments) getMaster().getValue();
+							int idx = container.getImports().indexOf(obj) + 1;
+							if (idx < container.getImports().size()) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, obj, idx);
+
+								if (cmd.canExecute()) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+
+						}
+					}
+				}
+			});
+
+			final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
+			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			childrenDropDown.setContentProvider(new ArrayContentProvider());
+			childrenDropDown.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					FeatureClass eclass = (FeatureClass) element;
+					return eclass.label;
+				}
+			});
+			childrenDropDown.setComparator(new ViewerComparator() {
+				@Override
+				public int compare(Viewer viewer, Object e1, Object e2) {
+					FeatureClass eClass1 = (FeatureClass) e1;
+					FeatureClass eClass2 = (FeatureClass) e2;
+					return eClass1.label.compareTo(eClass2.label);
+				}
+			});
+
+			List<FeatureClass> list = new ArrayList<FeatureClass>();
+			addClasses(ApplicationPackageImpl.eINSTANCE, list);
+			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
+			
+			childrenDropDown.setInput(list);
+			childrenDropDown.getCombo().select(0);
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					EClass eClass = ((FeatureClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement()).eClass;
+					EObject eObject = EcoreUtil.create(eClass);
+
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
+
+					if (cmd.canExecute()) {
+						getEditingDomain().getCommandStack().execute(cmd);
+						getEditor().setSelection(eObject);
+					}
+				}
+			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Remove");
+			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						List<?> elements = ((IStructuredSelection) viewer.getSelection()).toList();
+
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, elements);
+						if (cmd.canExecute()) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+				}
+			});
+		}
 
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -106,9 +267,9 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());
-			viewer.setLabelProvider(new ComponentLabelProvider(editor));
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 300;
+			gd.heightHint = 200;
 			viewer.getControl().setLayoutData(gd);
 
 			IEMFListProperty prop = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
@@ -190,7 +351,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(component);
+						getEditor().setSelection(component);
 					}
 				}
 			});
@@ -217,9 +378,38 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		return parent;
 	}
 
+	public void addClasses(EPackage ePackage, List<FeatureClass> list) {
+		for (EClassifier c : ePackage.getEClassifiers()) {
+			if (c instanceof EClass) {
+				EClass eclass = (EClass) c;
+				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract() && !eclass.isInterface() && eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
+					list.add(new FeatureClass(eclass.getName(), eclass));
+				}
+			}
+		}
+
+		for (EPackage eSubPackage : ePackage.getESubpackages()) {
+			addClasses(eSubPackage, list);
+		}
+	}
+	
 	@Override
 	public IObservableList getChildList(Object element) {
-		return MODEL_FRAGMENTS__FRAGMENTS.observe(element);
+		WritableList list = new WritableList();
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_IMPORTS, MODEL_FRAGMENTS__IMPORTS, element, "Imports") {
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+		});
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_MODEL_FRAGEMENTS, MODEL_FRAGMENTS__FRAGMENTS, element, "Fragments") {
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+		});
+		
+		return list;
 	}
 
 	@Override

@@ -10,6 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.conversion.Converter;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -46,8 +54,8 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	protected IProject project;
 
-	public ToolItemEditor(EditingDomain editingDomain, IProject project) {
-		super(editingDomain);
+	public ToolItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
+		super(editingDomain, editor);
 		this.project = project;
 	}
 
@@ -67,6 +75,11 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("Id");
 
@@ -75,7 +88,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 		gd.horizontalSpan = 2;
 		t.setLayoutData(gd);
 		context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(master));
-
+		
 		createFormSubTypeForm(parent, context, master);
 
 		return parent;
@@ -83,6 +96,8 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 	private void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, final WritableValue master) {
 		IValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		IWidgetValueProperty checkProp = WidgetProperties.selection();
+		IWidgetValueProperty enabled = WidgetProperties.enabled();
 
 		// ------------------------------------------------------------
 		{
@@ -143,6 +158,42 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 					dialog.open();
 				}
 			});
+		}
+		
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Enabled");
+			
+			Button b = new Button(parent, SWT.CHECK);
+			b.setLayoutData(new GridData(GridData.BEGINNING,GridData.CENTER,false,false,2,1));
+			context.bindValue(checkProp.observe(b), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__ENABLED).observeDetail(getMaster()));
+		}
+
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Selected");
+			
+			Button b = new Button(parent, SWT.CHECK);
+			b.setLayoutData(new GridData(GridData.BEGINNING,GridData.CENTER,false,false,2,1));
+			context.bindValue(checkProp.observe(b), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__SELECTED).observeDetail(getMaster()));
+			
+			UpdateValueStrategy t2m = new UpdateValueStrategy();
+			t2m.setConverter(new Converter(boolean.class, ItemType.class) {
+
+				public Object convert(Object fromObject) {
+					return null;
+				}
+			});
+			UpdateValueStrategy m2t = new UpdateValueStrategy();
+			m2t.setConverter(new Converter(ItemType.class, boolean.class) {
+				
+				public Object convert(Object fromObject) {
+					return fromObject == ItemType.CHECK || fromObject == ItemType.RADIO;
+				}
+			});
+			
+			context.bindValue(enabled.observe(b), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.ITEM__TYPE).observeDetail(getMaster()),t2m,m2t);
+
 		}
 
 		// ------------------------------------------------------------

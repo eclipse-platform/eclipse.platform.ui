@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -60,14 +63,12 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	
 	private IListProperty BINDING_TABLE__BINDINGS = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS);
 
 
 	public BindingTableEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 	}
 
 	@Override
@@ -110,6 +111,13 @@ public class BindingTableEditor extends AbstractComponentEditor {
 		
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+
+		
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.BindingTableEditor_Id);
@@ -254,7 +262,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
+						getEditor().setSelection(handler);
 					}
 				}
 			});

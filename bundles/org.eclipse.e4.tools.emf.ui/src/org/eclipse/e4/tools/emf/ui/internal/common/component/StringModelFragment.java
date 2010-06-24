@@ -89,13 +89,11 @@ public class StringModelFragment extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 
 	private IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
 	public StringModelFragment(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 	}
 
 	@Override
@@ -202,7 +200,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());
-			viewer.setLabelProvider(new ComponentLabelProvider(editor));
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
@@ -294,7 +292,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 			List<FeatureClass> list = new ArrayList<FeatureClass>();
 			addClasses(ApplicationPackageImpl.eINSTANCE, list);
-			list.addAll(editor.getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
+			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
 			
 			childrenDropDown.setInput(list);
 			childrenDropDown.getCombo().select(0);
@@ -312,7 +310,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(eObject);
+						getEditor().setSelection(eObject);
 					}
 				}
 			});

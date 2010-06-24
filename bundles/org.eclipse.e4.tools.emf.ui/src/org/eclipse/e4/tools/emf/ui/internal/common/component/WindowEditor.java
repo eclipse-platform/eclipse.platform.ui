@@ -10,6 +10,13 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.emf.edit.command.RemoveCommand;
+
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -68,20 +75,16 @@ public class WindowEditor extends AbstractComponentEditor {
 	private IListProperty SHARED_ELEMENTS = EMFProperties.list(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS);
 	private IValueProperty WINDOW__MAIN_MENU = EMFProperties.value(BasicPackageImpl.Literals.WINDOW__MAIN_MENU);
 	
-
-	private Action addMainMenu; 
+	private Action addMainMenu;
+	private Button createRemoveMainMenu; 
 	
-	public WindowEditor(EditingDomain editingDomain, IProject project) {
-		super(editingDomain);
+	public WindowEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
+		super(editingDomain,editor);
 		this.project = project;
 		addMainMenu = new Action("Add Main Menu") {
 			@Override
 			public void run() {
-				MMenu menu = MMenuFactory.INSTANCE.createMenu();
-				Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__MAIN_MENU, menu);
-				if( cmd.canExecute() ) {
-					getEditingDomain().getCommandStack().execute(cmd);
-				}
+				addMenu();
 			}
 		};
 	}
@@ -117,6 +120,7 @@ public class WindowEditor extends AbstractComponentEditor {
 			composite = createForm(parent,context, getMaster());
 		}
 		getMaster().setValue(object);
+		createRemoveMainMenu.setSelection(((MWindow)object).getMainMenu() != null);
 		return composite;
 	}
 
@@ -126,7 +130,12 @@ public class WindowEditor extends AbstractComponentEditor {
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-
+		
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -138,7 +147,7 @@ public class WindowEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -231,18 +240,52 @@ public class WindowEditor extends AbstractComponentEditor {
 					dialog.open();
 				}
 			});
-
+		}
+		
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Main Menu");
+			
+			createRemoveMainMenu = new Button(parent, SWT.CHECK);
+			createRemoveMainMenu.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					MWindow window = (MWindow) getMaster().getValue();
+					if( window.getMainMenu() == null ) {
+						addMenu();
+					} else {
+						removeMenu();
+					}
+				}
+			});
+			createRemoveMainMenu.setLayoutData(new GridData(GridData.BEGINNING,GridData.CENTER,false,false,2,1));
 		}
 
+		ControlFactory.createSelectedElement(parent, this, context, "Selected Element");
 		ControlFactory.createBindingsWidget(parent, this);
 		ControlFactory.createVariablesWidget(parent, this);
 		ControlFactory.createTagsWidget(parent, this);
 
 		return parent;
 	}
+	
+	void removeMenu() {
+		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__MAIN_MENU, null);
+		if( cmd.canExecute() ) {
+			getEditingDomain().getCommandStack().execute(cmd);
+		}
+	}
+	
+	void addMenu() {
+		MMenu menu = MMenuFactory.INSTANCE.createMenu();
+		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__MAIN_MENU, menu);
+		if( cmd.canExecute() ) {
+			getEditingDomain().getCommandStack().execute(cmd);
+		}
+	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList getChildList(final Object element) {
 		final WritableList list = new WritableList();
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, "Handlers") {
 
@@ -287,10 +330,16 @@ public class WindowEditor extends AbstractComponentEditor {
 			public void handleValueChange(ValueChangeEvent event) {
 				if( event.diff.getOldValue() != null ) {
 					list.remove(event.diff.getOldValue());
+					if( getMaster().getValue() == element ) {
+						createRemoveMainMenu.setSelection(false);	
+					}
 				}
 				
 				if( event.diff.getNewValue() != null ) {
 					list.add(0,event.diff.getNewValue());
+					if( getMaster().getValue() == element ) {
+						createRemoveMainMenu.setSelection(true);	
+					}
 				}
 			}
 		});

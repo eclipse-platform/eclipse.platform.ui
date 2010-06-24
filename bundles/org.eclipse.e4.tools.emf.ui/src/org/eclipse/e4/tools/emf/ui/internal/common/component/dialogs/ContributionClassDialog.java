@@ -74,10 +74,14 @@ public class ContributionClassDialog extends TitleAreaDialog {
 		setTitle(Messages.ContributionClassDialog_DialogTitle);
 		setMessage(Messages.ContributionClassDialog_DialogMessage);
 		
+		final Image titleImage = new Image(comp.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newclass_wiz.png"));
+		setTitleImage(titleImage);
+		
 		getShell().addDisposeListener(new DisposeListener() {
 			
 			public void widgetDisposed(DisposeEvent e) {
 				javaClassImage.dispose();
+				titleImage.dispose();
 			}
 		});
 		

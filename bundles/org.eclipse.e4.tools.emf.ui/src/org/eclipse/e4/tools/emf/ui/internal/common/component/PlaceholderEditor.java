@@ -10,6 +10,22 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.common.Util;
+
+import org.eclipse.e4.ui.workbench.UIEvents.UIElement;
+
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+
+import org.eclipse.core.databinding.conversion.Converter;
+
+import org.eclipse.core.databinding.conversion.Converter;
+
+import org.eclipse.core.databinding.UpdateValueStrategy;
+
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
@@ -53,12 +69,10 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 	private Image image;
 	private EMFDataBindingContext context;
 	private IModelResource resource;
-	private ModelEditor editor;
 	
 	public PlaceholderEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource) {
-		super(editingDomain);
+		super(editingDomain,editor);
 		this.resource = resource;
-		this.editor = editor;
 	}
 
 	@Override
@@ -131,6 +145,11 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -138,20 +157,61 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan=2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));			
+		}
+		
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText("Reference");
+
+			Text t = new Text(parent, SWT.BORDER);
+			t.setEditable(false);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			t.setLayoutData(gd);
 			
-			final Button b = new Button(parent, SWT.PUSH);
+			UpdateValueStrategy t2m = new UpdateValueStrategy();
+			t2m.setConverter(new Converter(String.class, MUIElement.class) {
+				
+				public Object convert(Object fromObject) {
+					return null;
+				}
+			});
+			UpdateValueStrategy m2t = new UpdateValueStrategy();
+			m2t.setConverter(new Converter(MUIElement.class,String.class) {
+				
+				public Object convert(Object fromObject) {
+					if( fromObject != null ) {
+						EObject o = (EObject) fromObject;
+						if( o instanceof MUILabel ) {
+							MUILabel label = (MUILabel) o;
+							if( ! Util.isNullOrEmpty(label.getLabel()) )  {
+								return o.eClass().getName() + " - " + label.getLabel();
+							}
+						}
+						
+						return o.eClass().getName() + " - "+((MUIElement)fromObject).getElementId();
+					}
+					return null;
+				}
+			});
+			
+			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), AdvancedPackageImpl.Literals.PLACEHOLDER__REF).observeDetail(getMaster()),t2m,m2t);
+			
+			final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
 			b.setText(Messages.PlaceholderEditor_FindReference);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					SharedElementsDialog dialog = new SharedElementsDialog(b.getShell(),editor,(MPlaceholder) getMaster().getValue(), resource);
+					SharedElementsDialog dialog = new SharedElementsDialog(b.getShell(),getEditor(),(MPlaceholder) getMaster().getValue(), resource);
 					dialog.open();
 				}
 			});
 		}
 
+		
 		return parent;
 	}
 

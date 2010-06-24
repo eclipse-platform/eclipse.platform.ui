@@ -51,14 +51,12 @@ import org.eclipse.swt.widgets.Label;
 public class VCommandEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private TableViewer viewer;
 	
 	private EStructuralFeature commandsFeature;
 
 	public VCommandEditor(EditingDomain editingDomain, ModelEditor editor, EStructuralFeature commandsFeature) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 		this.commandsFeature = commandsFeature;
 	}
 
@@ -205,7 +203,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 					
 					if( cmd.canExecute() ) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(command);
+						getEditor().setSelection(command);
 					}
 				}
 			});

@@ -50,12 +50,10 @@ import org.eclipse.swt.widgets.Label;
 public class VHandlerEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private TableViewer viewer;
 
 	public VHandlerEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 	}
 
 	@Override
@@ -210,7 +208,7 @@ public class VHandlerEditor extends AbstractComponentEditor {
 					
 					if( cmd.canExecute() ) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
+						getEditor().setSelection(handler);
 					}
 				}
 			});

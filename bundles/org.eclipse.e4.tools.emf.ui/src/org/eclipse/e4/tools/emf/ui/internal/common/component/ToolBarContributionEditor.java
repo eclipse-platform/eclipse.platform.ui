@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 
 import org.eclipse.core.databinding.property.list.IListProperty;
@@ -79,7 +82,6 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private IProject project;
 	
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
@@ -97,8 +99,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 	}
 	
 	public ToolBarContributionEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 		this.project = project;
 	}
 
@@ -147,6 +148,11 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -158,7 +164,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-		
+				
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -203,7 +209,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText(Messages.ToolBarEditor_ToolbarItemsType);
 				column.getColumn().setWidth(300);
-				column.setLabelProvider(new ComponentLabelProvider(editor));
+				column.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			}
 
 			{
@@ -312,7 +318,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 							if (!struct.separator) {
-								editor.setSelection(eObject);
+								getEditor().setSelection(eObject);
 							}
 						}
 					}

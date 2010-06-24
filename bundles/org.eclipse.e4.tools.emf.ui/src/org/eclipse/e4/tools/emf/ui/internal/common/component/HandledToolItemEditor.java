@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -64,8 +66,8 @@ public class HandledToolItemEditor extends ToolItemEditor {
 	private Image image;
 	private IModelResource resource;
 
-	public HandledToolItemEditor(EditingDomain editingDomain, IProject project, IModelResource resource) {
-		super(editingDomain, project);
+	public HandledToolItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project, IModelResource resource) {
+		super(editingDomain, editor, project);
 		this.resource = resource;
 	}
 
@@ -136,7 +138,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 
 				@Override
 				protected void setValue(Object element, Object value) {
-					Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.PARAMETER__NAME, value);
+					Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.PARAMETER__NAME, value);
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 					}
@@ -172,7 +174,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 
 				@Override
 				protected void setValue(Object element, Object value) {
-					Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.PARAMETER__VALUE, value);
+					Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.PARAMETER__VALUE, value);
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 					}

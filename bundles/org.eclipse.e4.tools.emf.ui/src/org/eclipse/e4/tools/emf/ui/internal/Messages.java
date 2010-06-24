@@ -223,6 +223,7 @@ public class Messages {
 	public static String PartEditor_Menus;
 	public static String PartEditor_Handlers;
 	public static String PartEditor_ContainerData;
+	public static String PartEditor_ToolBar;
 	
 	public static String PartSashContainerEditor_Label;
 	public static String PartSashContainerEditor_Description;
@@ -350,6 +351,7 @@ public class Messages {
 	public static String FeatureSelectionDialog_ShellTitle;
 	public static String FeatureSelectionDialog_DialogTitle;
 	public static String FeatureSelectionDialog_DialogMessage;
+
 
 
 	

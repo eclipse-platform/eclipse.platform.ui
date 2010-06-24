@@ -10,6 +10,25 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EPackage;
+
+import java.util.ArrayList;
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.IEMFListProperty;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
+
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+
+import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
+
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
+
+import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
+
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -18,9 +37,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -50,15 +66,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public class VWindowControlEditor extends AbstractComponentEditor {
+public class VModelImportsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
 
-	public VWindowControlEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain,editor);
+	public VModelImportsEditor(EditingDomain editingDomain, ModelEditor editor) {
+		super(editingDomain, editor);
 	}
-
+ 
 	@Override
 	public Image getImage(Object element, Display display) {
 		return null;
@@ -66,7 +82,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Controls";
+		return "Imports";
 	}
 
 	@Override
@@ -76,7 +92,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Controls Bla Bla Bla Bla Bla";
+		return "Imports Bla Bla Bla Bla Bla";
 	}
 
 	@Override
@@ -98,53 +114,47 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Controls");
+			l.setText("Imports");
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-
+			
 			viewer = new TableViewer(parent);
-			ObservableListContentProvider cp = new ObservableListContentProvider();
-			viewer.setContentProvider(cp);
+			viewer.setContentProvider(new ObservableListContentProvider());
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
-			
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 300;
+			gd.heightHint = 200;
 			viewer.getControl().setLayoutData(gd);
-
-			
-			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-			viewer.setInput(prop.observeDetail(getMaster()));
 			
 			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
-			GridLayout gl = new GridLayout(2,false);
-			gl.marginLeft=0;
-			gl.marginRight=0;
-			gl.marginWidth=0;
-			gl.marginHeight=0;
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			GridLayout gl = new GridLayout(2, false);
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Up");
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! viewer.getSelection().isEmpty() ) {
-						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
-						if( s.size() == 1 ) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
 							Object obj = s.getFirstElement();
-							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
-							int idx = container.getChildren().indexOf(obj) - 1;
-							if( idx >= 0 ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
-								
-								if( cmd.canExecute() ) {
+							MModelFragments container = (MModelFragments) getMaster().getValue();
+							int idx = container.getImports().indexOf(obj) - 1;
+							if (idx >= 0) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, obj, idx);
+
+								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
 									viewer.setSelection(new StructuredSelection(obj));
 								}
 							}
-							
+
 						}
 					}
 				}
@@ -153,82 +163,86 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Down");
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! viewer.getSelection().isEmpty() ) {
-						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
-						if( s.size() == 1 ) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
 							Object obj = s.getFirstElement();
-							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
-							int idx = container.getChildren().indexOf(obj) + 1;
-							if( idx < container.getChildren().size() ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
-								
-								if( cmd.canExecute() ) {
+							MModelFragments container = (MModelFragments) getMaster().getValue();
+							int idx = container.getImports().indexOf(obj) + 1;
+							if (idx < container.getImports().size()) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, obj, idx);
+
+								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
 									viewer.setSelection(new StructuredSelection(obj));
 								}
 							}
-							
+
 						}
 					}
 				}
 			});
-			
+
 			final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
 			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			childrenDropDown.setContentProvider(new ArrayContentProvider());
 			childrenDropDown.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					EClass eclass = (EClass) element;
-					return eclass.getName();
+					FeatureClass eclass = (FeatureClass) element;
+					return eclass.label;
 				}
 			});
-			childrenDropDown.setInput(new EClass[] {
-					AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
-					BasicPackageImpl.Literals.PART_SASH_CONTAINER,
-					BasicPackageImpl.Literals.PART_STACK,
-					BasicPackageImpl.Literals.PART,
-					BasicPackageImpl.Literals.INPUT_PART
+			childrenDropDown.setComparator(new ViewerComparator() {
+				@Override
+				public int compare(Viewer viewer, Object e1, Object e2) {
+					FeatureClass eClass1 = (FeatureClass) e1;
+					FeatureClass eClass2 = (FeatureClass) e2;
+					return eClass1.label.compareTo(eClass2.label);
+				}
 			});
-			childrenDropDown.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK));
+
+			List<FeatureClass> list = new ArrayList<FeatureClass>();
+			addClasses(ApplicationPackageImpl.eINSTANCE, list);
+			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
 			
+			childrenDropDown.setInput(list);
+			childrenDropDown.getCombo().select(0);
+
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! childrenDropDown.getSelection().isEmpty() ) {
-						EClass eClass = (EClass) ((IStructuredSelection)childrenDropDown.getSelection()).getFirstElement();
-						
-						EObject eObject = EcoreUtil.create(eClass);
-						
-						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
-						
-						if( cmd.canExecute() ) {
-							getEditingDomain().getCommandStack().execute(cmd);
-							getEditor().setSelection(eObject);
-						}
+					EClass eClass = ((FeatureClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement()).eClass;
+					EObject eObject = EcoreUtil.create(eClass);
+
+					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, eObject);
+
+					if (cmd.canExecute()) {
+						getEditingDomain().getCommandStack().execute(cmd);
+						getEditor().setSelection(eObject);
 					}
 				}
 			});
-			
+
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Remove");
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! viewer.getSelection().isEmpty() ) {
-						List<?> elements = ((IStructuredSelection)viewer.getSelection()).toList();
-						
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, elements);
-						if( cmd.canExecute() ) {
+					if (!viewer.getSelection().isEmpty()) {
+						List<?> elements = ((IStructuredSelection) viewer.getSelection()).toList();
+
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS, elements);
+						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}
@@ -236,10 +250,24 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 			});
 		}
 
-
 		return parent;
 	}
 
+	public void addClasses(EPackage ePackage, List<FeatureClass> list) {
+		for (EClassifier c : ePackage.getEClassifiers()) {
+			if (c instanceof EClass) {
+				EClass eclass = (EClass) c;
+				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract() && !eclass.isInterface() && eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
+					list.add(new FeatureClass(eclass.getName(), eclass));
+				}
+			}
+		}
+
+		for (EPackage eSubPackage : ePackage.getESubpackages()) {
+			addClasses(eSubPackage, list);
+		}
+	}
+	
 	@Override
 	public IObservableList getChildList(Object element) {
 		// TODO Auto-generated method stub

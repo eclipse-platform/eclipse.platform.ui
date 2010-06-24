@@ -10,6 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map.Entry;
@@ -49,8 +54,8 @@ public class ToolControlEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private IProject project;
 
-	public ToolControlEditor(EditingDomain editingDomain, IProject project) {
-		super(editingDomain);
+	public ToolControlEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
+		super(editingDomain,editor);
 		this.project = project;
 	}
 
@@ -99,7 +104,11 @@ public class ToolControlEditor extends AbstractComponentEditor {
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -111,7 +120,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(master));
 		}
-
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);

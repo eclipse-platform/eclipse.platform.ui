@@ -56,8 +56,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private IListProperty TOOLBAR_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS);
 	private IListProperty TRIM_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
 	
-	public ApplicationEditor(EditingDomain editingDomain) {
-		super(editingDomain);
+	public ApplicationEditor(EditingDomain editingDomain, ModelEditor editor) {
+		super(editingDomain,editor);
 	}
 
 	@Override

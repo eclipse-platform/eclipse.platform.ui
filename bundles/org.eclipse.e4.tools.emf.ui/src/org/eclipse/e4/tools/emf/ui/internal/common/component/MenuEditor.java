@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -73,7 +75,6 @@ public class MenuEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private IProject project;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
@@ -92,8 +93,7 @@ public class MenuEditor extends AbstractComponentEditor {
 	}
 
 	public MenuEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 		this.project = project;
 	}
 
@@ -129,7 +129,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 		EObject o = (EObject) object;
 		Control topControl;
-		if( o.eContainer() instanceof MWindow ) {
+		if( o.eContainer() instanceof MWindow || o.eContainer() == null ) {
 			topControl = composite.getChildren()[1];
 		} else {
 			topControl = composite.getChildren()[0];
@@ -150,6 +150,12 @@ public class MenuEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -161,7 +167,7 @@ public class MenuEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-
+				
 		// ------------------------------------------------------------
 		if( ! rootMenu )
 		{
@@ -229,7 +235,7 @@ public class MenuEditor extends AbstractComponentEditor {
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText(Messages.MenuEditor_MenuItemType);
 				column.getColumn().setWidth(300);
-				column.setLabelProvider(new ComponentLabelProvider(editor));
+				column.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			}
 
 			{
@@ -338,7 +344,7 @@ public class MenuEditor extends AbstractComponentEditor {
 						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 							if (!struct.separator) {
-								editor.setSelection(eObject);
+								getEditor().setSelection(eObject);
 							}
 						}
 					}
@@ -388,6 +394,7 @@ public class MenuEditor extends AbstractComponentEditor {
 	@Override
 	public String getDetailLabel(Object element) {
 		MMenu menu = (MMenu) element;
+		
 		if( menu.getLabel() != null && menu.getLabel().trim().length() > 0 ) {
 			return menu.getLabel();
 		}

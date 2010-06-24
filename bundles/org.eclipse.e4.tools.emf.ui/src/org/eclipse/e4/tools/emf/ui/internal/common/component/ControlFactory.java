@@ -10,6 +10,41 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+
+import org.eclipse.emf.edit.domain.EditingDomain;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+
+import org.eclipse.core.databinding.observable.list.IObservableList;
+
+import org.eclipse.e4.tools.emf.ui.common.Util;
+
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+
+import org.eclipse.e4.ui.workbench.UIEvents.UILabel;
+
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+
+import org.eclipse.emf.databinding.EMFDataBindingContext;
+
+import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.jface.databinding.viewers.IViewerValueProperty;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.viewers.ComboViewer;
+
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -50,6 +85,96 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class ControlFactory {
+	public static void createFindImport(Composite parent, final AbstractComponentEditor editor, EMFDataBindingContext context) {
+		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+			
+		Label l = new Label(parent, SWT.NONE);
+			l.setText("Reference-Id");
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(editor.getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(editor.getMaster()));
+			
+			final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			b.setText("Find ...");
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					FindImportElementDialog dialog = new FindImportElementDialog(b.getShell(), editor.getEditingDomain(), (EObject) editor.getMaster().getValue());
+					dialog.open();
+				}
+			});
+	}
+	
+	public static void createSelectedElement(Composite parent, final AbstractComponentEditor editor, final EMFDataBindingContext context, String label) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setText(label);
+
+		ComboViewer viewer = new ComboViewer(parent);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan=2;
+		viewer.getControl().setLayoutData(gd);
+		IEMFEditListProperty listProp = EMFEditProperties.list(editor.getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+		IEMFEditValueProperty labelProp = EMFEditProperties.value(editor.getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL);
+		IEMFEditValueProperty idProp = EMFEditProperties.value(editor.getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
+		
+		IViewerValueProperty vProp = ViewerProperties.singleSelection();
+
+		final Binding[] binding = new Binding[1];
+		final IObservableValue uiObs = vProp.observe(viewer);
+		final IObservableValue mObs = EMFEditProperties.value(editor.getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT).observeDetail(editor.getMaster());
+		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
+
+			public void handleValueChange(ValueChangeEvent event) {
+				if( binding[0] != null ) {
+					binding[0].dispose();
+				}
+
+			}
+		});
+
+		final IObservableList list = listProp.observeDetail(editor.getMaster());
+		ObservableListContentProvider cp = new ObservableListContentProvider();
+		viewer.setContentProvider(cp);
+		IObservableMap[] attributeMaps = {
+				labelProp.observeDetail(cp.getKnownElements()),
+				idProp.observeDetail(cp.getKnownElements())
+		};
+		viewer.setLabelProvider(new ObservableMapLabelProvider(attributeMaps) {
+			@Override
+			public String getText(Object element) {
+				EObject o = (EObject) element;
+				String rv = o.eClass().getName();
+				
+				if( element instanceof MUILabel ) {
+					MUILabel label = (MUILabel) element;
+					if( ! Util.isNullOrEmpty(label.getLabel()) ) {
+						return rv + " - " + label.getLabel().trim();	
+					}
+					
+				}
+				
+				if(element instanceof MApplicationElement) {
+					MApplicationElement appEl = (MApplicationElement) element;
+					if( ! Util.isNullOrEmpty(appEl.getElementId()) ) {
+						return rv + " - " + appEl.getElementId();
+					}
+				}
+				
+				return rv + "["+list.indexOf(element)+"]";
+			}
+		});
+		viewer.setInput(list);
+		
+		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
+
+			public void handleValueChange(ValueChangeEvent event) {
+				binding[0] = context.bindValue(uiObs, mObs);
+			}
+		});
+	}
+	
 	public static void createStringListWidget(Composite parent, final AbstractComponentEditor editor, String label, final EStructuralFeature feature) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);

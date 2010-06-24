@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Label;
 
 public class VApplicationAddons extends AbstractComponentEditor {
 	private Composite composite;
-	private ModelEditor editor;
 	private TableViewer viewer;
 	private EMFDataBindingContext context;
 	
@@ -46,8 +45,7 @@ public class VApplicationAddons extends AbstractComponentEditor {
 	private RemoveAddonCommand removeAddonCommand = new RemoveAddonCommand();
 	
 	public VApplicationAddons(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 		actions.add(new Action("Add Addon") {
 			@Override
 			public void run() {
@@ -105,7 +103,7 @@ public class VApplicationAddons extends AbstractComponentEditor {
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
 			viewer.getTable().setHeaderVisible(true);
-			viewer.setLabelProvider(new ComponentLabelProvider(editor));
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 						
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));

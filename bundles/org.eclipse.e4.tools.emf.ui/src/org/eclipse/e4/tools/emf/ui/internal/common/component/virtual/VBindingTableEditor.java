@@ -74,13 +74,11 @@ import org.eclipse.swt.widgets.Label;
 public class VBindingTableEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private TableViewer bindingViewer;
 	private TreeViewer contextsViewer;
 
 	public VBindingTableEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 	}
 
 	@Override
@@ -368,7 +366,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 180;
 			bindingViewer.getControl().setLayoutData(gd);
-			bindingViewer.setLabelProvider(new ComponentLabelProvider(editor));
+			bindingViewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
@@ -445,7 +443,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(command);
+						getEditor().setSelection(command);
 					}
 				}
 			});

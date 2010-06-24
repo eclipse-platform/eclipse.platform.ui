@@ -39,7 +39,7 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 	private Image image;
 	
 	public DirectMenuItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain,project);
+		super(editingDomain,editor, project);
 	}
 
 	@Override

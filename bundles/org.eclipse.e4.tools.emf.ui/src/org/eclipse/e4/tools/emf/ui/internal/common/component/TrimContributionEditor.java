@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+
 import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
@@ -84,7 +86,6 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private IProject project;
 	
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
@@ -102,8 +103,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 	}
 	
 	public TrimContributionEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 		this.project = project;
 	}
 
@@ -151,7 +151,11 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -163,7 +167,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-		
+				
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -196,7 +200,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 			
 			final TableViewer viewer = new TableViewer(parent);
-			viewer.setLabelProvider(new ComponentLabelProvider(editor));
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			viewer.setContentProvider(new ObservableListContentProvider());
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
@@ -293,7 +297,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 					
 					if( cmd.canExecute() ) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(toolbar);
+						getEditor().setSelection(toolbar);
 					}
 				}
 			});

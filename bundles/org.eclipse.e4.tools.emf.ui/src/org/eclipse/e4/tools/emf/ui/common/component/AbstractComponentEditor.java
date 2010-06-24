@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -47,12 +49,19 @@ public abstract class AbstractComponentEditor {
 	public static final int ARROW_UP = 3;
 	public static final int ARROW_DOWN = 4;
 
-	public AbstractComponentEditor(EditingDomain editingDomain) {
+	private ModelEditor editor;
+	
+	public AbstractComponentEditor(EditingDomain editingDomain, ModelEditor editor) {
 		this.editingDomain = editingDomain;
+		this.editor = editor;
 	}
 
 	public EditingDomain getEditingDomain() {
 		return editingDomain;
+	}
+	
+	public ModelEditor getEditor() {
+		return editor;
 	}
 
 	public WritableValue getMaster() {

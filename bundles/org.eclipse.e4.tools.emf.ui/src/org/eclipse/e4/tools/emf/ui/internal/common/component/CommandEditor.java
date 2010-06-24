@@ -10,6 +10,11 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -63,8 +68,8 @@ public class CommandEditor extends AbstractComponentEditor {
 	private Image image;
 	private EMFDataBindingContext context;
 
-	public CommandEditor(EditingDomain editingDomain) {
-		super(editingDomain);
+	public CommandEditor(EditingDomain editingDomain, ModelEditor editor) {
+		super(editingDomain,editor);
 	}
 
 	@Override
@@ -106,6 +111,12 @@ public class CommandEditor extends AbstractComponentEditor {
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);
+			
+			return parent;
+		}
 
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -117,7 +128,7 @@ public class CommandEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);

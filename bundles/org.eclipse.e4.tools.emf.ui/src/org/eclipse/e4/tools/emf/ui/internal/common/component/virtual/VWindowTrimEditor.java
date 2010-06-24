@@ -42,12 +42,10 @@ import org.eclipse.swt.widgets.Label;
 public class VWindowTrimEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private TableViewer viewer;
 
 	public VWindowTrimEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 	}
 
 	@Override
@@ -95,7 +93,7 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 			viewer = new TableViewer(parent);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
-			viewer.setLabelProvider(new ComponentLabelProvider(editor));
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
@@ -122,7 +120,7 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 					
 					if( cmd.canExecute() ) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(handler);
+						getEditor().setSelection(handler);
 					}
 				}
 			});

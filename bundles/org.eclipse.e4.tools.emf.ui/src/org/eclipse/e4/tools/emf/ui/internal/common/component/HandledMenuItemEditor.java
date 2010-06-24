@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -64,8 +66,8 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 	private Image image;
 	private IModelResource resource;
 
-	public HandledMenuItemEditor(EditingDomain editingDomain, IProject project, IModelResource resource) {
-		super(editingDomain,project);
+	public HandledMenuItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project, IModelResource resource) {
+		super(editingDomain,editor,project);
 		this.resource = resource;
 	}
 

@@ -57,12 +57,10 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private TableViewer viewer;
 
 	public VWindowSharedElementsEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 	}
 
 	@Override
@@ -110,7 +108,7 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 			viewer = new TableViewer(parent);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
-			viewer.setLabelProvider(new ComponentLabelProvider(editor));
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
@@ -215,7 +213,7 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 						
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
-							editor.setSelection(eObject);
+							getEditor().setSelection(eObject);
 						}
 					}
 				}

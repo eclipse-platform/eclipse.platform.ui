@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -75,15 +77,13 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private IProject project;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 
 	public PerspectiveEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
-		super(editingDomain);
+		super(editingDomain,editor);
 		this.project = project;
-		this.editor = editor;
 	}
 
 	@Override
@@ -143,6 +143,11 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -154,42 +159,8 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PerspectiveEditor_SelectedElement);
-
-			ComboViewer viewer = new ComboViewer(parent);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			viewer.getControl().setLayoutData(gd);
-			IEMFEditListProperty listProp = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
-			IViewerValueProperty vProp = ViewerProperties.singleSelection();
-
-			final Binding[] binding = new Binding[1];
-			final IObservableValue uiObs = vProp.observe(viewer);
-			final IObservableValue mObs = EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT).observeDetail(getMaster());
-			getMaster().addValueChangeListener(new IValueChangeListener() {
-
-				public void handleValueChange(ValueChangeEvent event) {
-					if (binding[0] != null) {
-						binding[0].dispose();
-					}
-
-				}
-			});
-
-			ViewerSupport.bind(viewer, listProp.observeDetail(getMaster()), valProp);
-
-			getMaster().addValueChangeListener(new IValueChangeListener() {
-
-				public void handleValueChange(ValueChangeEvent event) {
-					binding[0] = context.bindValue(uiObs, mObs);
-				}
-			});
-		}
+		
+		ControlFactory.createSelectedElement(parent, this, context, Messages.PerspectiveEditor_SelectedElement);
 
 		// ------------------------------------------------------------
 		{
@@ -246,7 +217,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			viewer.getControl().setLayoutData(gd);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
-			viewer.setLabelProvider(new ComponentLabelProvider(editor));
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			
 			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
@@ -347,7 +318,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 						
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
-							editor.setSelection(eObject);
+							getEditor().setSelection(eObject);
 						}
 					}
 				}

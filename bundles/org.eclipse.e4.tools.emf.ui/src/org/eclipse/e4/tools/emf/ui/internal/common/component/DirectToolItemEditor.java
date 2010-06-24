@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -37,8 +39,8 @@ import org.eclipse.swt.widgets.Text;
 public class DirectToolItemEditor extends ToolItemEditor {
 	private Image image;
 
-	public DirectToolItemEditor(EditingDomain editingDomain, IProject project) {
-		super(editingDomain,project);
+	public DirectToolItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
+		super(editingDomain,editor, project);
 	}
 
 	@Override

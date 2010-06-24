@@ -64,12 +64,10 @@ import org.eclipse.swt.widgets.Label;
 public class VToolBarContributionsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private TableViewer viewer;
 
 	public VToolBarContributionsEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain, editor);
 	}
 
 	@Override
@@ -224,7 +222,7 @@ public class VToolBarContributionsEditor extends AbstractComponentEditor {
 					
 					if( cmd.canExecute() ) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(command);
+						getEditor().setSelection(command);
 					}
 				}
 			});

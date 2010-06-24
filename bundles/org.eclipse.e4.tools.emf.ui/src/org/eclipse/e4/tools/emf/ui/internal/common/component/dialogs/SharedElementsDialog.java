@@ -97,6 +97,10 @@ public class SharedElementsDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
+
+		setTitle("Find Shared Elements");
+		setMessage("Find Shared Elements of an Window");
+
 		
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));

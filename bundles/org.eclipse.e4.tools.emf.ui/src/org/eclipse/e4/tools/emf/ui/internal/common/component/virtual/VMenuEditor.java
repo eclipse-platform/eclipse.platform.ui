@@ -46,13 +46,11 @@ import org.eclipse.swt.widgets.Label;
 public class VMenuEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private ModelEditor editor;
 	private TableViewer viewer;
 	private EStructuralFeature feature;
 
 	public VMenuEditor(EditingDomain editingDomain, ModelEditor editor, EStructuralFeature feature) {
-		super(editingDomain);
-		this.editor = editor;
+		super(editingDomain,editor);
 		this.feature = feature;
 	}
 
@@ -138,7 +136,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 
 				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);
-					editor.setSelection(handler);
+					getEditor().setSelection(handler);
 				}
 			}
 		});

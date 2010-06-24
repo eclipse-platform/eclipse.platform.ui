@@ -10,6 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+
+import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
+
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
+
+import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
+
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -18,9 +26,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -50,12 +55,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public class VWindowControlEditor extends AbstractComponentEditor {
+public class VModelFragmentsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
 
-	public VWindowControlEditor(EditingDomain editingDomain, ModelEditor editor) {
+	public VModelFragmentsEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain,editor);
 	}
 
@@ -66,7 +71,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Controls";
+		return "Fragments";
 	}
 
 	@Override
@@ -76,7 +81,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Controls Bla Bla Bla Bla Bla";
+		return "Fragments Bla Bla Bla Bla Bla";
 	}
 
 	@Override
@@ -98,7 +103,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Controls");
+			l.setText("Fragments");
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 			viewer = new TableViewer(parent);
@@ -111,7 +116,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 			viewer.getControl().setLayoutData(gd);
 
 			
-			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
 			viewer.setInput(prop.observeDetail(getMaster()));
 			
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -134,10 +139,10 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
 						if( s.size() == 1 ) {
 							Object obj = s.getFirstElement();
-							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
-							int idx = container.getChildren().indexOf(obj) - 1;
+							MModelFragments container = (MModelFragments) getMaster().getValue();
+							int idx = container.getFragments().indexOf(obj) - 1;
 							if( idx >= 0 ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -161,10 +166,10 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
 						if( s.size() == 1 ) {
 							Object obj = s.getFirstElement();
-							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
-							int idx = container.getChildren().indexOf(obj) + 1;
-							if( idx < container.getChildren().size() ) {
-								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
+							MModelFragments container = (MModelFragments) getMaster().getValue();
+							int idx = container.getFragments().indexOf(obj) + 1;
+							if( idx < container.getFragments().size() ) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, obj, idx);
 								
 								if( cmd.canExecute() ) {
 									getEditingDomain().getCommandStack().execute(cmd);
@@ -176,44 +181,23 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 					}
 				}
 			});
-			
-			final ComboViewer childrenDropDown = new ComboViewer(buttonComp);
-			childrenDropDown.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			childrenDropDown.setContentProvider(new ArrayContentProvider());
-			childrenDropDown.setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					EClass eclass = (EClass) element;
-					return eclass.getName();
-				}
-			});
-			childrenDropDown.setInput(new EClass[] {
-					AdvancedPackageImpl.Literals.PERSPECTIVE_STACK,
-					BasicPackageImpl.Literals.PART_SASH_CONTAINER,
-					BasicPackageImpl.Literals.PART_STACK,
-					BasicPackageImpl.Literals.PART,
-					BasicPackageImpl.Literals.INPUT_PART
-			});
-			childrenDropDown.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK));
-			
+						
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText("Add");
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! childrenDropDown.getSelection().isEmpty() ) {
-						EClass eClass = (EClass) ((IStructuredSelection)childrenDropDown.getSelection()).getFirstElement();
-						
-						EObject eObject = EcoreUtil.create(eClass);
-						
-						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+					
+						MStringModelFragment eObject = MFragmentFactory.INSTANCE.createStringModelFragment();
+						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, eObject);
 						
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 							getEditor().setSelection(eObject);
 						}
-					}
+					
 				}
 			});
 			
@@ -227,7 +211,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 					if( ! viewer.getSelection().isEmpty() ) {
 						List<?> elements = ((IStructuredSelection)viewer.getSelection()).toList();
 						
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, elements);
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS, elements);
 						if( cmd.canExecute() ) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}

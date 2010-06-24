@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.emf.ecore.EObject;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -66,13 +69,11 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
-	private ModelEditor modelEditor;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 
-	public PerspectiveStackEditor(EditingDomain editingDomain, ModelEditor modelEditor) {
-		super(editingDomain);
-		this.modelEditor = modelEditor;
+	public PerspectiveStackEditor(EditingDomain editingDomain, ModelEditor editor) {
+		super(editingDomain,editor);
 	}
 
 	@Override
@@ -121,6 +122,11 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		if( getEditor().isModelFragment() ) {
+			ControlFactory.createFindImport(parent, this, context);			
+			return parent;
+		}
+		
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -132,43 +138,9 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PerspectiveStackEditor_SelectedElement);
-
-			ComboViewer viewer = new ComboViewer(parent);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
-			viewer.getControl().setLayoutData(gd);
-			IEMFEditListProperty listProp = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL);
-			IViewerValueProperty vProp = ViewerProperties.singleSelection();
-
-			final Binding[] binding = new Binding[1];
-			final IObservableValue uiObs = vProp.observe(viewer);
-			final IObservableValue mObs = EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT).observeDetail(getMaster());
-			getMaster().addValueChangeListener(new IValueChangeListener() {
-
-				public void handleValueChange(ValueChangeEvent event) {
-					if( binding[0] != null ) {
-						binding[0].dispose();
-					}
-
-				}
-			});
-
-			ViewerSupport.bind(viewer, listProp.observeDetail(getMaster()), valProp);
-
-			getMaster().addValueChangeListener(new IValueChangeListener() {
-
-				public void handleValueChange(ValueChangeEvent event) {
-					binding[0] = context.bindValue(uiObs, mObs);
-				}
-			});
-		}
 		
+		ControlFactory.createSelectedElement(parent, this, context, Messages.PerspectiveStackEditor_SelectedElement);
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -176,7 +148,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 			
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());
-			viewer.setLabelProvider(new ComponentLabelProvider(modelEditor));
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
@@ -260,7 +232,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 					
 					if( cmd.canExecute() ) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						modelEditor.setSelection(eObject);
+						getEditor().setSelection(eObject);
 					}
 				}
 			});
