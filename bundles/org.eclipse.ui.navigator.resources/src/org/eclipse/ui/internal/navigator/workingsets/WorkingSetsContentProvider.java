@@ -106,7 +106,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof IWorkingSet) {
 			IWorkingSet workingSet = (IWorkingSet) parentElement;
-			if (workingSet.isAggregateWorkingSet()) {
+			if (workingSet.isAggregateWorkingSet() && projectExplorer != null) {
 				switch (projectExplorer.getRootMode()) {
 					case ProjectExplorer.WORKING_SETS :
 						return ((IAggregateWorkingSet) workingSet).getComponents();
@@ -156,6 +156,9 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	}
  
 	private void updateRootMode() {
+		if (projectExplorer == null) {
+			return;
+		}
 		if( extensionStateModel.getBooleanProperty(SHOW_TOP_LEVEL_WORKING_SETS) )
 			projectExplorer.setRootMode(ProjectExplorer.WORKING_SETS);
 		else
