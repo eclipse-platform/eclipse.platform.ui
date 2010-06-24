@@ -34,14 +34,10 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -51,7 +47,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -66,26 +61,28 @@ import org.osgi.service.event.EventHandler;
 public class TrimStack {
 	private static Image restoreImage;
 
-	private static int SHOW_SHELL = 1;
-	private static int HOVER_SHELL = 2;
-
 	private ToolBar trimStackTB;
 
 	MPartStack theStack;
-	private Shell showShell;
-	private Shell hoverShell;
-	private boolean inhibitHover = false;
+	private Composite hostPane;
 
 	private Listener mouseDownListener = new Listener() {
 		public void handleEvent(Event event) {
 			if (event.widget instanceof Control) {
 				Control control = (Control) event.widget;
-				if (control == null)
+				if (control.getShell() != hostPane.getParent())
 					return;
-				if (control.getShell() != showShell.getParent())
-					return;
+
 				if (control == trimStackTB)
 					return;
+
+				// Is this control contained in the hosted stack ?
+				while (!(control instanceof Shell)) {
+					if (control == hostPane) {
+						return;
+					}
+					control = control.getParent();
+				}
 
 				showStack(false);
 			}
@@ -122,7 +119,7 @@ public class TrimStack {
 			if (changedElement != theStack)
 				return;
 
-			if (showShell != null && showShell.isVisible())
+			if (hostPane != null && hostPane.isVisible())
 				updateSelection(theStack.getSelectedElement());
 		}
 	};
@@ -185,6 +182,8 @@ public class TrimStack {
 
 	private MTrimBar bar;
 
+	private int fixedSides;
+
 	@PostConstruct
 	void addListeners() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
@@ -210,20 +209,7 @@ public class TrimStack {
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl me) {
 		if (theStack == null) {
-			List<MPerspectiveStack> ps = modelService.findElements(window, null,
-					MPerspectiveStack.class, null);
-			if (ps.size() == 0) {
-				theStack = (MPartStack) modelService.find(toolControl.getElementId(), window);
-			} else {
-				String toolControlId = toolControl.getElementId();
-				int index = toolControlId.indexOf('(');
-				String stackId = toolControlId.substring(0, index);
-				String perspId = toolControlId.substring(index + 1, toolControlId.length() - 1);
-				MPerspective persp = (MPerspective) modelService.find(perspId, ps.get(0));
-				if (persp != null) {
-					theStack = (MPartStack) modelService.find(stackId, persp);
-				}
-			}
+			theStack = findStack();
 		}
 
 		MUIElement meParent = me.getParent();
@@ -248,7 +234,31 @@ public class TrimStack {
 		});
 
 		updateTrimStackItems();
-		// addTransparentTooltips(newTB);
+	}
+
+	/**
+	 * @return
+	 */
+	private MPartStack findStack() {
+		List<MPerspectiveStack> ps = modelService.findElements(window, null,
+				MPerspectiveStack.class, null);
+		if (ps.size() == 0) {
+			String toolControlId = toolControl.getElementId();
+			int index = toolControlId.indexOf('(');
+			String stackId = toolControlId.substring(0, index);
+			theStack = (MPartStack) modelService.find(stackId, window);
+		} else {
+			String toolControlId = toolControl.getElementId();
+			int index = toolControlId.indexOf('(');
+			String stackId = toolControlId.substring(0, index);
+			String perspId = toolControlId.substring(index + 1, toolControlId.length() - 1);
+			MPerspective persp = (MPerspective) modelService.find(perspId, ps.get(0));
+			if (persp != null) {
+				theStack = (MPartStack) modelService.find(stackId, persp);
+			}
+		}
+
+		return theStack;
 	}
 
 	private void updateTrimStackItems() {
@@ -296,45 +306,11 @@ public class TrimStack {
 			});
 		}
 
-		if (showShell != null && showShell.isVisible())
+		if (hostPane != null && hostPane.isVisible())
 			updateSelection(theStack.getSelectedElement());
 
 		trimStackTB.pack();
 		trimStackTB.getShell().layout(new Control[] { trimStackTB }, SWT.DEFER);
-	}
-
-	/**
-	 * @param ti
-	 */
-	protected void showHover(boolean show, ToolItem ti) {
-		CTabFolder ctf = (CTabFolder) theStack.getWidget();
-		if (show) {
-			Shell hoverShell = getShell(HOVER_SHELL, ti.getParent().getShell());
-			ctf.setParent(hoverShell);
-
-			hoverShell.layout(true);
-			CTabItem cti = (CTabItem) ti.getData();
-			MUIElement element = (MUIElement) cti.getData(AbstractPartRenderer.OWNING_ME);
-			if (element instanceof MPlaceholder)
-				element = ((MPlaceholder) element).getRef();
-			if (element instanceof MPart) {
-				MPart part = (MPart) element;
-				partService.showPart(part, PartState.VISIBLE);
-			}
-
-			// Set the initial location
-			Rectangle itemBounds = ti.getBounds();
-			Point shellSize = hoverShell.getSize();
-			Point loc = new Point(itemBounds.x - (shellSize.x / 2), itemBounds.y
-					+ itemBounds.height);
-			loc = ti.getDisplay().map(ti.getParent(), null, loc);
-			hoverShell.setLocation(loc);
-
-			hoverShell.setVisible(true);
-		} else {
-			if (hoverShell != null)
-				hoverShell.setVisible(false);
-		}
 	}
 
 	void restoreStack() {
@@ -348,13 +324,10 @@ public class TrimStack {
 	public void showStack(@Named("show") boolean show) {
 		CTabFolder ctf = (CTabFolder) theStack.getWidget();
 		if (show) {
-			showHover(false, null);
-			inhibitHover = true;
+			hostPane = getHostPane();
+			ctf.setParent(hostPane);
 
-			Shell showShell = getShell(SHOW_SHELL, trimStackTB.getShell());
-			ctf.setParent(showShell);
-
-			showShell.getDisplay().addFilter(SWT.MouseDown, mouseDownListener);
+			hostPane.getDisplay().addFilter(SWT.MouseDown, mouseDownListener);
 
 			// Button Hack to show a 'restore' button while avoiding the 'minimized' layout
 			ctf.setMinimizeVisible(false);
@@ -364,23 +337,24 @@ public class TrimStack {
 			updateSelection(theStack.getSelectedElement());
 
 			// Set the initial location
-			setShellLocation(showShell);
+			setPaneLocation(hostPane);
 
-			showShell.layout(true);
-			showShell.open();
+			hostPane.layout(true);
+			hostPane.moveAbove(null);
+			hostPane.setVisible(true);
 		} else {
-			if (showShell != null) {
-				showShell.setVisible(false);
+			if (hostPane != null) {
+				hostPane.setVisible(false);
 
 				// clear any selected item
 				updateSelection(null);
 
-				showShell.getDisplay().removeFilter(SWT.MouseDown, mouseDownListener);
+				hostPane.getDisplay().removeFilter(SWT.MouseDown, mouseDownListener);
 
 				// capture the current shell's bounds
-				// Point size = showShell.getSize();
-				// String sizeStr = size.toString();
-				// toolControl.getPersistedState().put("Size", sizeStr);
+				Point size = hostPane.getSize();
+				toolControl.getPersistedState().put("XSize", Integer.toString(size.x));
+				toolControl.getPersistedState().put("YSize", Integer.toString(size.y));
 			}
 
 			// Button Hack to show a 'restore' button while avoiding the 'minimized' layout
@@ -389,35 +363,30 @@ public class TrimStack {
 				ctf.setMaximizeVisible(false);
 				ctf.setMaximized(false);
 			}
-
-			inhibitHover = false;
 		}
 	}
 
 	/**
 	 * @param showShell2
 	 */
-	private void setShellLocation(Composite someShell) {
-		Rectangle toolbarBounds = trimStackTB.getBounds();
-		Point shellSize = showShell.getSize();
+	private void setPaneLocation(Composite someShell) {
+		Shell theShell = trimStackTB.getShell();
+		TrimmedPartLayout tpl = (TrimmedPartLayout) theShell.getLayout();
+		Rectangle caRect = tpl.clientArea.getBounds();
 
-		Point loc = null;
-		switch (bar.getSide().getValue()) {
-		case SideValue.TOP_VALUE:
-			loc = new Point(toolbarBounds.x - (shellSize.x / 2), toolbarBounds.y
-					+ toolbarBounds.height);
-			break;
-		case SideValue.BOTTOM_VALUE:
-			loc = new Point(toolbarBounds.x - (shellSize.x / 2), toolbarBounds.y - shellSize.y);
-			break;
-		case SideValue.RIGHT_VALUE:
-			loc = new Point(toolbarBounds.x - shellSize.x, toolbarBounds.y);
-			break;
-		case SideValue.LEFT_VALUE:
-			loc = new Point(toolbarBounds.x + toolbarBounds.width, toolbarBounds.y);
-			break;
-		}
-		loc = trimStackTB.getDisplay().map(trimStackTB.getParent(), null, loc);
+		Point paneSize = hostPane.getSize();
+		Point loc = new Point(0, 0);
+
+		if (isFixed(SWT.LEFT))
+			loc.x = caRect.x;
+		else
+			loc.x = (caRect.x + caRect.width) - paneSize.x;
+
+		if (isFixed(SWT.TOP))
+			loc.y = caRect.y;
+		else
+			loc.y = (caRect.y + caRect.height) - paneSize.y;
+
 		someShell.setLocation(loc);
 	}
 
@@ -433,104 +402,51 @@ public class TrimStack {
 		}
 	}
 
-	private Shell getShell(int shellType, Shell mainShell) {
-		if (shellType == SHOW_SHELL && showShell != null)
-			return showShell;
-		if (shellType == HOVER_SHELL && hoverShell != null)
-			return hoverShell;
+	private Composite getHostPane() {
+		if (hostPane != null)
+			return hostPane;
 
-		Shell theShell;
-		if (shellType == HOVER_SHELL) {
-			hoverShell = new Shell(mainShell, SWT.NONE);
-			hoverShell.setData(ShellActivationListener.DIALOG_IGNORE_KEY, Boolean.TRUE);
-			// hoverShell.setAlpha(128);
-			hoverShell.setSize(300, 200);
-			theShell = hoverShell;
-		} else {
-			showShell = new Shell(mainShell, SWT.RESIZE);
-			showShell.setData(ShellActivationListener.DIALOG_IGNORE_KEY, Boolean.TRUE);
-			showShell.setSize(600, 400);
-			theShell = showShell;
+		// Create one
+		hostPane = new Composite(trimStackTB.getShell(), SWT.NONE);
+		hostPane.setData(ShellActivationListener.DIALOG_IGNORE_KEY, Boolean.TRUE);
 
-			theShell.addListener(SWT.Traverse, escapeListener);
-		}
+		int xSize = 600;
+		String xSizeStr = toolControl.getPersistedState().get("XSize");
+		if (xSizeStr != null)
+			xSize = Integer.parseInt(xSizeStr);
+		int ySize = 400;
+		String ySizeStr = toolControl.getPersistedState().get("YSize");
+		if (ySizeStr != null)
+			ySize = Integer.parseInt(ySizeStr);
+		hostPane.setSize(xSize, ySize);
+		hostPane.addListener(SWT.Traverse, escapeListener);
 
-		// Set a layout guaranteed not to affect the control's LayoutData
-		theShell.setLayout(new Layout() {
-			@Override
-			protected void layout(Composite composite, boolean flushCache) {
-				Rectangle bounds = ((Shell) composite).getClientArea();
-				Control[] kids = composite.getChildren();
-				if (kids.length == 1) {
-					kids[0].setBounds(0, 0, bounds.width, bounds.height);
-				}
-			}
+		// Set a special layout that allows resizing
+		fixedSides = getFixedSides();
+		hostPane.setLayout(new TrimPaneLayout(fixedSides));
 
-			@Override
-			protected Point computeSize(Composite composite, int wHint, int hHint,
-					boolean flushCache) {
-				return new Point(600, 400);
-			}
-		});
+		return hostPane;
+	}
 
-		return theShell;
+	private int getFixedSides() {
+		int verticalValue = SWT.TOP; // should be based on the center of the TB
+		if (bar.getSide() == SideValue.LEFT)
+			return SWT.LEFT | verticalValue;
+		else if (bar.getSide() == SideValue.RIGHT)
+			return SWT.RIGHT | verticalValue;
 
+		return SWT.TOP | SWT.LEFT;
 	}
 
 	private Image getRestoreImage(Display display) {
 		if (restoreImage == null) {
 			restoreImage = WorkbenchImages
 					.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_TRIMPART);
-			// restoreImage = new Image(display, 16, 16);
-			// GC gc = new GC(restoreImage);
-			// gc.setBackground(display.getSystemColor(SWT.COLOR_BLUE));
-			// gc.fillRectangle(0, 0, 16, 16);
-			// gc.setBackground(display.getSystemColor(SWT.COLOR_YELLOW));
-			// gc.fillRectangle(3, 3, 10, 10);
-			// gc.dispose();
 		}
 		return restoreImage;
 	}
 
-	void addTransparentTooltips(ToolBar newTB) {
-		newTB.addMouseTrackListener(new MouseTrackListener() {
-			public void mouseHover(MouseEvent e) {
-				if (inhibitHover)
-					return;
-				ToolBar tb = (ToolBar) e.widget;
-				Point loc = new Point(e.x, e.y);
-				ToolItem ti = tb.getItem(loc);
-				if (ti.getData() != null)
-					showHover(true, ti);
-			}
-
-			public void mouseExit(MouseEvent e) {
-				showHover(false, null);
-			}
-
-			public void mouseEnter(MouseEvent e) {
-				showHover(false, null);
-			}
-		});
-
-		newTB.addMouseListener(new MouseListener() {
-			public void mouseUp(MouseEvent e) {
-				showHover(false, null);
-			}
-
-			public void mouseDown(MouseEvent e) {
-				showHover(false, null);
-			}
-
-			public void mouseDoubleClick(MouseEvent e) {
-				showHover(false, null);
-			}
-		});
-
-		newTB.addMouseMoveListener(new MouseMoveListener() {
-			public void mouseMove(MouseEvent e) {
-				showHover(false, null);
-			}
-		});
+	private boolean isFixed(int swtSide) {
+		return (fixedSides & swtSide) != 0;
 	}
 }
