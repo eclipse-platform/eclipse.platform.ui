@@ -12,16 +12,27 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -36,6 +47,8 @@ public class ActionSet {
 
 	private MApplication application;
 
+	private ActiveContextExpression visibleWhen;
+
 	public ActionSet(MApplication application, IEclipseContext appContext,
 			IConfigurationElement element) {
 		this.application = application;
@@ -45,6 +58,15 @@ public class ActionSet {
 	public void addToModel(ArrayList<MMenuContribution> contributions) {
 
 		String idContrib = MenuHelper.getId(configElement);
+		visibleWhen = new ActiveContextExpression(idContrib);
+
+		EContextService contextService = application.getContext().get(EContextService.class);
+		Context actionSetContext = contextService.getContext(idContrib);
+		if (!actionSetContext.isDefined()) {
+			actionSetContext.define(MenuHelper.getLabel(configElement),
+					MenuHelper.getDescription(configElement), "org.eclipse.ui.contexts.actionSet"); //$NON-NLS-1$
+		}
+
 		IConfigurationElement[] menus = configElement
 				.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
 		for (IConfigurationElement element : menus) {
@@ -61,9 +83,52 @@ public class ActionSet {
 		// printContributions(contributions);
 	}
 
+	static class ActiveContextExpression extends Expression {
+		private String id;
+
+		public ActiveContextExpression(String id) {
+			this.id = id;
+		}
+
+		@Override
+		public void collectExpressionInfo(ExpressionInfo info) {
+			info.addVariableNameAccess(ISources.ACTIVE_CONTEXT_NAME);
+		}
+
+		@Override
+		public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+			Object obj = context.getVariable(ISources.ACTIVE_CONTEXT_NAME);
+			if (obj instanceof Collection<?>) {
+				return EvaluationResult.valueOf(((Collection) obj).contains(id));
+			}
+			return EvaluationResult.FALSE;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof ActiveContextExpression)) {
+				return false;
+			}
+			return id.equals(((ActiveContextExpression) obj).id);
+		}
+
+		@Override
+		public int hashCode() {
+			return id.hashCode();
+		}
+	}
+
+	private MCoreExpression createVisibleWhen() {
+		MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
+		exp.setCoreExpressionId("programmatic." + MenuHelper.getId(configElement)); //$NON-NLS-1$
+		exp.setCoreExpression(visibleWhen);
+		return exp;
+	}
+
 	private void addContribution(String idContrib, ArrayList<MMenuContribution> contributions,
 			IConfigurationElement element, boolean isMenu) {
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		menuContribution.setVisibleWhen(createVisibleWhen());
 		menuContribution.getTags().add(MenuServiceFilter.MC_MENU);
 		final String elementId = MenuHelper.getId(element);
 		if (idContrib != null && idContrib.length() > 0) {
@@ -114,6 +179,7 @@ public class ActionSet {
 	private void processGroups(String idContrib, ArrayList<MMenuContribution> contributions,
 			IConfigurationElement element) {
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		menuContribution.setVisibleWhen(createVisibleWhen());
 		menuContribution.getTags().add(MenuServiceFilter.MC_MENU);
 		final String elementId = MenuHelper.getId(element);
 		if (idContrib != null && idContrib.length() > 0) {

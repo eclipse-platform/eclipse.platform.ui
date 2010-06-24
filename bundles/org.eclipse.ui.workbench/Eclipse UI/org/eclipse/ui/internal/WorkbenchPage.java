@@ -32,6 +32,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -40,6 +41,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -304,7 +306,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private ListenerList partListenerList = new ListenerList();
 	private ListenerList partListener2List = new ListenerList();
 	private IPerspectiveDescriptor perspective;
-	private ModeledPageLayout modelLayout;
 
 
 	private E4PartListener e4PartListener = new E4PartListener();
@@ -1736,7 +1737,45 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				}
 			}
 		}
+
+		IEventBroker broker = window.getContext().get(IEventBroker.class);
+		broker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
+		if (getPerspectiveStack() != null) {
+			MPerspective persp = getPerspectiveStack().getSelectedElement();
+			List<String> newIds = ModeledPageLayout.getIds(persp, ModeledPageLayout.ACTION_SET_TAG);
+			EContextService contextService = window.getContext().get(EContextService.class);
+			for (String id : newIds) {
+				contextService.activateContext(id);
+			}
+		}
     }
+
+	private EventHandler selectionHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+
+			if (changedElement != getPerspectiveStack()) {
+				return;
+			}
+
+			EContextService contextService = window.getContext().get(EContextService.class);
+			MPerspective oldPersp = (MPerspective) event.getProperty(UIEvents.EventTags.OLD_VALUE);
+			List<String> oldIds = ModeledPageLayout.getIds(oldPersp,
+					ModeledPageLayout.ACTION_SET_TAG);
+			MPerspective newPersp = (MPerspective) event.getProperty(UIEvents.EventTags.NEW_VALUE);
+			List<String> newIds = ModeledPageLayout.getIds(newPersp,
+					ModeledPageLayout.ACTION_SET_TAG);
+
+			oldIds.removeAll(newIds);
+			for (String id : oldIds) {
+				contextService.deactivateContext(id);
+			}
+			for (String id : newIds) {
+				contextService.activateContext(id);
+			}
+		}
+	};
 
 	/**
      * See IWorkbenchPage.
@@ -2141,13 +2180,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspectiveStack perspectives = getPerspectiveStack();
 		for (MPerspective mperspective : perspectives.getChildren()) {
 			if (mperspective.getElementId().equals(perspective.getId())) {
-				// instantiate the perspective
-				IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
-				// use a new perspective since we're only interested in
-				// shortcuts here, see bug 305918
-				modelLayout = new ModeledPageLayout(window, modelService, partService,
-						AdvancedFactoryImpl.eINSTANCE.createPerspective(), perspective, this, false);
-				factory.createInitialLayout(modelLayout);
+				// // instantiate the perspective
+				// IPerspectiveFactory factory = ((PerspectiveDescriptor)
+				// perspective).createFactory();
+				// // use a new perspective since we're only interested in
+				// // shortcuts here, see bug 305918
+				// modelLayout = new ModeledPageLayout(window, modelService,
+				// partService,
+				// AdvancedFactoryImpl.eINSTANCE.createPerspective(),
+				// perspective, this, false);
+				// factory.createInitialLayout(modelLayout);
 
 				if (lastPerspective != null) {
 					legacyWindow.firePerspectiveDeactivated(this, lastPerspective);
@@ -2169,7 +2211,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		// instantiate the perspective
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
-		modelLayout = new ModeledPageLayout(window, modelService, partService,
+		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService,
 				modelPerspective,
 				perspective, this, true);
 		factory.createInitialLayout(modelLayout);
@@ -2462,14 +2504,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return tracker;		
 	}
 
+	private final static String[] EMPTY_STRING_ARRAY = new String[0];
+
+	private String[] getArrayForTag(String tagPrefix) {
+		MPerspective perspective = getPerspectiveStack().getSelectedElement();
+		if (perspective == null) {
+			return EMPTY_STRING_ARRAY;
+		}
+		List<String> id = ModeledPageLayout.getIds(perspective, tagPrefix);
+		if (id.size() == 0) {
+			return EMPTY_STRING_ARRAY;
+		}
+		return id.toArray(new String[id.size()]);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#getNewWizardShortcuts()
 	 */
 	public String[] getNewWizardShortcuts() {
-		ArrayList shortcuts = modelLayout.getNewWizardShortcuts();
-		return (String[]) shortcuts.toArray(new String[shortcuts.size()]);
+		return getArrayForTag(ModeledPageLayout.NEW_WIZARD_TAG);
 	}
 
 	/*
@@ -2478,8 +2533,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#getPerspectiveShortcuts()
 	 */
 	public String[] getPerspectiveShortcuts() {
-		ArrayList shortcuts = modelLayout.getPerspectiveShortcuts();
-		return (String[]) shortcuts.toArray(new String[shortcuts.size()]);
+		return getArrayForTag(ModeledPageLayout.PERSP_SHORTCUT_TAG);
 	}
 
 	/*
@@ -2488,8 +2542,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#getShowViewShortcuts()
 	 */
 	public String[] getShowViewShortcuts() {
-		ArrayList shortcuts = modelLayout.getShowViewShortcuts();
-		return (String[]) shortcuts.toArray(new String[shortcuts.size()]);
+		return getArrayForTag(ModeledPageLayout.SHOW_VIEW_TAG);
 	}
     
  

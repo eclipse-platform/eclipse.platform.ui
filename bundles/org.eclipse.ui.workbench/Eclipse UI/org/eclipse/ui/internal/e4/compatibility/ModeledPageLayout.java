@@ -11,10 +11,8 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
@@ -30,6 +28,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -40,6 +40,25 @@ import org.eclipse.ui.internal.WorkbenchPage;
 
 public class ModeledPageLayout implements IPageLayout {
 
+	public static final String ACTION_SET_TAG = "persp.actionSet:"; //$NON-NLS-1$
+	public static final String NEW_WIZARD_TAG = "persp.newWizSC:"; //$NON-NLS-1$
+	public static final String PERSP_SHORTCUT_TAG = "persp.perspSC:"; //$NON-NLS-1$
+	public static final String SHOW_IN_PART_TAG = "persp.showIn:"; //$NON-NLS-1$
+	public static final String SHOW_VIEW_TAG = "persp.viewSC:"; //$NON-NLS-1$
+
+	public static List<String> getIds(MPerspective model, String tagPrefix) {
+		if (model == null) {
+			return Collections.EMPTY_LIST;
+		}
+		ArrayList<String> result = new ArrayList<String>();
+		for (String tag : model.getTags()) {
+			if (tag.startsWith(tagPrefix)) {
+				result.add(tag.substring(tagPrefix.length()));
+			}
+		}
+		return result;
+	}
+
 	private MApplication application;
 	private EModelService modelService;
 
@@ -49,12 +68,6 @@ public class ModeledPageLayout implements IPageLayout {
 	private IPerspectiveDescriptor descriptor;
 
 	private MPartStack editorStack;
-
-	private ArrayList newWizardShortcuts = new ArrayList();
-	private ArrayList perspectiveShortcut = new ArrayList();
-	private ArrayList showInPart = new ArrayList();
-	private ArrayList showViewShortcut = new ArrayList();
-	private ArrayList actionSet = new ArrayList();
 
 	boolean createReferences;
 
@@ -110,7 +123,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addActionSet(String actionSetId) {
-		actionSet.add(actionSetId);
+		perspModel.getTags().add(ACTION_SET_TAG + actionSetId);
 	}
 
 	public void addFastView(String viewId) {
@@ -120,11 +133,11 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addNewWizardShortcut(String id) {
-		newWizardShortcuts.add(id);
+		perspModel.getTags().add(NEW_WIZARD_TAG + id);
 	}
 
 	public void addPerspectiveShortcut(String id) {
-		perspectiveShortcut.add(id);
+		perspModel.getTags().add(PERSP_SHORTCUT_TAG + id);
 	}
 
 	public void addPlaceholder(String viewId, int relationship, float ratio,
@@ -133,11 +146,11 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addShowInPart(String id) {
-		showInPart.add(id);
+		perspModel.getTags().add(SHOW_IN_PART_TAG + id);
 	}
 
 	public void addShowViewShortcut(String id) {
-		showViewShortcut.add(id);
+		perspModel.getTags().add(SHOW_VIEW_TAG + id);
 	}
 
 	public void addStandaloneView(String viewId, boolean showTitle,
@@ -465,33 +478,5 @@ public class ModeledPageLayout implements IPageLayout {
 	private MPart findPart(MUIElement toSearch, String id) {
 		MUIElement element = modelService.find(id, toSearch);
 		return element instanceof MPart ? (MPart) element : null;
-	}
-
-	/**
-	 * @return
-	 */
-	public ArrayList getNewWizardShortcuts() {
-		return newWizardShortcuts;
-	}
-
-	/**
-	 * @return
-	 */
-	public ArrayList getShowViewShortcuts() {
-		return showViewShortcut;
-	}
-
-	/**
-	 * @return
-	 */
-	public ArrayList getPerspectiveShortcuts() {
-		return perspectiveShortcut;
-	}
-
-	/**
-	 * @return
-	 */
-	public ArrayList getShowInPartIds() {
-		return showInPart;
 	}
 }
