@@ -1578,7 +1578,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Returns the perspective.
      */
     public IPerspectiveDescriptor getPerspective() {
-		return perspective;
+		MPerspectiveStack ps = getPerspectiveStack();
+		MPerspective curPersp = ps.getSelectedElement();
+		if (curPersp == null)
+			return null;
+
+		IPerspectiveDescriptor desc = PlatformUI.getWorkbench().getPerspectiveRegistry()
+				.findPerspectiveWithId(curPersp.getElementId());
+		return desc;
 	}
 
     /*
