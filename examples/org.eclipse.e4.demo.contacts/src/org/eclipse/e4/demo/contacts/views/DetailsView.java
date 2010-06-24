@@ -34,16 +34,15 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 
 public class DetailsView {
 
-	private final DetailComposite detailComposite;
+	@Inject
+	private MDirtyable dirtyable;
 
-	private final MDirtyable dirtyable;
+	@Inject
+	private DetailComposite detailComposite;
 
 	@Inject
 	private EHandlerService handlerService;
@@ -57,14 +56,6 @@ public class DetailsView {
 	@Inject
 	private MUILabel uiItem;
 
-	@Inject
-	public DetailsView(Composite parent, MDirtyable dirtyable) {
-		detailComposite = new DetailComposite(dirtyable, parent, SWT.NONE);
-		this.dirtyable = dirtyable;
-
-		GridLayoutFactory.fillDefaults().generateLayout(parent);
-	}
-	
 	@Focus
 	void setFocus() {
 		detailComposite.setFocus();
@@ -152,7 +143,7 @@ public class DetailsView {
 
 		updatePartTitle(originalContact);
 		monitor.done();
-		
+
 		dirtyable.setDirty(false);
 	}
 
@@ -202,17 +193,18 @@ public class DetailsView {
 
 	private void updatePartTitle(Contact contact) {
 		StringBuffer title = new StringBuffer("Details of ");
-		title.append(contact.getFirstName()).append(' ').append(
-				contact.getLastName());
+		title.append(contact.getFirstName()).append(' ')
+				.append(contact.getLastName());
 		uiItem.setLabel(title.toString());
 	}
 
 	@Inject
-	public void setSelection(@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Contact contact) {
+	public void setSelection(
+			@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Contact contact) {
 		if (contact != null) {
 			if (dirtyable.isDirty()) {
-				MessageDialog dialog = new MessageDialog(detailComposite
-						.getShell(), "Save vCard", null,
+				MessageDialog dialog = new MessageDialog(
+						detailComposite.getShell(), "Save vCard", null,
 						"The current vCard has been modified. Save changes?",
 						MessageDialog.CONFIRM, new String[] {
 								IDialogConstants.YES_LABEL,

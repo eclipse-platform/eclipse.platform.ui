@@ -60,9 +60,8 @@ public class DetailComposite extends Composite {
 	private final IObservableValue scaledImage;
 
 	@Inject
-	public DetailComposite(MDirtyable dirtyable, final Composite parent,
-			final int style) {
-		super(parent, style);
+	public DetailComposite(MDirtyable dirtyable, final Composite parent) {
+		super(parent, SWT.NONE);
 		this.dirtyable = dirtyable;
 
 		parent.getShell().setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -154,10 +153,8 @@ public class DetailComposite extends Composite {
 
 		};
 
-		dbc
-				.bindValue(SWTObservables.observeImage(imageLabel),
-						scaledImage, new UpdateValueStrategy(
-								UpdateValueStrategy.POLICY_NEVER), null);
+		dbc.bindValue(SWTObservables.observeImage(imageLabel), scaledImage,
+				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER), null);
 
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
