@@ -271,7 +271,13 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 		// Show any floating windows
 		if (element instanceof MWindow && element.getWidget() != null) {
-			element.setVisible(true);
+			int visCount = 0;
+			for (MUIElement kid : ((MWindow) element).getChildren()) {
+				if (kid.isToBeRendered() && kid.isVisible())
+					visCount++;
+			}
+			if (visCount > 0)
+				element.setVisible(true);
 		}
 
 		becomingVisible.add(element);
