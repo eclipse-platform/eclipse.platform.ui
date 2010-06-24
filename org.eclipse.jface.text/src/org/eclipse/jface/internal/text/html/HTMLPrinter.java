@@ -15,8 +15,10 @@ import java.io.Reader;
 import java.net.URL;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.util.Util;
 
@@ -27,9 +29,34 @@ import org.eclipse.jface.util.Util;
  */
 public class HTMLPrinter {
 
+	private static RGB BG_COLOR_RGB= new RGB(255, 255, 225); // RGB value of info bg color on WindowsXP
+	private static RGB FG_COLOR_RGB= new RGB(0, 0, 0); // RGB value of info fg color on WindowsXP
+	
 	private static final String UNIT; // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
 	static {
 		UNIT= Util.isMac() ? "px" : "pt";   //$NON-NLS-1$//$NON-NLS-2$
+	}
+
+
+	static {
+		final Display display= Display.getDefault();
+		if (display != null && !display.isDisposed()) {
+			try {
+				display.asyncExec(new Runnable() {
+					/*
+					 * @see java.lang.Runnable#run()
+					 */
+					public void run() {
+						BG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
+						FG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB();
+					}
+				});
+			} catch (SWTError err) {
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=45294
+				if (err.code != SWT.ERROR_DEVICE_DISPOSED)
+					throw err;
+			}
+		}
 	}
 
 	private HTMLPrinter() {
@@ -81,6 +108,11 @@ public class HTMLPrinter {
 	}
 
 	public static void insertPageProlog(StringBuffer buffer, int position, RGB fgRGB, RGB bgRGB, String styleSheet) {
+		if (fgRGB == null)
+			fgRGB= FG_COLOR_RGB;
+		if (bgRGB == null)
+			bgRGB= BG_COLOR_RGB;
+
 		StringBuffer pageProlog= new StringBuffer(300);
 
 		pageProlog.append("<html>"); //$NON-NLS-1$
@@ -93,19 +125,11 @@ public class HTMLPrinter {
 	}
 
 	private static void appendColors(StringBuffer pageProlog, RGB fgRGB, RGB bgRGB) {
-		pageProlog.append("<body style='color:"); //$NON-NLS-1$
-		if (fgRGB == null) {
-			pageProlog.append("InfoText"); //$NON-NLS-1$
-		} else {
-			appendColor(pageProlog, fgRGB);
-		}
-		pageProlog.append("; background-color:"); //$NON-NLS-1$
-		if (bgRGB == null) {
-			pageProlog.append("InfoBackground;"); //$NON-NLS-1$
-		} else {
-			appendColor(pageProlog, bgRGB);
-		}
-		pageProlog.append("'>"); //$NON-NLS-1$
+		pageProlog.append("<body text=\""); //$NON-NLS-1$
+		appendColor(pageProlog, fgRGB);
+		pageProlog.append("\" bgcolor=\""); //$NON-NLS-1$
+		appendColor(pageProlog, bgRGB);
+		pageProlog.append("\">"); //$NON-NLS-1$
 	}
 
 	private static void appendColor(StringBuffer buffer, RGB rgb) {
@@ -175,7 +199,7 @@ public class HTMLPrinter {
 	public static void insertPageProlog(StringBuffer buffer, int position) {
 		StringBuffer pageProlog= new StringBuffer(60);
 		pageProlog.append("<html>"); //$NON-NLS-1$
-		appendColors(pageProlog, null, null);
+		appendColors(pageProlog, FG_COLOR_RGB, BG_COLOR_RGB);
 		buffer.insert(position,  pageProlog.toString());
 	}
 
@@ -183,7 +207,7 @@ public class HTMLPrinter {
 		StringBuffer pageProlog= new StringBuffer(300);
 		pageProlog.append("<html>"); //$NON-NLS-1$
 		appendStyleSheetURL(pageProlog, styleSheetURL);
-		appendColors(pageProlog, null, null);
+		appendColors(pageProlog, FG_COLOR_RGB, BG_COLOR_RGB);
 		buffer.insert(position,  pageProlog.toString());
 	}
 
