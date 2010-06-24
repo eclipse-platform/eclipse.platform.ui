@@ -30,5 +30,6 @@ Bundle-Vendor: Eclipse.org
 Import-Package: javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0"
 Bundle-Activator: org.eclipse.e4.demo.contacts.BundleActivatorImpl
+Export-Package: org.eclipse.e4.demo.contacts.model
 
 
