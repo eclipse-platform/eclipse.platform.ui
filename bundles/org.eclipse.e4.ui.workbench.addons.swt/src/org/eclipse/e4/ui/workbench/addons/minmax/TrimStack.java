@@ -70,7 +70,8 @@ public class TrimStack {
 
 	ControlListener caResizeListener = new ControlListener() {
 		public void controlResized(ControlEvent e) {
-			setPaneLocation(hostPane);
+			if (hostPane != null && hostPane.isVisible())
+				setPaneLocation(hostPane);
 		}
 
 		public void controlMoved(ControlEvent e) {
@@ -355,7 +356,7 @@ public class TrimStack {
 			hostPane.moveAbove(null);
 			hostPane.setVisible(true);
 		} else {
-			if (hostPane != null) {
+			if (hostPane != null && hostPane.isVisible()) {
 				hostPane.setVisible(false);
 
 				// clear any selected item
@@ -381,6 +382,9 @@ public class TrimStack {
 
 	Composite getShellClientComposite() {
 		Shell theShell = trimStackTB.getShell();
+		if (!(theShell.getLayout() instanceof TrimmedPartLayout))
+			return null;
+
 		TrimmedPartLayout tpl = (TrimmedPartLayout) theShell.getLayout();
 		return tpl.clientArea;
 	}
