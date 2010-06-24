@@ -5,7 +5,7 @@
       <children xsi:type="basic:PartStack" xmi:id="_SeXUC-8EEd6FC9cDb6iV7g" elementId="_SeXUC-8EEd6FC9cDb6iV7g" containerData="30">
         <children xsi:type="basic:Part" xmi:id="_SeXUDO8EEd6FC9cDb6iV7g" elementId="ContactsView" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" label="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="List of Contacts"/>
       </children>
-      <children xsi:type="basic:PartStack" xmi:id="_SeXUDe8EEd6FC9cDb6iV7g" elementId="_SeXUDe8EEd6FC9cDb6iV7g" containerData="70">
+      <children xsi:type="basic:PartStack" xmi:id="_SeXUDe8EEd6FC9cDb6iV7g" elementId="org.eclipse.e4.demo.contacts.partstacks.second" containerData="70">
         <children xsi:type="basic:Part" xmi:id="DetailsView" elementId="DetailsView" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" label="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" tooltip="Contact Details"/>
       </children>
     </children>
