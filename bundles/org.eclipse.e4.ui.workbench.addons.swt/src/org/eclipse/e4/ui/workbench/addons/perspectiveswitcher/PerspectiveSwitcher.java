@@ -96,6 +96,10 @@ public class PerspectiveSwitcher {
 
 	private EventHandler selectionHandler = new EventHandler() {
 		public void handleEvent(Event event) {
+			if (psTB.isDisposed()) {
+				return;
+			}
+
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
 			if (psME == null || !(changedElement instanceof MPerspectiveStack))
