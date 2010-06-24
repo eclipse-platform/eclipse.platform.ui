@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.HelpSystem;
@@ -42,7 +44,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
@@ -396,13 +397,31 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		return buff.length() > 0 ? buff.toString().trim() : null;
 	}
+	
+	private class SearchTerms {
+		
+		private List terms = new ArrayList();
+		private Set termSet = new HashSet();
+		public void add(String term) {
+			String lowerCaseTerm = term.toLowerCase();
+			// Do not allow duplicates
+			if (!termSet.contains(lowerCaseTerm)) {
+				termSet.add(lowerCaseTerm);
+				terms.add(term);
+			}
+		}
+		
+		public String[] toArray() {
+			return (String[]) terms.toArray(new String[terms.size()]);
+		}
+	}
 
 	/*
 	 * Used for both dynamic help and to get a useful title
 	 */
 	private String[] computeSearchTerms(Control c) {
 		Composite parent = c.getParent();
-		List searchTerms = new ArrayList();
+		SearchTerms searchTerms = new SearchTerms();
 		while (parent != null) {
 			Object data = parent.getData();
 			if (data instanceof IWizardContainer) {
@@ -451,7 +470,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			}
 			parent = parent.getParent();
 		}
-		return (String[]) searchTerms.toArray(new String[searchTerms.size()]);
+		return (String[]) searchTerms.toArray();
 	}
 
 	private String getPageName(Control focusControl, Object page) {
