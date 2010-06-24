@@ -46,7 +46,7 @@ public class MockScope extends AbstractHelpScope {
 	}
 
 	public boolean inScope(IIndexSee see) {
-		return false;
+		return true;
 	}
 
 	public String getName(Locale locale) {

@@ -51,6 +51,15 @@ public class EmptyLeafRemoval extends TestCase {
 		assertTrue(ScopeUtils.showInTree(topic, new MockScope('a', true)));
 	}
 	
+	public void testEmptyGrandParentWithOutOfScopeChildTopicHierarchical() {
+		UserTopic topic = new UserTopic("ab", null, true);
+		UserTopic child = new UserTopic("c", "http://www.eclipse.org", true);
+		UserTopic grandChild = new UserTopic("ac", "http://www.eclipse.org", true);
+		topic.addTopic(child);
+		child.addTopic(grandChild);
+		assertFalse(ScopeUtils.showInTree(topic, new MockScope('a', true)));
+	}
+	
 	public void testEmptyGrandparentOfNonEmptyLeafTopicHierarchical() {
 		UserTopic topic = new UserTopic("ab", null, true);
 		UserTopic child = new UserTopic("ac", null, true);
