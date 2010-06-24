@@ -216,6 +216,7 @@ public final class ContributionsAnalyzer {
 			}
 
 			if (idx == trimBar.getChildren().size()) {
+				idx = getIndex(trimBar, "after=additions"); //$NON-NLS-1$
 				for (MTrimElement item : toolBarContribution.getChildren()) {
 					MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
 					if (DEBUG) {

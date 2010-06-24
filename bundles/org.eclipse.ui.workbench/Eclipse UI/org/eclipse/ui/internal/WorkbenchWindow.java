@@ -118,7 +118,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -523,15 +522,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			trimBar.getChildren().add(toolBar);
 			workbenchTrimElements.add(toolBar);
 		}
-
-		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-		toolBar.setElementId(IWorkbenchActionConstants.MB_ADDITIONS);
-		MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
-		separator.setElementId(IWorkbenchActionConstants.MB_ADDITIONS);
-		separator.setToBeRendered(false);
-		toolBar.getChildren().add(separator);
-		trimBar.getChildren().add(toolBar);
-		workbenchTrimElements.add(toolBar);
 
 		if (reload) {
 			TrimContributionHandler handler = model.getContext().get(TrimContributionHandler.class);
