@@ -89,6 +89,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	IRendererFactory curFactory = null;
 
+	TrimContributionHandler trimContributionHandler;
+
 	MenuServiceFilter menuServiceFilter;
 
 	org.eclipse.swt.widgets.Listener keyListener;
@@ -593,8 +595,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 				display.addFilter(SWT.KeyDown, keyListener);
 				display.addFilter(SWT.Traverse, keyListener);
 
-				ContextInjectionFactory.make(TrimContributionHandler.class,
-						runContext);
+				trimContributionHandler = ContextInjectionFactory.make(
+						TrimContributionHandler.class, runContext);
+				runContext.set(TrimContributionHandler.class, trimContributionHandler);
+				
 				ContextInjectionFactory.make(ToolBarContributionHandler.class,
 						runContext);
 				menuServiceFilter = ContextInjectionFactory.make(
@@ -720,6 +724,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * why this is needed we should make this safe for multiple calls
 	 */
 	private void cleanUp() {
+		if (trimContributionHandler != null) {
+			trimContributionHandler = null;
+			appContext.remove(TrimContributionHandler.class);
+		}
 		if (menuServiceFilter != null) {
 			Display display = Display.getDefault();
 			if (!display.isDisposed()) {

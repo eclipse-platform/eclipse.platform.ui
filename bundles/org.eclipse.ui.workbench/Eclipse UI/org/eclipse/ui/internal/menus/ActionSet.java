@@ -29,6 +29,9 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
@@ -55,7 +58,8 @@ public class ActionSet {
 		this.configElement = element;
 	}
 
-	public void addToModel(ArrayList<MMenuContribution> contributions) {
+	public void addToModel(ArrayList<MMenuContribution> menuContributions,
+			ArrayList<MToolBarContribution> toolBarContributions) {
 
 		String idContrib = MenuHelper.getId(configElement);
 		visibleWhen = new ActiveContextExpression(idContrib);
@@ -70,13 +74,14 @@ public class ActionSet {
 		IConfigurationElement[] menus = configElement
 				.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
 		for (IConfigurationElement element : menus) {
-			addContribution(idContrib, contributions, element, true);
+			addContribution(idContrib, menuContributions, element, true);
 		}
 
 		IConfigurationElement[] actions = configElement
 				.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
 		for (IConfigurationElement element : actions) {
-			addContribution(idContrib, contributions, element, false);
+			addContribution(idContrib, menuContributions, element, false);
+			addToolBarContribution(idContrib, toolBarContributions, element);
 		}
 
 		// for entertainment purposes only
@@ -163,7 +168,7 @@ public class ActionSet {
 				parentId = IWorkbenchActionConstants.M_WINDOW;
 				menuContribution.setParentID(parentId);
 			}
-			MMenuElement action = MenuHelper.createLegacyActionAdditions(application, element);
+			MMenuElement action = MenuHelper.createLegacyMenuActionAdditions(application, element);
 			if (action != null) {
 				menuContribution.getChildren().add(action);
 			}
@@ -173,6 +178,75 @@ public class ActionSet {
 		}
 		if (isMenu) {
 			processGroups(idContrib, contributions, element);
+		}
+	}
+
+	private void addToolBarContribution(String idContrib,
+			ArrayList<MToolBarContribution> contributions, IConfigurationElement element) {
+		String tpath = MenuHelper.getToolBarPath(element);
+		if (tpath == null) {
+			return;
+		}
+
+		MToolBarElement action = MenuHelper
+				.createLegacyToolBarActionAdditions(application, element);
+		if (action != null) {
+			MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
+					.createToolBarContribution();
+			toolBarContribution.getTags().add(MenuServiceFilter.MC_MENU);
+			final String elementId = MenuHelper.getId(element);
+			if (idContrib != null && idContrib.length() > 0) {
+				toolBarContribution.setElementId(idContrib + "/" + elementId); //$NON-NLS-1$
+			} else {
+				toolBarContribution.setElementId(elementId);
+			}
+
+			// String tgroup = null;
+			if (tpath != null) {
+				int loc = tpath.lastIndexOf('/');
+				if (loc != -1) {
+					// tgroup = tpath.substring(loc + 1);
+					tpath = tpath.substring(0, loc);
+				}
+			}
+			if ((tpath != null) && tpath.equals("Normal")) { //$NON-NLS-1$
+				IConfigurationElement parent = (IConfigurationElement) element.getParent();
+				tpath = parent.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+			}
+			Path menuPath = new Path(tpath);
+			tpath = menuPath.segment(0);
+
+			boolean found = false;
+			for (MToolBarContribution contribution : contributions) {
+				String contributionId = contribution.getElementId();
+				if (contributionId != null && contributionId.equals(tpath)) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				MToolBarContribution separatorContribution = MenuFactoryImpl.eINSTANCE
+						.createToolBarContribution();
+				separatorContribution.setElementId(tpath);
+				separatorContribution.setParentId("org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
+				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+				separator.setElementId(tpath);
+				toolBarContribution.getChildren().add(separator);
+				separatorContribution.getChildren().add(separator);
+				contributions.add(separatorContribution);
+			}
+
+			// String positionInParent =
+			// MenuHelper.isSeparatorVisible(configElement) ? null
+			//					: "after=" + tpath; //$NON-NLS-1$
+			String positionInParent = "after=" + tpath;//$NON-NLS-1$
+			toolBarContribution.setParentId("org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
+
+			toolBarContribution.setPositionInParent(positionInParent);
+
+			toolBarContribution.getChildren().add(action);
+			contributions.add(toolBarContribution);
 		}
 	}
 

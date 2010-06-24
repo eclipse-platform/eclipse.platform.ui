@@ -19,8 +19,10 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.osgi.service.event.Event;
@@ -34,7 +36,7 @@ public class TrimContributionHandler {
 	@Inject
 	private IEventBroker broker;
 
-	private Map<MTrimBar, List<MTrimElement>> trimContributions = new WeakHashMap<MTrimBar, List<MTrimElement>>();
+	private Map<MTrimBar, List<MUIElement>> trimContributions = new WeakHashMap<MTrimBar, List<MUIElement>>();
 
 	private EventHandler trimWidgetHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -61,7 +63,8 @@ public class TrimContributionHandler {
 		broker.unsubscribe(trimWidgetHandler);
 	}
 
-	private void contribute(MTrimBar trimBar) {
+	public void contribute(MTrimBar trimBar) {
+		cleanUp(trimBar);
 		contribute(trimBar.getElementId(), trimBar);
 	}
 
@@ -74,15 +77,26 @@ public class TrimContributionHandler {
 			}
 		}
 
-		List<MTrimElement> contributions = ContributionsAnalyzer.addTrimBarContributions(trimBar,
+		List<MUIElement> contributions = ContributionsAnalyzer.addTrimBarContributions(trimBar,
 				applicableContributions);
 		trimContributions.put(trimBar, contributions);
 	}
 
-	private void cleanUp(MTrimBar trimBar) {
-		List<MTrimElement> contributions = trimContributions.get(trimBar);
+	public void cleanUp(MTrimBar trimBar) {
+		List<MUIElement> contributions = trimContributions.remove(trimBar);
 		if (contributions != null) {
-			trimBar.getChildren().removeAll(contributions);
+			for (MUIElement contribution : contributions) {
+				contribution.setToBeRendered(false);
+				if (!trimBar.getChildren().remove(contribution)) {
+					for (MTrimElement child : trimBar.getChildren()) {
+						if (child instanceof MToolBar) {
+							if (((MToolBar) child).getChildren().remove(contribution)) {
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

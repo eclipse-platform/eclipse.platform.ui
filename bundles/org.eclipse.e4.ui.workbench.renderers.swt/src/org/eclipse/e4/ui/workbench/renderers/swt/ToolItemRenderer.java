@@ -310,12 +310,11 @@ public class ToolItemRenderer extends SWTPartRenderer {
 								menu.setVisible(true);
 
 								Display display = menu.getDisplay();
-								while (!menu.isDisposed() && menu.isVisible()) {
+								while (menu.isVisible()) {
 									if (!display.readAndDispatch()) {
 										display.sleep();
 									}
 								}
-								menu.dispose();
 							}
 						}
 					});
@@ -353,15 +352,17 @@ public class ToolItemRenderer extends SWTPartRenderer {
 			ToolItem ti = (ToolItem) me.getWidget();
 			ti.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
-					EHandlerService service = (EHandlerService) lclContext
-							.get(EHandlerService.class.getName());
-					ParameterizedCommand cmd = item.getWbCommand();
-					if (cmd == null) {
-						cmd = generateParameterizedCommand(item, lclContext);
+					if (e.detail != SWT.ARROW) {
+						EHandlerService service = (EHandlerService) lclContext
+								.get(EHandlerService.class.getName());
+						ParameterizedCommand cmd = item.getWbCommand();
+						if (cmd == null) {
+							cmd = generateParameterizedCommand(item, lclContext);
+						}
+						lclContext.set(MItem.class.getName(), item);
+						service.executeHandler(cmd);
+						lclContext.remove(MItem.class.getName());
 					}
-					lclContext.set(MItem.class.getName(), item);
-					service.executeHandler(cmd);
-					lclContext.remove(MItem.class.getName());
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e) {

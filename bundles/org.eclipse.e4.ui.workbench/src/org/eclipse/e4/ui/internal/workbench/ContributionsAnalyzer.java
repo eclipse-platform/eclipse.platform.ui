@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -24,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -138,9 +140,9 @@ public final class ContributionsAnalyzer {
 		return true;
 	}
 
-	public static List<MTrimElement> addTrimBarContributions(final MTrimBar trimBar,
+	public static List<MUIElement> addTrimBarContributions(final MTrimBar trimBar,
 			final List<MTrimContribution> toContribute) {
-		List<MTrimElement> contributions = new ArrayList<MTrimElement>();
+		List<MUIElement> contributions = new ArrayList<MUIElement>();
 		boolean done = toContribute.size() == 0;
 		while (!done) {
 			ArrayList<MTrimContribution> curList = new ArrayList<MTrimContribution>(toContribute);
@@ -159,21 +161,130 @@ public final class ContributionsAnalyzer {
 		return contributions;
 	}
 
-	private static boolean processAddition(final MTrimBar toolBarModel,
-			MTrimContribution toolBarContribution, List<MTrimElement> contributions) {
-		int idx = getIndex(toolBarModel, toolBarContribution.getPositionInParent());
-		if (idx == -1) {
-			return false;
-		}
-		for (MTrimElement item : toolBarContribution.getChildren()) {
-			MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
-			if (DEBUG) {
-				trace("addToolBarContribution " + copy, toolBarModel.getWidget(), toolBarModel); //$NON-NLS-1$
+	private static boolean processAddition(final MTrimBar trimBar,
+			MTrimContribution toolBarContribution, List<MUIElement> contributions) {
+		String positionInParent = toolBarContribution.getPositionInParent();
+		if (shouldContribute(trimBar, positionInParent)) {
+			int idx = getIndex(trimBar, positionInParent);
+			if (idx == -1) {
+				String id = null;
+				String modifier = null;
+				if (positionInParent != null && positionInParent.length() > 0) {
+					String[] array = positionInParent.split("="); //$NON-NLS-1$
+					modifier = array[0];
+					id = array[1];
+				}
+
+				for (int i = 0; i < trimBar.getChildren().size(); i++) {
+					MTrimElement element = trimBar.getChildren().get(i);
+					if (element instanceof MToolBar) {
+						MToolBar toolBar = (MToolBar) element;
+						boolean match = false;
+						int insertionIdx = 0;
+						for (MToolBarElement tbe : toolBar.getChildren()) {
+							if (id.equals(tbe.getElementId())) {
+								if ("after".equals(modifier)) { //$NON-NLS-1$
+									insertionIdx++;
+								}
+								match = true;
+								break;
+							}
+							insertionIdx++;
+						}
+
+						if (match) {
+							for (MTrimElement item : toolBarContribution.getChildren()) {
+								MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
+								if (copy instanceof MToolControl) {
+									trimBar.getChildren().add(i++, copy);
+									contributions.add(copy);
+								} else if (copy instanceof MToolBar) {
+									MToolBar toolBarCopy = (MToolBar) copy;
+									for (int j = 0; j < toolBarContribution.getChildren().size(); j++) {
+										toolBar.getChildren().add(insertionIdx++,
+												toolBarCopy.getChildren().get(j));
+									}
+									copy.setToBeRendered(true);
+									contributions.add(copy);
+								}
+							}
+							return true;
+						}
+					}
+				}
+				return false;
 			}
-			toolBarModel.getChildren().add(idx++, copy);
-			contributions.add(copy);
+
+			if (idx == trimBar.getChildren().size()) {
+				for (MTrimElement item : toolBarContribution.getChildren()) {
+					MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
+					if (DEBUG) {
+						trace("addTrimContribution " + copy, trimBar.getWidget(), trimBar); //$NON-NLS-1$
+					}
+					trimBar.getChildren().add(idx++, copy);
+					contributions.add(copy);
+				}
+				return true;
+			}
+
+			MTrimElement element = trimBar.getChildren().get(idx);
+			if (element instanceof MToolControl) {
+				for (MTrimElement item : toolBarContribution.getChildren()) {
+					MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
+					if (DEBUG) {
+						trace("addTrimContribution " + copy, trimBar.getWidget(), trimBar); //$NON-NLS-1$
+					}
+					trimBar.getChildren().add(idx++, copy);
+					contributions.add(copy);
+				}
+			} else if (element instanceof MToolBar) {
+				MToolBar bar = (MToolBar) element;
+				for (MTrimElement item : toolBarContribution.getChildren()) {
+					if (item instanceof MToolBar) {
+						MToolBar contributedToolBar = (MToolBar) item;
+						for (int i = 0; i < contributedToolBar.getChildren().size(); i++) {
+							MToolBarElement tbe = contributedToolBar.getChildren().get(i);
+							MToolBarElement copy = (MToolBarElement) EcoreUtil.copy((EObject) tbe);
+							if (DEBUG) {
+								trace("addTrimContribution " + copy, trimBar.getWidget(), trimBar); //$NON-NLS-1$
+							}
+							bar.setToBeRendered(true);
+							bar.getChildren().add(copy);
+							contributions.add(copy);
+						}
+					}
+				}
+			}
+			return true;
 		}
-		return true;
+		return false;
+	}
+
+	private static boolean shouldContribute(MTrimBar trimBar, String positionInParent) {
+		String id = null;
+		if (positionInParent != null && positionInParent.length() > 0) {
+			String[] array = positionInParent.split("="); //$NON-NLS-1$
+			id = array[1];
+		}
+		if (id == null || id.equals("additions")) { //$NON-NLS-1$
+			return true;
+		}
+
+		for (MTrimElement element : trimBar.getChildren()) {
+			if (id.equals(element.getElementId())) {
+				return true;
+			}
+
+			if (element instanceof MToolBar) {
+				for (MToolBarElement e : ((MToolBar) element).getChildren()) {
+					if (id.equals(e.getElementId())) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private static int getIndex(MElementContainer<?> menuModel, String positionInParent) {

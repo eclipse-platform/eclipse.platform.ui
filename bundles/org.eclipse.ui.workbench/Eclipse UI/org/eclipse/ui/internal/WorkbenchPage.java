@@ -2198,6 +2198,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				// this perspective already exists, switch to this one
 				perspectives.setSelectedElement(mperspective);
 				window.getContext().set(IContextConstants.ACTIVE_CHILD, mperspective.getContext());
+				List<String> ids = ModeledPageLayout.getIds(mperspective,
+						ModeledPageLayout.ACTION_SET_TAG);
+				legacyWindow.populateTrimContributions(ids, true);
 				legacyWindow.firePerspectiveDeactivated(this, perspective);
 				return;
 			}
@@ -2226,6 +2229,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// activate it
 		perspectives.setSelectedElement(modelPerspective);
 		window.getContext().set(IContextConstants.ACTIVE_CHILD, modelPerspective.getContext());
+		List<String> ids = ModeledPageLayout.getIds(modelPerspective,
+				ModeledPageLayout.ACTION_SET_TAG);
+		legacyWindow.populateTrimContributions(ids, true);
 		legacyWindow.firePerspectiveDeactivated(this, perspective);
 
 		// FIXME: we need to fire events

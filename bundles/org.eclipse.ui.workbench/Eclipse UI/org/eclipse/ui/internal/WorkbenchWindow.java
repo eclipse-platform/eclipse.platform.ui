@@ -45,6 +45,7 @@ import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.internal.workbench.TrimContributionHandler;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -64,6 +65,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
@@ -116,6 +118,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -440,12 +443,29 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		initializeDefaultServices();
 
-		// register with the tracker
-
-		fireWindowOpening();
+		ContextInjectionFactory.inject(page, model.getContext());
 
 		// Fill the action bars
 		fillActionBars(FILL_ALL_ACTION_BARS);
+
+		List<MPerspectiveStack> ps = modelService.findElements(model, null,
+				MPerspectiveStack.class, null);
+		if (ps.size() > 0) {
+			MPerspectiveStack stack = ps.get(0);
+			if (stack.getSelectedElement() != null) {
+				MPerspective curPersp = stack.getSelectedElement();
+				IPerspectiveDescriptor thePersp = getWorkbench().getPerspectiveRegistry()
+						.findPerspectiveWithId(curPersp.getElementId());
+				if (thePersp != null) {
+					perspective = thePersp;
+				}
+			}
+		}
+		page.setPerspective(perspective);
+
+		// register with the tracker
+
+		fireWindowOpening();
 
 		Shell shell = (Shell) model.getWidget();
 		MMenu mainMenu = model.getMainMenu();
@@ -468,8 +488,76 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MenuServiceFilter filter = ctx.get(MenuServiceFilter.class);
 		filter.showMenu(null, menu, mainMenu);
 
+		createProgressIndicator(shell);
+		createHeapStatus(shell);
+	}
+
+	@PreDestroy
+	void destroy() {
+		removeTrimContributions();
+	}
+
+	private void removeTrimContributions() {
 		MTrimBar trimBar = getTopTrim();
+		for (MTrimElement trimElement : workbenchTrimElements) {
+			trimElement.setToBeRendered(false);
+			trimBar.getChildren().remove(trimElement);
+		}
+		workbenchTrimElements.clear();
+	}
+
+	void populateTrimContributions(List<String> actionSets, boolean reload) {
+		removeTrimContributions();
+
+		MTrimBar trimBar = getTopTrim();
+		trimBar.setToBeRendered(true);
 		fill(trimBar, getCoolBarManager2());
+
+		for (String actionSet : actionSets) {
+			MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+			toolBar.setElementId(actionSet);
+			MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+			separator.setElementId(actionSet);
+			separator.setToBeRendered(false);
+			toolBar.getChildren().add(separator);
+			trimBar.getChildren().add(toolBar);
+			workbenchTrimElements.add(toolBar);
+		}
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		toolBar.setElementId(IWorkbenchActionConstants.MB_ADDITIONS);
+		MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+		separator.setElementId(IWorkbenchActionConstants.MB_ADDITIONS);
+		separator.setToBeRendered(false);
+		toolBar.getChildren().add(separator);
+		trimBar.getChildren().add(toolBar);
+		workbenchTrimElements.add(toolBar);
+
+		if (reload) {
+			TrimContributionHandler handler = model.getContext().get(TrimContributionHandler.class);
+			handler.cleanUp(trimBar);
+			handler.contribute(trimBar);
+
+			for (MTrimElement trimElement : trimBar.getChildren()) {
+				if (trimElement instanceof MToolBar) {
+					List<MToolBarElement> children = ((MToolBar) trimElement).getChildren();
+					if (children.isEmpty()) {
+						trimElement.setToBeRendered(false);
+					} else {
+						boolean ignore = true;
+						for (MToolBarElement child : children) {
+							if (!(child instanceof MToolBarSeparator)) {
+								ignore = false;
+							}
+						}
+
+						if (ignore) {
+							trimElement.setToBeRendered(false);
+						}
+					}
+				}
+			}
+		}
 
 		MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
@@ -486,15 +574,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		workbenchTrimElements.add(spacerControl);
 		workbenchTrimElements.add(switcherControl);
-
-		createProgressIndicator(shell);
-		createHeapStatus(shell);
-	}
-
-	@PreDestroy
-	void destroy() {
-		MTrimBar trimBar = getTopTrim();
-		trimBar.getChildren().removeAll(workbenchTrimElements);
 	}
 
 	private MTrimBar getTopTrim() {
@@ -2039,21 +2118,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		selectionService = (ISelectionService) ContextInjectionFactory.make(SelectionService.class,
 				model.getContext());
-
-		ContextInjectionFactory.inject(page, model.getContext());
-		List<MPerspectiveStack> ps = modelService.findElements(model, null,
-				MPerspectiveStack.class, null);
-		if (ps.size() > 0) {
-			MPerspectiveStack stack = ps.get(0);
-			if (stack.getSelectedElement() != null) {
-				MPerspective curPersp = stack.getSelectedElement();
-				IPerspectiveDescriptor thePersp = getWorkbench().getPerspectiveRegistry()
-						.findPerspectiveWithId(curPersp.getElementId());
-				if (thePersp != null)
-					perspective = thePersp;
-			}
-		}
-		page.setPerspective(perspective);
 
 		LegacyHandlerService hs = new LegacyHandlerService(windowContext);
 		windowContext.set(IHandlerService.class.getName(), hs);

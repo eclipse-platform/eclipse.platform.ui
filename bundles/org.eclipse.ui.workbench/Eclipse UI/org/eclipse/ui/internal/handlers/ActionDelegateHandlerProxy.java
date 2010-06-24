@@ -399,7 +399,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * 
 	 * @return The current delegate; or <code>null</code> if none.
 	 */
-	private final IActionDelegate getDelegate() {
+	public final IActionDelegate getDelegate() {
 		return delegate;
 	}
 
@@ -541,7 +541,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * @return <code>true</code> if the delegate is now non-null;
 	 *         <code>false</code> otherwise.
 	 */
-	private final boolean loadDelegate() {
+	public final boolean loadDelegate() {
 		// Try to load the delegate, if it hasn't been loaded already.
 		if (delegate == null) {
 			/*

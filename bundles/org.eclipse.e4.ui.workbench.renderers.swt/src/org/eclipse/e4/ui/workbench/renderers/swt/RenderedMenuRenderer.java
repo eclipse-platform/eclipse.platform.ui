@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
@@ -33,21 +34,31 @@ public class RenderedMenuRenderer extends SWTPartRenderer {
 			return null;
 
 		MRenderedMenu menuModel = (MRenderedMenu) element;
-		if (!(menuModel.getContributionManager() instanceof MenuManager)) {
-			return null;
+		Object contributionManager = menuModel.getContributionManager();
+		if (contributionManager instanceof MenuManager) {
+			Menu newMenu = null;
+			MenuManager mm = (MenuManager) contributionManager;
+			MUIElement container = (MUIElement) ((EObject) menuModel)
+					.eContainer();
+			if (parent instanceof Decorations && container instanceof MWindow) {
+				newMenu = mm.createMenuBar((Decorations) parent);
+			} else {
+				newMenu = mm.createContextMenu((Control) parent);
+			}
+			mm.update(true);
+			return newMenu;
+		} else if (contributionManager instanceof IMenuCreator) {
+			final IMenuCreator creator = (IMenuCreator) contributionManager;
+			if (parent instanceof Control) {
+				Control control = (Control) parent;
+				return creator.getMenu(control);
+			} else if (parent instanceof Menu) {
+				Menu menu = (Menu) parent;
+				return creator.getMenu(menu);
+			}
 		}
 
-		Menu newMenu = null;
-		MenuManager mm = (MenuManager) menuModel.getContributionManager();
-		MUIElement container = (MUIElement) ((EObject) menuModel).eContainer();
-		if (parent instanceof Decorations && container instanceof MWindow) {
-			newMenu = mm.createMenuBar((Decorations) parent);
-		} else {
-			newMenu = mm.createContextMenu((Control) parent);
-		}
-		mm.update(true);
-
-		return newMenu;
+		return null;
 	}
 
 	/*

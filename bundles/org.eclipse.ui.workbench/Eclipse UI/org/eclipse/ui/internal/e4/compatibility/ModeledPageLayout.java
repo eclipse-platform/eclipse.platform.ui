@@ -37,6 +37,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 
 public class ModeledPageLayout implements IPageLayout {
 
@@ -116,6 +118,13 @@ public class ModeledPageLayout implements IPageLayout {
 		// editorArea.setName("Editor Area");
 
 		perspModel.getChildren().add(eaRef);
+
+		ActionSetRegistry registry = application.getContext().get(ActionSetRegistry.class);
+		for (IActionSetDescriptor actionSetDescriptor : registry.getActionSets()) {
+			if (actionSetDescriptor.isInitiallyVisible()) {
+				addActionSet(actionSetDescriptor.getId());
+			}
+		}
 	}
 
 	public MPerspective getModel() {

@@ -9,28 +9,48 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
+import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
+import org.eclipse.ui.internal.handlers.E4HandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
@@ -236,11 +256,85 @@ public class MenuHelper {
 		}
 	}
 
+	static class ToolBarKey {
+		private MToolBarContribution contribution;
+		private int tag = -1;
+		private int hc = -1;
+
+		public ToolBarKey(MToolBarContribution mc) {
+			this.contribution = mc;
+			mc.setWidget(this);
+		}
+
+		int getSchemeTag() {
+			if (tag == -1) {
+				List<String> tags = contribution.getTags();
+				if (tags.contains("scheme:menu")) { //$NON-NLS-1$
+					tag = 1;
+				} else if (tags.contains("scheme:popup")) { //$NON-NLS-1$
+					tag = 2;
+				} else if (tags.contains("scheme:toolbar")) { //$NON-NLS-1$
+					tag = 3;
+				} else {
+					tag = 0;
+				}
+			}
+			return tag;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof ToolBarKey)) {
+				return false;
+			}
+			ToolBarKey other = (ToolBarKey) obj;
+			MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
+			Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
+			MCoreExpression vexp2 = (MCoreExpression) other.contribution.getVisibleWhen();
+			Object exp2 = vexp2 == null ? null : vexp2.getCoreExpression();
+			return Util.equals(contribution.getParentId(), other.contribution.getParentId())
+					&& Util.equals(contribution.getPositionInParent(),
+							other.contribution.getPositionInParent())
+					&& getSchemeTag() == other.getSchemeTag() && Util.equals(exp1, exp2);
+		}
+
+		@Override
+		public int hashCode() {
+			if (hc == -1) {
+				MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
+				Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
+				hc = Util.hashCode(contribution.getParentId());
+				hc = hc * 87 + Util.hashCode(contribution.getPositionInParent());
+				hc = hc * 87 + getSchemeTag();
+				hc = hc * 87 + Util.hashCode(exp1);
+			}
+			return hc;
+		}
+
+		@Override
+		public String toString() {
+			return "Key " + contribution.getParentId() + "--" + contribution.getPositionInParent() //$NON-NLS-1$ //$NON-NLS-2$
+					+ "--" + getSchemeTag() + "--" + contribution.getVisibleWhen(); //$NON-NLS-1$//$NON-NLS-2$
+		}
+	}
+
 	private static Key getKey(MMenuContribution contribution) {
 		if (contribution.getWidget() instanceof Key) {
 			return (Key) contribution.getWidget();
 		}
 		return new Key(contribution);
+	}
+
+	private static ToolBarKey getKey(MToolBarContribution contribution) {
+		if (contribution.getWidget() instanceof ToolBarKey) {
+			return (ToolBarKey) contribution.getWidget();
+		}
+		return new ToolBarKey(contribution);
 	}
 
 	public static void printContributions(ArrayList<MMenuContribution> contributions) {
@@ -264,6 +358,50 @@ public class MenuHelper {
 				printElement(level + 1, item);
 			}
 		}
+	}
+
+	public static void mergeToolBarContributions(ArrayList<MToolBarContribution> contributions,
+			ArrayList<MToolBarContribution> result) {
+		HashMap<ToolBarKey, ArrayList<MToolBarContribution>> buckets = new HashMap<ToolBarKey, ArrayList<MToolBarContribution>>();
+		trace("mergeContributions size: " + contributions.size(), null); //$NON-NLS-1$
+		// first pass, sort by parentId?position,scheme,visibleWhen
+		for (MToolBarContribution contribution : contributions) {
+			ToolBarKey key = getKey(contribution);
+			ArrayList<MToolBarContribution> slot = buckets.get(key);
+			if (slot == null) {
+				slot = new ArrayList<MToolBarContribution>();
+				buckets.put(key, slot);
+			}
+			slot.add(contribution);
+		}
+		Iterator<MToolBarContribution> i = contributions.iterator();
+		while (i.hasNext() && !buckets.isEmpty()) {
+			MToolBarContribution contribution = i.next();
+			ToolBarKey key = getKey(contribution);
+			ArrayList<MToolBarContribution> slot = buckets.remove(key);
+			if (slot == null) {
+				continue;
+			}
+			MToolBarContribution toContribute = null;
+			for (MToolBarContribution item : slot) {
+				if (toContribute == null) {
+					toContribute = item;
+					continue;
+				}
+				Object[] array = item.getChildren().toArray();
+				for (int c = 0; c < array.length; c++) {
+					MToolBarElement me = (MToolBarElement) array[c];
+					if (!containsMatching(toContribute.getChildren(), me)) {
+						toContribute.getChildren().add(me);
+					}
+				}
+			}
+			if (toContribute != null) {
+				toContribute.setWidget(null);
+				result.add(toContribute);
+			}
+		}
+		trace("mergeContributions: final size: " + result.size(), null); //$NON-NLS-1$
 	}
 
 	public static void mergeContributions(ArrayList<MMenuContribution> contributions,
@@ -316,6 +454,17 @@ public class MenuHelper {
 			if (Util.equals(me.getElementId(), element.getElementId())
 					&& element.getClass().isInstance(me)
 					&& (element instanceof MMenuSeparator || element instanceof MMenu)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean containsMatching(List<MToolBarElement> children, MToolBarElement me) {
+		for (MToolBarElement element : children) {
+			if (Util.equals(me.getElementId(), element.getElementId())
+					&& element.getClass().isInstance(me)
+					&& (element instanceof MToolBarSeparator || element instanceof MToolBar)) {
 				return true;
 			}
 		}
@@ -389,6 +538,10 @@ public class MenuHelper {
 
 	static String getMenuBarPath(IConfigurationElement element) {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_MENUBAR_PATH);
+	}
+
+	static String getToolBarPath(IConfigurationElement element) {
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_TOOLBAR_PATH);
 	}
 
 	static String getMnemonic(IConfigurationElement element) {
@@ -508,7 +661,7 @@ public class MenuHelper {
 		return element;
 	}
 
-	public static MMenuElement createLegacyActionAdditions(MApplication app,
+	public static MMenuElement createLegacyMenuActionAdditions(MApplication app,
 			IConfigurationElement element) {
 		String id = MenuHelper.getId(element);
 		String text = MenuHelper.getLabel(element);
@@ -541,5 +694,90 @@ public class MenuHelper {
 
 	public static String getDescription(IConfigurationElement configElement) {
 		return configElement.getAttribute(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
+	}
+
+	public static MToolBarElement createLegacyToolBarActionAdditions(MApplication app,
+			IConfigurationElement element) {
+		String cmdId = MenuHelper.getActionSetCommandId(element);
+		if (cmdId == null) {
+			return null;
+		}
+		String id = MenuHelper.getId(element);
+		String text = MenuHelper.getLabel(element);
+		String mnemonic = MenuHelper.getMnemonic(element);
+		if (text != null && mnemonic != null) {
+			int idx = text.indexOf(mnemonic);
+			if (idx != -1) {
+				text = text.substring(0, idx) + '&' + text.substring(idx);
+			}
+		}
+		String iconUri = MenuHelper.getIconUrl(element, IWorkbenchRegistryConstants.ATT_ICON);
+		MCommand cmd = getCommandById(app, cmdId);
+		if (cmd == null) {
+			ECommandService commandService = (ECommandService) PlatformUI.getWorkbench()
+					.getService(ECommandService.class);
+			Command command = commandService.getCommand(cmdId);
+			if (command == null) {
+				ICommandService ics = (ICommandService) PlatformUI.getWorkbench().getService(
+						ICommandService.class);
+				command = commandService.defineCommand(cmdId, text, null, ics.getCategory(null),
+						null);
+			}
+			cmd = CommandsFactoryImpl.eINSTANCE.createCommand();
+			cmd.setCommandName(text);
+			cmd.setElementId(cmdId);
+		}
+		final MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
+
+		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
+		if (style == null || style.length() == 0) {
+			item.setType(ItemType.PUSH);
+		} else if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
+			item.setType(ItemType.CHECK);
+		} else if (IWorkbenchRegistryConstants.STYLE_RADIO.equals(style)) {
+			item.setType(ItemType.RADIO);
+		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
+			MRenderedMenu menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
+			menu.setContributionManager(new IMenuCreator() {
+				private IWorkbenchWindowPulldownDelegate getDelegate() {
+					WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow();
+					E4HandlerProxy proxy = (E4HandlerProxy) HandlerServiceImpl.lookUpHandler(window
+							.getModel().getContext(), item.getCommand().getElementId());
+					ActionDelegateHandlerProxy handlerProxy = (ActionDelegateHandlerProxy) proxy
+							.getHandler();
+					Object delegate = handlerProxy.getDelegate();
+					if (delegate == null) {
+						handlerProxy.loadDelegate();
+						delegate = handlerProxy.getDelegate();
+					}
+					return (IWorkbenchWindowPulldownDelegate) delegate;
+				}
+
+				public Menu getMenu(Menu parent) {
+					IWorkbenchWindowPulldownDelegate2 delegate = (IWorkbenchWindowPulldownDelegate2) getDelegate();
+					return delegate.getMenu(parent);
+				}
+
+				public Menu getMenu(Control parent) {
+					return getDelegate().getMenu(parent);
+				}
+
+				public void dispose() {
+				}
+			});
+			item.setMenu(menu);
+		} else {
+			item.setType(ItemType.PUSH);
+		}
+		
+		item.setElementId(id);
+		item.setCommand(cmd);
+		if (iconUri == null) {
+			item.setLabel(text);
+		} else {
+			item.setIconURI(iconUri);
+		}
+		return item;
 	}
 }
