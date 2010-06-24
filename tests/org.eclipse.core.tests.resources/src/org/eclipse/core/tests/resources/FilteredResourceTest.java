@@ -1690,4 +1690,67 @@ public class FilteredResourceTest extends ResourceTest {
 			fail("5.0", e);
 		}
 	}
+
+	/**
+	 * Regression for  Bug 317783 -  Resource filters do not work at all in "Project Explorer" 
+	 * The problem is that a client calls explicitly refreshLocal on a folder that is filtered out by 
+	 * resource filters and that doesn't exist in the workspace.  This used to cause the resource to
+	 * appear in the workspace, along with all its children, in spite of active resource filters to the
+	 * contrary.
+	 */
+	public void test317783() {
+		IFolder folder = existingProject.getFolder("foo");
+		ensureExistsInWorkspace(folder, true);
+
+		IFile file = folder.getFile("bar.txt");
+		ensureExistsInWorkspace(file, "content");
+
+		try {
+			existingProject.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+
+		try {
+			FileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*");
+			existingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription, 0, getMonitor());
+		} catch (CoreException e) {
+			fail("1.2");
+		}
+
+		try {
+			existingProject.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.3", e);
+		}
+
+		IResource members[] = null;
+		try {
+			members = existingProject.members();
+		} catch (CoreException e) {
+			fail("1.4", e);
+		}
+		assertEquals("1.5", members.length, 2);
+		assertEquals("1.6", members[0].getName(), ".project");
+		assertEquals("1.7", members[1].getName(), existingFileInExistingProject.getName());
+
+		try {
+			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		try {
+			members = existingProject.members();
+		} catch (CoreException e) {
+			fail("2.1", e);
+		}
+		assertEquals("2.2", members.length, 2);
+		assertEquals("2.3", members[0].getName(), ".project");
+		assertEquals("2.4", members[1].getName(), existingFileInExistingProject.getName());
+
+		assertEquals("2.5", false, folder.exists());
+		assertEquals("2.6", false, file.exists());
+
+	}
 }
