@@ -45,7 +45,15 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		processLanguages();
 	}
 
+	public Object create(String uriString, IEclipseContext context, IEclipseContext staticContext) {
+		return doCreate(uriString, context, staticContext);
+	}
+
 	public Object create(String uriString, IEclipseContext context) {
+		return doCreate(uriString, context, null);
+	}
+
+	private Object doCreate(String uriString, IEclipseContext context, IEclipseContext staticContext) {
 		if (uriString == null) {
 			return null;
 		}
@@ -53,7 +61,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		Bundle bundle = getBundle(uri);
 		Object contribution;
 		if (bundle != null) {
-			contribution = createFromBundle(bundle, context, uri);
+			contribution = createFromBundle(bundle, context, staticContext, uri);
 		} else {
 			contribution = null;
 			Activator.log(LogService.LOG_ERROR, "Unable to retrive the bundle from the URI: " //$NON-NLS-1$
@@ -62,7 +70,8 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		return contribution;
 	}
 
-	protected Object createFromBundle(Bundle bundle, IEclipseContext context, URI uri) {
+	protected Object createFromBundle(Bundle bundle, IEclipseContext context,
+			IEclipseContext staticContext, URI uri) {
 		Object contribution;
 		if (uri.segmentCount() > 3) {
 			String prefix = uri.segment(2);
@@ -77,7 +86,12 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			String clazz = uri.segment(2);
 			try {
 				Class<?> targetClass = bundle.loadClass(clazz);
-				contribution = ContextInjectionFactory.make(targetClass, context);
+				if (staticContext == null)
+					contribution = ContextInjectionFactory.make(targetClass, context);
+				else
+					contribution = ContextInjectionFactory
+							.make(targetClass, context, staticContext);
+
 				if (contribution == null) {
 					String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
 							+ bundle.getBundleId() + "'"; //$NON-NLS-1$
