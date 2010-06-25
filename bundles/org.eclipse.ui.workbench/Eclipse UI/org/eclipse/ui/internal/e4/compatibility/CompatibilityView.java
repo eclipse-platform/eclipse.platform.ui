@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+
 import javax.inject.Inject;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -19,7 +21,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
-import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
@@ -91,7 +92,7 @@ public class CompatibilityView extends CompatibilityPart {
 				menu.setElementId(part.getElementId());
 
 				menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
-				menu.getTags().add(MenuServiceFilter.MC_MENU);
+				menu.getTags().add(ContributionsAnalyzer.MC_MENU);
 				part.getMenus().add(menu);
 
 			}
@@ -109,7 +110,7 @@ public class CompatibilityView extends CompatibilityPart {
 				menu.setElementId(part.getElementId());
 
 				menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
-				menu.getTags().add(MenuServiceFilter.MC_MENU);
+				menu.getTags().add(ContributionsAnalyzer.MC_MENU);
 				part.getMenus().add(menu);
 			}
 		}

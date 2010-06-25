@@ -16,6 +16,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.internal.expressions.ReferenceExpression;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
@@ -23,16 +27,19 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
@@ -45,6 +52,57 @@ public final class ContributionsAnalyzer {
 
 	private static void trace(String msg, Object menu, Object menuModel) {
 		trace(msg + ": " + menu + ": " + menuModel, null); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	public static void gatherMenuContributions(final MMenu menuModel,
+			final List<MMenuContribution> menuContributionList, final String id,
+			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
+			boolean includePopups) {
+		boolean menuBar = (((MUIElement) ((EObject) menuModel).eContainer()) instanceof MWindow);
+		for (MMenuContribution menuContribution : menuContributionList) {
+			String parentID = menuContribution.getParentID();
+			boolean popup = parentID.equals(POPUP_PARENT_ID) && (menuModel instanceof MPopupMenu)
+					&& includePopups;
+			boolean filtered = isFiltered(menuModel, menuContribution);
+			if (filtered || (!popup && !parentID.equals(id)) || !menuContribution.isToBeRendered()) {
+				continue;
+			}
+			if (menuBar || isVisible(menuContribution, eContext)) {
+				toContribute.add(menuContribution);
+			}
+		}
+	}
+
+	static boolean isFiltered(MMenu menuModel, MMenuContribution menuContribution) {
+		if (menuModel.getTags().contains(ContributionsAnalyzer.MC_POPUP)) {
+			return !menuContribution.getTags().contains(ContributionsAnalyzer.MC_POPUP)
+					&& menuContribution.getTags().contains(ContributionsAnalyzer.MC_MENU);
+		}
+		if (menuModel.getTags().contains(ContributionsAnalyzer.MC_MENU)) {
+			return !menuContribution.getTags().contains(ContributionsAnalyzer.MC_MENU)
+					&& menuContribution.getTags().contains(ContributionsAnalyzer.MC_POPUP);
+		}
+		return false;
+	}
+
+	public static boolean isVisible(MMenuContribution menuContribution, ExpressionContext eContext) {
+		if (menuContribution.getVisibleWhen() == null) {
+			return true;
+		}
+		MCoreExpression exp = (MCoreExpression) menuContribution.getVisibleWhen();
+		Expression ref = null;
+		if (exp.getCoreExpression() instanceof Expression) {
+			ref = (Expression) exp.getCoreExpression();
+		} else {
+			ref = new ReferenceExpression(exp.getCoreExpressionId());
+			exp.setCoreExpression(ref);
+		}
+		try {
+			return ref.evaluate(eContext) != EvaluationResult.FALSE;
+		} catch (CoreException e) {
+			trace("isVisible exception", e); //$NON-NLS-1$
+		}
+		return false;
 	}
 
 	public static void addMenuContributions(final MMenu menuModel,
@@ -628,4 +686,9 @@ public final class ContributionsAnalyzer {
 		}
 		return -1;
 	}
+
+	public static final String MC_POPUP = "menuContribution:popup"; //$NON-NLS-1$
+	public static final String MC_MENU = "menuContribution:menu"; //$NON-NLS-1$
+	public static final String MC_TOOLBAR = "menuContribution:toolbar"; //$NON-NLS-1$
+	public static final String POPUP_PARENT_ID = "popup"; //$NON-NLS-1$
 }

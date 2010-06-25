@@ -35,7 +35,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -135,7 +134,7 @@ public class ActionSet {
 			IConfigurationElement element, boolean isMenu) {
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
 		menuContribution.setVisibleWhen(createVisibleWhen());
-		menuContribution.getTags().add(MenuServiceFilter.MC_MENU);
+		menuContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 		final String elementId = MenuHelper.getId(element);
 		if (idContrib != null && idContrib.length() > 0) {
 			menuContribution.setElementId(idContrib + "/" + elementId); //$NON-NLS-1$
@@ -194,7 +193,7 @@ public class ActionSet {
 		if (action != null) {
 			MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
 					.createToolBarContribution();
-			toolBarContribution.getTags().add(MenuServiceFilter.MC_MENU);
+			toolBarContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 			final String elementId = MenuHelper.getId(element);
 			if (idContrib != null && idContrib.length() > 0) {
 				toolBarContribution.setElementId(idContrib + "/" + elementId); //$NON-NLS-1$
@@ -256,7 +255,7 @@ public class ActionSet {
 			IConfigurationElement element) {
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
 		menuContribution.setVisibleWhen(createVisibleWhen());
-		menuContribution.getTags().add(MenuServiceFilter.MC_MENU);
+		menuContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 		final String elementId = MenuHelper.getId(element);
 		if (idContrib != null && idContrib.length() > 0) {
 			menuContribution.setElementId(idContrib + "/" + elementId + ".groups"); //$NON-NLS-1$ //$NON-NLS-2$

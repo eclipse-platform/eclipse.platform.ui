@@ -16,17 +16,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
-import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.internal.expressions.ReferenceExpression;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
@@ -45,8 +40,6 @@ import org.eclipse.swt.widgets.Widget;
 
 public class MenuServiceFilter implements Listener {
 	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context";
-	final public static String MC_POPUP = "menuContribution:popup";
-	final public static String MC_MENU = "menuContribution:menu";
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
 		WorkbenchSWTActivator.trace(Policy.MENUS, msg + ": " + menu + ": "
@@ -132,7 +125,8 @@ public class MenuServiceFilter implements Listener {
 		final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
 		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
 		ExpressionContext eContext = new ExpressionContext(parentContext);
-		gatherMenuContributions(menuModel, menuModel.getElementId(),
+		ContributionsAnalyzer.gatherMenuContributions(menuModel,
+				application.getMenuContributions(), menuModel.getElementId(),
 				toContribute, eContext, false);
 		ContributionsAnalyzer.addMenuContributions(menuModel, toContribute,
 				menuContributionsToRemove);
@@ -196,12 +190,14 @@ public class MenuServiceFilter implements Listener {
 		final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
 		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
 		ExpressionContext eContext = new ExpressionContext(popupContext);
-		gatherMenuContributions(menuModel, menuModel.getElementId(),
+		ContributionsAnalyzer.gatherMenuContributions(menuModel,
+				application.getMenuContributions(), menuModel.getElementId(),
 				toContribute, eContext, true);
 
 		for (String tag : menuModel.getTags()) {
 			if (tag.startsWith("popup:") && tag.length() > 6) {
-				gatherMenuContributions(menuModel, tag.substring(6),
+				ContributionsAnalyzer.gatherMenuContributions(menuModel,
+						application.getMenuContributions(), tag.substring(6),
 						toContribute, eContext, false);
 			}
 		}
@@ -232,38 +228,6 @@ public class MenuServiceFilter implements Listener {
 		for (MMenuElement element : menuModel) {
 			renderer.removeGui(element);
 		}
-	}
-
-	private void gatherMenuContributions(final MMenu menuModel,
-			final String id, final ArrayList<MMenuContribution> toContribute,
-			final ExpressionContext eContext, boolean includePopups) {
-		for (MMenuContribution menuContribution : application
-				.getMenuContributions()) {
-			String parentID = menuContribution.getParentID();
-			boolean popup = parentID.equals("popup")
-					&& (menuModel instanceof MPopupMenu) && includePopups;
-			boolean filtered = isFiltered(menuModel, menuContribution);
-			if (filtered || (!popup && !parentID.equals(id))
-					|| !menuContribution.isToBeRendered()) {
-				continue;
-			}
-			if (isVisible(menuContribution, eContext)) {
-				toContribute.add(menuContribution);
-			}
-		}
-	}
-
-	private boolean isFiltered(MMenu menuModel,
-			MMenuContribution menuContribution) {
-		if (menuModel.getTags().contains(MC_POPUP)) {
-			return !menuContribution.getTags().contains(MC_POPUP)
-					&& menuContribution.getTags().contains(MC_MENU);
-		}
-		if (menuModel.getTags().contains(MC_MENU)) {
-			return !menuContribution.getTags().contains(MC_MENU)
-					&& menuContribution.getTags().contains(MC_POPUP);
-		}
-		return false;
 	}
 
 	private void removeMenuContributions(final MMenu menuModel,
@@ -336,28 +300,6 @@ public class MenuServiceFilter implements Listener {
 			trace("cleanUp.run()", menu, null);
 			cleanUp.run();
 		}
-	}
-
-	private boolean isVisible(MMenuContribution menuContribution,
-			ExpressionContext eContext) {
-		if (menuContribution.getVisibleWhen() == null) {
-			return true;
-		}
-		MCoreExpression exp = (MCoreExpression) menuContribution
-				.getVisibleWhen();
-		Expression ref = null;
-		if (exp.getCoreExpression() instanceof Expression) {
-			ref = (Expression) exp.getCoreExpression();
-		} else {
-			ref = new ReferenceExpression(exp.getCoreExpressionId());
-			exp.setCoreExpression(ref);
-		}
-		try {
-			return ref.evaluate(eContext) != EvaluationResult.FALSE;
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-		return false;
 	}
 
 	public void dispose() {

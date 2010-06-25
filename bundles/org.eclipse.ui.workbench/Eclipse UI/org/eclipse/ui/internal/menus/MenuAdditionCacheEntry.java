@@ -33,7 +33,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
-import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
@@ -293,9 +292,9 @@ public class MenuAdditionCacheEntry {
 		}
 		menuContribution.setPositionInParent(query);
 		menuContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
-		String filter = MenuServiceFilter.MC_MENU;
+		String filter = ContributionsAnalyzer.MC_MENU;
 		if ("popup".equals(location.getScheme())) { //$NON-NLS-1$
-			filter = MenuServiceFilter.MC_POPUP;
+			filter = ContributionsAnalyzer.MC_POPUP;
 		}
 		menuContribution.getTags().add(filter);
 		menuContribution.setVisibleWhen(MenuHelper.getVisibleWhen(configElement));
