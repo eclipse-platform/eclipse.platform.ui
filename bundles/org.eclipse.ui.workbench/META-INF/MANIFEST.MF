@@ -41,7 +41,7 @@ Export-Package: org.eclipse.ui;ui.workbench=split;mandatory:="ui.workbench",
  org.eclipse.ui.internal.decorators;x-friends:="org.eclipse.ui.ide",
  org.eclipse.ui.internal.dialogs;x-internal:=true,
  org.eclipse.ui.internal.dnd;x-friends:="org.eclipse.ui.intro,org.eclipse.ui.presentations.r21",
- org.eclipse.ui.internal.e4.compatibility;x-internal:=true,
+ org.eclipse.ui.internal.e4.compatibility;x-friends:="org.eclipse.e4.ui.workbench.addons.swt",
  org.eclipse.ui.internal.editorsupport;x-internal:=true,
  org.eclipse.ui.internal.expressions;x-internal:=true,
  org.eclipse.ui.internal.handlers;x-friends:="org.eclipse.ui,org.eclipse.ui.ide",
@@ -123,5 +123,4 @@ Import-Package: com.ibm.icu.text,
  org.osgi.service.event;version="1.2.0",
  org.w3c.dom,
  org.xml.sax
-Bundle-RequiredExecutionEnvironment: J2SE-1.5,
- CDC-1.1/Foundation-1.1
+Bundle-RequiredExecutionEnvironment: J2SE-1.5

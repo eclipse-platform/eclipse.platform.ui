@@ -27,12 +27,12 @@ Require-Bundle: org.eclipse.equinox.registry,
  org.eclipse.core.runtime;bundle-version="3.6.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.e4.ui.internal.workbench.swt;x-friends:="org.eclipse.e4.ui.workbench.addons.swt,org.eclipse.e4.ui.workbench.renderers.swt",
+Export-Package: org.eclipse.e4.ui.internal.workbench.swt;x-friends:="org.eclipse.e4.ui.workbench.addons.swt,org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.internal.workbench.swt.handlers;x-internal:=true,
- org.eclipse.e4.ui.workbench.swt;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt",
+ org.eclipse.e4.ui.workbench.swt;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.workbench.swt.factories;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt",
- org.eclipse.e4.ui.workbench.swt.modeling;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt",
- org.eclipse.e4.ui.workbench.swt.util;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt"
+ org.eclipse.e4.ui.workbench.swt.modeling;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
+ org.eclipse.e4.ui.workbench.swt.util;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench"
 Bundle-Vendor: Eclipse.org
 Import-Package: com.ibm.icu.text;version="4.2.1",
  javax.annotation;version="1.0.0",

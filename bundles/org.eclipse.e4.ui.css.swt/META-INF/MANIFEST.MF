@@ -6,7 +6,7 @@ Bundle-Version: 0.9.1.qualifier
 Export-Package: org.eclipse.e4.ui.css.swt;x-internal:=true,
  org.eclipse.e4.ui.css.swt.dom;x-internal:=true,
  org.eclipse.e4.ui.css.swt.dom.html;x-internal:=true,
- org.eclipse.e4.ui.css.swt.engine;x-friends:="org.eclipse.e4.ui.css.swt.theme",
+ org.eclipse.e4.ui.css.swt.engine;x-friends:="org.eclipse.e4.ui.css.swt.theme,org.eclipse.e4.ui.workbench.swt",
  org.eclipse.e4.ui.css.swt.engine.html;x-internal:=true,
  org.eclipse.e4.ui.css.swt.helpers;x-internal:=true,
  org.eclipse.e4.ui.css.swt.properties;x-internal:=true,
