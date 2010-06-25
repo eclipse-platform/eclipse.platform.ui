@@ -12,6 +12,8 @@
 
 package org.eclipse.ui.internal.menus;
 
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+
 import java.util.ArrayList;
 import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -118,7 +120,7 @@ public class MenuAdditionCacheEntry {
 	private MMenuElement createMenuCommandAddition(final IConfigurationElement commandAddition) {
 		MHandledMenuItem item = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 		item.setElementId(MenuHelper.getId(commandAddition));
-		item.setCommand(MenuHelper.getCommandById(application,
+		item.setCommand(ContributionsAnalyzer.getCommandById(application,
 				MenuHelper.getCommandId(commandAddition)));
 		Map parms = MenuHelper.getParameters(commandAddition);
 		for (Object obj : parms.entrySet()) {
@@ -141,7 +143,7 @@ public class MenuAdditionCacheEntry {
 	private MToolBarElement createToolBarCommandAddition(final IConfigurationElement commandAddition) {
 		MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
 		item.setElementId(MenuHelper.getId(commandAddition));
-		item.setCommand(MenuHelper.getCommandById(application,
+		item.setCommand(ContributionsAnalyzer.getCommandById(application,
 				MenuHelper.getCommandId(commandAddition)));
 		Map parms = MenuHelper.getParameters(commandAddition);
 		for (Object obj : parms.entrySet()) {

@@ -3,11 +3,7 @@ package org.eclipse.ui.internal.menus;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.expressions.Expression;
@@ -18,26 +14,21 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.jface.action.IMenuCreator;
@@ -64,20 +55,6 @@ public class MenuHelper {
 	public static final String ACTION_SET_CMD_PREFIX = "AS::"; //$NON-NLS-1$
 	public static final String MAIN_MENU_ID = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
 	private static Field urlField;
-
-	public static int indexForId(MElementContainer<MMenuElement> parentMenu, String id) {
-		if (id == null || id.length() == 0) {
-			return -1;
-		}
-		int i = 0;
-		for (MMenuElement item : parentMenu.getChildren()) {
-			if (id.equals(item.getElementId())) {
-				return i;
-			}
-			i++;
-		}
-		return -1;
-	}
 
 	public static String getActionSetCommandId(IConfigurationElement element) {
 		String id = MenuHelper.getDefinitionId(element);
@@ -135,16 +112,6 @@ public class MenuHelper {
 		return null;
 	}
 
-	static MCommand getCommandById(MApplication app, String cmdId) {
-		final List<MCommand> cmds = app.getCommands();
-		for (MCommand cmd : cmds) {
-			if (cmdId.equals(cmd.getElementId())) {
-				return cmd;
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * @param element
 	 *            the configuration element
@@ -187,315 +154,6 @@ public class MenuHelper {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	static class Key {
-		private MMenuContribution contribution;
-		private int tag = -1;
-		private int hc = -1;
-
-		public Key(MMenuContribution mc) {
-			this.contribution = mc;
-			mc.setWidget(this);
-		}
-
-		int getSchemeTag() {
-			if (tag == -1) {
-				List<String> tags = contribution.getTags();
-				if (tags.contains("scheme:menu")) { //$NON-NLS-1$
-					tag = 1;
-				} else if (tags.contains("scheme:popup")) { //$NON-NLS-1$
-					tag = 2;
-				} else if (tags.contains("scheme:toolbar")) { //$NON-NLS-1$
-					tag = 3;
-				} else {
-					tag = 0;
-				}
-			}
-			return tag;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof Key)) {
-				return false;
-			}
-			Key other = (Key) obj;
-			MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
-			Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
-			MCoreExpression vexp2 = (MCoreExpression) other.contribution.getVisibleWhen();
-			Object exp2 = vexp2 == null ? null : vexp2.getCoreExpression();
-			return Util.equals(contribution.getParentID(), other.contribution.getParentID())
-					&& Util.equals(contribution.getPositionInParent(),
-							other.contribution.getPositionInParent())
-					&& getSchemeTag() == other.getSchemeTag() && Util.equals(exp1, exp2);
-		}
-
-		@Override
-		public int hashCode() {
-			if (hc == -1) {
-				MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
-				Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
-				hc = Util.hashCode(contribution.getParentID());
-				hc = hc * 87 + Util.hashCode(contribution.getPositionInParent());
-				hc = hc * 87 + getSchemeTag();
-				hc = hc * 87 + Util.hashCode(exp1);
-			}
-			return hc;
-		}
-
-		@Override
-		public String toString() {
-			return "Key " + contribution.getParentID() + "--" + contribution.getPositionInParent() //$NON-NLS-1$ //$NON-NLS-2$
-					+ "--" + getSchemeTag() + "--" + contribution.getVisibleWhen(); //$NON-NLS-1$//$NON-NLS-2$
-		}
-	}
-
-	static class ToolBarKey {
-		private MToolBarContribution contribution;
-		private int tag = -1;
-		private int hc = -1;
-
-		public ToolBarKey(MToolBarContribution mc) {
-			this.contribution = mc;
-			mc.setWidget(this);
-		}
-
-		int getSchemeTag() {
-			if (tag == -1) {
-				List<String> tags = contribution.getTags();
-				if (tags.contains("scheme:menu")) { //$NON-NLS-1$
-					tag = 1;
-				} else if (tags.contains("scheme:popup")) { //$NON-NLS-1$
-					tag = 2;
-				} else if (tags.contains("scheme:toolbar")) { //$NON-NLS-1$
-					tag = 3;
-				} else {
-					tag = 0;
-				}
-			}
-			return tag;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof ToolBarKey)) {
-				return false;
-			}
-			ToolBarKey other = (ToolBarKey) obj;
-			MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
-			Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
-			MCoreExpression vexp2 = (MCoreExpression) other.contribution.getVisibleWhen();
-			Object exp2 = vexp2 == null ? null : vexp2.getCoreExpression();
-			return Util.equals(contribution.getParentId(), other.contribution.getParentId())
-					&& Util.equals(contribution.getPositionInParent(),
-							other.contribution.getPositionInParent())
-					&& getSchemeTag() == other.getSchemeTag() && Util.equals(exp1, exp2);
-		}
-
-		@Override
-		public int hashCode() {
-			if (hc == -1) {
-				MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
-				Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
-				hc = Util.hashCode(contribution.getParentId());
-				hc = hc * 87 + Util.hashCode(contribution.getPositionInParent());
-				hc = hc * 87 + getSchemeTag();
-				hc = hc * 87 + Util.hashCode(exp1);
-			}
-			return hc;
-		}
-
-		@Override
-		public String toString() {
-			return "Key " + contribution.getParentId() + "--" + contribution.getPositionInParent() //$NON-NLS-1$ //$NON-NLS-2$
-					+ "--" + getSchemeTag() + "--" + contribution.getVisibleWhen(); //$NON-NLS-1$//$NON-NLS-2$
-		}
-	}
-
-	private static Key getKey(MMenuContribution contribution) {
-		if (contribution.getWidget() instanceof Key) {
-			return (Key) contribution.getWidget();
-		}
-		return new Key(contribution);
-	}
-
-	private static ToolBarKey getKey(MToolBarContribution contribution) {
-		if (contribution.getWidget() instanceof ToolBarKey) {
-			return (ToolBarKey) contribution.getWidget();
-		}
-		return new ToolBarKey(contribution);
-	}
-
-	public static void printContributions(ArrayList<MMenuContribution> contributions) {
-		for (MMenuContribution c : contributions) {
-			trace("\n" + c, null); //$NON-NLS-1$
-			for (MMenuElement element : c.getChildren()) {
-				printElement(1, element);
-			}
-		}
-	}
-
-	private static void printElement(int level, MMenuElement element) {
-		StringBuilder buf = new StringBuilder();
-		for (int i = 0; i < level; i++) {
-			buf.append('\t');
-		}
-		buf.append(element.toString());
-		trace(buf.toString(), null);
-		if (element instanceof MMenu) {
-			for (MMenuElement item : ((MMenu) element).getChildren()) {
-				printElement(level + 1, item);
-			}
-		}
-	}
-
-	public static void mergeToolBarContributions(ArrayList<MToolBarContribution> contributions,
-			ArrayList<MToolBarContribution> result) {
-		HashMap<ToolBarKey, ArrayList<MToolBarContribution>> buckets = new HashMap<ToolBarKey, ArrayList<MToolBarContribution>>();
-		trace("mergeContributions size: " + contributions.size(), null); //$NON-NLS-1$
-		// first pass, sort by parentId?position,scheme,visibleWhen
-		for (MToolBarContribution contribution : contributions) {
-			ToolBarKey key = getKey(contribution);
-			ArrayList<MToolBarContribution> slot = buckets.get(key);
-			if (slot == null) {
-				slot = new ArrayList<MToolBarContribution>();
-				buckets.put(key, slot);
-			}
-			slot.add(contribution);
-		}
-		Iterator<MToolBarContribution> i = contributions.iterator();
-		while (i.hasNext() && !buckets.isEmpty()) {
-			MToolBarContribution contribution = i.next();
-			ToolBarKey key = getKey(contribution);
-			ArrayList<MToolBarContribution> slot = buckets.remove(key);
-			if (slot == null) {
-				continue;
-			}
-			MToolBarContribution toContribute = null;
-			for (MToolBarContribution item : slot) {
-				if (toContribute == null) {
-					toContribute = item;
-					continue;
-				}
-				Object[] array = item.getChildren().toArray();
-				for (int c = 0; c < array.length; c++) {
-					MToolBarElement me = (MToolBarElement) array[c];
-					if (!containsMatching(toContribute.getChildren(), me)) {
-						toContribute.getChildren().add(me);
-					}
-				}
-			}
-			if (toContribute != null) {
-				toContribute.setWidget(null);
-				result.add(toContribute);
-			}
-		}
-		trace("mergeContributions: final size: " + result.size(), null); //$NON-NLS-1$
-	}
-
-	public static void mergeContributions(ArrayList<MMenuContribution> contributions,
-			ArrayList<MMenuContribution> result) {
-		HashMap<Key, ArrayList<MMenuContribution>> buckets = new HashMap<Key, ArrayList<MMenuContribution>>();
-		trace("mergeContributions size: " + contributions.size(), null); //$NON-NLS-1$
-		printContributions(contributions);
-		// first pass, sort by parentId?position,scheme,visibleWhen
-		for (MMenuContribution contribution : contributions) {
-			Key key = getKey(contribution);
-			ArrayList<MMenuContribution> slot = buckets.get(key);
-			if (slot == null) {
-				slot = new ArrayList<MMenuContribution>();
-				buckets.put(key, slot);
-			}
-			slot.add(contribution);
-		}
-		Iterator<MMenuContribution> i = contributions.iterator();
-		while (i.hasNext() && !buckets.isEmpty()) {
-			MMenuContribution contribution = i.next();
-			Key key = getKey(contribution);
-			ArrayList<MMenuContribution> slot = buckets.remove(key);
-			if (slot == null) {
-				continue;
-			}
-			MMenuContribution toContribute = null;
-			for (MMenuContribution item : slot) {
-				if (toContribute == null) {
-					toContribute = item;
-					continue;
-				}
-				Object[] array = item.getChildren().toArray();
-				for (int c = 0; c < array.length; c++) {
-					MMenuElement me = (MMenuElement) array[c];
-					if (!containsMatching(toContribute.getChildren(), me)) {
-						toContribute.getChildren().add(me);
-					}
-				}
-			}
-			if (toContribute != null) {
-				toContribute.setWidget(null);
-				result.add(toContribute);
-			}
-		}
-		trace("mergeContributions: final size: " + result.size(), null); //$NON-NLS-1$
-	}
-
-	private static boolean containsMatching(List<MMenuElement> children, MMenuElement me) {
-		for (MMenuElement element : children) {
-			if (Util.equals(me.getElementId(), element.getElementId())
-					&& element.getClass().isInstance(me)
-					&& (element instanceof MMenuSeparator || element instanceof MMenu)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static boolean containsMatching(List<MToolBarElement> children, MToolBarElement me) {
-		for (MToolBarElement element : children) {
-			if (Util.equals(me.getElementId(), element.getElementId())
-					&& element.getClass().isInstance(me)
-					&& (element instanceof MToolBarSeparator || element instanceof MToolBar)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public static void mergeActionSetContributions(ArrayList<MMenuContribution> contributions,
-			ArrayList<MMenuContribution> result) {
-		ListIterator<MMenuContribution> i = contributions.listIterator(contributions.size());
-		MMenuContribution currentContribution = null;
-		while (i.hasPrevious()) {
-			MMenuContribution c = i.previous();
-			if (currentContribution == null) {
-				currentContribution = c;
-				continue;
-			}
-			if (c.getParentID().equals(currentContribution.getParentID())
-					&& c.getPositionInParent().equals(currentContribution.getPositionInParent())) {
-				ListIterator<MMenuElement> j = c.getChildren().listIterator(c.getChildren().size());
-				while (j.hasPrevious()) {
-					currentContribution.getChildren().add(j.previous());
-				}
-				c.getChildren().clear();
-			} else {
-				result.add(currentContribution);
-				currentContribution = c;
-			}
-		}
-		if (currentContribution != null) {
-			result.add(currentContribution);
-		}
 	}
 
 	/*
@@ -680,7 +338,7 @@ public class MenuHelper {
 		MHandledMenuItem item = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 		item.setElementId(id);
 		item.setLabel(text);
-		MCommand cmd = getCommandById(app, cmdId);
+		MCommand cmd = ContributionsAnalyzer.getCommandById(app, cmdId);
 		if (cmd == null) {
 			trace("Failed to find command: " + cmdId, null); //$NON-NLS-1$
 			return null;
@@ -712,7 +370,7 @@ public class MenuHelper {
 			}
 		}
 		String iconUri = MenuHelper.getIconUrl(element, IWorkbenchRegistryConstants.ATT_ICON);
-		MCommand cmd = getCommandById(app, cmdId);
+		MCommand cmd = ContributionsAnalyzer.getCommandById(app, cmdId);
 		if (cmd == null) {
 			ECommandService commandService = (ECommandService) PlatformUI.getWorkbench()
 					.getService(ECommandService.class);

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -120,7 +121,7 @@ final class MenuPersistence extends RegistryPersistence {
 		readActionSets(contributions, actionSetTBCs);
 
 		// can I rationalize them?
-		MenuHelper.mergeContributions(contributions, menuContributions);
+		ContributionsAnalyzer.mergeContributions(contributions, menuContributions);
 		application.getMenuContributions().addAll(menuContributions);
 
 		ArrayList<MToolBarContribution> mergedActionSetTBCs = actionSetTBCs;

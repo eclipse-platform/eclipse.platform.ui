@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -282,7 +283,7 @@ public class ActionSet {
 
 	MElementContainer<MMenuElement> findMenuFromPath(MElementContainer<MMenuElement> menu,
 			Path menuPath, int segment) {
-		int idx = MenuHelper.indexForId(menu, menuPath.segment(segment));
+		int idx = ContributionsAnalyzer.indexForId(menu, menuPath.segment(segment));
 		if (idx == -1) {
 			if (segment + 1 < menuPath.segmentCount() || !menuPath.hasTrailingSeparator()) {
 				return null;
