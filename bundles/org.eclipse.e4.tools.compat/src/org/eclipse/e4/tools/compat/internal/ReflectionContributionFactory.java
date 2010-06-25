@@ -257,4 +257,10 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			segments = uriString.substring(uriString.indexOf('/')+1).split("/");
 		}
 	}
+
+	public Object create(String uriString, IEclipseContext context,
+			IEclipseContext staticContext) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
