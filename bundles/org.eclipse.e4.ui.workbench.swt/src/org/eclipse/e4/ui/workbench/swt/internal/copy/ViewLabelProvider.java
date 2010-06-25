@@ -43,7 +43,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 	 * Get image descriptors for the clear button.
 	 */
 	static {
-		Bundle bundle = org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator
+		Bundle bundle = org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator
 				.getDefault().getBundle();
 		IPath path = new Path("$nl$/icons/full/obj16/fldr_obj.gif");
 		URL url = FileLocator.find(bundle, path, null);

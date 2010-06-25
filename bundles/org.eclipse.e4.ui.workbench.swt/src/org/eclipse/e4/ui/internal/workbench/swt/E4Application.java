@@ -61,7 +61,6 @@ import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;

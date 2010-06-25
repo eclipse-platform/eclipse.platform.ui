@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.ui.workbench.swt;
+package org.eclipse.e4.ui.internal.workbench.swt;
 
 import java.io.BufferedReader;
 import java.io.File;

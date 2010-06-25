@@ -180,7 +180,7 @@ public class FilteredTree extends Composite {
 	 * Get image descriptors for the clear button.
 	 */
 	static {
-		Bundle bundle = org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator
+		Bundle bundle = org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator
 				.getDefault().getBundle();
 		IPath enabledPath = new Path("$nl$/icons/full/etool16/clear_co.gif");
 		URL enabledURL = FileLocator.find(bundle, enabledPath, null);

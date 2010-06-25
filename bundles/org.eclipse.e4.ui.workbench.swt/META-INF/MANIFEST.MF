@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Workbench SWT support (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench.swt;singleton:=true
 Bundle-Version: 0.9.1.qualifier
-Bundle-Activator: org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator
+Bundle-Activator: org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator
 Require-Bundle: org.eclipse.equinox.registry,
  org.eclipse.equinox.app,
  org.eclipse.e4.ui.workbench,
@@ -29,8 +29,8 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.ui.internal.workbench.swt;x-friends:="org.eclipse.e4.ui.workbench.addons.swt,org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.internal.workbench.swt.handlers;x-internal:=true,
- org.eclipse.e4.ui.workbench.swt;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.workbench.swt.factories;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt",
+ org.eclipse.e4.ui.workbench.swt.internal.copy;x-internal:=true,
  org.eclipse.e4.ui.workbench.swt.modeling;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.workbench.swt.util;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench"
 Bundle-Vendor: Eclipse.org

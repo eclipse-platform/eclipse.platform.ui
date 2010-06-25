@@ -11,13 +11,14 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal.copy;
 
+import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
-import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;

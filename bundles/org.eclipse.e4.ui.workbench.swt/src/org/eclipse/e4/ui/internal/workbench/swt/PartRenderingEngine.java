@@ -57,7 +57,6 @@ import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
