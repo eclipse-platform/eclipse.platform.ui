@@ -46,11 +46,11 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class ActionSet {
 
-	private IConfigurationElement configElement;
+	protected IConfigurationElement configElement;
 
-	private MApplication application;
+	protected MApplication application;
 
-	private ActiveContextExpression visibleWhen;
+	protected Expression visibleWhen;
 
 	public ActionSet(MApplication application, IEclipseContext appContext,
 			IConfigurationElement element) {
@@ -62,7 +62,7 @@ public class ActionSet {
 			ArrayList<MToolBarContribution> toolBarContributions) {
 
 		String idContrib = MenuHelper.getId(configElement);
-		visibleWhen = new ActiveContextExpression(idContrib);
+		visibleWhen = createExpression(configElement);
 
 		EContextService contextService = application.getContext().get(EContextService.class);
 		Context actionSetContext = contextService.getContext(idContrib);
@@ -81,11 +81,17 @@ public class ActionSet {
 				.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
 		for (IConfigurationElement element : actions) {
 			addContribution(idContrib, menuContributions, element, false);
-			addToolBarContribution(idContrib, toolBarContributions, element);
+			addToolBarContribution(idContrib, toolBarContributions, element,
+					"org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
 		}
 
 		// for entertainment purposes only
 		// printContributions(contributions);
+	}
+
+	protected Expression createExpression(IConfigurationElement configElement) {
+		String idContrib = MenuHelper.getId(configElement);
+		return new ActiveContextExpression(idContrib);
 	}
 
 	static class ActiveContextExpression extends Expression {
@@ -130,7 +136,7 @@ public class ActionSet {
 		return exp;
 	}
 
-	private void addContribution(String idContrib, ArrayList<MMenuContribution> contributions,
+	protected void addContribution(String idContrib, ArrayList<MMenuContribution> contributions,
 			IConfigurationElement element, boolean isMenu) {
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
 		menuContribution.setVisibleWhen(createVisibleWhen());
@@ -181,8 +187,9 @@ public class ActionSet {
 		}
 	}
 
-	private void addToolBarContribution(String idContrib,
-			ArrayList<MToolBarContribution> contributions, IConfigurationElement element) {
+	protected void addToolBarContribution(String idContrib,
+			ArrayList<MToolBarContribution> contributions, IConfigurationElement element,
+			String parentId) {
 		String tpath = MenuHelper.getToolBarPath(element);
 		if (tpath == null) {
 			return;
@@ -229,7 +236,7 @@ public class ActionSet {
 				MToolBarContribution separatorContribution = MenuFactoryImpl.eINSTANCE
 						.createToolBarContribution();
 				separatorContribution.setElementId(tpath);
-				separatorContribution.setParentId("org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
+				separatorContribution.setParentId(parentId);
 				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
 				separator.setElementId(tpath);
 				toolBarContribution.getChildren().add(separator);
@@ -241,7 +248,7 @@ public class ActionSet {
 			// MenuHelper.isSeparatorVisible(configElement) ? null
 			//					: "after=" + tpath; //$NON-NLS-1$
 			String positionInParent = "after=" + tpath;//$NON-NLS-1$
-			toolBarContribution.setParentId("org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
+			toolBarContribution.setParentId(parentId);
 
 			toolBarContribution.setPositionInParent(positionInParent);
 			toolBarContribution.setVisibleWhen(createVisibleWhen());

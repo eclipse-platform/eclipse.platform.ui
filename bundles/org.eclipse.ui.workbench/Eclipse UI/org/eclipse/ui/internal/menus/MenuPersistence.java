@@ -51,6 +51,8 @@ final class MenuPersistence extends RegistryPersistence {
 	private IEclipseContext appContext;
 	private ArrayList<MenuAdditionCacheEntry> cacheEntries = new ArrayList<MenuAdditionCacheEntry>();
 	private ArrayList<ActionSet> actionContributions = new ArrayList<ActionSet>();
+	private ArrayList<EditorAction> editorActionContributions = new ArrayList<EditorAction>();
+	private ArrayList<ViewAction> viewActionContributions = new ArrayList<ViewAction>();
 	private ArrayList<MMenuContribution> menuContributions = new ArrayList<MMenuContribution>();
 	private ArrayList<MToolBarContribution> toolBarContributions = new ArrayList<MToolBarContribution>();
 	private ArrayList<MTrimContribution> trimContributions = new ArrayList<MTrimContribution>();
@@ -76,6 +78,8 @@ final class MenuPersistence extends RegistryPersistence {
 		menuContributions.clear();
 		cacheEntries.clear();
 		actionContributions.clear();
+		editorActionContributions.clear();
+		viewActionContributions.clear();
 		super.dispose();
 	}
 
@@ -119,6 +123,10 @@ final class MenuPersistence extends RegistryPersistence {
 		ArrayList<MToolBarContribution> actionSetTBCs = new ArrayList<MToolBarContribution>();
 		// convert actionSets to MenuContributions
 		readActionSets(contributions, actionSetTBCs);
+
+		readEditorActions(contributions, actionSetTBCs);
+
+		readViewActions(contributions, toolBarContributions);
 
 		// can I rationalize them?
 		ContributionsAnalyzer.mergeContributions(contributions, menuContributions);
@@ -278,6 +286,62 @@ final class MenuPersistence extends RegistryPersistence {
 			ActionSet actionSet = new ActionSet(application, appContext, element);
 			actionContributions.add(actionSet);
 			actionSet.addToModel(menuContributions, toolBarContributions);
+		}
+	}
+
+	private void readEditorActions(ArrayList<MMenuContribution> menuContributions,
+			ArrayList<MToolBarContribution> toolBarContributions) {
+		final IExtensionRegistry registry = Platform.getExtensionRegistry();
+		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
+
+		configElements
+				.addAll(Arrays.asList(registry
+						.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_EDITOR_ACTIONS)));
+
+		Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
+			public int compare(IConfigurationElement c1, IConfigurationElement c2) {
+				return c1.getNamespaceIdentifier().compareToIgnoreCase(c2.getNamespaceIdentifier());
+			}
+		};
+		Collections.sort(configElements, comparer);
+
+		for (IConfigurationElement element : configElements) {
+			for (IConfigurationElement child : element.getChildren()) {
+				if (child.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION)) {
+					EditorAction editorAction = new EditorAction(application, appContext, element,
+							child);
+					editorActionContributions.add(editorAction);
+					editorAction.addToModel(menuContributions, toolBarContributions);
+				}
+			}
+		}
+	}
+
+	private void readViewActions(ArrayList<MMenuContribution> menuContributions,
+			ArrayList<MToolBarContribution> toolBarContributions) {
+		final IExtensionRegistry registry = Platform.getExtensionRegistry();
+		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
+
+		configElements
+				.addAll(Arrays.asList(registry
+				.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_VIEW_ACTIONS)));
+
+		Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
+			public int compare(IConfigurationElement c1, IConfigurationElement c2) {
+				return c1.getNamespaceIdentifier().compareToIgnoreCase(c2.getNamespaceIdentifier());
+			}
+		};
+		Collections.sort(configElements, comparer);
+
+		for (IConfigurationElement element : configElements) {
+			for (IConfigurationElement child : element.getChildren()) {
+				if (child.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION)) {
+					ViewAction viewAction = new ViewAction(application, appContext, element,
+							child);
+					viewActionContributions.add(viewAction);
+					viewAction.addToModel(menuContributions, toolBarContributions);
+				}
+			}
 		}
 	}
 }
