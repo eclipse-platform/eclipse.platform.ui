@@ -31,6 +31,17 @@ public class WorkbenchSWTMessages extends NLS {
 	public static String ICategory_general;
 	public static String ShowView_shellTitle;
 
+	// IDEApplication messages
+	public static String IDEApplication_workspaceMandatoryTitle;
+	public static String IDEApplication_workspaceMandatoryMessage;
+	public static String IDEApplication_workspaceCannotLockTitle;
+	public static String IDEApplication_workspaceCannotLockMessage;
+	public static String IDEApplication_workspaceCannotBeSetTitle;
+	public static String IDEApplication_workspaceCannotBeSetMessage;
+	public static String InternalError;
+	public static String IDEApplication_versionTitle;
+	public static String IDEApplication_versionMessage;
+
 	static {
 		// load message values from bundle file
 		reloadMessages();
