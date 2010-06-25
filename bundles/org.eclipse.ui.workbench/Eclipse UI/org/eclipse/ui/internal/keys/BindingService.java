@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -358,6 +358,35 @@ public final class BindingService implements IBindingService {
 	 */
 	public Collection getConflictsFor(TriggerSequence sequence) {
 		return bindingService.getConflictsFor(sequence);
+	}
+
+	/**
+	 * TODO Promote this method to API.
+	 * <p>
+	 * Adds a single new binding to the existing array of bindings. If the array
+	 * is currently <code>null</code>, then a new array is created and this
+	 * binding is added to it. This method does not detect duplicates.
+	 * </p>
+	 * <p>
+	 * This method completes in amortized <code>O(1)</code>.
+	 * </p>
+	 * 
+	 * @param binding
+	 *            The binding to be added; must not be <code>null</code>.
+	 */
+	public final void addBinding(final Binding binding) {
+		manager.addBinding(binding);
+	}
+
+	/**
+	 * Remove the specific binding by identity. Does nothing if the binding is
+	 * not in the manager.
+	 * 
+	 * @param binding
+	 *            The binding to be removed; must not be <code>null</code>.
+	 */
+	public final void removeBinding(final Binding binding) {
+		manager.removeBinding(binding);
 	}
 
 }

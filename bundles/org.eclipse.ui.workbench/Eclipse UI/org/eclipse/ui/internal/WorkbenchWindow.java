@@ -147,6 +147,7 @@ import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
+import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.progress.ProgressRegion;
@@ -2107,11 +2108,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class, mappingService);
 
-		// final LegacyActionPersistence actionPersistence = new
-		// LegacyActionPersistence(this);
-		// serviceLocator.registerService(LegacyActionPersistence.class,
-		// actionPersistence);
-		// actionPersistence.read();
+		final LegacyActionPersistence actionPersistence = new LegacyActionPersistence(this);
+		serviceLocator.registerService(LegacyActionPersistence.class, actionPersistence);
+		actionPersistence.read();
 
 		selectionService = (ISelectionService) ContextInjectionFactory.make(SelectionService.class,
 				model.getContext());
