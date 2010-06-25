@@ -191,7 +191,7 @@ public interface IInformationControl {
 
 	/**
 	 * Removes the given listeners from the list of focus listeners.
-	 * If the listener is not registered this call has no affect.
+	 * If the listener is not registered this call has no effect.
 	 *
 	 * @param listener the listener to be removed
 	 */

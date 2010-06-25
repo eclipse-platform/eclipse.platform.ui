@@ -39,14 +39,14 @@ public interface IFileBufferListener {
 	/**
 	 * Informs the listener about an upcoming replace of the contents of the given buffer.
 	 *
-	 * @param buffer the effected file buffer
+	 * @param buffer the affected file buffer
 	 */
 	void bufferContentAboutToBeReplaced(IFileBuffer buffer);
 
 	/**
 	 * Informs the listener that the buffer of the given buffer has been replaced.
 	 *
-	 * @param buffer the effected file buffer
+	 * @param buffer the affected file buffer
 	 */
 	void bufferContentReplaced(IFileBuffer buffer);
 
@@ -54,7 +54,7 @@ public interface IFileBufferListener {
 	 * Informs the listener about the start of a state changing operation on
 	 * the given buffer.
 	 *
-	 * @param buffer the effected file buffer
+	 * @param buffer the affected file buffer
 	 */
 	void stateChanging(IFileBuffer buffer);
 
@@ -62,7 +62,7 @@ public interface IFileBufferListener {
 	 * Informs the listener that the dirty state of the given buffer changed
 	 * to the specified value
 	 *
-	 * @param buffer the effected file buffer
+	 * @param buffer the affected file buffer
 	 * @param isDirty <code>true</code> if the buffer is dirty, <code>false</code> otherwise
 	 */
 	void dirtyStateChanged(IFileBuffer buffer, boolean isDirty);
@@ -70,7 +70,7 @@ public interface IFileBufferListener {
 	/**
 	 * Informs the listener that the state validation changed to the specified value.
 	 *
-	 * @param buffer the effected file buffer
+	 * @param buffer the affected file buffer
 	 * @param isStateValidated <code>true</code> if the buffer state is validated, <code>false</code> otherwise
 	 */
 	void stateValidationChanged(IFileBuffer buffer, boolean isStateValidated);
@@ -83,7 +83,7 @@ public interface IFileBufferListener {
 	 * backed by an <code>IFile</code>.
 	 * </p>
 	 *
-	 * @param buffer the effected file buffer
+	 * @param buffer the affected file buffer
 	 * @param path the new location (not just the container)
 	 */
 	void underlyingFileMoved(IFileBuffer buffer, IPath path);
@@ -91,7 +91,7 @@ public interface IFileBufferListener {
 	/**
 	 * Informs the listener that the file underlying the given file buffer has been deleted.
 	 *
-	 * @param buffer the effected file buffer
+	 * @param buffer the affected file buffer
 	 */
 	void underlyingFileDeleted(IFileBuffer buffer);
 
@@ -99,7 +99,7 @@ public interface IFileBufferListener {
 	 * Informs the listener that a state changing operation on the given
 	 * file buffer failed.
 	 *
-	 * @param buffer the effected file buffer
+	 * @param buffer the affected file buffer
 	 */
 	void stateChangeFailed(IFileBuffer buffer);
 }

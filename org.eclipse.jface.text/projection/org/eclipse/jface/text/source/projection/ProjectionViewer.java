@@ -1325,7 +1325,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 		IRegion rangeIndication= getRangeIndication();
 		if (moveCursor && fProjectionAnnotationModel != null && (rangeIndication == null || offset != rangeIndication.getOffset() || length != rangeIndication.getLength())) {
 			List expand= new ArrayList(2);
-			// expand the immediate effected collapsed regions
+			// expand the immediate affected collapsed regions
 			Iterator iterator= fProjectionAnnotationModel.getAnnotationIterator();
 			while (iterator.hasNext()) {
 				ProjectionAnnotation annotation= (ProjectionAnnotation)iterator.next();

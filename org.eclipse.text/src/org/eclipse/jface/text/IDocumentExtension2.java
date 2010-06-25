@@ -38,7 +38,7 @@ public interface IDocumentExtension2 {
 	/**
 	 * Can be called prior to a <code>replace</code> operation. After the
 	 * <code>replace</code> <code>resumeListenerNotification</code> must be
-	 * called. The affect of these calls is that no document listener is notified
+	 * called. The effect of these calls is that no document listener is notified
 	 * until <code>resumeListenerNotification</code> is called. This allows clients
 	 * to update structure before any listener is informed about the change.<p>
 	 * Listener notification can only be stopped for a single <code>replace</code> operation.

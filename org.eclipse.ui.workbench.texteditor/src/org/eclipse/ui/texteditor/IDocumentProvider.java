@@ -213,7 +213,7 @@ public interface IDocumentProvider {
 
 	/**
 	 * Removes the given element state listener from this document provider.
-	 * Has no affect if an identical listener is not registered.
+	 * Has no effect if an identical listener is not registered.
 	 *
 	 * @param listener the listener
 	 */
