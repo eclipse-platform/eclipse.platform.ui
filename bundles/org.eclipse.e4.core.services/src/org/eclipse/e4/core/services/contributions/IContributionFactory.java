@@ -19,6 +19,8 @@ public interface IContributionFactory {
 
 	public Object create(String uriString, IEclipseContext context);
 
+	public Object create(String uriString, IEclipseContext context, IEclipseContext staticContext);
+
 	public Bundle getBundle(String uriString);
 
 }

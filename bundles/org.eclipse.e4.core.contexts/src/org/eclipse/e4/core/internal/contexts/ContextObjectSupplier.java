@@ -167,6 +167,8 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 	}
 
 	static public ContextObjectSupplier getObjectSupplier(IEclipseContext context, IInjector injector) {
+		if (context == null)
+			return null;
 		ContextObjectSupplier supplier = context.getLocal(ContextObjectSupplier.class);
 		if (supplier != null)
 			return supplier;
