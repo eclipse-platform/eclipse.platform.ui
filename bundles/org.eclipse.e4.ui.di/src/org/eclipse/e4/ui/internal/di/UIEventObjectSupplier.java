@@ -12,11 +12,8 @@ package org.eclipse.e4.ui.internal.di;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.core.di.internal.extensions.EventObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
