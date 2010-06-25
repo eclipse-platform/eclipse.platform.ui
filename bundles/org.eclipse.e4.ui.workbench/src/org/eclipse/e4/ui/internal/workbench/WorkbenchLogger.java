@@ -142,7 +142,8 @@ public final class WorkbenchLogger extends Logger {
 			trace.trace(null, message, t);
 		} else {
 			System.out.println(message);
-			t.printStackTrace();
+			if (t != null)
+				t.printStackTrace();
 		}
 	}
 
