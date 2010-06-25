@@ -244,6 +244,7 @@ public class ActionSet {
 			toolBarContribution.setParentId("org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
 
 			toolBarContribution.setPositionInParent(positionInParent);
+			toolBarContribution.setVisibleWhen(createVisibleWhen());
 
 			toolBarContribution.getChildren().add(action);
 			contributions.add(toolBarContribution);

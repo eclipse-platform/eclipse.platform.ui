@@ -138,6 +138,7 @@ import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
@@ -449,10 +450,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		List<MPerspectiveStack> ps = modelService.findElements(model, null,
 				MPerspectiveStack.class, null);
+		MPerspective curPersp = null;
 		if (ps.size() > 0) {
 			MPerspectiveStack stack = ps.get(0);
 			if (stack.getSelectedElement() != null) {
-				MPerspective curPersp = stack.getSelectedElement();
+				curPersp = stack.getSelectedElement();
 				IPerspectiveDescriptor thePersp = getWorkbench().getPerspectiveRegistry()
 						.findPerspectiveWithId(curPersp.getElementId());
 				if (thePersp != null) {
@@ -461,6 +463,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		}
 		page.setPerspective(perspective);
+
+		if (curPersp != null) {
+			populateTrimContributions(ModeledPageLayout.getIds(curPersp, ACTION_SET_CMD_PREFIX),
+					true);
+		}
 
 		// register with the tracker
 

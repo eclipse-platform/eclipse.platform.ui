@@ -132,6 +132,7 @@ final class MenuPersistence extends RegistryPersistence {
 			trimContribution.getChildren().add(toolBar);
 			trimContribution.setParentId(merged.getParentId());
 			trimContribution.setPositionInParent(merged.getPositionInParent());
+			trimContribution.setVisibleWhen(merged.getVisibleWhen());
 			trimContributions.add(trimContribution);
 		}
 
