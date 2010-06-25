@@ -156,6 +156,8 @@ public class MinMaxAddon {
 				}
 			} else {
 				bar.getChildren().add(trimStack);
+				if (!bar.isToBeRendered())
+					bar.setToBeRendered(true);
 			}
 		} else {
 			trimStack.setVisible(true);
