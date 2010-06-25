@@ -23,6 +23,9 @@ public class SwitchPerspectiveHandler {
 	public void execute(EModelService modelService, MWindow window) {
 		MPerspectiveStack ps = (MPerspectiveStack) modelService.find("DefaultPerspectiveStack", window); //$NON-NLS-1$
 		List<MPerspective> kids = ps.getChildren();
+		if (kids.size() < 2)
+			return;
+		
 		if (ps.getSelectedElement() == kids.get(0)) {
 			ps.setSelectedElement(kids.get(1));
 		} else {
