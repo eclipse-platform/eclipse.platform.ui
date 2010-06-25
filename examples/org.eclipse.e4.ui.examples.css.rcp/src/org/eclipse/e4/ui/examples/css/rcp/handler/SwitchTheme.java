@@ -21,7 +21,7 @@ public class SwitchTheme extends AbstractHandler {
 			themeId = USER_CSS_COLORFUL;
 		}
 		reset = !reset;
-		ThemeHelper.getEngine().setTheme(themeId);
+		ThemeHelper.getEngine().setTheme(themeId, true);
 		return null;
 
 	}
