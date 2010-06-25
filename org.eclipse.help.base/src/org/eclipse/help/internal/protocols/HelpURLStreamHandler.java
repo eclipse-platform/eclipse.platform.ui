@@ -26,9 +26,12 @@ public class HelpURLStreamHandler extends URLStreamHandler {
 		String protocol = url.getProtocol();
 		if (protocol.equals("help")) { //$NON-NLS-1$
 			return new HelpURLConnection(url);
+		} else if (protocol.equals("localhelp")) { //$NON-NLS-1$
+			return new HelpURLConnection(url, true);
 		}
 		return null;
 	}
+	
 	public static URLStreamHandler getDefault() {
 		if (instance == null) {
 			instance = new HelpURLStreamHandler();

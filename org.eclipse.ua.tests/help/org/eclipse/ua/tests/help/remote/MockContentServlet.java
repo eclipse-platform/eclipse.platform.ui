@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 public class MockContentServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 2360013070409217702L;
+	private static int callcount = 0;
 
 	/**
 	 * Return a create page based on the path and locale unless the path
@@ -44,6 +45,11 @@ public class MockContentServlet extends HttpServlet {
 		    String response = RemoteTestUtils.createMockContent(plugin, file, locale, port);
 		    resp.getWriter().write(response);
 		}
+		callcount++;
+	}
+	
+	public static int getCallcount() {
+		return callcount;
 	}
 
 }

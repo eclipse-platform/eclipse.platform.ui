@@ -71,13 +71,18 @@ public class HelpURLConnection extends URLConnection {
 	protected String file;
 	protected String locale;
 	private static String appserverImplPluginId;
+	private boolean localOnly;
 
 	/**
 	 * Constructor for HelpURLConnection
 	 */
 	public HelpURLConnection(URL url) {
+		this(url, false);
+	}
+	
+	public HelpURLConnection(URL url, boolean localOnly) {
 		super(url);
-
+        this.localOnly = localOnly;
 		String urlFile = url.getFile();
 
 		// Strip off everything before and including the PLUGINS_ROOT
@@ -121,7 +126,8 @@ public class HelpURLConnection extends URLConnection {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
-		int helpOption=PreferenceFileHandler.getEmbeddedHelpOption();
+		int helpOption=localOnly ? PreferenceFileHandler.LOCAL_HELP_ONLY 
+			: PreferenceFileHandler.getEmbeddedHelpOption();
 		InputStream in = null;
 		if (plugin != null && (helpOption==PreferenceFileHandler.LOCAL_HELP_ONLY || helpOption==PreferenceFileHandler.LOCAL_HELP_PRIORITY)) {
 			in = getLocalHelp(plugin);

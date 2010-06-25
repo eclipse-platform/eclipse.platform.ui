@@ -1037,7 +1037,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 				query.append("&id=" + id); //$NON-NLS-1$
 			if (participantId != null)
 				query.append("&participantId=" + participantId); //$NON-NLS-1$
-			return new URL("help", //$NON-NLS-1$
+			return new URL("localhelp", //$NON-NLS-1$
 					null, -1, url + query.toString(), HelpURLStreamHandler.getDefault());
 
 		} catch (MalformedURLException mue) {
