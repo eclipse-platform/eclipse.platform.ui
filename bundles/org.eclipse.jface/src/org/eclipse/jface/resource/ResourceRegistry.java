@@ -76,7 +76,7 @@ public abstract class ResourceRegistry extends EventManager {
     }
 
     /**
-     * Removes the given listener from this registry. Has no affect if the
+     * Removes the given listener from this registry. Has no effect if the
      * listener is not registered.
      * 
      * @param listener a property change listener

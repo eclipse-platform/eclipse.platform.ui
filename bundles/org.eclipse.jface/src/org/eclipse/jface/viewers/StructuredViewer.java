@@ -1534,7 +1534,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
-	 * Removes the given open listener from this viewer. Has no affect if an
+	 * Removes the given open listener from this viewer. Has no effect if an
 	 * identical listener is not registered.
 	 * 
 	 * @param listener
@@ -1552,7 +1552,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
-	 * Removes the given double-click listener from this viewer. Has no affect
+	 * Removes the given double-click listener from this viewer. Has no effect
 	 * if an identical listener is not registered.
 	 * 
 	 * @param listener

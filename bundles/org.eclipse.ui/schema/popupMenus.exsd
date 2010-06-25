@@ -70,7 +70,7 @@ The &lt;code&gt;objectContribution&lt;/code&gt; element uses the core expression
    <element name="objectContribution">
       <annotation>
          <documentation>
-            This element is used to define a group of actions and/or menus for any viewer context menus for which the objects of the specified type are selected.  &lt;code&gt;enablement&lt;/code&gt; in this element refers to core expression enablement, as defined in &lt;a href=&quot;org_eclipse_core_expressions_definitions.html&quot;&gt;org.eclipse.core.expressions.definitions&lt;/a&gt;, and effects the enablement of the objectContribution not the contained actions.
+            This element is used to define a group of actions and/or menus for any viewer context menus for which the objects of the specified type are selected.  &lt;code&gt;enablement&lt;/code&gt; in this element refers to core expression enablement, as defined in &lt;a href=&quot;org_eclipse_core_expressions_definitions.html&quot;&gt;org.eclipse.core.expressions.definitions&lt;/a&gt;, and affects the enablement of the objectContribution not the contained actions.
          </documentation>
       </annotation>
       <complexType>

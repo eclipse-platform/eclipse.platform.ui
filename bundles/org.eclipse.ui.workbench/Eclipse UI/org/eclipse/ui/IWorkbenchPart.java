@@ -205,7 +205,7 @@ public interface IWorkbenchPart extends IAdaptable {
 
     /**
      * Removes the given property listener from this workbench part.
-     * Has no affect if an identical listener is not registered.
+     * Has no effect if an identical listener is not registered.
      *
      * @param listener a property listener
      */

@@ -153,7 +153,7 @@ public class ColorSelector extends EventManager {
 
     /**
      * Removes the given listener from this <code>ColorSelector</code>. Has
-     * no affect if the listener is not registered.
+     * no effect if the listener is not registered.
      * 
      * @param listener
      *            a property change listener

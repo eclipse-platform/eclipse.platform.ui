@@ -345,7 +345,7 @@ public interface IPreferenceStore {
 
     /**
      * Removes the given listener from this preference store.
-     * Has no affect if the listener is not registered.
+     * Has no effect if the listener is not registered.
      *
      * @param listener a property change listener
      */

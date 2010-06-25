@@ -2222,7 +2222,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Removes a listener for expand and collapse events in this viewer. Has no
-	 * affect if an identical listener is not registered.
+	 * effect if an identical listener is not registered.
 	 *
 	 * @param listener
 	 *            a tree viewer listener

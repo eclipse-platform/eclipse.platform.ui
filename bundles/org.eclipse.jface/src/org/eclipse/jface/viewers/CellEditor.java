@@ -791,7 +791,7 @@ public abstract class CellEditor {
 	}
 
 	/**
-	 * Removes the given listener from this cell editor. Has no affect if an
+	 * Removes the given listener from this cell editor. Has no effect if an
 	 * identical listener is not registered.
 	 *
 	 * @param listener
@@ -803,7 +803,7 @@ public abstract class CellEditor {
 
 	/**
 	 * Removes the given property change listener from this cell editor. Has no
-	 * affect if an identical property change listener is not registered.
+	 * effect if an identical property change listener is not registered.
 	 *
 	 * @param listener
 	 *            a property change listener
