@@ -356,14 +356,14 @@ public class TrimStack {
 			hostPane.moveAbove(null);
 			hostPane.setVisible(true);
 		} else {
+			Display.getCurrent().removeFilter(SWT.MouseDown, mouseDownListener);
+			getShellClientComposite().removeControlListener(caResizeListener);
+
 			if (hostPane != null && hostPane.isVisible()) {
 				hostPane.setVisible(false);
 
 				// clear any selected item
 				updateSelection(null);
-
-				hostPane.getDisplay().removeFilter(SWT.MouseDown, mouseDownListener);
-				getShellClientComposite().removeControlListener(caResizeListener);
 
 				// capture the current shell's bounds
 				Point size = hostPane.getSize();
