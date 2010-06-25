@@ -4,6 +4,8 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Point;
@@ -14,10 +16,14 @@ import org.eclipse.swt.widgets.ToolItem;
 
 class DragAndDropUtil {
 
+	private MWindow topLevelWindow;
 	private Display display;
+	private EModelService modelService;
 
-	public DragAndDropUtil(Display display) {
-		this.display = display;
+	public DragAndDropUtil(MWindow window) {
+		topLevelWindow = window;
+		display = Display.getCurrent();
+		modelService = window.getContext().get(EModelService.class);
 	}
 
 	public CursorInfo getCursorInfo() {
@@ -93,8 +99,11 @@ class DragAndDropUtil {
 			return null;
 
 		MUIElement element = (MUIElement) ctrl.getData(AbstractPartRenderer.OWNING_ME);
-		if (element != null)
-			return element;
+		if (element != null) {
+			if (modelService.getTopLevelWindowFor(element) == topLevelWindow)
+				return element;
+			return null;
+		}
 
 		return getModelElement(ctrl.getParent());
 	}

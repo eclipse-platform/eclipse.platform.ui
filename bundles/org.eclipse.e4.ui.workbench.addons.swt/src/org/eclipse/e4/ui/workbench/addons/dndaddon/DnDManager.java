@@ -135,7 +135,7 @@ class DnDManager {
 			display = baseShell.getDisplay();
 			setDisplayFilters(true);
 
-			dndUtil = new DragAndDropUtil(display);
+			dndUtil = new DragAndDropUtil(window);
 
 			modelService = (EModelService) baseWindow.getContext().get(
 					EModelService.class.getName());
