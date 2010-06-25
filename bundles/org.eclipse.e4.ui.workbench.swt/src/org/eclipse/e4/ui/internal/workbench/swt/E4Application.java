@@ -57,9 +57,6 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
 import org.eclipse.e4.ui.workbench.IModelResourceHandler;
-import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
-import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
-import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
@@ -222,8 +219,10 @@ public class E4Application implements IApplication {
 		String cssResourcesURI = getArgValue(E4Workbench.CSS_RESOURCE_URI_ARG,
 				applicationContext);
 		appContext.set(E4Workbench.CSS_RESOURCE_URI_ARG, cssResourcesURI);
-		appContext.set(E4Workbench.RENDERER_FACTORY_URI, getArgValue(
-				E4Workbench.RENDERER_FACTORY_URI, applicationContext));
+		appContext.set(
+				E4Workbench.RENDERER_FACTORY_URI,
+				getArgValue(E4Workbench.RENDERER_FACTORY_URI,
+						applicationContext));
 
 		// This is a default arg, if missing we use the default rendering engine
 		String presentationURI = getArgValue(E4Workbench.PRESENTATION_URI_ARG,
@@ -257,8 +256,8 @@ public class E4Application implements IApplication {
 
 		saveAndRestore = value == null || Boolean.getBoolean(value);
 
-		eclipseContext.set(E4Workbench.SAVE_AND_RESTORE, Boolean
-				.valueOf(saveAndRestore));
+		eclipseContext.set(E4Workbench.SAVE_AND_RESTORE,
+				Boolean.valueOf(saveAndRestore));
 		eclipseContext.set(E4Workbench.INITIAL_WORKBENCH_MODEL_URI,
 				initialWorkbenchDefinitionInstance);
 		eclipseContext.set(E4Workbench.INSTANCE_LOCATION, instanceLocation);
@@ -317,10 +316,11 @@ public class E4Application implements IApplication {
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
 
-		appContext.set(Logger.class.getName(), ContextInjectionFactory.make(
-				WorkbenchLogger.class, appContext));
-		appContext.set(Adapter.class.getName(), ContextInjectionFactory.make(
-				EclipseAdapter.class, appContext));
+		appContext
+				.set(Logger.class.getName(), ContextInjectionFactory.make(
+						WorkbenchLogger.class, appContext));
+		appContext.set(Adapter.class.getName(),
+				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
 
 		// No default log provider available
 		if (appContext.get(ILoggerProvider.class) == null) {
@@ -610,8 +610,8 @@ public class E4Application implements IApplication {
 		// to use it anyhow.
 		String title = WorkbenchSWTMessages.IDEApplication_versionTitle;
 		String message = NLS.bind(
-				WorkbenchSWTMessages.IDEApplication_versionMessage, url
-						.getFile());
+				WorkbenchSWTMessages.IDEApplication_versionMessage,
+				url.getFile());
 
 		MessageBox mbox = new MessageBox(shell, SWT.OK | SWT.CANCEL
 				| SWT.ICON_WARNING | SWT.APPLICATION_MODAL);
