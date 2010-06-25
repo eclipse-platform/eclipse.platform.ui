@@ -104,10 +104,11 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (selPart != null) {
 			showTab(selPart);
 		} else if (stack.getChildren().size() > 0) {
-			// NOTE: This code will cause a SELECTED_ELEMENT change on the
-			// stack, leading to the tab being shown
-			selPart = stack.getChildren().get(0);
-			stack.setSelectedElement(selPart);
+			for (MUIElement kid : stack.getChildren()) {
+				if (kid.isToBeRendered() && kid.isVisible()) {
+					stack.setSelectedElement(kid);
+				}
+			}
 		}
 	}
 
