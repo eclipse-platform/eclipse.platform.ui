@@ -14,7 +14,7 @@ Import-Package: javax.inject;version="1.0.0",
  org.eclipse.e4.core.services.log,
  org.eclipse.e4.core.services.util,
  org.osgi.framework;version="1.5.0"
-Export-Package: org.eclipse.e4.core.commands;x-friends:="org.eclipse.e4.ui.bindings,org.eclipse.e4.ui.workbench",
+Export-Package: org.eclipse.e4.core.commands;x-friends:="org.eclipse.e4.ui.bindings,org.eclipse.e4.ui.workbench,org.eclipse.e4.ui.workbench.renderers.swt",
  org.eclipse.e4.core.commands.internal;x-friends:="org.eclipse.e4.ui.bindings"
 Service-Component: OSGI-INF/commands.xml, OSGI-INF/handlers.xml
 Require-Bundle: org.eclipse.equinox.common;bundle-version="3.6.0",
