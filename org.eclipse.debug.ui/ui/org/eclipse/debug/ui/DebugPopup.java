@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public abstract class DebugPopup extends PopupDialog {
      *  the dialog, or <code>null</code>
      */
     public DebugPopup(Shell parent, Point anchor, String commandId) {
-        super(parent, PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE, true, false, true, true, false, null, null);
+        super(parent, PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE, true, true, false, true, false, null, null);
         fAnchor = anchor;
         fCommandId = commandId;
     }
