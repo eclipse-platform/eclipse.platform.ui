@@ -20,8 +20,6 @@ public class ViewPatternFilter extends PatternFilter {
 
 	/**
 	 * Create a new instance of a ViewPatternFilter
-	 * 
-	 * @param isMatchItem
 	 */
 	public ViewPatternFilter() {
 		super();
