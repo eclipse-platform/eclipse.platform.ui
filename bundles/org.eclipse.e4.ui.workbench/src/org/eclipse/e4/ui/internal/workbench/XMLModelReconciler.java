@@ -98,7 +98,19 @@ public class XMLModelReconciler extends ModelReconciler {
 	 * The name of the root element that describes the model deltas in XML form (value is
 	 * <code>changes</code>).
 	 */
-	private static final String CHANGES_ATTNAME = "changes"; //$NON-NLS-1$
+	private static final String CHANGES_ELEMENT_NAME = "changes"; //$NON-NLS-1$
+
+	/**
+	 * The name of the attribute that describes the version of the model deltas (value is
+	 * <code>version</code>).
+	 */
+	private static final String VERSION_ATTNAME = "version"; //$NON-NLS-1$
+
+	/**
+	 * The version of the model deltas.
+	 */
+	// a new string is constructed because we do not know want the value to be inlined
+	private static final String VERSION_NUMBER = new String("1.0"); //$NON-NLS-1$
 
 	/**
 	 * An attribute for describing the type of the object in question (value is <code>type</code>).
@@ -152,7 +164,19 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		Collection<ModelDelta> deltas = new LinkedList<ModelDelta>();
 
-		NodeList rootNodeList = (NodeList) document.getDocumentElement();
+		Element rootElement = document.getDocumentElement();
+		String version = rootElement.getAttribute(VERSION_ATTNAME);
+		try {
+			if (version == null || version.length() == 0
+					|| Double.parseDouble(version) < Double.parseDouble(VERSION_NUMBER)) {
+				return deltas;
+			}
+		} catch (NumberFormatException e) {
+			// some corrupt versioning, ignore this deltas file
+			return deltas;
+		}
+
+		NodeList rootNodeList = (NodeList) rootElement;
 		for (int i = 0; i < rootNodeList.getLength(); i++) {
 			Node node = rootNodeList.item(i);
 			if (node instanceof Element) {
@@ -939,7 +963,8 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		// begin construction of the XML document
 		Document document = createDocument();
-		Element root = document.createElement(CHANGES_ATTNAME);
+		Element root = document.createElement(CHANGES_ELEMENT_NAME);
+		root.setAttribute(VERSION_ATTNAME, VERSION_NUMBER);
 		document.appendChild(root);
 
 		EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription.getObjectChanges();
