@@ -10,29 +10,24 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.e4.tools.emf.ui.common.Util;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
-import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map.Entry;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -48,6 +43,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -57,10 +53,10 @@ public class ToolControlEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private Composite composite;
 	private IProject project;
-	private StackLayout stackLayout;
+	private EStackLayout stackLayout;
 
 	public ToolControlEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 		this.project = project;
 	}
 
@@ -100,7 +96,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			if (getEditor().isModelFragment()) {
 				composite = new Composite(parent, SWT.NONE);
-				stackLayout = new StackLayout();
+				stackLayout = new EStackLayout();
 				composite.setLayout(stackLayout);
 				createForm(composite, context, getMaster(), false);
 				createForm(composite, context, getMaster(), true);
@@ -108,21 +104,21 @@ public class ToolControlEditor extends AbstractComponentEditor {
 				composite = createForm(parent, context, getMaster(), false);
 			}
 		}
-		
-		if( getEditor().isModelFragment() ) {
+
+		if (getEditor().isModelFragment()) {
 			Control topControl;
-			if( Util.isImport((EObject) object) ) {
+			if (Util.isImport((EObject) object)) {
 				topControl = composite.getChildren()[1];
 			} else {
-				topControl = composite.getChildren()[0];				
+				topControl = composite.getChildren()[0];
 			}
-			
-			if( stackLayout.topControl != topControl ) {
+
+			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
 				composite.layout(true, true);
 			}
 		}
-		
+
 		getMaster().setValue(object);
 		return composite;
 	}
@@ -132,12 +128,12 @@ public class ToolControlEditor extends AbstractComponentEditor {
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-		
-		if( isImport ) {
-			ControlFactory.createFindImport(parent, this, context);			
+
+		if (isImport) {
+			ControlFactory.createFindImport(parent, this, context);
 			return parent;
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -150,7 +146,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(master));
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -162,6 +158,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText("Find ...");
 			b.addSelectionListener(new SelectionAdapter() {
@@ -172,7 +169,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 				}
 			});
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -186,7 +183,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 80;
 			tableviewer.getControl().setLayoutData(gd);
-			
+
 			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
 			column.getColumn().setText("Key");
 			column.getColumn().setWidth(200);
@@ -197,9 +194,9 @@ public class ToolControlEditor extends AbstractComponentEditor {
 					Entry<String, String> entry = (Entry<String, String>) element;
 					return entry.getKey();
 				}
-			}); 
+			});
 
-			//FIXME How can we react upon changes in the Map-Value?
+			// FIXME How can we react upon changes in the Map-Value?
 			column = new TableViewerColumn(tableviewer, SWT.NONE);
 			column.getColumn().setText("Value");
 			column.getColumn().setWidth(200);
@@ -211,17 +208,17 @@ public class ToolControlEditor extends AbstractComponentEditor {
 					return entry.getValue();
 				}
 			});
-			
+
 			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE);
 			tableviewer.setInput(prop.observeDetail(getMaster()));
-			
+
 			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
 			GridLayout gl = new GridLayout();
-			gl.marginLeft=0;
-			gl.marginRight=0;
-			gl.marginWidth=0;
-			gl.marginHeight=0;
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);

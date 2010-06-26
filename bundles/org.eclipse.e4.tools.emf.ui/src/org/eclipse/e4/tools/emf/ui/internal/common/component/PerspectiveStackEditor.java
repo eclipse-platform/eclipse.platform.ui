@@ -10,23 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.e4.tools.emf.ui.common.Util;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
-import org.eclipse.emf.ecore.EObject;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
@@ -41,19 +32,14 @@ import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
-import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.IViewerValueProperty;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -65,6 +51,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -75,15 +62,15 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-	private StackLayout stackLayout;
+	private EStackLayout stackLayout;
 
 	public PerspectiveStackEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
+		if (image == null) {
 			try {
 				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PerspectiveStack.gif")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
@@ -116,7 +103,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			if (getEditor().isModelFragment()) {
 				composite = new Composite(parent, SWT.NONE);
-				stackLayout = new StackLayout();
+				stackLayout = new EStackLayout();
 				composite.setLayout(stackLayout);
 				createForm(composite, context, getMaster(), false);
 				createForm(composite, context, getMaster(), true);
@@ -124,37 +111,36 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 				composite = createForm(parent, context, getMaster(), false);
 			}
 		}
-		
-		if( getEditor().isModelFragment() ) {
+
+		if (getEditor().isModelFragment()) {
 			Control topControl;
-			if( Util.isImport((EObject) object) ) {
+			if (Util.isImport((EObject) object)) {
 				topControl = composite.getChildren()[1];
 			} else {
-				topControl = composite.getChildren()[0];				
+				topControl = composite.getChildren()[0];
 			}
-			
-			if( stackLayout.topControl != topControl ) {
+
+			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
 				composite.layout(true, true);
 			}
 		}
-		
+
 		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, final EMFDataBindingContext context,
-			WritableValue master, boolean isImport) {
-		parent = new Composite(parent,SWT.NONE);
+	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master, boolean isImport) {
+		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		if( isImport ) {
-			ControlFactory.createFindImport(parent, this, context);			
+		if (isImport) {
+			ControlFactory.createFindImport(parent, this, context);
 			return parent;
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -163,61 +149,60 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
+			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-		
+
 		ControlFactory.createSelectedElement(parent, this, context, Messages.PerspectiveStackEditor_SelectedElement);
 
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PerspectiveStackEditor_Perspectives);
-			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
-			
+			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
+
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
-			
-			
+
 			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 			viewer.setInput(prop.observeDetail(getMaster()));
-			
+
 			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
 			GridLayout gl = new GridLayout();
-			gl.marginLeft=0;
-			gl.marginRight=0;
-			gl.marginWidth=0;
-			gl.marginHeight=0;
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.PartStackEditor_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() { 
+			b.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {  
-					if( ! viewer.getSelection().isEmpty() ) {
-						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
-						if( s.size() == 1 ) {
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
 							Object obj = s.getFirstElement();
 							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
 							int idx = container.getChildren().indexOf(obj) - 1;
-							if( idx >= 0 ) {
+							if (idx >= 0) {
 								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
-								
-								if( cmd.canExecute() ) {
+
+								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
 									viewer.setSelection(new StructuredSelection(obj));
 								}
 							}
-							
+
 						}
 					}
 				}
@@ -230,44 +215,44 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! viewer.getSelection().isEmpty() ) {
-						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
-						if( s.size() == 1 ) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
 							Object obj = s.getFirstElement();
 							MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
 							int idx = container.getChildren().indexOf(obj) + 1;
-							if( idx < container.getChildren().size() ) {
+							if (idx < container.getChildren().size()) {
 								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
-								
-								if( cmd.canExecute() ) {
+
+								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
 									viewer.setSelection(new StructuredSelection(obj));
 								}
 							}
-							
+
 						}
 					}
 				}
 			});
-						
+
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setText(Messages.PerspectiveStackEditor_Add);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MPerspective eObject = MAdvancedFactory.INSTANCE.createPerspective();
-					
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
-					
-					if( cmd.canExecute() ) {
+
+					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 						getEditor().setSelection(eObject);
 					}
 				}
 			});
-			
-			
+
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.PartStackEditor_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
@@ -275,11 +260,11 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! viewer.getSelection().isEmpty() ) {
-						List<?> elements = ((IStructuredSelection)viewer.getSelection()).toList();
-						
+					if (!viewer.getSelection().isEmpty()) {
+						List<?> elements = ((IStructuredSelection) viewer.getSelection()).toList();
+
 						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, elements);
-						if( cmd.canExecute() ) {
+						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}
