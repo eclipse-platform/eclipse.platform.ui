@@ -11,21 +11,48 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 public class ShadowComposite extends Composite {
+
+	// ================================
+	// Dummy to not modify code
+	// ================================
+	public int marginWidth = 0;
+	public int marginHeight = 0;
+
+	ShadowComposite parent;
+
+	private int getTabHeight() {
+		return 0;
+	}
+
+	private boolean getMinimized() {
+		return false;
+	}
+
+	public static final int PART_BODY = -1;
+	public static final int PART_HEADER = -2;
+	public static final int PART_BORDER = -3;
+	public static final int PART_BACKGROUND = -4;
+
 	// Constants for circle drawing
 	final static int LEFT_TOP = 0;
 	final static int LEFT_BOTTOM = 1;
@@ -34,766 +61,185 @@ public class ShadowComposite extends Composite {
 
 	// drop shadow constants
 	final static int SIDE_DROP_WIDTH = 3;
-	final static int BOTTOM_DROP_WIDTH = 5;
+	final static int BOTTOM_DROP_WIDTH = 4;
 
 	// keylines
-	final static int OUTER_KEYLINE = 2;
-	final static int INNER_KEYLINE = 1;
-	final static int TOP_KEYLINE = 2;
+	final static int OUTER_KEYLINE = 1;
+	final static int INNER_KEYLINE = 0;
+	final static int TOP_KEYLINE = 0;
 
-	static final int CORNER_SIZE = 24;
+	// Item Constants
+	static final int ITEM_TOP_MARGIN = 2;
+	static final int ITEM_BOTTOM_MARGIN = 6;
+	static final int ITEM_LEFT_MARGIN = 4;
+	static final int ITEM_RIGHT_MARGIN = 4;
+	static final int INTERNAL_SPACING = 4;
 
-	static final String E4_SHADOW_IMAGE = "org.eclipse.e4.renderer.comp_image"; //$NON-NLS-1$
-
-	int marginWidth;
-	int marginHeight;
+	static final String E4_SHADOW_IMAGE = "org.eclipse.e4.renderer.shadowcomposite_image"; //$NON-NLS-1$
 
 	static int[] shape;
 
-	static int[] shadow = { 0x02fefefe, 0x03fefefe, 0x05fefefe, 0x06fdfdfd,
-			0x08fdfdfd, 0x0bfcfcfc, 0x0dfcfcfc, 0x10fbfbfb, 0x13fafafa,
-			0x17f9f9f9, 0x1af9f9f9, 0x1df8f8f8, 0x20f7f7f7, 0x23f6f6f6,
-			0x26f6f6f6, 0x28f5f5f5, 0x29f5f5f5, 0x2bf4f4f4, 0x2cf4f4f4,
-			0x2df4f4f4, 0x2df4f4f4, 0x2ef4f4f4, 0x2ef4f4f4, 0x2ef4f4f4,
-			0x2ff4f4f4, 0x2ff3f3f3, 0x2ff3f3f3, 0x2ff3f3f3, 0x2ff3f3f3,
-			0x2ff3f3f3, 0x2ff3f3f3, 0x2ff3f3f3, 0x2ff3f3f3, 0x2ff3f3f3,
-			0x2ff3f3f3, 0x2ff4f4f4, 0x2ef4f4f4, 0x2ef4f4f4, 0x2ef4f4f4,
-			0x2df4f4f4, 0x2df4f4f4, 0x2cf4f4f4, 0x2bf4f4f4, 0x29f5f5f5,
-			0x28f5f5f5, 0x26f6f6f6, 0x23f6f6f6, 0x20f7f7f7, 0x1df8f8f8,
-			0x1af9f9f9, 0x17f9f9f9, 0x13fafafa, 0x10fbfbfb, 0x0dfcfcfc,
-			0x0bfcfcfc, 0x08fdfdfd, 0x06fdfdfd, 0x05fefefe, 0x03fefefe,
-			0x02fefefe, 0x03fefefe, 0x05fefefe, 0x07fdfdfd, 0x09fdfdfd,
-			0x0cfcfcfc, 0x0ffbfbfb, 0x13fafafa, 0x17f9f9f9, 0x1bf8f8f8,
-			0x1ff7f7f7, 0x23f6f6f6, 0x27f5f5f5, 0x2bf4f4f4, 0x2ff3f3f3,
-			0x32f3f3f3, 0x35f2f2f2, 0x37f1f1f1, 0x39f1f1f1, 0x3af1f1f1,
-			0x3bf0f0f0, 0x3cf0f0f0, 0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0,
-			0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0,
-			0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0,
-			0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0, 0x3df0f0f0,
-			0x3cf0f0f0, 0x3bf0f0f0, 0x3af1f1f1, 0x39f1f1f1, 0x37f1f1f1,
-			0x35f2f2f2, 0x32f3f3f3, 0x2ff3f3f3, 0x2bf4f4f4, 0x27f5f5f5,
-			0x23f6f6f6, 0x1ff7f7f7, 0x1bf8f8f8, 0x17f9f9f9, 0x13fafafa,
-			0x0ffbfbfb, 0x0cfcfcfc, 0x09fdfdfd, 0x07fdfdfd, 0x05fefefe,
-			0x03fefefe, 0x05fefefe, 0x07fdfdfd, 0x09fdfdfd, 0x0dfcfcfc,
-			0x10fbfbfb, 0x15fafafa, 0x19f9f9f9, 0x1ef8f8f8, 0x24f6f6f6,
-			0x29f5f5f5, 0x2ff4f4f4, 0x34f2f2f2, 0x39f1f1f1, 0x3df0f0f0,
-			0x41efefef, 0x44eeeeee, 0x47ededed, 0x49ededed, 0x4bededed,
-			0x4cececec, 0x4dececec, 0x4dececec, 0x4eececec, 0x4eececec,
-			0x4eececec, 0x4eececec, 0x4eececec, 0x4fececec, 0x4fececec,
-			0x4fececec, 0x4fececec, 0x4fececec, 0x4fececec, 0x4eececec,
-			0x4eececec, 0x4eececec, 0x4eececec, 0x4eececec, 0x4dececec,
-			0x4dececec, 0x4cececec, 0x4bededed, 0x49ededed, 0x47ededed,
-			0x44eeeeee, 0x41efefef, 0x3df0f0f0, 0x39f1f1f1, 0x34f2f2f2,
-			0x2ff4f4f4, 0x29f5f5f5, 0x24f6f6f6, 0x1ef8f8f8, 0x19f9f9f9,
-			0x15fafafa, 0x10fbfbfb, 0x0dfcfcfc, 0x09fdfdfd, 0x07fdfdfd,
-			0x05fefefe, 0x07fdfdfd, 0x09fdfdfd, 0x0dfcfcfc, 0x11fbfbfb,
-			0x16fafafa, 0x1bf8f8f8, 0x21f7f7f7, 0x27f5f5f5, 0x2ef4f4f4,
-			0x35f2f2f2, 0x3cf0f0f0, 0x42efefef, 0x48ededed, 0x4dececec,
-			0x51ebebeb, 0x55eaeaea, 0x58e9e9e9, 0x5be9e9e9, 0x5de8e8e8,
-			0x5ee8e8e8, 0x5fe7e7e7, 0x60e7e7e7, 0x61e7e7e7, 0x61e7e7e7,
-			0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7,
-			0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7,
-			0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x60e7e7e7,
-			0x5fe7e7e7, 0x5ee8e8e8, 0x5de8e8e8, 0x5be9e9e9, 0x58e9e9e9,
-			0x55eaeaea, 0x51ebebeb, 0x4dececec, 0x48ededed, 0x42efefef,
-			0x3cf0f0f0, 0x35f2f2f2, 0x2ef4f4f4, 0x27f5f5f5, 0x21f7f7f7,
-			0x1bf8f8f8, 0x16fafafa, 0x11fbfbfb, 0x0dfcfcfc, 0x09fdfdfd,
-			0x07fdfdfd, 0x09fdfdfd, 0x0dfcfcfc, 0x11fbfbfb, 0x16fafafa,
-			0x1cf8f8f8, 0x23f6f6f6, 0x2af5f5f5, 0x32f3f3f3, 0x3af1f1f1,
-			0x42efefef, 0x4aededed, 0x51ebebeb, 0x58e9e9e9, 0x5ee8e8e8,
-			0x64e6e6e6, 0x68e5e5e5, 0x6ce4e4e4, 0x6ee4e4e4, 0x70e3e3e3,
-			0x72e3e3e3, 0x73e3e3e3, 0x74e2e2e2, 0x75e2e2e2, 0x75e2e2e2,
-			0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2,
-			0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2,
-			0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x74e2e2e2,
-			0x73e3e3e3, 0x72e3e3e3, 0x70e3e3e3, 0x6ee4e4e4, 0x6ce4e4e4,
-			0x68e5e5e5, 0x64e6e6e6, 0x5ee8e8e8, 0x58e9e9e9, 0x51ebebeb,
-			0x4aededed, 0x42efefef, 0x3af1f1f1, 0x32f3f3f3, 0x2af5f5f5,
-			0x23f6f6f6, 0x1cf8f8f8, 0x16fafafa, 0x11fbfbfb, 0x0dfcfcfc,
-			0x09fdfdfd, 0x0cfcfcfc, 0x10fbfbfb, 0x16fafafa, 0x1cf8f8f8,
-			0x23f6f6f6, 0x2cf4f4f4, 0x35f2f2f2, 0x3ef0f0f0, 0x48ededed,
-			0x51ebebeb, 0x5ae9e9e9, 0x62e7e7e7, 0x6ae5e5e5, 0x71e3e3e3,
-			0x77e2e2e2, 0x7be1e1e1, 0x7fe0e0e0, 0x82dfdfdf, 0x85dedede,
-			0x86dedede, 0x88dedede, 0x88dddddd, 0x89dddddd, 0x89dddddd,
-			0x89dddddd, 0x8adddddd, 0x8adddddd, 0x8adddddd, 0x8adddddd,
-			0x8adddddd, 0x8adddddd, 0x8adddddd, 0x8adddddd, 0x8adddddd,
-			0x8adddddd, 0x89dddddd, 0x89dddddd, 0x89dddddd, 0x88dddddd,
-			0x88dedede, 0x86dedede, 0x85dedede, 0x82dfdfdf, 0x7fe0e0e0,
-			0x7be1e1e1, 0x77e2e2e2, 0x71e3e3e3, 0x6ae5e5e5, 0x62e7e7e7,
-			0x5ae9e9e9, 0x51ebebeb, 0x48ededed, 0x3ef0f0f0, 0x35f2f2f2,
-			0x2cf4f4f4, 0x23f6f6f6, 0x1cf8f8f8, 0x16fafafa, 0x10fbfbfb,
-			0x0cfcfcfc, 0x0ffbfbfb, 0x14fafafa, 0x1bf8f8f8, 0x23f6f6f6,
-			0x2cf4f4f4, 0x35f2f2f2, 0x40efefef, 0x4bededed, 0x56eaeaea,
-			0x60e7e7e7, 0x6ae5e5e5, 0x74e2e2e2, 0x7ce0e0e0, 0x83dfdfdf,
-			0x8adddddd, 0x8fdcdcdc, 0x93dbdbdb, 0x96dadada, 0x98d9d9d9,
-			0x9ad9d9d9, 0x9bd9d9d9, 0x9cd8d8d8, 0x9dd8d8d8, 0x9dd8d8d8,
-			0x9dd8d8d8, 0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8,
-			0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8,
-			0x9ed8d8d8, 0x9dd8d8d8, 0x9dd8d8d8, 0x9dd8d8d8, 0x9cd8d8d8,
-			0x9bd9d9d9, 0x9ad9d9d9, 0x98d9d9d9, 0x96dadada, 0x93dbdbdb,
-			0x8fdcdcdc, 0x8adddddd, 0x83dfdfdf, 0x7ce0e0e0, 0x74e2e2e2,
-			0x6ae5e5e5, 0x60e7e7e7, 0x56eaeaea, 0x4bededed, 0x40efefef,
-			0x35f2f2f2, 0x2cf4f4f4, 0x23f6f6f6, 0x1bf8f8f8, 0x14fafafa,
-			0x0ffbfbfb, 0x13fafafa, 0x19f9f9f9, 0x21f7f7f7, 0x2af5f5f5,
-			0x35f2f2f2, 0x40efefef, 0x4cececec, 0x58e9e9e9, 0x64e6e6e6,
-			0x70e3e3e3, 0x7be1e1e1, 0x85dedede, 0x8edcdcdc, 0x96dadada,
-			0x9cd8d8d8, 0xa2d7d7d7, 0xa6d6d6d6, 0xa9d5d5d5, 0xabd5d5d5,
-			0xadd4d4d4, 0xaed4d4d4, 0xafd4d4d4, 0xb0d4d4d4, 0xb0d3d3d3,
-			0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3,
-			0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3,
-			0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d4d4d4, 0xafd4d4d4,
-			0xaed4d4d4, 0xadd4d4d4, 0xabd5d5d5, 0xa9d5d5d5, 0xa6d6d6d6,
-			0xa2d7d7d7, 0x9cd8d8d8, 0x96dadada, 0x8edcdcdc, 0x85dedede,
-			0x7be1e1e1, 0x70e3e3e3, 0x64e6e6e6, 0x58e9e9e9, 0x4cececec,
-			0x40efefef, 0x35f2f2f2, 0x2af5f5f5, 0x21f7f7f7, 0x19f9f9f9,
-			0x13fafafa, 0x16f9f9f9, 0x1ef8f8f8, 0x27f5f5f5, 0x32f3f3f3,
-			0x3ef0f0f0, 0x4bededed, 0x58e9e9e9, 0x66e6e6e6, 0x73e3e3e3,
-			0x80dfdfdf, 0x8bdddddd, 0x96dadada, 0x9fd8d8d8, 0xa7d6d6d6,
-			0xaed4d4d4, 0xb3d3d3d3, 0xb7d2d2d2, 0xbad1d1d1, 0xbdd0d0d0,
-			0xbed0d0d0, 0xc0d0d0d0, 0xc0cfcfcf, 0xc1cfcfcf, 0xc1cfcfcf,
-			0xc1cfcfcf, 0xc1cfcfcf, 0xc1cfcfcf, 0xc2cfcfcf, 0xc2cfcfcf,
-			0xc2cfcfcf, 0xc2cfcfcf, 0xc2cfcfcf, 0xc2cfcfcf, 0xc1cfcfcf,
-			0xc1cfcfcf, 0xc1cfcfcf, 0xc1cfcfcf, 0xc1cfcfcf, 0xc0cfcfcf,
-			0xc0d0d0d0, 0xbed0d0d0, 0xbdd0d0d0, 0xbad1d1d1, 0xb7d2d2d2,
-			0xb3d3d3d3, 0xaed4d4d4, 0xa7d6d6d6, 0x9fd8d8d8, 0x96dadada,
-			0x8bdddddd, 0x80dfdfdf, 0x73e3e3e3, 0x66e6e6e6, 0x58e9e9e9,
-			0x4bededed, 0x3ef0f0f0, 0x32f3f3f3, 0x27f5f5f5, 0x1ef8f8f8,
-			0x16f9f9f9, 0x1bf8f8f8, 0x24f6f6f6, 0x2ef4f4f4, 0x3af1f1f1,
-			0x47ededed, 0x56eaeaea, 0x64e6e6e6, 0x73e3e3e3, 0x81dfdfdf,
-			0x8fdcdcdc, 0x9bd9d9d9, 0xa6d6d6d6, 0xafd4d4d4, 0xb7d2d2d2,
-			0xbed0d0d0, 0xc3cfcfcf, 0xc7cecece, 0xcacdcdcd, 0xcccdcdcd,
-			0xcecccccc, 0xcfcccccc, 0xcfcccccc, 0xd0cccccc, 0xd0cccccc,
-			0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc,
-			0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc,
-			0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xcfcccccc,
-			0xcfcccccc, 0xcecccccc, 0xcccdcdcd, 0xcacdcdcd, 0xc7cecece,
-			0xc3cfcfcf, 0xbed0d0d0, 0xb7d2d2d2, 0xafd4d4d4, 0xa6d6d6d6,
-			0x9bd9d9d9, 0x8fdcdcdc, 0x81dfdfdf, 0x73e3e3e3, 0x64e6e6e6,
-			0x56eaeaea, 0x47ededed, 0x3af1f1f1, 0x2ef4f4f4, 0x24f6f6f6,
-			0x1bf8f8f8, 0x1ff7f7f7, 0x29f5f5f5, 0x35f2f2f2, 0x42efefef,
-			0x51ebebeb, 0x60e7e7e7, 0x70e3e3e3, 0x80dfdfdf, 0x8fdcdcdc,
-			0x9cd8d8d8, 0xa9d5d5d5, 0xb4d2d2d2, 0xbdd0d0d0, 0xc5cecece,
-			0xcbcdcdcd, 0xd0cccccc, 0xd4cbcbcb, 0xd7cacaca, 0xd9c9c9c9,
-			0xdac9c9c9, 0xdbc9c9c9, 0xdcc9c9c9, 0xdcc9c9c9, 0xdcc9c9c9,
-			0xddc9c9c9, 0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8,
-			0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8,
-			0xddc8c8c8, 0xddc9c9c9, 0xdcc9c9c9, 0xdcc9c9c9, 0xdcc9c9c9,
-			0xdbc9c9c9, 0xdac9c9c9, 0xd9c9c9c9, 0xd7cacaca, 0xd4cbcbcb,
-			0xd0cccccc, 0xcbcdcdcd, 0xc5cecece, 0xbdd0d0d0, 0xb4d2d2d2,
-			0xa9d5d5d5, 0x9cd8d8d8, 0x8fdcdcdc, 0x80dfdfdf, 0x70e3e3e3,
-			0x60e7e7e7, 0x51ebebeb, 0x42efefef, 0x35f2f2f2, 0x29f5f5f5,
-			0x1ff7f7f7, 0x23f6f6f6, 0x2ff4f4f4, 0x3bf0f0f0, 0x4aededed,
-			0x5ae9e9e9, 0x6ae5e5e5, 0x7be0e0e0, 0x8bdcdcdc, 0x9bd9d9d9,
-			0xa9d5d5d5, 0xb6d2d2d2, 0xc0cfcfcf, 0xcacdcdcd, 0xd1cbcbcb,
-			0xd7cacaca, 0xdcc9c9c9, 0xdfc8c8c8, 0xe1c7c7c7, 0xe3c7c7c7,
-			0xe5c7c7c7, 0xe5c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6,
-			0xe6c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6,
-			0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6,
-			0xe7c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6,
-			0xe5c6c6c6, 0xe5c7c7c7, 0xe3c7c7c7, 0xe1c7c7c7, 0xdfc8c8c8,
-			0xdcc9c9c9, 0xd7cacaca, 0xd1cbcbcb, 0xcacdcdcd, 0xc0cfcfcf,
-			0xb6d2d2d2, 0xa9d5d5d5, 0x9bd9d9d9, 0x8bdcdcdc, 0x7be0e0e0,
-			0x6ae5e5e5, 0x5ae9e9e9, 0x4aededed, 0x3bf0f0f0, 0x2ff4f4f4,
-			0x23f6f6f6, 0x27f5f5f5, 0x34f2f2f2, 0x42efefef, 0x51ebebeb,
-			0x62e7e7e7, 0x74e2e2e2, 0x85dedede, 0x96dadada, 0xa6d6d6d6,
-			0xb4d2d2d2, 0xc1cfcfcf, 0xcbcdcdcd, 0xd4cbcbcb, 0xdbc9c9c9,
-			0xe0c8c8c8, 0xe5c7c7c7, 0xe8c6c6c6, 0xeac5c5c5, 0xecc5c5c5,
-			0xedc5c5c5, 0xedc4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4,
-			0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4,
-			0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4,
-			0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4,
-			0xedc4c4c4, 0xedc5c5c5, 0xecc5c5c5, 0xeac5c5c5, 0xe8c6c6c6,
-			0xe5c7c7c7, 0xe0c8c8c8, 0xdbc9c9c9, 0xd4cbcbcb, 0xcbcdcdcd,
-			0xc1cfcfcf, 0xb4d2d2d2, 0xa6d6d6d6, 0x96dadada, 0x85dedede,
-			0x74e2e2e2, 0x62e7e7e7, 0x51ebebeb, 0x42efefef, 0x34f2f2f2,
-			0x27f5f5f5, 0x2bf4f4f4, 0x39f1f1f1, 0x47ededed, 0x58e9e9e9,
-			0x6ae5e5e5, 0x7ce0e0e0, 0x8edcdcdc, 0x9fd8d8d8, 0xafd4d4d4,
-			0xbdd0d0d0, 0xcacdcdcd, 0xd4cbcbcb, 0xdcc9c9c9, 0xe3c7c7c7,
-			0xe8c6c6c6, 0xecc5c5c5, 0xefc4c4c4, 0xf0c4c4c4, 0xf2c3c3c3,
-			0xf3c3c3c3, 0xf3c3c3c3, 0xf3c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3,
-			0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3,
-			0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3,
-			0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf3c3c3c3,
-			0xf3c3c3c3, 0xf3c3c3c3, 0xf2c3c3c3, 0xf0c4c4c4, 0xefc4c4c4,
-			0xecc5c5c5, 0xe8c6c6c6, 0xe3c7c7c7, 0xdcc9c9c9, 0xd4cbcbcb,
-			0xcacdcdcd, 0xbdd0d0d0, 0xafd4d4d4, 0x9fd8d8d8, 0x8edcdcdc,
-			0x7ce0e0e0, 0x6ae5e5e5, 0x58e9e9e9, 0x47ededed, 0x39f1f1f1,
-			0x2bf4f4f4, 0x2ff4f4f4, 0x3df0f0f0, 0x4dececec, 0x5ee8e8e8,
-			0x71e3e3e3, 0x84dfdfdf, 0x96dadada, 0xa7d6d6d6, 0xb7d2d2d2,
-			0xc5cecece, 0xd1cbcbcb, 0xdbc9c9c9, 0xe3c7c7c7, 0xe9c6c6c6,
-			0xeec4c4c4, 0xf1c4c4c4, 0xf4c3c3c3, 0xf5c2c2c2, 0xf6c2c2c2,
-			0xf7c2c2c2, 0xf7c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2,
-			0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2,
-			0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2,
-			0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2,
-			0xf7c2c2c2, 0xf7c2c2c2, 0xf6c2c2c2, 0xf5c2c2c2, 0xf4c3c3c3,
-			0xf1c4c4c4, 0xeec4c4c4, 0xe9c6c6c6, 0xe3c7c7c7, 0xdbc9c9c9,
-			0xd1cbcbcb, 0xc5cecece, 0xb7d2d2d2, 0xa7d6d6d6, 0x96dadada,
-			0x84dfdfdf, 0x71e3e3e3, 0x5ee8e8e8, 0x4dececec, 0x3df0f0f0,
-			0x2ff4f4f4, 0x32f3f3f3, 0x41efefef, 0x51ebebeb, 0x63e6e6e6,
-			0x77e2e2e2, 0x8adddddd, 0x9cd8d8d8, 0xaed4d4d4, 0xbdd0d0d0,
-			0xcbcdcdcd, 0xd7cacaca, 0xe0c7c7c7, 0xe8c6c6c6, 0xeec4c4c4,
-			0xf2c3c3c3, 0xf5c3c3c3, 0xf7c2c2c2, 0xf8c2c2c2, 0xf9c1c1c1,
-			0xfac1c1c1, 0xfac1c1c1, 0xfac1c1c1, 0xfbc1c1c1, 0xfbc1c1c1,
-			0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1,
-			0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1,
-			0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfac1c1c1,
-			0xfac1c1c1, 0xfac1c1c1, 0xf9c1c1c1, 0xf8c2c2c2, 0xf7c2c2c2,
-			0xf5c3c3c3, 0xf2c3c3c3, 0xeec4c4c4, 0xe8c6c6c6, 0xe0c7c7c7,
-			0xd7cacaca, 0xcbcdcdcd, 0xbdd0d0d0, 0xaed4d4d4, 0x9cd8d8d8,
-			0x8adddddd, 0x77e2e2e2, 0x63e6e6e6, 0x51ebebeb, 0x41efefef,
-			0x32f3f3f3, 0x34f2f2f2, 0x44eeeeee, 0x55eaeaea, 0x68e5e5e5,
-			0x7be1e1e1, 0x8fdcdcdc, 0xa1d7d7d7, 0xb3d3d3d3, 0xc2cfcfcf,
-			0xd0cbcbcb, 0xdcc9c9c9, 0xe4c6c6c6, 0xecc5c5c5, 0xf1c4c4c4,
-			0xf5c3c3c3, 0xf8c2c2c2, 0xfac1c1c1, 0xfac1c1c1, 0xfcc1c1c1,
-			0xfcc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1,
-			0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1,
-			0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1,
-			0xfdc1c1c1, 0xfdc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1,
-			0xfcc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1, 0xfac1c1c1, 0xfac1c1c1,
-			0xf8c2c2c2, 0xf5c3c3c3, 0xf1c4c4c4, 0xecc5c5c5, 0xe4c6c6c6,
-			0xdcc9c9c9, 0xd0cbcbcb, 0xc2cfcfcf, 0xb3d3d3d3, 0xa1d7d7d7,
-			0x8fdcdcdc, 0x7be1e1e1, 0x68e5e5e5, 0x55eaeaea, 0x44eeeeee,
-			0x34f2f2f2, 0x37f2f2f2, 0x47eeeeee, 0x58e9e9e9, 0x6be4e4e4,
-			0x7fe0e0e0, 0x93dbdbdb, 0xa5d6d6d6, 0xb7d2d2d2, 0xc6cecece,
-			0xd4cacaca, 0xdfc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf3c3c3c3,
-			0xf7c2c2c2, 0xfac2c2c2, 0xfbc1c1c1, 0xfcc1c1c1, 0xfdc0c0c0,
-			0xfdc0c0c0, 0xfdc0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc0c0c0, 0xfdc0c0c0, 0xfdc0c0c0, 0xfcc1c1c1, 0xfbc1c1c1,
-			0xfac2c2c2, 0xf7c2c2c2, 0xf3c3c3c3, 0xeec4c4c4, 0xe7c6c6c6,
-			0xdfc8c8c8, 0xd4cacaca, 0xc6cecece, 0xb7d2d2d2, 0xa5d6d6d6,
-			0x93dbdbdb, 0x7fe0e0e0, 0x6be4e4e4, 0x58e9e9e9, 0x47eeeeee,
-			0x37f2f2f2, 0x38f1f1f1, 0x49ededed, 0x5be9e9e9, 0x6ee4e4e4,
-			0x82dfdfdf, 0x96dadada, 0xa9d5d5d5, 0xbbd1d1d1, 0xc9cecece,
-			0xd7cacaca, 0xe2c7c7c7, 0xeac5c5c5, 0xf0c4c4c4, 0xf5c3c3c3,
-			0xf9c2c2c2, 0xfbc1c1c1, 0xfcc0c0c0, 0xfdc0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfdc0c0c0, 0xfcc0c0c0,
-			0xfbc1c1c1, 0xf9c2c2c2, 0xf5c3c3c3, 0xf0c4c4c4, 0xeac5c5c5,
-			0xe2c7c7c7, 0xd7cacaca, 0xc9cecece, 0xbbd1d1d1, 0xa9d5d5d5,
-			0x96dadada, 0x82dfdfdf, 0x6ee4e4e4, 0x5be9e9e9, 0x49ededed,
-			0x38f1f1f1, 0x3af1f1f1, 0x4bededed, 0x5de8e8e8, 0x70e3e3e3,
-			0x85dedede, 0x99d9d9d9, 0xabd4d4d4, 0xbdd0d0d0, 0xcccdcdcd,
-			0xd9c9c9c9, 0xe4c7c7c7, 0xebc5c5c5, 0xf2c4c4c4, 0xf6c2c2c2,
-			0xfac1c1c1, 0xfcc1c1c1, 0xfdc0c0c0, 0xfdc0c0c0, 0xfec0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfdc0c0c0, 0xfdc0c0c0,
-			0xfcc1c1c1, 0xfac1c1c1, 0xf6c2c2c2, 0xf2c4c4c4, 0xebc5c5c5,
-			0xe4c7c7c7, 0xd9c9c9c9, 0xcccdcdcd, 0xbdd0d0d0, 0xabd4d4d4,
-			0x99d9d9d9, 0x85dedede, 0x70e3e3e3, 0x5de8e8e8, 0x4bededed,
-			0x3af1f1f1, 0x3bf1f1f1, 0x4cededed, 0x5ee8e8e8, 0x72e3e3e3,
-			0x87dedede, 0x9ad9d9d9, 0xadd4d4d4, 0xbfd0d0d0, 0xcdcdcdcd,
-			0xdac9c9c9, 0xe5c7c7c7, 0xecc4c4c4, 0xf3c3c3c3, 0xf7c2c2c2,
-			0xfac1c1c1, 0xfcc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfcc1c1c1, 0xfac1c1c1, 0xf7c2c2c2, 0xf3c3c3c3, 0xecc4c4c4,
-			0xe5c7c7c7, 0xdac9c9c9, 0xcdcdcdcd, 0xbfd0d0d0, 0xadd4d4d4,
-			0x9ad9d9d9, 0x87dedede, 0x72e3e3e3, 0x5ee8e8e8, 0x4cededed,
-			0x3bf1f1f1, 0x3cf0f0f0, 0x4dececec, 0x5fe7e7e7, 0x73e3e3e3,
-			0x88dedede, 0x9cd9d9d9, 0xaed4d4d4, 0xc0cfcfcf, 0xcecccccc,
-			0xdbc8c8c8, 0xe6c6c6c6, 0xedc4c4c4, 0xf3c3c3c3, 0xf7c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf7c2c2c2, 0xf3c3c3c3, 0xedc4c4c4,
-			0xe6c6c6c6, 0xdbc8c8c8, 0xcecccccc, 0xc0cfcfcf, 0xaed4d4d4,
-			0x9cd9d9d9, 0x88dedede, 0x73e3e3e3, 0x5fe7e7e7, 0x4dececec,
-			0x3cf0f0f0, 0x3cf0f0f0, 0x4eececec, 0x60e7e7e7, 0x74e2e2e2,
-			0x89dddddd, 0x9dd8d8d8, 0xafd3d3d3, 0xc1cfcfcf, 0xcfcccccc,
-			0xdcc8c8c8, 0xe6c6c6c6, 0xedc4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xedc4c4c4,
-			0xe6c6c6c6, 0xdcc8c8c8, 0xcfcccccc, 0xc1cfcfcf, 0xafd3d3d3,
-			0x9dd8d8d8, 0x89dddddd, 0x74e2e2e2, 0x60e7e7e7, 0x4eececec,
-			0x3cf0f0f0, 0x3cf0f0f0, 0x4eececec, 0x60e7e7e7, 0x74e2e2e2,
-			0x89dddddd, 0x9dd8d8d8, 0xafd3d3d3, 0xc1cfcfcf, 0xcfcccccc,
-			0xdcc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xdcc8c8c8, 0xcfcccccc, 0xc1cfcfcf, 0xafd3d3d3,
-			0x9dd8d8d8, 0x89dddddd, 0x74e2e2e2, 0x60e7e7e7, 0x4eececec,
-			0x3cf0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3df0f0f0, 0x4fececec, 0x61e7e7e7, 0x75e2e2e2,
-			0x8adddddd, 0x9ed8d8d8, 0xb0d3d3d3, 0xc2cfcfcf, 0xd0cccccc,
-			0xddc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xddc8c8c8, 0xd0cccccc, 0xc2cfcfcf, 0xb0d3d3d3,
-			0x9ed8d8d8, 0x8adddddd, 0x75e2e2e2, 0x61e7e7e7, 0x4fececec,
-			0x3df0f0f0, 0x3cf0f0f0, 0x4eececec, 0x60e7e7e7, 0x74e2e2e2,
-			0x89dddddd, 0x9dd8d8d8, 0xafd3d3d3, 0xc1cfcfcf, 0xcfcccccc,
-			0xdcc8c8c8, 0xe7c6c6c6, 0xeec4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xeec4c4c4,
-			0xe7c6c6c6, 0xdcc8c8c8, 0xcfcccccc, 0xc1cfcfcf, 0xafd3d3d3,
-			0x9dd8d8d8, 0x89dddddd, 0x74e2e2e2, 0x60e7e7e7, 0x4eececec,
-			0x3cf0f0f0, 0x3cf0f0f0, 0x4eececec, 0x60e7e7e7, 0x74e2e2e2,
-			0x89dddddd, 0x9dd8d8d8, 0xafd3d3d3, 0xc1cfcfcf, 0xcfcccccc,
-			0xdcc8c8c8, 0xe6c6c6c6, 0xedc4c4c4, 0xf4c3c3c3, 0xf8c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf8c2c2c2, 0xf4c3c3c3, 0xedc4c4c4,
-			0xe6c6c6c6, 0xdcc8c8c8, 0xcfcccccc, 0xc1cfcfcf, 0xafd3d3d3,
-			0x9dd8d8d8, 0x89dddddd, 0x74e2e2e2, 0x60e7e7e7, 0x4eececec,
-			0x3cf0f0f0, 0x3cf0f0f0, 0x4dececec, 0x5fe8e8e8, 0x73e3e3e3,
-			0x88dedede, 0x9cd9d9d9, 0xaed4d4d4, 0xc0d0d0d0, 0xcecccccc,
-			0xdbc8c8c8, 0xe6c6c6c6, 0xedc4c4c4, 0xf3c3c3c3, 0xf7c2c2c2,
-			0xfbc1c1c1, 0xfdc1c1c1, 0xfec0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfdc1c1c1, 0xfbc1c1c1, 0xf7c2c2c2, 0xf3c3c3c3, 0xedc4c4c4,
-			0xe6c6c6c6, 0xdbc8c8c8, 0xcecccccc, 0xc0d0d0d0, 0xaed4d4d4,
-			0x9cd9d9d9, 0x88dedede, 0x73e3e3e3, 0x5fe8e8e8, 0x4dececec,
-			0x3cf0f0f0, 0x3bf1f1f1, 0x4cededed, 0x5ee8e8e8, 0x72e3e3e3,
-			0x86dedede, 0x9ad9d9d9, 0xadd4d4d4, 0xbfd0d0d0, 0xcdcdcdcd,
-			0xdac9c9c9, 0xe5c7c7c7, 0xecc4c4c4, 0xf2c3c3c3, 0xf7c2c2c2,
-			0xfac1c1c1, 0xfcc1c1c1, 0xfdc0c0c0, 0xfec0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0,
-			0xffc0c0c0, 0xffc0c0c0, 0xffc0c0c0, 0xfec0c0c0, 0xfdc0c0c0,
-			0xfcc1c1c1, 0xfac1c1c1, 0xf7c2c2c2, 0xf2c3c3c3, 0xecc4c4c4,
-			0xe5c7c7c7, 0xdac9c9c9, 0xcdcdcdcd, 0xbfd0d0d0, 0xadd4d4d4,
-			0x9ad9d9d9, 0x86dedede, 0x72e3e3e3, 0x5ee8e8e8, 0x4cededed,
-			0x3bf1f1f1, 0x3af1f1f1, 0x4bededed, 0x5de8e8e8, 0x70e3e3e3,
-			0x85dedede, 0x99d9d9d9, 0xabd4d4d4, 0xbdd0d0d0, 0xcbcdcdcd,
-			0xd9c9c9c9, 0xe3c7c7c7, 0xebc5c5c5, 0xf1c4c4c4, 0xf6c3c3c3,
-			0xf9c1c1c1, 0xfcc1c1c1, 0xfdc0c0c0, 0xfdc0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfdc0c0c0, 0xfdc0c0c0,
-			0xfcc1c1c1, 0xf9c1c1c1, 0xf6c3c3c3, 0xf1c4c4c4, 0xebc5c5c5,
-			0xe3c7c7c7, 0xd9c9c9c9, 0xcbcdcdcd, 0xbdd0d0d0, 0xabd4d4d4,
-			0x99d9d9d9, 0x85dedede, 0x70e3e3e3, 0x5de8e8e8, 0x4bededed,
-			0x3af1f1f1, 0x38f1f1f1, 0x49ededed, 0x5be9e9e9, 0x6ee4e4e4,
-			0x82dfdfdf, 0x96dadada, 0xa8d5d5d5, 0xbad1d1d1, 0xc9cecece,
-			0xd7cacaca, 0xe1c7c7c7, 0xe9c5c5c5, 0xf0c4c4c4, 0xf4c3c3c3,
-			0xf8c2c2c2, 0xfac2c2c2, 0xfcc1c1c1, 0xfcc0c0c0, 0xfdc0c0c0,
-			0xfdc0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0, 0xfec0c0c0,
-			0xfec0c0c0, 0xfdc0c0c0, 0xfdc0c0c0, 0xfcc0c0c0, 0xfcc1c1c1,
-			0xfac2c2c2, 0xf8c2c2c2, 0xf4c3c3c3, 0xf0c4c4c4, 0xe9c5c5c5,
-			0xe1c7c7c7, 0xd7cacaca, 0xc9cecece, 0xbad1d1d1, 0xa8d5d5d5,
-			0x96dadada, 0x82dfdfdf, 0x6ee4e4e4, 0x5be9e9e9, 0x49ededed,
-			0x38f1f1f1, 0x37f2f2f2, 0x47eeeeee, 0x58e9e9e9, 0x6be5e5e5,
-			0x7fe0e0e0, 0x93dbdbdb, 0xa5d6d6d6, 0xb7d2d2d2, 0xc6cecece,
-			0xd3cacaca, 0xdec8c8c8, 0xe7c6c6c6, 0xeec5c5c5, 0xf2c3c3c3,
-			0xf6c2c2c2, 0xf9c2c2c2, 0xfac1c1c1, 0xfbc1c1c1, 0xfcc1c1c1,
-			0xfcc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1, 0xfdc1c1c1,
-			0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1,
-			0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1,
-			0xfdc1c1c1, 0xfdc1c1c1, 0xfdc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1,
-			0xfcc1c1c1, 0xfcc1c1c1, 0xfcc1c1c1, 0xfbc1c1c1, 0xfac1c1c1,
-			0xf9c2c2c2, 0xf6c2c2c2, 0xf2c3c3c3, 0xeec5c5c5, 0xe7c6c6c6,
-			0xdec8c8c8, 0xd3cacaca, 0xc6cecece, 0xb7d2d2d2, 0xa5d6d6d6,
-			0x93dbdbdb, 0x7fe0e0e0, 0x6be5e5e5, 0x58e9e9e9, 0x47eeeeee,
-			0x37f2f2f2, 0x34f2f2f2, 0x44eeeeee, 0x55eaeaea, 0x67e5e5e5,
-			0x7be1e1e1, 0x8edcdcdc, 0xa1d7d7d7, 0xb3d3d3d3, 0xc2cfcfcf,
-			0xcfcccccc, 0xdbc9c9c9, 0xe3c7c7c7, 0xeac5c5c5, 0xf0c4c4c4,
-			0xf3c3c3c3, 0xf6c3c3c3, 0xf8c2c2c2, 0xf9c1c1c1, 0xfac1c1c1,
-			0xfac1c1c1, 0xfac1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1,
-			0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1,
-			0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1,
-			0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1, 0xfbc1c1c1,
-			0xfac1c1c1, 0xfac1c1c1, 0xfac1c1c1, 0xf9c1c1c1, 0xf8c2c2c2,
-			0xf6c3c3c3, 0xf3c3c3c3, 0xf0c4c4c4, 0xeac5c5c5, 0xe3c7c7c7,
-			0xdbc9c9c9, 0xcfcccccc, 0xc2cfcfcf, 0xb3d3d3d3, 0xa1d7d7d7,
-			0x8edcdcdc, 0x7be1e1e1, 0x67e5e5e5, 0x55eaeaea, 0x44eeeeee,
-			0x34f2f2f2, 0x32f3f3f3, 0x41efefef, 0x51ebebeb, 0x63e7e7e7,
-			0x76e2e2e2, 0x89dddddd, 0x9bd8d8d8, 0xadd4d4d4, 0xbcd1d1d1,
-			0xcacdcdcd, 0xd5cacaca, 0xdec8c8c8, 0xe6c6c6c6, 0xebc5c5c5,
-			0xf0c4c4c4, 0xf3c3c3c3, 0xf5c2c2c2, 0xf6c2c2c2, 0xf7c2c2c2,
-			0xf7c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2,
-			0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2,
-			0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2,
-			0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2, 0xf8c2c2c2,
-			0xf8c2c2c2, 0xf7c2c2c2, 0xf7c2c2c2, 0xf6c2c2c2, 0xf5c2c2c2,
-			0xf3c3c3c3, 0xf0c4c4c4, 0xebc5c5c5, 0xe6c6c6c6, 0xdec8c8c8,
-			0xd5cacaca, 0xcacdcdcd, 0xbcd1d1d1, 0xadd4d4d4, 0x9bd8d8d8,
-			0x89dddddd, 0x76e2e2e2, 0x63e7e7e7, 0x51ebebeb, 0x41efefef,
-			0x32f3f3f3, 0x2ef4f4f4, 0x3df0f0f0, 0x4cececec, 0x5ee8e8e8,
-			0x70e3e3e3, 0x83dfdfdf, 0x94dadada, 0xa6d6d6d6, 0xb5d2d2d2,
-			0xc3cfcfcf, 0xcfcccccc, 0xd8c9c9c9, 0xe0c8c8c8, 0xe6c6c6c6,
-			0xeac5c5c5, 0xeec5c5c5, 0xf0c4c4c4, 0xf1c3c3c3, 0xf3c3c3c3,
-			0xf3c3c3c3, 0xf3c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3,
-			0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3,
-			0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3,
-			0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3, 0xf4c3c3c3,
-			0xf3c3c3c3, 0xf3c3c3c3, 0xf3c3c3c3, 0xf1c3c3c3, 0xf0c4c4c4,
-			0xeec5c5c5, 0xeac5c5c5, 0xe6c6c6c6, 0xe0c8c8c8, 0xd8c9c9c9,
-			0xcfcccccc, 0xc3cfcfcf, 0xb5d2d2d2, 0xa6d6d6d6, 0x94dadada,
-			0x83dfdfdf, 0x70e3e3e3, 0x5ee8e8e8, 0x4cececec, 0x3df0f0f0,
-			0x2ef4f4f4, 0x2bf4f4f4, 0x38f1f1f1, 0x47eeeeee, 0x57e9e9e9,
-			0x69e5e5e5, 0x7be1e1e1, 0x8cdcdcdc, 0x9dd8d8d8, 0xadd4d4d4,
-			0xbbd1d1d1, 0xc7cecece, 0xd0cbcbcb, 0xd8cacaca, 0xdfc8c8c8,
-			0xe3c7c7c7, 0xe7c6c6c6, 0xeac5c5c5, 0xebc5c5c5, 0xedc5c5c5,
-			0xedc4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4,
-			0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4,
-			0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4,
-			0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4, 0xeec4c4c4,
-			0xeec4c4c4, 0xedc4c4c4, 0xedc5c5c5, 0xebc5c5c5, 0xeac5c5c5,
-			0xe7c6c6c6, 0xe3c7c7c7, 0xdfc8c8c8, 0xd8cacaca, 0xd0cbcbcb,
-			0xc7cecece, 0xbbd1d1d1, 0xadd4d4d4, 0x9dd8d8d8, 0x8cdcdcdc,
-			0x7be1e1e1, 0x69e5e5e5, 0x57e9e9e9, 0x47eeeeee, 0x38f1f1f1,
-			0x2bf4f4f4, 0x27f5f5f5, 0x33f2f2f2, 0x41efefef, 0x50ebebeb,
-			0x61e7e7e7, 0x72e3e3e3, 0x83dedede, 0x94dadada, 0xa3d7d7d7,
-			0xb0d3d3d3, 0xbcd0d0d0, 0xc6cecece, 0xcfcccccc, 0xd5cacaca,
-			0xdac9c9c9, 0xdec8c8c8, 0xe1c7c7c7, 0xe3c7c7c7, 0xe4c7c7c7,
-			0xe5c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6,
-			0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6,
-			0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6, 0xe7c6c6c6,
-			0xe7c6c6c6, 0xe7c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6, 0xe6c6c6c6,
-			0xe6c6c6c6, 0xe5c6c6c6, 0xe4c7c7c7, 0xe3c7c7c7, 0xe1c7c7c7,
-			0xdec8c8c8, 0xdac9c9c9, 0xd5cacaca, 0xcfcccccc, 0xc6cecece,
-			0xbcd0d0d0, 0xb0d3d3d3, 0xa3d7d7d7, 0x94dadada, 0x83dedede,
-			0x72e3e3e3, 0x61e7e7e7, 0x50ebebeb, 0x41efefef, 0x33f2f2f2,
-			0x27f5f5f5, 0x23f6f6f6, 0x2ef4f4f4, 0x3bf1f1f1, 0x49ededed,
-			0x58e9e9e9, 0x68e5e5e5, 0x78e1e1e1, 0x88dddddd, 0x97dadada,
-			0xa5d6d6d6, 0xb0d3d3d3, 0xbbd1d1d1, 0xc3cfcfcf, 0xcacdcdcd,
-			0xcfcccccc, 0xd3cbcbcb, 0xd7cacaca, 0xd9c9c9c9, 0xdac9c9c9,
-			0xdbc9c9c9, 0xdcc9c9c9, 0xdcc9c9c9, 0xdcc9c9c9, 0xddc9c9c9,
-			0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8,
-			0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8, 0xddc8c8c8,
-			0xddc8c8c8, 0xddc8c8c8, 0xddc9c9c9, 0xdcc9c9c9, 0xdcc9c9c9,
-			0xdcc9c9c9, 0xdbc9c9c9, 0xdac9c9c9, 0xd9c9c9c9, 0xd7cacaca,
-			0xd3cbcbcb, 0xcfcccccc, 0xcacdcdcd, 0xc3cfcfcf, 0xbbd1d1d1,
-			0xb0d3d3d3, 0xa5d6d6d6, 0x97dadada, 0x88dddddd, 0x78e1e1e1,
-			0x68e5e5e5, 0x58e9e9e9, 0x49ededed, 0x3bf1f1f1, 0x2ef4f4f4,
-			0x23f6f6f6, 0x1ef7f7f7, 0x28f5f5f5, 0x34f2f2f2, 0x41efefef,
-			0x4fececec, 0x5ee8e8e8, 0x6de4e4e4, 0x7ce0e0e0, 0x8adddddd,
-			0x97dadada, 0xa3d7d7d7, 0xadd4d4d4, 0xb5d2d2d2, 0xbcd1d1d1,
-			0xc2cfcfcf, 0xc6cecece, 0xc9cdcdcd, 0xcccdcdcd, 0xcdcccccc,
-			0xcecccccc, 0xcfcccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc,
-			0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc,
-			0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc,
-			0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc, 0xd0cccccc,
-			0xcfcccccc, 0xcecccccc, 0xcdcccccc, 0xcccdcdcd, 0xc9cdcdcd,
-			0xc6cecece, 0xc2cfcfcf, 0xbcd1d1d1, 0xb5d2d2d2, 0xadd4d4d4,
-			0xa3d7d7d7, 0x97dadada, 0x8adddddd, 0x7ce0e0e0, 0x6de4e4e4,
-			0x5ee8e8e8, 0x4fececec, 0x41efefef, 0x34f2f2f2, 0x28f5f5f5,
-			0x1ef7f7f7, 0x1af9f9f9, 0x23f6f6f6, 0x2df4f4f4, 0x39f1f1f1,
-			0x45eeeeee, 0x53ebebeb, 0x61e7e7e7, 0x6fe4e4e4, 0x7ce0e0e0,
-			0x88dddddd, 0x93dbdbdb, 0x9dd8d8d8, 0xa6d6d6d6, 0xadd4d4d4,
-			0xb2d3d3d3, 0xb7d2d2d2, 0xbad1d1d1, 0xbdd0d0d0, 0xbed0d0d0,
-			0xbfd0d0d0, 0xc0cfcfcf, 0xc1cfcfcf, 0xc1cfcfcf, 0xc1cfcfcf,
-			0xc1cfcfcf, 0xc1cfcfcf, 0xc2cfcfcf, 0xc2cfcfcf, 0xc2cfcfcf,
-			0xc2cfcfcf, 0xc2cfcfcf, 0xc2cfcfcf, 0xc2cfcfcf, 0xc2cfcfcf,
-			0xc1cfcfcf, 0xc1cfcfcf, 0xc1cfcfcf, 0xc1cfcfcf, 0xc1cfcfcf,
-			0xc0cfcfcf, 0xbfd0d0d0, 0xbed0d0d0, 0xbdd0d0d0, 0xbad1d1d1,
-			0xb7d2d2d2, 0xb2d3d3d3, 0xadd4d4d4, 0xa6d6d6d6, 0x9dd8d8d8,
-			0x93dbdbdb, 0x88dddddd, 0x7ce0e0e0, 0x6fe4e4e4, 0x61e7e7e7,
-			0x53ebebeb, 0x45eeeeee, 0x39f1f1f1, 0x2df4f4f4, 0x23f6f6f6,
-			0x1af9f9f9, 0x16fafafa, 0x1df8f8f8, 0x26f6f6f6, 0x30f3f3f3,
-			0x3cf0f0f0, 0x48ededed, 0x54eaeaea, 0x61e7e7e7, 0x6de4e4e4,
-			0x79e1e1e1, 0x83dfdfdf, 0x8ddcdcdc, 0x95dadada, 0x9bd9d9d9,
-			0xa1d7d7d7, 0xa5d6d6d6, 0xa9d5d5d5, 0xabd5d5d5, 0xadd4d4d4,
-			0xaed4d4d4, 0xafd4d4d4, 0xb0d4d4d4, 0xb0d3d3d3, 0xb0d3d3d3,
-			0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3,
-			0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3,
-			0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d3d3d3, 0xb0d4d4d4,
-			0xafd4d4d4, 0xaed4d4d4, 0xadd4d4d4, 0xabd5d5d5, 0xa9d5d5d5,
-			0xa5d6d6d6, 0xa1d7d7d7, 0x9bd9d9d9, 0x95dadada, 0x8ddcdcdc,
-			0x83dfdfdf, 0x79e1e1e1, 0x6de4e4e4, 0x61e7e7e7, 0x54eaeaea,
-			0x48ededed, 0x3cf0f0f0, 0x30f3f3f3, 0x26f6f6f6, 0x1df8f8f8,
-			0x16fafafa, 0x12fbfbfb, 0x18f9f9f9, 0x20f7f7f7, 0x28f5f5f5,
-			0x32f3f3f3, 0x3df0f0f0, 0x48ededed, 0x53eaeaea, 0x5ee8e8e8,
-			0x68e5e5e5, 0x72e3e3e3, 0x7be1e1e1, 0x82dfdfdf, 0x89dddddd,
-			0x8edcdcdc, 0x93dbdbdb, 0x96dadada, 0x98d9d9d9, 0x9ad9d9d9,
-			0x9bd9d9d9, 0x9cd8d8d8, 0x9dd8d8d8, 0x9dd8d8d8, 0x9dd8d8d8,
-			0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8,
-			0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8, 0x9ed8d8d8,
-			0x9ed8d8d8, 0x9ed8d8d8, 0x9dd8d8d8, 0x9dd8d8d8, 0x9dd8d8d8,
-			0x9cd8d8d8, 0x9bd9d9d9, 0x9ad9d9d9, 0x98d9d9d9, 0x96dadada,
-			0x93dbdbdb, 0x8edcdcdc, 0x89dddddd, 0x82dfdfdf, 0x7be1e1e1,
-			0x72e3e3e3, 0x68e5e5e5, 0x5ee8e8e8, 0x53eaeaea, 0x48ededed,
-			0x3df0f0f0, 0x32f3f3f3, 0x28f5f5f5, 0x20f7f7f7, 0x18f9f9f9,
-			0x12fbfbfb, 0x0efbfbfb, 0x14fafafa, 0x1af9f9f9, 0x21f7f7f7,
-			0x29f5f5f5, 0x32f3f3f3, 0x3cf0f0f0, 0x45eeeeee, 0x4febebeb,
-			0x58e9e9e9, 0x61e7e7e7, 0x69e5e5e5, 0x70e3e3e3, 0x76e2e2e2,
-			0x7be1e1e1, 0x7fe0e0e0, 0x82dfdfdf, 0x85dedede, 0x86dedede,
-			0x87dedede, 0x88dddddd, 0x89dddddd, 0x89dddddd, 0x89dddddd,
-			0x8adddddd, 0x8adddddd, 0x8adddddd, 0x8adddddd, 0x8adddddd,
-			0x8adddddd, 0x8adddddd, 0x8adddddd, 0x8adddddd, 0x8adddddd,
-			0x8adddddd, 0x8adddddd, 0x89dddddd, 0x89dddddd, 0x89dddddd,
-			0x88dddddd, 0x87dedede, 0x86dedede, 0x85dedede, 0x82dfdfdf,
-			0x7fe0e0e0, 0x7be1e1e1, 0x76e2e2e2, 0x70e3e3e3, 0x69e5e5e5,
-			0x61e7e7e7, 0x58e9e9e9, 0x4febebeb, 0x45eeeeee, 0x3cf0f0f0,
-			0x32f3f3f3, 0x29f5f5f5, 0x21f7f7f7, 0x1af9f9f9, 0x14fafafa,
-			0x0efbfbfb, 0x0bfcfcfc, 0x0ffbfbfb, 0x14fafafa, 0x1af8f8f8,
-			0x21f7f7f7, 0x29f5f5f5, 0x30f3f3f3, 0x39f1f1f1, 0x41efefef,
-			0x49ededed, 0x51ebebeb, 0x58e9e9e9, 0x5ee8e8e8, 0x63e6e6e6,
-			0x68e5e5e5, 0x6be4e4e4, 0x6ee4e4e4, 0x70e3e3e3, 0x72e3e3e3,
-			0x73e3e3e3, 0x74e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2,
-			0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2,
-			0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2,
-			0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2, 0x75e2e2e2,
-			0x74e2e2e2, 0x73e3e3e3, 0x72e3e3e3, 0x70e3e3e3, 0x6ee4e4e4,
-			0x6be4e4e4, 0x68e5e5e5, 0x63e6e6e6, 0x5ee8e8e8, 0x58e9e9e9,
-			0x51ebebeb, 0x49ededed, 0x41efefef, 0x39f1f1f1, 0x30f3f3f3,
-			0x29f5f5f5, 0x21f7f7f7, 0x1af8f8f8, 0x14fafafa, 0x0ffbfbfb,
-			0x0bfcfcfc, 0x09fdfdfd, 0x0cfcfcfc, 0x10fbfbfb, 0x14fafafa,
-			0x1af9f9f9, 0x20f7f7f7, 0x26f6f6f6, 0x2df4f4f4, 0x34f2f2f2,
-			0x3bf0f0f0, 0x41efefef, 0x47ededed, 0x4cececec, 0x51ebebeb,
-			0x55eaeaea, 0x58e9e9e9, 0x5be9e9e9, 0x5de8e8e8, 0x5ee8e8e8,
-			0x5fe7e7e7, 0x60e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7,
-			0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7,
-			0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7,
-			0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7, 0x61e7e7e7,
-			0x60e7e7e7, 0x5fe7e7e7, 0x5ee8e8e8, 0x5de8e8e8, 0x5be9e9e9,
-			0x58e9e9e9, 0x55eaeaea, 0x51ebebeb, 0x4cececec, 0x47ededed,
-			0x41efefef, 0x3bf0f0f0, 0x34f2f2f2, 0x2df4f4f4, 0x26f6f6f6,
-			0x20f7f7f7, 0x1af9f9f9, 0x14fafafa, 0x10fbfbfb, 0x0cfcfcfc,
-			0x09fdfdfd, 0x06fdfdfd, 0x09fdfdfd, 0x0cfcfcfc, 0x0ffbfbfb,
-			0x14fafafa, 0x18f9f9f9, 0x1df8f8f8, 0x23f6f6f6, 0x28f5f5f5,
-			0x2ef4f4f4, 0x33f2f2f2, 0x38f1f1f1, 0x3df0f0f0, 0x41efefef,
-			0x44eeeeee, 0x47eeeeee, 0x49ededed, 0x4bededed, 0x4cececec,
-			0x4dececec, 0x4dececec, 0x4eececec, 0x4eececec, 0x4eececec,
-			0x4eececec, 0x4eececec, 0x4fececec, 0x4fececec, 0x4fececec,
-			0x4fececec, 0x4fececec, 0x4fececec, 0x4fececec, 0x4fececec,
-			0x4eececec, 0x4eececec, 0x4eececec, 0x4eececec, 0x4eececec,
-			0x4dececec, 0x4dececec, 0x4cececec, 0x4bededed, 0x49ededed,
-			0x47eeeeee, 0x44eeeeee, 0x41efefef, 0x3df0f0f0, 0x38f1f1f1,
-			0x33f2f2f2, 0x2ef4f4f4, 0x28f5f5f5, 0x23f6f6f6, 0x1df8f8f8,
-			0x18f9f9f9, 0x14fafafa, 0x0ffbfbfb, 0x0cfcfcfc, 0x09fdfdfd,
-			0x06fdfdfd, };
-
 	Image shadowImage;
+
+	int cornerSize = 20;
+
+	boolean shadowEnabled = true;
+	Color outerKeyline, innerKeyline;
+	Color[] activeToolbar;
+	int[] activePercents;
+	Color[] inactiveToolbar;
+	int[] inactivePercents;
+	boolean active;
+
+	private boolean drawPolyline = true;
 
 	public ShadowComposite(Composite parent, int style) {
 		super(parent, style);
-		addPaintListener(new PaintListener() {
+		this.parent = this;
+		this.outerKeyline = new Color(getDisplay(), new RGB(240, 240, 240));
+		addListener(SWT.Paint, new Listener() {
 
-			public void paintControl(PaintEvent e) {
-				Point size = getSize();
-				Rectangle bodyRect = new Rectangle(0, 0, size.x, size.y);
-				drawTabBody(e.gc, bodyRect, 0);
-				drawTabHeader(e.gc, bodyRect, 0);
+			public void handleEvent(Event event) {
+				onPaint(event);
 			}
 		});
+		addListener(SWT.Dispose, new Listener() {
+
+			public void handleEvent(Event event) {
+				outerKeyline.dispose();
+			}
+		});
+		// addPaintListener(new PaintListener() {
+		//
+		// public void paintControl(PaintEvent e) {
+		// Point size = getSize();
+		// Rectangle bodyRect = new Rectangle(0, 0, size.x, size.y);
+		// drawTabBody(e.gc, bodyRect, 0);
+		// drawTabHeader(e.gc, bodyRect, 0);
+		// }
+		// });
+	}
+
+	public Rectangle getClientArea() {
+		Rectangle trim = computeTrim(CTabFolderRenderer.PART_BODY, SWT.NONE, 0, 0, 0, 0);
+		// if (minimized)
+		// return new Rectangle(-trim.x, -trim.y, 0, 0);
+		Point size = getSize();
+		int width = size.x - trim.width;
+		int height = size.y - trim.height;
+		return new Rectangle(-trim.x, -trim.y, width, height);
+	}
+
+	private void onPaint(Event event) {
+		GC gc = event.gc;
+		gc.setAdvanced(true);
+
+		Color gcBackground = gc.getBackground();
+		Color gcForeground = gc.getForeground();
+
+		Point size = getSize();
+		Rectangle bodyRect = new Rectangle(0, 0, size.x, size.y);
+		draw(CTabFolderRenderer.PART_BODY, SWT.BACKGROUND | SWT.FOREGROUND, bodyRect, gc);
+
+		gc.setForeground(gcForeground);
+		gc.setBackground(gcBackground);
+
+		draw(CTabFolderRenderer.PART_HEADER, SWT.BACKGROUND | SWT.FOREGROUND, bodyRect, gc);
+
 	}
 
 	@Override
-	public Rectangle getClientArea() {
-		Rectangle area = super.getClientArea();
-		return new Rectangle(15, 15, area.width - 30, area.height - 30);
+	public Rectangle computeTrim(int x, int y, int width, int height) {
+		return computeTrim(PART_BODY, SWT.NONE, x, y, width, height);
 	}
 
+	protected Rectangle computeTrim(int part, int state, int x, int y, int width, int height) {
+		GC gc = new GC(parent);
+		gc.dispose();
+		int borderTop = TOP_KEYLINE + OUTER_KEYLINE;
+		int borderBottom = INNER_KEYLINE + OUTER_KEYLINE;
+		int marginWidth = parent.marginWidth;
+		int marginHeight = parent.marginHeight;
+		int sideDropWidth = shadowEnabled ? SIDE_DROP_WIDTH : 0;
+		switch (part) {
+		case PART_BODY:
+			x = x - marginWidth - OUTER_KEYLINE - INNER_KEYLINE - sideDropWidth - (cornerSize / 2);
+			width = width + 2 * OUTER_KEYLINE + 2 * INNER_KEYLINE + 2 * marginWidth + 2 * sideDropWidth + cornerSize;
+			int tabHeight = parent.getTabHeight() + 1; // TODO: Figure out what
+														// to do about the +1
+			// TODO: Fix
+			if (parent.getMinimized()) {
+				y = /* parent.onBottom ? y - borderTop : */y - tabHeight - borderTop - 5;
+				height = borderTop + borderBottom + tabHeight;
+			} else {
+				// y = tabFolder.onBottom ? y - marginHeight - highlight_margin
+				// - borderTop: y - marginHeight - highlight_header - tabHeight
+				// - borderTop;
 
+				y = y - marginHeight - tabHeight - borderTop - (cornerSize / 4);
+				height = height + borderBottom + borderTop + 2 * marginHeight + tabHeight + cornerSize / 2 + cornerSize / 4 + (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
+			}
+			break;
+		case PART_HEADER:
+			x = x - (INNER_KEYLINE + OUTER_KEYLINE) - sideDropWidth;
+			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth);
+			break;
+		case PART_BORDER:
+			x = x - INNER_KEYLINE - OUTER_KEYLINE - sideDropWidth - (cornerSize / 4);
+			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth) + cornerSize / 2;
+			y = y - borderTop;
+			height = height + borderTop + borderBottom;
+			break;
+		// default:
+		// if (0 <= part && part < parent.getItemCount()) {
+		// x = x - ITEM_LEFT_MARGIN;// - (CORNER_SIZE/2);
+		// width = width + ITEM_LEFT_MARGIN + ITEM_RIGHT_MARGIN + 1;
+		// y = y - ITEM_TOP_MARGIN;
+		// height = height + ITEM_TOP_MARGIN + ITEM_BOTTOM_MARGIN;
+		// }
+		// break;
+		}
+		return new Rectangle(x, y, width, height);
+	}
+
+	// protected void dispose() {
+	// super.dispose();
+	// }
+
+	protected void draw(int part, int state, Rectangle bounds, GC gc) {
+		switch (part) {
+		case PART_BODY:
+			this.drawTabBody(gc, bounds, state);
+			return;
+		case PART_HEADER:
+			this.drawTabHeader(gc, bounds, state);
+			return;
+			// default:
+			// if (0 <= part && part < parent.getItemCount()) {
+			// if (bounds.width == 0 || bounds.height == 0)
+			// return;
+			// if ((state & SWT.SELECTED) != 0) {
+			// drawSelectedTab(part, gc, bounds, state);
+			// state &= ~SWT.BACKGROUND;
+			// super.draw(part, state, bounds, gc);
+			// } else {
+			// drawUnselectedTab(part, gc, bounds, state);
+			// if ((state & SWT.HOT) == 0 && !active) {
+			// gc.setAdvanced(true);
+			// gc.setAlpha(0x7f);
+			// state &= ~SWT.BACKGROUND;
+			// super.draw(part, state, bounds, gc);
+			// gc.setAdvanced(false);
+			// } else {
+			// state &= ~SWT.BACKGROUND;
+			// super.draw(part, state, bounds, gc);
+			// }
+			// }
+			// return;
+			// }
+		}
+		// super.draw(part, state, bounds, gc);
+	}
 
 	void drawTabHeader(GC gc, Rectangle bounds, int state) {
 		// gc.setClipping(bounds.x, bounds.y, bounds.width,
@@ -801,14 +247,12 @@ public class ShadowComposite extends Composite {
 
 		int[] points = new int[1024];
 		int index = 0;
-		int radius = CORNER_SIZE / 2;
-//		int marginWidth = parent.marginWidth;
-//		int marginHeight = parent.marginHeight;
-		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2 * SIDE_DROP_WIDTH + 2
-				* marginWidth;
+		int radius = cornerSize / 2;
+		int marginWidth = parent.marginWidth;
+		int marginHeight = parent.marginHeight;
+		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2 * (shadowEnabled ? SIDE_DROP_WIDTH : 0) + 2 * marginWidth;
 		int width = bounds.width - delta;
-		int height = bounds.height - INNER_KEYLINE - OUTER_KEYLINE - 2
-				* marginHeight - BOTTOM_DROP_WIDTH;
+		int height = bounds.height - INNER_KEYLINE - OUTER_KEYLINE - 2 * marginHeight - (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
 		int circX = bounds.x + delta / 2 + radius;
 		int circY = bounds.y + radius;
 
@@ -820,15 +264,15 @@ public class ShadowComposite extends Composite {
 		region.intersect(clipping);
 		gc.setClipping(region);
 
-//		int header = 3; // TODO: this needs to be added to computeTrim for
-//						// HEADER
-//		Rectangle trim = computeTrim(PART_HEADER, state, 0, 0, 0, 0);
-//		trim.width = bounds.width - trim.width;
-//		trim.height = (parent.getTabHeight() + 1 + header) - trim.height;
-//		trim.x = -trim.x;
-//		trim.y = -trim.y;
-//
-//		draw(PART_BACKGROUND, SWT.NONE, trim, gc);
+		int header = 3; // TODO: this needs to be added to computeTrim for
+						// HEADER
+		Rectangle trim = computeTrim(PART_HEADER, state, 0, 0, 0, 0);
+		trim.width = bounds.width - trim.width;
+		trim.height = (parent.getTabHeight() + 1 + header) - trim.height;
+		trim.x = -trim.x;
+		trim.y = -trim.y;
+
+		draw(PART_BACKGROUND, SWT.NONE, trim, gc);
 
 		gc.setClipping(clipping);
 		clipping.dispose();
@@ -838,18 +282,15 @@ public class ShadowComposite extends Composite {
 		System.arraycopy(ltt, 0, points, index, ltt.length);
 		index += ltt.length;
 
-		int[] lbb = drawCircle(circX + 1, circY + height - (radius * 2) - 2,
-				radius, LEFT_BOTTOM);
+		int[] lbb = drawCircle(circX + 1, circY + height - (radius * 2) - 2, radius, LEFT_BOTTOM);
 		System.arraycopy(lbb, 0, points, index, lbb.length);
 		index += lbb.length;
 
-		int[] rb = drawCircle(circX + width - (radius * 2) - 2, circY + height
-				- (radius * 2) - 2, radius, RIGHT_BOTTOM);
+		int[] rb = drawCircle(circX + width - (radius * 2) - 2, circY + height - (radius * 2) - 2, radius, RIGHT_BOTTOM);
 		System.arraycopy(rb, 0, points, index, rb.length);
 		index += rb.length;
 
-		int[] rt = drawCircle(circX + width - (radius * 2) - 2, circY + 1,
-				radius, RIGHT_TOP);
+		int[] rt = drawCircle(circX + width - (radius * 2) - 2, circY + 1, radius, RIGHT_TOP);
 		System.arraycopy(rt, 0, points, index, rt.length);
 		index += rt.length;
 		points[index++] = points[0];
@@ -858,40 +299,25 @@ public class ShadowComposite extends Composite {
 		int[] tempPoints = new int[index];
 		System.arraycopy(points, 0, tempPoints, 0, index);
 
-		// White Keyline
-		// gc.setAntialias(SWT.ON);
-		gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
-		gc.drawPolyline(tempPoints);
+		if (outerKeyline == null)
+			outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
 
-		ltt = drawCircle(circX + 2, circY + 2, radius, LEFT_TOP);
-		System.arraycopy(ltt, 0, points, index, ltt.length);
-		gc.drawPolyline(ltt);
+		gc.setForeground(outerKeyline);
 
-		rt = drawCircle(circX + width - (radius * 2) - 3, circY + 2, radius,
-				RIGHT_TOP);
-		System.arraycopy(rt, 0, points, index, rt.length);
-		gc.drawPolyline(rt);
-
-		int rtLength = rt.length;
-		gc.drawLine(rt[rtLength - 2], rt[rtLength - 1], ltt[0], ltt[1]);
-
-		Color borderBlue = new Color(gc.getDevice(), 190, 216, 237);
-		gc.setForeground(borderBlue);
-		gc.drawPolyline(shape);
-		borderBlue.dispose();
+		if (drawPolyline) {
+			gc.drawPolyline(shape);
+		}
 	}
 
 	void drawTabBody(GC gc, Rectangle bounds, int state) {
 		int[] points = new int[1024];
 		int index = 0;
-		int radius = CORNER_SIZE / 2;
-//		int marginWidth = parent.marginWidth;
-//		int marginHeight = parent.marginHeight;
-		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2 * SIDE_DROP_WIDTH + 2
-				* marginWidth;
+		int radius = cornerSize / 2;
+		int marginWidth = parent.marginWidth;
+		int marginHeight = parent.marginHeight;
+		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2 * (shadowEnabled ? SIDE_DROP_WIDTH : 0) + 2 * marginWidth;
 		int width = bounds.width - delta;
-		int height = bounds.height - INNER_KEYLINE - OUTER_KEYLINE - 2
-				* marginHeight - BOTTOM_DROP_WIDTH;
+		int height = Math.max(parent.getTabHeight() + INNER_KEYLINE + OUTER_KEYLINE + (shadowEnabled ? BOTTOM_DROP_WIDTH : 0), bounds.height - INNER_KEYLINE - OUTER_KEYLINE - 2 * marginHeight - (shadowEnabled ? BOTTOM_DROP_WIDTH : 0));
 
 		int circX = bounds.x + delta / 2 + radius;
 		int circY = bounds.y + radius;
@@ -902,18 +328,15 @@ public class ShadowComposite extends Composite {
 		System.arraycopy(ltt, 0, points, index, ltt.length);
 		index += ltt.length;
 
-		int[] lbb = drawCircle(circX, circY + height - (radius * 2), radius,
-				LEFT_BOTTOM);
+		int[] lbb = drawCircle(circX, circY + height - (radius * 2), radius, LEFT_BOTTOM);
 		System.arraycopy(lbb, 0, points, index, lbb.length);
 		index += lbb.length;
 
-		int[] rb = drawCircle(circX + width - (radius * 2), circY + height
-				- (radius * 2), radius, RIGHT_BOTTOM);
+		int[] rb = drawCircle(circX + width - (radius * 2), circY + height - (radius * 2), radius, RIGHT_BOTTOM);
 		System.arraycopy(rb, 0, points, index, rb.length);
 		index += rb.length;
 
-		int[] rt = drawCircle(circX + width - (radius * 2), circY, radius,
-				RIGHT_TOP);
+		int[] rt = drawCircle(circX + width - (radius * 2), circY, radius, RIGHT_TOP);
 		System.arraycopy(rt, 0, points, index, rt.length);
 		index += rt.length;
 		points[index++] = circX;
@@ -928,24 +351,206 @@ public class ShadowComposite extends Composite {
 		Region r = new Region();
 		r.add(bounds);
 		r.subtract(shape);
-		gc.setBackground(getParent().getBackground());
-		Display display = getDisplay();
+		gc.setBackground(parent.getParent().getBackground());
+		Display display = parent.getDisplay();
 		Region clipping = new Region();
 		gc.getClipping(clipping);
 		r.intersect(clipping);
 		gc.setClipping(r);
-		Rectangle mappedBounds = display
-				.map(this, getParent(), bounds);
-		getParent().drawBackground(gc, bounds.x, bounds.y, bounds.width,
-				bounds.height, mappedBounds.x, mappedBounds.y);
+		Rectangle mappedBounds = display.map(parent, parent.getParent(), bounds);
+		parent.getParent().drawBackground(gc, bounds.x, bounds.y, bounds.width, bounds.height, mappedBounds.x, mappedBounds.y);
 
 		// Shadow
-		drawShadow(display, bounds, gc);
+		if (shadowEnabled)
+			drawShadow(display, bounds, gc);
 
 		gc.setClipping(clipping);
 		clipping.dispose();
 		r.dispose();
 	}
+
+	// void drawSelectedTab(int itemIndex, GC gc, Rectangle bounds, int state) {
+	// int width = bounds.width;
+	//
+	// int[] points = new int[1024];
+	// int index = 0;
+	// int radius = cornerSize / 2;
+	// int circX = bounds.x + radius;
+	// int circY = bounds.y - 1 + radius;
+	// int selectionX1, selectionY1, selectionX2, selectionY2;
+	// if (itemIndex == 0) {
+	// circX -= 1;
+	// points[index++] = circX - radius;
+	// points[index++] = bounds.y + bounds.height;
+	//
+	// points[index++] = selectionX1 = circX - radius;
+	// points[index++] = selectionY1 = bounds.y + bounds.height;
+	// } else {
+	// points[index++] = shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE +
+	// OUTER_KEYLINE;
+	// points[index++] = bounds.y + bounds.height;
+	//
+	// points[index++] = selectionX1 = bounds.x;
+	// points[index++] = selectionY1 = bounds.y + bounds.height;
+	// }
+	// int[] ltt = drawCircle(circX, circY, radius, LEFT_TOP);
+	// for (int i = 0; i < ltt.length / 2; i += 2) {
+	// int tmp = ltt[i];
+	// ltt[i] = ltt[ltt.length - i - 2];
+	// ltt[ltt.length - i - 2] = tmp;
+	// tmp = ltt[i + 1];
+	// ltt[i + 1] = ltt[ltt.length - i - 1];
+	// ltt[ltt.length - i - 1] = tmp;
+	// }
+	// System.arraycopy(ltt, 0, points, index, ltt.length);
+	// index += ltt.length;
+	//
+	// int[] rt = drawCircle(circX + width - (radius * 2), circY, radius,
+	// RIGHT_TOP);
+	// for (int i = 0; i < rt.length / 2; i += 2) {
+	// int tmp = rt[i];
+	// rt[i] = rt[rt.length - i - 2];
+	// rt[rt.length - i - 2] = tmp;
+	// tmp = rt[i + 1];
+	// rt[i + 1] = rt[rt.length - i - 1];
+	// rt[rt.length - i - 1] = tmp;
+	// }
+	// System.arraycopy(rt, 0, points, index, rt.length);
+	// index += rt.length;
+	//
+	// points[index++] = selectionX2 = bounds.width + circX - radius;
+	// points[index++] = selectionY2 = bounds.y + bounds.height;
+	//
+	// points[index++] = parent.getSize().x - (shadowEnabled ? SIDE_DROP_WIDTH :
+	// 0 + INNER_KEYLINE + OUTER_KEYLINE);
+	// points[index++] = bounds.y + bounds.height;
+	//
+	// gc.setClipping(0, bounds.y, parent.getSize().x - (shadowEnabled ?
+	// SIDE_DROP_WIDTH : 0 + INNER_KEYLINE + OUTER_KEYLINE), bounds.y +
+	// bounds.height);// bounds.height
+	// // +
+	// // 4);
+	// Color selectionFillColor =
+	// gc.getDevice().getSystemColor(SWT.COLOR_WHITE);
+	// gc.setBackground(selectionFillColor);
+	// gc.setForeground(selectionFillColor);
+	// int[] tmpPoints = new int[index];
+	// System.arraycopy(points, 0, tmpPoints, 0, index);
+	// gc.fillPolygon(tmpPoints);
+	// gc.drawLine(selectionX1, selectionY1, selectionX2, selectionY2);
+	// Color tempBorder = new Color(gc.getDevice(), 182, 188, 204);
+	// gc.setForeground(tempBorder);
+	// tempBorder.dispose();
+	// if (active)
+	// gc.drawPolyline(tmpPoints);
+	// Rectangle rect = null;
+	// gc.setClipping(rect);
+	//
+	// if (outerKeyline == null)
+	// outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+	// gc.setForeground(outerKeyline);
+	// gc.drawPolyline(shape);
+	// }
+	//
+	// void drawUnselectedTab(int itemIndex, GC gc, Rectangle bounds, int state)
+	// {
+	// if ((state & SWT.HOT) != 0) {
+	// int width = bounds.width;
+	// int[] points = new int[1024];
+	// int[] inactive = new int[8];
+	// int index = 0, inactive_index = 0;
+	// int radius = cornerSize / 2;
+	// int circX = bounds.x + radius;
+	// int circY = bounds.y - 1 + radius;
+	//
+	// int leftIndex = circX;
+	// if (itemIndex == 0) {
+	// if (parent.getSelectionIndex() != 0)
+	// leftIndex -= 1;
+	// points[index++] = leftIndex - radius;
+	// points[index++] = bounds.y + bounds.height;
+	// } else {
+	// points[index++] = bounds.x;
+	// points[index++] = bounds.y + bounds.height;
+	// }
+	//
+	// if (!active) {
+	// System.arraycopy(points, 0, inactive, 0, index);
+	// inactive_index += 2;
+	// }
+	//
+	// int[] ltt = drawCircle(leftIndex, circY, radius, LEFT_TOP);
+	// for (int i = 0; i < ltt.length / 2; i += 2) {
+	// int tmp = ltt[i];
+	// ltt[i] = ltt[ltt.length - i - 2];
+	// ltt[ltt.length - i - 2] = tmp;
+	// tmp = ltt[i + 1];
+	// ltt[i + 1] = ltt[ltt.length - i - 1];
+	// ltt[ltt.length - i - 1] = tmp;
+	// }
+	// System.arraycopy(ltt, 0, points, index, ltt.length);
+	// index += ltt.length;
+	//
+	// if (!active) {
+	// System.arraycopy(ltt, 0, inactive, inactive_index, 2);
+	// inactive_index += 2;
+	// }
+	//
+	// int rightIndex = circX - 1;
+	// int[] rt = drawCircle(rightIndex + width - (radius * 2), circY, radius,
+	// RIGHT_TOP);
+	// for (int i = 0; i < rt.length / 2; i += 2) {
+	// int tmp = rt[i];
+	// rt[i] = rt[rt.length - i - 2];
+	// rt[rt.length - i - 2] = tmp;
+	// tmp = rt[i + 1];
+	// rt[i + 1] = rt[rt.length - i - 1];
+	// rt[rt.length - i - 1] = tmp;
+	// }
+	// System.arraycopy(rt, 0, points, index, rt.length);
+	// index += rt.length;
+	// if (!active) {
+	// System.arraycopy(rt, rt.length - 4, inactive, inactive_index, 2);
+	// inactive[inactive_index] -= 1;
+	// inactive_index += 2;
+	// }
+	//
+	// points[index++] = bounds.width + rightIndex - radius;
+	// points[index++] = bounds.y + bounds.height;
+	//
+	// if (!active) {
+	// System.arraycopy(points, index - 2, inactive, inactive_index, 2);
+	// inactive[inactive_index] -= 1;
+	// inactive_index += 2;
+	// }
+	//
+	// gc.setClipping(points[0], bounds.y, parent.getSize().x - (shadowEnabled ?
+	// SIDE_DROP_WIDTH : 0 + INNER_KEYLINE + OUTER_KEYLINE), bounds.y +
+	// bounds.height);// bounds.height
+	// // + 4);
+	// gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
+	// int[] tmpPoints = new int[index];
+	// System.arraycopy(points, 0, tmpPoints, 0, index);
+	// gc.fillPolygon(tmpPoints);
+	// Color tempBorder = new Color(gc.getDevice(), 182, 188, 204);
+	// gc.setForeground(tempBorder);
+	// tempBorder.dispose();
+	// if (active) {
+	// gc.drawPolyline(tmpPoints);
+	// } else {
+	// gc.drawLine(inactive[0], inactive[1], inactive[2], inactive[3]);
+	// gc.drawLine(inactive[4], inactive[5], inactive[6], inactive[7]);
+	// }
+	//
+	// Rectangle rect = null;
+	// gc.setClipping(rect);
+	//
+	// if (outerKeyline == null)
+	// outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+	// // gc.setForeground(outerKeyline);
+	// // gc.drawPolyline(shape);
+	// }
+	// }
 
 	static int[] drawCircle(int xC, int yC, int r, int circlePart) {
 		int x = 0, y = r, u = 1, v = 2 * r - 1, e = 0;
@@ -1003,8 +608,7 @@ public class ShadowComposite extends Composite {
 				int[] newPointTableMirror = new int[length];
 				System.arraycopy(points, 0, newPointTable, 0, points.length);
 				points = newPointTable;
-				System.arraycopy(pointsMirror, 0, newPointTableMirror, 0,
-						pointsMirror.length);
+				System.arraycopy(pointsMirror, 0, newPointTableMirror, 0, pointsMirror.length);
 				pointsMirror = newPointTableMirror;
 			}
 		}
@@ -1022,56 +626,52 @@ public class ShadowComposite extends Composite {
 	void drawShadow(final Display display, Rectangle bounds, GC gc) {
 		if (shadowImage == null)
 			createShadow(display);
+
 		int x = bounds.x;
 		int y = bounds.y;
 		int SIZE = shadowImage.getBounds().width / 3;
+
+		int height = Math.max(bounds.height, SIZE * 2);
+		int width = Math.max(bounds.width, SIZE * 2);
 		// top left
-		gc.drawImage(shadowImage, 0, 0, SIZE, SIZE, 0, 0, SIZE, 20);
-		int fillHeight = bounds.height - SIZE * 2;
-		int fillWidth = bounds.width + 5 - SIZE * 2;
+		gc.drawImage(shadowImage, 0, 0, SIZE, SIZE, 2, 10, SIZE, 20);
+		int fillHeight = height - SIZE * 2;
+		int fillWidth = width + 5 - SIZE * 2;
 
 		int xFill = 0;
 		for (int i = SIZE; i < fillHeight; i += SIZE) {
 			xFill = i;
-			gc.drawImage(shadowImage, 0, SIZE, SIZE, SIZE, 0, i, SIZE, SIZE);
+			gc.drawImage(shadowImage, 0, SIZE, SIZE, SIZE, 2, i, SIZE, SIZE);
 		}
 
 		// Pad the rest of the shadow
-		gc.drawImage(shadowImage, 0, SIZE, SIZE, fillHeight - xFill, 0, xFill
-				+ SIZE, SIZE, fillHeight - xFill);
+		gc.drawImage(shadowImage, 0, SIZE, SIZE, fillHeight - xFill, 2, xFill + SIZE, SIZE, fillHeight - xFill);
 
 		// bl
-		gc.drawImage(shadowImage, 0, 40, 20, 20, 0, y + bounds.height - SIZE,
-				20, 20);
+		gc.drawImage(shadowImage, 0, 40, 20, 20, 2, y + height - SIZE, 20, 20);
+
 		int yFill = 0;
 		for (int i = SIZE; i <= fillWidth; i += SIZE) {
 			yFill = i;
-			gc.drawImage(shadowImage, SIZE, SIZE * 2, SIZE, SIZE, i, y
-					+ bounds.height - SIZE, SIZE, SIZE);
+			gc.drawImage(shadowImage, SIZE, SIZE * 2, SIZE, SIZE, i, y + height - SIZE, SIZE, SIZE);
 		}
 		// Pad the rest of the shadow
-		gc.drawImage(shadowImage, SIZE, SIZE * 2, fillWidth - yFill, SIZE,
-				yFill + SIZE, y + bounds.height - SIZE, fillWidth - yFill, SIZE);
+		gc.drawImage(shadowImage, SIZE, SIZE * 2, fillWidth - yFill, SIZE, yFill + SIZE, y + height - SIZE, fillWidth - yFill, SIZE);
 
 		// br
-		gc.drawImage(shadowImage, SIZE * 2, SIZE * 2, SIZE, SIZE, x
-				+ bounds.width - SIZE + 5, y + bounds.height - SIZE, SIZE, SIZE);
+		gc.drawImage(shadowImage, SIZE * 2, SIZE * 2, SIZE, SIZE, x + width - SIZE - 1, y + height - SIZE, SIZE, SIZE);
 
 		// tr
-		gc.drawImage(shadowImage, SIZE * 2, 0, SIZE, SIZE, x + bounds.width
-				- SIZE + 5, y, SIZE, SIZE);
+		gc.drawImage(shadowImage, (SIZE * 2), 0, SIZE, SIZE, x + width - SIZE - 1, 10, SIZE, SIZE);
 
 		xFill = 0;
 		for (int i = SIZE; i < fillHeight; i += SIZE) {
 			xFill = i;
-			gc.drawImage(shadowImage, SIZE * 2, SIZE, SIZE, SIZE, x
-					+ bounds.width - SIZE + 5, i, SIZE, SIZE);
+			gc.drawImage(shadowImage, SIZE * 2, SIZE, SIZE, SIZE, x + width - SIZE - 1, i, SIZE, SIZE);
 		}
 
 		// Pad the rest of the shadow
-		gc.drawImage(shadowImage, SIZE * 2, SIZE, SIZE, fillHeight - xFill, x
-				+ bounds.width - SIZE + 5, xFill + SIZE, SIZE, fillHeight
-				- xFill);
+		gc.drawImage(shadowImage, SIZE * 2, SIZE, SIZE, fillHeight - xFill, x + width - SIZE - 1, xFill + SIZE, SIZE, fillHeight - xFill);
 	}
 
 	void createShadow(final Display display) {
@@ -1079,17 +679,17 @@ public class ShadowComposite extends Composite {
 		if (obj != null) {
 			shadowImage = (Image) obj;
 		} else {
-			ImageData data = new ImageData(60, 60, 32, new PaletteData(
-					0xFF0000, 0xFF00, 0xFF));
-			for (int y = 0, index = 0; y < 60; y++) {
-				for (int x = 0; x < 60; x++) {
-					data.setPixel(x, y, shadow[index] & 0xFFFFFF);
-					data.setAlpha(x, y, (shadow[index] >> 24) & 0xFF);
-					index++;
-				}
-			}
-			shadowImage = new Image(display, data);
+			ImageData data = new ImageData(60, 60, 32, new PaletteData(0xFF0000, 0xFF00, 0xFF));
+			Image tmpImage = shadowImage = new Image(display, data);
+			GC gc = new GC(tmpImage);
+			Color shadowColor = new Color(display, new RGB(128, 128, 128));
+			gc.setBackground(shadowColor);
+			drawTabBody(gc, new Rectangle(0, 0, 60, 60), SWT.None);
+			ImageData blured = blur(tmpImage, 5, 25);
+			shadowImage = new Image(display, blured);
 			display.setData(E4_SHADOW_IMAGE, shadowImage);
+			tmpImage.dispose();
+			shadowColor.dispose();
 			display.disposeExec(new Runnable() {
 				public void run() {
 					Object obj = display.getData(E4_SHADOW_IMAGE);
@@ -1102,4 +702,176 @@ public class ShadowComposite extends Composite {
 			});
 		}
 	}
+
+	public ImageData blur(Image src, int radius, int sigma) {
+		float[] kernel = create1DKernel(radius, sigma);
+
+		ImageData imgPixels = src.getImageData();
+		int width = imgPixels.width;
+		int height = imgPixels.height;
+
+		int[] inPixels = new int[width * height];
+		int[] outPixels = new int[width * height];
+		int offset = 0;
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				RGB rgb = imgPixels.palette.getRGB(imgPixels.getPixel(x, y));
+				if (rgb.red == 255 && rgb.green == 255 && rgb.blue == 255) {
+					inPixels[offset] = (rgb.red << 16) | (rgb.green << 8) | rgb.blue;
+				} else {
+					inPixels[offset] = (imgPixels.getAlpha(x, y) << 24) | (rgb.red << 16) | (rgb.green << 8) | rgb.blue;
+				}
+				offset++;
+			}
+		}
+
+		convolve(kernel, inPixels, outPixels, width, height, true);
+		convolve(kernel, outPixels, inPixels, height, width, true);
+
+		ImageData dst = new ImageData(imgPixels.width, imgPixels.height, 24, new PaletteData(0xff0000, 0xff00, 0xff));
+
+		dst.setPixels(0, 0, inPixels.length, inPixels, 0);
+		offset = 0;
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (inPixels[offset] == -1) {
+					dst.setAlpha(x, y, 0);
+				} else {
+					int a = (inPixels[offset] >> 24) & 0xff;
+					// if (a < 150) a = 0;
+					dst.setAlpha(x, y, a);
+				}
+				offset++;
+			}
+		}
+		return dst;
+	}
+
+	private void convolve(float[] kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha) {
+		int kernelWidth = kernel.length;
+		int kernelMid = kernelWidth / 2;
+		for (int y = 0; y < height; y++) {
+			int index = y;
+			int currentLine = y * width;
+			for (int x = 0; x < width; x++) {
+				// do point
+				float a = 0, r = 0, g = 0, b = 0;
+				for (int k = -kernelMid; k <= kernelMid; k++) {
+					float val = kernel[k + kernelMid];
+					int xcoord = x + k;
+					if (xcoord < 0)
+						xcoord = 0;
+					if (xcoord >= width)
+						xcoord = width - 1;
+					int pixel = inPixels[currentLine + xcoord];
+					// float alp = ((pixel >> 24) & 0xff);
+					a += val * ((pixel >> 24) & 0xff);
+					r += val * (((pixel >> 16) & 0xff));
+					g += val * (((pixel >> 8) & 0xff));
+					b += val * (((pixel) & 0xff));
+				}
+				int ia = alpha ? clamp((int) (a + 0.5)) : 0xff;
+				int ir = clamp((int) (r + 0.5));
+				int ig = clamp((int) (g + 0.5));
+				int ib = clamp((int) (b + 0.5));
+				outPixels[index] = (ia << 24) | (ir << 16) | (ig << 8) | ib;
+				index += height;
+			}
+		}
+
+	}
+
+	private int clamp(int value) {
+		if (value > 255)
+			return 255;
+		if (value < 0)
+			return 0;
+		return value;
+	}
+
+	private float[] create1DKernel(int radius, int sigma) {
+		// guideline: 3*sigma should be the radius
+		int size = radius * 2 + 1;
+		float[] kernel = new float[size];
+		int radiusSquare = radius * radius;
+		float sigmaSquare = 2 * sigma * sigma;
+		float piSigma = 2 * (float) Math.PI * sigma;
+		float sqrtSigmaPi2 = (float) Math.sqrt(piSigma);
+		int start = size / 2;
+		int index = 0;
+		float total = 0;
+		for (int i = -start; i <= start; i++) {
+			float d = i * i;
+			if (d > radiusSquare) {
+				kernel[index] = 0;
+			} else {
+				kernel[index] = (float) Math.exp(-(d) / sigmaSquare) / sqrtSigmaPi2;
+			}
+			total += kernel[index];
+			index++;
+		}
+		for (int i = 0; i < size; i++) {
+			kernel[i] /= total;
+		}
+		return kernel;
+	}
+
+	@Inject
+	@Optional
+	public void setCornerRadius(@Named("radius") Integer radius) {
+		cornerSize = radius.intValue();
+		parent.redraw();
+	}
+
+	@Inject
+	@Optional
+	public void setShadowVisible(@Named("shadowVisible") Boolean visible) {
+		this.shadowEnabled = visible.booleanValue();
+		parent.redraw();
+	}
+
+	@Inject
+	@Optional
+	public void setOuterKeyline(@Named("outerKeyline") Color color) {
+		this.outerKeyline = color;
+		// TODO: HACK! Should be set based on pseudo-state.
+		// setActive(!(color.getRed() == 255 && color.getGreen() == 255 &&
+		// color.getBlue() == 255));
+		parent.redraw();
+	}
+
+	@Inject
+	@Optional
+	public void setInnerKeyline(@Named("innerKeyline") Color color) {
+		this.innerKeyline = color;
+		parent.redraw();
+	}
+
+	@Inject
+	@Optional
+	public void setActiveToolbarGradient(@Named("activeToolbarColors") Color[] color, @Named("activeToolbarPercents") int[] percents) {
+		activeToolbar = color;
+		activePercents = percents;
+	}
+
+	@Inject
+	@Optional
+	public void setInactiveToolbarGradient(@Named("inactiveToolbarColors") Color[] color, @Named("inactiveToolbarPercents") int[] percents) {
+		inactiveToolbar = color;
+		inactivePercents = percents;
+	}
+
+	// public void setActive(boolean active) {
+	// this.active = active;
+	// Control topRight = parent.getTopRight();
+	// if (topRight != null) {
+	// if (active && toolbarActiveImage == null)
+	// createActiveToolbarImages(Display.getCurrent());
+	// if (!active && toolbarInactiveImage == null)
+	// createInactiveToolbarImages(Display.getCurrent());
+	// topRight.setBackgroundImage(active ? toolbarActiveImage :
+	// toolbarInactiveImage);
+	// parent.redraw();
+	// }
+	// }
 }
