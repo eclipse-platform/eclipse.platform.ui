@@ -14,6 +14,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
@@ -89,6 +90,10 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 					engine.applyStyles((Widget) widget, true);
 				}
 			});
+			
+			if( appContext.get(ILoggerProvider.class) == null ) {
+				appContext.set(ILoggerProvider.class, ContextInjectionFactory.make(DefaultLoggerProvider.class, appContext));
+			}
 			
 			return appContext;
 		} else if( o != null && site == null ) {
