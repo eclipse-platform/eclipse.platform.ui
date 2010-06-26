@@ -10,24 +10,17 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-
-import org.eclipse.e4.tools.emf.ui.common.Util;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
-import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandlerCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -37,6 +30,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -48,6 +42,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -58,7 +53,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private IModelResource resource;
 	private IProject project;
-	private StackLayout stackLayout;
+	private EStackLayout stackLayout;
 
 	public HandlerEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource, IProject project) {
 		super(editingDomain,editor);
@@ -95,7 +90,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			if (getEditor().isModelFragment()) {
 				composite = new Composite(parent, SWT.NONE);
-				stackLayout = new StackLayout();
+				stackLayout = new EStackLayout();
 				composite.setLayout(stackLayout);
 				createForm(composite, context, getMaster(), false);
 				createForm(composite, context, getMaster(), true);

@@ -10,64 +10,45 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-
-import org.eclipse.emf.edit.domain.EditingDomain;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
-
-import org.eclipse.core.databinding.observable.list.IObservableList;
-
-import org.eclipse.e4.tools.emf.ui.common.Util;
-
-import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
-
-import org.eclipse.e4.ui.workbench.UIEvents.UILabel;
-
-import org.eclipse.core.databinding.observable.map.IObservableMap;
-
-import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
-
-import org.eclipse.emf.databinding.EMFDataBindingContext;
-
+import java.util.Arrays;
+import java.util.List;
 import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
-import org.eclipse.jface.databinding.viewers.IViewerValueProperty;
-import org.eclipse.jface.databinding.viewers.ViewerProperties;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.viewers.ComboViewer;
-
-import org.eclipse.e4.ui.model.application.commands.MBindings;
-
-import org.eclipse.e4.ui.model.application.ui.MContext;
-
-import java.util.Arrays;
-import java.util.List;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.IViewerValueProperty;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewerProperties;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -178,7 +159,7 @@ public class ControlFactory {
 	public static void createStringListWidget(Composite parent, final AbstractComponentEditor editor, String label, final EStructuralFeature feature) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
-		l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
+		l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 		final Text t = new Text(parent, SWT.BORDER);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -192,7 +173,7 @@ public class ControlFactory {
 		});
 
 		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Add);
+		b.setText(Messages.ControlFactory_AddNoEllipse);
 		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -316,7 +297,7 @@ public class ControlFactory {
 		});
 
 		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Add);
+		b.setText(Messages.ControlFactory_AddNoEllipse);
 		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -440,7 +421,7 @@ public class ControlFactory {
 		});
 
 		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Add);
+		b.setText(Messages.ControlFactory_AddNoEllipse);
 		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -564,7 +545,7 @@ public class ControlFactory {
 		});
 
 		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Add);
+		b.setText(Messages.ControlFactory_AddNoEllipse);
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

@@ -10,24 +10,17 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-
-import org.eclipse.e4.tools.emf.ui.common.Util;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
-import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.KeyBindingCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
@@ -40,6 +33,7 @@ import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -65,6 +59,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -75,10 +70,10 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	private Image image;
 	private EMFDataBindingContext context;
 	private IModelResource resource;
-	private StackLayout stackLayout;
+	private EStackLayout stackLayout;
 
 	public KeyBindingEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 		this.resource = resource;
 	}
 
@@ -112,7 +107,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			if (getEditor().isModelFragment()) {
 				composite = new Composite(parent, SWT.NONE);
-				stackLayout = new StackLayout();
+				stackLayout = new EStackLayout();
 				composite.setLayout(stackLayout);
 				createForm(composite, context, getMaster(), false);
 				createForm(composite, context, getMaster(), true);
@@ -120,21 +115,21 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 				composite = createForm(parent, context, getMaster(), false);
 			}
 		}
-		
-		if( getEditor().isModelFragment() ) {
+
+		if (getEditor().isModelFragment()) {
 			Control topControl;
-			if( Util.isImport((EObject) object) ) {
+			if (Util.isImport((EObject) object)) {
 				topControl = composite.getChildren()[1];
 			} else {
-				topControl = composite.getChildren()[0];				
+				topControl = composite.getChildren()[0];
 			}
-			
-			if( stackLayout.topControl != topControl ) {
+
+			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
 				composite.layout(true, true);
 			}
 		}
-		
+
 		getMaster().setValue(object);
 		return composite;
 	}
@@ -145,11 +140,11 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		if( isImport ) {
-			ControlFactory.createFindImport(parent, this, context);			
+		if (isImport) {
+			ControlFactory.createFindImport(parent, this, context);
 			return parent;
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -162,7 +157,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);

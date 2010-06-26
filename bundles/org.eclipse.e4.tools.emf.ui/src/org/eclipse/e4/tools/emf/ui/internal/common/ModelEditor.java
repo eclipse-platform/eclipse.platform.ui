@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
+import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+
 import org.eclipse.swt.widgets.TreeItem;
 
 import javax.annotation.PostConstruct;
@@ -227,7 +229,7 @@ public class ModelEditor {
 		scrolling.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		scrolling.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 
-		final StackLayout layout = new StackLayout();
+		final EStackLayout layout = new EStackLayout();
 		final Composite contentContainer = new Composite(scrolling, SWT.NONE);
 		contentContainer.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 		scrolling.setExpandHorizontal(true);
@@ -236,10 +238,8 @@ public class ModelEditor {
 
 		scrolling.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				if( layout.topControl != null ) {
-					Rectangle r = scrolling.getClientArea();
-					scrolling.setMinSize(layout.topControl.computeSize(r.width, SWT.DEFAULT));	
-				}
+				Rectangle r = scrolling.getClientArea();
+				scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));	
 			}
 		});
 
@@ -276,7 +276,7 @@ public class ModelEditor {
 					}
 
 					Rectangle r = scrolling.getClientArea();
-					scrolling.setMinSize(layout.topControl.computeSize(r.width, SWT.DEFAULT));
+					scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
 					scrolling.setOrigin(0, 0);
 					scrolling.layout(true,true);
 

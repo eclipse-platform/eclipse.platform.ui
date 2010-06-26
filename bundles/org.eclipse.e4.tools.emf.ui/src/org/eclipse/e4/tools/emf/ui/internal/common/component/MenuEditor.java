@@ -10,14 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
-import org.eclipse.emf.common.util.URI;
-
-import org.eclipse.e4.tools.emf.ui.common.Util;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -25,6 +17,9 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
@@ -34,12 +29,14 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIconDia
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFListProperty;
@@ -63,7 +60,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -84,7 +80,7 @@ public class MenuEditor extends AbstractComponentEditor {
 	private IProject project;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
-	private StackLayout stackLayout;
+	private EStackLayout stackLayout;
 
 	private static class Struct {
 		private final String label;
@@ -99,7 +95,7 @@ public class MenuEditor extends AbstractComponentEditor {
 	}
 
 	public MenuEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 		this.project = project;
 	}
 
@@ -127,30 +123,30 @@ public class MenuEditor extends AbstractComponentEditor {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
 			composite = new Composite(parent, SWT.NONE);
-			stackLayout = new StackLayout();
+			stackLayout = new EStackLayout();
 			composite.setLayout(stackLayout);
-			
-			createForm(composite, context, getMaster(),false,false);
-			createForm(composite, context, getMaster(),true,false);
-			if( getEditor().isModelFragment() ) {
-				createForm(composite, context, getMaster(),false,true);	
+
+			createForm(composite, context, getMaster(), false, false);
+			createForm(composite, context, getMaster(), true, false);
+			if (getEditor().isModelFragment()) {
+				createForm(composite, context, getMaster(), false, true);
 			}
 		}
 		EObject o = (EObject) object;
 		Control topControl;
-		if( Util.isImport(o) && getEditor().isModelFragment() ) {
+		if (Util.isImport(o) && getEditor().isModelFragment()) {
 			topControl = composite.getChildren()[2];
-		} else if( o.eContainer() instanceof MWindow || o.eContainer() == null ) {
+		} else if (o.eContainer() instanceof MWindow || o.eContainer() == null) {
 			topControl = composite.getChildren()[1];
 		} else {
 			topControl = composite.getChildren()[0];
 		}
-		
-		if( stackLayout.topControl != topControl ) {
+
+		if (stackLayout.topControl != topControl) {
 			stackLayout.topControl = topControl;
 			composite.layout(true, true);
 		}
-		
+
 		getMaster().setValue(object);
 		return composite;
 	}
@@ -161,11 +157,11 @@ public class MenuEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		if( isImport ) {
+		if (isImport) {
 			ControlFactory.createFindImport(parent, this, context);
 			return parent;
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -178,10 +174,9 @@ public class MenuEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-				
+
 		// ------------------------------------------------------------
-		if( ! rootMenu )
-		{
+		if (!rootMenu) {
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_LabelLabel);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -194,8 +189,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
-		if( ! rootMenu )
-		{
+		if (!rootMenu) {
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_Tooltip);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -208,8 +202,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
-		if( ! rootMenu )
-		{
+		if (!rootMenu) {
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_IconURI);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -219,36 +212,36 @@ public class MenuEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
 			new ImageTooltip(t) {
-				
+
 				@Override
 				protected URI getImageURI() {
 					MUILabel part = (MUILabel) getMaster().getValue();
 					String uri = part.getIconURI();
-					if( uri == null || uri.trim().length() == 0 ) {
+					if (uri == null || uri.trim().length() == 0) {
 						return null;
 					}
 					return URI.createURI(part.getIconURI());
 				}
 			};
 
-			
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText(Messages.MenuItemEditor_Find);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MenuIconDialogEditor dialog = new MenuIconDialogEditor(b.getShell(), project, getEditingDomain(),(MMenu) getMaster().getValue());
+					MenuIconDialogEditor dialog = new MenuIconDialogEditor(b.getShell(), project, getEditingDomain(), (MMenu) getMaster().getValue());
 					dialog.open();
 				}
-			});			
+			});
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_MenuItems);
-			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
+			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 			final TableViewer viewer = new TableViewer(parent);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
@@ -396,8 +389,8 @@ public class MenuEditor extends AbstractComponentEditor {
 				}
 			});
 		}
-		
-		ControlFactory.createTagsWidget(parent, this); 
+
+		ControlFactory.createTagsWidget(parent, this);
 
 		return parent;
 	}
@@ -410,20 +403,20 @@ public class MenuEditor extends AbstractComponentEditor {
 	@Override
 	public String getLabel(Object element) {
 		MMenu menu = (MMenu) element;
-		if( menu.getParent() == null ) {
+		if (menu.getParent() == null) {
 			EObject o = (EObject) element;
-			if( o.eContainer() instanceof MWindow ) {
+			if (o.eContainer() instanceof MWindow) {
 				return Messages.MenuEditor_MainMenu;
 			}
 		}
 		return Messages.MenuEditor_Label;
 	}
-	
+
 	@Override
 	public String getDetailLabel(Object element) {
 		MMenu menu = (MMenu) element;
-		
-		if( menu.getLabel() != null && menu.getLabel().trim().length() > 0 ) {
+
+		if (menu.getLabel() != null && menu.getLabel().trim().length() > 0) {
 			return menu.getLabel();
 		}
 		return null;

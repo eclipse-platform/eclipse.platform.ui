@@ -10,52 +10,20 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
-
-import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
-
-import java.io.InputStream;
-
-import java.io.IOException;
-
-import org.eclipse.emf.common.util.URI;
-
-import org.eclipse.swt.widgets.Event;
-
-import org.eclipse.jface.window.DefaultToolTip;
-
-import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.e4.tools.emf.ui.common.Util;
-
-import org.eclipse.swt.custom.StackLayout;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
-import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.core.databinding.property.value.IValueProperty;
-
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
-
-import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.edit.command.SetCommand;
-
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map.Entry;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
@@ -65,15 +33,22 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PartIconDia
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -89,6 +64,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -104,7 +80,7 @@ public class PartEditor extends AbstractComponentEditor {
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IValueProperty PART__TOOLBAR = EMFProperties.value(BasicPackageImpl.Literals.PART__TOOLBAR);
 	private Button createRemoveToolBar;
-	private StackLayout stackLayout;
+	private EStackLayout stackLayout;
 
 	public PartEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain, editor);
@@ -141,7 +117,7 @@ public class PartEditor extends AbstractComponentEditor {
 			context = new EMFDataBindingContext();
 			if (getEditor().isModelFragment()) {
 				composite = new Composite(parent, SWT.NONE);
-				stackLayout = new StackLayout();
+				stackLayout = new EStackLayout();
 				composite.setLayout(stackLayout);
 				createForm(composite, context, getMaster(), false);
 				createForm(composite, context, getMaster(), true);
@@ -149,25 +125,25 @@ public class PartEditor extends AbstractComponentEditor {
 				composite = createForm(parent, context, getMaster(), false);
 			}
 		}
-		
-		if( getEditor().isModelFragment() ) {
+
+		if (getEditor().isModelFragment()) {
 			Control topControl;
-			if( Util.isImport((EObject) object) ) {
+			if (Util.isImport((EObject) object)) {
 				topControl = composite.getChildren()[1];
 			} else {
-				topControl = composite.getChildren()[0];				
+				topControl = composite.getChildren()[0];
 			}
-			
-			if( stackLayout.topControl != topControl ) {
+
+			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
 				composite.layout(true, true);
 			}
 		}
-		
+
 		if (createRemoveToolBar != null) {
 			createRemoveToolBar.setSelection(((MPart) object).getToolbar() != null);
 		}
-		
+
 		getMaster().setValue(object);
 
 		return composite;
@@ -179,17 +155,17 @@ public class PartEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		 if( isImport ) {
-			 ControlFactory.createFindImport(parent, this, context);
-			 return parent;
-		 }
+		if (isImport) {
+			ControlFactory.createFindImport(parent, this, context);
+			return parent;
+		}
 
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartEditor_Id);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			
+
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
@@ -215,7 +191,7 @@ public class PartEditor extends AbstractComponentEditor {
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartEditor_Tooltip);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			
+
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
@@ -234,19 +210,20 @@ public class PartEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
 			new ImageTooltip(t) {
-				
+
 				@Override
 				protected URI getImageURI() {
 					MUILabel part = (MUILabel) getMaster().getValue();
 					String uri = part.getIconURI();
-					if( uri == null || uri.trim().length() == 0 ) {
+					if (uri == null || uri.trim().length() == 0) {
 						return null;
 					}
 					return URI.createURI(part.getIconURI());
 				}
 			};
-			
+
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText(Messages.PartEditor_Find);
 			b.addSelectionListener(new SelectionAdapter() {
@@ -269,6 +246,7 @@ public class PartEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText(Messages.PartEditor_Find);
 			b.addSelectionListener(new SelectionAdapter() {
@@ -463,11 +441,11 @@ public class PartEditor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(Object element) {
 		final WritableList list = new WritableList();
-		
-		if( getEditor().isModelFragment() && Util.isImport((EObject) element) ) {
+
+		if (getEditor().isModelFragment() && Util.isImport((EObject) element)) {
 			return list;
 		}
-		
+
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PART_MENU, PART__MENUS, element, Messages.PartEditor_Menus) {
 
 			@Override

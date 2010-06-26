@@ -37,14 +37,14 @@ import org.eclipse.swt.widgets.Text;
 
 public class DirectMenuItemEditor extends MenuItemEditor {
 	private Image image;
-	
+
 	public DirectMenuItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain,editor, project);
+		super(editingDomain, editor, project);
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
+		if (image == null) {
 			try {
 				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/DirectMenuItem.gif")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
@@ -65,11 +65,11 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 	public String getDescription(Object element) {
 		return Messages.DirectMenuItemEditor_Description;
 	}
-	
+
 	@Override
 	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -78,15 +78,16 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
 
-			final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText(Messages.DirectMenuItemEditor_Find);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project,getEditingDomain(),(MContribution) getMaster().getValue(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI);
+					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), project, getEditingDomain(), (MContribution) getMaster().getValue(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI);
 					dialog.open();
 				}
 			});
