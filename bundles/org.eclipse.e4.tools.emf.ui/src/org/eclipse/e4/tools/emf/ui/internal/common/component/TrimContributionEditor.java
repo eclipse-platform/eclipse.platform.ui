@@ -324,7 +324,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 			});
 		}
 
-		ControlFactory.createTagsWidget(parent, this);
+		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

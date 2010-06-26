@@ -24,8 +24,6 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.commands.MBindings;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -156,13 +154,17 @@ public class ControlFactory {
 		});
 	}
 
-	public static void createStringListWidget(Composite parent, final AbstractComponentEditor editor, String label, final EStructuralFeature feature) {
+	public static void createStringListWidget(Composite parent, final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
-		l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
+		GridData gd = new GridData(GridData.END, GridData.BEGINNING, false, false);
+		gd.verticalIndent = vIndent;
+		l.setLayoutData(gd);
 
 		final Text t = new Text(parent, SWT.BORDER);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		gd = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
+		gd.verticalIndent = vIndent;
+		t.setLayoutData(gd);
 		t.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -175,7 +177,9 @@ public class ControlFactory {
 		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ControlFactory_AddNoEllipse);
 		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		gd = new GridData(GridData.FILL, GridData.CENTER, false, false);
+		gd.verticalIndent = vIndent;
+		b.setLayoutData(gd);
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -188,7 +192,7 @@ public class ControlFactory {
 		final TableViewer viewer = new TableViewer(parent);
 		viewer.setLabelProvider(new LabelProvider());
 		viewer.setContentProvider(new ObservableListContentProvider());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 150;
 		viewer.getControl().setLayoutData(gd);
 
@@ -274,335 +278,6 @@ public class ControlFactory {
 						if (el.getVariables().size() > 0) {
 							viewer.setSelection(new StructuredSelection(el.getVariables().get(0)));
 						}
-					}
-				}
-			}
-		});
-	}
-
-	public static void createVariablesWidget(Composite parent, final AbstractComponentEditor editor) {
-		Label l = new Label(parent, SWT.NONE);
-		l.setText(Messages.ControlFactory_ContextVariables);
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-		final Text t = new Text(parent, SWT.BORDER);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		t.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.CR || e.keyCode == SWT.LF) {
-					handleAddText(editor, UiPackageImpl.Literals.CONTEXT__VARIABLES, t);
-				}
-			}
-		});
-
-		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_AddNoEllipse);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAddText(editor, UiPackageImpl.Literals.CONTEXT__VARIABLES, t);
-			}
-		});
-
-		new Label(parent, SWT.NONE);
-
-		final TableViewer viewer = new TableViewer(parent);
-		viewer.setLabelProvider(new LabelProvider());
-		viewer.setContentProvider(new ObservableListContentProvider());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 150;
-		viewer.getControl().setLayoutData(gd);
-
-		IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.CONTEXT__VARIABLES);
-		viewer.setInput(prop.observeDetail(editor.getMaster()));
-
-		Composite buttonComp = new Composite(parent, SWT.NONE);
-		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-		GridLayout gl = new GridLayout();
-		gl.marginLeft = 0;
-		gl.marginRight = 0;
-		gl.marginWidth = 0;
-		gl.marginHeight = 0;
-		buttonComp.setLayout(gl);
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Up);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_UP));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						MContext container = (MContext) editor.getMaster().getValue();
-						int idx = container.getVariables().indexOf(obj) - 1;
-						if (idx >= 0) {
-							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), UiPackageImpl.Literals.CONTEXT__VARIABLES, obj, idx);
-
-							if (cmd.canExecute()) {
-								editor.getEditingDomain().getCommandStack().execute(cmd);
-								viewer.setSelection(new StructuredSelection(obj));
-							}
-						}
-
-					}
-				}
-			}
-		});
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Down);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_DOWN));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						MContext container = (MApplication) editor.getMaster().getValue();
-						int idx = container.getVariables().indexOf(obj) + 1;
-						if (idx < container.getVariables().size()) {
-							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), UiPackageImpl.Literals.CONTEXT__VARIABLES, obj, idx);
-
-							if (cmd.canExecute()) {
-								editor.getEditingDomain().getCommandStack().execute(cmd);
-								viewer.setSelection(new StructuredSelection(obj));
-							}
-						}
-
-					}
-				}
-			}
-		});
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Remove);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_DELETE_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					MContext el = (MContext) editor.getMaster().getValue();
-					List<?> ids = ((IStructuredSelection) viewer.getSelection()).toList();
-					Command cmd = RemoveCommand.create(editor.getEditingDomain(), el, UiPackageImpl.Literals.CONTEXT__VARIABLES, ids);
-					if (cmd.canExecute()) {
-						editor.getEditingDomain().getCommandStack().execute(cmd);
-						if (el.getVariables().size() > 0) {
-							viewer.setSelection(new StructuredSelection(el.getVariables().get(0)));
-						}
-					}
-				}
-			}
-		});
-	}
-
-	public static void createBindingsWidget(Composite parent, final AbstractComponentEditor editor) {
-		Label l = new Label(parent, SWT.NONE);
-		l.setText(Messages.ControlFactory_BindingContexts);
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-		final Text t = new Text(parent, SWT.BORDER);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		t.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.CR || e.keyCode == SWT.LF) {
-					handleAddText(editor, CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, t);
-				}
-			}
-		});
-
-		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_AddNoEllipse);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAddText(editor, CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, t);
-			}
-		});
-
-		new Label(parent, SWT.NONE);
-
-		final TableViewer viewer = new TableViewer(parent);
-		viewer.setLabelProvider(new LabelProvider());
-		viewer.setContentProvider(new ObservableListContentProvider());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 150;
-		viewer.getControl().setLayoutData(gd);
-
-		IEMFListProperty prop = EMFProperties.list(CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS);
-		viewer.setInput(prop.observeDetail(editor.getMaster()));
-
-		Composite buttonComp = new Composite(parent, SWT.NONE);
-		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-		GridLayout gl = new GridLayout();
-		gl.marginLeft = 0;
-		gl.marginRight = 0;
-		gl.marginWidth = 0;
-		gl.marginHeight = 0;
-		buttonComp.setLayout(gl);
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Up);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_UP));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						MBindings container = (MBindings) editor.getMaster().getValue();
-						int idx = container.getBindingContexts().indexOf(obj) - 1;
-						if (idx >= 0) {
-							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, obj, idx);
-
-							if (cmd.canExecute()) {
-								editor.getEditingDomain().getCommandStack().execute(cmd);
-								viewer.setSelection(new StructuredSelection(obj));
-							}
-						}
-
-					}
-				}
-			}
-		});
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Down);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_DOWN));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						MBindings container = (MBindings) editor.getMaster().getValue();
-						int idx = container.getBindingContexts().indexOf(obj) + 1;
-						if (idx < container.getBindingContexts().size()) {
-							Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, obj, idx);
-
-							if (cmd.canExecute()) {
-								editor.getEditingDomain().getCommandStack().execute(cmd);
-								viewer.setSelection(new StructuredSelection(obj));
-							}
-						}
-
-					}
-				}
-			}
-		});
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Remove);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_DELETE_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					MBindings el = (MBindings) editor.getMaster().getValue();
-					List<?> ids = ((IStructuredSelection) viewer.getSelection()).toList();
-					Command cmd = RemoveCommand.create(editor.getEditingDomain(), el, CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, ids);
-					if (cmd.canExecute()) {
-						editor.getEditingDomain().getCommandStack().execute(cmd);
-						if (el.getBindingContexts().size() > 0) {
-							viewer.setSelection(new StructuredSelection(el.getBindingContexts().get(0)));
-						}
-					}
-				}
-			}
-		});
-	}
-
-	public static void createTagsWidget(Composite parent, final AbstractComponentEditor editor) {
-		Label l = new Label(parent, SWT.NONE);
-		l.setText(Messages.ControlFactory_Tags);
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-		final Text tagText = new Text(parent, SWT.BORDER);
-		tagText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		tagText.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.CR || e.keyCode == SWT.LF) {
-					handleAddText(editor, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, tagText);
-				}
-			}
-		});
-
-		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_AddNoEllipse);
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAddText(editor, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, tagText);
-			}
-		});
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-
-		new Label(parent, SWT.NONE);
-		final TableViewer viewer = new TableViewer(parent);
-		viewer.setContentProvider(new ObservableListContentProvider());
-		viewer.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return element.toString();
-			}
-		});
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 120;
-		viewer.getControl().setLayoutData(gd);
-
-		IEMFEditListProperty prop = EMFEditProperties.list(editor.getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS);
-		viewer.setInput(prop.observeDetail(editor.getMaster()));
-
-		Composite buttonComp = new Composite(parent, SWT.NONE);
-		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-		GridLayout gl = new GridLayout();
-		gl.marginLeft = 0;
-		gl.marginRight = 0;
-		gl.marginWidth = 0;
-		gl.marginHeight = 0;
-		buttonComp.setLayout(gl);
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Up);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_UP));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Down);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_DOWN));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Remove);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_DELETE_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-				if (!s.isEmpty()) {
-					MApplicationElement appEl = (MApplicationElement) editor.getMaster().getValue();
-					Command cmd = RemoveCommand.create(editor.getEditingDomain(), appEl, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, s.toList());
-					if (cmd.canExecute()) {
-						editor.getEditingDomain().getCommandStack().execute(cmd);
 					}
 				}
 			}

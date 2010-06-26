@@ -444,7 +444,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			column.getColumn().setWidth(200);
 		}
 
-		ControlFactory.createTagsWidget(parent, this);
+		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

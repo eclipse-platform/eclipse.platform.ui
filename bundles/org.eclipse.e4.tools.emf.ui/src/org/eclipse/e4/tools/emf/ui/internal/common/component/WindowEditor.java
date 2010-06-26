@@ -311,9 +311,9 @@ public class WindowEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createSelectedElement(parent, this, context, "Selected Element");
-		ControlFactory.createBindingsWidget(parent, this);
-		ControlFactory.createVariablesWidget(parent, this);
-		ControlFactory.createTagsWidget(parent, this);
+		ControlFactory.createStringListWidget(parent, this, "Binding Contexts", CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, "Variables", UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

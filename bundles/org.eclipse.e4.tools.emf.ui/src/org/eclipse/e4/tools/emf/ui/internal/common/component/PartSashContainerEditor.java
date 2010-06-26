@@ -212,8 +212,6 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA).observeDetail(master));
 		}
 
-		ControlFactory.createTagsWidget(parent, this);
-
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartSashContainerEditor_Controls);
@@ -344,6 +342,8 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 				}
 			});
 		}
+
+		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

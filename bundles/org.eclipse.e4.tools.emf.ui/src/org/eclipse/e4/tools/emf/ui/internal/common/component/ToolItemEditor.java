@@ -246,7 +246,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 		createSubTypeFormElements(parent, context, master);
 
-		ControlFactory.createTagsWidget(parent, this);
+		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 	}
 
 	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context, WritableValue master) {

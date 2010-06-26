@@ -310,20 +310,23 @@ public class PartEditor extends AbstractComponentEditor {
 		}
 
 		// ------------------------------------------------------------
-		ControlFactory.createBindingsWidget(parent, this);
+		ControlFactory.createStringListWidget(parent, this, "Binding Contexts", CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, VERTICAL_LIST_WIDGET_INDENT);
 
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartEditor_PersitedState);
-			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
+			GridData gd = new GridData(GridData.END, GridData.BEGINNING, false, false);
+			gd.verticalIndent = VERTICAL_LIST_WIDGET_INDENT;
+			l.setLayoutData(gd);
 
 			TableViewer tableviewer = new TableViewer(parent);
 			tableviewer.getTable().setHeaderVisible(true);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			tableviewer.setContentProvider(cp);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 80;
+			gd.verticalIndent = VERTICAL_LIST_WIDGET_INDENT;
 			tableviewer.getControl().setLayoutData(gd);
 
 			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
@@ -374,8 +377,8 @@ public class PartEditor extends AbstractComponentEditor {
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		}
 
-		ControlFactory.createVariablesWidget(parent, this);
-		ControlFactory.createTagsWidget(parent, this);
+		ControlFactory.createStringListWidget(parent, this, "Variables", UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

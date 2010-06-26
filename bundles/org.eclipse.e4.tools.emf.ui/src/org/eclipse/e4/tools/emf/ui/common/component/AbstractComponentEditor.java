@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -22,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
@@ -33,12 +32,11 @@ public abstract class AbstractComponentEditor {
 	private EditingDomain editingDomain;
 
 	private static Map<Integer, Image> IMAGE_MAP = new HashMap<Integer, Image>();
-	private static final String[] IMAGES = {
-		"/icons/full/obj16/zoom.png", //$NON-NLS-1$
-		"/icons/full/obj16/table_add.png", //$NON-NLS-1$
-		"/icons/full/obj16/table_delete.png", //$NON-NLS-1$
-		"/icons/full/obj16/arrow_up.png", //$NON-NLS-1$
-		"/icons/full/obj16/arrow_down.png" //$NON-NLS-1$
+	private static final String[] IMAGES = { "/icons/full/obj16/zoom.png", //$NON-NLS-1$
+	"/icons/full/obj16/table_add.png", //$NON-NLS-1$
+	"/icons/full/obj16/table_delete.png", //$NON-NLS-1$
+	"/icons/full/obj16/arrow_up.png", //$NON-NLS-1$
+	"/icons/full/obj16/arrow_down.png" //$NON-NLS-1$
 	};
 
 	private WritableValue master = new WritableValue();
@@ -49,8 +47,10 @@ public abstract class AbstractComponentEditor {
 	public static final int ARROW_UP = 3;
 	public static final int ARROW_DOWN = 4;
 
+	protected static final int VERTICAL_LIST_WIDGET_INDENT = 10;
+
 	private ModelEditor editor;
-	
+
 	public AbstractComponentEditor(EditingDomain editingDomain, ModelEditor editor) {
 		this.editingDomain = editingDomain;
 		this.editor = editor;
@@ -59,7 +59,7 @@ public abstract class AbstractComponentEditor {
 	public EditingDomain getEditingDomain() {
 		return editingDomain;
 	}
-	
+
 	public ModelEditor getEditor() {
 		return editor;
 	}
@@ -68,9 +68,9 @@ public abstract class AbstractComponentEditor {
 		return master;
 	}
 
-	public Image getImage( Display d, int id) {
+	public Image getImage(Display d, int id) {
 		Image img = IMAGE_MAP.get(id);
-		if( img == null ) {
+		if (img == null) {
 			try {
 				InputStream in = AbstractComponentEditor.class.getClassLoader().getResourceAsStream(IMAGES[id]);
 				img = new Image(d, in);
@@ -85,18 +85,22 @@ public abstract class AbstractComponentEditor {
 		return img;
 	}
 
-	public abstract Image getImage(Object element,Display display);
+	public abstract Image getImage(Object element, Display display);
+
 	public abstract String getLabel(Object element);
+
 	public abstract String getDetailLabel(Object element);
 
 	public abstract String getDescription(Object element);
+
 	public abstract Composite getEditor(Composite parent, Object object);
+
 	public abstract IObservableList getChildList(Object element);
 
 	protected Image loadSharedImage(Display d, URL path) {
 		try {
 			URL url = FileLocator.resolve(path);
-			if( url != null ) {
+			if (url != null) {
 				InputStream in = url.openStream();
 				Image image = new Image(d, in);
 				in.close();
@@ -108,11 +112,11 @@ public abstract class AbstractComponentEditor {
 		}
 		return null;
 	}
-	
+
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] {};
 	}
-	
+
 	public List<Action> getActions(Object element) {
 		return Collections.emptyList();
 	}

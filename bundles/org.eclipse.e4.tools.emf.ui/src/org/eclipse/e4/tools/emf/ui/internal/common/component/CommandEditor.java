@@ -71,7 +71,7 @@ public class CommandEditor extends AbstractComponentEditor {
 	private EStackLayout stackLayout;
 
 	public CommandEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 	}
 
 	@Override
@@ -112,21 +112,21 @@ public class CommandEditor extends AbstractComponentEditor {
 				composite = createForm(parent, context, getMaster(), false);
 			}
 		}
-		
-		if( getEditor().isModelFragment() ) {
+
+		if (getEditor().isModelFragment()) {
 			Control topControl;
-			if( Util.isImport((EObject) object) ) {
+			if (Util.isImport((EObject) object)) {
 				topControl = composite.getChildren()[1];
 			} else {
-				topControl = composite.getChildren()[0];				
+				topControl = composite.getChildren()[0];
 			}
-			
-			if( stackLayout.topControl != topControl ) {
+
+			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
 				composite.layout(true, true);
 			}
 		}
-		
+
 		getMaster().setValue(object);
 		return composite;
 	}
@@ -136,10 +136,10 @@ public class CommandEditor extends AbstractComponentEditor {
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-		
-		if( isImport ) {
+
+		if (isImport) {
 			ControlFactory.createFindImport(parent, this, context);
-			
+
 			return parent;
 		}
 
@@ -152,9 +152,9 @@ public class CommandEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -165,30 +165,30 @@ public class CommandEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME).observeDetail(getMaster()));
 		}
 
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CommandEditor_LabelDescription);
-			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
+			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
-			Text t = new Text(parent, SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL);
+			Text t = new Text(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
-			gd.heightHint=100;
+			gd.heightHint = 100;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__DESCRIPTION).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__DESCRIPTION).observeDetail(getMaster()));
 		}
 
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CommandEditor_Parameters);
-			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
+			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
-			final TableViewer viewer = new TableViewer(parent,SWT.FULL_SELECTION|SWT.MULTI|SWT.BORDER);
+			final TableViewer viewer = new TableViewer(parent, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
 			viewer.getTable().setHeaderVisible(true);
@@ -199,73 +199,73 @@ public class CommandEditor extends AbstractComponentEditor {
 
 			{
 				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
-				
+
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText(Messages.CommandEditor_ParameterId);
 				column.getColumn().setWidth(200);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())));
 				column.setEditingSupport(new EditingSupport(viewer) {
 					private TextCellEditor editor = new TextCellEditor(viewer.getTable());
-					
+
 					@Override
 					protected void setValue(Object element, Object value) {
-						if( value.toString().trim().length() == 0 ) {
+						if (value.toString().trim().length() == 0) {
 							value = null;
 						}
-						
+
 						Command cmd = SetCommand.create(getEditingDomain(), element, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, value);
-						if( cmd.canExecute() ) {
+						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}
-					
+
 					@Override
 					protected Object getValue(Object element) {
 						MCommandParameter obj = (MCommandParameter) element;
 						return obj.getElementId() != null ? obj.getElementId() : ""; //$NON-NLS-1$
 					}
-					
+
 					@Override
 					protected CellEditor getCellEditor(Object element) {
 						return editor;
 					}
-					
+
 					@Override
 					protected boolean canEdit(Object element) {
 						return true;
 					}
 				});
 			}
-			
+
 			{
 				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME);
-				
+
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText(Messages.CommandEditor_ParameterName);
 				column.getColumn().setWidth(200);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())));
 				column.setEditingSupport(new EditingSupport(viewer) {
 					private TextCellEditor editor = new TextCellEditor(viewer.getTable());
-					
+
 					@Override
 					protected void setValue(Object element, Object value) {
 						Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME, value);
-						if( cmd.canExecute() ) {
+						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}
-					
+
 					@Override
 					protected Object getValue(Object element) {
 						MCommandParameter obj = (MCommandParameter) element;
 						return obj.getName() != null ? obj.getName() : ""; //$NON-NLS-1$
 					}
-					
+
 					@Override
 					protected CellEditor getCellEditor(Object element) {
 						return editor;
 					}
-					
+
 					@Override
 					protected boolean canEdit(Object element) {
 						return true;
@@ -275,33 +275,33 @@ public class CommandEditor extends AbstractComponentEditor {
 
 			{
 				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID);
-				
+
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText(Messages.CommandEditor_ParameterTypeId);
-				column.getColumn().setWidth(200);				
+				column.getColumn().setWidth(200);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())));
 				column.setEditingSupport(new EditingSupport(viewer) {
 					private TextCellEditor editor = new TextCellEditor(viewer.getTable());
-					
+
 					@Override
 					protected void setValue(Object element, Object value) {
 						Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID, value);
-						if( cmd.canExecute() ) {
+						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}
-					
+
 					@Override
 					protected Object getValue(Object element) {
 						MCommandParameter obj = (MCommandParameter) element;
 						return obj.getTypeId() != null ? obj.getTypeId() : ""; //$NON-NLS-1$
 					}
-					
+
 					@Override
 					protected CellEditor getCellEditor(Object element) {
 						return editor;
 					}
-					
+
 					@Override
 					protected boolean canEdit(Object element) {
 						return true;
@@ -311,10 +311,10 @@ public class CommandEditor extends AbstractComponentEditor {
 
 			{
 				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__OPTIONAL);
-				
+
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText(Messages.CommandEditor_ParameterOptional);
-				column.getColumn().setWidth(200);				
+				column.getColumn().setWidth(200);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())) {
 					@Override
 					public String getText(MCommandParameter element) {
@@ -323,27 +323,27 @@ public class CommandEditor extends AbstractComponentEditor {
 				});
 				column.setEditingSupport(new EditingSupport(viewer) {
 					private ComboBoxCellEditor editor = new ComboBoxCellEditor(viewer.getTable(), new String[] { Messages.CommandEditor_ParameterOptional_Yes, Messages.CommandEditor_ParameterOptional_No });
-					
+
 					@Override
 					protected void setValue(Object element, Object value) {
-						int idx = ((Number)value).intValue();
+						int idx = ((Number) value).intValue();
 						Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.COMMAND_PARAMETER__OPTIONAL, idx == 0);
-						if( cmd.canExecute() ) {
+						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}
-					
+
 					@Override
 					protected Object getValue(Object element) {
 						MCommandParameter obj = (MCommandParameter) element;
 						return obj.isOptional() ? 0 : 1;
 					}
-					
+
 					@Override
 					protected CellEditor getCellEditor(Object element) {
 						return editor;
 					}
-					
+
 					@Override
 					protected boolean canEdit(Object element) {
 						return true;
@@ -354,27 +354,24 @@ public class CommandEditor extends AbstractComponentEditor {
 			ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(viewer) {
 				@Override
 				protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
-					boolean singleSelect = ((IStructuredSelection)viewer.getSelection()).size() == 1;
-					boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent)event.sourceEvent).button == 1;
+					boolean singleSelect = ((IStructuredSelection) viewer.getSelection()).size() == 1;
+					boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent) event.sourceEvent).button == 1;
 
-					return singleSelect && (isLeftDoubleMouseSelect
-							|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
-							|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
+					return singleSelect && (isLeftDoubleMouseSelect || event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC || event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
 				}
 			};
 			TableViewerEditor.create(viewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
 
-			
 			IEMFEditListProperty mProp = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
 			viewer.setInput(mProp.observeDetail(getMaster()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
 			GridLayout gl = new GridLayout();
-			gl.marginLeft=0;
-			gl.marginRight=0;
-			gl.marginWidth=0;
-			gl.marginHeight=0;
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
@@ -396,8 +393,8 @@ public class CommandEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					MCommandParameter param = MCommandsFactory.INSTANCE.createCommandParameter();
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS, param);
-					
-					if( cmd.canExecute() ) {
+
+					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 						viewer.editElement(param, 0);
 					}
@@ -410,7 +407,7 @@ public class CommandEditor extends AbstractComponentEditor {
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		}
 
-		ControlFactory.createTagsWidget(parent, this);
+		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}
@@ -429,12 +426,10 @@ public class CommandEditor extends AbstractComponentEditor {
 
 		return null;
 	}
-	
+
 	@Override
 	public FeaturePath[] getLabelProperties() {
-		return new FeaturePath[] {
-			FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME)	
-		};
+		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME) };
 	}
 
 }
