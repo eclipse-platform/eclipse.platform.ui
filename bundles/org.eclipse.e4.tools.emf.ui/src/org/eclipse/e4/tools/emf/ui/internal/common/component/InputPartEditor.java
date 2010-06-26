@@ -47,6 +47,7 @@ public class InputPartEditor extends PartEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.InputPartEditor_InputURI);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);

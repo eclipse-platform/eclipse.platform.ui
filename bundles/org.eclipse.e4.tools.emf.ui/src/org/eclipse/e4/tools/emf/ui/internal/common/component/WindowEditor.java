@@ -10,6 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.emf.common.util.URI;
+
+import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 import org.eclipse.emf.ecore.EObject;
 
@@ -76,7 +84,8 @@ public class WindowEditor extends AbstractComponentEditor {
 	private IValueProperty WINDOW__MAIN_MENU = EMFProperties.value(BasicPackageImpl.Literals.WINDOW__MAIN_MENU);
 	
 	private Action addMainMenu;
-	private Button createRemoveMainMenu; 
+	private Button createRemoveMainMenu;
+	private StackLayout stackLayout; 
 	
 	public WindowEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain,editor);
@@ -115,23 +124,50 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context, getMaster());
+			if (getEditor().isModelFragment()) {
+				composite = new Composite(parent, SWT.NONE);
+				stackLayout = new StackLayout();
+				composite.setLayout(stackLayout);
+				createForm(composite, context, getMaster(), false);
+				createForm(composite, context, getMaster(), true);
+			} else {
+				composite = createForm(parent, context, getMaster(), false);
+			}
 		}
+		
+		if( getEditor().isModelFragment() ) {
+			Control topControl;
+			if( Util.isImport((EObject) object) ) {
+				topControl = composite.getChildren()[1];
+			} else {
+				topControl = composite.getChildren()[0];				
+			}
+			
+			if( stackLayout.topControl != topControl ) {
+				stackLayout.topControl = topControl;
+				composite.layout(true, true);
+			}
+		}
+
+		if( createRemoveMainMenu != null ) {
+			createRemoveMainMenu.setSelection(((MWindow)object).getMainMenu() != null);	
+		}
+		
 		getMaster().setValue(object);
-		createRemoveMainMenu.setSelection(((MWindow)object).getMainMenu() != null);
+		
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context,
-			WritableValue master) {
+			WritableValue master, boolean isImport) {
 		parent = new Composite(parent,SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 		
-		if( getEditor().isModelFragment() ) {
+		if( isImport ) {
 			ControlFactory.createFindImport(parent, this, context);			
 			return parent;
 		}
@@ -140,6 +176,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Id");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -152,6 +189,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("X");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -164,6 +202,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Y");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -176,6 +215,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Width");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -188,6 +228,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Height");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -200,6 +241,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Label");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -212,6 +254,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Tooltip");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -224,11 +267,25 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Icon URI");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
+			new ImageTooltip(t) {
+				
+				@Override
+				protected URI getImageURI() {
+					MUILabel part = (MUILabel) getMaster().getValue();
+					String uri = part.getIconURI();
+					if( uri == null || uri.trim().length() == 0 ) {
+						return null;
+					}
+					return URI.createURI(part.getIconURI());
+				}
+			};
+			
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText("Find ...");
 			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
@@ -245,6 +302,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Main Menu");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			
 			createRemoveMainMenu = new Button(parent, SWT.CHECK);
 			createRemoveMainMenu.addSelectionListener(new SelectionAdapter() {
@@ -287,6 +345,10 @@ public class WindowEditor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(final Object element) {
 		final WritableList list = new WritableList();
+		if( getEditor().isModelFragment() && Util.isImport((EObject) element) ) {
+			return list;
+		}
+		
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, "Handlers") {
 
 			@Override

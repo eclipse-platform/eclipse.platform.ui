@@ -122,7 +122,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Imports");
-			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
 			
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());
@@ -263,7 +263,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.ModelFragmentsEditor_ModelFragments);
-			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
 
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());

@@ -10,6 +10,16 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+
+import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
+import org.eclipse.emf.common.util.URI;
+
+import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 import org.eclipse.emf.ecore.EObject;
 
@@ -79,6 +89,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IValueProperty PART__TOOLBAR = EMFProperties.value(BasicPackageImpl.Literals.PART_DESCRIPTOR__TOOLBAR);
 	private Button createRemoveToolBar;
+	private StackLayout stackLayout;
 
 	public PartDescriptorEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain,editor);
@@ -111,23 +122,49 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context, getMaster());
+			if (getEditor().isModelFragment()) {
+				composite = new Composite(parent, SWT.NONE);
+				stackLayout = new StackLayout();
+				composite.setLayout(stackLayout);
+				createForm(composite, context, getMaster(), false);
+				createForm(composite, context, getMaster(), true);
+			} else {
+				composite = createForm(parent, context, getMaster(), false);
+			}
 		}
+		
+		if( getEditor().isModelFragment() ) {
+			Control topControl;
+			if( Util.isImport((EObject) object) ) {
+				topControl = composite.getChildren()[1];
+			} else {
+				topControl = composite.getChildren()[0];				
+			}
+			
+			if( stackLayout.topControl != topControl ) {
+				stackLayout.topControl = topControl;
+				composite.layout(true, true);
+			}
+		}
+		
+		if (createRemoveToolBar != null) {
+			createRemoveToolBar.setSelection(((MPartDescriptor) object).getToolbar() != null);
+		}
+		
 		getMaster().setValue(object);
-		createRemoveToolBar.setSelection(((MPartDescriptor)object).getToolbar() != null);
 		return composite;
 	}
 
-	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master) {
+	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
 		parent = new Composite(parent,SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		
-		if( getEditor().isModelFragment() ) {
+		if( isImport ) {
 			ControlFactory.createFindImport(parent, this, context);			
 			return parent;
 		}
@@ -137,6 +174,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Id);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -149,6 +187,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_LabelLabel);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -161,7 +200,8 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Tooltip);
-
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan=2;
@@ -173,11 +213,25 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_IconURI);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
+			new ImageTooltip(t) {
+				
+				@Override
+				protected URI getImageURI() {
+					MUILabel part = (MUILabel) getMaster().getValue();
+					String uri = part.getIconURI();
+					if( uri == null || uri.trim().length() == 0 ) {
+						return null;
+					}
+					return URI.createURI(part.getIconURI());
+				}
+			};
+			
 			final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText(Messages.PartDescriptorEditor_Find);
@@ -194,6 +248,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_ClassURI);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -215,6 +270,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartEditor_ToolBar);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			
 			createRemoveToolBar = new Button(parent, SWT.CHECK);
 			createRemoveToolBar.addSelectionListener(new SelectionAdapter() {
@@ -235,6 +291,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_ContainerData);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -247,6 +304,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Dirtyable);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Button checkbox = new Button(parent, SWT.CHECK);
 			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
@@ -262,6 +320,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Closeable);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Button checkbox = new Button(parent, SWT.CHECK);
 			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
@@ -276,6 +335,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Multiple);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Button checkbox = new Button(parent, SWT.CHECK);
 			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
@@ -290,6 +350,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Category);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL,GridData.BEGINNING, true, false, 2, 1));
@@ -300,7 +361,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_PersitedState);
-			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 			TableViewer tableviewer = new TableViewer(parent);
 			tableviewer.getTable().setHeaderVisible(true);
@@ -362,7 +423,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Variables);
-			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 			ListViewer viewer = new ListViewer(parent);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -375,7 +436,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PartDescriptorEditor_Properties);
-			l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 			TableViewer tableviewer = new TableViewer(parent);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -418,6 +479,11 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(final Object element) {
 		final WritableList list = new WritableList();
+		
+		if( getEditor().isModelFragment() && Util.isImport((EObject) element) ) {
+			return list;
+		}
+		
 		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_PARTDESCRIPTOR_MENU, PART__MENUS, element, Messages.PartDescriptorEditor_Menus) {
 
 			@Override

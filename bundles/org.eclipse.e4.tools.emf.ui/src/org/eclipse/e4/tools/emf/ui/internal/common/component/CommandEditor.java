@@ -10,6 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+
+import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 import org.eclipse.emf.ecore.EObject;
 
@@ -67,6 +73,7 @@ public class CommandEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
+	private StackLayout stackLayout;
 
 	public CommandEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain,editor);
@@ -100,19 +107,42 @@ public class CommandEditor extends AbstractComponentEditor {
 	public Composite getEditor(Composite parent, Object object) {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent, context);
+			if (getEditor().isModelFragment()) {
+				composite = new Composite(parent, SWT.NONE);
+				stackLayout = new StackLayout();
+				composite.setLayout(stackLayout);
+				createForm(composite, context, getMaster(), false);
+				createForm(composite, context, getMaster(), true);
+			} else {
+				composite = createForm(parent, context, getMaster(), false);
+			}
 		}
+		
+		if( getEditor().isModelFragment() ) {
+			Control topControl;
+			if( Util.isImport((EObject) object) ) {
+				topControl = composite.getChildren()[1];
+			} else {
+				topControl = composite.getChildren()[0];				
+			}
+			
+			if( stackLayout.topControl != topControl ) {
+				stackLayout.topControl = topControl;
+				composite.layout(true, true);
+			}
+		}
+		
 		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 		
-		if( getEditor().isModelFragment() ) {
+		if( isImport ) {
 			ControlFactory.createFindImport(parent, this, context);
 			
 			return parent;
@@ -121,6 +151,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CommandEditor_Id);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -133,6 +164,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CommandEditor_Name);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -145,7 +177,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CommandEditor_LabelDescription);
-			l.setLayoutData(new GridData(GridData.BEGINNING,GridData.BEGINNING,false,false));
+			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
 
 			Text t = new Text(parent, SWT.BORDER|SWT.H_SCROLL|SWT.V_SCROLL);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -159,7 +191,7 @@ public class CommandEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.CommandEditor_Parameters);
-			l.setLayoutData(new GridData(GridData.BEGINNING,GridData.BEGINNING,false,false));
+			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
 
 			final TableViewer viewer = new TableViewer(parent,SWT.FULL_SELECTION|SWT.MULTI|SWT.BORDER);
 			ObservableListContentProvider cp = new ObservableListContentProvider();

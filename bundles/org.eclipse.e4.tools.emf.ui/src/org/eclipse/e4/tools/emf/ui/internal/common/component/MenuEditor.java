@@ -10,6 +10,12 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.emf.common.util.URI;
+
+import org.eclipse.e4.tools.emf.ui.common.Util;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 
 import java.net.MalformedURLException;
@@ -124,12 +130,17 @@ public class MenuEditor extends AbstractComponentEditor {
 			stackLayout = new StackLayout();
 			composite.setLayout(stackLayout);
 			
-			createForm(composite, context, getMaster(),false);
-			createForm(composite, context, getMaster(),true);
+			createForm(composite, context, getMaster(),false,false);
+			createForm(composite, context, getMaster(),true,false);
+			if( getEditor().isModelFragment() ) {
+				createForm(composite, context, getMaster(),false,true);	
+			}
 		}
 		EObject o = (EObject) object;
 		Control topControl;
-		if( o.eContainer() instanceof MWindow || o.eContainer() == null ) {
+		if( Util.isImport(o) && getEditor().isModelFragment() ) {
+			topControl = composite.getChildren()[2];
+		} else if( o.eContainer() instanceof MWindow || o.eContainer() == null ) {
 			topControl = composite.getChildren()[1];
 		} else {
 			topControl = composite.getChildren()[0];
@@ -144,14 +155,13 @@ public class MenuEditor extends AbstractComponentEditor {
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean rootMenu) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean rootMenu, boolean isImport) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		
-		if( getEditor().isModelFragment() ) {
+		if( isImport ) {
 			ControlFactory.createFindImport(parent, this, context);
 			return parent;
 		}
@@ -160,6 +170,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_Id);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -173,6 +184,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_LabelLabel);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -186,6 +198,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_Tooltip);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -199,11 +212,26 @@ public class MenuEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_IconURI);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
+			new ImageTooltip(t) {
+				
+				@Override
+				protected URI getImageURI() {
+					MUILabel part = (MUILabel) getMaster().getValue();
+					String uri = part.getIconURI();
+					if( uri == null || uri.trim().length() == 0 ) {
+						return null;
+					}
+					return URI.createURI(part.getIconURI());
+				}
+			};
+
+			
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText(Messages.MenuItemEditor_Find);
@@ -220,7 +248,7 @@ public class MenuEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuEditor_MenuItems);
-			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
 
 			final TableViewer viewer = new TableViewer(parent);
 			ObservableListContentProvider cp = new ObservableListContentProvider();

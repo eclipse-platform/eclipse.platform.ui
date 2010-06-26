@@ -10,6 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.e4.tools.emf.ui.common.Util;
+
 import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
@@ -47,6 +55,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private IProject project;
 	private Image image;
+	private StackLayout stackLayout;
 	
 	public AddonsEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain,editor);
@@ -88,22 +97,45 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context); 
-		} 
+			if (getEditor().isModelFragment()) {
+				composite = new Composite(parent, SWT.NONE);
+				stackLayout = new StackLayout();
+				composite.setLayout(stackLayout);
+				createForm(composite, context, getMaster(), false);
+				createForm(composite, context, getMaster(), true);
+			} else {
+				composite = createForm(parent, context, getMaster(), false);
+			}
+		}
+		
+		if( getEditor().isModelFragment() ) {
+			Control topControl;
+			if( Util.isImport((EObject) object) ) {
+				topControl = composite.getChildren()[1];
+			} else {
+				topControl = composite.getChildren()[0];				
+			}
+			
+			if( stackLayout.topControl != topControl ) {
+				stackLayout.topControl = topControl;
+				composite.layout(true, true);
+			}
+		}
+		
 		getMaster().setValue(object);
 		return composite;
 	}
 	
-	protected Composite createForm(Composite parent, EMFDataBindingContext context) {
+	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		
-		if( getEditor().isModelFragment() ) {
+		if( getEditor().isModelFragment() && isImport ) {
 			ControlFactory.createFindImport(parent, this, context);
 			return parent;
 		}
@@ -111,6 +143,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.AddonsEditor_Id);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -123,6 +156,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.AddonsEditor_ClassURI);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

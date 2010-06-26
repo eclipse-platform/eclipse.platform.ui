@@ -10,7 +10,10 @@ public class EditorProjectFunction extends ContextFunction {
 	@Override
 	public Object compute(IEclipseContext context) {
 		final IEditorInput input = context.get(IEditorInput.class);
-		return ((IFileEditorInput)input).getFile().getProject();
+		if( input != null ) {
+			return ((IFileEditorInput)input).getFile().getProject();	
+		}
+		return null;
 	}
 
 }

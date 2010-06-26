@@ -10,6 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.emf.common.util.URI;
+
+import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 
 import java.net.MalformedURLException;
@@ -80,6 +88,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	private IProject project;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+	private StackLayout stackLayout;
 
 	public PerspectiveEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
 		super(editingDomain,editor);
@@ -131,19 +140,42 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	public Composite getEditor(Composite parent, Object object) {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent, context, getMaster());
+			if (getEditor().isModelFragment()) {
+				composite = new Composite(parent, SWT.NONE);
+				stackLayout = new StackLayout();
+				composite.setLayout(stackLayout);
+				createForm(composite, context, getMaster(), false);
+				createForm(composite, context, getMaster(), true);
+			} else {
+				composite = createForm(parent, context, getMaster(), false);
+			}
 		}
+		
+		if( getEditor().isModelFragment() ) {
+			Control topControl;
+			if( Util.isImport((EObject) object) ) {
+				topControl = composite.getChildren()[1];
+			} else {
+				topControl = composite.getChildren()[0];				
+			}
+			
+			if( stackLayout.topControl != topControl ) {
+				stackLayout.topControl = topControl;
+				composite.layout(true, true);
+			}
+		}
+		
 		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master, boolean isImport) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		if( getEditor().isModelFragment() ) {
+		if( isImport ) {
 			ControlFactory.createFindImport(parent, this, context);			
 			return parent;
 		}
@@ -152,6 +184,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PerspectiveEditor_Id);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -166,6 +199,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PerspectiveEditor_LabelLabel);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -178,6 +212,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PerspectiveEditor_Tooltip);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -190,11 +225,25 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PerspectiveEditor_IconURI);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
+			new ImageTooltip(t) {
+				
+				@Override
+				protected URI getImageURI() {
+					MUILabel part = (MUILabel) getMaster().getValue();
+					String uri = part.getIconURI();
+					if( uri == null || uri.trim().length() == 0 ) {
+						return null;
+					}
+					return URI.createURI(part.getIconURI());
+				}
+			};
+			
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.PerspectiveEditor_Find);
 			b.addSelectionListener(new SelectionAdapter() {
@@ -209,7 +258,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.PerspectiveEditor_Controls);
-			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
 			
 			final TableViewer viewer = new TableViewer(parent);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);

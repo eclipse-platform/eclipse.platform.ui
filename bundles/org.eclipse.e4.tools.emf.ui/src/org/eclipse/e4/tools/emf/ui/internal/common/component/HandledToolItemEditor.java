@@ -92,6 +92,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.HandledToolItemEditor_Command);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -115,7 +116,7 @@ public class HandledToolItemEditor extends ToolItemEditor {
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(Messages.HandledToolItemEditor_Parameters);
-		l.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+		l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 		final TableViewer tableviewer = new TableViewer(parent);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);

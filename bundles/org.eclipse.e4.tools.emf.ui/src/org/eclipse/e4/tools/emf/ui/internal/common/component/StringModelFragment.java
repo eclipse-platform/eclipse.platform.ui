@@ -142,6 +142,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_ParentId);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -153,6 +154,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_Featurename);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Composite comp = new Composite(parent, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -184,6 +186,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_PositionInList);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -196,7 +199,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_Elements);
-			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
 
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());

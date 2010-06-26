@@ -10,6 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.emf.common.util.URI;
+
+import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.core.databinding.conversion.Converter;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -61,6 +69,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	private Image menuImage;
 	private EMFDataBindingContext context;
 	protected IProject project;
+	private StackLayout stackLayout;
 
 	public MenuItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain,editor);
@@ -85,13 +94,36 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	public Composite getEditor(Composite parent, Object object) {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent, context, getMaster());
+			if (getEditor().isModelFragment()) {
+				composite = new Composite(parent, SWT.NONE);
+				stackLayout = new StackLayout();
+				composite.setLayout(stackLayout);
+				createForm(composite, context, getMaster(), false);
+				createForm(composite, context, getMaster(), true);
+			} else {
+				composite = createForm(parent, context, getMaster(), false);
+			}
 		}
+		
+		if( getEditor().isModelFragment() ) {
+			Control topControl;
+			if( Util.isImport((EObject) object) ) {
+				topControl = composite.getChildren()[1];
+			} else {
+				topControl = composite.getChildren()[0];				
+			}
+			
+			if( stackLayout.topControl != topControl ) {
+				stackLayout.topControl = topControl;
+				composite.layout(true, true);
+			}
+		}
+		
 		getMaster().setValue(object);
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
@@ -99,7 +131,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		IWidgetValueProperty checkProp = WidgetProperties.selection();
 		IWidgetValueProperty enabled = WidgetProperties.enabled();
 		
-		if( getEditor().isModelFragment() ) {
+		if( isImport ) {
 			ControlFactory.createFindImport(parent, this, context);			
 			return parent;
 		}
@@ -108,6 +140,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_Id);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -121,6 +154,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			{
 				Label l = new Label(parent, SWT.NONE);
 				l.setText(Messages.MenuItemEditor_Type);
+				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 				ComboViewer viewer = new ComboViewer(parent);
 				viewer.setContentProvider(new ArrayContentProvider());
@@ -137,6 +171,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_Label);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -149,6 +184,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_Tooltip);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -161,11 +197,25 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_IconURI);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 
+			new ImageTooltip(t) {
+				
+				@Override
+				protected URI getImageURI() {
+					MUILabel part = (MUILabel) getMaster().getValue();
+					String uri = part.getIconURI();
+					if( uri == null || uri.trim().length() == 0 ) {
+						return null;
+					}
+					return URI.createURI(part.getIconURI());
+				}
+			};
+			
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText(Messages.MenuItemEditor_Find);
@@ -181,6 +231,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Enabled");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			
 			Button b = new Button(parent, SWT.CHECK);
 			b.setLayoutData(new GridData(GridData.BEGINNING,GridData.CENTER,false,false,2,1));
@@ -190,6 +241,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Selected");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			
 			Button b = new Button(parent, SWT.CHECK);
 			b.setLayoutData(new GridData(GridData.BEGINNING,GridData.CENTER,false,false,2,1));

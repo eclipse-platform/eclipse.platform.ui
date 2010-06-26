@@ -10,51 +10,20 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
-import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.swt.widgets.TreeItem;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelImportsEditor;
+import javax.annotation.PostConstruct;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelFragmentsEditor;
+import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.swt.widgets.ToolBar;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimContributionEditor;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VTrimContributionsEditor;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VToolBarContributionsEditor;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarContributionEditor;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
-
-import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
-
-import org.eclipse.emf.ecore.EStructuralFeature;
-
-import org.eclipse.e4.tools.emf.ui.common.IEditorFeature;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.StringModelFragment;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelFragmentsEditor;
-
-import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuContributionEditor;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuContributionsEditor;
-
-import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -76,6 +45,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.tools.emf.ui.common.IEditorDescriptor;
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature;
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.ISelectionProviderService;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -91,8 +62,10 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledToolItemEdit
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.InputPartEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.KeyBindingEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuSeparatorEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelFragmentsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartDescriptorEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartSashContainerEditor;
@@ -100,31 +73,44 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.PartStackEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveStackEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PlaceholderEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.StringModelFragment;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarSeparatorEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimBarEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimmedWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationAddons;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuContributionsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelFragmentsEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelImportsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VToolBarContributionsEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VTrimContributionsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowControlEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -182,15 +168,17 @@ public class ModelEditor {
 	private IProject project;
 	private ISelectionProviderService selectionService;
 	private IEclipseContext context;
-	private Image toolmenuIcon;
 	private boolean fragment;
 
+	@Inject
+	@Optional
+	private MPart editorPart;
+	
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project) {
 		this.modelProvider = modelProvider;
 		this.project = project;
 		this.context = context;
 		this.context.set(ModelEditor.class, this);
-		this.toolmenuIcon = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/headermenu.png"));
 
 		registerDefaultEditors();
 		registerVirtualEditors();
@@ -234,15 +222,12 @@ public class ModelEditor {
 		final Label textLabel = new Label(headerContainer, SWT.NONE);
 		textLabel.setData(CSS_CLASS_KEY, "sectionHeader"); //$NON-NLS-1$
 		textLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-//		ToolBar toolbar = new ToolBar(headerContainer, SWT.NONE);
-//		ToolItem item = new ToolItem(toolbar, SWT.PUSH);
-//		item.setImage(toolmenuIcon);
-		
+				
 		final ScrolledComposite scrolling = new ScrolledComposite(editingArea, SWT.H_SCROLL | SWT.V_SCROLL);
 		scrolling.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		scrolling.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 
+		final StackLayout layout = new StackLayout();
 		final Composite contentContainer = new Composite(scrolling, SWT.NONE);
 		contentContainer.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 		scrolling.setExpandHorizontal(true);
@@ -251,13 +236,14 @@ public class ModelEditor {
 
 		scrolling.addControlListener(new ControlAdapter() {
 			public void controlResized(ControlEvent e) {
-				Rectangle r = scrolling.getClientArea();
-				scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
+				if( layout.topControl != null ) {
+					Rectangle r = scrolling.getClientArea();
+					scrolling.setMinSize(layout.topControl.computeSize(r.width, SWT.DEFAULT));	
+				}
 			}
 		});
 
 		scrolling.setLayoutData(new GridData(GridData.FILL_BOTH));
-		final StackLayout layout = new StackLayout();
 		contentContainer.setLayout(layout);
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -290,7 +276,9 @@ public class ModelEditor {
 					}
 
 					Rectangle r = scrolling.getClientArea();
-					scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
+					scrolling.setMinSize(layout.topControl.computeSize(r.width, SWT.DEFAULT));
+					scrolling.setOrigin(0, 0);
+					scrolling.layout(true,true);
 
 					if (selectionService != null) {
 						selectionService.setSelection(s.getFirstElement());
@@ -354,6 +342,10 @@ public class ModelEditor {
 		return fragment;
 	}
 	
+	public boolean isLiveModel() {
+		return ! modelProvider.isSaveable();
+	}
+	
 	public List<FeatureClass> getFeatureClasses(EClass eClass, EStructuralFeature feature) {
 		List<FeatureClass> list = new ArrayList<IEditorFeature.FeatureClass>();
 		
@@ -365,11 +357,10 @@ public class ModelEditor {
 	}
 
 	@Inject
-	@Optional
-	public void setSelectionService(ISelectionProviderService selectionService) {
+	public void setSelectionService(@Optional ISelectionProviderService selectionService) {
 		this.selectionService = selectionService;
 		if (viewer != null && !viewer.getControl().isDisposed()) {
-			if (!viewer.getSelection().isEmpty()) {
+			if (!viewer.getSelection().isEmpty() && selectionService != null) {
 				selectionService.setSelection(((IStructuredSelection) viewer.getSelection()).getFirstElement());
 			}
 		}

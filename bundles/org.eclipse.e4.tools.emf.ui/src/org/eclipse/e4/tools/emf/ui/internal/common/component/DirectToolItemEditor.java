@@ -64,6 +64,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(Messages.DirectToolItemEditor_ClassURI);
+		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 		Text t = new Text(parent, SWT.BORDER);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

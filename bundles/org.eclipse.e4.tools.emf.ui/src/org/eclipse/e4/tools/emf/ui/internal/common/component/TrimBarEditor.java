@@ -10,6 +10,10 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -78,6 +82,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 	private ModelEditor editor;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+	private StackLayout stackLayout;
 
 	public TrimBarEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain,editor);
@@ -110,22 +115,45 @@ public class TrimBarEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context, getMaster());
+			if (getEditor().isModelFragment()) {
+				composite = new Composite(parent, SWT.NONE);
+				stackLayout = new StackLayout();
+				composite.setLayout(stackLayout);
+				createForm(composite, context, getMaster(), false);
+				createForm(composite, context, getMaster(), true);
+			} else {
+				composite = createForm(parent, context, getMaster(), false);
+			}
 		}
+		
+		if( getEditor().isModelFragment() ) {
+			Control topControl;
+			if( Util.isImport((EObject) object) ) {
+				topControl = composite.getChildren()[1];
+			} else {
+				topControl = composite.getChildren()[0];				
+			}
+			
+			if( stackLayout.topControl != topControl ) {
+				stackLayout.topControl = topControl;
+				composite.layout(true, true);
+			}
+		}
+		
 		getMaster().setValue(object);
 		return composite;
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context,
-			WritableValue master) {
+			WritableValue master, boolean isImport) {
 		parent = new Composite(parent,SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		if( getEditor().isModelFragment() ) {
+		if( isImport ) {
 			ControlFactory.createFindImport(parent, this, context);			
 			return parent;
 		}
@@ -134,7 +162,8 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Id");
-
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan=2;
@@ -146,6 +175,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Side");
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			ComboViewer viewer = new ComboViewer(parent);
 			viewer.setContentProvider(new ArrayContentProvider());
@@ -161,7 +191,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Controls");
-			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
 			
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setLabelProvider(new ComponentLabelProvider(editor));
