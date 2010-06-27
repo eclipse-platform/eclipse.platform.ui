@@ -39,7 +39,6 @@ import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.Policy;
-import org.eclipse.e4.ui.internal.workbench.ToolBarContributionHandler;
 import org.eclipse.e4.ui.internal.workbench.TrimContributionHandler;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -598,8 +597,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 						TrimContributionHandler.class, runContext);
 				runContext.set(TrimContributionHandler.class, trimContributionHandler);
 				
-				ContextInjectionFactory.make(ToolBarContributionHandler.class,
-						runContext);
 				menuServiceFilter = ContextInjectionFactory.make(
 						MenuServiceFilter.class, runContext);
 				display.addFilter(SWT.Show, menuServiceFilter);

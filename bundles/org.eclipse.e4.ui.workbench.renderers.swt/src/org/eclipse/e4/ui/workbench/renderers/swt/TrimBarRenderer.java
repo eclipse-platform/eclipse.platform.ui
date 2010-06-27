@@ -11,13 +11,23 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
@@ -26,6 +36,22 @@ import org.eclipse.swt.widgets.Widget;
  *
  */
 public class TrimBarRenderer extends SWTPartRenderer {
+	private MApplication application;
+
+	private HashMap<MTrimBar, ArrayList<ArrayList<MTrimElement>>> pendingCleanup = new HashMap<MTrimBar, ArrayList<ArrayList<MTrimElement>>>();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#init(org.eclipse
+	 * .e4.core.contexts.IEclipseContext)
+	 */
+	@Override
+	public void init(IEclipseContext context) {
+		super.init(context);
+		application = context.get(MApplication.class);
+	}
 
 	ControlListener childResizeListener = new ControlListener() {
 		public void controlResized(ControlEvent e) {
@@ -54,21 +80,32 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		if (!(parentComp.getLayout() instanceof TrimmedPartLayout))
 			return null;
 
-		MTrimBar trimModel = (MTrimBar) element;
+		final MTrimBar trimModel = (MTrimBar) element;
 		TrimmedPartLayout tpl = (TrimmedPartLayout) parentComp.getLayout();
 
+		Composite result = null;
 		switch (trimModel.getSide().getValue()) {
 		case SideValue.TOP_VALUE:
-			return tpl.getTrimComposite(parentComp, SWT.TOP);
+			result = tpl.getTrimComposite(parentComp, SWT.TOP);
+			break;
 		case SideValue.BOTTOM_VALUE:
-			return tpl.getTrimComposite(parentComp, SWT.BOTTOM);
+			result = tpl.getTrimComposite(parentComp, SWT.BOTTOM);
+			break;
 		case SideValue.LEFT_VALUE:
-			return tpl.getTrimComposite(parentComp, SWT.LEFT);
+			result = tpl.getTrimComposite(parentComp, SWT.LEFT);
+			break;
 		case SideValue.RIGHT_VALUE:
-			return tpl.getTrimComposite(parentComp, SWT.RIGHT);
+			result = tpl.getTrimComposite(parentComp, SWT.RIGHT);
+			break;
+		default:
+			return null;
 		}
-
-		return null; // unknown side
+		result.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cleanUp(trimModel);
+			}
+		});
+		return result;
 	}
 
 	@Override
@@ -93,10 +130,68 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	public void processContents(MElementContainer<MUIElement> me) {
 		if (!(((MUIElement) me) instanceof MTrimBar))
 			return;
-		// MTrimContainer trimModel = (MTrimContainer) me;
-
-		// TODO Auto-generated method stub
 		super.processContents(me);
+		IEclipseContext ctx = getContext(me);
+		ExpressionContext eContext = new ExpressionContext(ctx);
+		MElementContainer<?> trimObj = me;
+		MTrimBar trimModel = (MTrimBar) trimObj;
+		ArrayList<MTrimContribution> toContribute = new ArrayList<MTrimContribution>();
+		ContributionsAnalyzer.gatherTrimContributions(trimModel,
+				application.getTrimContributions(), trimModel.getElementId(),
+				toContribute, eContext);
+		addTrimContributions(trimModel, toContribute, ctx, eContext);
+	}
+
+	private void addTrimContributions(final MTrimBar trimModel,
+			ArrayList<MTrimContribution> toContribute, IEclipseContext ctx,
+			final ExpressionContext eContext) {
+		// boolean done = toContribute.size() == 0;
+		// while (!done) {
+		// ArrayList<MTrimContribution> curList = new
+		// ArrayList<MTrimContribution>(
+		// toContribute);
+		// int retryCount = toContribute.size();
+		// toContribute.clear();
+		//
+		// for (final MTrimContribution contribution : curList) {
+		// final ArrayList<MTrimElement> toRemove = new
+		// ArrayList<MTrimElement>();
+		// if (!ContributionsAnalyzer.processAddition(trimModel,
+		// contribution, toRemove)) {
+		// toContribute.add(contribution);
+		// } else {
+		// if (contribution.getVisibleWhen() != null) {
+		// ctx.runAndTrack(new RunAndTrack() {
+		// @Override
+		// public boolean changed(IEclipseContext context) {
+		// if (!trimModel.isToBeRendered()
+		// || !trimModel.isVisible()
+		// || trimModel.getWidget() == null) {
+		// return false;
+		// }
+		// boolean rc = ContributionsAnalyzer.isVisible(
+		// contribution, eContext);
+		// for (MTrimElement child : toRemove) {
+		// child.setToBeRendered(rc);
+		// }
+		// return true;
+		// }
+		// });
+		// }
+		// ArrayList<ArrayList<MTrimElement>> lists = pendingCleanup
+		// .get(trimModel);
+		// if (lists == null) {
+		// lists = new ArrayList<ArrayList<MTrimElement>>();
+		// pendingCleanup.put(trimModel, lists);
+		// }
+		// lists.add(toRemove);
+		// }
+		// }
+		// // We're done if the retryList is now empty (everything done) or
+		// // if the list hasn't changed at all (no hope)
+		// done = (toContribute.size() == 0)
+		// || (toContribute.size() == retryCount);
+		// }
 	}
 
 	/*
@@ -116,6 +211,19 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		if (element.getWidget() instanceof Control) {
 			final Control ctrl = (Control) element.getWidget();
 			ctrl.addControlListener(childResizeListener);
+		}
+	}
+
+	protected void cleanUp(MTrimBar element) {
+		ArrayList<ArrayList<MTrimElement>> lists = pendingCleanup
+				.remove(element);
+		if (lists == null) {
+			return;
+		}
+		for (ArrayList<MTrimElement> list : lists) {
+			for (MTrimElement child : list) {
+				element.getChildren().remove(child);
+			}
 		}
 	}
 }

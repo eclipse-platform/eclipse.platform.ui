@@ -54,6 +54,40 @@ public final class ContributionsAnalyzer {
 		trace(msg + ": " + menu + ": " + menuModel, null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	public static void gatherTrimContributions(MTrimBar trimModel,
+			List<MTrimContribution> trimContributions, String elementId,
+			ArrayList<MTrimContribution> toContribute, ExpressionContext eContext) {
+		for (MTrimContribution contribution : trimContributions) {
+			String parentId = contribution.getParentId();
+			boolean filtered = isFiltered(trimModel, contribution);
+			if (filtered || !parentId.equals(elementId) || !contribution.isToBeRendered()) {
+				continue;
+			}
+			toContribute.add(contribution);
+		}
+	}
+
+	static boolean isFiltered(MTrimBar trimModel, MTrimContribution contribution) {
+		return false;
+	}
+
+	public static void gatherToolBarContributions(final MToolBar toolbarModel,
+			final List<MToolBarContribution> toolbarContributionList, final String id,
+			final ArrayList<MToolBarContribution> toContribute, final ExpressionContext eContext) {
+		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
+			String parentID = toolBarContribution.getParentId();
+			boolean filtered = isFiltered(toolbarModel, toolBarContribution);
+			if (filtered || !parentID.equals(id) || !toolBarContribution.isToBeRendered()) {
+				continue;
+			}
+			toContribute.add(toolBarContribution);
+		}
+	}
+
+	static boolean isFiltered(MToolBar toolbarModel, MToolBarContribution toolBarContribution) {
+		return false;
+	}
+
 	public static void gatherMenuContributions(final MMenu menuModel,
 			final List<MMenuContribution> menuContributionList, final String id,
 			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
@@ -89,7 +123,24 @@ public final class ContributionsAnalyzer {
 		if (menuContribution.getVisibleWhen() == null) {
 			return true;
 		}
-		MCoreExpression exp = (MCoreExpression) menuContribution.getVisibleWhen();
+		return isVisible((MCoreExpression) menuContribution.getVisibleWhen(), eContext);
+	}
+
+	public static boolean isVisible(MToolBarContribution contribution, ExpressionContext eContext) {
+		if (contribution.getVisibleWhen() == null) {
+			return true;
+		}
+		return isVisible((MCoreExpression) contribution.getVisibleWhen(), eContext);
+	}
+
+	public static boolean isVisible(MTrimContribution contribution, ExpressionContext eContext) {
+		if (contribution.getVisibleWhen() == null) {
+			return true;
+		}
+		return isVisible((MCoreExpression) contribution.getVisibleWhen(), eContext);
+	}
+
+	static boolean isVisible(MCoreExpression exp, ExpressionContext eContext) {
 		Expression ref = null;
 		if (exp.getCoreExpression() instanceof Expression) {
 			ref = (Expression) exp.getCoreExpression();
@@ -168,30 +219,9 @@ public final class ContributionsAnalyzer {
 		return true;
 	}
 
-	public static List<MToolBarElement> addToolBarContributions(final MToolBar menuModel,
-			final List<MToolBarContribution> toContribute) {
-		List<MToolBarElement> contributions = new ArrayList<MToolBarElement>();
-		boolean done = toContribute.size() == 0;
-		while (!done) {
-			ArrayList<MToolBarContribution> curList = new ArrayList<MToolBarContribution>(
-					toContribute);
-			int retryCount = toContribute.size();
-			toContribute.clear();
-
-			for (MToolBarContribution menuContribution : curList) {
-				if (!processAddition(menuModel, menuContribution, contributions)) {
-					toContribute.add(menuContribution);
-				}
-			}
-			// We're done if the retryList is now empty (everything done) or
-			// if the list hasn't changed at all (no hope)
-			done = (toContribute.size() == 0) || (toContribute.size() == retryCount);
-		}
-		return contributions;
-	}
-
-	private static boolean processAddition(final MToolBar toolBarModel,
-			MToolBarContribution toolBarContribution, List<MToolBarElement> contributions) {
+	public static boolean processAddition(final MToolBar toolBarModel,
+			MToolBarContribution toolBarContribution, List<MToolBarElement> contributions,
+			HashSet<String> existingSeparatorNames) {
 		int idx = getIndex(toolBarModel, toolBarContribution.getPositionInParent());
 		if (idx == -1) {
 			return false;
@@ -691,4 +721,5 @@ public final class ContributionsAnalyzer {
 	public static final String MC_MENU = "menuContribution:menu"; //$NON-NLS-1$
 	public static final String MC_TOOLBAR = "menuContribution:toolbar"; //$NON-NLS-1$
 	public static final String POPUP_PARENT_ID = "popup"; //$NON-NLS-1$
+
 }
