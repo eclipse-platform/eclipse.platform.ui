@@ -56,7 +56,7 @@ public class SearchField {
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				boolean wasVisible = shell.getVisible();
-				boolean nowVisible = !text.getText().isEmpty();
+				boolean nowVisible = text.getText().length() > 0;
 				if (!wasVisible && nowVisible) {
 					Rectangle tempBounds = comp.getBounds();
 					Rectangle compBounds = e.display.map(comp, null, tempBounds);
