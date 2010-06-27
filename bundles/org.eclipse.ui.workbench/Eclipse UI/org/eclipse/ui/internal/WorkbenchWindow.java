@@ -557,10 +557,17 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		switcherControl
 				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
 
+		MToolControl searchControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+		searchControl.setElementId("SearchField"); //$NON-NLS-1$
+		searchControl
+				.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.quickaccess.SearchField"); //$NON-NLS-1$
+
 		trimBar.getChildren().add(spacerControl);
+		trimBar.getChildren().add(searchControl);
 		trimBar.getChildren().add(switcherControl);
 
 		workbenchTrimElements.add(spacerControl);
+		workbenchTrimElements.add(searchControl);
 		workbenchTrimElements.add(switcherControl);
 	}
 

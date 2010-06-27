@@ -12,9 +12,13 @@ package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * Handler for quick access pop-up dialog, showing UI elements such as editors,
@@ -38,8 +42,15 @@ public class QuickAccessHandler extends AbstractHandler {
 			return null;
 		}
 
-		final PopupDialog popupDialog = new QuickAccessDialog(window, executionEvent.getCommand());
-		popupDialog.open();
+		MWindow mWindow = ((WorkbenchWindow) window).getModel();
+		EModelService modelService = mWindow.getContext().get(EModelService.class);
+		MUIElement searchField = modelService.find("SearchField", mWindow); //$NON-NLS-1$
+		Control control = (Control) searchField.getWidget();
+		control.setFocus();
+
+// final PopupDialog popupDialog = new QuickAccessDialog(window,
+		// executionEvent.getCommand());
+		// popupDialog.open();
 		return null;
 	}
 
