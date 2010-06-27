@@ -138,7 +138,7 @@ public final class ContributionsAnalyzer {
 		}
 	}
 
-	private static boolean processAddition(final MMenu menuModel,
+	public static boolean processAddition(final MMenu menuModel,
 			final ArrayList<MMenuElement> menuContributionsToRemove,
 			MMenuContribution menuContribution, final HashSet<String> existingMenuIds,
 			HashSet<String> existingSeparatorNames) {

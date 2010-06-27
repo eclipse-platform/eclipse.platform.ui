@@ -2220,6 +2220,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				perspective, this, true);
 		factory.createInitialLayout(modelLayout);
 		PerspectiveTagger.tagPerspective(modelPerspective, modelService);
+		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+		reader.extendLayout(getExtensionTracker(), perspective.getId(), modelLayout);
 
 		if (lastPerspective != null) {
 			legacyWindow.firePerspectiveDeactivated(this, lastPerspective);

@@ -136,9 +136,11 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void addFastView(String viewId) {
+		E4Util.unsupported("addFastView: " + viewId); //$NON-NLS-1$
 	}
 
 	public void addFastView(String viewId, float ratio) {
+		E4Util.unsupported("addFastView: " + viewId); //$NON-NLS-1$
 	}
 
 	public void addNewWizardShortcut(String id) {
@@ -176,6 +178,14 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public void addView(String viewId, int relationship, float ratio,
 			String refId) {
+		insertView(viewId, relationship, ratio, refId, true, true);
+	}
+
+	public void addView(String viewId, int relationship, float ratio, String refId,
+			boolean minimized) {
+		if (minimized) {
+			E4Util.unsupported("addView: use of minimized for " + viewId + " ref " + refId); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		insertView(viewId, relationship, ratio, refId, true, true);
 	}
 
@@ -487,5 +497,39 @@ public class ModeledPageLayout implements IPageLayout {
 	private MPart findPart(MUIElement toSearch, String id) {
 		MUIElement element = modelService.find(id, toSearch);
 		return element instanceof MPart ? (MPart) element : null;
+	}
+
+	public void addHiddenMenuItemId(String id) {
+		E4Util.unsupported("addHiddenMenuItemId: " + id); //$NON-NLS-1$
+	}
+
+	public void addHiddenToolBarItemId(String id) {
+		E4Util.unsupported("addHiddenToolBarItemId: " + id); //$NON-NLS-1$
+	}
+
+	public void removePlaceholder(String id) {
+		MUIElement refModel = findElement(perspModel, id);
+		if (!(refModel instanceof MPlaceholder)) {
+			E4Util.unsupported("removePlaceholder: failed to find " + id + ": " + refModel); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
+		MElementContainer<MUIElement> parent = refModel.getParent();
+		if (parent != null) {
+			parent.getChildren().remove(refModel);
+		}
+	}
+
+	public void stackView(String id, String refId, boolean visible) {
+		MUIElement refModel = findElement(perspModel, refId);
+		if (refModel instanceof MPart || refModel instanceof MPlaceholder) {
+			refModel = refModel.getParent();
+		}
+		if (!(refModel instanceof MPartStack)) {
+			E4Util.unsupported("stackView: failed to find " + refId + " for " + id); //$NON-NLS-1$//$NON-NLS-2$
+			return;
+		}
+		MStackElement viewModel = createViewModel(application, id, visible, page, partService,
+				createReferences);
+		((MPartStack) refModel).getChildren().add(viewModel);
 	}
 }
