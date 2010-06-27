@@ -272,13 +272,12 @@ public class CTabRendering extends CTabFolderRenderer {
 
 		int[] tempPoints = new int[index];
 		System.arraycopy(points, 0, tempPoints, 0, index);
-		shape = tempPoints;
-		gc.fillPolygon(shape);
+		gc.fillPolygon(tempPoints);
 
 		// Fill in parent background for non-rectangular shape
 		Region r = new Region();
 		r.add(bounds);
-		r.subtract(shape);
+		r.subtract(tempPoints);
 		gc.setBackground(parent.getParent().getBackground());
 		Display display = parent.getDisplay();
 		Region clipping = new Region();
@@ -297,6 +296,9 @@ public class CTabRendering extends CTabFolderRenderer {
 		gc.setClipping(clipping);
 		clipping.dispose();
 		r.dispose();
+
+		// Remember for use in header drawing
+		shape = tempPoints;
 	}
 
 	void drawSelectedTab(int itemIndex, GC gc, Rectangle bounds, int state) {
