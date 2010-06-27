@@ -190,21 +190,9 @@ public class ShadowComposite extends Composite {
 			y = y - borderTop;
 			height = height + borderTop + borderBottom;
 			break;
-		// default:
-		// if (0 <= part && part < parent.getItemCount()) {
-		// x = x - ITEM_LEFT_MARGIN;// - (CORNER_SIZE/2);
-		// width = width + ITEM_LEFT_MARGIN + ITEM_RIGHT_MARGIN + 1;
-		// y = y - ITEM_TOP_MARGIN;
-		// height = height + ITEM_TOP_MARGIN + ITEM_BOTTOM_MARGIN;
-		// }
-		// break;
 		}
 		return new Rectangle(x, y, width, height);
 	}
-
-	// protected void dispose() {
-	// super.dispose();
-	// }
 
 	protected void draw(int part, int state, Rectangle bounds, GC gc) {
 		switch (part) {
@@ -214,31 +202,7 @@ public class ShadowComposite extends Composite {
 		case PART_HEADER:
 			this.drawTabHeader(gc, bounds, state);
 			return;
-			// default:
-			// if (0 <= part && part < parent.getItemCount()) {
-			// if (bounds.width == 0 || bounds.height == 0)
-			// return;
-			// if ((state & SWT.SELECTED) != 0) {
-			// drawSelectedTab(part, gc, bounds, state);
-			// state &= ~SWT.BACKGROUND;
-			// super.draw(part, state, bounds, gc);
-			// } else {
-			// drawUnselectedTab(part, gc, bounds, state);
-			// if ((state & SWT.HOT) == 0 && !active) {
-			// gc.setAdvanced(true);
-			// gc.setAlpha(0x7f);
-			// state &= ~SWT.BACKGROUND;
-			// super.draw(part, state, bounds, gc);
-			// gc.setAdvanced(false);
-			// } else {
-			// state &= ~SWT.BACKGROUND;
-			// super.draw(part, state, bounds, gc);
-			// }
-			// }
-			// return;
-			// }
 		}
-		// super.draw(part, state, bounds, gc);
 	}
 
 	void drawTabHeader(GC gc, Rectangle bounds, int state) {
@@ -344,13 +308,12 @@ public class ShadowComposite extends Composite {
 
 		int[] tempPoints = new int[index];
 		System.arraycopy(points, 0, tempPoints, 0, index);
-		shape = tempPoints;
-		gc.fillPolygon(shape);
+		gc.fillPolygon(tempPoints);
 
 		// Fill in parent background for non-rectangular shape
 		Region r = new Region();
 		r.add(bounds);
-		r.subtract(shape);
+		r.subtract(tempPoints);
 		gc.setBackground(parent.getParent().getBackground());
 		Display display = parent.getDisplay();
 		Region clipping = new Region();
@@ -367,190 +330,9 @@ public class ShadowComposite extends Composite {
 		gc.setClipping(clipping);
 		clipping.dispose();
 		r.dispose();
-	}
 
-	// void drawSelectedTab(int itemIndex, GC gc, Rectangle bounds, int state) {
-	// int width = bounds.width;
-	//
-	// int[] points = new int[1024];
-	// int index = 0;
-	// int radius = cornerSize / 2;
-	// int circX = bounds.x + radius;
-	// int circY = bounds.y - 1 + radius;
-	// int selectionX1, selectionY1, selectionX2, selectionY2;
-	// if (itemIndex == 0) {
-	// circX -= 1;
-	// points[index++] = circX - radius;
-	// points[index++] = bounds.y + bounds.height;
-	//
-	// points[index++] = selectionX1 = circX - radius;
-	// points[index++] = selectionY1 = bounds.y + bounds.height;
-	// } else {
-	// points[index++] = shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE +
-	// OUTER_KEYLINE;
-	// points[index++] = bounds.y + bounds.height;
-	//
-	// points[index++] = selectionX1 = bounds.x;
-	// points[index++] = selectionY1 = bounds.y + bounds.height;
-	// }
-	// int[] ltt = drawCircle(circX, circY, radius, LEFT_TOP);
-	// for (int i = 0; i < ltt.length / 2; i += 2) {
-	// int tmp = ltt[i];
-	// ltt[i] = ltt[ltt.length - i - 2];
-	// ltt[ltt.length - i - 2] = tmp;
-	// tmp = ltt[i + 1];
-	// ltt[i + 1] = ltt[ltt.length - i - 1];
-	// ltt[ltt.length - i - 1] = tmp;
-	// }
-	// System.arraycopy(ltt, 0, points, index, ltt.length);
-	// index += ltt.length;
-	//
-	// int[] rt = drawCircle(circX + width - (radius * 2), circY, radius,
-	// RIGHT_TOP);
-	// for (int i = 0; i < rt.length / 2; i += 2) {
-	// int tmp = rt[i];
-	// rt[i] = rt[rt.length - i - 2];
-	// rt[rt.length - i - 2] = tmp;
-	// tmp = rt[i + 1];
-	// rt[i + 1] = rt[rt.length - i - 1];
-	// rt[rt.length - i - 1] = tmp;
-	// }
-	// System.arraycopy(rt, 0, points, index, rt.length);
-	// index += rt.length;
-	//
-	// points[index++] = selectionX2 = bounds.width + circX - radius;
-	// points[index++] = selectionY2 = bounds.y + bounds.height;
-	//
-	// points[index++] = parent.getSize().x - (shadowEnabled ? SIDE_DROP_WIDTH :
-	// 0 + INNER_KEYLINE + OUTER_KEYLINE);
-	// points[index++] = bounds.y + bounds.height;
-	//
-	// gc.setClipping(0, bounds.y, parent.getSize().x - (shadowEnabled ?
-	// SIDE_DROP_WIDTH : 0 + INNER_KEYLINE + OUTER_KEYLINE), bounds.y +
-	// bounds.height);// bounds.height
-	// // +
-	// // 4);
-	// Color selectionFillColor =
-	// gc.getDevice().getSystemColor(SWT.COLOR_WHITE);
-	// gc.setBackground(selectionFillColor);
-	// gc.setForeground(selectionFillColor);
-	// int[] tmpPoints = new int[index];
-	// System.arraycopy(points, 0, tmpPoints, 0, index);
-	// gc.fillPolygon(tmpPoints);
-	// gc.drawLine(selectionX1, selectionY1, selectionX2, selectionY2);
-	// Color tempBorder = new Color(gc.getDevice(), 182, 188, 204);
-	// gc.setForeground(tempBorder);
-	// tempBorder.dispose();
-	// if (active)
-	// gc.drawPolyline(tmpPoints);
-	// Rectangle rect = null;
-	// gc.setClipping(rect);
-	//
-	// if (outerKeyline == null)
-	// outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
-	// gc.setForeground(outerKeyline);
-	// gc.drawPolyline(shape);
-	// }
-	//
-	// void drawUnselectedTab(int itemIndex, GC gc, Rectangle bounds, int state)
-	// {
-	// if ((state & SWT.HOT) != 0) {
-	// int width = bounds.width;
-	// int[] points = new int[1024];
-	// int[] inactive = new int[8];
-	// int index = 0, inactive_index = 0;
-	// int radius = cornerSize / 2;
-	// int circX = bounds.x + radius;
-	// int circY = bounds.y - 1 + radius;
-	//
-	// int leftIndex = circX;
-	// if (itemIndex == 0) {
-	// if (parent.getSelectionIndex() != 0)
-	// leftIndex -= 1;
-	// points[index++] = leftIndex - radius;
-	// points[index++] = bounds.y + bounds.height;
-	// } else {
-	// points[index++] = bounds.x;
-	// points[index++] = bounds.y + bounds.height;
-	// }
-	//
-	// if (!active) {
-	// System.arraycopy(points, 0, inactive, 0, index);
-	// inactive_index += 2;
-	// }
-	//
-	// int[] ltt = drawCircle(leftIndex, circY, radius, LEFT_TOP);
-	// for (int i = 0; i < ltt.length / 2; i += 2) {
-	// int tmp = ltt[i];
-	// ltt[i] = ltt[ltt.length - i - 2];
-	// ltt[ltt.length - i - 2] = tmp;
-	// tmp = ltt[i + 1];
-	// ltt[i + 1] = ltt[ltt.length - i - 1];
-	// ltt[ltt.length - i - 1] = tmp;
-	// }
-	// System.arraycopy(ltt, 0, points, index, ltt.length);
-	// index += ltt.length;
-	//
-	// if (!active) {
-	// System.arraycopy(ltt, 0, inactive, inactive_index, 2);
-	// inactive_index += 2;
-	// }
-	//
-	// int rightIndex = circX - 1;
-	// int[] rt = drawCircle(rightIndex + width - (radius * 2), circY, radius,
-	// RIGHT_TOP);
-	// for (int i = 0; i < rt.length / 2; i += 2) {
-	// int tmp = rt[i];
-	// rt[i] = rt[rt.length - i - 2];
-	// rt[rt.length - i - 2] = tmp;
-	// tmp = rt[i + 1];
-	// rt[i + 1] = rt[rt.length - i - 1];
-	// rt[rt.length - i - 1] = tmp;
-	// }
-	// System.arraycopy(rt, 0, points, index, rt.length);
-	// index += rt.length;
-	// if (!active) {
-	// System.arraycopy(rt, rt.length - 4, inactive, inactive_index, 2);
-	// inactive[inactive_index] -= 1;
-	// inactive_index += 2;
-	// }
-	//
-	// points[index++] = bounds.width + rightIndex - radius;
-	// points[index++] = bounds.y + bounds.height;
-	//
-	// if (!active) {
-	// System.arraycopy(points, index - 2, inactive, inactive_index, 2);
-	// inactive[inactive_index] -= 1;
-	// inactive_index += 2;
-	// }
-	//
-	// gc.setClipping(points[0], bounds.y, parent.getSize().x - (shadowEnabled ?
-	// SIDE_DROP_WIDTH : 0 + INNER_KEYLINE + OUTER_KEYLINE), bounds.y +
-	// bounds.height);// bounds.height
-	// // + 4);
-	// gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
-	// int[] tmpPoints = new int[index];
-	// System.arraycopy(points, 0, tmpPoints, 0, index);
-	// gc.fillPolygon(tmpPoints);
-	// Color tempBorder = new Color(gc.getDevice(), 182, 188, 204);
-	// gc.setForeground(tempBorder);
-	// tempBorder.dispose();
-	// if (active) {
-	// gc.drawPolyline(tmpPoints);
-	// } else {
-	// gc.drawLine(inactive[0], inactive[1], inactive[2], inactive[3]);
-	// gc.drawLine(inactive[4], inactive[5], inactive[6], inactive[7]);
-	// }
-	//
-	// Rectangle rect = null;
-	// gc.setClipping(rect);
-	//
-	// if (outerKeyline == null)
-	// outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
-	// // gc.setForeground(outerKeyline);
-	// // gc.drawPolyline(shape);
-	// }
-	// }
+		shape = tempPoints;
+	}
 
 	static int[] drawCircle(int xC, int yC, int r, int circlePart) {
 		int x = 0, y = r, u = 1, v = 2 * r - 1, e = 0;
