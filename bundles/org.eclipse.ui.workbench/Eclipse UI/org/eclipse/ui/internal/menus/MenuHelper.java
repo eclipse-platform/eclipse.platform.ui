@@ -1,13 +1,12 @@
 package org.eclipse.ui.internal.menus;
 
-import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
-
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
@@ -15,9 +14,9 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
@@ -40,9 +39,7 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
-import org.eclipse.ui.internal.handlers.E4HandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
@@ -321,8 +318,8 @@ public class MenuHelper {
 	}
 
 	public static MMenuElement createLegacyMenuActionAdditions(MApplication app,
-			IConfigurationElement element) {
-		String id = MenuHelper.getId(element);
+			final IConfigurationElement element) {
+		final String id = MenuHelper.getId(element);
 		String text = MenuHelper.getLabel(element);
 		String mnemonic = MenuHelper.getMnemonic(element);
 		if (text != null && mnemonic != null) {
@@ -332,18 +329,91 @@ public class MenuHelper {
 			}
 		}
 		String iconUri = MenuHelper.getIconUrl(element, IWorkbenchRegistryConstants.ATT_ICON);
-		String cmdId = MenuHelper.getActionSetCommandId(element);
-		if (cmdId == null) {
-			return null;
+		final String cmdId = MenuHelper.getActionSetCommandId(element);
+
+		MCommand cmd = ContributionsAnalyzer.getCommandById(app, cmdId);
+		if (cmd == null) {
+			ECommandService commandService = app.getContext().get(ECommandService.class);
+			Command command = commandService.getCommand(cmdId);
+			if (command == null) {
+				ICommandService ics = app.getContext().get(ICommandService.class);
+				command = commandService.defineCommand(cmdId, text, null, ics.getCategory(null),
+						null);
+			}
+			cmd = CommandsFactoryImpl.eINSTANCE.createCommand();
+			cmd.setCommandName(text);
+			cmd.setElementId(cmdId);
+			app.getCommands().add(cmd);
+		}
+
+		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
+		String pulldown = element.getAttribute("pulldown"); //$NON-NLS-1$
+		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)
+				|| (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
+			MRenderedMenu menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
+			menu.setElementId(id);
+			menu.setLabel(text);
+			if (iconUri != null) {
+				menu.setIconURI(iconUri);
+			}
+			ECommandService cs = app.getContext().get(ECommandService.class);
+			final ParameterizedCommand parmCmd = cs.createCommand(cmdId, null);
+			menu.setContributionManager(new IMenuCreator() {
+				private ActionDelegateHandlerProxy handlerProxy;
+
+				private ActionDelegateHandlerProxy getProxy() {
+					if (handlerProxy == null) {
+						handlerProxy = new ActionDelegateHandlerProxy(element,
+								IWorkbenchRegistryConstants.ATT_CLASS, id, parmCmd, PlatformUI
+										.getWorkbench().getActiveWorkbenchWindow(), null, null,
+								null);
+					}
+					return handlerProxy;
+				}
+
+				private IWorkbenchWindowPulldownDelegate getDelegate() {
+					getProxy();
+					if (handlerProxy == null) {
+						return null;
+					}
+					if (handlerProxy.getDelegate() == null) {
+						handlerProxy.loadDelegate();
+					}
+					return (IWorkbenchWindowPulldownDelegate) handlerProxy.getDelegate();
+				}
+
+				public Menu getMenu(Menu parent) {
+					IWorkbenchWindowPulldownDelegate2 delegate = (IWorkbenchWindowPulldownDelegate2) getDelegate();
+					if (delegate == null) {
+						return null;
+					}
+					return delegate.getMenu(parent);
+				}
+
+				public Menu getMenu(Control parent) {
+					return getDelegate() == null ? null : getDelegate().getMenu(parent);
+				}
+
+				public void dispose() {
+					if (handlerProxy != null) {
+						handlerProxy.dispose();
+						handlerProxy = null;
+					}
+				}
+			});
+			return menu;
+		}
+
+		ItemType type = ItemType.PUSH;
+		if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
+			type = ItemType.CHECK;
+		} else if (IWorkbenchRegistryConstants.STYLE_RADIO.equals(style)) {
+			type = ItemType.RADIO;
 		}
 		MHandledMenuItem item = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 		item.setElementId(id);
 		item.setLabel(text);
-		MCommand cmd = ContributionsAnalyzer.getCommandById(app, cmdId);
-		if (cmd == null) {
-			trace("Failed to find command: " + cmdId, null); //$NON-NLS-1$
-			return null;
-		}
+		item.setType(type);
 		item.setCommand(cmd);
 		if (iconUri != null) {
 			item.setIconURI(iconUri);
@@ -356,12 +426,9 @@ public class MenuHelper {
 	}
 
 	public static MToolBarElement createLegacyToolBarActionAdditions(MApplication app,
-			IConfigurationElement element) {
+			final IConfigurationElement element) {
 		String cmdId = MenuHelper.getActionSetCommandId(element);
-		if (cmdId == null) {
-			return null;
-		}
-		String id = MenuHelper.getId(element);
+		final String id = MenuHelper.getId(element);
 		String text = MenuHelper.getLabel(element);
 		String mnemonic = MenuHelper.getMnemonic(element);
 		if (text != null && mnemonic != null) {
@@ -373,11 +440,10 @@ public class MenuHelper {
 		String iconUri = MenuHelper.getIconUrl(element, IWorkbenchRegistryConstants.ATT_ICON);
 		MCommand cmd = ContributionsAnalyzer.getCommandById(app, cmdId);
 		if (cmd == null) {
-			ECommandService commandService = (ECommandService) PlatformUI.getWorkbench()
-					.getService(ECommandService.class);
+			ECommandService commandService = app.getContext().get(ECommandService.class);
 			Command command = commandService.getCommand(cmdId);
 			if (command == null) {
-				ICommandService ics = (ICommandService) PlatformUI.getWorkbench().getService(
+				ICommandService ics = app.getContext().get(
 						ICommandService.class);
 				command = commandService.defineCommand(cmdId, text, null, ics.getCategory(null),
 						null);
@@ -385,6 +451,7 @@ public class MenuHelper {
 			cmd = CommandsFactoryImpl.eINSTANCE.createCommand();
 			cmd.setCommandName(text);
 			cmd.setElementId(cmdId);
+			app.getCommands().add(cmd);
 		}
 		final MHandledToolItem item = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
 
@@ -397,32 +464,49 @@ public class MenuHelper {
 			item.setType(ItemType.RADIO);
 		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
 			MRenderedMenu menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
+			ECommandService cs = app.getContext().get(ECommandService.class);
+			final ParameterizedCommand parmCmd = cs.createCommand(cmdId, null);
 			menu.setContributionManager(new IMenuCreator() {
-				private IWorkbenchWindowPulldownDelegate getDelegate() {
-					WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow();
-					E4HandlerProxy proxy = (E4HandlerProxy) HandlerServiceImpl.lookUpHandler(window
-							.getModel().getContext(), item.getCommand().getElementId());
-					ActionDelegateHandlerProxy handlerProxy = (ActionDelegateHandlerProxy) proxy
-							.getHandler();
-					Object delegate = handlerProxy.getDelegate();
-					if (delegate == null) {
-						handlerProxy.loadDelegate();
-						delegate = handlerProxy.getDelegate();
+				private ActionDelegateHandlerProxy handlerProxy;
+
+				private ActionDelegateHandlerProxy getProxy() {
+					if (handlerProxy == null) {
+						handlerProxy = new ActionDelegateHandlerProxy(element,
+								IWorkbenchRegistryConstants.ATT_CLASS, id, parmCmd, PlatformUI
+										.getWorkbench().getActiveWorkbenchWindow(), null, null,
+								null);
 					}
-					return (IWorkbenchWindowPulldownDelegate) delegate;
+					return handlerProxy;
+				}
+
+				private IWorkbenchWindowPulldownDelegate getDelegate() {
+					getProxy();
+					if (handlerProxy == null) {
+						return null;
+					}
+					if (handlerProxy.getDelegate() == null) {
+						handlerProxy.loadDelegate();
+					}
+					return (IWorkbenchWindowPulldownDelegate) handlerProxy.getDelegate();
 				}
 
 				public Menu getMenu(Menu parent) {
 					IWorkbenchWindowPulldownDelegate2 delegate = (IWorkbenchWindowPulldownDelegate2) getDelegate();
+					if (delegate == null) {
+						return null;
+					}
 					return delegate.getMenu(parent);
 				}
 
 				public Menu getMenu(Control parent) {
-					return getDelegate().getMenu(parent);
+					return getDelegate() == null ? null : getDelegate().getMenu(parent);
 				}
 
 				public void dispose() {
+					if (handlerProxy != null) {
+						handlerProxy.dispose();
+						handlerProxy = null;
+					}
 				}
 			});
 			item.setMenu(menu);

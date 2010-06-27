@@ -13,11 +13,13 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Menu;
@@ -53,12 +55,27 @@ public class RenderedMenuRenderer extends SWTPartRenderer {
 				Control control = (Control) parent;
 				return creator.getMenu(control);
 			} else if (parent instanceof Menu) {
+				int addIndex = calcVisibleIndex(menuModel);
+				MenuItem newItem = new MenuItem((Menu) parent, SWT.CASCADE,
+						addIndex);
+				setItemText(menuModel, newItem);
+				newItem.setImage(getImage(menuModel));
+				newItem.setEnabled(menuModel.isEnabled());
 				Menu menu = (Menu) parent;
-				return creator.getMenu(menu);
+				newItem.setMenu(creator.getMenu(menu));
+				return newItem;
 			}
 		}
 
 		return null;
+	}
+
+	private void setItemText(MMenu model, MenuItem item) {
+		String text = model.getLabel();
+		if (text == null) {
+			text = ""; //$NON-NLS-1$
+		}
+		item.setText(text);
 	}
 
 	/*
