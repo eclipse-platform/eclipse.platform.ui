@@ -162,4 +162,13 @@ public interface MMenuFactory {
 	 */
 	MTrimContribution createTrimContribution();
 
+	/**
+	 * Returns a new object of class '<em>Rendered Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Rendered Menu Item</em>'.
+	 * @generated
+	 */
+	MRenderedMenuItem createRenderedMenuItem();
+
 } //MMenuFactory

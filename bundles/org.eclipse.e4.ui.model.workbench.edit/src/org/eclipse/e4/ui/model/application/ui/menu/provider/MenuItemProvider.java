@@ -284,6 +284,11 @@ public class MenuItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createRenderedMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.INSTANCE.createApplication()));
 
 		newChildDescriptors.add

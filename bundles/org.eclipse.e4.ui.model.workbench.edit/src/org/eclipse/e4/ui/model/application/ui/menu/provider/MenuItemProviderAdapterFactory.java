@@ -422,6 +422,29 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected RenderedMenuItemItemProvider renderedMenuItemItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createRenderedMenuItemAdapter() {
+		if (renderedMenuItemItemProvider == null) {
+			renderedMenuItemItemProvider = new RenderedMenuItemItemProvider(this);
+		}
+
+		return renderedMenuItemItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -535,6 +558,7 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		if (renderedToolBarItemProvider != null) renderedToolBarItemProvider.dispose();
 		if (toolBarContributionItemProvider != null) toolBarContributionItemProvider.dispose();
 		if (trimContributionItemProvider != null) trimContributionItemProvider.dispose();
+		if (renderedMenuItemItemProvider != null) renderedMenuItemItemProvider.dispose();
 	}
 
 }

@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
+import org.eclipse.e4.ui.model.application.ui.menu.*;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
@@ -101,6 +102,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.RENDERED_TOOL_BAR: return (EObject)createRenderedToolBar();
 			case MenuPackageImpl.TOOL_BAR_CONTRIBUTION: return (EObject)createToolBarContribution();
 			case MenuPackageImpl.TRIM_CONTRIBUTION: return (EObject)createTrimContribution();
+			case MenuPackageImpl.RENDERED_MENU_ITEM: return (EObject)createRenderedMenuItem();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -284,6 +286,16 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MTrimContribution createTrimContribution() {
 		TrimContributionImpl trimContribution = new TrimContributionImpl();
 		return trimContribution;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MRenderedMenuItem createRenderedMenuItem() {
+		RenderedMenuItemImpl renderedMenuItem = new RenderedMenuItemImpl();
+		return renderedMenuItem;
 	}
 
 	/**

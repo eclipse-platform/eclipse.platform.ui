@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.menu.*;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
@@ -359,6 +360,18 @@ public class MenuSwitch<T1> {
 			case MenuPackageImpl.TRIM_CONTRIBUTIONS: {
 				MTrimContributions trimContributions = (MTrimContributions)theEObject;
 				T1 result = caseTrimContributions(trimContributions);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.RENDERED_MENU_ITEM: {
+				MRenderedMenuItem renderedMenuItem = (MRenderedMenuItem)theEObject;
+				T1 result = caseRenderedMenuItem(renderedMenuItem);
+				if (result == null) result = caseMenuItem(renderedMenuItem);
+				if (result == null) result = caseItem(renderedMenuItem);
+				if (result == null) result = caseMenuElement(renderedMenuItem);
+				if (result == null) result = caseUIElement(renderedMenuItem);
+				if (result == null) result = caseUILabel(renderedMenuItem);
+				if (result == null) result = caseApplicationElement(renderedMenuItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -723,6 +736,21 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseTrimContributions(MTrimContributions object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Rendered Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Rendered Menu Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseRenderedMenuItem(MRenderedMenuItem object) {
 		return null;
 	}
 
