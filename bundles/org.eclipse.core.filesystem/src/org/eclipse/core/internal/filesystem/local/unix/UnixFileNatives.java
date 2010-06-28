@@ -78,9 +78,9 @@ public abstract class UnixFileNatives {
 					info = new FileInfo();
 				info.setAttribute(EFS.ATTRIBUTE_SYMLINK, true);
 				byte target[] = new byte[UnixFileFlags.PATH_MAX];
-				long length = readlink(name, target, target.length);
+				int length = readlink(name, target, target.length);
 				if (length > 0)
-					info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, bytesToFileName(target, (int) length));
+					info.setStringAttribute(EFS.ATTRIBUTE_LINK_TARGET, bytesToFileName(target, length));
 			} else
 				info = stat.toFileInfo();
 		} else
@@ -182,7 +182,7 @@ public abstract class UnixFileNatives {
 
 	private static final native int lstat(byte[] path, StructStat buf);
 
-	private static final native long readlink(byte[] path, byte[] buf, long bufsiz);
+	private static final native int readlink(byte[] path, byte[] buf, long bufsiz);
 
 	private static final native int errno();
 
