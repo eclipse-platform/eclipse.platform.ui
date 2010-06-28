@@ -1,27 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 
-<plugin
-   id="org.eclipse.compare.examples"
-   name="%pluginName"
-   version="3.1.200.qualifier"
-   provider-name="%providerName">
+<plugin>
 
-   <runtime>
-      <library name="compareexamples.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
-   </requires>
-
-   <extension
+     <extension
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             extensions="kvtxt"

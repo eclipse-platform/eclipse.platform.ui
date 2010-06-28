@@ -3,42 +3,17 @@
 <!-- =================================================================================== -->
 <!-- Team Examples Plug-in Manifest 					                                 -->
 <!-- =================================================================================== -->
-<plugin
-   id="org.eclipse.team.examples.filesystem"
-   name="%pluginName"
-   version="3.4.100.qualifier"
-   provider-name="%providerName"
-   class="org.eclipse.team.examples.filesystem.FileSystemPlugin">
+<plugin>
 
 <!-- =================================================================================== -->
 <!-- Libraries						 					                                 -->
 <!-- =================================================================================== -->
 
-<runtime>
-	<library name="teamfilesystem.jar">
-    	<export name="*"/>
-	</library>
-</runtime>
-   
+
 <!-- =================================================================================== -->
 <!-- Imports						 					                                 -->
 <!-- =================================================================================== -->
    
-<requires>
-	<import plugin="org.eclipse.core.runtime.compatibility"/> 
-	<import plugin="org.eclipse.ui.ide" optional="true"/>
-	<import plugin="org.eclipse.ui.views" optional="true"/>
-	<import plugin="org.eclipse.jface.text" optional="true"/>
-	<import plugin="org.eclipse.ui.workbench.texteditor" optional="true"/>
-	<import plugin="org.eclipse.ui.editors" optional="true"/>
-	<import plugin="org.eclipse.core.resources"/>
-	<import plugin="org.eclipse.team.core"/>
-	<import plugin="org.eclipse.team.ui"/>
-	<import plugin="org.eclipse.compare"/>
-	<import plugin="org.eclipse.ui"/>
- <import plugin="org.eclipse.core.filesystem"/>
- <import plugin="org.eclipse.ui.navigator"/>
-</requires>
 
 <!-- =================================================================================== -->
 <!-- Repository Providers																 -->
