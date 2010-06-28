@@ -38,7 +38,7 @@ public class PasteConnectionStringAction extends ActionDelegate implements
 				StringTokenizer st = new StringTokenizer((String) contents,
 						System.getProperty("line.separator", "\n")); //$NON-NLS-1$ //$NON-NLS-2$
 				while (st.hasMoreTokens()) {
-					String connectionString = st.nextToken();
+					String connectionString = st.nextToken().trim();
 					CVSRepositoryLocation location = CVSRepositoryLocation
 							.fromString(connectionString);
 					if (location != null) {
