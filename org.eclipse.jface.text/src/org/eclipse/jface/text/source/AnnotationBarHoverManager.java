@@ -701,6 +701,24 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	}
 
 	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeInformationControlLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point)
+	 * @since 3.7
+	 */
+	protected Point computeInformationControlLocation(Rectangle subjectArea, Point controlSize) {
+		MouseEvent event= getHoverEvent();
+		IAnnotationHover hover= getHover(event);
+
+		if (hover instanceof IAnnotationHoverExtension) {
+			IAnnotationHoverExtension extension= (IAnnotationHoverExtension) hover;
+			boolean allowMouseExit= extension.canHandleMouseCursor();
+			if (allowMouseExit) {
+				return computeLocation(subjectArea, controlSize, ANCHOR_RIGHT);
+			}
+		}
+		return super.computeInformationControlLocation(subjectArea, controlSize);
+	}
+	
+	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point, org.eclipse.jface.text.AbstractInformationControlManager.Anchor)
 	 * @since 3.0
 	 */
