@@ -24,6 +24,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -40,7 +41,8 @@ public class EditorAction extends ActionSet {
 
 	@Override
 	public void addToModel(ArrayList<MMenuContribution> menuContributions,
-			ArrayList<MToolBarContribution> toolBarContributions) {
+			ArrayList<MToolBarContribution> toolBarContributions,
+			ArrayList<MTrimContribution> trimContributions) {
 		String idContrib = MenuHelper.getId(configElement);
 		visibleWhen = createExpression(configElement);
 
@@ -52,7 +54,7 @@ public class EditorAction extends ActionSet {
 		}
 
 		addContribution(idContrib, menuContributions, configElement, false);
-		addToolBarContribution(idContrib, toolBarContributions, configElement,
+		addToolBarContribution(idContrib, toolBarContributions, trimContributions, configElement,
 				parent.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID));
 	}
 

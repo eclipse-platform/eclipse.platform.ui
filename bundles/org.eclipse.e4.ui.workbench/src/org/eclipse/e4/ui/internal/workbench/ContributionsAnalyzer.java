@@ -37,7 +37,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.emf.ecore.EObject;
@@ -48,7 +47,7 @@ public final class ContributionsAnalyzer {
 		Activator.trace("/trace/menus", msg, error); //$NON-NLS-1$
 	}
 
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
 
 	private static void trace(String msg, Object menu, Object menuModel) {
 		trace(msg + ": " + menu + ": " + menuModel, null); //$NON-NLS-1$ //$NON-NLS-2$
@@ -237,152 +236,21 @@ public final class ContributionsAnalyzer {
 		return true;
 	}
 
-	public static List<MUIElement> addTrimBarContributions(final MTrimBar trimBar,
-			final List<MTrimContribution> toContribute) {
-		List<MUIElement> contributions = new ArrayList<MUIElement>();
-		boolean done = toContribute.size() == 0;
-		while (!done) {
-			ArrayList<MTrimContribution> curList = new ArrayList<MTrimContribution>(toContribute);
-			int retryCount = toContribute.size();
-			toContribute.clear();
-
-			for (MTrimContribution menuContribution : curList) {
-				if (!processAddition(trimBar, menuContribution, contributions)) {
-					toContribute.add(menuContribution);
-				}
-			}
-			// We're done if the retryList is now empty (everything done) or
-			// if the list hasn't changed at all (no hope)
-			done = (toContribute.size() == 0) || (toContribute.size() == retryCount);
+	public static boolean processAddition(final MTrimBar trimBar, MTrimContribution contribution,
+			List<MTrimElement> contributions) {
+		int idx = getIndex(trimBar, contribution.getPositionInParent());
+		if (idx == -1) {
+			return false;
 		}
-		return contributions;
-	}
-
-	private static boolean processAddition(final MTrimBar trimBar,
-			MTrimContribution toolBarContribution, List<MUIElement> contributions) {
-		String positionInParent = toolBarContribution.getPositionInParent();
-		if (shouldContribute(trimBar, positionInParent)) {
-			int idx = getIndex(trimBar, positionInParent);
-			if (idx == -1) {
-				String id = null;
-				String modifier = null;
-				if (positionInParent != null && positionInParent.length() > 0) {
-					String[] array = positionInParent.split("="); //$NON-NLS-1$
-					modifier = array[0];
-					id = array[1];
-				}
-
-				for (int i = 0; i < trimBar.getChildren().size(); i++) {
-					MTrimElement element = trimBar.getChildren().get(i);
-					if (element instanceof MToolBar) {
-						MToolBar toolBar = (MToolBar) element;
-						boolean match = false;
-						int insertionIdx = 0;
-						for (MToolBarElement tbe : toolBar.getChildren()) {
-							if (id.equals(tbe.getElementId())) {
-								if ("after".equals(modifier)) { //$NON-NLS-1$
-									insertionIdx++;
-								}
-								match = true;
-								break;
-							}
-							insertionIdx++;
-						}
-
-						if (match) {
-							for (MTrimElement item : toolBarContribution.getChildren()) {
-								MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
-								if (copy instanceof MToolControl) {
-									trimBar.getChildren().add(i++, copy);
-									contributions.add(copy);
-								} else if (copy instanceof MToolBar) {
-									MToolBar toolBarCopy = (MToolBar) copy;
-									for (int j = 0; j < toolBarContribution.getChildren().size(); j++) {
-										toolBar.getChildren().add(insertionIdx++,
-												toolBarCopy.getChildren().get(j));
-									}
-									copy.setToBeRendered(true);
-									contributions.add(copy);
-								}
-							}
-							return true;
-						}
-					}
-				}
-				return false;
+		for (MTrimElement item : contribution.getChildren()) {
+			MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
+			if (DEBUG) {
+				trace("addTrimContribution " + copy, trimBar.getWidget(), trimBar); //$NON-NLS-1$
 			}
-
-			if (idx == trimBar.getChildren().size()) {
-				idx = getIndex(trimBar, "after=additions"); //$NON-NLS-1$
-				for (MTrimElement item : toolBarContribution.getChildren()) {
-					MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
-					if (DEBUG) {
-						trace("addTrimContribution " + copy, trimBar.getWidget(), trimBar); //$NON-NLS-1$
-					}
-					trimBar.getChildren().add(idx++, copy);
-					contributions.add(copy);
-				}
-				return true;
-			}
-
-			MTrimElement element = trimBar.getChildren().get(idx);
-			if (element instanceof MToolControl) {
-				for (MTrimElement item : toolBarContribution.getChildren()) {
-					MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
-					if (DEBUG) {
-						trace("addTrimContribution " + copy, trimBar.getWidget(), trimBar); //$NON-NLS-1$
-					}
-					trimBar.getChildren().add(idx++, copy);
-					contributions.add(copy);
-				}
-			} else if (element instanceof MToolBar) {
-				MToolBar bar = (MToolBar) element;
-				for (MTrimElement item : toolBarContribution.getChildren()) {
-					if (item instanceof MToolBar) {
-						MToolBar contributedToolBar = (MToolBar) item;
-						for (int i = 0; i < contributedToolBar.getChildren().size(); i++) {
-							MToolBarElement tbe = contributedToolBar.getChildren().get(i);
-							MToolBarElement copy = (MToolBarElement) EcoreUtil.copy((EObject) tbe);
-							if (DEBUG) {
-								trace("addTrimContribution " + copy, trimBar.getWidget(), trimBar); //$NON-NLS-1$
-							}
-							bar.setToBeRendered(true);
-							bar.getChildren().add(copy);
-							contributions.add(copy);
-						}
-					}
-				}
-			}
-			return true;
+			trimBar.getChildren().add(idx++, copy);
+			contributions.add(copy);
 		}
-		return false;
-	}
-
-	private static boolean shouldContribute(MTrimBar trimBar, String positionInParent) {
-		String id = null;
-		if (positionInParent != null && positionInParent.length() > 0) {
-			String[] array = positionInParent.split("="); //$NON-NLS-1$
-			id = array[1];
-		}
-		if (id == null || id.equals("additions")) { //$NON-NLS-1$
-			return true;
-		}
-
-		for (MTrimElement element : trimBar.getChildren()) {
-			if (id.equals(element.getElementId())) {
-				return true;
-			}
-
-			if (element instanceof MToolBar) {
-				for (MToolBarElement e : ((MToolBar) element).getChildren()) {
-					if (id.equals(e.getElementId())) {
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
+		return true;
 	}
 
 	private static int getIndex(MElementContainer<?> menuModel, String positionInParent) {
@@ -422,28 +290,28 @@ public final class ContributionsAnalyzer {
 	}
 
 	static class Key {
-		private MMenuContribution contribution;
 		private int tag = -1;
 		private int hc = -1;
+		private String parentId;
+		private String position;
+		private MCoreExpression vexp;
 
-		public Key(MMenuContribution mc) {
-			this.contribution = mc;
-			mc.setWidget(this);
+		public Key(String parentId, String position, List<String> tags, MCoreExpression vexp) {
+			this.parentId = parentId;
+			this.position = position;
+			this.vexp = vexp;
+			if (tags.contains("scheme:menu")) { //$NON-NLS-1$
+				tag = 1;
+			} else if (tags.contains("scheme:popup")) { //$NON-NLS-1$
+				tag = 2;
+			} else if (tags.contains("scheme:toolbar")) { //$NON-NLS-1$
+				tag = 3;
+			} else {
+				tag = 0;
+			}
 		}
 
 		int getSchemeTag() {
-			if (tag == -1) {
-				List<String> tags = contribution.getTags();
-				if (tags.contains("scheme:menu")) { //$NON-NLS-1$
-					tag = 1;
-				} else if (tags.contains("scheme:popup")) { //$NON-NLS-1$
-					tag = 2;
-				} else if (tags.contains("scheme:toolbar")) { //$NON-NLS-1$
-					tag = 3;
-				} else {
-					tag = 0;
-				}
-			}
 			return tag;
 		}
 
@@ -458,23 +326,18 @@ public final class ContributionsAnalyzer {
 				return false;
 			}
 			Key other = (Key) obj;
-			MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
-			Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
-			MCoreExpression vexp2 = (MCoreExpression) other.contribution.getVisibleWhen();
-			Object exp2 = vexp2 == null ? null : vexp2.getCoreExpression();
-			return Util.equals(contribution.getParentID(), other.contribution.getParentID())
-					&& Util.equals(contribution.getPositionInParent(),
-							other.contribution.getPositionInParent())
+			Object exp1 = vexp == null ? null : vexp.getCoreExpression();
+			Object exp2 = other.vexp == null ? null : other.vexp.getCoreExpression();
+			return Util.equals(parentId, other.parentId) && Util.equals(position, other.position)
 					&& getSchemeTag() == other.getSchemeTag() && Util.equals(exp1, exp2);
 		}
 
 		@Override
 		public int hashCode() {
 			if (hc == -1) {
-				MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
-				Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
-				hc = Util.hashCode(contribution.getParentID());
-				hc = hc * 87 + Util.hashCode(contribution.getPositionInParent());
+				Object exp1 = vexp == null ? null : vexp.getCoreExpression();
+				hc = Util.hashCode(parentId);
+				hc = hc * 87 + Util.hashCode(position);
 				hc = hc * 87 + getSchemeTag();
 				hc = hc * 87 + Util.hashCode(exp1);
 			}
@@ -483,83 +346,61 @@ public final class ContributionsAnalyzer {
 
 		@Override
 		public String toString() {
-			return "Key " + contribution.getParentID() + "--" + contribution.getPositionInParent() //$NON-NLS-1$ //$NON-NLS-2$
-					+ "--" + getSchemeTag() + "--" + contribution.getVisibleWhen(); //$NON-NLS-1$//$NON-NLS-2$
+			return getClass().getName() + " " + parentId + "--" + position //$NON-NLS-1$ //$NON-NLS-2$
+					+ "--" + getSchemeTag() + "--" + vexp; //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
-	static class ToolBarKey {
-		private MToolBarContribution contribution;
-		private int tag = -1;
-		private int hc = -1;
+	static class MenuKey extends Key {
+		private MMenuContribution contribution;
 
-		public ToolBarKey(MToolBarContribution mc) {
+		public MenuKey(MMenuContribution mc) {
+			super(mc.getParentID(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
+					.getVisibleWhen());
 			this.contribution = mc;
 			mc.setWidget(this);
 		}
 
-		int getSchemeTag() {
-			if (tag == -1) {
-				List<String> tags = contribution.getTags();
-				if (tags.contains("scheme:menu")) { //$NON-NLS-1$
-					tag = 1;
-				} else if (tags.contains("scheme:popup")) { //$NON-NLS-1$
-					tag = 2;
-				} else if (tags.contains("scheme:toolbar")) { //$NON-NLS-1$
-					tag = 3;
-				} else {
-					tag = 0;
-				}
-			}
-			return tag;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof ToolBarKey)) {
-				return false;
-			}
-			ToolBarKey other = (ToolBarKey) obj;
-			MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
-			Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
-			MCoreExpression vexp2 = (MCoreExpression) other.contribution.getVisibleWhen();
-			Object exp2 = vexp2 == null ? null : vexp2.getCoreExpression();
-			return Util.equals(contribution.getParentId(), other.contribution.getParentId())
-					&& Util.equals(contribution.getPositionInParent(),
-							other.contribution.getPositionInParent())
-					&& getSchemeTag() == other.getSchemeTag() && Util.equals(exp1, exp2);
-		}
-
-		@Override
-		public int hashCode() {
-			if (hc == -1) {
-				MCoreExpression vexp1 = (MCoreExpression) contribution.getVisibleWhen();
-				Object exp1 = vexp1 == null ? null : vexp1.getCoreExpression();
-				hc = Util.hashCode(contribution.getParentId());
-				hc = hc * 87 + Util.hashCode(contribution.getPositionInParent());
-				hc = hc * 87 + getSchemeTag();
-				hc = hc * 87 + Util.hashCode(exp1);
-			}
-			return hc;
-		}
-
-		@Override
-		public String toString() {
-			return "Key " + contribution.getParentId() + "--" + contribution.getPositionInParent() //$NON-NLS-1$ //$NON-NLS-2$
-					+ "--" + getSchemeTag() + "--" + contribution.getVisibleWhen(); //$NON-NLS-1$//$NON-NLS-2$
+		public MMenuContribution getContribution() {
+			return contribution;
 		}
 	}
 
-	private static Key getKey(MMenuContribution contribution) {
-		if (contribution.getWidget() instanceof Key) {
-			return (Key) contribution.getWidget();
+	static class ToolBarKey extends Key {
+		private MToolBarContribution contribution;
+
+		public ToolBarKey(MToolBarContribution mc) {
+			super(mc.getParentId(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
+					.getVisibleWhen());
+			this.contribution = mc;
+			mc.setWidget(this);
 		}
-		return new Key(contribution);
+
+		public MToolBarContribution getContribution() {
+			return contribution;
+		}
+	}
+
+	static class TrimKey extends Key {
+		private MTrimContribution contribution;
+
+		public TrimKey(MTrimContribution mc) {
+			super(mc.getParentId(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
+					.getVisibleWhen());
+			this.contribution = mc;
+			mc.setWidget(this);
+		}
+
+		public MTrimContribution getContribution() {
+			return contribution;
+		}
+	}
+
+	private static MenuKey getKey(MMenuContribution contribution) {
+		if (contribution.getWidget() instanceof MenuKey) {
+			return (MenuKey) contribution.getWidget();
+		}
+		return new MenuKey(contribution);
 	}
 
 	private static ToolBarKey getKey(MToolBarContribution contribution) {
@@ -567,6 +408,13 @@ public final class ContributionsAnalyzer {
 			return (ToolBarKey) contribution.getWidget();
 		}
 		return new ToolBarKey(contribution);
+	}
+
+	private static TrimKey getKey(MTrimContribution contribution) {
+		if (contribution.getWidget() instanceof TrimKey) {
+			return (TrimKey) contribution.getWidget();
+		}
+		return new TrimKey(contribution);
 	}
 
 	public static void printContributions(ArrayList<MMenuContribution> contributions) {
@@ -638,12 +486,12 @@ public final class ContributionsAnalyzer {
 
 	public static void mergeContributions(ArrayList<MMenuContribution> contributions,
 			ArrayList<MMenuContribution> result) {
-		HashMap<Key, ArrayList<MMenuContribution>> buckets = new HashMap<Key, ArrayList<MMenuContribution>>();
+		HashMap<MenuKey, ArrayList<MMenuContribution>> buckets = new HashMap<MenuKey, ArrayList<MMenuContribution>>();
 		trace("mergeContributions size: " + contributions.size(), null); //$NON-NLS-1$
 		printContributions(contributions);
 		// first pass, sort by parentId?position,scheme,visibleWhen
 		for (MMenuContribution contribution : contributions) {
-			Key key = getKey(contribution);
+			MenuKey key = getKey(contribution);
 			ArrayList<MMenuContribution> slot = buckets.get(key);
 			if (slot == null) {
 				slot = new ArrayList<MMenuContribution>();
@@ -654,7 +502,7 @@ public final class ContributionsAnalyzer {
 		Iterator<MMenuContribution> i = contributions.iterator();
 		while (i.hasNext() && !buckets.isEmpty()) {
 			MMenuContribution contribution = i.next();
-			Key key = getKey(contribution);
+			MenuKey key = getKey(contribution);
 			ArrayList<MMenuContribution> slot = buckets.remove(key);
 			if (slot == null) {
 				continue;
@@ -703,6 +551,17 @@ public final class ContributionsAnalyzer {
 		return false;
 	}
 
+	private static boolean containsMatching(List<MTrimElement> children, MTrimElement me) {
+		for (MTrimElement element : children) {
+			if (Util.equals(me.getElementId(), element.getElementId())
+					&& element.getClass().isInstance(me)
+					&& (element instanceof MToolBarSeparator || element instanceof MToolBar)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static int indexForId(MElementContainer<MMenuElement> parentMenu, String id) {
 		if (id == null || id.length() == 0) {
 			return -1;
@@ -721,5 +580,49 @@ public final class ContributionsAnalyzer {
 	public static final String MC_MENU = "menuContribution:menu"; //$NON-NLS-1$
 	public static final String MC_TOOLBAR = "menuContribution:toolbar"; //$NON-NLS-1$
 	public static final String POPUP_PARENT_ID = "popup"; //$NON-NLS-1$
+
+	public static void mergeTrimContributions(ArrayList<MTrimContribution> contributions,
+			ArrayList<MTrimContribution> result) {
+		HashMap<TrimKey, ArrayList<MTrimContribution>> buckets = new HashMap<TrimKey, ArrayList<MTrimContribution>>();
+		trace("mergeContributions size: " + contributions.size(), null); //$NON-NLS-1$
+		// first pass, sort by parentId?position,scheme,visibleWhen
+		for (MTrimContribution contribution : contributions) {
+			TrimKey key = getKey(contribution);
+			ArrayList<MTrimContribution> slot = buckets.get(key);
+			if (slot == null) {
+				slot = new ArrayList<MTrimContribution>();
+				buckets.put(key, slot);
+			}
+			slot.add(contribution);
+		}
+		Iterator<MTrimContribution> i = contributions.iterator();
+		while (i.hasNext() && !buckets.isEmpty()) {
+			MTrimContribution contribution = i.next();
+			TrimKey key = getKey(contribution);
+			ArrayList<MTrimContribution> slot = buckets.remove(key);
+			if (slot == null) {
+				continue;
+			}
+			MTrimContribution toContribute = null;
+			for (MTrimContribution item : slot) {
+				if (toContribute == null) {
+					toContribute = item;
+					continue;
+				}
+				Object[] array = item.getChildren().toArray();
+				for (int c = 0; c < array.length; c++) {
+					MTrimElement me = (MTrimElement) array[c];
+					if (!containsMatching(toContribute.getChildren(), me)) {
+						toContribute.getChildren().add(me);
+					}
+				}
+			}
+			if (toContribute != null) {
+				toContribute.setWidget(null);
+				result.add(toContribute);
+			}
+		}
+		trace("mergeContributions: final size: " + result.size(), null); //$NON-NLS-1$
+	}
 
 }

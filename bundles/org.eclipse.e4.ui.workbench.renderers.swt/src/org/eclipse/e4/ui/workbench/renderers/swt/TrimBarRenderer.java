@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -145,53 +146,51 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	private void addTrimContributions(final MTrimBar trimModel,
 			ArrayList<MTrimContribution> toContribute, IEclipseContext ctx,
 			final ExpressionContext eContext) {
-		// boolean done = toContribute.size() == 0;
-		// while (!done) {
-		// ArrayList<MTrimContribution> curList = new
-		// ArrayList<MTrimContribution>(
-		// toContribute);
-		// int retryCount = toContribute.size();
-		// toContribute.clear();
-		//
-		// for (final MTrimContribution contribution : curList) {
-		// final ArrayList<MTrimElement> toRemove = new
-		// ArrayList<MTrimElement>();
-		// if (!ContributionsAnalyzer.processAddition(trimModel,
-		// contribution, toRemove)) {
-		// toContribute.add(contribution);
-		// } else {
-		// if (contribution.getVisibleWhen() != null) {
-		// ctx.runAndTrack(new RunAndTrack() {
-		// @Override
-		// public boolean changed(IEclipseContext context) {
-		// if (!trimModel.isToBeRendered()
-		// || !trimModel.isVisible()
-		// || trimModel.getWidget() == null) {
-		// return false;
-		// }
-		// boolean rc = ContributionsAnalyzer.isVisible(
-		// contribution, eContext);
-		// for (MTrimElement child : toRemove) {
-		// child.setToBeRendered(rc);
-		// }
-		// return true;
-		// }
-		// });
-		// }
-		// ArrayList<ArrayList<MTrimElement>> lists = pendingCleanup
-		// .get(trimModel);
-		// if (lists == null) {
-		// lists = new ArrayList<ArrayList<MTrimElement>>();
-		// pendingCleanup.put(trimModel, lists);
-		// }
-		// lists.add(toRemove);
-		// }
-		// }
-		// // We're done if the retryList is now empty (everything done) or
-		// // if the list hasn't changed at all (no hope)
-		// done = (toContribute.size() == 0)
-		// || (toContribute.size() == retryCount);
-		// }
+		boolean done = toContribute.size() == 0;
+		while (!done) {
+			ArrayList<MTrimContribution> curList = new ArrayList<MTrimContribution>(
+					toContribute);
+			int retryCount = toContribute.size();
+			toContribute.clear();
+
+			for (final MTrimContribution contribution : curList) {
+				final ArrayList<MTrimElement> toRemove = new ArrayList<MTrimElement>();
+				if (!ContributionsAnalyzer.processAddition(trimModel,
+						contribution, toRemove)) {
+					toContribute.add(contribution);
+				} else {
+					if (contribution.getVisibleWhen() != null) {
+						ctx.runAndTrack(new RunAndTrack() {
+							@Override
+							public boolean changed(IEclipseContext context) {
+								if (!trimModel.isToBeRendered()
+										|| !trimModel.isVisible()
+										|| trimModel.getWidget() == null) {
+									return false;
+								}
+								boolean rc = ContributionsAnalyzer.isVisible(
+										contribution, eContext);
+								for (MTrimElement child : toRemove) {
+									child.setToBeRendered(rc);
+								}
+								return true;
+							}
+						});
+					}
+					ArrayList<ArrayList<MTrimElement>> lists = pendingCleanup
+							.get(trimModel);
+					if (lists == null) {
+						lists = new ArrayList<ArrayList<MTrimElement>>();
+						pendingCleanup.put(trimModel, lists);
+					}
+					lists.add(toRemove);
+				}
+			}
+			// We're done if the retryList is now empty (everything done) or
+			// if the list hasn't changed at all (no hope)
+			done = (toContribute.size() == 0)
+					|| (toContribute.size() == retryCount);
+		}
 	}
 
 	/*

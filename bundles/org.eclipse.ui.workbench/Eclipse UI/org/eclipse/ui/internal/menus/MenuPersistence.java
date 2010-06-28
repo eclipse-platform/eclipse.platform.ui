@@ -25,10 +25,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -116,36 +114,26 @@ final class MenuPersistence extends RegistryPersistence {
 		// Read legacy 3.2 'trim' additions
 		readTrimAdditions();
 
-		ArrayList<MMenuContribution> contributions = new ArrayList<MMenuContribution>();
+		ArrayList<MMenuContribution> menuC = new ArrayList<MMenuContribution>();
+		ArrayList<MToolBarContribution> toolbarC = new ArrayList<MToolBarContribution>();
+		ArrayList<MTrimContribution> trimC = new ArrayList<MTrimContribution>();
 		// read the 3.3 menu additions
-		readAdditions(contributions, toolBarContributions, trimContributions);
+		readAdditions(menuC, toolbarC, trimC);
 
-		ArrayList<MToolBarContribution> actionSetTBCs = new ArrayList<MToolBarContribution>();
 		// convert actionSets to MenuContributions
-		readActionSets(contributions, actionSetTBCs);
+		readActionSets(menuC, toolbarC, trimC);
 
-		readEditorActions(contributions, actionSetTBCs);
+		readEditorActions(menuC, toolbarC, trimC);
 
-		readViewActions(contributions, toolBarContributions);
+		readViewActions(menuC, toolbarC, trimC);
 
 		// can I rationalize them?
-		ContributionsAnalyzer.mergeContributions(contributions, menuContributions);
+		ContributionsAnalyzer.mergeContributions(menuC, menuContributions);
 		application.getMenuContributions().addAll(menuContributions);
 
-		ArrayList<MToolBarContribution> mergedActionSetTBCs = actionSetTBCs;
-
-		for (MToolBarContribution merged : mergedActionSetTBCs) {
-			MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-			toolBar.getChildren().addAll(merged.getChildren());
-			MTrimContribution trimContribution = MenuFactoryImpl.eINSTANCE.createTrimContribution();
-			trimContribution.getChildren().add(toolBar);
-			trimContribution.setParentId(merged.getParentId());
-			trimContribution.setPositionInParent(merged.getPositionInParent());
-			trimContribution.setVisibleWhen(merged.getVisibleWhen());
-			trimContributions.add(trimContribution);
-		}
-
+		ContributionsAnalyzer.mergeToolBarContributions(toolbarC, toolBarContributions);
 		application.getToolBarContributions().addAll(toolBarContributions);
+		ContributionsAnalyzer.mergeTrimContributions(trimC, trimContributions);
 		application.getTrimContributions().addAll(trimContributions);
 	}
 
@@ -268,7 +256,8 @@ final class MenuPersistence extends RegistryPersistence {
 	}
 
 	private void readActionSets(ArrayList<MMenuContribution> menuContributions,
-			ArrayList<MToolBarContribution> toolBarContributions) {
+			ArrayList<MToolBarContribution> toolBarContributions,
+			ArrayList<MTrimContribution> trimContributions) {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
 
@@ -285,12 +274,13 @@ final class MenuPersistence extends RegistryPersistence {
 		for (IConfigurationElement element : configElements) {
 			ActionSet actionSet = new ActionSet(application, appContext, element);
 			actionContributions.add(actionSet);
-			actionSet.addToModel(menuContributions, toolBarContributions);
+			actionSet.addToModel(menuContributions, toolBarContributions, trimContributions);
 		}
 	}
 
 	private void readEditorActions(ArrayList<MMenuContribution> menuContributions,
-			ArrayList<MToolBarContribution> toolBarContributions) {
+			ArrayList<MToolBarContribution> toolBarContributions,
+			ArrayList<MTrimContribution> trimContributions) {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
 
@@ -311,14 +301,16 @@ final class MenuPersistence extends RegistryPersistence {
 					EditorAction editorAction = new EditorAction(application, appContext, element,
 							child);
 					editorActionContributions.add(editorAction);
-					editorAction.addToModel(menuContributions, toolBarContributions);
+					editorAction.addToModel(menuContributions, toolBarContributions,
+							trimContributions);
 				}
 			}
 		}
 	}
 
 	private void readViewActions(ArrayList<MMenuContribution> menuContributions,
-			ArrayList<MToolBarContribution> toolBarContributions) {
+			ArrayList<MToolBarContribution> toolBarContributions,
+			ArrayList<MTrimContribution> trimContributions) {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
 
@@ -339,7 +331,8 @@ final class MenuPersistence extends RegistryPersistence {
 					ViewAction viewAction = new ViewAction(application, appContext, element,
 							child);
 					viewActionContributions.add(viewAction);
-					viewAction.addToModel(menuContributions, toolBarContributions);
+					viewAction.addToModel(menuContributions, toolBarContributions,
+							trimContributions);
 				}
 			}
 		}

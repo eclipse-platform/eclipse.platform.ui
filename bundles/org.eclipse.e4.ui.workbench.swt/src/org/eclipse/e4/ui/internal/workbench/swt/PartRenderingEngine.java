@@ -39,7 +39,6 @@ import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.Policy;
-import org.eclipse.e4.ui.internal.workbench.TrimContributionHandler;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -86,8 +85,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private String factoryUrl;
 
 	IRendererFactory curFactory = null;
-
-	TrimContributionHandler trimContributionHandler;
 
 	MenuServiceFilter menuServiceFilter;
 
@@ -593,10 +590,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 				display.addFilter(SWT.KeyDown, keyListener);
 				display.addFilter(SWT.Traverse, keyListener);
 
-				trimContributionHandler = ContextInjectionFactory.make(
-						TrimContributionHandler.class, runContext);
-				runContext.set(TrimContributionHandler.class, trimContributionHandler);
-				
 				menuServiceFilter = ContextInjectionFactory.make(
 						MenuServiceFilter.class, runContext);
 				display.addFilter(SWT.Show, menuServiceFilter);
@@ -720,10 +713,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * why this is needed we should make this safe for multiple calls
 	 */
 	private void cleanUp() {
-		if (trimContributionHandler != null) {
-			trimContributionHandler = null;
-			appContext.remove(TrimContributionHandler.class);
-		}
 		if (menuServiceFilter != null) {
 			Display display = Display.getDefault();
 			if (!display.isDisposed()) {

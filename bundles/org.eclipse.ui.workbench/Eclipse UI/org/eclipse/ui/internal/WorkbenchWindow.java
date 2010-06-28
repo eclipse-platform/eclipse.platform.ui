@@ -45,7 +45,6 @@ import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
-import org.eclipse.e4.ui.internal.workbench.TrimContributionHandler;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -65,7 +64,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
@@ -510,43 +508,22 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		trimBar.setToBeRendered(true);
 		fill(trimBar, getCoolBarManager2());
 
-		for (String actionSet : actionSets) {
-			MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-			toolBar.setElementId(actionSet);
-			MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
-			separator.setElementId(actionSet);
-			separator.setToBeRendered(false);
-			toolBar.getChildren().add(separator);
-			trimBar.getChildren().add(toolBar);
-			workbenchTrimElements.add(toolBar);
-		}
-
-		if (reload) {
-			TrimContributionHandler handler = model.getContext().get(TrimContributionHandler.class);
-			handler.cleanUp(trimBar);
-			handler.contribute(trimBar);
-
-			for (MTrimElement trimElement : trimBar.getChildren()) {
-				if (trimElement instanceof MToolBar) {
-					List<MToolBarElement> children = ((MToolBar) trimElement).getChildren();
-					if (children.isEmpty()) {
-						trimElement.setToBeRendered(false);
-					} else {
-						boolean ignore = true;
-						for (MToolBarElement child : children) {
-							if (!(child instanceof MToolBarSeparator)) {
-								ignore = false;
-							}
-						}
-
-						if (ignore) {
-							trimElement.setToBeRendered(false);
-						}
-					}
-				}
+		if (false) {
+			// TODO don't do this yet, it should be handled by the TrimRenderer
+			for (String actionSet : actionSets) {
+				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+				toolBar.setElementId(actionSet);
+				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+				separator.setElementId(actionSet);
+				separator.setToBeRendered(false);
+				toolBar.getChildren().add(separator);
+				trimBar.getChildren().add(toolBar);
+				workbenchTrimElements.add(toolBar);
 			}
 		}
 
+		// TODO why aren't these added as trim contributions
+		// that would remove everything from this method except the fill(*)
 		MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
 		spacerControl
