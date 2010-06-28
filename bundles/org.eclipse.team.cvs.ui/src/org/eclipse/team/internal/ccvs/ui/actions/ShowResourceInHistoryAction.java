@@ -12,22 +12,16 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.ui.*;
-import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.ide.ResourceUtil;
 
 public class ShowResourceInHistoryAction extends WorkspaceAction {
 	/*
@@ -91,40 +85,5 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 	
 	protected boolean isEnabledForIgnoredResources() {
 		return true;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
-	 */
-	public void setEnabled(Object evaluationContext) {
-		IWorkbenchWindow activeWorkbenchWindow = (IWorkbenchWindow) HandlerUtil
-				.getVariable(evaluationContext,
-						ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		if (activeWorkbenchWindow != null) {
-			ISelection selection = (ISelection) HandlerUtil.getVariable(
-					evaluationContext, ISources.ACTIVE_CURRENT_SELECTION_NAME);
-			if (selection == null) {
-				selection = StructuredSelection.EMPTY;
-			}
-			IWorkbenchPart part = (IWorkbenchPart) HandlerUtil.getVariable(
-					evaluationContext, ISources.ACTIVE_PART_NAME);
-			updateSelection(activeWorkbenchWindow, part, selection);
-		}
-	}
-	
-	private void updateSelection(IWorkbenchWindow activeWorkbenchWindow,
-			IWorkbenchPart part, ISelection selection) {
-		// If the action is run from within an editor, try and find the
-		// file for the given editor.
-		if (part != null && part instanceof IEditorPart) {
-			IEditorInput input = ((IEditorPart) part).getEditorInput();
-			IFile file = ResourceUtil.getFile(input);
-			if (file != null) {
-				selectionChanged((IAction) null, new StructuredSelection(file));
-			}
-		} else {
-			// Fallback is to prime the action with the selection
-			selectionChanged((IAction) null, selection);
-		}
 	}
 }

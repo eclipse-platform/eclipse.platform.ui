@@ -1238,10 +1238,11 @@
             description="%CVSActionSet.checkoutTooltip"
             id="org.eclipse.team.cvs.ui.checkout"/>
       <command
-            description="%CommitAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%CommitAction.name"
-            id="org.eclipse.team.cvs.ui.commit"/>
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"
+            description="%CommitAction.tooltip"
+            id="org.eclipse.team.cvs.ui.commit"
+            name="%CommitAction.name"/>
       <command
             description="%CommitAllAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
@@ -1249,74 +1250,87 @@
             id="org.eclipse.team.cvs.ui.commitAll"/>
       <command
             categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction"
             description="%ReplaceWithAction.tooltip"
-            name="%ReplaceWithAction.name"
-            id="org.eclipse.team.cvs.ui.replace"/>
+            id="org.eclipse.team.cvs.ui.replace"
+            name="%ReplaceWithAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithSelectableTagAction"
             description="%ReplaceWithTagAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%ReplaceWithTagAction.name"
-            id="org.eclipse.team.cvs.ui.replaceWithTag"/>
+            id="org.eclipse.team.cvs.ui.replaceWithTag"
+            name="%ReplaceWithTagAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRevisionAction"
             description="%ReplaceWithRevisionAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%ReplaceWithRevisionAction.name"
-            id="org.eclipse.team.cvs.ui.replaceWithRevision"/>
+            id="org.eclipse.team.cvs.ui.replaceWithRevision"
+            name="%ReplaceWithRevisionAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
             description="%CompareWithRemoteAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%CompareWithRemoteAction.name"
-            id="org.eclipse.team.cvs.ui.compareWithRemote"/>
+            id="org.eclipse.team.cvs.ui.compareWithRemote"
+            name="%CompareWithRemoteAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.CompareWithTagAction"
             description="%CompareWithTagAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%CompareWithTagAction.name"
-            id="org.eclipse.team.cvs.ui.compareWithTag"/>
+            id="org.eclipse.team.cvs.ui.compareWithTag"
+            name="%CompareWithTagAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRevisionAction"
             description="%CompareWithRevisionAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%CompareWithRevisionAction.name"
-            id="org.eclipse.team.cvs.ui.compareWithRevision"/>
+            id="org.eclipse.team.cvs.ui.compareWithRevision"
+            name="%CompareWithRevisionAction.name"/>
       <command
-            description="%UpdateAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%UpdateAction.name"
-            id="org.eclipse.team.cvs.ui.update"/>
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.UpdateSilentAction"
+            description="%UpdateAction.tooltip"
+            id="org.eclipse.team.cvs.ui.update"
+            name="%UpdateAction.name"/>
       <command
             description="%UpdateAllAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             id="org.eclipse.team.cvs.ui.updateAll"
             name="%UpdateAllAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction"
             description="%GenerateDiff.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%GenerateDiff.name"
-            id="org.eclipse.team.cvs.ui.GenerateDiff"/>
+            id="org.eclipse.team.cvs.ui.GenerateDiff"
+            name="%GenerateDiff.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.TagLocalAction"
             description="%TagAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%TagAction.name"
-            id="org.eclipse.team.cvs.ui.tag"/>
+            id="org.eclipse.team.cvs.ui.tag"
+            name="%TagAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"
             description="%BranchAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%BranchAction.name"
-            id="org.eclipse.team.cvs.ui.branch"/>
+            id="org.eclipse.team.cvs.ui.branch"
+            name="%BranchAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
             description="%MergeAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%MergeAction.name"
-            id="org.eclipse.team.cvs.ui.merge"/>
+            id="org.eclipse.team.cvs.ui.merge"
+            name="%MergeAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.UpdateAction"
             description="%UpdateActionSwitch.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%UpdateActionSwitch.name"
-            id="org.eclipse.team.cvs.ui.updateSwitch"/>
+            id="org.eclipse.team.cvs.ui.updateSwitch"
+            name="%UpdateActionSwitch.name"/>
       <command
-            description="%SetKeywordSubstitutionAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%SetKeywordSubstitutionAction.name"
-            id="org.eclipse.team.cvs.ui.setKeywordSubstitution"/>
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.SetKeywordSubstitutionAction"
+            description="%SetKeywordSubstitutionAction.tooltip"
+            id="org.eclipse.team.cvs.ui.setKeywordSubstitution"
+            name="%SetKeywordSubstitutionAction.name"/>
       <command
             description="%ShowAnnotationAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
@@ -1330,20 +1344,23 @@
             defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
             id="org.eclipse.team.cvs.ui.showHistory"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.AddAction"
             description="%AddAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%AddAction.name"
-            id="org.eclipse.team.cvs.ui.add"/>
+            id="org.eclipse.team.cvs.ui.add"
+            name="%AddAction.name"/>
       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction"
             description="%IgnoreAction.tooltip"
-            categoryId="org.eclipse.team.cvs.ui.actionSet"
-            name="%IgnoreAction.name"
-            id="org.eclipse.team.cvs.ui.ignore"/>
+            id="org.eclipse.team.cvs.ui.ignore"
+            name="%IgnoreAction.name"/>
       <command
             categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"
             description="%Synchronize.tooltip"
-            name="%Synchronize.name"
-            id="org.eclipse.team.cvs.ui.sync"/> 
+            id="org.eclipse.team.cvs.ui.sync"
+            name="%Synchronize.name"/> 
    </extension>
    
    <!-- Commented out awaiting menu support from UI

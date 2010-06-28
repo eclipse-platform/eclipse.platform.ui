@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,8 @@ import java.util.List;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -211,7 +212,7 @@ public abstract class TeamAction extends AbstractHandler implements IObjectActio
 
     private Object getResourceMapping(Object object) {
         if (object instanceof ResourceMapping)
-            return (ResourceMapping)object;
+            return object;
         return Utils.getResourceMapping(object);
     }
     
@@ -547,5 +548,41 @@ public abstract class TeamAction extends AbstractHandler implements IObjectActio
     final public void runWithEvent(IAction action, Event event) {
         run(action);
     }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
+	 */
+	public void setEnabled(Object evaluationContext) {
+		IWorkbenchWindow activeWorkbenchWindow = (IWorkbenchWindow) HandlerUtil
+				.getVariable(evaluationContext,
+						ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+		if (activeWorkbenchWindow != null) {
+			ISelection selection = (ISelection) HandlerUtil.getVariable(
+					evaluationContext, ISources.ACTIVE_CURRENT_SELECTION_NAME);
+			if (selection == null) {
+				selection = StructuredSelection.EMPTY;
+			}
+			IWorkbenchPart part = (IWorkbenchPart) HandlerUtil.getVariable(
+					evaluationContext, ISources.ACTIVE_PART_NAME);
+			updateSelection(activeWorkbenchWindow, part, selection);
+		}
+	}
+	
+	private void updateSelection(IWorkbenchWindow activeWorkbenchWindow,
+			IWorkbenchPart part, ISelection selection) {
+		// If the action is run from within an editor, try and find the
+		// file for the given editor.
+		setActivePart(null, part);
+		if (part != null && part instanceof IEditorPart) {
+			IEditorInput input = ((IEditorPart) part).getEditorInput();
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null) {
+				selectionChanged((IAction) null, new StructuredSelection(file));
+			}
+		} else {
+			// Fallback is to prime the action with the selection
+			selectionChanged((IAction) null, selection);
+		}
+	}
 
 }

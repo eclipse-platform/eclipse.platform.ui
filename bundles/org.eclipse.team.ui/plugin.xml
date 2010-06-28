@@ -329,10 +329,11 @@
             id="org.eclipse.team.ui.synchronizeLast">
       </command>
       <command
-            name="%Command.applyPatch.name"
             categoryId="org.eclipse.team.ui.category.team"
+            defaultHandler="org.eclipse.team.internal.ui.actions.ApplyPatchAction"
             description="%Command.applyPatch.description"
-            id="org.eclipse.team.ui.applyPatch">
+            id="org.eclipse.team.ui.applyPatch"
+            name="%Command.applyPatch.name">
       </command>
       <command
        		name="%Synchronizing.perspective"
