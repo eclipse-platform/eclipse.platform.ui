@@ -62,6 +62,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.PerspectiveTagger;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
@@ -397,6 +398,8 @@ public class PerspectiveSwitcher {
 						.getActivePage(), true);
 		factory.createInitialLayout(modelLayout);
 		PerspectiveTagger.tagPerspective(persp, modelService);
+		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+		reader.extendLayout(null, desc.getId(), modelLayout);
 
 		// add it to the stack
 		children.add(persp);
