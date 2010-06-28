@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.ExtensionPointProxy;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -29,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.jface.action.IMenuCreator;
@@ -315,6 +317,17 @@ public class MenuHelper {
 		element.setIconURI(MenuHelper
 				.getIconUrl(menuAddition, IWorkbenchRegistryConstants.ATT_ICON));
 		element.setLabel(Util.safeString(text));
+
+		for (IConfigurationElement child : menuAddition.getChildren()) {
+			if (child.getName().equals(IWorkbenchRegistryConstants.TAG_DYNAMIC)) {
+				ExtensionPointProxy proxy = new ExtensionPointProxy(child,
+						IWorkbenchRegistryConstants.TAG_CLASS, new ExtensionContribution());
+				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
+				menuItem.setElementId(getId(child));
+				menuItem.setContributionItem(proxy);
+				element.getChildren().add(menuItem);
+			}
+		}
 
 		return element;
 	}

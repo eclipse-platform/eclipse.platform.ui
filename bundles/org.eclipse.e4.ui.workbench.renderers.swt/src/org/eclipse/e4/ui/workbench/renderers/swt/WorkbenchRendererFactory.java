@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
@@ -45,6 +46,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private IEclipseContext context;
 	private DirectMenuItemRenderer directMenuItemRenderer;
 	private RenderedMenuRenderer renderedMenuRenderer;
+	private RenderedMenuItemRenderer renderedMenuItemRenderer;
 	private RenderedToolBarRenderer renderedToolbarRenderer;
 
 	public AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
@@ -72,6 +74,12 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(renderedMenuRenderer);
 			}
 			return renderedMenuRenderer;
+		} else if (uiElement instanceof MRenderedMenuItem) {
+			if (renderedMenuItemRenderer == null) {
+				renderedMenuItemRenderer = new RenderedMenuItemRenderer();
+				initRenderer(renderedMenuItemRenderer);
+			}
+			return renderedMenuItemRenderer;
 		} else if (uiElement instanceof MMenu) {
 			if (menuRenderer == null) {
 				menuRenderer = new MenuRenderer();
