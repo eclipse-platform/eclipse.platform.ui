@@ -12,9 +12,9 @@ package org.eclipse.e4.ui.css.swt.theme;
 
 import java.util.List;
 
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.util.resources.IResourceLocator;
 import org.eclipse.swt.widgets.Widget;
+import org.w3c.dom.css.CSSStyleDeclaration;
 
 public interface IThemeEngine {
 	public static final String DEFAULT_THEME_ID = "org.eclipse.e4.ui.workbench.swt.theme.default";
@@ -32,9 +32,7 @@ public interface IThemeEngine {
 
 	public void applyStyles(Widget widget, boolean applyStylesToChildNodes);
 	
-	// TODO may not be ideal??
-	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312842
-	public CSSEngine getCSSEngine();
+	public CSSStyleDeclaration getStyle(Widget widget);
 	public void restore(String alternate);
 	public ITheme getActiveTheme();
 }

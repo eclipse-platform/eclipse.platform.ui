@@ -42,6 +42,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
+import org.w3c.dom.Element;
+import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class ThemeEngine implements IThemeEngine {
 	private List<Theme> themes = new ArrayList<Theme>();
@@ -366,5 +368,13 @@ public class ThemeEngine implements IThemeEngine {
 	
 	public ITheme getActiveTheme() {
 		return currentTheme;
+	}
+	
+	public CSSStyleDeclaration getStyle(Widget widget) {
+		Element e = engine.getCSSElementContext(widget).getElement();
+		if( e == null ) {
+			return null;
+		}
+		return engine.getViewCSS().getComputedStyle(e, null);
 	}
 }
