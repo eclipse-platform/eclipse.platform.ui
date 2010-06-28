@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,7 +70,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 	
 	private class RepositorySelectionDialog extends Dialog {
 		ICVSRepositoryLocation[] allLocations;
-		ICVSRepositoryLocation[] compatibleLocatons;
+		ICVSRepositoryLocation[] compatibleLocations;
 		ICVSRepositoryLocation selectedLocation;
 		
 		TableViewer viewer;
@@ -90,7 +90,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 					locations.add(location);
 				}
 			}
-			compatibleLocatons = (ICVSRepositoryLocation[]) locations.toArray(new ICVSRepositoryLocation[locations.size()]);
+			compatibleLocations = (ICVSRepositoryLocation[]) locations.toArray(new ICVSRepositoryLocation[locations.size()]);
 		}
 		protected void createButtonsForButtonBar(Composite parent) {
 			// create OK and Cancel buttons by default
@@ -113,7 +113,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 			viewer.setContentProvider(new WorkbenchContentProvider() {
 				public Object[] getElements(Object inputElement) {
 					if (showCompatible) {
-						return compatibleLocatons;
+						return compatibleLocations;
 					} else {
 						return allLocations;
 					}
@@ -136,7 +136,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 					okPressed();
 				}
 			});
-			viewer.setInput(compatibleLocatons);
+			viewer.setInput(compatibleLocations);
 			
 			final Button compatibleButton = createCheckBox(composite, CVSUIMessages.CVSProjectPropertiesPage_31); 
 			compatibleButton.setSelection(showCompatible);
