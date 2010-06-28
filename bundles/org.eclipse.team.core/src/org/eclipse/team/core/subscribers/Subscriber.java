@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,7 +220,7 @@ abstract public class Subscriber {
 
 	/**
 	 * Removes a listener previously registered with this team subscriber. Has
-	 * no affect if an identical listener is not registered.
+	 * no effect if an identical listener is not registered.
 	 * 
 	 * @param listener a team resource change listener
 	 */
@@ -268,7 +268,7 @@ abstract public class Subscriber {
 	 * Fires a team resource change event to all registered listeners. Only
 	 * listeners registered at the time this method is called are notified.
 	 * Listener notification makes use of an <code>ISafeRunnable</code> to ensure that
-	 * client exceptions do not effect the notification to other clients.
+	 * client exceptions do not affect the notification to other clients.
 	 */
 	protected void fireTeamResourceChange(final ISubscriberChangeEvent[] deltas) {
 		ISubscriberChangeListener[] allListeners;

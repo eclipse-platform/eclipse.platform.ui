@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ public interface ITeamStatus extends IStatus {
 	public static final int RESOURCE_SYNC_INFO_ERROR = 1;
 	
 	/**
-	 * An error occurred that may effect several resources in a <code>SyncInfoSet</code>.
+	 * An error occurred that may affect several resources in a <code>SyncInfoSet</code>.
 	 * The error will be cleared when the set is reset. 
 	 */
 	public static final int SYNC_INFO_SET_ERROR = 2;

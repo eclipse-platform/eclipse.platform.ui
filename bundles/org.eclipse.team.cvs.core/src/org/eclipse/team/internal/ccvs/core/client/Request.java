@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -121,7 +119,7 @@ public abstract class Request {
 		
 		// If the session is connected to a CVSNT server (1.11.1.1), we'll need to do some special handling for
 		// some errors. Unfortunately, CVSNT 1.11.1.1 will drop the connection after so some functionality is
-		// still effected
+		// still affected
 		boolean isCVSNT = session.isCVSNT();
 
 		session.clearErrors();

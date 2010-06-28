@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,7 +76,7 @@ public class ProjectMetaFileOperation extends CVSOperation {
 		metaFileExists = false;
 		monitor.beginTask(null, folders.length*100);
 		for (int i = 0; i < folders.length; i++) {
-			// make a copy of the folder so that we will not effect the original
+			// make a copy of the folder so that we will not affect the original
 			// folder when we refetch the members
 			// TODO: this is a strange thing to need to do. We should fix this.
 			ICVSRemoteFolder folder = (ICVSRemoteFolder) folders[i].forTag(folders[i].getTag());
