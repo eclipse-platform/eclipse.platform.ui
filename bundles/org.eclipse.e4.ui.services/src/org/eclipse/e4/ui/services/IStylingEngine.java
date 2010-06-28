@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services;
 
+import org.w3c.dom.css.CSSStyleDeclaration;
+
 
 public interface IStylingEngine {
 	/**
@@ -21,4 +23,5 @@ public interface IStylingEngine {
 	public void setClassname(Object widget, String classname);
 	public void setId(Object widget, String id);
 	public void style(Object widget);
+	public CSSStyleDeclaration getStyle(Object widget);
 }

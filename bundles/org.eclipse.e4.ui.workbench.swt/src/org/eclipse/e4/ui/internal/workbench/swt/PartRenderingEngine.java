@@ -75,6 +75,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
+import org.w3c.dom.Element;
+import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class PartRenderingEngine implements IPresentationEngine {
 	public static final String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"
@@ -781,6 +783,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 					engine.applyStyles((Widget) widget, true);
 				}
 
+				public CSSStyleDeclaration getStyle(Object widget) {
+					return engine.getStyle((Widget) widget);
+				}
+
 			});
 		} else if (cssURI != null) {
 			String cssResourcesURI = (String) appContext
@@ -790,6 +796,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				engine.getResourcesLocatorManager().registerResourceLocator(
 						new OSGiResourceLocator(cssResourcesURI.toString()));
 			}
+			display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
 			appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 				public void setClassname(Object widget, String classname) {
 					((Widget) widget).setData(
@@ -804,6 +811,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 				public void style(Object widget) {
 					engine.applyStyles((Widget) widget, true);
+				}
+
+				public CSSStyleDeclaration getStyle(Object widget) {
+					Element e = engine.getCSSElementContext(widget)
+							.getElement();
+					if (e == null) {
+						return null;
+					}
+					return engine.getViewCSS().getComputedStyle(e, null);
 				}
 
 			});

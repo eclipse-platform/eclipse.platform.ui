@@ -11,10 +11,8 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.swt.widgets.Control;
-import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
@@ -26,8 +24,7 @@ import org.w3c.dom.css.CSSValue;
 public class CSSEngineHelper {
 	IEclipseContext context;
 	Control control;
-	IThemeEngine engine;
-	CSSEngine cssEngine;
+	IStylingEngine engine;
 	CSSStyleDeclaration style;
 
 	/**
@@ -44,11 +41,9 @@ public class CSSEngineHelper {
 	}
 
 	private void initialize() {
-		this.engine = context.get(IThemeEngine.class);
+		this.engine = context.get(IStylingEngine.class);
 		if (engine != null) {
-			CSSEngine cssEngine = engine.getCSSEngine();
-			Element e = cssEngine.getCSSElementContext(control).getElement();
-			style = cssEngine.getViewCSS().getComputedStyle(e, null);
+			style = engine.getStyle(control);
 		}
 	}
 

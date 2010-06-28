@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
+import org.w3c.dom.css.CSSStyleDeclaration;
 
 public abstract class UIStartupTest extends HeadlessApplicationTest {
 
@@ -237,6 +238,11 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 							public void setClassname(Object widget,
 									String classname) {
 								// no-op
+							}
+
+							public CSSStyleDeclaration getStyle(Object widget) {
+								// TODO Auto-generated method stub
+								return null;
 							}
 						});
 			}

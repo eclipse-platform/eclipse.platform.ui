@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.workbench.IExceptionHandler;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.emf.common.notify.Notifier;
+import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class E4Workbench implements IWorkbench {
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
@@ -292,6 +293,10 @@ public class E4Workbench implements IWorkbench {
 			}
 
 			public void style(Object widget) {
+			}
+
+			public CSSStyleDeclaration getStyle(Object widget) {
+				return null;
 			}
 		});
 	}
