@@ -1266,6 +1266,12 @@
             description="%ReplaceWithRevisionAction.tooltip"
             id="org.eclipse.team.cvs.ui.replaceWithRevision"
             name="%ReplaceWithRevisionAction.name"/>
+       <command
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithLatestRevisionAction"
+            description="%ReplaceWithLastRevision.tooltip"
+            id="org.eclipse.team.cvs.ui.replaceWithBase"
+            name="%ReplaceWithLastRevision.label"/>
       <command
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             defaultHandler="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"
