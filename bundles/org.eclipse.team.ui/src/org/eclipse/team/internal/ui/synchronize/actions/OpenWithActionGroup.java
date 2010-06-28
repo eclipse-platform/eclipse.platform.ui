@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,17 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.SaveablesCompareEditorInput;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.actions.OpenWithMenu;
+import org.eclipse.ui.*;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.keys.IBindingService;
 
 /**
  * This is the action group for the open actions. It contains open
@@ -103,49 +104,77 @@ public class OpenWithActionGroup extends ActionGroup {
 			}
 			return;
 		}
-        
+
         if (elements.length != resources.length){
         	// Only supported if all the items are resources.
         	return;
         }
-        
+
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i].getType() != IResource.FILE) {
 				// Only supported if all the items are files.
 				return;
 			}
 		}
-        
+
         if (openInCompareAction != null) {
             menu.appendToGroup(groupId, openInCompareAction);
         }
-        
+
         for (int i = 0; i < resources.length; i++) {
             if (!resources[i].exists()) {
                 // Only support non-compare actions if all files exist.
                 return;
             }
         }
-        
+
 		if (openFileAction != null) {
 			openFileAction.selectionChanged(selection);
 			menu.appendToGroup(groupId, openFileAction);
 		}
-        
+
         if (resources.length == 1) {
             // Only support the "Open With..." submenu if exactly one file is selected.
             IWorkbenchSite ws = getSite().getWorkbenchSite();
             if (ws != null) {
-                MenuManager submenu =
+                MenuManager openWithSubmenu =
                     new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 
-                submenu.add(new OpenWithMenu(ws.getPage(), resources[0]));
-                menu.appendToGroup(groupId, submenu);
+                openWithSubmenu.add(new OpenWithMenu(ws.getPage(), resources[0]));
+                menu.appendToGroup(groupId, openWithSubmenu);
+
+				MenuManager showInSubmenu = new MenuManager(
+						getShowInMenuLabel());
+				IContributionItem showInMenu = ContributionItemFactory.VIEWS_SHOW_IN
+						.create(ws.getWorkbenchWindow());
+				showInSubmenu.add(showInMenu);
+				menu.appendToGroup(groupId, showInSubmenu);
             }
         }
     }
 
+	/**
+	 * {@link SaveablesCompareEditorInput#getShowInMenuLabel}
+	 * 
+	 * @return label for "Show In" menu
+	 */
+	private static String getShowInMenuLabel() {
+		String keyBinding = null;
+
+		IBindingService bindingService = (IBindingService) PlatformUI
+				.getWorkbench().getAdapter(IBindingService.class);
+		if (bindingService != null)
+			keyBinding = bindingService
+					.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
+
+		if (keyBinding == null)
+			keyBinding = ""; //$NON-NLS-1$
+
+		return NLS
+				.bind(TeamUIMessages.SaveableCompareEditorInput_0, keyBinding);
+	}
+
 	public void openInCompareEditor() {
 		if (openInCompareAction != null)
-			openInCompareAction.run();		
+			openInCompareAction.run();
 	}
 }
