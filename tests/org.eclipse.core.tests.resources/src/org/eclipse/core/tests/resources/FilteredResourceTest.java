@@ -1730,9 +1730,9 @@ public class FilteredResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.4", e);
 		}
-		assertEquals("1.5", members.length, 2);
-		assertEquals("1.6", members[0].getName(), ".project");
-		assertEquals("1.7", members[1].getName(), existingFileInExistingProject.getName());
+		assertEquals("1.5", 2, members.length);
+		assertEquals("1.6", ".project", members[0].getName());
+		assertEquals("1.7", existingFileInExistingProject.getName(), members[1].getName());
 
 		try {
 			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
@@ -1745,9 +1745,9 @@ public class FilteredResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("2.1", e);
 		}
-		assertEquals("2.2", members.length, 2);
-		assertEquals("2.3", members[0].getName(), ".project");
-		assertEquals("2.4", members[1].getName(), existingFileInExistingProject.getName());
+		assertEquals("2.2", 2, members.length);
+		assertEquals("2.3", ".project", members[0].getName());
+		assertEquals("2.4", existingFileInExistingProject.getName(), members[1].getName());
 
 		assertEquals("2.5", false, folder.exists());
 		assertEquals("2.6", false, file.exists());
