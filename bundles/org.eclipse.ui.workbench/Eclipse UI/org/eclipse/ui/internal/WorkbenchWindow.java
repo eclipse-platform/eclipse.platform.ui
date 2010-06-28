@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
@@ -43,6 +42,7 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -69,6 +69,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
@@ -168,6 +169,8 @@ import org.eclipse.ui.services.IServiceScopes;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * A window within the workbench.
@@ -188,6 +191,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	@Inject
 	EModelService modelService;
+
+	@Inject
+	private IEventBroker eventBroker;
 
 	private WorkbenchPage page;
 
@@ -255,6 +261,18 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private IAdaptable input;
 
 	private IPerspectiveDescriptor perspective;
+
+	private EventHandler windowWidgetHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			if (event.getProperty(UIEvents.EventTags.ELEMENT) == model
+					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
+				removeTrimContributions();
+				model.setMainMenu(null);
+
+				eventBroker.unsubscribe(windowWidgetHandler);
+			}
+		}
+	};
 
 	static final String TEXT_DELIMITERS = TextProcessor.getDefaultDelimiters() + "-"; //$NON-NLS-1$
 
@@ -485,11 +503,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		createProgressIndicator(shell);
 		createHeapStatus(shell);
-	}
 
-	@PreDestroy
-	void destroy() {
-		removeTrimContributions();
+		eventBroker.subscribe(
+				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
+				windowWidgetHandler);
 	}
 
 	private void removeTrimContributions() {
