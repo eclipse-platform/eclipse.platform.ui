@@ -288,7 +288,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private ITextViewer fViewer;
 	/** The associated content assistant. */
 	private final ContentAssistant fContentAssistant;
-	/** The used additional info controller. */
+	/** The used additional info controller, or <code>null</code> if none. */
 	private final AdditionalInfoController fAdditionalInfoController;
 	/** The closing strategy for this completion proposal popup. */
 	private final PopupCloser fPopupCloser= new PopupCloser();
@@ -435,7 +435,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *
 	 * @param contentAssistant the content assistant feeding this popup
 	 * @param viewer the viewer on top of which this popup appears
-	 * @param infoController the information control collaborating with this popup
+	 * @param infoController the information control collaborating with this popup, or <code>null</code>
 	 * @since 2.0
 	 */
 	public CompletionProposalPopup(ContentAssistant contentAssistant, ITextViewer viewer, AdditionalInfoController infoController) {
@@ -450,7 +450,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *
 	 * @param contentAssistant the content assistant feeding this popup
 	 * @param contentAssistSubjectControl the content assist subject control on top of which this popup appears
-	 * @param infoController the information control collaborating with this popup
+	 * @param infoController the information control collaborating with this popup, or <code>null</code>
 	 * @since 3.0
 	 */
 	public CompletionProposalPopup(ContentAssistant contentAssistant, IContentAssistSubjectControl contentAssistSubjectControl, AdditionalInfoController infoController) {
@@ -717,33 +717,35 @@ class CompletionProposalPopup implements IContentAssistListener {
     			}
     		});
     	}
-    	control.addFocusListener(new FocusListener() {
-    		private TraverseListener fTraverseListener;
-    		public void focusGained(FocusEvent e) {
-    			if (Helper.okToUse(control)) {
-    				if (fTraverseListener == null) {
-    					fTraverseListener= new TraverseListener() {
-    						public void keyTraversed(TraverseEvent event) {
-    							if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
-    								IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
-    								if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
-    									fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
-    									event.doit= false;
-    								}
-    							}
-    						}
-    					};
-    					fProposalTable.addTraverseListener(fTraverseListener);
-    				}
-    			}
-    		}
-    		public void focusLost(FocusEvent e) {
-    			if (fTraverseListener != null) {
-    				control.removeTraverseListener(fTraverseListener);
-    				fTraverseListener= null;
-    			}
-    		}
-    	});
+    	if (fAdditionalInfoController != null) {
+	    	control.addFocusListener(new FocusListener() {
+	    		private TraverseListener fTraverseListener;
+	    		public void focusGained(FocusEvent e) {
+	    			if (Helper.okToUse(control)) {
+	    				if (fTraverseListener == null) {
+	    					fTraverseListener= new TraverseListener() {
+	    						public void keyTraversed(TraverseEvent event) {
+	    							if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+	    								IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
+	    								if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
+	    									fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
+	    									event.doit= false;
+	    								}
+	    							}
+	    						}
+	    					};
+	    					fProposalTable.addTraverseListener(fTraverseListener);
+	    				}
+	    			}
+	    		}
+	    		public void focusLost(FocusEvent e) {
+	    			if (fTraverseListener != null) {
+	    				control.removeTraverseListener(fTraverseListener);
+	    				fTraverseListener= null;
+	    			}
+	    		}
+	    	});
+    	}
     }
 
 	/**

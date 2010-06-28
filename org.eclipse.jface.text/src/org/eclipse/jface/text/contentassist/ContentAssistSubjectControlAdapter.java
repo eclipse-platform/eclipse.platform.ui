@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -294,7 +294,7 @@ final class ContentAssistSubjectControlAdapter implements IContentAssistSubjectC
 	* Creates and returns a completion proposal popup for the given content assistant.
 	*
 	* @param contentAssistant the content assistant
-	* @param controller the additional info controller
+	* @param controller the additional info controller, or <code>null</code>
 	* @return the completion proposal popup
 	*/
 	CompletionProposalPopup createCompletionProposalPopup(ContentAssistant contentAssistant, AdditionalInfoController controller) {
