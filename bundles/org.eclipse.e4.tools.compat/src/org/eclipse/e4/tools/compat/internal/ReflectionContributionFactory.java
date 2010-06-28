@@ -42,6 +42,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	 * @param registry
 	 *            to read languages.
 	 */
+	@Inject
 	public ReflectionContributionFactory(IExtensionRegistry registry) {
 		this.registry = registry;
 		processLanguages();
