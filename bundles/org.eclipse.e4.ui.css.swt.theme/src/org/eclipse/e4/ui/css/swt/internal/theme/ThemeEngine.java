@@ -78,12 +78,17 @@ public class ThemeEngine implements IThemeEngine {
 			for (IConfigurationElement ce : getPlatformMatches(e
 					.getConfigurationElements())) {
 				if (ce.getName().equals("theme")) {
-					registerTheme(
-							ce.getAttribute("id"),
-							ce.getAttribute("label"),
-							"platform:/plugin/" + ce.getContributor().getName()
-									+ "/"
-									+ ce.getAttribute("basestylesheeturi"));
+					try {
+						registerTheme(
+								ce.getAttribute("id"),
+								ce.getAttribute("label"),
+								"platform:/plugin/" + ce.getContributor().getName()
+										+ "/"
+										+ ce.getAttribute("basestylesheeturi"));						
+					} catch (IllegalArgumentException e1) {
+						//TODO Can we somehow use logging?
+						e1.printStackTrace();
+					}
 				}
 			}
 		}
@@ -132,7 +137,7 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	public synchronized ITheme registerTheme(String id, String label,
-			String basestylesheetURI) {
+			String basestylesheetURI) throws IllegalArgumentException {
 		for (Theme t : themes) {
 			if (t.getId().equals(id)) {
 				throw new IllegalArgumentException("A theme with the id '" + id

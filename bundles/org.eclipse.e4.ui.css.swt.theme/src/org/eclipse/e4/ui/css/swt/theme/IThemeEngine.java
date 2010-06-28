@@ -34,9 +34,11 @@ public interface IThemeEngine {
 	 *            the base stylesheet uri
 	 * 
 	 * @return the theme instance registered
+	 * @throws IllegalArgumentException
+	 *             if a theme with this id is already registered
 	 */
 	public ITheme registerTheme(String id, String label,
-			String basestylesheetURI);
+			String basestylesheetURI) throws IllegalArgumentException;
 
 	/**
 	 * Register a stylesheet
