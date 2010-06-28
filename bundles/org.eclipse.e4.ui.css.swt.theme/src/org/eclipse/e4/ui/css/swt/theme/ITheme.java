@@ -10,7 +10,17 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.theme;
 
+/**
+ * A theme which is composed of stylesheets and resources
+ */
 public interface ITheme {
+	/**
+	 * @return the theme id
+	 */
 	String getId();
+
+	/**
+	 * @return the label
+	 */
 	String getLabel();
 }

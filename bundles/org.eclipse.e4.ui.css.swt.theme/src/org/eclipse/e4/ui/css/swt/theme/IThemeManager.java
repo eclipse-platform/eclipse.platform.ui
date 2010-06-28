@@ -12,6 +12,17 @@ package org.eclipse.e4.ui.css.swt.theme;
 
 import org.eclipse.swt.widgets.Display;
 
+/**
+ * Manages the theme engines for displays. This service is available through the
+ * OSGi-Service registry
+ */
 public interface IThemeManager {
+	/**
+	 * Get the engine for a given display
+	 * 
+	 * @param display
+	 *            the display the engine is for
+	 * @return a new theme engine when none already created
+	 */
 	public IThemeEngine getEngineForDisplay(Display display);
 }
