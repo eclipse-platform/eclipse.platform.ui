@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -20,11 +22,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.jface.viewers.StyledString.Styler;
 
 /**
  * A {@link StyledCellLabelProvider} supports styled labels by using owner
@@ -74,8 +71,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	private ColumnViewer viewer;
 	private ViewerColumn column;
 	
-	private Widget itemOfLastMeasure;
-	private Object elementOfLastMeasure;
 	private int deltaOfLastMeasure;
 
 	/**
@@ -183,8 +178,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	
 		this.viewer= null;
 		this.column= null;
-		this.itemOfLastMeasure = null;
-		this.elementOfLastMeasure = null;
 		
 		super.dispose();
 	}
@@ -283,10 +276,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 		TextLayout layout = getSharedTextLayout(event.display);
 		
 		int textWidthDelta = deltaOfLastMeasure = updateTextLayout(layout, cell, applyColors);
-		/* remove-begin if bug 228695 fixed */
-		itemOfLastMeasure = event.item;
-		elementOfLastMeasure = event.item.getData();
-		/* remove-end if bug 228695 fixed */
 
 		event.width += textWidthDelta;
 	}
@@ -373,15 +362,6 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 		if (textBounds != null) {
 			TextLayout textLayout= getSharedTextLayout(event.display);
 
-			/* remove-begin if bug 228695 fixed */
-			if (event.item != itemOfLastMeasure || event.item.getData() != elementOfLastMeasure) {
-				// fLayout has not been configured in 'measure()'
-				deltaOfLastMeasure = updateTextLayout(textLayout, cell, applyColors);
-				itemOfLastMeasure = event.item;
-				elementOfLastMeasure = event.item.getData();
-			}
-			/* remove-end if bug 228695 fixed */
-			
 			/* remove-begin if bug 228376 fixed */
 			if (!applyColors) {
 				// need to remove colors for selected elements: measure doesn't provide that information, see bug 228376
