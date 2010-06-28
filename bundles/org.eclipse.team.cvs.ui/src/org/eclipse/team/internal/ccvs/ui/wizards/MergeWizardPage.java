@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,22 +14,13 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
-import org.eclipse.team.internal.ccvs.ui.tags.TagContentAssistProcessor;
-import org.eclipse.team.internal.ccvs.ui.tags.TagRefreshButtonArea;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionArea;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
+import org.eclipse.team.internal.ccvs.ui.tags.*;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.PlatformUI;
@@ -117,7 +108,13 @@ public class MergeWizardPage extends CVSWizardPage {
         }
     }
     private void createTagRefreshArea(Composite composite) {
-	    tagRefreshArea = new TagRefreshButtonArea(getShell(), getTagSource(), null);
+	    tagRefreshArea = new TagRefreshButtonArea(getShell(), getTagSource(), null) {
+	    	public void refresh(boolean background) {
+	    		super.refresh(background);
+	    		updateStartTag(startTagField.getText());
+	    		updateEndTag(endTagField.getText());
+	    	};
+	    };
 	    tagRefreshArea.setRunnableContext(getContainer());
 	    tagRefreshArea.createArea(composite); 
     }
