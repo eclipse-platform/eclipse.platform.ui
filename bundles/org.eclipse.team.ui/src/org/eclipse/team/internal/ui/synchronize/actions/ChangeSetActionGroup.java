@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
-import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.ui.TeamUIMessages;
@@ -143,7 +142,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
         public void run() {
             ActiveChangeSet set = getSelectedSet();
             if (set == null) return;
-            if (MessageDialog.openConfirm(getConfiguration().getSite().getShell(), TeamUIMessages.ChangeSetActionGroup_0, NLS.bind(TeamUIMessages.ChangeSetActionGroup_1, new String[] { set.getTitle() }))) { // 
+            if (MessageDialog.openConfirm(getConfiguration().getSite().getShell(), TeamUIMessages.ChangeSetActionGroup_0, NLS.bind(TeamUIMessages.ChangeSetActionGroup_1, new String[] { LegacyActionTools.escapeMnemonics(set.getTitle()) }))) { // 
                 getActiveChangeSetManager().remove(set);
             }
         }
@@ -168,7 +167,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
         private final ActiveChangeSet set;
 	    
         public AddToChangeSetAction(ISynchronizePageConfiguration configuration, ActiveChangeSet set, ISelection selection) {
-            super(set == null ? TeamUIMessages.ChangeSetActionGroup_2 : set.getTitle(), configuration); 
+            super(set == null ? TeamUIMessages.ChangeSetActionGroup_2 : LegacyActionTools.escapeMnemonics(set.getTitle()), configuration); 
             this.set = set;
             selectionChanged(selection);
         }
