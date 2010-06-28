@@ -104,9 +104,11 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (selPart != null) {
 			showTab(selPart);
 		} else if (stack.getChildren().size() > 0) {
+			// Set the selection to the first renderable element
 			for (MUIElement kid : stack.getChildren()) {
 				if (kid.isToBeRendered() && kid.isVisible()) {
 					stack.setSelectedElement(kid);
+					break;
 				}
 			}
 		}
