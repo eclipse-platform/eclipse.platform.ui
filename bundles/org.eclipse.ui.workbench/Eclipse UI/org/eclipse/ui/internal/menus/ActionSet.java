@@ -244,9 +244,6 @@ public class ActionSet {
 		toolBarContribution.setPositionInParent(positionInParent);
 		toolBarContribution.setVisibleWhen(createVisibleWhen());
 
-		MToolBarSeparator sep = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
-		sep.setElementId("starting.toolbar.separator"); //$NON-NLS-1$
-		toolBarContribution.getChildren().add(sep);
 		toolBarContribution.getChildren().add(action);
 		contributions.add(toolBarContribution);
 
@@ -262,6 +259,9 @@ public class ActionSet {
 		trimContribution.setPositionInParent("after=additions"); //$NON-NLS-1$		trimContribution.setVisibleWhen(createVisibleWhen());
 		MToolBar tb = MenuFactoryImpl.eINSTANCE.createToolBar();
 		tb.setElementId(tpath);
+		MToolBarSeparator sep = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+		sep.setElementId("starting.toolbar.separator"); //$NON-NLS-1$
+		tb.getChildren().add(sep);
 		sep = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
 		sep.setElementId(tgroup);
 		sep.setVisible(false);
