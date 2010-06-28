@@ -56,7 +56,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		final IThemeEngine engine = themeManager.getEngineForDisplay(Display
 				.getCurrent());
-		engine.setTheme("org.eclipse.e4.ui.examples.css.rcp");
+		engine.setTheme("org.eclipse.e4.ui.examples.css.rcp", true);
 		if (serviceRef != null) {
 			serviceRef = null;
 		}
