@@ -35,6 +35,7 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.w3c.dom.css.CSSStyleDeclaration;
 
 @SuppressWarnings("restriction")
 public class ContextServiceFactory extends AbstractServiceFactory {
@@ -88,6 +89,10 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 
 				public void style(Object widget) {
 					engine.applyStyles((Widget) widget, true);
+				}
+
+				public CSSStyleDeclaration getStyle(Object widget) {
+					return engine.getStyle((Widget) widget);
 				}
 			});
 			
