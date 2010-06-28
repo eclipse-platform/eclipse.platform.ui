@@ -505,7 +505,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		removeTrimContributions();
 
 		MTrimBar trimBar = getTopTrim();
-		trimBar.setToBeRendered(true);
 		fill(trimBar, getCoolBarManager2());
 
 		if (false) {
@@ -542,6 +541,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		trimBar.getChildren().add(spacerControl);
 		trimBar.getChildren().add(searchControl);
 		trimBar.getChildren().add(switcherControl);
+		trimBar.setToBeRendered(true);
 
 		workbenchTrimElements.add(spacerControl);
 		workbenchTrimElements.add(searchControl);
