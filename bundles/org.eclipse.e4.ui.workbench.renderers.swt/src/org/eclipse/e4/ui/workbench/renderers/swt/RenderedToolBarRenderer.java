@@ -10,13 +10,21 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
@@ -25,16 +33,29 @@ import org.eclipse.swt.widgets.Widget;
  * Create a contribute part.
  */
 public class RenderedToolBarRenderer extends SWTPartRenderer {
+	private MApplication application;
 
-	@Inject
-	private IPresentationEngine engine;
+	HashMap<MToolBar, ArrayList<ArrayList<MToolBarElement>>> pendingCleanup = new HashMap<MToolBar, ArrayList<ArrayList<MToolBarElement>>>();
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#init(org.eclipse
+	 * .e4.core.contexts.IEclipseContext)
+	 */
+	@Override
+	public void init(IEclipseContext context) {
+		super.init(context);
+		application = context.get(MApplication.class);
+	}
 
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MRenderedToolBar)
 				|| !(parent instanceof Composite))
 			return null;
 
-		MRenderedToolBar toolBar = (MRenderedToolBar) element;
+		final MRenderedToolBar toolBar = (MRenderedToolBar) element;
 		if (!(toolBar.getContributionManager() instanceof ToolBarManager)) {
 			return null;
 		}
@@ -43,13 +64,31 @@ public class RenderedToolBarRenderer extends SWTPartRenderer {
 		ToolBar tb = tbm.createControl((Composite) parent);
 		tbm.update(true);
 		tb.setData(ToolBarManager.class.getName(), tbm);
-		
-		for (MToolBarElement child : toolBar.getChildren()) {
-			engine.createGui(child, tb);
-		}
+		tb.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cleanUp(toolBar);
+			}
+		});
+
 		tb.getParent().layout(true);
 
 		return tb;
+	}
+
+	/**
+	 * @param toolBar
+	 */
+	protected void cleanUp(MRenderedToolBar element) {
+		ArrayList<ArrayList<MToolBarElement>> lists = pendingCleanup
+				.remove(element);
+		if (lists == null) {
+			return;
+		}
+		for (ArrayList<MToolBarElement> list : lists) {
+			for (MToolBarElement child : list) {
+				element.getChildren().remove(child);
+			}
+		}
 	}
 
 	/*
@@ -83,5 +122,15 @@ public class RenderedToolBarRenderer extends SWTPartRenderer {
 	public void processContents(MElementContainer<MUIElement> container) {
 		// We've delegated further rendering to the ContributionManager
 		// it's their fault the menu items don't show up!
+		IEclipseContext ctx = getContext(container);
+		ExpressionContext eContext = new ExpressionContext(ctx);
+		ArrayList<MToolBarContribution> toContribute = new ArrayList<MToolBarContribution>();
+		MElementContainer<?> toolbarObj = container;
+		MToolBar toolbarModel = (MToolBar) toolbarObj;
+		ContributionsAnalyzer.gatherToolBarContributions(toolbarModel,
+				application.getToolBarContributions(),
+				toolbarModel.getElementId(), toContribute, eContext);
+		ToolBarRenderer.addToolBarContributions(toolbarModel, toContribute,
+				ctx, eContext, pendingCleanup);
 	}
 }

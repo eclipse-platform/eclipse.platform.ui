@@ -120,12 +120,16 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		ContributionsAnalyzer.gatherToolBarContributions(toolbarModel,
 				application.getToolBarContributions(),
 				toolbarModel.getElementId(), toContribute, eContext);
-		addToolBarContributions(toolbarModel, toContribute, ctx, eContext);
+		addToolBarContributions(toolbarModel, toContribute, ctx, eContext,
+				pendingCleanup);
 	}
 
-	private void addToolBarContributions(final MToolBar toolbarModel,
-			ArrayList<MToolBarContribution> toContribute, IEclipseContext ctx,
-			final ExpressionContext eContext) {
+	public static void addToolBarContributions(
+			final MToolBar toolbarModel,
+			ArrayList<MToolBarContribution> toContribute,
+			IEclipseContext ctx,
+			final ExpressionContext eContext,
+			HashMap<MToolBar, ArrayList<ArrayList<MToolBarElement>>> pendingCleanup) {
 		HashSet<String> existingSeparatorNames = new HashSet<String>();
 		for (MToolBarElement child : toolbarModel.getChildren()) {
 			String elementId = child.getElementId();

@@ -48,6 +48,8 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class ActionSet {
 
+	private static final String MAIN_TOOLBAR = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+
 	protected IConfigurationElement configElement;
 
 	protected MApplication application;
@@ -85,7 +87,7 @@ public class ActionSet {
 		for (IConfigurationElement element : actions) {
 			addContribution(idContrib, menuContributions, element, false);
 			addToolBarContribution(idContrib, toolBarContributions, trimContributions, element,
-					"org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
+					MAIN_TOOLBAR);
 		}
 
 		// for entertainment purposes only
@@ -133,6 +135,9 @@ public class ActionSet {
 	}
 
 	private MCoreExpression createVisibleWhen() {
+		if (visibleWhen == null) {
+			return null;
+		}
 		MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
 		exp.setCoreExpressionId("programmatic." + MenuHelper.getId(configElement)); //$NON-NLS-1$
 		exp.setCoreExpression(visibleWhen);
@@ -235,6 +240,13 @@ public class ActionSet {
 		Path menuPath = new Path(tpath);
 		tpath = menuPath.segment(0);
 
+		if (MAIN_TOOLBAR.equals(parentId)) {
+			addTrimContribution(idContrib, contributions, trimContributions, element, parentId,
+					tpath, tgroup);
+		} else {
+			tpath = parentId;
+		}
+
 		// String positionInParent =
 		// MenuHelper.isSeparatorVisible(configElement) ? null
 		//					: "after=" + tpath; //$NON-NLS-1$
@@ -246,7 +258,14 @@ public class ActionSet {
 
 		toolBarContribution.getChildren().add(action);
 		contributions.add(toolBarContribution);
+	}
 
+	private void addTrimContribution(String idContrib,
+			ArrayList<MToolBarContribution> contributions,
+			ArrayList<MTrimContribution> trimContributions, IConfigurationElement element,
+			String parentId, String tpath, String tgroup) {
+
+		final String elementId = MenuHelper.getId(element);
 		MTrimContribution trimContribution = MenuFactoryImpl.eINSTANCE.createTrimContribution();
 		trimContribution.getTags().add(ContributionsAnalyzer.MC_TOOLBAR);
 		trimContribution.getTags().add("scheme:toolbar"); //$NON-NLS-1$

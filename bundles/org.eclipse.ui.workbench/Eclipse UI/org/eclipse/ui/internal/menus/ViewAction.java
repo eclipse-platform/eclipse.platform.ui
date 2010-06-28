@@ -12,13 +12,8 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import org.eclipse.core.commands.contexts.Context;
-import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ExpressionInfo;
-import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -26,7 +21,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 public class ViewAction extends ActionSet {
@@ -59,54 +53,6 @@ public class ViewAction extends ActionSet {
 	}
 
 	protected Expression createExpression(IConfigurationElement configElement) {
-		String idContrib = MenuHelper.getId(configElement);
-		return new ActiveEditorContextExpression(
-				parent.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID), idContrib);
+		return null;
 	}
-
-	static class ActiveEditorContextExpression extends Expression {
-		private String viewId;
-		private String actionId;
-
-		public ActiveEditorContextExpression(String editorId, String actionId) {
-			this.viewId = editorId;
-			this.actionId = actionId;
-		}
-
-		@Override
-		public void collectExpressionInfo(ExpressionInfo info) {
-			info.addVariableNameAccess(ISources.ACTIVE_CONTEXT_NAME);
-			info.addVariableNameAccess(ISources.ACTIVE_PART_ID_NAME);
-		}
-
-		@Override
-		public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
-			Object obj = context.getVariable(ISources.ACTIVE_CONTEXT_NAME);
-			if (obj instanceof Collection<?>) {
-				if (EvaluationResult.valueOf(((Collection) obj).contains(actionId)) == EvaluationResult.TRUE) {
-					Object activeEditorId = context.getVariable(ISources.ACTIVE_PART_ID_NAME);
-					if (activeEditorId instanceof String) {
-						return EvaluationResult.valueOf(viewId.equals(activeEditorId));
-					}
-				}
-			}
-			return EvaluationResult.FALSE;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (!(obj instanceof ActiveEditorContextExpression)) {
-				return false;
-			}
-
-			ActiveEditorContextExpression other = (ActiveEditorContextExpression) obj;
-			return actionId.equals(other.actionId) && viewId.equals(other.viewId);
-		}
-
-		@Override
-		public int hashCode() {
-			return actionId.hashCode() * viewId.hashCode();
-		}
-	}
-
 }
