@@ -147,9 +147,6 @@ public class TrimStack {
 			if (theStack == null || trimStackTB == null || parentElement != theStack)
 				return;
 
-			if (!changedElement.isToBeRendered())
-				return;
-
 			trimStackTB.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					updateTrimStackItems();
