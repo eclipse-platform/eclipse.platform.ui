@@ -128,6 +128,17 @@ public class MenuServiceFilter implements Listener {
 		ContributionsAnalyzer.gatherMenuContributions(menuModel,
 				application.getMenuContributions(), menuModel.getElementId(),
 				toContribute, eContext, false);
+		if (toContribute.size() > 0) {
+			List<MMenuElement> items = menuModel.getChildren();
+
+			if (!items.isEmpty()
+					&& "menu.placeholder".equals(items.get(0).getElementId())) {
+				MMenuElement item = items.get(0);
+				trace("removed " + item, menu, menuModel);
+				renderer.removeGui(item);
+				items.remove(0);
+			}
+		}
 		ContributionsAnalyzer.addMenuContributions(menuModel, toContribute,
 				menuContributionsToRemove);
 

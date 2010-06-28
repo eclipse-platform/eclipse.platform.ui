@@ -48,6 +48,9 @@ public class SeparatorRenderer extends SWTPartRenderer {
 				}
 				// determine the index at which we should create the new item
 				int addIndex = calcVisibleIndex(element);
+				if (addIndex == 0) {
+					return null;
+				}
 				// this shouldn't happen, but it might
 				newSep = new MenuItem(menu, SWT.SEPARATOR, addIndex);
 			}
