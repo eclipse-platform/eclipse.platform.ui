@@ -937,6 +937,17 @@ public class EPartServiceTest extends TestCase {
 		assertNull(partService.createPart("partId2"));
 	}
 
+	public void testCreateSharedPart_NoDescriptor() {
+		MApplication application = createApplication(1, new String[1][0]);
+		MWindow window = application.getChildren().get(0);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		assertNull(partService.createSharedPart("partId", window));
+	}
+
 	public void testShowPart_Id_ACTIVATE() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);

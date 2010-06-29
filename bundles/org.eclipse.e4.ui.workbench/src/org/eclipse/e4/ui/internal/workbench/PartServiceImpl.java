@@ -443,6 +443,10 @@ public class PartServiceImpl implements EPartService {
 		if (sharedPart == null) {
 			MPartDescriptor descriptor = findDescriptor(id);
 			sharedPart = createPart(descriptor);
+			if (sharedPart == null) {
+				return null;
+			}
+
 			sharedWindow.getSharedElements().add(sharedPart);
 		}
 
