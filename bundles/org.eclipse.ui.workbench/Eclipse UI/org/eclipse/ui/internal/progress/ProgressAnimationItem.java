@@ -103,6 +103,10 @@ public class ProgressAnimationItem extends AnimationItem implements
 		for (int i = jobTreeElements.length - 1; i >= 0; i--) {
 			if (jobTreeElements[i] instanceof JobInfo) {
 				JobInfo ji = (JobInfo) jobTreeElements[i];
+				if (ji.isReported()) {
+					// the error was already reported, so do nothing.
+					continue;
+				}
 				Job job = ji.getJob();
 				if (job != null) {
 
@@ -117,7 +121,11 @@ public class ProgressAnimationItem extends AnimationItem implements
 						StatusManager.getManager().handle(statusAdapter,
 								StatusManager.SHOW);
 
-						removeTopElement(ji);
+						if (FinishedJobs.keep(ji)) {
+							ji.setReported(true);
+						} else {
+							removeTopElement(ji);
+						}
 					}
 
 					execute(ji, job);
@@ -209,7 +217,7 @@ public class ProgressAnimationItem extends AnimationItem implements
 			if (jobTreeElements[i] instanceof JobInfo) {
 				JobInfo ji = (JobInfo) jobTreeElements[i];
 				Job job = ji.getJob();
-				if (job != null) {
+				if ((job != null) && (!ji.isReported())) {
 					IStatus status = job.getResult();
 					if (status != null && status.getSeverity() == IStatus.ERROR) {
 						// green arrow with error overlay

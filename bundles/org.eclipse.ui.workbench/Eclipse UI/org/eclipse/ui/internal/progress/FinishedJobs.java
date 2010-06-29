@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,22 +109,31 @@ public class FinishedJobs extends EventManager {
 	static boolean keep(JobInfo info) {
 		Job job = info.getJob();
 		if (job != null) {
-			Object prop = job.getProperty(ProgressManagerUtil.KEEP_PROPERTY);
-			if (prop instanceof Boolean) {
-				if (((Boolean) prop).booleanValue()) {
-					return true;
-				}
-			}
-
-			prop = job.getProperty(ProgressManagerUtil.KEEPONE_PROPERTY);
-			if (prop instanceof Boolean) {
-				if (((Boolean) prop).booleanValue()) {
-					return true;
-				}
-			}
+			if (hasKeepFlag(job))
+				return true;
 
 			IStatus status = job.getResult();
 			if (status != null && status.getSeverity() == IStatus.ERROR) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true if job has one of keep flags set.
+	 */
+	static boolean hasKeepFlag(Job job) {
+		Object prop = job.getProperty(ProgressManagerUtil.KEEP_PROPERTY);
+		if (prop instanceof Boolean) {
+			if (((Boolean) prop).booleanValue()) {
+				return true;
+			}
+		}
+
+		prop = job.getProperty(ProgressManagerUtil.KEEPONE_PROPERTY);
+		if (prop instanceof Boolean) {
+			if (((Boolean) prop).booleanValue()) {
 				return true;
 			}
 		}
@@ -288,6 +297,22 @@ public class FinishedJobs extends EventManager {
 				JobInfo info1 = (JobInfo) infos[i];
 				Job job = info1.getJob();
 				if (job != null) {
+
+					// do not remove error jobs that have keep flag set
+					if (hasKeepFlag(job)){
+						// but mark the job as reported to prevent displaying
+						// the same job error many times
+						info1.setReported(true);
+						// notify listeners to force refresh
+						Object l[] = getListeners();
+						for (int j = 0; j < l.length; j++) {
+							KeptJobsListener jv = (KeptJobsListener) l[j];
+							jv.removed(null);
+						}
+						//proceed with next entry
+						continue;
+					}
+
 					IStatus status = job.getResult();
 					if (status != null && status.getSeverity() == IStatus.ERROR) {
 						JobTreeElement topElement = (JobTreeElement) info1

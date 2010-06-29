@@ -30,6 +30,13 @@ public class JobInfo extends JobTreeElement {
     private IStatus blockedStatus;
 
     private volatile boolean canceled = false;
+
+	/**
+	 * This flag controls whether the job result was passed to status handling in
+	 * order to display it.
+	 */
+	private volatile boolean reported = false;
+
     private List children = Collections.synchronizedList(new ArrayList());
 
     private Job job;
@@ -381,6 +388,14 @@ public class JobInfo extends JobTreeElement {
     boolean isActive() {
         return getJob().getState() != Job.NONE;
     }
+
+	boolean isReported() {
+		return reported;
+	}
+
+	void setReported(boolean errorReported) {
+		this.reported = errorReported;
+	}
 
     /**
      * Return whether or not the receiver is blocked.
