@@ -47,9 +47,10 @@ public class ViewAction extends ActionSet {
 					MenuHelper.getDescription(configElement), "org.eclipse.ui.contexts.actionSet"); //$NON-NLS-1$
 		}
 
-		addContribution(idContrib, menuContributions, configElement, false);
+		String parentId = parent.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
+		addContribution(idContrib, menuContributions, configElement, false, parentId);
 		addToolBarContribution(idContrib, toolBarContributions, trimContributions, configElement,
-				parent.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID));
+				parentId);
 	}
 
 	protected Expression createExpression(IConfigurationElement configElement) {

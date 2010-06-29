@@ -49,7 +49,8 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class ActionSet {
 
-	private static final String MAIN_TOOLBAR = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+	protected static final String MAIN_TOOLBAR = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+	protected static final String MAIN_MENU = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
 
 	protected IConfigurationElement configElement;
 
@@ -83,13 +84,13 @@ public class ActionSet {
 		IConfigurationElement[] menus = configElement
 				.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
 		for (IConfigurationElement element : menus) {
-			addContribution(idContrib, menuContributions, element, true);
+			addContribution(idContrib, menuContributions, element, true, MAIN_MENU);
 		}
 
 		IConfigurationElement[] actions = configElement
 				.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
 		for (IConfigurationElement element : actions) {
-			addContribution(idContrib, menuContributions, element, false);
+			addContribution(idContrib, menuContributions, element, false, MAIN_MENU);
 			addToolBarContribution(idContrib, toolBarContributions, trimContributions, element,
 					MAIN_TOOLBAR);
 		}
@@ -149,7 +150,7 @@ public class ActionSet {
 	}
 
 	protected void addContribution(String idContrib, ArrayList<MMenuContribution> contributions,
-			IConfigurationElement element, boolean isMenu) {
+			IConfigurationElement element, boolean isMenu, String parentId) {
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
 		menuContribution.setVisibleWhen(createVisibleWhen());
 		menuContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
@@ -169,7 +170,6 @@ public class ActionSet {
 			path = IWorkbenchActionConstants.MB_ADDITIONS;
 		}
 		Path menuPath = new Path(path);
-		String parentId = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
 		String positionInParent = "after=" + menuPath.segment(0); //$NON-NLS-1$
 		int segmentCount = menuPath.segmentCount();
 		if (segmentCount > 1) {
@@ -182,7 +182,7 @@ public class ActionSet {
 			MMenu menu = MenuHelper.createMenuAddition(element);
 			menuContribution.getChildren().add(menu);
 		} else {
-			if (parentId.equals("org.eclipse.ui.main.menu")) { //$NON-NLS-1$
+			if (parentId.equals(MAIN_MENU)) {
 				E4Util.unsupported("****MC: bad pie: " + menuPath); //$NON-NLS-1$
 				parentId = IWorkbenchActionConstants.M_WINDOW;
 				menuContribution.setParentID(parentId);

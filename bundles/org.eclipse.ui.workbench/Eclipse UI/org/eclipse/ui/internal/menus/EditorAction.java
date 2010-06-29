@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -53,9 +52,9 @@ public class EditorAction extends ActionSet {
 					MenuHelper.getDescription(configElement), "org.eclipse.ui.contexts.actionSet"); //$NON-NLS-1$
 		}
 
-		addContribution(idContrib, menuContributions, configElement, false);
+		addContribution(idContrib, menuContributions, configElement, false, MAIN_MENU);
 		addToolBarContribution(idContrib, toolBarContributions, trimContributions, configElement,
-				parent.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID));
+				MAIN_TOOLBAR);
 	}
 
 	protected Expression createExpression(IConfigurationElement configElement) {
@@ -75,20 +74,14 @@ public class EditorAction extends ActionSet {
 
 		@Override
 		public void collectExpressionInfo(ExpressionInfo info) {
-			info.addVariableNameAccess(ISources.ACTIVE_CONTEXT_NAME);
 			info.addVariableNameAccess(ISources.ACTIVE_EDITOR_ID_NAME);
 		}
 
 		@Override
 		public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
-			Object obj = context.getVariable(ISources.ACTIVE_CONTEXT_NAME);
-			if (obj instanceof Collection<?>) {
-				if (EvaluationResult.valueOf(((Collection) obj).contains(actionId)) == EvaluationResult.TRUE) {
-					Object activeEditorId = context.getVariable(ISources.ACTIVE_EDITOR_ID_NAME);
-					if (activeEditorId instanceof String) {
-						return EvaluationResult.valueOf(editorId.equals(activeEditorId));
-					}
-				}
+			Object activeEditorId = context.getVariable(ISources.ACTIVE_EDITOR_ID_NAME);
+			if (activeEditorId instanceof String) {
+				return EvaluationResult.valueOf(editorId.equals(activeEditorId));
 			}
 			return EvaluationResult.FALSE;
 		}
