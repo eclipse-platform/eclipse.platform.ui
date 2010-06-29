@@ -439,7 +439,8 @@ public class EclipseContext implements IEclipseContext {
 		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.UNINJECTED, new Object[] {object}, null, null);
 		for (Computation computation : ls) {
-			((TrackableComputationExt) computation).update(event);
+			if (computation instanceof TrackableComputationExt)
+				((TrackableComputationExt) computation).update(event);
 		}
 	}
 
