@@ -267,7 +267,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == model
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
 				removeTrimContributions();
-				model.setMainMenu(null);
+				MMenu menu = model.getMainMenu();
+				if (menu != null) {
+					engine.removeGui(menu);
+					model.setMainMenu(null);
+				}
 
 				eventBroker.unsubscribe(windowWidgetHandler);
 			}
