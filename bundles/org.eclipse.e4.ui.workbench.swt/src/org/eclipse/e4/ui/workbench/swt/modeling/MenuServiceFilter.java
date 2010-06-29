@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
@@ -23,6 +25,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
@@ -231,7 +234,25 @@ public class MenuServiceFilter implements Listener {
 		trace("render", menu, menuModel);
 		for (MMenuElement element : menuModel.getChildren()) {
 			renderer.createGui(element, menu);
+			if (element instanceof MHandledMenuItem) {
+				setEnabled((MHandledMenuItem) element);
+			}
 		}
+	}
+
+	private void setEnabled(MHandledMenuItem item) {
+		if (!item.isToBeRendered() || !item.isVisible()
+				|| item.getWidget() == null) {
+			return;
+		}
+		ParameterizedCommand cmd = item.getWbCommand();
+		if (cmd == null) {
+			return;
+		}
+		final IEclipseContext lclContext = modelService
+				.getContainingContext(item);
+		EHandlerService service = lclContext.get(EHandlerService.class);
+		item.setEnabled(service.canExecute(cmd));
 	}
 
 	private void unrender(final List<MMenuElement> menuModel) {

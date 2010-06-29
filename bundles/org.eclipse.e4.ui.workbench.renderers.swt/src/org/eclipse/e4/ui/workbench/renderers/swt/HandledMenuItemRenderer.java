@@ -30,13 +30,10 @@ import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * Create a contribute part.
@@ -45,7 +42,6 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 
 	@Inject
 	Logger logger;
-	private MenuListener menuListener;
 
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MHandledMenuItem) || !(parent instanceof Menu))
@@ -72,39 +68,29 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 		else if (itemModel.getType() == ItemType.RADIO)
 			flags = SWT.RADIO;
 
+		ParameterizedCommand cmd = itemModel.getWbCommand();
+		if (cmd == null) {
+			IEclipseContext lclContext = getContext(itemModel);
+			cmd = generateParameterizedCommand(itemModel, lclContext);
+		}
 		MenuItem newItem = new MenuItem((Menu) parent, flags, addIndex);
 		setItemText(itemModel, newItem);
+		setEnabled(itemModel, newItem);
 		newItem.setImage(getImage(itemModel));
-		hookMenuAboutToShow(itemModel, newItem);
-		newItem.setEnabled(itemModel.isEnabled());
 		newItem.setSelection(itemModel.isSelected());
 
 		return newItem;
 	}
 
-	private void hookMenuAboutToShow(final MHandledItem item,
-			final MenuItem newItem) {
-		final IEclipseContext lclContext = getContext(item);
-		menuListener = new MenuListener() {
-			public void menuShown(MenuEvent e) {
-				if (newItem.isDisposed()) {
-					return;
-				}
-				EHandlerService service = lclContext.get(EHandlerService.class);
-				ParameterizedCommand cmd = item.getWbCommand();
-				if (cmd == null) {
-					cmd = generateParameterizedCommand(item, lclContext);
-				}
-				if (cmd == null) {
-					return;
-				}
-				item.setEnabled(service.canExecute(cmd));
-			}
-
-			public void menuHidden(MenuEvent e) {
-			}
-		};
-		newItem.getParent().addMenuListener(menuListener);
+	private void setEnabled(MHandledMenuItem itemModel, MenuItem newItem) {
+		ParameterizedCommand cmd = itemModel.getWbCommand();
+		if (cmd == null) {
+			return;
+		}
+		final IEclipseContext lclContext = getContext(itemModel);
+		EHandlerService service = lclContext.get(EHandlerService.class);
+		itemModel.setEnabled(service.canExecute(cmd));
+		newItem.setEnabled(itemModel.isEnabled());
 	}
 
 	protected void setItemText(MMenuItem model, MenuItem item) {
@@ -115,9 +101,6 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 			EBindingService bs = (EBindingService) context
 					.get(EBindingService.class.getName());
 			ParameterizedCommand cmd = handledItem.getWbCommand();
-			if (cmd == null) {
-				cmd = generateParameterizedCommand(handledItem, context);
-			}
 			if (cmd != null && (text == null || text.length() == 0)) {
 				try {
 					text = cmd.getName();
@@ -161,10 +144,7 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 							.get(EHandlerService.class.getName());
 					ParameterizedCommand cmd = item.getWbCommand();
 					if (cmd == null) {
-						cmd = generateParameterizedCommand(item, lclContext);
-						if (cmd == null) {
-							return;
-						}
+						return;
 					}
 					lclContext.set(MItem.class.getName(), item);
 					service.executeHandler(cmd);
@@ -177,7 +157,7 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 		}
 	}
 
-	private ParameterizedCommand generateParameterizedCommand(
+	public static ParameterizedCommand generateParameterizedCommand(
 			final MHandledItem item, final IEclipseContext lclContext) {
 		ECommandService cmdService = (ECommandService) lclContext
 				.get(ECommandService.class.getName());
@@ -193,13 +173,5 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 				.getElementId(), parameters);
 		item.setWbCommand(cmd);
 		return cmd;
-	}
-
-	public void disposeWidget(MUIElement element) {
-		Widget widget = (Widget) element.getWidget();
-		if (widget instanceof MenuItem && !widget.isDisposed()) {
-			((MenuItem) widget).getParent().removeMenuListener(menuListener);
-		}
-		super.disposeWidget(element);
 	}
 }
