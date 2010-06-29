@@ -21,7 +21,10 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -126,7 +129,33 @@ public class RenderedToolBarRenderer extends SWTPartRenderer {
 		ExpressionContext eContext = new ExpressionContext(ctx);
 		ArrayList<MToolBarContribution> toContribute = new ArrayList<MToolBarContribution>();
 		MElementContainer<?> toolbarObj = container;
-		MToolBar toolbarModel = (MToolBar) toolbarObj;
+		MRenderedToolBar toolbarModel = (MRenderedToolBar) toolbarObj;
+		if (toolbarModel.getContributionManager() instanceof ToolBarManager) {
+			final ArrayList<MToolBarElement> toRemove = new ArrayList<MToolBarElement>();
+			IContributionItem[] items = ((ToolBarManager) toolbarModel
+					.getContributionManager()).getItems();
+			if (items.length > 0) {
+				for (IContributionItem item : items) {
+					if (item.isGroupMarker() || item.isSeparator()) {
+						MToolBarSeparator sep = MenuFactoryImpl.eINSTANCE
+								.createToolBarSeparator();
+						sep.setElementId(item.getId());
+						sep.setVisible(false);
+						toolbarModel.getChildren().add(sep);
+						toRemove.add(sep);
+					}
+				}
+				if (!toRemove.isEmpty()) {
+					ArrayList<ArrayList<MToolBarElement>> lists = pendingCleanup
+							.get(toolbarModel);
+					if (lists == null) {
+						lists = new ArrayList<ArrayList<MToolBarElement>>();
+						pendingCleanup.put(toolbarModel, lists);
+					}
+					lists.add(toRemove);
+				}
+			}
+		}
 		ContributionsAnalyzer.gatherToolBarContributions(toolbarModel,
 				application.getToolBarContributions(),
 				toolbarModel.getElementId(), toContribute, eContext);
