@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -55,6 +56,9 @@ public class ActionSet {
 	protected MApplication application;
 
 	protected Expression visibleWhen;
+
+	private HashSet<String> menuContributionGroupIds = new HashSet<String>();
+	private HashSet<String> toolbarContributionGroupIds = new HashSet<String>();
 
 	public ActionSet(MApplication application, IEclipseContext appContext,
 			IConfigurationElement element) {
@@ -185,6 +189,7 @@ public class ActionSet {
 			}
 			MMenuElement action = MenuHelper.createLegacyMenuActionAdditions(application, element);
 			if (action != null) {
+				contributeMenuGroup(contributions, parentId, positionInParent);
 				menuContribution.getChildren().add(action);
 			}
 		}
@@ -194,6 +199,44 @@ public class ActionSet {
 		if (isMenu) {
 			processGroups(idContrib, contributions, element);
 		}
+	}
+
+	private void contributeMenuGroup(ArrayList<MMenuContribution> contributions, String parentId,
+			String positionInParent) {
+		String group = positionInParent.substring(6);
+		if (menuContributionGroupIds.contains(parentId + group)) {
+			return;
+		}
+		menuContributionGroupIds.add(parentId + group);
+		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		menuContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
+		menuContribution.getTags().add("scheme:menu"); //$NON-NLS-1$
+		menuContribution.setParentID(parentId);
+		menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
+		MMenuElement sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		sep.setElementId(group);
+		sep.setVisible(false);
+		menuContribution.getChildren().add(sep);
+		contributions.add(menuContribution);
+	}
+
+	private void contributeToolBarGroup(ArrayList<MToolBarContribution> contributions,
+			String parentId, String group) {
+		if (toolbarContributionGroupIds.contains(parentId + group)) {
+			return;
+		}
+		toolbarContributionGroupIds.add(parentId + group);
+		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE
+				.createToolBarContribution();
+		toolBarContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
+		toolBarContribution.getTags().add("scheme:toolbar"); //$NON-NLS-1$
+		toolBarContribution.setParentId(parentId);
+		toolBarContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
+		MToolBarSeparator sep = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
+		sep.setElementId(group);
+		sep.setVisible(false);
+		toolBarContribution.getChildren().add(sep);
+		contributions.add(toolBarContribution);
 	}
 
 	protected void addToolBarContribution(String idContrib,
@@ -251,6 +294,7 @@ public class ActionSet {
 		// MenuHelper.isSeparatorVisible(configElement) ? null
 		//					: "after=" + tpath; //$NON-NLS-1$
 		String positionInParent = "after=" + tgroup;//$NON-NLS-1$
+		contributeToolBarGroup(contributions, tpath, tgroup);
 		toolBarContribution.setParentId(tpath);
 
 		toolBarContribution.setPositionInParent(positionInParent);
@@ -280,10 +324,6 @@ public class ActionSet {
 		tb.setElementId(tpath);
 		MToolBarSeparator sep = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
 		sep.setElementId("starting.toolbar.separator"); //$NON-NLS-1$
-		tb.getChildren().add(sep);
-		sep = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
-		sep.setElementId(tgroup);
-		sep.setVisible(false);
 		tb.getChildren().add(sep);
 		trimContribution.getChildren().add(tb);
 		trimContributions.add(trimContribution);
