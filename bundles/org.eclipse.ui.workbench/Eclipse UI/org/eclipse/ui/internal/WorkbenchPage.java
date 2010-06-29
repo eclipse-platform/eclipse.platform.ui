@@ -662,7 +662,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		MPart part = findPart(viewId, secondaryId);
 		if (part == null) {
-			MPlaceholder ph = partService.createSharedPart(viewId, window);
+			MPlaceholder ph = partService.createSharedPart(viewId, window, secondaryId != null);
 			part = (MPart) ph.getRef();
 			part.setCurSharedRef(ph);
 
