@@ -19,7 +19,6 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
@@ -31,10 +30,13 @@ import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * Create a contribute part.
@@ -43,6 +45,7 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 
 	@Inject
 	Logger logger;
+	private MenuListener menuListener;
 
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MHandledMenuItem) || !(parent instanceof Menu))
@@ -72,20 +75,20 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 		MenuItem newItem = new MenuItem((Menu) parent, flags, addIndex);
 		setItemText(itemModel, newItem);
 		newItem.setImage(getImage(itemModel));
-		setEnabled(itemModel, newItem);
+		hookMenuAboutToShow(itemModel, newItem);
 		newItem.setEnabled(itemModel.isEnabled());
 		newItem.setSelection(itemModel.isSelected());
 
 		return newItem;
 	}
 
-	private void setEnabled(final MHandledItem item, final MenuItem newItem) {
+	private void hookMenuAboutToShow(final MHandledItem item,
+			final MenuItem newItem) {
 		final IEclipseContext lclContext = getContext(item);
-		lclContext.runAndTrack(new RunAndTrack() {
-			@Override
-			public boolean changed(IEclipseContext context) {
+		menuListener = new MenuListener() {
+			public void menuShown(MenuEvent e) {
 				if (newItem.isDisposed()) {
-					return false;
+					return;
 				}
 				EHandlerService service = lclContext.get(EHandlerService.class);
 				ParameterizedCommand cmd = item.getWbCommand();
@@ -93,12 +96,15 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 					cmd = generateParameterizedCommand(item, lclContext);
 				}
 				if (cmd == null) {
-					return false;
+					return;
 				}
 				item.setEnabled(service.canExecute(cmd));
-				return true;
 			}
-		});
+
+			public void menuHidden(MenuEvent e) {
+			}
+		};
+		newItem.getParent().addMenuListener(menuListener);
 	}
 
 	protected void setItemText(MMenuItem model, MenuItem item) {
@@ -187,5 +193,13 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 				.getElementId(), parameters);
 		item.setWbCommand(cmd);
 		return cmd;
+	}
+
+	public void disposeWidget(MUIElement element) {
+		Widget widget = (Widget) element.getWidget();
+		if (widget instanceof MenuItem && !widget.isDisposed()) {
+			((MenuItem) widget).getParent().removeMenuListener(menuListener);
+		}
+		super.disposeWidget(element);
 	}
 }
