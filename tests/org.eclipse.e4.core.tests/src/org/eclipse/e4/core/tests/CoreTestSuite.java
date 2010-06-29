@@ -30,6 +30,7 @@ import org.eclipse.e4.core.internal.tests.contexts.inject.ExtraDependenciesTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.GroupedUpdatesTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.InjectStaticContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.InjectionUpdateTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.InvokeInRATTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ParentContextDisposalTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ProviderInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ServiceContextTest;
@@ -86,5 +87,6 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(ExtraDependenciesTest.class);
 		addTestSuite(ContextFunctionDynamicsTest.class);
 		addTestSuite(InjectArraysTest.class);
+		addTestSuite(InvokeInRATTest.class);
 	}
 }
