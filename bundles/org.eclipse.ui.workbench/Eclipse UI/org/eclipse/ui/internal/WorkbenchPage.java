@@ -2469,7 +2469,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				List<CompatibilityView> stack = new ArrayList<CompatibilityView>();
 
 				for (Object child : parent.getChildren()) {
-					MPart siblingPart = (MPart) child;
+					MPart siblingPart = child instanceof MPart ? (MPart) child
+							: (MPart) ((MPlaceholder) child).getRef();
 					Object siblingObject = siblingPart.getObject();
 					if (siblingObject instanceof CompatibilityView) {
 						stack.add((CompatibilityView) siblingObject);
