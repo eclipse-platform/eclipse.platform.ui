@@ -493,6 +493,16 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		// unset the client object
 		if (element instanceof MContribution) {
+			// if this element is *not* an MContext itself then
+			// we need to explicitly un-inject it. If it *is*
+			// an MContext then the code below will un-inject
+			// when the context is disposed.
+			if (!(element instanceof MContext)) {
+				IEclipseContext parentContext = modelService
+						.getContainingContext(element);
+				ContextInjectionFactory.uninject(
+						((MContribution) element).getObject(), parentContext);
+			}
 			((MContribution) element).setObject(null);
 		}
 
