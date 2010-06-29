@@ -2112,8 +2112,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		serviceLocator.registerService(LegacyActionPersistence.class, actionPersistence);
 		actionPersistence.read();
 
-		selectionService = (ISelectionService) ContextInjectionFactory.make(SelectionService.class,
+		selectionService = ContextInjectionFactory.make(SelectionService.class,
 				model.getContext());
+		serviceLocator.registerService(ISelectionService.class, selectionService);
 
 		LegacyHandlerService hs = new LegacyHandlerService(windowContext);
 		windowContext.set(IHandlerService.class.getName(), hs);
