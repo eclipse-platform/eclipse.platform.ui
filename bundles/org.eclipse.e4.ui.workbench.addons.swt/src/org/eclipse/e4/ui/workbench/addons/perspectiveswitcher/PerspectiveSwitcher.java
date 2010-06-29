@@ -15,18 +15,15 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -51,23 +48,21 @@ import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.PerspectiveExtensionReader;
-import org.eclipse.ui.internal.PerspectiveTagger;
-import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
-import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.osgi.service.event.Event;
@@ -80,9 +75,6 @@ public class PerspectiveSwitcher {
 
 	@Inject
 	EModelService modelService;
-
-	@Inject
-	private EPartService partService;
 
 	@Inject
 	private MWindow window;
@@ -203,6 +195,22 @@ public class PerspectiveSwitcher {
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
 	}
 
+	@PreDestroy
+	void cleanUp() {
+		eventBroker.unsubscribe(toBeRenderedHandler);
+		eventBroker.unsubscribe(childrenHandler);
+		eventBroker.unsubscribe(selectionHandler);
+
+		if (comp != null && !comp.isDisposed())
+			comp.dispose();
+		comp = null;
+		psTB = null;
+
+		if (backgroundImage != null && !backgroundImage.isDisposed())
+			backgroundImage.dispose();
+		backgroundImage = null;
+	}
+
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl toolControl) {
 		psME = toolControl;
@@ -271,7 +279,8 @@ public class PerspectiveSwitcher {
 		});
 
 		final ToolItem createItem = new ToolItem(psTB, SWT.PUSH);
-		createItem.setText("+"); //$NON-NLS-1$
+		createItem.setImage(getOpenPerspectiveImage(psTB.getDisplay()));
+		createItem.setToolTipText("Open Perspective"); //$NON-NLS-1$
 		createItem.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				selectPerspective();
@@ -294,19 +303,18 @@ public class PerspectiveSwitcher {
 		}
 	}
 
+	private Image getOpenPerspectiveImage(Display display) {
+		ImageDescriptor desc = WorkbenchImages
+				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW);
+		return desc.createImage();
+	}
+
 	MPerspectiveStack getPerspectiveStack() {
 		List<MPerspectiveStack> psList = modelService.findElements(window, null,
 				MPerspectiveStack.class, null);
 		if (psList.size() > 0)
 			return psList.get(0);
 		return null;
-	}
-
-	@PreDestroy
-	void removeListeners() {
-		eventBroker.unsubscribe(toBeRenderedHandler);
-		eventBroker.unsubscribe(childrenHandler);
-		eventBroker.unsubscribe(selectionHandler);
 	}
 
 	private ToolItem addPerspectiveItem(MPerspective persp) {
@@ -378,36 +386,8 @@ public class PerspectiveSwitcher {
 	// FIXME singletons, singletons, everywhere!!
 	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=313771
 	private void openPerspective(PerspectiveDescriptor desc) {
-		if (desc == null) {
-			// something bad happened
-			E4Util.unsupported("Couldn't open perspective");
-			return;
-		}
-
-		MPerspective persp = AdvancedFactoryImpl.eINSTANCE.createPerspective();
-		// tag it with the same id
-		persp.setElementId(desc.getId());
-		persp.setLabel(desc.getLabel());
-
-		List<MPerspective> children = getPerspectiveStack().getChildren();
-
-		// instantiate the perspective
-		IPerspectiveFactory factory = (desc).createFactory();
-		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService,
-				persp, desc, (WorkbenchPage) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-						.getActivePage(), true);
-		factory.createInitialLayout(modelLayout);
-		PerspectiveTagger.tagPerspective(persp, modelService);
-		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
-		reader.extendLayout(null, desc.getId(), modelLayout);
-
-		// add it to the stack
-		children.add(persp);
-
-		// activate it
-		getPerspectiveStack().setSelectedElement(persp);
-		window.getContext().set(IContextConstants.ACTIVE_CHILD, persp.getContext());
-
+		IWorkbenchPage page = window.getContext().get(IWorkbenchPage.class);
+		page.setPerspective(desc);
 	}
 
 	private void selectPerspective() {
@@ -486,7 +466,7 @@ public class PerspectiveSwitcher {
 		IPerspectiveDescriptor desc = getDescriptorFor(persp.getElementId());
 		page.closePerspective(desc, true, false);
 
-		removePerspectiveItem(persp);
+		// removePerspectiveItem(persp);
 	}
 
 	private void addResetItem(final Menu menu) {

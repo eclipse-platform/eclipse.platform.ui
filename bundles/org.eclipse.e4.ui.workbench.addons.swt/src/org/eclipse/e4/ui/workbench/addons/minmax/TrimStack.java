@@ -208,11 +208,21 @@ public class TrimStack {
 	}
 
 	@PreDestroy
-	void removeListeners() {
+	void cleanUp() {
 		eventBroker.unsubscribe(toBeRenderedHandler);
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(selectionHandler);
 		eventBroker.unsubscribe(widgetHandler);
+
+		showStack(false);
+
+		if (hostPane != null && !hostPane.isDisposed())
+			hostPane.dispose();
+		hostPane = null;
+
+		if (trimStackTB != null && !trimStackTB.isDisposed())
+			trimStackTB.dispose();
+		trimStackTB = null;
 	}
 
 	@PostConstruct
@@ -354,7 +364,12 @@ public class TrimStack {
 			hostPane.setVisible(true);
 		} else {
 			Display.getCurrent().removeFilter(SWT.MouseDown, mouseDownListener);
-			getShellClientComposite().removeControlListener(caResizeListener);
+
+			// Check to ensure that the client area is non-null since the
+			// trimstack may be currently hosted in the limbo shell
+			Composite clientArea = getShellClientComposite();
+			if (clientArea != null)
+				clientArea.removeControlListener(caResizeListener);
 
 			if (hostPane != null && hostPane.isVisible()) {
 				hostPane.setVisible(false);

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -45,15 +46,16 @@ public class ToolControlRenderer extends SWTPartRenderer {
 		newComposite.setLayout(new FillLayout());
 
 		// Create a context just to contain the parameters for injection
-		IEclipseContext localContext = parentContext.createChild("TrimControl"); //$NON-NLS-1$
-		IContributionFactory contributionFactory = (IContributionFactory) localContext
-				.get(IContributionFactory.class.getName());
+		IContributionFactory contributionFactory = parentContext
+				.get(IContributionFactory.class);
+
+		IEclipseContext localContext = EclipseContextFactory.create();
 
 		localContext.set(Composite.class.getName(), newComposite);
 		localContext.set(MToolControl.class.getName(), toolControl);
 
 		Object tcImpl = contributionFactory.create(
-				toolControl.getContributionURI(), localContext);
+				toolControl.getContributionURI(), parentContext, localContext);
 		toolControl.setObject(tcImpl);
 
 		if (sep != null) {
