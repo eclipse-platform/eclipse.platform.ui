@@ -28,10 +28,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -64,7 +63,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.e4.core.commands.internal.CommandServiceImpl;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -89,10 +87,10 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ExternalActionManager;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -1739,13 +1737,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		MakeHandlersGo allHandlers = new MakeHandlersGo();
 
-		Category[] definedCategories = commandManager.getDefinedCategories();
-		for (int i = 0; i < definedCategories.length; i++) {
-			// must match definition in CommandServiceImpl
-			appContext.set(CommandServiceImpl.CAT_ID + definedCategories[i].getId(),
-					definedCategories[i]);
-		}
-
 		Command[] cmds = commandManager.getAllCommands();
 		for (int i = 0; i < cmds.length; i++) {
 			Command cmd = cmds[i];
@@ -1757,9 +1748,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				continue;
 			}
 			cmd.setHandler(allHandlers);
-
-			// must match definition in CommandServiceImpl
-			appContext.set(CommandServiceImpl.CMD_ID + cmdId, cmd);
 
 			MCommand mcmd = null;
 			List<MCommand> appCommands = app.getCommands();

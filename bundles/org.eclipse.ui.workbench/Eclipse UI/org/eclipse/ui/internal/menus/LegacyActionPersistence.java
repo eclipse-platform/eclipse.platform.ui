@@ -13,15 +13,10 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandEvent;
-import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
@@ -32,16 +27,8 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.bindings.Binding;
-import org.eclipse.jface.bindings.Scheme;
-import org.eclipse.jface.bindings.keys.IKeyLookup;
-import org.eclipse.jface.bindings.keys.KeyBinding;
-import org.eclipse.jface.bindings.keys.KeyLookupFactory;
-import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.commands.RadioState;
 import org.eclipse.jface.commands.ToggleState;
-import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.menus.IMenuStateIds;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -57,10 +44,8 @@ import org.eclipse.ui.internal.expressions.LegacySelectionEnablerWrapper;
 import org.eclipse.ui.internal.expressions.LegacyViewContributionExpression;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
-import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
-import org.eclipse.ui.keys.IBindingService;
 
 /**
  * <p>
@@ -98,12 +83,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	private static final int INDEX_VIEW_CONTRIBUTIONS = INDEX_EDITOR_CONTRIBUTIONS + 1;
 
-	/**
-	 * The binding manager which should be populated with bindings from actions;
-	 * must not be <code>null</code>.
-	 */
-	private final BindingService bindingService;
-
 
 
 	/**
@@ -131,38 +110,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * must not be <code>null</code>.
 	 */
 	private final IWorkbenchWindow window;
-	
-	/**
-	 * Help action sets with enable/disable.
-	 */
-	private ICommandListener actionSetListener = new ICommandListener() {
-		public void commandChanged(CommandEvent commandEvent) {
-			Command cmd = commandEvent.getCommand();
-			String commandId = cmd.getId();
-			Binding binding = (Binding) commandIdToBinding.get(commandId);
-			if (binding != null) {
-				if (cmd.isEnabled()) {
-					if (!actionSetActiveBindings.contains(binding)) {
-						bindingService.addBinding(binding);
-						actionSetActiveBindings.add(binding);
-					}
-				} else if (actionSetActiveBindings.contains(binding)) {
-					bindingService.removeBinding(binding);
-					actionSetActiveBindings.remove(binding);
-				}
-			}
-		}
-	};
-	
-	/**
-	 * Map every commandId to its binding.
-	 */
-	private HashMap commandIdToBinding = new HashMap();
-	
-	/**
-	 * Which bindings do we currently have outstanding.
-	 */
-	private HashSet actionSetActiveBindings = new HashSet();
 
 	/**
 	 * Constructs a new instance of {@link LegacyActionPersistence}.
@@ -173,9 +120,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	public LegacyActionPersistence(final IWorkbenchWindow window) {
 		// TODO Blind casts are bad.
-		this.bindingService = (BindingService) window
-				.getService(IBindingService.class);
-
 		this.commandService = (ICommandService) window
 				.getService(ICommandService.class);
 		this.window = window;
@@ -202,25 +146,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	}
 
 	/**
-	 * Removes all of the bindings made by this class, and then clears the
-	 * collection. This should be called before every read.
-	 */
-	private final void clearBindings() {
-		Iterator i = commandIdToBinding.entrySet().iterator();
-		while (i.hasNext()) {
-			Map.Entry entry = (Map.Entry) i.next();
-			String commandId = (String) entry.getKey();
-			Binding binding = (Binding) entry.getValue();
-			commandService.getCommand(commandId).removeCommandListener(actionSetListener);
-			if (binding!=null && actionSetActiveBindings.contains(binding)) {
-				bindingService.removeBinding(binding);
-			}
-		}
-		commandIdToBinding.clear();
-		actionSetActiveBindings.clear();
-	}
-
-	/**
 	 * Removes all of the image bindings made by this class, and then clears the
 	 * collection. This should be called before every read.
 	 * 
@@ -235,65 +160,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	private final void clearMenus() {
 		menuContributions.clear();
-	}
-
-	/**
-	 * Extracts any key bindings from the action. If such a binding exists, it
-	 * is added to the binding manager.
-	 * 
-	 * @param element
-	 *            The action from which the binding should be read; must not be
-	 *            <code>null</code>.
-	 * @param command
-	 *            The fully-parameterized command for which a binding should be
-	 *            made; must not be <code>null</code>.
-	 */
-	private final void convertActionToBinding(
-			final IConfigurationElement element,
-			final ParameterizedCommand command, final List warningsToLog) {
-		// Figure out which accelerator text to use.
-		String acceleratorText = readOptional(element, ATT_ACCELERATOR);
-		if (acceleratorText == null) {
-			final String label = readOptional(element, ATT_LABEL);
-			if (label != null) {
-				acceleratorText = LegacyActionTools
-						.extractAcceleratorText(label);
-			}
-		}
-
-		// If there is some accelerator text, generate a key sequence from it.
-		if (acceleratorText != null) {
-			final IKeyLookup lookup = KeyLookupFactory.getSWTKeyLookup();
-			final int acceleratorInt = LegacyActionTools
-					.convertAccelerator(acceleratorText);
-			final int modifierMask = lookup.getAlt() | lookup.getCommand()
-					| lookup.getCtrl() | lookup.getShift();
-			final int modifierKeys = acceleratorInt & modifierMask;
-			final int naturalKey = acceleratorInt & ~modifierMask;
-			final KeyStroke keyStroke = KeyStroke.getInstance(modifierKeys,
-					naturalKey);
-			final KeySequence keySequence = KeySequence.getInstance(keyStroke);
-
-			final Scheme activeScheme = bindingService.getActiveScheme();
-
-			try {
-				final Binding binding = new KeyBinding(keySequence, command,
-						activeScheme.getId(), IContextIds.CONTEXT_ID_WINDOW,
-						null, null, null, Binding.SYSTEM);
-				commandIdToBinding.put(command.getCommand().getId(), binding);
-
-				if (command.getCommand().isEnabled()) {
-					bindingService.addBinding(binding);
-					actionSetActiveBindings.add(binding);
-				}
-
-				command.getCommand().addCommandListener(actionSetListener);
-			} catch (IllegalArgumentException e) {
-				addWarning(warningsToLog,
-						"invalid keybinding: " + e.getMessage(), element, //$NON-NLS-1$
-						command.getCommand().getId());
-			}
-		}
 	}
 
 	/**
@@ -518,7 +384,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 	private void clear() {
 		clearActivations();
-		clearBindings();
 		clearImages();
 		clearMenus();
 	}
@@ -654,9 +519,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			convertActionToHandler(element, id, command, visibleWhenExpression,
 					viewId, warningsToLog);
 			// TODO Read the overrideActionId attribute
-
-			convertActionToBinding(element, command, warningsToLog);
-
 		}
 	}
 

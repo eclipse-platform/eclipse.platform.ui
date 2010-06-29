@@ -27,6 +27,8 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -358,6 +360,12 @@ public class ToolItemRenderer extends SWTPartRenderer {
 						ParameterizedCommand cmd = item.getWbCommand();
 						if (cmd == null) {
 							cmd = generateParameterizedCommand(item, lclContext);
+						}
+						if (cmd == null) {
+							Activator.trace(Policy.DEBUG_MENUS,
+									"Failed to execute: " + item.getCommand(), //$NON-NLS-1$
+									null);
+							return;
 						}
 						lclContext.set(MItem.class.getName(), item);
 						service.executeHandler(cmd);

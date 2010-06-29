@@ -19,26 +19,17 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  *
  */
 public class CommandServiceImpl implements ECommandService {
-	public static final String CAT_ID = "category::"; //$NON-NLS-1$
-	public static final String CMD_ID = "command::"; //$NON-NLS-1$
 
 	private CommandManager commandManager;
-	private IEclipseContext context;
 
 	@Inject
 	public void setManager(CommandManager m) {
 		commandManager = m;
-	}
-
-	@Inject
-	public void setContext(IEclipseContext c) {
-		context = c;
 	}
 
 	/*
@@ -66,7 +57,6 @@ public class CommandServiceImpl implements ECommandService {
 		Category cat = commandManager.getCategory(id);
 		if (!cat.isDefined()) {
 			cat.define(name, description);
-			context.set(CAT_ID + id, cat);
 		}
 		return cat;
 	}
@@ -82,7 +72,6 @@ public class CommandServiceImpl implements ECommandService {
 		Command cmd = commandManager.getCommand(id);
 		if (!cmd.isDefined()) {
 			cmd.define(name, description, category, parameters);
-			context.set(CMD_ID + id, cmd);
 		}
 		return cmd;
 	}
@@ -93,7 +82,7 @@ public class CommandServiceImpl implements ECommandService {
 	 * @see org.eclipse.e4.core.commands.ECommandService#getCategory(java.lang.String)
 	 */
 	public Category getCategory(String categoryId) {
-		return (Category) context.get(CAT_ID + categoryId);
+		return commandManager.getCategory(categoryId);
 	}
 
 	/*
@@ -102,7 +91,7 @@ public class CommandServiceImpl implements ECommandService {
 	 * @see org.eclipse.e4.core.commands.ECommandService#getCommand(java.lang.String)
 	 */
 	public Command getCommand(String commandId) {
-		return (Command) context.get(CMD_ID + commandId);
+		return commandManager.getCommand(commandId);
 	}
 
 }

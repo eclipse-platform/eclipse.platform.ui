@@ -24,16 +24,12 @@ import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -43,8 +39,6 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.internal.workbench.Activator;
-import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -129,7 +123,6 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.commands.ICommandImageService;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -139,9 +132,7 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
-import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
-import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.layout.ITrimManager;
@@ -853,39 +844,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public static boolean getRetarget(IConfigurationElement element) {
 		String r = element.getAttribute(IWorkbenchRegistryConstants.ATT_RETARGET);
 		return Boolean.valueOf(r);
-	}
-
-	private void readActionSets() {
-		IEclipseContext windowContext = model.getContext();
-		WorkbenchWindowExpression windowExpression = new WorkbenchWindowExpression(this);
-		ICommandService cs = (ICommandService) windowContext.get(ICommandService.class.getName());
-		IExtensionRegistry registry = (IExtensionRegistry) windowContext
-				.get(IExtensionRegistry.class.getName());
-		IExtensionPoint extPoint = registry
-				.getExtensionPoint(IWorkbenchRegistryConstants.EXTENSION_ACTION_SETS);
-		IConfigurationElement[] actionSetElements = extPoint.getConfigurationElements();
-		for (IConfigurationElement ase : actionSetElements) {
-			IConfigurationElement[] elements = ase
-					.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
-			for (IConfigurationElement configElement : elements) {
-				String id = getId(configElement);
-				String cmdId = getActionSetCommandId(configElement);
-				if (id == null || id.length() == 0 || getRetarget(configElement)) {
-					continue;
-				}
-				Command cmd = cs.getCommand(cmdId);
-				if (!cmd.isDefined()) {
-					Activator.trace(Policy.DEBUG_CMDS, "Still no command for " //$NON-NLS-1$
-							+ cmdId, null);
-					continue;
-				}
-				LegacyHandlerService.registerLegacyHandler(windowContext, id, cmdId,
-						new ActionDelegateHandlerProxy(configElement,
-								IWorkbenchRegistryConstants.ATT_CLASS, id,
-								new ParameterizedCommand(cmd, null), this, null, null, null),
-						windowExpression);
-			}
-		}
 	}
 
 	/**
@@ -2108,9 +2066,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class, mappingService);
 
-		final LegacyActionPersistence actionPersistence = new LegacyActionPersistence(this);
-		serviceLocator.registerService(LegacyActionPersistence.class, actionPersistence);
-		actionPersistence.read();
 
 		selectionService = ContextInjectionFactory.make(SelectionService.class,
 				model.getContext());
@@ -2118,7 +2073,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		LegacyHandlerService hs = new LegacyHandlerService(windowContext);
 		windowContext.set(IHandlerService.class.getName(), hs);
-		readActionSets();
+
+		final LegacyActionPersistence actionPersistence = new LegacyActionPersistence(this);
+		serviceLocator.registerService(LegacyActionPersistence.class, actionPersistence);
+		actionPersistence.read();
 
 	}
 
