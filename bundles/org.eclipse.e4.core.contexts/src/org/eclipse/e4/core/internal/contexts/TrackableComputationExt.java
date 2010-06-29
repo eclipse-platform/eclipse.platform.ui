@@ -77,7 +77,7 @@ public class TrackableComputationExt extends Computation implements IContextReco
 				else {
 					if (eventType == ContextChangeEvent.DISPOSE)
 						runnable.disposed(cachedEvent.getContext());
-					else
+					else if (eventType != ContextChangeEvent.UNINJECTED)
 						result = runnable.changed(cachedEvent.getContext());
 				}
 				cachedEvent = null;
@@ -88,7 +88,7 @@ public class TrackableComputationExt extends Computation implements IContextReco
 				else {
 					if (eventType == ContextChangeEvent.DISPOSE)
 						runnable.disposed(event.getContext());
-					else
+					else if (eventType != ContextChangeEvent.UNINJECTED)
 						result = runnable.changed(event.getContext());
 				}
 			}
