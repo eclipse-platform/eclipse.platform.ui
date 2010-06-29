@@ -139,14 +139,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
      * @since 3.3
      */
 	protected static final String PREF_PREFERRED_DELEGATES = DebugPlugin.getUniqueIdentifier() + ".PREFERRED_DELEGATES"; //$NON-NLS-1$
-	
-	/**
-	 * Boolean preference on whether to delete associated configurations when a project is deleted.
-	 * 
-	 * @since 3.3
-	 */
-	public static final String PREF_DELETE_CONFIGS_ON_PROJECT_DELETE = DebugPlugin.getUniqueIdentifier() + ".PREF_DELETE_CONFIGS_ON_PROJECT_DELETE"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Constant to define debug.ui for the status codes
 	 * 
@@ -2038,7 +2031,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @return whether to auto-delete configurations
 	 */
 	private boolean isDeleteConfigurations() {
-		return Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true, null);
+		return Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), DebugPlugin.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true, null);
 	}
 	
 	/* (non-Javadoc)

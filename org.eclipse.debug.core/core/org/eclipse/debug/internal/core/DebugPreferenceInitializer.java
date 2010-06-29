@@ -27,7 +27,7 @@ public class DebugPreferenceInitializer extends AbstractPreferenceInitializer {
 		// Step filter preferences
 		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), StepFilterManager.PREF_USE_STEP_FILTERS, false);
 		//launch configurations preferences
-		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true);
+		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), DebugPlugin.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true);
 		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, true);
 		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_BREAKPOINT_MANAGER_ENABLED_STATE, true);
 		Preferences.savePreferences(DebugPlugin.getUniqueIdentifier());

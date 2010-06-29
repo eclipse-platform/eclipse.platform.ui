@@ -279,6 +279,15 @@ public class DebugPlugin extends Plugin {
 	public static final String ATTR_CONSOLE_ENCODING = "org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING"; //$NON-NLS-1$
 	
 	/**
+	 * Boolean preference key (value <code>org.eclipse.debug.core.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE</code>) that controls
+	 * whether to delete associated configurations when a project is deleted. Default value is <code>true</code>.
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREF_DELETE_CONFIGS_ON_PROJECT_DELETE = DebugPlugin.getUniqueIdentifier() + ".PREF_DELETE_CONFIGS_ON_PROJECT_DELETE"; //$NON-NLS-1$
+
+	
+	/**
 	 * The singleton debug plug-in instance.
 	 */
 	private static DebugPlugin fgDebugPlugin= null;
