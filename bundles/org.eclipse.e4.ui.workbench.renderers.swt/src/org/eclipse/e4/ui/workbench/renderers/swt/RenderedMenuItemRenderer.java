@@ -60,6 +60,29 @@ public class RenderedMenuItemRenderer extends SWTPartRenderer {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#unbindWidget
+	 * (org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	@Override
+	public Object unbindWidget(MUIElement me) {
+		MRenderedMenuItem item = (MRenderedMenuItem) me;
+		Object contributionItem = item.getContributionItem();
+		if (contributionItem instanceof ExtensionPointProxy) {
+			ExtensionPointProxy proxy = (ExtensionPointProxy) contributionItem;
+			Object delegate = proxy.getDelegate();
+			if (delegate instanceof IContributionItem) {
+				((IContributionItem) delegate).dispose();
+			}
+		} else if (contributionItem instanceof IContributionItem) {
+			((IContributionItem) contributionItem).dispose();
+		}
+		return super.unbindWidget(me);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#hideChild
 	 * (org.eclipse.e4.ui.model.application.MElementContainer,
 	 * org.eclipse.e4.ui.model.application.MUIElement)

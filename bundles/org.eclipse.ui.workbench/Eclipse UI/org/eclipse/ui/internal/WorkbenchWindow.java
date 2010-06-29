@@ -63,6 +63,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -662,6 +663,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				separator.setToBeRendered(item.isVisible());
 				separator.setElementId(item.getId());
 				menu.getChildren().add(separator);
+			} else {
+				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
+				menuItem.setContributionItem(item);
+				menu.getChildren().add(menuItem);
 			}
 		}
 	}

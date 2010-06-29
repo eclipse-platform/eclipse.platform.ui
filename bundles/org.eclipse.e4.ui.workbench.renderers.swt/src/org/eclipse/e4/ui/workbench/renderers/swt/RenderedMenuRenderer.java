@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
@@ -96,6 +97,16 @@ public class RenderedMenuRenderer extends SWTPartRenderer {
 		Widget widget = (Widget) child.getWidget();
 		if (widget != null && !widget.isDisposed())
 			widget.dispose();
+	}
+
+	@Override
+	public Object unbindWidget(MUIElement me) {
+		MRenderedMenu menuModel = (MRenderedMenu) me;
+		Object contributionManager = menuModel.getContributionManager();
+		if (contributionManager instanceof IMenuManager) {
+			((IMenuManager) contributionManager).dispose();
+		}
+		return super.unbindWidget(me);
 	}
 
 	/*
