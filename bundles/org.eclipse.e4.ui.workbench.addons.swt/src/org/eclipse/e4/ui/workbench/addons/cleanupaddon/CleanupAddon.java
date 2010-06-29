@@ -215,8 +215,13 @@ public class CleanupAddon {
 
 				// Remove stacks with no visible children from the display (but not the
 				// model)
+				final MElementContainer<MUIElement> theContainer = container;
 				if (visCount == 0) {
-					container.setToBeRendered(false);
+					Display.getCurrent().asyncExec(new Runnable() {
+						public void run() {
+							theContainer.setToBeRendered(false);
+						}
+					});
 				}
 			}
 		}
