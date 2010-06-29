@@ -92,7 +92,7 @@ public interface EPartService {
 	public void activate(MPart part);
 
 	/**
-	 * This method will be removed before 1.0 is released.
+	 * This method may be removed before 1.0 is released.
 	 * 
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -151,7 +151,7 @@ public interface EPartService {
 	public MPart createPart(String id);
 
 	/**
-	 * Creates a new part of the given id.
+	 * Creates a new placeholder for a part of the given id.
 	 * 
 	 * @param id
 	 *            the identifier of the part, must not be <code>null</code>
@@ -161,6 +161,21 @@ public interface EPartService {
 	 *         that match the specified id
 	 */
 	public MPlaceholder createSharedPart(String id, MWindow sharedWindow);
+
+	/**
+	 * Creates a new placeholder for a part of the given id.
+	 * 
+	 * @param id
+	 *            the identifier of the part, must not be <code>null</code>
+	 * @param sharedWindow
+	 *            the window under which a shared part reference will be created
+	 * @param force
+	 *            <code>true</code> if a new part should be created, <code>false</code> if the
+	 *            window should be queried for a shared part first
+	 * @return a new part of the given id, or <code>null</code> if no part descriptors can be found
+	 *         that match the specified id
+	 */
+	public MPlaceholder createSharedPart(String id, MWindow sharedWindow, boolean force);
 
 	/**
 	 * Shows a part with the identified by the given id. In the event that there are multiple parts

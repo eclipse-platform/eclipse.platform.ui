@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -946,6 +947,59 @@ public class EPartServiceTest extends TestCase {
 		EPartService partService = (EPartService) window.getContext().get(
 				EPartService.class.getName());
 		assertNull(partService.createSharedPart("partId", window));
+	}
+
+	public void testCreateSharedPart_ForceFalse() {
+		MApplication application = createApplication(1, new String[1][0]);
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setElementId("partId");
+		application.getDescriptors().add(partDescriptor);
+
+		MWindow window = application.getChildren().get(0);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPlaceholder placeholderA = partService.createSharedPart("partId",
+				window, false);
+		MPlaceholder placeholderB = partService.createSharedPart("partId",
+				window, false);
+
+		assertEquals(1, window.getSharedElements().size());
+
+		MPart part = (MPart) window.getSharedElements().get(0);
+		assertEquals(part, placeholderA.getRef());
+		assertEquals(part, placeholderB.getRef());
+	}
+
+	public void testCreateSharedPart_ForceTrue() {
+		MApplication application = createApplication(1, new String[1][0]);
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setElementId("partId");
+		application.getDescriptors().add(partDescriptor);
+
+		MWindow window = application.getChildren().get(0);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPlaceholder placeholderA = partService.createSharedPart("partId",
+				window, true);
+		MPlaceholder placeholderB = partService.createSharedPart("partId",
+				window, true);
+
+		assertEquals(2, window.getSharedElements().size());
+
+		MPart part1 = (MPart) window.getSharedElements().get(0);
+		MPart part2 = (MPart) window.getSharedElements().get(1);
+		assertTrue(part1 == placeholderA.getRef()
+				|| part1 == placeholderB.getRef());
+		assertTrue(part2 == placeholderA.getRef()
+				|| part2 == placeholderB.getRef());
 	}
 
 	public void testShowPart_Id_ACTIVATE() {

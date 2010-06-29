@@ -431,12 +431,20 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPlaceholder createSharedPart(String id, MWindow sharedWindow) {
+		return createSharedPart(id, sharedWindow, false);
+	}
+
+	public MPlaceholder createSharedPart(String id, MWindow sharedWindow, boolean force) {
 		// Do we already have the part to share?
 		MPart sharedPart = null;
-		for (MUIElement element : sharedWindow.getSharedElements()) {
-			if (element.getElementId().equals(id)) {
-				sharedPart = (MPart) element;
-				break;
+
+		// check for existing parts if necessary
+		if (!force) {
+			for (MUIElement element : sharedWindow.getSharedElements()) {
+				if (element.getElementId().equals(id)) {
+					sharedPart = (MPart) element;
+					break;
+				}
 			}
 		}
 
@@ -665,7 +673,8 @@ public class PartServiceImpl implements EPartService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.workbench.modeling.EPartService#save(org.eclipse.e4.ui.model.application.
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EPartService#save(org.eclipse.e4.ui.model.application.
 	 * MSaveablePart, boolean)
 	 */
 	public boolean savePart(MPart part, boolean confirm) {
