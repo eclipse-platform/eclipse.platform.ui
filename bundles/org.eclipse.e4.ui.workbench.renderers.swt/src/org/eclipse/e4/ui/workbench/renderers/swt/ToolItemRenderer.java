@@ -18,6 +18,8 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -245,6 +247,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		newItem.setImage(getImage((MUILabel) element));
 
 		newItem.setEnabled(itemModel.isEnabled());
+
 		newItem.setSelection(itemModel.isSelected());
 
 		return newItem;
@@ -351,7 +354,43 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		} else if (me instanceof MHandledItem) {
 			final MHandledItem item = (MHandledItem) me;
 			final IEclipseContext lclContext = getContext(me);
-			ToolItem ti = (ToolItem) me.getWidget();
+			final ToolItem ti = (ToolItem) me.getWidget();
+			final Display display = ti.getDisplay();
+			display.timerExec(500, new Runnable() {
+				boolean logged = false;
+
+				public void run() {
+					if (ti.isDisposed()) {
+						return;
+					}
+					SafeRunner.run(new ISafeRunnable() {
+						public void run() throws Exception {
+							EHandlerService service = lclContext
+									.get(EHandlerService.class);
+							ParameterizedCommand cmd = item.getWbCommand();
+							if (cmd == null) {
+								cmd = generateParameterizedCommand(item,
+										lclContext);
+							}
+							if (cmd == null) {
+								return;
+							}
+							item.setEnabled(service.canExecute(cmd));
+						}
+
+						public void handleException(Throwable exception) {
+							if (!logged) {
+								logged = true;
+								logger.error(
+										exception,
+										"Internal error during tool item enablement updating, this is only logged once per tool item."); //$NON-NLS-1$
+							}
+						}
+					});
+					// repeat until disposed
+					display.timerExec(500, this);
+				}
+			});
 			ti.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
 					if (e.detail != SWT.ARROW) {
