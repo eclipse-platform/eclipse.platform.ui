@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
+
 package org.eclipse.ui.internal.quickaccess;
 
 import javax.annotation.PostConstruct;
@@ -60,8 +71,19 @@ public class SearchField {
 				if (!wasVisible && nowVisible) {
 					Rectangle tempBounds = comp.getBounds();
 					Rectangle compBounds = e.display.map(comp, null, tempBounds);
-					shell.setBounds(compBounds.x, compBounds.y + compBounds.height,
-							Math.max(350, compBounds.width), 250);
+					Rectangle monitorBounds = comp.getMonitor().getBounds();
+					int width = Math.max(350, compBounds.width);
+					int height = 250;
+
+					if (compBounds.x + width > monitorBounds.width) {
+						compBounds.x = monitorBounds.width - width;
+					}
+					
+					if (compBounds.y + height > monitorBounds.height) {
+						compBounds.y = compBounds.y - tempBounds.height - height;
+					}
+					
+					shell.setBounds(compBounds.x, compBounds.y + compBounds.height, width, height);
 					shell.layout();
 				}
 				shell.setVisible(nowVisible);
