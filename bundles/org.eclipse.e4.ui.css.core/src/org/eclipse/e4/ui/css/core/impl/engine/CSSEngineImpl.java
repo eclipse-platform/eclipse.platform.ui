@@ -45,14 +45,10 @@ public class CSSEngineImpl extends AbstractCSSEngine {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint extPoint = registry
 				.getExtensionPoint("org.eclipse.e4.u.css.core.elementProvider");
-		IExtension[] ex = extPoint.getExtensions();
-		IConfigurationElement[] con = ex[0].getConfigurationElements();
-		String provider = null;
 		for (IExtension e : extPoint.getExtensions()) {
 			for (IConfigurationElement ce : e.getConfigurationElements()) {
 				String tmp = ce.getName();
 				if (tmp.equals("provider")) {
-					provider = ce.getAttribute("class");
 					try {
 						Object tmp2 = ce.createExecutableExtension("class");
 						for (IConfigurationElement ce2 : ce.getChildren()) {

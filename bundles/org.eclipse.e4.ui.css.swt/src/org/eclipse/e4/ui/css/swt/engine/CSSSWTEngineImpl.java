@@ -81,16 +81,12 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint extPoint = registry
 				.getExtensionPoint("org.eclipse.e4.ui.css.swt.property.handler");
-		IExtension[] ex = extPoint.getExtensions();
-		IConfigurationElement[] con = ex[0].getConfigurationElements();
 		for (IExtension e : extPoint.getExtensions()) {
 			for (IConfigurationElement ce : e.getConfigurationElements()) {
 				if (ce.getName().equals("handler")) {
 					String name = ce.getAttribute("composite");
 					String adapter = ce.getAttribute("adapter");
 //					if (className.equals(adapter)) {
-						
-						String handler = ce.getAttribute("handler");
 						IConfigurationElement[] children = ce.getChildren();
 						String[] names = new String[children.length];
 						for (int i = 0; i < children.length; i++) {
