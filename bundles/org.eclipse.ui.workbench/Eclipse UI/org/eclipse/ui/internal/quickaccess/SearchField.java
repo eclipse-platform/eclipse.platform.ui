@@ -16,6 +16,8 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Rectangle;
@@ -87,6 +89,14 @@ public class SearchField {
 					shell.layout();
 				}
 				shell.setVisible(nowVisible);
+			}
+		});
+		text.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ESC) {
+					text.setText(""); //$NON-NLS-1$
+				}
 			}
 		});
 
