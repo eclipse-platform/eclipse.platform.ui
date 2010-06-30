@@ -117,9 +117,10 @@ public class InjectorImpl implements IInjector {
 			List<WeakReference<?>> list = injectedObjects.get(objectSupplier);
 			for (Iterator<WeakReference<?>> i = list.iterator(); i.hasNext();) {
 				WeakReference<?> ref = i.next();
-				if (object == ref.get())
+				if (object == ref.get()) {
 					i.remove();
-				return true;
+					return true;
+				}
 			}
 			return false;
 		}
