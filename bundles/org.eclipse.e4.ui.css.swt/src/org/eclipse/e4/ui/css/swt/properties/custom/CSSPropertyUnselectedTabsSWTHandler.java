@@ -38,18 +38,17 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 			folder.setBackground(colors, percents, true);
 			
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-			Object appContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
-			if (appContext != null && appContext instanceof IEclipseContext) {
-				IEclipseContext context = (IEclipseContext) appContext;
-				IEclipseContext childContext = context.createChild();
+			Object cssContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
+			if (cssContext != null && cssContext instanceof IEclipseContext) {
+				IEclipseContext context = (IEclipseContext) cssContext;
 				if (pseudo != null && pseudo.equals("selected")) {
-					childContext.set("activeToolbarColors", colors);
-					childContext.set("activeToolbarPercents", percents);
+					context.set("activeToolbarColors", colors);
+					context.set("activeToolbarPercents", percents);
 				} else {
-					childContext.set("inactiveToolbarColors", colors);
-					childContext.set("inactiveToolbarPercents", percents);
+					context.set("inactiveToolbarColors", colors);
+					context.set("inactiveToolbarPercents", percents);
 				}
-				ContextInjectionFactory.inject(renderer, childContext); 
+				ContextInjectionFactory.inject(renderer, context); 
 			}
 		}
 	}

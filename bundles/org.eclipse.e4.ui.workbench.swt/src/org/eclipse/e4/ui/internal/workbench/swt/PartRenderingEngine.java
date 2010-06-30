@@ -23,6 +23,7 @@ import javax.inject.Named;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
@@ -763,7 +764,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 			final IThemeEngine engine = mgr.getEngineForDisplay(display);
 
 			// Store the app context
-			display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$
+			IContributionFactory contribution = (IContributionFactory) appContext
+					.get(IContributionFactory.class.getName());
+			IEclipseContext cssContext = EclipseContextFactory.create();
+			cssContext.set(IContributionFactory.class.getName(), contribution);
+			display.setData("org.eclipse.e4.ui.css.context", cssContext); //$NON-NLS-1$
 
 			// Create the OSGi resource locator
 			if (cssResourcesURI != null) {

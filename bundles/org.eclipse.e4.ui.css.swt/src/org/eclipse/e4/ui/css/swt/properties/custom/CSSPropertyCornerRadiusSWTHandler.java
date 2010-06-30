@@ -34,12 +34,11 @@ public class CSSPropertyCornerRadiusSWTHandler extends AbstractCSSPropertySWTHan
 			
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
 					
-			Object appContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
-			if (appContext != null && appContext instanceof IEclipseContext) {
-				IEclipseContext context = (IEclipseContext) appContext;
-				IEclipseContext childContext = context.createChild();
-				childContext.set("radius", new Integer(radiusValue));
-				ContextInjectionFactory.inject(renderer, childContext); 
+			Object cssContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
+			if (cssContext != null && cssContext instanceof IEclipseContext) {
+				IEclipseContext context = (IEclipseContext) cssContext;
+				context.set("radius", new Integer(radiusValue));
+				ContextInjectionFactory.inject(renderer, context); 
 			}
 		}
 	}

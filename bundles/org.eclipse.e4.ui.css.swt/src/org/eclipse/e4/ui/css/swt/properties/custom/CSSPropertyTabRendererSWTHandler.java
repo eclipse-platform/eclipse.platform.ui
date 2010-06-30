@@ -33,13 +33,12 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 			if (((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
 				String rendURL = ((CSSPrimitiveValue) value).getStringValue();
 			
-				Object appContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
-				if (appContext != null && appContext instanceof IEclipseContext) {
-					IEclipseContext context = (IEclipseContext) appContext;
-					IEclipseContext childContext = context.createChild();
-					childContext.set(CTabFolder.class.getName(), control);
+				Object cssContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
+				if (cssContext != null && cssContext instanceof IEclipseContext) {
+					IEclipseContext context = (IEclipseContext) cssContext;
+					context.set(CTabFolder.class.getName(), control);
 					IContributionFactory factory = (IContributionFactory) context.get(IContributionFactory.class.getName());
-					Object rend = factory.create(rendURL, childContext);
+					Object rend = factory.create(rendURL, context);
 					if (rend != null && rend instanceof CTabFolderRenderer){
 						((CTabFolder) control).setRenderer((CTabFolderRenderer)rend);
 					}
