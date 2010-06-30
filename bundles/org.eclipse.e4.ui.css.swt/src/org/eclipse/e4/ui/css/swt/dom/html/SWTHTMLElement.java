@@ -11,7 +11,7 @@
 package org.eclipse.e4.ui.css.swt.dom.html;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.dom.SWTElement;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * w3c Element which wrap SWT widget to manage HTML/XUL selectors.
  */
-public class SWTHTMLElement extends SWTElement {
+public class SWTHTMLElement extends WidgetElement {
 
 	protected String attributeType;
 

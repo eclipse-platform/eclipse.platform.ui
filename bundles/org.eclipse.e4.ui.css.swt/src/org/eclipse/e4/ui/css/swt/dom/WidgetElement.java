@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Angelo Zerr and others.
+ * Copyright (c) 2008 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,40 +7,34 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
- *     IBM Corporation - ongoing development
- *     Remy Chi Jian Suen <remy.suen@gmail.com>
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
-import org.eclipse.e4.ui.css.swt.helpers.PropertyHelper;
-
+import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.utils.ClassUtils;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
-import org.eclipse.e4.ui.css.swt.engine.AbstractCSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.helpers.SWTStyleHelpers;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * w3c Element which wrap SWT widget.
+ * {@link CSSStylableElement} implementation which wrap SWT {@link Widget}.
+ * 
  */
-public class SWTElement extends ElementAdapter implements NodeList {
-
+public class WidgetElement extends ElementAdapter implements NodeList {
+	
+	boolean dynamicEnabled = false;
+	
 	/**
 	 * Convenience method for getting the CSS class of a widget.
-	 * @param widget SWT widget with associated CSS class name
+	 * 
+	 * @param widget
+	 *            SWT widget with associated CSS class name
 	 * @return CSS class name
 	 */
 	public static String getCSSClass(Widget widget) {
@@ -49,7 +43,9 @@ public class SWTElement extends ElementAdapter implements NodeList {
 
 	/**
 	 * Convenience method for getting the CSS ID of a widget.
-	 * @param widget SWT widget with associated CSS id
+	 * 
+	 * @param widget
+	 *            SWT widget with associated CSS id
 	 * @return CSS ID
 	 */
 	public static String getID(Widget widget) {
@@ -58,8 +54,11 @@ public class SWTElement extends ElementAdapter implements NodeList {
 
 	/**
 	 * Convenience method for setting the CSS class of a widget.
-	 * @param widget SWT widget with associated CSS class name
-	 * @param className class name to set
+	 * 
+	 * @param widget
+	 *            SWT widget with associated CSS class name
+	 * @param className
+	 *            class name to set
 	 */
 	public static void setCSSClass(Widget widget, String className) {
 		widget.setData(CSSSWTConstants.CSS_CLASS_NAME_KEY, className);
@@ -67,13 +66,16 @@ public class SWTElement extends ElementAdapter implements NodeList {
 
 	/**
 	 * Convenience method for setting the CSS ID of a widget.
-	 * @param widget SWT widget with associated CSS id
-	 * @param id CSS id to set
+	 * 
+	 * @param widget
+	 *            SWT widget with associated CSS id
+	 * @param id
+	 *            CSS id to set
 	 */
 	public static void setID(Widget widget, String id) {
 		widget.setData(CSSSWTConstants.CSS_ID_KEY, id);
 	}
-
+	
 	/**
 	 * Convenience method for getting the CSS engine responsible for a widget.
 	 * @param widget SWT widget which is styled by an engine
@@ -87,7 +89,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	 * @param widget SWT display which is styled by an engine
 	 * @param engine Engine to be associated with the display
 	 */
-	public static void setEngine(Display display, AbstractCSSSWTEngineImpl engine) {
+	public static void setEngine(Display display, CSSEngine engine) {
 		display.setData(CSSSWTConstants.CSS_ENGINE_KEY, engine);
 	}
 
@@ -97,7 +99,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 
 	protected String swtStyles;
 
-	public SWTElement(Widget widget, CSSEngine engine) {
+	public WidgetElement(Widget widget, CSSEngine engine) {
 		super(widget, engine);
 		this.localName = computeLocalName();
 		this.namespaceURI = computeNamespaceURI();
@@ -145,14 +147,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	 * 
 	 */
 	protected void computeStaticPseudoInstances() {
-		Widget widget = getWidget();
-		if (widget instanceof CTabFolder || widget instanceof CTabItem) {
-			// it's CTabFolder. Set selected as static pseudo instance.
-			// because this widget define methods
-			// CTabFolder#setSelectionBackground (Color color)
-			// which set background Color when a CTabItem is selected.
-			super.addStaticPseudoInstance("selected");
-		}
+		
 	}
 
 	/**
@@ -167,7 +162,9 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.ui.css.core.dom.ElementAdapter#getAttribute(java.lang.String)
+	 * @see
+	 * org.eclipse.e4.ui.css.core.dom.ElementAdapter#getAttribute(java.lang.
+	 * String)
 	 */
 	public String getAttribute(String attr) {
 		Widget widget = getWidget();
@@ -178,7 +175,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 		if (o != null)
 			return o.toString();
 		try {
-			o = PropertyHelper.getProperty(widget, attr);
+			//o = PropertyUtils.getProperty(widget, attr);
 			if (o != null)
 				return o.toString();
 		} catch (Exception e) {
@@ -195,19 +192,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 		return namespaceURI;
 	}
 
-	public Node getParentNode() {
-		Widget widget = getWidget();
-		if (widget instanceof CTabItem) {
-			return getElement(((CTabItem) widget).getParent());
-		}
-		if (widget instanceof Control) {
-			Control control = (Control) widget;
-			Composite parent = control.getParent();
-			if (parent != null) {
-				Element element = getElement(parent);
-				return element;
-			}
-		}
+	public Node getParentNode() {		
 		return null;
 	}
 
@@ -215,40 +200,11 @@ public class SWTElement extends ElementAdapter implements NodeList {
 		return this;
 	}
 
-	public int getLength() {
-		Widget widget = getWidget();
-		int childCount = 0;
-		if (widget instanceof Composite) {
-			childCount = ((Composite) widget).getChildren().length;
-			
-			if (widget instanceof CTabFolder) {
-				// if it's a CTabFolder, include the child items in the count
-				childCount += ((CTabFolder) widget).getItemCount();
-			}
-		}
-		return childCount;
+	public int getLength() {	
+		return 0;
 	}
 
 	public Node item(int index) {
-		Widget widget = getWidget();
-		if (widget instanceof Composite) {
-			if (widget instanceof CTabFolder) {
-				// retrieve the child control or child item depending on the
-				// index
-				CTabFolder folder = (CTabFolder) widget;
-				int length = folder.getChildren().length;
-				if (index >= length) {
-					Widget w = folder.getItem(index - length);
-					return getElement(w);
-				} else {
-					Widget w = folder.getChildren()[index];
-					return getElement(w);
-				}
-			}
-			
-			Widget w = ((Composite) widget).getChildren()[index];
-			return getElement(w);
-		}
 		return null;
 	}
 
@@ -284,68 +240,12 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	 */
 	public String getCSSStyle() {
 		Widget widget = getWidget();
-		//TODO should have key in CSSSWT
+		// TODO should have key in CSSSWT
 		Object id = widget.getData("style");
 		if (id != null)
 			return id.toString();
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.ui.css.core.dom.ElementAdapter#isPseudoInstanceOf(java.lang.String)
-	 */
-	public boolean isPseudoInstanceOf(String s) {
-		if ("enabled".equals(s)) {
-			Control control = (Control) getNativeWidget();
-			return control.isEnabled();
-		}
-		if ("disabled".equals(s)) {
-			Control control = (Control) getNativeWidget();
-			return !control.isEnabled();
-		}
-		if ("selected".equals(s) && getNativeWidget() instanceof Button) {
-			Button button = (Button) getNativeWidget();
-			return button.getSelection();
-	}
-		if ("visible".equals(s)) {
-			Control control = (Control) getNativeWidget();
-			return !control.isVisible();
-		}
-		if ("focus".equals(s)) {
-			Control control = (Control) getNativeWidget();
-			if (control.isFocusControl()) {
-				return control.getData(CSSSWTConstants.FOCUS_LOST) == null;
-			}
-		}
-		if ("active".equals(s) && getNativeWidget() instanceof Shell) {
-				Control control = (Control) getNativeWidget();
-				if (control.isEnabled()) {
-					return control.getData(CSSSWTConstants.ACTIVE_LOST) == null;
-				}
-		}
-		if ("hover".equals(s)) {
-			Control control = (Control) getNativeWidget();
-			return control.getData(CSSSWTConstants.MOUSE_HOVER) != null;
-		}
-		if ("odd".equals(s)) {
-			Object widget = getNativeWidget();
-			if (widget instanceof TableItem) {
-				TableItem tableItem = (TableItem) widget;
-				int index = tableItem.getParent().indexOf(tableItem);
-				return (index % 2) == 1;
-			}
-		}
-		if ("even".equals(s)) {
-			Object widget = getNativeWidget();
-			if (widget instanceof TableItem) {
-				TableItem tableItem = (TableItem) widget;
-				int index = tableItem.getParent().indexOf(tableItem);
-				return (index %2) == 0;
-			}
-		}
-		return super.isPseudoInstanceOf(s);
-	}
 
 }

@@ -11,6 +11,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.e4.ui.css.swt.dom.ItemElement;
+
+import org.w3c.dom.css.CSSPrimitiveValue;
+
+import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
+
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
@@ -58,7 +64,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 					.getCSS2FontProperties(widget, engine
 							.getCSSElementContext(widget));
 			if (fontProperties != null) {
-				super.applyCSSProperty(fontProperties, property, value, pseudo,
+				super.applyCSSProperty(element, property, value, pseudo,
 						engine);
 				if (widget instanceof CTabItem) {
 					Control parent = CTabETabHelper.getParent(widget);
@@ -89,6 +95,62 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 		return false;
 	}
 
+	public void applyCSSPropertyFontFamily(Object element, CSSValue value,
+			String pseudo, CSSEngine engine) throws Exception {
+		Widget widget = SWTElementHelpers.getWidget(element);
+		CSS2FontProperties fontProperties = CSSSWTFontHelper
+		.getCSS2FontProperties(widget, engine
+				.getCSSElementContext(widget));
+		if (fontProperties instanceof CSS2FontProperties) {
+			applyCSSPropertyFontFamily((CSS2FontProperties) fontProperties, value,
+					pseudo, engine);
+			return;
+		}
+		throw new UnsupportedPropertyException("font-family");
+	}
+	
+	public void applyCSSPropertyFontSize(Object element, CSSValue value,
+			String pseudo, CSSEngine engine) throws Exception {
+		Widget widget = SWTElementHelpers.getWidget(element);
+		CSS2FontProperties fontProperties = CSSSWTFontHelper
+		.getCSS2FontProperties(widget, engine
+				.getCSSElementContext(widget));
+		if (fontProperties instanceof CSS2FontProperties) {
+			applyCSSPropertyFontSize((CSS2FontProperties) fontProperties, value,
+					pseudo, engine);
+			return;
+		}
+		throw new UnsupportedPropertyException("font-size");
+	}
+
+	public void applyCSSPropertyFontWeight(Object element, CSSValue value,
+			String pseudo, CSSEngine engine) throws Exception {
+		Widget widget = SWTElementHelpers.getWidget(element);
+		CSS2FontProperties fontProperties = CSSSWTFontHelper
+		.getCSS2FontProperties(widget, engine
+				.getCSSElementContext(widget));
+		if (fontProperties instanceof CSS2FontProperties) {
+			applyCSSPropertyFontWeight((CSS2FontProperties) fontProperties, value,
+					pseudo, engine);
+			return;
+		}
+		throw new UnsupportedPropertyException("font-weight");
+	}
+	
+	public void applyCSSPropertyFontStyle(Object element, CSSValue value,
+			String pseudo, CSSEngine engine) throws Exception {
+		Widget widget = SWTElementHelpers.getWidget(element);
+		CSS2FontProperties fontProperties = CSSSWTFontHelper
+		.getCSS2FontProperties(widget, engine
+				.getCSSElementContext(widget));
+		if (fontProperties instanceof CSS2FontProperties) {
+			applyCSSPropertyFontStyle((CSS2FontProperties) fontProperties, value,
+					pseudo, engine);
+			return;
+		}
+		throw new UnsupportedPropertyException("font-style");
+	}
+	
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
@@ -215,6 +277,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 			CSS2FontProperties fontProperties = CSSSWTFontHelper
 					.getCSS2FontProperties(item, engine
 							.getCSSElementContext(item));
+			ItemElement itemElement = new ItemElement(item, engine);
 			if (fontProperties != null) {
 				// reset ourselves to prevent the stacking of properties
 				reset(fontProperties);
@@ -226,7 +289,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 						try {
 							// we have a value, so apply it to the properties
 							CSSPropertyFontSWTHandler.super.applyCSSProperty(
-									fontProperties, fontAttributes[j], value,
+									itemElement, fontAttributes[j], value,
 									pseudo, engine);
 						} catch (Exception e) {
 							engine.handleExceptions(e);

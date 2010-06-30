@@ -11,6 +11,13 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.engine;
 
+import java.util.HashMap;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBorderHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyClassificationHandler;
@@ -27,7 +34,6 @@ import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyPaddingSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCornerRadiusSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyInnerKeylineSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler;
@@ -66,6 +72,63 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 	}
 
 	protected void initializeCSSPropertyHandlers() {
+		
+		HashMap handlersMap = propertyHandlerMap;
+		String className = this.getClass().getName();
+//		if (handlersMap.containsKey(className)) return;
+		if (handlersMap.size() != 0) return;
+		
+		IExtensionRegistry registry = RegistryFactory.getRegistry();
+		IExtensionPoint extPoint = registry
+				.getExtensionPoint("org.eclipse.e4.ui.css.swt.property.handler");
+		IExtension[] ex = extPoint.getExtensions();
+		IConfigurationElement[] con = ex[0].getConfigurationElements();
+		for (IExtension e : extPoint.getExtensions()) {
+			for (IConfigurationElement ce : e.getConfigurationElements()) {
+				if (ce.getName().equals("handler")) {
+					String name = ce.getAttribute("composite");
+					String adapter = ce.getAttribute("adapter");
+//					if (className.equals(adapter)) {
+						
+						String handler = ce.getAttribute("handler");
+						IConfigurationElement[] children = ce.getChildren();
+						String[] names = new String[children.length];
+						for (int i = 0; i < children.length; i++) {
+							if (children[i].getName().equals("property-name"))
+								names[i] =  children[i].getAttribute("name");
+						}
+						try {
+							if (handlersMap.containsKey(adapter)) {
+								HashMap adapterMap = (HashMap) handlersMap.get(adapter);
+								if (!adapterMap.containsKey(name)){
+									Object t = ce.createExecutableExtension("handler");
+									for (int i = 0; i < names.length; i++) {									
+										adapterMap.put(names[i], t);
+									}
+								}	
+							} else {
+								HashMap adaptersMap = new HashMap();
+								Object t = ce.createExecutableExtension("handler");
+								for (int i = 0; i < names.length; i++) {									
+									adaptersMap.put(names[i], t);
+								}
+								handlersMap.put(adapter, adaptersMap);
+							}
+							
+						} catch (CoreException e1) {
+						}
+//					}
+				}
+			}
+		}
+		//need to be craeful of the case where the property we are looking for is actually in a parent class
+		//that hasn't been initialized
+		//if no property exists for this one, add the element to the map to avoid future lookups
+//		if (!handlersMap.containsKey(className))  {
+//			handlersMap.put(className, null);
+//		}
+		
+		if (true) return;
 		// Register SWT CSS Property Background Handler
 		super.registerCSSPropertyHandler(ICSSPropertyBackgroundHandler.class,
 				CSSPropertyBackgroundSWTHandler.INSTANCE);
@@ -167,9 +230,11 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 				CSSPropertyTabRendererSWTHandler.INSTANCE);
 		
 		//Register SWT CSS Property corner radius
-		super.registerCSSProperty("corner-radius", CSSPropertyCornerRadiusSWTHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyCornerRadiusSWTHandler.class,
-				CSSPropertyCornerRadiusSWTHandler.INSTANCE);
+//		super.registerCSSProperty("corner-radius", CSSPropertyCornerRadiusSWTHandler.class);  
+//		super.registerCSSPropertyHandler(CSSPropertyCornerRadiusSWTHandler.class,
+//				CSSPropertyCornerRadiusSWTHandler.INSTANCE);
+		
+	
 		
 		//Register SWT CSS Property shadow visible
 		super.registerCSSProperty("shadow-visible", CSSPropertyShadowVisibleSWTHandler.class);  

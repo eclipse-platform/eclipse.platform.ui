@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.css.swt.engine;
 
 import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
-import org.eclipse.e4.ui.css.swt.dom.SWTElement;
 import org.eclipse.e4.ui.css.swt.dom.SWTElementProvider;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTColorConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTCursorConverterImpl;
@@ -23,10 +22,6 @@ import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTGradientConver
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTImageConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTRGBConverterImpl;
 import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
-import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTActiveHandler;
-import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTButtonSelectedHandler;
-import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTFocusHandler;
-import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTHoverHandler;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -46,26 +41,11 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 		
 		// Register SWT Element Provider to retrieve
 		// w3c Element SWTElement coming from SWT widget.
-		super.setElementProvider(SWTElementProvider.INSTANCE);
+		//super.setElementProvider(SWTElementProvider.INSTANCE);
 
 		/** Initialize CSS Property Handlers * */
 
 		this.initializeCSSPropertyHandlers();
-
-		/** Initialize Dynamic pseudo classes * */
-
-		// Register SWT Focus Handler
-		super.registerDynamicPseudoClassHandler("focus",
-				DynamicPseudoClassesSWTFocusHandler.INSTANCE);
-		// Register SWT Active Handler
-		super.registerDynamicPseudoClassHandler("active",
-				DynamicPseudoClassesSWTActiveHandler.INSTANCE);
-		// Register SWT Hover Handler
-		super.registerDynamicPseudoClassHandler("hover",
-				DynamicPseudoClassesSWTHoverHandler.INSTANCE);
-		// Register SWT Checked Handler
-		super.registerDynamicPseudoClassHandler("selected",
-				DynamicPseudoClassesSWTButtonSelectedHandler.INSTANCE);
 
 		/** Initialize SWT CSSValue converter * */
 
@@ -91,7 +71,7 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 			new CSSSWTApplyStylesListener(display, this);
 		}
 		
-		SWTElement.setEngine(display, this);
+//		SWTElement.setEngine(display, this);
 	}
 
 	protected abstract void initializeCSSPropertyHandlers();

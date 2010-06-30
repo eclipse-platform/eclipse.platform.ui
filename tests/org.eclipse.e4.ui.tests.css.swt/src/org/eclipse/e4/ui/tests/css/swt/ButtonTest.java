@@ -101,14 +101,14 @@ public class ButtonTest extends CSSSWTTestCase {
 		assertEquals(SWT.ITALIC, fontData.getStyle());		
 	}
 	
-	public void testSelectedPseudo() throws Exception {
-		Button buttonToTest = createTestButton("Button { color: #FF0000; }\n" + 
-				"Button:selected { color: #0000FF; }");
-		assertEquals(RED, buttonToTest.getForeground().getRGB());
-		buttonToTest.setSelection(true);
-		engine.applyStyles(buttonToTest.getShell(), true);
-		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
-	}
+//	public void testSelectedPseudo() throws Exception {
+//		Button buttonToTest = createTestButton("Button { color: #FF0000; }\n" + 
+//				"Button:selected { color: #0000FF; }");
+//		assertEquals(RED, buttonToTest.getForeground().getRGB());
+//		buttonToTest.setSelection(true);
+//		engine.applyStyles(buttonToTest.getShell(), true);
+//		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
+//	}
 	
 	public void testAlignment() throws Exception {
 		Button buttonToTest = createTestButton("Button { alignment: right; }");		

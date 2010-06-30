@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.dom.SWTElement;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.dom.html.SWTHTMLElement;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
@@ -58,7 +58,7 @@ public class SWTElementHelpers {
 	 */
 	public static Element getElement(Widget widget, CSSEngine engine) {
 		try {
-			return getElement(widget, engine, SWTElement.class);
+			return getElement(widget, engine, WidgetElement.class);
 		} catch (Exception e) {
 			return null;
 		}

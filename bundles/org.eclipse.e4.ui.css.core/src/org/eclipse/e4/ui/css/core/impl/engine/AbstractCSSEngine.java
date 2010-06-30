@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
+import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -21,7 +23,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
@@ -33,14 +34,12 @@ import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2Delegate;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandlerProvider;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
-import org.eclipse.e4.ui.css.core.dom.selectors.IDynamicPseudoClassesHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
 import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
-import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
 import org.eclipse.e4.ui.css.core.resources.CSSResourcesHelpers;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
 import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
@@ -100,8 +99,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	protected boolean computeDefaultStyle = false;
 
-	private Map elementsWithDynamicPseudoClasses = null;
-
 	private Map elementsContext = null;
 
 	/**
@@ -125,6 +122,11 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	private boolean throwError;
 
 	private Map valueConverters = null;
+
+	protected HashMap widgetsMap = new HashMap();
+	
+	//Map containing k: ElementAdapters o: Map of PropertyHandlers (k: name o: handler))
+	public  HashMap propertyHandlerMap = new HashMap();
 
 	public AbstractCSSEngine() {
 		this(new DocumentCSSImpl());
@@ -319,10 +321,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				 */
 				applyDefaultStyleDeclaration(element, false, style, null);
 			}
-			/*
-			 * Initialize dynamic pseudo classes if needed
-			 */
-			initializeDynamicPseudoClassesIfNeeded(element);
 
 			/*
 			 * Manage static pseudo instances
@@ -348,15 +346,17 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 						if (parentRule instanceof ExtendedCSSRule) {
 							applyConditionalPseudoStyle((ExtendedCSSRule) parentRule, pseudoInstance, element, styleWithPseudoInstance);
 						} else {
-							applyStyleDeclaration(element, styleWithPseudoInstance,
-									pseudoInstance);							
+//							applyStyleDeclaration(element, styleWithPseudoInstance,
+//									pseudoInstance);	
+							applyStyleDeclaration(elt, styleWithPseudoInstance, pseudoInstance);
 						}
 					}
 				}
 			}
 
 			if (style != null) {
-				applyStyleDeclaration(element, style, null);
+				//applyStyleDeclaration(element, style, null);
+				applyStyleDeclaration(elt, style, null);
 			}
 			try {
 				// Apply inline style
@@ -647,32 +647,50 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		if (currentCSSPropertiesApplyed.containsKey(property))
 			// CSS Property was already applied, ignore it.
 			return null;
-		Collection handlers = getCSSPropertyHandlers(property);
-		if (handlers == null) {
-			if (throwError)
-				throw new UnsupportedPropertyException(property);
-			return null;
+		//Collection handlers = getCSSPropertyHandlers(property);
+//		if (handlers == null) {
+//			if (throwError)
+//				throw new UnsupportedPropertyException(property);
+//			return null;
+//		}
+		boolean found = false;
+		ICSSPropertyHandler handler = null;
+		Object tmpMap = propertyHandlerMap.get(widget.getClass().getName());
+		if (tmpMap != null) {
+			handler = (ICSSPropertyHandler) ((HashMap) tmpMap).get(property);
+			if (handler != null) found = true;
 		}
-		try {
-			for (Iterator iterator = handlers.iterator(); iterator.hasNext();) {
-				ICSSPropertyHandler handler = (ICSSPropertyHandler) iterator
-						.next();
-				boolean result = handler.applyCSSProperty(widget, property,
-						value, pseudo, this);
-				if (result) {
-					// Add CSS Property to flag that this CSS Property was
-					// applied.
-					currentCSSPropertiesApplyed.put(property, property);
-					return handler;
-				}
+		//go up in the hierarchy and try to find a match
+		if (!found) {
+			Class parentClass = widget.getClass().getSuperclass();
+			do {
+			tmpMap = propertyHandlerMap.get(parentClass.getName());
+			if (tmpMap != null) {
+				handler = (ICSSPropertyHandler) ((HashMap) tmpMap).get(property);
+				if (handler != null) found = true;
 			}
-
-		} catch (Exception e) {
-			if (throwError
-					|| (!throwError && !(e instanceof UnsupportedPropertyException)))
-				handleExceptions(e);
+			parentClass = parentClass.getSuperclass(); }
+			while (!found && parentClass != ElementAdapter.class);
 		}
-		return null;
+		
+		if (handler != null) {
+			try {
+					boolean result = handler.applyCSSProperty(widget, property,
+							value, pseudo, this);
+					if (result) {
+						// Add CSS Property to flag that this CSS Property was
+						// applied.
+						currentCSSPropertiesApplyed.put(property, property);
+						return handler;
+					}
+	
+			} catch (Exception e) {
+				if (throwError
+						|| (!throwError && !(e instanceof UnsupportedPropertyException)))
+					handleExceptions(e);
+			}
+		}
+		return handler;
 	}
 
 	public String retrieveCSSProperty(Object widget, String property,
@@ -719,7 +737,15 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	protected Collection getCSSPropertyHandlers(String property)
 			throws Exception {
-		Collection handlers = null;
+		Collection handlers = new ArrayList();
+		Iterator iter = propertyHandlerMap.values().iterator();
+		while (iter.hasNext()) {
+			HashMap  tmp = (HashMap) iter.next();
+			Object o = tmp.get(property);
+			if (o != null) {
+				handlers.add(o);
+			}
+		}
 		for (Iterator iterator = propertyHandlerProviders.iterator(); iterator
 				.hasNext();) {
 			ICSSPropertyHandlerProvider provider = (ICSSPropertyHandlerProvider) iterator
@@ -736,60 +762,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	}
 
 	/*--------------- Dynamic pseudo classes -----------------*/
-
-	public void registerDynamicPseudoClassHandler(String pseudo,
-			IDynamicPseudoClassesHandler dynamicPseudoClassHandler) {
-		dynamicPseudoClassesHandler.put(pseudo, dynamicPseudoClassHandler);
-	}
-
-	protected void initializeDynamicPseudoClassesIfNeeded(Object node) {
-		if (dynamicPseudoClassesHandler == null
-				|| dynamicPseudoClassesHandler.values().size() < 1)
-			return;
-		Element element = getElement(node);
-		if (element == null)
-			return;
-		if (isElementsWithDynamicPseudoClassesInitialized(element))
-			return;
-		// Create
-		// Loop for pseudo class condition
-		List list = documentCSS
-				.queryConditionSelector(Condition.SAC_PSEUDO_CLASS_CONDITION);
-		if (list == null)
-			return;
-		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-			Selector selector = (Selector) iterator.next();
-			ConditionalSelector conditionalSelector = (ConditionalSelector) selector;
-			String value = ((AttributeCondition) conditionalSelector
-					.getCondition()).getValue();
-
-			if (((ExtendedSelector) conditionalSelector.getSimpleSelector())
-					.match(element, value)) {
-				IDynamicPseudoClassesHandler handler = (IDynamicPseudoClassesHandler) dynamicPseudoClassesHandler
-						.get(value);
-				if (handler != null) {
-					handler.intialize(element, this);
-					addElementsWithDynamicPseudoClasses(element);
-				}
-			}
-
-		}
-	}
-
-	protected void addElementsWithDynamicPseudoClasses(Element element) {
-		if (elementsWithDynamicPseudoClasses == null)
-			elementsWithDynamicPseudoClasses = new HashMap();
-		elementsWithDynamicPseudoClasses.put(element, element);
-	}
-
-	protected boolean isElementsWithDynamicPseudoClassesInitialized(
-			Element element) {
-		if (elementsWithDynamicPseudoClasses == null)
-			return false;
-		return (elementsWithDynamicPseudoClasses.get(element) != null);
-	}
-
-	/*--------------- w3c Element -----------------*/
 
 	public IElementProvider getElementProvider() {
 		return elementProvider;
@@ -818,6 +790,18 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			elt = (Element) element;
 		else if (elementProvider != null) {
 			elt = elementProvider.getElement(element, this);
+		} else if (elementProvider == null) {
+			Object tmp = widgetsMap.get(element.getClass().getName());
+			if (tmp == null) {
+				Class parent = element.getClass();
+				do {
+					parent = parent.getSuperclass();
+					tmp = widgetsMap.get(parent.getName());
+				} while (tmp == null && parent != Object.class);
+			}
+			//found && parentClass != ElementAdapter.class
+			elementProvider = (IElementProvider) tmp;
+			elt = elementProvider.getElement(element, this);
 		}
 		if (elt != null) {
 			if (elementContext == null) {
@@ -827,6 +811,11 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			}
 			elementContext.setElementProvider(elementProvider);
 			elementContext.setElement(elt);
+			if (elt instanceof CSSStylableElement) {
+					// Initialize CSS stylable element
+					((CSSStylableElement)elt).initialize();
+			}
+
 		}
 		return elt;
 	}
@@ -902,6 +891,15 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	public void dispose() {
 		reset();
+		// Call dispose for each CSSStylableElement which was registered
+		Collection contexts = elementsContext.values();
+		for (Iterator iterator = contexts.iterator(); iterator.hasNext();) {
+			CSSElementContext context = (CSSElementContext) iterator.next();
+			Element element = context.getElement();
+			if (element instanceof CSSStylableElement) {
+				((CSSStylableElement) element).dispose();
+			}
+		}
 		elementsContext = null;
 		if (resourcesRegistry != null)
 			resourcesRegistry.dispose();
@@ -909,21 +907,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	public void reset() {
 		// Remove All Style Sheets
-		documentCSS.removeAllStyleSheets();
-		if (elementsWithDynamicPseudoClasses != null) {
-			Collection elements = elementsWithDynamicPseudoClasses.values();
-			for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
-				Element element = (Element) iterator.next();
-				Collection handlers = dynamicPseudoClassesHandler.values();
-				for (Iterator iterator2 = handlers.iterator(); iterator2
-						.hasNext();) {
-					IDynamicPseudoClassesHandler handler = (IDynamicPseudoClassesHandler) iterator2
-							.next();
-					handler.dispose(element, this);
-				}
-			}
-			elementsWithDynamicPseudoClasses = null;
-		}
+		((ExtendedDocumentCSS) documentCSS).removeAllStyleSheets();
 	}
 
 	/*--------------- Resources Registry -----------------*/

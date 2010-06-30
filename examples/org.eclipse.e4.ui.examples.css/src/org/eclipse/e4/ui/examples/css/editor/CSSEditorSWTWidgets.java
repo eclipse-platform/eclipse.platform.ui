@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+s * Copyright (c) 2008 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.examples.css.editor;
 
-import org.eclipse.e4.ui.css.swt.dom.SWTElement;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -82,11 +82,11 @@ public class CSSEditorSWTWidgets extends AbstractCSSSWTEditor {
 					
 			CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NONE);
 			tabItem1.setText("Busy");
-			SWTElement.setCSSClass(tabItem1, "busy");
+			WidgetElement.setCSSClass(tabItem1, "busy");
 			
 			CTabItem tabItem2 = new CTabItem(tabFolder, SWT.NONE);
 			tabItem2.setText("Modified");
-			SWTElement.setCSSClass(tabItem2, "modified");
+			WidgetElement.setCSSClass(tabItem2, "modified");
 			
 			tabFolder.setSelection(0);
 		}
@@ -98,11 +98,11 @@ public class CSSEditorSWTWidgets extends AbstractCSSSWTEditor {
 					
 			CTabItem etabItem1 = new CTabItem(etabFolder, SWT.NONE);
 			etabItem1.setText("Busy");
-			SWTElement.setCSSClass(etabItem1, "busy");
+			WidgetElement.setCSSClass(etabItem1, "busy");
 			
 			CTabItem etabItem2 = new CTabItem(etabFolder, SWT.NONE);
 			etabItem2.setText("Modified");
-			SWTElement.setCSSClass(etabItem2, "modified");
+			WidgetElement.setCSSClass(etabItem2, "modified");
 			
 			etabFolder.setSelection(0);
 		}

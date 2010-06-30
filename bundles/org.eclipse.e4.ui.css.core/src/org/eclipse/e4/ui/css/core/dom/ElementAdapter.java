@@ -10,6 +10,16 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom;
 
+import org.eclipse.e4.ui.css.core.impl.engine.AbstractCSSEngine;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,12 +54,12 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	private CSSExtendedProperties style = null;
 
 	private List staticPseudoInstances;
-
+	
 	public ElementAdapter(Object nativeWidget, CSSEngine engine) {
 		this.nativeWidget = nativeWidget;
 		this.engine = engine;
 	}
-
+	
 	/**
 	 * Add static pseudo instance
 	 * 
@@ -368,5 +378,24 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 		if (staticPseudoInstances == null)
 			return false;
 		return staticPseudoInstances.contains(s);
+	}
+	
+	public void initialize() {
+	
+	}
+	
+	public void dispose() {
+		
+	}
+	
+	/**
+	 * Apply styles for the native widget.
+	 */
+	protected void doApplyStyles() {
+		try {
+			engine.applyStyles(getNativeWidget(), false, true);
+		} catch (Exception ex) {
+			engine.handleExceptions(ex);
+		}
 	}
 }

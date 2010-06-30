@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.e4.ui.css.swt.properties.GradientBackgroundListener;
@@ -36,7 +37,8 @@ public class CSSPropertyBackgroundSWTHandler extends
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
 		if (widget != null) {
-			super.applyCSSProperty(widget, property, value, pseudo, engine);
+//			super.applyCSSProperty(widget, property, value, pseudo, engine);
+			super.applyCSSProperty(element, property, value, pseudo, engine);
 			return true;
 		}
 		return false;
@@ -61,7 +63,7 @@ public class CSSPropertyBackgroundSWTHandler extends
 	 */
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		Widget widget = (Widget) element;
+		Widget widget = (Widget) ((WidgetElement) element).getNativeWidget();
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			Color newColor = (Color) engine.convert(value, Color.class, widget
 					.getDisplay());
@@ -99,7 +101,8 @@ public class CSSPropertyBackgroundSWTHandler extends
 	 */
 	public void applyCSSPropertyBackgroundImage(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		Widget control = (Widget) element;
+//		Widget control = (Widget) element;
+		Widget control = (Widget) ((WidgetElement) element).getNativeWidget();
 		Image image = (Image) engine.convert(value, Image.class, control
 				.getDisplay());
 		if (control instanceof CTabFolder && "selected".equals(pseudo)) {
@@ -112,7 +115,7 @@ public class CSSPropertyBackgroundSWTHandler extends
 			button.setImage(image);
 		} else {
 			try {
-				if(element instanceof Control)
+				if(control instanceof Control)
 					((Control) control).setBackgroundImage(image);
 			} catch (Throwable e) {
 				//TODO replace with eclipse logging

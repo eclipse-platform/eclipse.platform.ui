@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
+import org.eclipse.core.runtime.CoreException;
+
+import java.util.Map;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 import org.eclipse.e4.ui.css.core.dom.parsers.CSSParserFactory;
@@ -33,6 +41,31 @@ public class CSSEngineImpl extends AbstractCSSEngine {
 
 	public CSSEngineImpl() {
 		super();
+		//Get Extension points
+		IExtensionRegistry registry = RegistryFactory.getRegistry();
+		IExtensionPoint extPoint = registry
+				.getExtensionPoint("org.eclipse.e4.u.css.core.elementProvider");
+		IExtension[] ex = extPoint.getExtensions();
+		IConfigurationElement[] con = ex[0].getConfigurationElements();
+		String provider = null;
+		for (IExtension e : extPoint.getExtensions()) {
+			for (IConfigurationElement ce : e.getConfigurationElements()) {
+				String tmp = ce.getName();
+				if (tmp.equals("provider")) {
+					provider = ce.getAttribute("class");
+					try {
+						Object tmp2 = ce.createExecutableExtension("class");
+						for (IConfigurationElement ce2 : ce.getChildren()) {
+							String widget = ce2.getAttribute("class");
+							widgetsMap.put(widget, tmp2);
+						}
+					} catch (CoreException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
 		// Register SWT Boolean CSSValue Converter
 		super.registerCSSValueConverter(CSSValueBooleanConverterImpl.INSTANCE);
 	}

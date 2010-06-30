@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom;
 
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -119,4 +120,16 @@ public interface CSSStylableElement extends Element {
 	 * @return
 	 */
 	public CSSExtendedProperties getStyle();
+
+	/**
+	 * Method called after the {@link CSSStylableElement} was linked to the
+	 * native widget. You can add UI listener into this method.
+	 */
+	void initialize();
+
+	/**
+	 * Method called when {@link CSSEngine#dispose()} is called. You can
+	 * remove UI listener into this method.
+	 */
+	public void dispose();
 }

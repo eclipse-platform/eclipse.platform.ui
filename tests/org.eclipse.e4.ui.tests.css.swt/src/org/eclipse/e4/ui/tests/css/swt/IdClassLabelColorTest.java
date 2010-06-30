@@ -10,7 +10,7 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.dom.SWTElement;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -46,8 +46,8 @@ public class IdClassLabelColorTest extends CSSSWTTestCase {
 
 		Label labelToTest = new Label(panel, SWT.NONE);
 		labelToTest.setText("Some label text");
-		SWTElement.setCSSClass(labelToTest, CSS_CLASS_NAME);
-		SWTElement.setID(labelToTest, CSS_ID);
+		WidgetElement.setCSSClass(labelToTest, CSS_CLASS_NAME);
+		WidgetElement.setID(labelToTest, CSS_ID);
 		
 		// Apply styles
 		engine.applyStyles(shell, true);
@@ -67,7 +67,7 @@ public class IdClassLabelColorTest extends CSSSWTTestCase {
 		Label labelToTest = createTestLabel("." + CSS_CLASS_NAME + " { background-color: #00FF00 }");
 
 		//Ensure the widget actually thinks it has this CSS class
-		assertEquals(SWTElement.getCSSClass(labelToTest), CSS_CLASS_NAME);
+		assertEquals(WidgetElement.getCSSClass(labelToTest), CSS_CLASS_NAME);
 
 		assertEquals(GREEN, labelToTest.getBackground().getRGB());
 	}
@@ -77,7 +77,7 @@ public class IdClassLabelColorTest extends CSSSWTTestCase {
 		Label labelToTest = createTestLabel("#" + CSS_ID + " { background-color: #0000FF }");
 		
 		//Ensure the widget actually thinks it has this ID
-		assertEquals(SWTElement.getID(labelToTest), CSS_ID);
+		assertEquals(WidgetElement.getID(labelToTest), CSS_ID);
 
 		assertEquals(BLUE, labelToTest.getBackground().getRGB());
 	}

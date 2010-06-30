@@ -1,7 +1,7 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.swt.dom.SWTElement;
+import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -53,15 +53,15 @@ public class DescendentTest extends CSSSWTTestCase {
 		Button buttonB = buttons[1];
 		Button buttonC = buttons[2];
 		
-		SWTElement.setCSSClass(buttonA.getParent(), "special");
+		WidgetElement.setCSSClass(buttonA.getParent(), "special");
 		engine.applyStyles(buttonA.getShell(), true);
 		
 		assertEquals(RED, buttonA.getBackground().getRGB());
 		assertEquals(GREEN, buttonB.getBackground().getRGB());
 		assertEquals(BLUE, buttonC.getBackground().getRGB());
 		
-		SWTElement.setCSSClass(buttonA.getParent(), "extraordinary");
-		SWTElement.setID(buttonB.getParent(), "parent");
+		WidgetElement.setCSSClass(buttonA.getParent(), "extraordinary");
+		WidgetElement.setID(buttonB.getParent(), "parent");
 		
 		engine.applyStyles(buttonA.getShell(), true);
 		assertEquals(WHITE, buttonA.getBackground().getRGB());
