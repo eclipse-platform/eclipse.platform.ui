@@ -200,15 +200,6 @@ public class PerspectiveSwitcher {
 		eventBroker.unsubscribe(toBeRenderedHandler);
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(selectionHandler);
-
-		if (comp != null && !comp.isDisposed())
-			comp.dispose();
-		comp = null;
-		psTB = null;
-
-		if (backgroundImage != null && !backgroundImage.isDisposed())
-			backgroundImage.dispose();
-		backgroundImage = null;
 	}
 
 	@PostConstruct
@@ -657,6 +648,8 @@ public class PerspectiveSwitcher {
 	}
 
 	void dispose() {
+		cleanUp();
+
 		if (backgroundImage != null) {
 			comp.setBackgroundImage(null);
 			backgroundImage.dispose();
