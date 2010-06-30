@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.menus;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -21,7 +22,9 @@ import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -40,6 +43,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
@@ -100,42 +104,79 @@ public class ActionSet {
 	}
 
 	protected Expression createExpression(IConfigurationElement configElement) {
-		String idContrib = MenuHelper.getId(configElement);
-		return new ActiveContextExpression(idContrib);
+		String actionSetId = MenuHelper.getId(configElement);
+		Set<String> associatedPartIds = actionSetPartAssociations(actionSetId);
+		return new ActionSetAndPartExpression(actionSetId, associatedPartIds);
 	}
 
-	static class ActiveContextExpression extends Expression {
-		private String id;
+	private Set<String> actionSetPartAssociations(String actionSetId) {
+		HashSet<String> result = new HashSet<String>();
+		final IExtensionRegistry registry = Platform.getExtensionRegistry();
+		final IConfigurationElement[] associations = registry
+				.getConfigurationElementsFor(PlatformUI.PLUGIN_ID + '.'
+						+ IWorkbenchRegistryConstants.PL_ACTION_SET_PART_ASSOCIATIONS);
+		for (IConfigurationElement element : associations) {
+			String targetId = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
+			if (!actionSetId.equals(targetId)) {
+				continue;
+			}
+			IConfigurationElement[] children = element
+					.getChildren(IWorkbenchRegistryConstants.TAG_PART);
+			for (IConfigurationElement part : children) {
+				String id = MenuHelper.getId(part);
+				if (id != null && id.length() > 0) {
+					MenuHelper.trace(IWorkbenchRegistryConstants.PL_ACTION_SET_PART_ASSOCIATIONS
+							+ ':' + actionSetId + ':' + id, null);
+					result.add(id);
+				}
+			}
+		}
+		return result;
+	}
 
-		public ActiveContextExpression(String id) {
+	static class ActionSetAndPartExpression extends Expression {
+		private String id;
+		private Set<String> partIds;
+
+		public ActionSetAndPartExpression(String id, Set<String> associatedPartIds) {
 			this.id = id;
+			this.partIds = associatedPartIds;
 		}
 
 		@Override
 		public void collectExpressionInfo(ExpressionInfo info) {
 			info.addVariableNameAccess(ISources.ACTIVE_CONTEXT_NAME);
+			info.addVariableNameAccess(ISources.ACTIVE_PART_ID_NAME);
 		}
 
 		@Override
 		public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 			Object obj = context.getVariable(ISources.ACTIVE_CONTEXT_NAME);
 			if (obj instanceof Collection<?>) {
-				return EvaluationResult.valueOf(((Collection) obj).contains(id));
+				boolean rc = ((Collection) obj).contains(id);
+				if (rc) {
+					return EvaluationResult.TRUE;
+				}
+			}
+			if (!partIds.isEmpty()) {
+				return EvaluationResult.valueOf(partIds.contains(context
+						.getVariable(ISources.ACTIVE_PART_ID_NAME)));
 			}
 			return EvaluationResult.FALSE;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof ActiveContextExpression)) {
+			if (!(obj instanceof ActionSetAndPartExpression)) {
 				return false;
 			}
-			return id.equals(((ActiveContextExpression) obj).id);
+			ActionSetAndPartExpression exp = (ActionSetAndPartExpression) obj;
+			return id.equals(exp.id) && partIds.equals(exp.partIds);
 		}
 
 		@Override
 		public int hashCode() {
-			return id.hashCode();
+			return id.hashCode() + partIds.hashCode();
 		}
 	}
 
