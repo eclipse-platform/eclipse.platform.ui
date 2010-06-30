@@ -11,16 +11,19 @@
 package org.eclipse.e4.core.internal.contexts;
 
 import java.util.List;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 
 public class TrackableComputationExt extends Computation implements IContextRecorder {
 
+	final private IEclipseContext originatingContext;
 	private RunAndTrack runnable;
 	private ContextChangeEvent cachedEvent;
 
-	public TrackableComputationExt(RunAndTrack runnable) {
+	public TrackableComputationExt(RunAndTrack runnable, IEclipseContext originatingContext) {
 		this.runnable = runnable;
+		this.originatingContext = originatingContext;
 	}
 
 	public int hashCode() {
@@ -96,7 +99,14 @@ public class TrackableComputationExt extends Computation implements IContextReco
 			EclipseContext.localComputation().set(oldComputation);
 		}
 		EclipseContext eventsContext = (EclipseContext) event.getContext();
-		if (result && eventType != ContextChangeEvent.DISPOSE)
+
+		if (eventType == ContextChangeEvent.DISPOSE) {
+			if (originatingContext.equals(eventsContext)) {
+				removeAll(eventsContext);
+				return false;
+			}
+		}
+		if (result)
 			startListening(eventsContext);
 		else
 			removeAll(eventsContext);

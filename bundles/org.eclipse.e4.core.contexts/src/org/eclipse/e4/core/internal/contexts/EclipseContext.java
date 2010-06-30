@@ -320,7 +320,7 @@ public class EclipseContext implements IEclipseContext {
 
 	public void runAndTrack(final RunAndTrack runnable) {
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.INITIAL, null, null, null);
-		TrackableComputationExt computation = new TrackableComputationExt(runnable);
+		TrackableComputationExt computation = new TrackableComputationExt(runnable, this);
 		computation.update(event);
 	}
 
