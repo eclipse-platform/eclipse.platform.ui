@@ -111,8 +111,14 @@ abstract public class Requestor implements IRequestor {
 
 	}
 
-	public void uninject(Object object, PrimaryObjectSupplier objectSupplier) {
+	public boolean uninject(Object object, PrimaryObjectSupplier objectSupplier) {
+		Object originatingObject = getRequestingObject();
+		if (originatingObject == null)
+			return false;
+		if (originatingObject != object)
+			return true;
 		injector.uninject(object, objectSupplier);
+		return false;
 	}
 
 }

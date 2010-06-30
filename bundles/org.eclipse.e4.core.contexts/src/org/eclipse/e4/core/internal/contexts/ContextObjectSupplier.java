@@ -64,8 +64,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			} else if (eventType == ContextChangeEvent.UNINJECTED) {
 				if (eventsContext == context) {
 					ContextObjectSupplier originatingSupplier = eventsContext.getLocal(ContextObjectSupplier.class);
-					requestor.uninject(extraArguments[0], originatingSupplier);
-					return false;
+					return requestor.uninject(extraArguments[0], originatingSupplier);
 				}
 			} else {
 				requestor.resolveArguments();

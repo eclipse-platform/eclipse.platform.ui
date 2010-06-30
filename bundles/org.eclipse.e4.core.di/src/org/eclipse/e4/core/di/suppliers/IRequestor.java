@@ -68,6 +68,7 @@ public interface IRequestor {
 	 * @param object domain object that needs to be un-injected
 	 * @param objectSupplier the object supplier being un-injected
 	 * @throws InjectionException if an exception occurred while performing this task
+	 * @return <code>true</code> if the object was uninjected, <code>false</code> otherwise
 	 */
-	public void uninject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
+	public boolean uninject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 }
