@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * example a processor responsible for renaming Java methods returns the
 	 * method to be renamed via this call.
 	 *
-	 * @return an array containing the element to be refactored
+	 * @return an array containing the elements to be refactored
 	 */
 	public abstract Object[] getElements();
 
@@ -138,7 +138,7 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 *  the refactoring is considered as not being executable.
 	 *
 	 * @throws CoreException if an exception occurred during initial condition
-	 *         checking. If this happens the initial condition checking is
+	 *         checking. If this happens, the initial condition checking is
 	 *         interpreted as failed.
 	 *
 	 * @throws OperationCanceledException if the condition checking got canceled
@@ -166,7 +166,7 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 *  the refactoring is considered as not being executable.
 	 *
 	 * @throws CoreException if an exception occurred during final condition
-	 *  checking. If this happens the final condition checking is interpreted as failed.
+	 *  checking. If this happens, the final condition checking is interpreted as failed.
 	 *
 	 * @throws OperationCanceledException if the condition checking got canceled
 	 *
