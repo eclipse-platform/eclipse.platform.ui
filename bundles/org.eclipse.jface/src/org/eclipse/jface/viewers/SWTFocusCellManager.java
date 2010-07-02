@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
 
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -23,6 +22,8 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.core.runtime.Assert;
 
 /**
  * This class is responsible to provide cell management base features for the
@@ -224,7 +225,7 @@ abstract class SWTFocusCellManager {
 		}
 
 		if( focusCell != null ) {
-			focusCell.scrollIntoView();	
+			focusCell.scrollIntoView();
 		}
 		
 		this.cellHighlighter.focusCellChanged(focusCell,oldCell);

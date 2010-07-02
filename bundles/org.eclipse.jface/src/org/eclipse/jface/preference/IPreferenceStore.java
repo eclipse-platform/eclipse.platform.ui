@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
  * The <code>IPreferenceStore</code> interface represents a table mapping
- * named preferences to values. If there is no value for a given name, 
+ * named preferences to values. If there is no value for a given name,
  * then that preferences's default value is returned; and if there is no
  * default value for that preference, then a default-default value is returned.
  * The default-default values for the primitive types are as follows:
@@ -30,7 +30,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * Thus a preference store maintains two values for each of a set of
  * names: a current value and a default value.
  * The typical usage is to establish the defaults for all known preferences
- * and then restore previously stored values for preferences whose values 
+ * and then restore previously stored values for preferences whose values
  * were different from their defaults. After the current values of
  * the preferences have been modified, it is a simple matter to write
  * out only those preferences whose values are different from their defaults.
@@ -47,7 +47,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * does not cause such events to be reported.
  * </p>
  * <p>
- * Clients who need a preference store may implement this interface or 
+ * Clients who need a preference store may implement this interface or
  * instantiate the standard implementation <code>PreferenceStore</code>.
  * </p>
  *
@@ -103,7 +103,7 @@ public interface IPreferenceStore {
      * <b>Note</b> The types of the oldValue and newValue of the
      * generated PropertyChangeEvent are determined by whether
      * or not the typed API in IPreferenceStore was called.
-     * If values are changed via setValue(name,type) the 
+     * If values are changed via setValue(name,type) the
      * values in the PropertyChangedEvent will be of that type.
      * If they are set using a non typed API (i.e. #setToDefault
      * or using the OSGI Preferences) the values will be unconverted
@@ -111,15 +111,15 @@ public interface IPreferenceStore {
      * </p>
      * <p>
      * A listener will be called in the same Thread
-     * that it is invoked in. Any Thread dependant listeners (such as 
+     * that it is invoked in. Any Thread dependant listeners (such as
      * those who update an SWT widget) will need to update in the
      * correct Thread. In the case of an SWT update you can update
      * using Display#syncExec(Runnable) or Display#asyncExec(Runnable).
      * </p>
-     * <p>  
-     * Likewise any application that updates an IPreferenceStore 
+     * <p>
+     * Likewise any application that updates an IPreferenceStore
      * from a Thread other than the UI Thread should be aware of
-     * any listeners that require an update in the UI Thread. 
+     * any listeners that require an update in the UI Thread.
      * </p>
      *
      * @param listener a property change listener
@@ -148,7 +148,7 @@ public interface IPreferenceStore {
      * Fires a property change event corresponding to a change to the
      * current value of the preference with the given name.
      * <p>
-     * This method is provided on this interface to simplify the implementation 
+     * This method is provided on this interface to simplify the implementation
      * of decorators. There is normally no need to call this method since
      * <code>setValue</code> and <code>setToDefault</code> report such
      * events in due course. Implementations should funnel all preference
@@ -167,7 +167,7 @@ public interface IPreferenceStore {
      * Returns the current value of the boolean-valued preference with the
      * given name.
      * Returns the default-default value (<code>false</code>) if there
-     * is no preference with the given name, or if the current value 
+     * is no preference with the given name, or if the current value
      * cannot be treated as a boolean.
      *
      * @param name the name of the preference
@@ -179,7 +179,7 @@ public interface IPreferenceStore {
      * Returns the default value for the boolean-valued preference
      * with the given name.
      * Returns the default-default value (<code>false</code>) if there
-     * is no default preference with the given name, or if the default 
+     * is no default preference with the given name, or if the default
      * value cannot be treated as a boolean.
      *
      * @param name the name of the preference
@@ -191,7 +191,7 @@ public interface IPreferenceStore {
      * Returns the default value for the double-valued preference
      * with the given name.
      * Returns the default-default value (<code>0.0</code>) if there
-     * is no default preference with the given name, or if the default 
+     * is no default preference with the given name, or if the default
      * value cannot be treated as a double.
      *
      * @param name the name of the preference
@@ -203,7 +203,7 @@ public interface IPreferenceStore {
      * Returns the default value for the float-valued preference
      * with the given name.
      * Returns the default-default value (<code>0.0f</code>) if there
-     * is no default preference with the given name, or if the default 
+     * is no default preference with the given name, or if the default
      * value cannot be treated as a float.
      *
      * @param name the name of the preference
@@ -215,7 +215,7 @@ public interface IPreferenceStore {
      * Returns the default value for the integer-valued preference
      * with the given name.
      * Returns the default-default value (<code>0</code>) if there
-     * is no default preference with the given name, or if the default 
+     * is no default preference with the given name, or if the default
      * value cannot be treated as an integer.
      *
      * @param name the name of the preference
@@ -227,7 +227,7 @@ public interface IPreferenceStore {
      * Returns the default value for the long-valued preference
      * with the given name.
      * Returns the default-default value (<code>0L</code>) if there
-     * is no default preference with the given name, or if the default 
+     * is no default preference with the given name, or if the default
      * value cannot be treated as a long.
      *
      * @param name the name of the preference
@@ -238,8 +238,8 @@ public interface IPreferenceStore {
     /**
      * Returns the default value for the string-valued preference
      * with the given name.
-     * Returns the default-default value (the empty string <code>""</code>) 
-     * is no default preference with the given name, or if the default 
+     * Returns the default-default value (the empty string <code>""</code>)
+     * is no default preference with the given name, or if the default
      * value cannot be treated as a string.
      *
      * @param name the name of the preference
@@ -251,7 +251,7 @@ public interface IPreferenceStore {
      * Returns the current value of the double-valued preference with the
      * given name.
      * Returns the default-default value (<code>0.0</code>) if there
-     * is no preference with the given name, or if the current value 
+     * is no preference with the given name, or if the current value
      * cannot be treated as a double.
      *
      * @param name the name of the preference
@@ -263,7 +263,7 @@ public interface IPreferenceStore {
      * Returns the current value of the float-valued preference with the
      * given name.
      * Returns the default-default value (<code>0.0f</code>) if there
-     * is no preference with the given name, or if the current value 
+     * is no preference with the given name, or if the current value
      * cannot be treated as a float.
      *
      * @param name the name of the preference
@@ -275,7 +275,7 @@ public interface IPreferenceStore {
      * Returns the current value of the integer-valued preference with the
      * given name.
      * Returns the default-default value (<code>0</code>) if there
-     * is no preference with the given name, or if the current value 
+     * is no preference with the given name, or if the current value
      * cannot be treated as an integter.
      *
      * @param name the name of the preference
@@ -287,7 +287,7 @@ public interface IPreferenceStore {
      * Returns the current value of the long-valued preference with the
      * given name.
      * Returns the default-default value (<code>0L</code>) if there
-     * is no preference with the given name, or if the current value 
+     * is no preference with the given name, or if the current value
      * cannot be treated as a long.
      *
      * @param name the name of the preference
@@ -299,7 +299,7 @@ public interface IPreferenceStore {
      * Returns the current value of the string-valued preference with the
      * given name.
      * Returns the default-default value (the empty string <code>""</code>)
-     * if there is no preference with the given name, or if the current value 
+     * if there is no preference with the given name, or if the current value
      * cannot be treated as a string.
      *
      * @param name the name of the preference
@@ -322,8 +322,8 @@ public interface IPreferenceStore {
      * Returns whether the current values in this property store
      * require saving.
      *
-     * @return <code>true</code> if at least one of values of 
-     *  the preferences known to this store has changed and 
+     * @return <code>true</code> if at least one of values of
+     *  the preferences known to this store has changed and
      *  requires saving, and <code>false</code> otherwise.
      */
     public boolean needsSaving();
@@ -332,8 +332,8 @@ public interface IPreferenceStore {
      * Sets the current value of the preference with the given name to
      * the given string value without sending a property change.
      * <p>
-     * This method does not fire a property change event and 
-     * should only be used for setting internal preferences 
+     * This method does not fire a property change event and
+     * should only be used for setting internal preferences
      * that are not meant to be processed by listeners.
      * Normal clients should instead call #setValue.
      * </p>
@@ -353,7 +353,7 @@ public interface IPreferenceStore {
 
     /**
      * Sets the default value for the double-valued preference with the
-     * given name. 
+     * given name.
      * <p>
      * Note that the current value of the preference is affected if
      * the preference's current value was its old default value, in which
@@ -370,7 +370,7 @@ public interface IPreferenceStore {
 
     /**
      * Sets the default value for the float-valued preference with the
-     * given name. 
+     * given name.
      * <p>
      * Note that the current value of the preference is affected if
      * the preference's current value was its old default value, in which
@@ -387,7 +387,7 @@ public interface IPreferenceStore {
 
     /**
      * Sets the default value for the integer-valued preference with the
-     * given name. 
+     * given name.
      * <p>
      * Note that the current value of the preference is affected if
      * the preference's current value was its old default value, in which
@@ -404,7 +404,7 @@ public interface IPreferenceStore {
 
     /**
      * Sets the default value for the long-valued preference with the
-     * given name. 
+     * given name.
      * <p>
      * Note that the current value of the preference is affected if
      * the preference's current value was its old default value, in which
@@ -421,7 +421,7 @@ public interface IPreferenceStore {
 
     /**
      * Sets the default value for the string-valued preference with the
-     * given name. 
+     * given name.
      * <p>
      * Note that the current value of the preference is affected if
      * the preference's current value was its old default value, in which
@@ -438,7 +438,7 @@ public interface IPreferenceStore {
 
     /**
      * Sets the default value for the boolean-valued preference with the
-     * given name. 
+     * given name.
      * <p>
      * Note that the current value of the preference is affected if
      * the preference's current value was its old default value, in which
@@ -459,7 +459,7 @@ public interface IPreferenceStore {
      * <p>
      * Note that the preferred way of re-initializing a preference to the
      * appropriate default value is to call <code>setToDefault</code>.
-     * This is implemented by removing the named value from the store, 
+     * This is implemented by removing the named value from the store,
      * thereby exposing the default value.
      * </p>
      *
@@ -471,7 +471,7 @@ public interface IPreferenceStore {
      * Sets the current value of the double-valued preference with the
      * given name.
      * <p>
-     * A property change event is reported if the current value of the 
+     * A property change event is reported if the current value of the
      * preference actually changes from its previous value. In the event
      * object, the property name is the name of the preference, and the
      * old and new values are wrapped as objects.
@@ -490,7 +490,7 @@ public interface IPreferenceStore {
      * Sets the current value of the float-valued preference with the
      * given name.
      * <p>
-     * A property change event is reported if the current value of the 
+     * A property change event is reported if the current value of the
      * preference actually changes from its previous value. In the event
      * object, the property name is the name of the preference, and the
      * old and new values are wrapped as objects.
@@ -509,7 +509,7 @@ public interface IPreferenceStore {
      * Sets the current value of the integer-valued preference with the
      * given name.
      * <p>
-     * A property change event is reported if the current value of the 
+     * A property change event is reported if the current value of the
      * preference actually changes from its previous value. In the event
      * object, the property name is the name of the preference, and the
      * old and new values are wrapped as objects.
@@ -528,7 +528,7 @@ public interface IPreferenceStore {
      * Sets the current value of the long-valued preference with the
      * given name.
      * <p>
-     * A property change event is reported if the current value of the 
+     * A property change event is reported if the current value of the
      * preference actually changes from its previous value. In the event
      * object, the property name is the name of the preference, and the
      * old and new values are wrapped as objects.
@@ -547,7 +547,7 @@ public interface IPreferenceStore {
      * Sets the current value of the string-valued preference with the
      * given name.
      * <p>
-     * A property change event is reported if the current value of the 
+     * A property change event is reported if the current value of the
      * preference actually changes from its previous value. In the event
      * object, the property name is the name of the preference, and the
      * old and new values are wrapped as objects.
@@ -566,7 +566,7 @@ public interface IPreferenceStore {
      * Sets the current value of the boolean-valued preference with the
      * given name.
      * <p>
-     * A property change event is reported if the current value of the 
+     * A property change event is reported if the current value of the
      * preference actually changes from its previous value. In the event
      * object, the property name is the name of the preference, and the
      * old and new values are wrapped as objects.

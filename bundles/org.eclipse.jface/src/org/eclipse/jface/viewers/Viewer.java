@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,20 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+
+import org.eclipse.jface.util.SafeRunnable;
+
 /**
  * A viewer is a model-based adapter on a widget.
  * <p>
- * A viewer can be created as an adapter on a pre-existing control (e.g., 
+ * A viewer can be created as an adapter on a pre-existing control (e.g.,
  * creating a <code>ListViewer</code> on an existing <code>List</code> control).
  * All viewers also provide a convenience constructor for creating the control.
  * </p>
@@ -228,7 +230,7 @@ public abstract class Viewer implements IInputSelectionProvider {
      * Internal hook method called when the input to this viewer is
      * initially set or subsequently changed.
      * <p>
-     * The default implementation does nothing. Subclassers may override 
+     * The default implementation does nothing. Subclassers may override
      * this method to do something when a viewer's input is set.
      * A typical use is populate the viewer.
      * </p>

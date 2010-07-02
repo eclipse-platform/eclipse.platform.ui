@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ package org.eclipse.jface.viewers;
  * Selection provider extension interface to allow providers
  * to notify about post selection changed events.
  * A post selection changed event is equivalent to selection changed event
- * if the selection change was triggered by the mouse, but it has a delay 
+ * if the selection change was triggered by the mouse, but it has a delay
  * if the selection change is triggered by keyboard navigation.
  *
  * @see ISelectionProvider
@@ -33,7 +33,7 @@ public interface IPostSelectionProvider extends ISelectionProvider {
             ISelectionChangedListener listener);
 
     /**
-     * Removes the given listener for post selection changes from this selection 
+     * Removes the given listener for post selection changes from this selection
      * provider.
      * Has no effect if an identical listener is not registered.
      *

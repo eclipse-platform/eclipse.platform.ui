@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,18 +14,18 @@ package org.eclipse.jface.viewers;
  * A label provider maps an element of the viewer's model to
  * an optional image and optional text string used to display
  * the element in the viewer's control.  Certain label providers
- * may allow multiple labels per element.  
- * This is an "abstract interface", defining methods common 
- * to all label providers, but does not actually define the methods 
+ * may allow multiple labels per element.
+ * This is an "abstract interface", defining methods common
+ * to all label providers, but does not actually define the methods
  * to get the label(s) for an element.  This interface should never
  * be directly implemented.
  * Most viewers will take either an <code>ILabelProvider</code> or
  * an <code>ITableLabelProvider</code>.
  * <p>
- * A label provider must not be shared between viewers 
+ * A label provider must not be shared between viewers
  * since a label provider generally manages SWT resources (images),
  * which must be disposed when the viewer is disposed.
- * To simplify life cycle management, the current label provider 
+ * To simplify life cycle management, the current label provider
  * of a viewer is disposed when the viewer is disposed.
  * </p>
  * <p>
@@ -40,10 +40,10 @@ package org.eclipse.jface.viewers;
  */
 public interface IBaseLabelProvider {
     /**
-     * Adds a listener to this label provider. 
+     * Adds a listener to this label provider.
      * Has no effect if an identical listener is already registered.
      * <p>
-     * Label provider listeners are informed about state changes 
+     * Label provider listeners are informed about state changes
      * that affect the rendering of the viewer that uses this label provider.
      * </p>
      *
@@ -62,7 +62,7 @@ public interface IBaseLabelProvider {
     public void dispose();
 
     /**
-     * Returns whether the label would be affected 
+     * Returns whether the label would be affected
      * by a change to the given property of the given element.
      * This can be used to optimize a non-structural viewer update.
      * If the property mentioned in the update does not affect the label,

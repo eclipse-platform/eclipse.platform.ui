@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jface.resource;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.EventManager;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -37,8 +38,8 @@ public abstract class ResourceRegistry extends EventManager {
      */
     protected abstract void clearCaches();
 
-    /** 
-     * @return the set of keys this manager knows about.  This collection 
+    /**
+     * @return the set of keys this manager knows about.  This collection
      * should be immutable.
      */
     public abstract Set getKeySet();
