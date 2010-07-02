@@ -72,8 +72,8 @@ public class SearchIndexCreation extends TestCase {
 			String doc, boolean exists) {
 		URL url = SearchIndex.getIndexableURL(index.getLocale(), doc);
 		IStatus status = index.addDocument(url.getFile(), url);
-		if (exists) {
-		    assertTrue(status.isOK());
+		if (exists && !status.isOK()) {
+		    fail(doc + " status = " + status.getMessage());
 		}
 	}
 
