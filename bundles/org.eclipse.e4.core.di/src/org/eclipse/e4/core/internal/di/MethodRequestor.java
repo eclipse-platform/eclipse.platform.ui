@@ -14,6 +14,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
@@ -57,12 +59,24 @@ public class MethodRequestor extends Requestor {
 	@Override
 	public IObjectDescriptor[] getDependentObjects() {
 		Type[] parameterTypes = method.getGenericParameterTypes();
-		Annotation[][] annotations = method.getParameterAnnotations();
+		Annotation[][] annotations = getParameterAnnotations(method);
 		IObjectDescriptor[] descriptors = new IObjectDescriptor[parameterTypes.length];
 		for (int i = 0; i < parameterTypes.length; i++) {
 			descriptors[i] = new ObjectDescriptor(parameterTypes[i], annotations[i]);
 		}
 		return descriptors;
+	}
+
+	// TODO we should use weak references here...
+	static Map<Method, Annotation[][]> annotationCache = new HashMap<Method, Annotation[][]>();
+
+	static synchronized Annotation[][] getParameterAnnotations(Method method) {
+		Annotation[][] result = annotationCache.get(method);
+		if (result == null) {
+			result = method.getParameterAnnotations();
+			annotationCache.put(method, result);
+		}
+		return result;
 	}
 
 	@Override

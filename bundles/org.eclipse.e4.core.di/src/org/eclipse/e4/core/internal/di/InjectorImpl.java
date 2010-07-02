@@ -340,6 +340,10 @@ public class InjectorImpl implements IInjector {
 
 	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean track) {
 		IObjectDescriptor[] descriptors = requestor.getDependentObjects();
+		// keep a copy because we'll be nulling out elements of descriptors, but we need all of them back later
+		// TODO maybe use an array of boolean instead of nulling out?
+		IObjectDescriptor[] cachedDescriptors = new IObjectDescriptor[descriptors.length];
+		System.arraycopy(descriptors, 0, cachedDescriptors, 0, descriptors.length);
 
 		// 0) initial fill - all are unresolved
 		Object[] actualArgs = new Object[descriptors.length];
@@ -429,7 +433,7 @@ public class InjectorImpl implements IInjector {
 		}
 
 		// 6) post process
-		descriptors = requestor.getDependentObjects(); // reset nulled out values
+		descriptors = cachedDescriptors; // reset nulled out values
 		for (int i = 0; i < descriptors.length; i++) {
 			// check that values are of a correct type
 			if (actualArgs[i] != null && actualArgs[i] != IInjector.NOT_A_VALUE) {
