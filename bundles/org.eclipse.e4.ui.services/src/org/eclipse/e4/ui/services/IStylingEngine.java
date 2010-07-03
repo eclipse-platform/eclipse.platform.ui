@@ -22,6 +22,7 @@ public interface IStylingEngine {
 
 	public void setClassname(Object widget, String classname);
 	public void setId(Object widget, String id);
+	public void setClassnameAndId(Object widget, String classname, String id);
 	public void style(Object widget);
 	public CSSStyleDeclaration getStyle(Object widget);
 }

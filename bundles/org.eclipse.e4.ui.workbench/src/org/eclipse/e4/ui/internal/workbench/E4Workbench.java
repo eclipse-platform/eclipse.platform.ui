@@ -298,6 +298,9 @@ public class E4Workbench implements IWorkbench {
 			public CSSStyleDeclaration getStyle(Object widget) {
 				return null;
 			}
+
+			public void setClassnameAndId(Object widget, String classname, String id) {
+			}
 		});
 	}
 }

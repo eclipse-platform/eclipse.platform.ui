@@ -802,6 +802,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 					return engine.getStyle((Widget) widget);
 				}
 
+				public void setClassnameAndId(Object widget, String classname,
+						String id) {
+					((Widget) widget).setData(
+							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+					engine.applyStyles((Widget) widget, true);
+				}
+
 			});
 		} else if (cssURI != null) {
 			String cssResourcesURI = (String) appContext
@@ -835,6 +843,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 						return null;
 					}
 					return engine.getViewCSS().getComputedStyle(e, null);
+				}
+
+				public void setClassnameAndId(Object widget, String classname,
+						String id) {
+					((Widget) widget).setData(
+							"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+					engine.applyStyles((Widget) widget, true);
 				}
 
 			});

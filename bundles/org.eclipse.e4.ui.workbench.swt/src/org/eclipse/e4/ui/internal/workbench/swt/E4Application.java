@@ -476,6 +476,10 @@ public class E4Application implements IApplication {
 			public CSSStyleDeclaration getStyle(Object widget) {
 				return null;
 			}
+
+			public void setClassnameAndId(Object widget, String classname,
+					String id) {
+			}
 		});
 
 		// FROM: Workbench constructor

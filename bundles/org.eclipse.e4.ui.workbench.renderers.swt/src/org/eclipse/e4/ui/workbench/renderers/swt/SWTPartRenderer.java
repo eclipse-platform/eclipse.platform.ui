@@ -74,10 +74,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		String cssClassStr = 'M' + eObj.eClass().getName();
 		for (String tag : me.getTags())
 			cssClassStr += ' ' + tag;
-		engine.setClassname(widget, cssClassStr);
 
-		// Set the id
-		engine.setId(widget, me.getElementId()); // also triggers style()
+		// this will trigger style()
+		engine.setClassnameAndId(widget, cssClassStr, me.getElementId());
 	}
 
 	public void bindWidget(MUIElement me, Object widget) {

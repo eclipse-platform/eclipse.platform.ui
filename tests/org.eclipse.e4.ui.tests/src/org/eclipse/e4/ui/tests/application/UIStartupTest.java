@@ -244,6 +244,11 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 								// TODO Auto-generated method stub
 								return null;
 							}
+
+							public void setClassnameAndId(Object widget,
+									String classname, String id) {
+								// no-op
+							}
 						});
 			}
 		});
