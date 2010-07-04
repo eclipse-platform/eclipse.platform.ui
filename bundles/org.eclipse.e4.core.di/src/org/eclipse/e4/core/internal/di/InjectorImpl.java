@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -54,6 +55,7 @@ public class InjectorImpl implements IInjector {
 	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<WeakReference<Class<?>>>();
 	private HashMap<Class<?>, Object> singletonCache = new HashMap<Class<?>, Object>();
 	private Map<Class<?>, Set<Binding>> bindings = new HashMap<Class<?>, Set<Binding>>();
+	private Map<Class<?>, Method[]> methodsCache = new WeakHashMap<Class<?>, Method[]>();
 
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
 		inject(object, objectSupplier, null);
@@ -175,7 +177,7 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private Object invokeUsingClass(Object userObject, Class<?> currentClass, Class<? extends Annotation> qualifier, Object defaultValue, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean throwUnresolved) {
-		Method[] methods = currentClass.getDeclaredMethods();
+		Method[] methods = getDeclaredMethods(currentClass);
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
 			if (method.getAnnotation(qualifier) == null)
@@ -576,7 +578,7 @@ public class InjectorImpl implements IInjector {
 	 */
 	private boolean processMethods(final Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean track, List<Requestor> requestors) {
 		boolean injectedStatic = false;
-		Method[] methods = objectsClass.getDeclaredMethods();
+		Method[] methods = getDeclaredMethods(objectsClass);
 		for (int i = 0; i < methods.length; i++) {
 			final Method method = methods[i];
 			if (isOverridden(method, classHierarchy))
@@ -627,6 +629,15 @@ public class InjectorImpl implements IInjector {
 				return true;
 		}
 		return false;
+	}
+
+	private Method[] getDeclaredMethods(Class<?> c) {
+		Method[] methods = methodsCache.get(c);
+		if (methods == null) {
+			methods = c.getDeclaredMethods();
+			methodsCache.put(c, methods);
+		}
+		return methods;
 	}
 
 	private Class<?> getDesiredClass(Type desiredType) {
@@ -734,7 +745,7 @@ public class InjectorImpl implements IInjector {
 			processAnnotated(annotation, userObject, superClass, objectSupplier, tempSupplier, classHierarchy);
 			classHierarchy.remove(objectClass);
 		}
-		Method[] methods = objectClass.getDeclaredMethods();
+		Method[] methods = getDeclaredMethods(objectClass);
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
 			if (!method.isAnnotationPresent(annotation))
