@@ -23,7 +23,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 
 	final static protected String ECLIPSE_CONTEXT_NAME = IEclipseContext.class.getName();
 
-	static private class ContextInjectionListener extends RunAndTrackExt {
+	public static class ContextInjectionListener extends RunAndTrackExt {
 
 		final private Object[] result;
 		final private String[] keys;
@@ -65,6 +65,8 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 					return requestor.uninject(extraArguments[0], originatingSupplier);
 				}
 			} else {
+				if (!requestor.isValid())
+					return false; // remove this listener
 				requestor.resolveArguments();
 				if (recorder != null)
 					recorder.stopAccessRecording();
