@@ -64,6 +64,19 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class ControlFactory {
+	public static void createTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setText(label);
+		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+		Text t = new Text(parent, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		t.setLayoutData(gd);
+		context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
+
+	}
+
 	public static void createFindImport(Composite parent, final AbstractComponentEditor editor, EMFDataBindingContext context) {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
