@@ -11,6 +11,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
@@ -121,6 +122,16 @@ public class CTabRendering extends CTabFolderRenderer {
 		return new Rectangle(x, y, width, height);
 	}
 
+	protected Point computeSize(int part, int state, GC gc, int wHint, int hHint) {
+		if (0 <= part && part < parent.getItemCount()) {
+			gc.setAdvanced(true);
+			Point result = super.computeSize(part, state, gc, wHint, hHint);
+			gc.setAdvanced(false);
+			return result;
+		}
+		return super.computeSize(part, state, gc, wHint, hHint);
+	}
+
 	protected void dispose() {
 		super.dispose();
 	}
@@ -137,6 +148,7 @@ public class CTabRendering extends CTabFolderRenderer {
 			if (0 <= part && part < parent.getItemCount()) {
 				if (bounds.width == 0 || bounds.height == 0)
 					return;
+				gc.setAdvanced(true);
 				if ((state & SWT.SELECTED) != 0) {
 					drawSelectedTab(part, gc, bounds, state);
 					state &= ~SWT.BACKGROUND;
@@ -144,16 +156,15 @@ public class CTabRendering extends CTabFolderRenderer {
 				} else {
 					drawUnselectedTab(part, gc, bounds, state);
 					if ((state & SWT.HOT) == 0 && !active) {
-						gc.setAdvanced(true);
 						gc.setAlpha(0x7f);
 						state &= ~SWT.BACKGROUND;
 						super.draw(part, state, bounds, gc);
-						gc.setAdvanced(false);
 					} else {
 						state &= ~SWT.BACKGROUND;
 						super.draw(part, state, bounds, gc);
 					}
 				}
+				gc.setAdvanced(false);
 				return;
 			}
 		}
