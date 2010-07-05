@@ -2706,7 +2706,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		// add any remaining elements
 		if (min < elementChildren.length) {
 			for (int i = min; i < elementChildren.length; ++i) {
-				createTreeItem(widget, elementChildren[i], i);
+				createTreeItem(widget, elementChildren[i], -1);
 			}
 
 			// Need to restore expanded state in a separate pass
