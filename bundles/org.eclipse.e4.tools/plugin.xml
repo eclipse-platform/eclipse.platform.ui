@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.eclipse.e4.tools"
+            name="e4">
+      </category>
+      <category
+            id="org.eclipse.e4.tools.classes"
+            name="Classes"
+            parentCategory="org.eclipse.e4.tools">
+      </category>
+      <category
+            id="org.eclipse.e4.tools.model"
+            name="Model"
+            parentCategory="org.eclipse.e4.tools">
+      </category>
+      <wizard
+            category="org.eclipse.e4.tools"
+            class="org.eclipse.e4.internal.tools.wizards.project.E4NewProjectWizard"
+            icon="platform:/plugin/org.eclipse.pde.ui/icons/etool16/newpprj_wiz.gif"
+            id="org.eclipse.e4.tools.E4NewProjectWizard"
+            name="e4 Application Project"
+            project="true">
+      </wizard>
+      <wizard
+            category="org.eclipse.e4.tools/org.eclipse.e4.tools.model"
+            class="org.eclipse.e4.internal.tools.wizards.model.NewApplicationModelWizard"
+            icon="icons/full/obj16/application_view_tile.png"
+            id="org.eclipse.e4.tools.newappmodel"
+            name="New Application Model">
+      </wizard>
+      <wizard
+            category="org.eclipse.e4.tools/org.eclipse.e4.tools.model"
+            class="org.eclipse.e4.internal.tools.wizards.model.NewContributionModelWizard"
+            icon="icons/full/obj16/plugin.png"
+            id="org.eclipse.e4.tools.newmodelfragment"
+            name="New Model Fragment">
+      </wizard>
+      <wizard
+            category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
+            class="org.eclipse.e4.internal.tools.wizards.classes.NewHandlerClassWizard"
+            icon="icons/full/obj16/class_obj.gif"
+            id="org.eclipse.e4.tools.newhandler"
+            name="New Handler Class">
+      </wizard>
+      <wizard
+            category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
+            class="org.eclipse.e4.internal.tools.wizards.classes.NewPartClassWizard"
+            icon="icons/full/obj16/Part.gif"
+            id="org.eclipse.e4.tools.newpart"
+            name="New Part Class">
+      </wizard>
+   </extension>
+
+</plugin>

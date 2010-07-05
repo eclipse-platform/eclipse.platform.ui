@@ -1,0 +1,48 @@
+<%@ jet package="org.eclipse.e4.internal.tools.wizards.classes.templates" class="PartTemplate" imports="org.eclipse.e4.internal.tools.wizards.classes.NewPartClassWizard.PartClass" %>
+<% PartClass domainClass = (PartClass)argument; %> 
+package <%= domainClass.getPackageFragment().getElementName() %>;
+
+import javax.inject.Inject;
+<% if( domainClass.isUsePostConstruct() ) { %>
+import javax.annotation.PostConstruct;
+<% } %>
+<% if( domainClass.isUsePredestroy() ) { %>
+import javax.annotation.PreDestroy;
+<% } %>
+<% if( domainClass.isUseFocus() ) { %>
+import org.eclipse.e4.ui.di.Focus;
+<% } %>
+<% if( domainClass.isUsePersist() ) { %>
+import org.eclipse.e4.ui.di.Persist;
+<% } %>
+
+public class <%= domainClass.getName() %> {
+	@Inject
+	public <%= domainClass.getName() %>() {
+		//TODO Your code here
+	}
+	<% if( domainClass.isUsePostConstruct() ) { %>
+	@PostConstruct
+	public void <%= domainClass.getPostConstructMethodName()  %>() {
+		//TODO Your code here
+	}
+	<% } %>
+	<% if( domainClass.isUsePredestroy() ) { %>
+	@PreDestroy
+	public void <%= domainClass.getPreDestroyMethodName()  %>() {
+		//TODO Your code here
+	}
+	<% } %>
+	<% if( domainClass.isUseFocus() ) { %>
+	@Focus
+	public void <%= domainClass.getFocusMethodName() %>() {
+		//TODO Your code here
+	}
+	<% } %>
+	<% if( domainClass.isUsePersist() ) { %>
+	@Persist
+	public void <%= domainClass.getPersistMethodName() %>() {
+		//TODO Your code here
+	}
+	<% } %>
+}
