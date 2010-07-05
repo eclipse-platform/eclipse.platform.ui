@@ -679,12 +679,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 				toolBar.setElementId(item.getId());
 				fill(toolBar, manager2);
+				toolBar.setToBeRendered(shouldBeRendered(toolBar));
 				container.getChildren().add(toolBar);
 				workbenchTrimElements.add(toolBar);
 			} else if (item instanceof IContributionManager) {
 				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 				toolBar.setElementId(item.getId());
 				fill(toolBar, (IContributionManager) item);
+				toolBar.setToBeRendered(shouldBeRendered(toolBar));
 				container.getChildren().add(toolBar);
 				workbenchTrimElements.add(toolBar);
 			} else if (item instanceof AbstractGroupMarker) {
@@ -695,10 +697,29 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
 				toolBar.setElementId(item.getId());
 				toolBar.getChildren().add(separator);
+				toolBar.setToBeRendered(shouldBeRendered(toolBar));
 				container.getChildren().add(toolBar);
 				workbenchTrimElements.add(toolBar);
 			}
 		}
+	}
+
+	/**
+	 * Returns the TBR state given a toolBar model element. This will only show
+	 * (TBR == true) MToolBars that have at least one visible non-separator.
+	 * 
+	 * @param toolBar
+	 *            The MToolbar to analyze
+	 * 
+	 * @return The expected TBR state for this toolbar
+	 */
+	private boolean shouldBeRendered(MToolBar toolBar) {
+		for (MUIElement tbElement : toolBar.getChildren()) {
+			if (!(tbElement instanceof MToolBarSeparator) && tbElement.isToBeRendered())
+				return true;
+		}
+
+		return false;
 	}
 
 	private void fill(MToolBar container, IContributionManager manager) {
