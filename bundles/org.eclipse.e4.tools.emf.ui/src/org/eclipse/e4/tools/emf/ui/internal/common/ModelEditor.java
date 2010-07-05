@@ -63,6 +63,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuContributionEdi
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuSeparatorEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ModelFragmentsEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ParameterEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartDescriptorEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PartSashContainerEditor;
@@ -555,6 +556,7 @@ public class ModelEditor {
 		registerEditor(CommandsPackageImpl.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain(), this, modelProvider, project));
 		registerEditor(CommandsPackageImpl.Literals.COMMAND, new CommandEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(CommandsPackageImpl.Literals.COMMAND_PARAMETER, new CommandParameterEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(CommandsPackageImpl.Literals.PARAMETER, new ParameterEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(CommandsPackageImpl.Literals.BINDING_TABLE, new BindingTableEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(CommandsPackageImpl.Literals.BINDING_CONTEXT, new BindingContextEditor(modelProvider.getEditingDomain(), this));
 

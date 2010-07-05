@@ -18,34 +18,30 @@ import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 
-public class CommandParameterEditor extends AbstractComponentEditor {
+public class ParameterEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
 
 	private EStackLayout stackLayout;
 
-	public CommandParameterEditor(EditingDomain editingDomain, ModelEditor editor) {
+	public ParameterEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
 	}
 
@@ -53,7 +49,7 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if (image == null) {
 			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/CommandParameter.gif")); //$NON-NLS-1$
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Parameter.gif")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -65,12 +61,12 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Command Parameter";
+		return "Parameter";
 	}
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MCommandParameter param = (MCommandParameter) element;
+		MParameter param = (MParameter) element;
 		if (param.getName() != null && param.getName().trim().length() > 0) {
 			return param.getName().trim();
 		} else if (param.getElementId() != null && param.getElementId().trim().length() > 0) {
@@ -81,7 +77,7 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Command Parameter Bla Bla Bla Bla";
+		return "Parameter Bla Bla Bla Bla";
 	}
 
 	@Override
@@ -129,22 +125,8 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, "Id", master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, "Name", master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME));
-		ControlFactory.createTextField(parent, "TypeId", master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID));
-
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText("Optional");
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			Button checkbox = new Button(parent, SWT.CHECK);
-			checkbox.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false, 2, 1));
-
-			IEMFEditValueProperty mprop = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__OPTIONAL);
-			IWidgetValueProperty uiProp = WidgetProperties.selection();
-
-			context.bindValue(uiProp.observe(checkbox), mprop.observeDetail(master));
-		}
+		ControlFactory.createTextField(parent, "Name", master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__NAME));
+		ControlFactory.createTextField(parent, "Value", master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__VALUE));
 
 		return parent;
 	}
