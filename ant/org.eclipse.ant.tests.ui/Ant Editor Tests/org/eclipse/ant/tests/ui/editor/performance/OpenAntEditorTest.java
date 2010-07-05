@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.ui.PartInitException;
 
 public class OpenAntEditorTest extends AbstractAntPerformanceTest {
@@ -41,7 +40,6 @@ public class OpenAntEditorTest extends AbstractAntPerformanceTest {
 	public void testOpenAntEditor2() throws PartInitException {
 		// warm run
 		IFile file= getIFile("build.xml");
-		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, "Delta for degradataion is < 60 ms and will not have any significant impact on the user experience.  Unable to find reason for the degradation in Ant code.");
 		tagAsGlobalSummary("Open Ant Editor", Dimension.ELAPSED_PROCESS);
 		measureOpenInEditor(file);
 	}
@@ -51,7 +49,6 @@ public class OpenAntEditorTest extends AbstractAntPerformanceTest {
 	    try {
 		IFile file= getIFile("build.xml");
 		store.setValue(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
-		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, "Delta for degradataion is < 60 ms and will not have any significant impact on the user experience.  Unable to find reason for the degradation in Ant code.");
 		tagAsSummary("Open Ant Editor; No folding", Dimension.ELAPSED_PROCESS);
 		measureOpenInEditor(file);
 	    } finally {
