@@ -51,6 +51,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingContextEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandParameterEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectMenuItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectToolItemEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.HandledMenuItemEditor;
@@ -553,6 +554,7 @@ public class ModelEditor {
 		registerEditor(CommandsPackageImpl.Literals.KEY_BINDING, new KeyBindingEditor(modelProvider.getEditingDomain(), this, modelProvider));
 		registerEditor(CommandsPackageImpl.Literals.HANDLER, new HandlerEditor(modelProvider.getEditingDomain(), this, modelProvider, project));
 		registerEditor(CommandsPackageImpl.Literals.COMMAND, new CommandEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(CommandsPackageImpl.Literals.COMMAND_PARAMETER, new CommandParameterEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(CommandsPackageImpl.Literals.BINDING_TABLE, new BindingTableEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(CommandsPackageImpl.Literals.BINDING_CONTEXT, new BindingContextEditor(modelProvider.getEditingDomain(), this));
 

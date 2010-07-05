@@ -12,13 +12,14 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
@@ -28,29 +29,20 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
-import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.emf.edit.command.MoveCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ColumnViewerEditor;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
-import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TableViewerEditor;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -69,6 +61,8 @@ public class CommandEditor extends AbstractComponentEditor {
 	private Image image;
 	private EMFDataBindingContext context;
 	private EStackLayout stackLayout;
+
+	private IEMFEditListProperty COMMAND__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
 
 	public CommandEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
@@ -191,176 +185,11 @@ public class CommandEditor extends AbstractComponentEditor {
 			final TableViewer viewer = new TableViewer(parent, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
-			viewer.getTable().setHeaderVisible(true);
+			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 120;
 			viewer.getControl().setLayoutData(gd);
-
-			{
-				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
-
-				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-				column.getColumn().setText(Messages.CommandEditor_ParameterId);
-				column.getColumn().setWidth(200);
-				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())));
-				column.setEditingSupport(new EditingSupport(viewer) {
-					private TextCellEditor editor = new TextCellEditor(viewer.getTable());
-
-					@Override
-					protected void setValue(Object element, Object value) {
-						if (value.toString().trim().length() == 0) {
-							value = null;
-						}
-
-						Command cmd = SetCommand.create(getEditingDomain(), element, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, value);
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
-					}
-
-					@Override
-					protected Object getValue(Object element) {
-						MCommandParameter obj = (MCommandParameter) element;
-						return obj.getElementId() != null ? obj.getElementId() : ""; //$NON-NLS-1$
-					}
-
-					@Override
-					protected CellEditor getCellEditor(Object element) {
-						return editor;
-					}
-
-					@Override
-					protected boolean canEdit(Object element) {
-						return true;
-					}
-				});
-			}
-
-			{
-				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME);
-
-				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-				column.getColumn().setText(Messages.CommandEditor_ParameterName);
-				column.getColumn().setWidth(200);
-				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())));
-				column.setEditingSupport(new EditingSupport(viewer) {
-					private TextCellEditor editor = new TextCellEditor(viewer.getTable());
-
-					@Override
-					protected void setValue(Object element, Object value) {
-						Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME, value);
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
-					}
-
-					@Override
-					protected Object getValue(Object element) {
-						MCommandParameter obj = (MCommandParameter) element;
-						return obj.getName() != null ? obj.getName() : ""; //$NON-NLS-1$
-					}
-
-					@Override
-					protected CellEditor getCellEditor(Object element) {
-						return editor;
-					}
-
-					@Override
-					protected boolean canEdit(Object element) {
-						return true;
-					}
-				});
-			}
-
-			{
-				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID);
-
-				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-				column.getColumn().setText(Messages.CommandEditor_ParameterTypeId);
-				column.getColumn().setWidth(200);
-				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())));
-				column.setEditingSupport(new EditingSupport(viewer) {
-					private TextCellEditor editor = new TextCellEditor(viewer.getTable());
-
-					@Override
-					protected void setValue(Object element, Object value) {
-						Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID, value);
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
-					}
-
-					@Override
-					protected Object getValue(Object element) {
-						MCommandParameter obj = (MCommandParameter) element;
-						return obj.getTypeId() != null ? obj.getTypeId() : ""; //$NON-NLS-1$
-					}
-
-					@Override
-					protected CellEditor getCellEditor(Object element) {
-						return editor;
-					}
-
-					@Override
-					protected boolean canEdit(Object element) {
-						return true;
-					}
-				});
-			}
-
-			{
-				IEMFValueProperty prop = EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__OPTIONAL);
-
-				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-				column.getColumn().setText(Messages.CommandEditor_ParameterOptional);
-				column.getColumn().setWidth(200);
-				column.setLabelProvider(new ObservableColumnLabelProvider<MCommandParameter>(prop.observeDetail(cp.getKnownElements())) {
-					@Override
-					public String getText(MCommandParameter element) {
-						return element.isOptional() ? Messages.CommandEditor_ParameterOptional_Yes : Messages.CommandEditor_ParameterOptional_No;
-					}
-				});
-				column.setEditingSupport(new EditingSupport(viewer) {
-					private ComboBoxCellEditor editor = new ComboBoxCellEditor(viewer.getTable(), new String[] { Messages.CommandEditor_ParameterOptional_Yes, Messages.CommandEditor_ParameterOptional_No });
-
-					@Override
-					protected void setValue(Object element, Object value) {
-						int idx = ((Number) value).intValue();
-						Command cmd = SetCommand.create(getEditingDomain(), element, CommandsPackageImpl.Literals.COMMAND_PARAMETER__OPTIONAL, idx == 0);
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
-					}
-
-					@Override
-					protected Object getValue(Object element) {
-						MCommandParameter obj = (MCommandParameter) element;
-						return obj.isOptional() ? 0 : 1;
-					}
-
-					@Override
-					protected CellEditor getCellEditor(Object element) {
-						return editor;
-					}
-
-					@Override
-					protected boolean canEdit(Object element) {
-						return true;
-					}
-				});
-			}
-
-			ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(viewer) {
-				@Override
-				protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
-					boolean singleSelect = ((IStructuredSelection) viewer.getSelection()).size() == 1;
-					boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent) event.sourceEvent).button == 1;
-
-					return singleSelect && (isLeftDoubleMouseSelect || event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC || event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
-				}
-			};
-			TableViewerEditor.create(viewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
 
 			IEMFEditListProperty mProp = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
 			viewer.setInput(mProp.observeDetail(getMaster()));
@@ -378,11 +207,55 @@ public class CommandEditor extends AbstractComponentEditor {
 			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
+							Object obj = s.getFirstElement();
+							MCommand container = (MCommand) getMaster().getValue();
+							int idx = container.getParameters().indexOf(obj) - 1;
+							if (idx >= 0) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS, obj, idx);
+
+								if (cmd.canExecute()) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+
+						}
+					}
+				}
+			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
+							Object obj = s.getFirstElement();
+							MCommand container = (MCommand) getMaster().getValue();
+							int idx = container.getParameters().indexOf(obj) + 1;
+							if (idx < container.getParameters().size()) {
+								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS, obj, idx);
+
+								if (cmd.canExecute()) {
+									getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+
+						}
+					}
+				}
+			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_AddEllipsis);
@@ -396,7 +269,7 @@ public class CommandEditor extends AbstractComponentEditor {
 
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						viewer.editElement(param, 0);
+						getEditor().setSelection(param);
 					}
 				}
 			});
@@ -405,6 +278,18 @@ public class CommandEditor extends AbstractComponentEditor {
 			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						List<?> keybinding = ((IStructuredSelection) viewer.getSelection()).toList();
+						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS, keybinding);
+						if (cmd.canExecute()) {
+							getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+				}
+			});
 		}
 
 		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
@@ -414,7 +299,7 @@ public class CommandEditor extends AbstractComponentEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		return null;
+		return COMMAND__PARAMETERS.observe(element);
 	}
 
 	@Override
