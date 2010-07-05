@@ -56,7 +56,10 @@ public class InjectorImpl implements IInjector {
 	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<WeakReference<Class<?>>>();
 	private HashMap<Class<?>, Object> singletonCache = new HashMap<Class<?>, Object>();
 	private Map<Class<?>, Set<Binding>> bindings = new HashMap<Class<?>, Set<Binding>>();
+
+	// Performance improvement:
 	private Map<Class<?>, Method[]> methodsCache = new WeakHashMap<Class<?>, Method[]>();
+	private Map<Class<?>, Map<Method, Boolean>> isOverriddenCache = new WeakHashMap<Class<?>, Map<Method, Boolean>>();
 
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
 		inject(object, objectSupplier, null);
@@ -545,7 +548,25 @@ public class InjectorImpl implements IInjector {
 		Method[] methods = getDeclaredMethods(objectsClass);
 		for (int i = 0; i < methods.length; i++) {
 			final Method method = methods[i];
-			if (isOverridden(method, classHierarchy))
+
+			Boolean isOverridden = null;
+			Map<Method, Boolean> methodMap = null;
+			Class<?> originalClass = userObject.getClass();
+			if (isOverriddenCache.containsKey(originalClass)) {
+				methodMap = isOverriddenCache.get(originalClass);
+				if (methodMap.containsKey(method))
+					isOverridden = methodMap.get(method);
+			}
+			if (isOverridden == null) {
+				isOverridden = isOverridden(method, classHierarchy);
+				if (methodMap == null) {
+					methodMap = new WeakHashMap<Method, Boolean>();
+					isOverriddenCache.put(originalClass, methodMap);
+				}
+				methodMap.put(method, isOverridden);
+			}
+
+			if (isOverridden)
 				continue; // process in the subclass
 			if (Modifier.isStatic(method.getModifiers())) {
 				if (hasInjectedStatic(objectsClass))
@@ -571,14 +592,32 @@ public class InjectorImpl implements IInjector {
 		// method is not private if we reached this line, check not(public OR protected)
 		boolean isDefault = !(Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers));
 
+		String methodName = method.getName();
+		Class<?>[] methodParams = method.getParameterTypes();
+		int methodParamsLength = method.getParameterTypes().length;
 		for (Class<?> subClass : classHierarchy) {
-			try {
-				subClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
-			} catch (SecurityException e) {
-				continue;
-			} catch (NoSuchMethodException e) {
-				continue; // this is the desired outcome
+			Method[] methods = subClass.getDeclaredMethods();
+			Method matchingMethod = null;
+			for (Method candidate : methods) {
+				if (!methodName.equals(candidate.getName()))
+					continue;
+				Class<?>[] candidateParams = method.getParameterTypes();
+				if (candidateParams.length != methodParamsLength)
+					continue;
+				boolean paramsMatch = true;
+				for (int i = 0; i < methodParamsLength; i++) {
+					if (candidateParams[i].equals(methodParams[i])) // strictly speaking, need to add erasures
+						continue;
+					paramsMatch = false;
+				}
+				if (!paramsMatch)
+					continue;
+				matchingMethod = candidate;
+				break;
 			}
+			if (matchingMethod == null)
+				continue;
+
 			if (isDefault) { // must be in the same package to override
 				Package originalPackage = method.getDeclaringClass().getPackage();
 				Package overridePackage = subClass.getPackage();
