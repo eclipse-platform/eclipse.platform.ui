@@ -321,9 +321,6 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInContainer(MPart part) {
-		MUIElement p = modelService.find(part.getElementId(), rootContainer);
-		if (p != null)
-			return true;
 		return isInContainer(rootContainer, part);
 	}
 
@@ -333,6 +330,10 @@ public class PartServiceImpl implements EPartService {
 				return true;
 			} else if (object instanceof MElementContainer<?>) {
 				if (isInContainer((MElementContainer<?>) object, part)) {
+					return true;
+				}
+			} else if (object instanceof MPlaceholder) {
+				if (((MPlaceholder) object).getRef() == part) {
 					return true;
 				}
 			}
@@ -485,6 +486,10 @@ public class PartServiceImpl implements EPartService {
 		} else {
 			if (providedPart != localPart && !descriptor.isAllowMultiple()) {
 				return localPart;
+			}
+
+			if (isInContainer(providedPart)) {
+				return providedPart;
 			}
 
 			String category = descriptor.getCategory();

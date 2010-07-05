@@ -605,7 +605,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	MPart findPart(String viewId, String secondaryId) {
 		if (secondaryId == null) {
-			return partService.findPart(viewId);
+			Collection<MPart> parts = partService.getParts();
+			partsLoop: for (MPart part : parts) {
+				if (part.getElementId().equals(viewId)) {
+					for (String tag : part.getTags()) {
+						if (tag.startsWith(SECONDARY_ID_HEADER)) {
+							continue partsLoop;
+						}
+					}
+
+					return part;
+				}
+			}
 		}
 
 		Collection<MPart> parts = partService.getParts();

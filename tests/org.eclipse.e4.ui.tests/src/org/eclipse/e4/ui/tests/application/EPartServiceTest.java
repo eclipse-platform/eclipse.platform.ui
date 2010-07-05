@@ -2085,6 +2085,56 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(stack, part.getParent());
 	}
 
+	public void testShowPart_Bug318931() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setElementId("partId");
+		partDescriptor.setAllowMultiple(true);
+		application.getDescriptors().add(partDescriptor);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+
+		MPlaceholder placeholderA = partService.createSharedPart("partId",
+				window, true);
+		MPart partA = (MPart) placeholderA.getRef();
+		partA.setCurSharedRef(placeholderA);
+		perspective.getChildren().add(placeholderA);
+
+		MPlaceholder placeholderB = partService.createSharedPart("partId",
+				window, true);
+		MPart partB = (MPart) placeholderB.getRef();
+		partB.setCurSharedRef(placeholderB);
+		perspective.getChildren().add(placeholderB);
+
+		partService.hidePart(partB);
+		partService.showPart(partB, PartState.ACTIVATE);
+
+		assertEquals(2, perspective.getChildren().size());
+		assertEquals(placeholderA, perspective.getChildren().get(0));
+		assertEquals(placeholderB, perspective.getChildren().get(1));
+	}
+
 	public void testHidePart_PartInAnotherWindow() {
 		MApplication application = createApplication(
 				new String[] { "partInWindow1" },
