@@ -162,7 +162,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartDescriptorEditor_Id);
+			l.setText(Messages.ModelTooling_Common_Id);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);

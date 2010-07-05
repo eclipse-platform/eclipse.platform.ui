@@ -48,15 +48,15 @@ public class AddonsEditor extends AbstractComponentEditor {
 	private IProject project;
 	private Image image;
 	private EStackLayout stackLayout;
-	
+
 	public AddonsEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 		this.project = project;
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if( image == null ) {
+		if (image == null) {
 			try {
 				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Addons.png")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
@@ -76,8 +76,8 @@ public class AddonsEditor extends AbstractComponentEditor {
 	@Override
 	public String getDetailLabel(Object element) {
 		MContribution contrib = (MContribution) element;
-		if( contrib.getContributionURI() != null && contrib.getContributionURI().trim().length() > 0 ) {
-			return contrib.getContributionURI().substring(contrib.getContributionURI().lastIndexOf('/')+1);
+		if (contrib.getContributionURI() != null && contrib.getContributionURI().trim().length() > 0) {
+			return contrib.getContributionURI().substring(contrib.getContributionURI().lastIndexOf('/') + 1);
 		}
 		return null;
 	}
@@ -101,49 +101,48 @@ public class AddonsEditor extends AbstractComponentEditor {
 				composite = createForm(parent, context, getMaster(), false);
 			}
 		}
-		
-		if( getEditor().isModelFragment() ) {
+
+		if (getEditor().isModelFragment()) {
 			Control topControl;
-			if( Util.isImport((EObject) object) ) {
+			if (Util.isImport((EObject) object)) {
 				topControl = composite.getChildren()[1];
 			} else {
-				topControl = composite.getChildren()[0];				
+				topControl = composite.getChildren()[0];
 			}
-			
-			if( stackLayout.topControl != topControl ) {
+
+			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
 				composite.layout(true, true);
 			}
 		}
-		
+
 		getMaster().setValue(object);
 		return composite;
 	}
-	
+
 	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout(3, false));
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		
-		if( getEditor().isModelFragment() && isImport ) {
+		if (getEditor().isModelFragment() && isImport) {
 			ControlFactory.createFindImport(parent, this, context);
 			return parent;
 		}
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.AddonsEditor_Id);
+			l.setText(Messages.ModelTooling_Common_Id);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -152,21 +151,21 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()));
 
-			final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
 			b.setText(Messages.AddonsEditor_Find);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project,getEditingDomain(),(MContribution) getMaster().getValue(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI);
+					ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), project, getEditingDomain(), (MContribution) getMaster().getValue(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI);
 					dialog.open();
 				}
 			});
 		}
-		
-//		ControlFactory.createBindingsWidget(parent, this);
+
+		// ControlFactory.createBindingsWidget(parent, this);
 
 		return parent;
 	}

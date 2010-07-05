@@ -143,7 +143,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.BindingTableEditor_Id);
+			l.setText(Messages.ModelTooling_Common_Id);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -204,7 +204,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
 
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-				column.getColumn().setText(Messages.BindingTableEditor_Id);
+				column.getColumn().setText(Messages.ModelTooling_Common_Id);
 				column.getColumn().setWidth(170);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
 			}
