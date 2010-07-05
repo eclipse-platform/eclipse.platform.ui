@@ -134,6 +134,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			if (fOverviewRuler != null && fIsOverviewRulerVisible) {
 				overviewRulerWidth= fOverviewRuler.getWidth();
 				width -= overviewRulerWidth + fGap;
+				if (scrollbarHeight <= 0)
+					scrollbarHeight= overviewRulerWidth;
 			}
 
 			if (fVerticalRuler != null && fIsVerticalRulerVisible) {
@@ -180,6 +182,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		 * @since 3.6
 		 */
 		private int[] getVerticalScrollArrowHeights(StyledText textWidget, int bottomOffset) {
+			ScrollBar verticalBar= textWidget.getVerticalBar();
+			if (verticalBar == null)
+				return new int[] { 0, 0 };
+			
 			int[] arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
 			if (arrowHeights[0] > 0 || arrowHeights[1] > 0) {
 				fScrollArrowHeights= arrowHeights;
@@ -192,7 +198,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 					int fakeHeight= 1000;
 					bottomOffset= bottomOffset - originalSize.y + fakeHeight;
 					textWidget.setSize(originalSize.x, fakeHeight);
-					textWidget.getVerticalBar().setValues(0, 0, 1 << 30, 1, 10, 10);
+					verticalBar.setValues(0, 0, 1 << 30, 1, 10, 10);
 					arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
 					fScrollArrowHeights= arrowHeights;
 				} finally {
