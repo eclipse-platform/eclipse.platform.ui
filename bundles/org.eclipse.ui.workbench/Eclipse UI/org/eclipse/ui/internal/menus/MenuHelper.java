@@ -536,6 +536,7 @@ public class MenuHelper {
 		} else {
 			item.setIconURI(iconUri);
 		}
+		item.setTooltip(getTooltip(element));
 		return item;
 	}
 }
