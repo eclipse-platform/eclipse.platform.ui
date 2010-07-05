@@ -8,20 +8,21 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.editor3x.wizard;
+package org.eclipse.e4.tools.compat.internal;
 
-import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.e4.tools.services.IClipboardService;
+import org.eclipse.jface.action.Action;
 
-
-public class NewContributionModelWizard extends BaseApplicationModelWizard {
-
-	@Override
-	public String getDefaultFileName() {
-		return "fragment.e4xmi";
+public class CutAction extends Action {
+	private IClipboardService service;
+	
+	public CutAction(IClipboardService service) {
+		super("Cut");
+		this.service = service;
 	}
 	
-	protected EObject createInitialModel() {
-		return (EObject) MFragmentFactory.INSTANCE.createModelFragments();
+	@Override
+	public void run() {
+		service.cut();
 	}
 }

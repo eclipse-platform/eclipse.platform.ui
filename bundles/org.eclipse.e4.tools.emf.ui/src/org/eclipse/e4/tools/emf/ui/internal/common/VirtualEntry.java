@@ -10,12 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
-import org.eclipse.core.databinding.observable.DisposeEvent;
-import org.eclipse.core.databinding.observable.IDisposeListener;
-
-import org.eclipse.core.databinding.observable.DisposeEvent;
-import org.eclipse.core.databinding.observable.IDisposeListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -31,11 +25,13 @@ public abstract class VirtualEntry<M> {
 	private Object originalParent;
 	private String label;
 	private IObservableList list;
+	private IListProperty property;
 
 	public VirtualEntry(String id, IListProperty property, Object originalParent, String label) {
 		this.id = id;
 		this.originalParent = originalParent;
 		this.label = label;
+		this.property = property;
 		this.list = new WritableList();
 		final IObservableList origList = property.observe(originalParent);
 		list.addAll(cleanedList(origList));
@@ -43,23 +39,27 @@ public abstract class VirtualEntry<M> {
 		final IListChangeListener listener = new IListChangeListener() {
 
 			public void handleListChange(ListChangeEvent event) {
-				if( ! VirtualEntry.this.list.isDisposed() ) {
+				if (!VirtualEntry.this.list.isDisposed()) {
 					List<Object> clean = cleanedList(event.getObservableList());
 					ListDiff diff = Diffs.computeListDiff(VirtualEntry.this.list, clean);
-					diff.applyTo(VirtualEntry.this.list);					
+					diff.applyTo(VirtualEntry.this.list);
 				}
 			}
 		};
-		
+
 		origList.addListChangeListener(listener);
+	}
+
+	public IListProperty getProperty() {
+		return property;
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<Object> cleanedList(IObservableList list) {
 		List<Object> l = new ArrayList<Object>(list.size());
 
-		for( Object o : list ) {
-			if( accepted((M) o) ) {
+		for (Object o : list) {
+			if (accepted((M) o)) {
 				l.add(o);
 			}
 		}

@@ -10,16 +10,17 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -34,13 +35,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class DirectToolItemEditor extends ToolItemEditor {
 	private Image image;
 
 	public DirectToolItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain,editor, project);
+		super(editingDomain, editor, project);
 	}
 
 	@Override
@@ -57,27 +59,39 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		return image;
 	}
 
-
 	@Override
 	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context, WritableValue master) {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
-		Label l = new Label(parent, SWT.NONE);
-		l.setText(Messages.DirectToolItemEditor_ClassURI);
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		final IContributionClassCreator c = getEditor().getContributionCreator(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM);
+		if (project != null && c != null) {
+			final Link l = new Link(parent, SWT.NONE);
+			l.setText("<A>" + Messages.DirectMenuItemEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			l.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project, l.getShell());
+				}
+			});
+		} else {
+			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.DirectToolItemEditor_ClassURI);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		}
 
 		Text t = new Text(parent, SWT.BORDER);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value( getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
+		context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
 
-		final Button b = new Button(parent, SWT.PUSH|SWT.FLAT);
+		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.DirectToolItemEditor_Find);
 		b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(),project,getEditingDomain(),(MContribution) getMaster().getValue(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI);
+				ContributionClassDialog dialog = new ContributionClassDialog(b.getShell(), project, getEditingDomain(), (MContribution) getMaster().getValue(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI);
 				dialog.open();
 			}
 		});

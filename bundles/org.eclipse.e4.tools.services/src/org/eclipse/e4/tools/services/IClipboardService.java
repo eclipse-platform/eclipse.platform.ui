@@ -8,20 +8,19 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  ******************************************************************************/
-package org.eclipse.e4.tools.emf.editor3x.wizard;
+package org.eclipse.e4.tools.services;
 
-import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.emf.ecore.EObject;
-
-
-public class NewApplicationModelWizard extends BaseApplicationModelWizard {
-
-	@Override
-	public String getDefaultFileName() {
-		return "Application.e4xmi";
-	}
+public interface IClipboardService {
+	public void copy();
+	public void paste();
+	public void cut();
+	public void setHandler(Handler handler);
 	
-	protected EObject createInitialModel() {
-		return (EObject) MApplicationFactory.INSTANCE.createApplication();
+	public interface Handler {
+		public void paste();
+		public void copy();
+		public void cut();
+//		public boolean canCopy();
+//		public boolean canPaste();
 	}
 }

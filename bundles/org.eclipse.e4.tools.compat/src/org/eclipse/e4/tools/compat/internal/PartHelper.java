@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.services.IClipboardService;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -34,13 +35,19 @@ public class PartHelper {
 		IEclipseContext parentContext = (IEclipseContext) site.getService(IEclipseContext.class);
 		
 		// Check if running in 4.x
-		if( parentContext.get("org.eclipse.e4.workbench.ui.IPresentationEngine") != null ) {
+		if( parentContext.get("org.eclipse.e4.ui.workbench.IPresentationEngine") != null ) {
 			// Hack to get the MPart-Context
 			try {
 				Class<?> clazz = Util.getBundle("org.eclipse.e4.ui.model.workbench").loadClass("org.eclipse.e4.ui.model.application.ui.basic.MPart");
 				Object instance = site.getService(clazz);
 				Method m = clazz.getMethod("getContext", new Class[0]);
-				return (IEclipseContext) m.invoke(instance);				
+				IEclipseContext ctx = (IEclipseContext) m.invoke(instance);
+				IEclipseContext rv = ctx;
+				while( ctx.getParent() != null ) {
+					ctx = ctx.getParent();
+				}
+				ctx.set(IClipboardService.class, new ClipboardServiceImpl());
+				return rv;
 			} catch (Exception e) {
 				throw new PartInitException("Could not create context",e);
 			}

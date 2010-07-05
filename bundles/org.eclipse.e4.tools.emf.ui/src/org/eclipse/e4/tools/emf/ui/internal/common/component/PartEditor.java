@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -67,6 +68,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class PartEditor extends AbstractComponentEditor {
@@ -237,9 +239,22 @@ public class PartEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartEditor_ClassURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			final IContributionClassCreator c = getEditor().getContributionCreator(BasicPackageImpl.Literals.PART);
+			if (project != null && c != null) {
+				final Link l = new Link(parent, SWT.NONE);
+				l.setText("<A>" + Messages.PartEditor_ClassURI + "</A>");
+				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				l.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project, l.getShell());
+					}
+				});
+			} else {
+				Label l = new Label(parent, SWT.NONE);
+				l.setText(Messages.PartEditor_ClassURI);
+				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			}
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

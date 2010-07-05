@@ -14,11 +14,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class DirectMenuItemEditor extends MenuItemEditor {
@@ -72,9 +75,22 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 
 		// ------------------------------------------------------------
 		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.DirectMenuItemEditor_ClassURI);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			final IContributionClassCreator c = getEditor().getContributionCreator(MenuPackageImpl.Literals.DIRECT_MENU_ITEM);
+			if (project != null && c != null) {
+				final Link l = new Link(parent, SWT.NONE);
+				l.setText("<A>" + Messages.DirectMenuItemEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
+				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+				l.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						c.createOpen((MContribution) getMaster().getValue(), getEditingDomain(), project, l.getShell());
+					}
+				});
+			} else {
+				Label l = new Label(parent, SWT.NONE);
+				l.setText(Messages.DirectMenuItemEditor_ClassURI);
+				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			}
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

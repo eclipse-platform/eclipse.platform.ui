@@ -21,6 +21,7 @@
             <element ref="editor" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="virtualeditor" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="editorfeature" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contributionClassCreator" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -95,6 +96,21 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.e4.tools.emf.ui.common.IEditorFeature"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contributionClassCreator">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator"/>
                </appinfo>
             </annotation>
          </attribute>

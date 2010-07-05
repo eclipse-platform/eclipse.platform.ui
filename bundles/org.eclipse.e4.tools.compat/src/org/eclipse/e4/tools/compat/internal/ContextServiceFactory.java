@@ -16,6 +16,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.tools.services.IClipboardService;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -52,10 +53,6 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 		final IWorkbenchWindow window = wls.getWorkbenchWindow();
 		final IWorkbenchPartSite site = wls.getPartSite();
 
-//		System.err.println("The locator: " + locator);
-//		System.err.println("	Window: " + window);
-//		System.err.println("	Site: " + site);
-		
 		Object o = parentLocator.getService(serviceInterface);
 		
 		// This happens when we run in plain 3.x
@@ -67,6 +64,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 
 			final IEclipseContext appContext = serviceContext.createChild("WorkbenchContext"); //$NON-NLS-1$
 			appContext.set(Logger.class, new WorkbenchLogger());
+			appContext.set(IClipboardService.class, new ClipboardServiceImpl());
 			IContributionFactory contributionFactory = ContextInjectionFactory.make(ReflectionContributionFactory.class, appContext);
 			appContext.set(IContributionFactory.class.getName(),contributionFactory);
 			

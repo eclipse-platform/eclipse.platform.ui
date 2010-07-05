@@ -14,15 +14,21 @@ package org.eclipse.e4.tools.compat.parts;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.tools.compat.internal.CopyAction;
+import org.eclipse.e4.tools.compat.internal.CutAction;
 import org.eclipse.e4.tools.compat.internal.PartHelper;
+import org.eclipse.e4.tools.compat.internal.PasteAction;
+import org.eclipse.e4.tools.services.IClipboardService;
 import org.eclipse.e4.tools.services.IDirtyProviderService;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.EditorPart;
 
 public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProviderService {
@@ -31,8 +37,20 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 	private Class<C> clazz;
 	private boolean dirtyState;
 	
+	private int features;
+
+	protected static final int COPY = 1;
+	protected static final int PASTE = 1 << 1;
+	protected static final int CUT = 1 << 2;
+	
+	
 	public DIEditorPart(Class<C> clazz) {
+		this(clazz, SWT.NONE);
+	}
+	
+	public DIEditorPart(Class<C> clazz, int features) {
 		this.clazz = clazz;
+		this.features = features;
 	}
 	
 	@Override
@@ -72,10 +90,28 @@ public abstract class DIEditorPart<C> extends EditorPart implements IDirtyProvid
 	@Override
 	public void createPartControl(Composite parent) {
 		component = PartHelper.creatComponent(parent, context, clazz, this);
+		makeActions();
 	}
 	
 	public C getComponent() {
 		return component;
+	}
+	
+	protected void makeActions() {
+		if( (features & COPY) == COPY ) {
+			IClipboardService clipboard = context.get(IClipboardService.class);
+			getEditorSite().getActionBars().setGlobalActionHandler(ActionFactory.COPY.getId(), new CopyAction(clipboard));
+		}
+		
+		if( (features & PASTE) == PASTE ) {
+			IClipboardService clipboard = context.get(IClipboardService.class);
+			getEditorSite().getActionBars().setGlobalActionHandler(ActionFactory.PASTE.getId(), new PasteAction(clipboard));
+		}
+		
+		if( (features & CUT) == CUT ) {
+			IClipboardService clipboard = context.get(IClipboardService.class);
+			getEditorSite().getActionBars().setGlobalActionHandler(ActionFactory.CUT.getId(), new CutAction(clipboard));
+		}
 	}
 	
 	public void setDirtyState(boolean dirtyState) {
