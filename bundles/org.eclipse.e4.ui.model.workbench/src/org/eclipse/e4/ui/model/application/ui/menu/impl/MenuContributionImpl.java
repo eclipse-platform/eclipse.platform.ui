@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl#getPositionInParent <em>Position In Parent</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl#getParentID <em>Parent ID</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl#getParentId <em>Parent Id</em>}</li>
  * </ul>
  * </p>
  *
@@ -53,24 +53,24 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	protected String positionInParent = POSITION_IN_PARENT_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getParentID() <em>Parent ID</em>}' attribute.
+	 * The default value of the '{@link #getParentId() <em>Parent Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getParentID()
+	 * @see #getParentId()
 	 * @generated
 	 * @ordered
 	 */
 	protected static final String PARENT_ID_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getParentID() <em>Parent ID</em>}' attribute.
+	 * The cached value of the '{@link #getParentId() <em>Parent Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getParentID()
+	 * @see #getParentId()
 	 * @generated
 	 * @ordered
 	 */
-	protected String parentID = PARENT_ID_EDEFAULT;
+	protected String parentId = PARENT_ID_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -117,8 +117,8 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getParentID() {
-		return parentID;
+	public String getParentId() {
+		return parentId;
 	}
 
 	/**
@@ -126,11 +126,11 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setParentID(String newParentID) {
-		String oldParentID = parentID;
-		parentID = newParentID;
+	public void setParentId(String newParentId) {
+		String oldParentId = parentId;
+		parentId = newParentId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID, oldParentID, parentID));
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID, oldParentId, parentId));
 	}
 
 	/**
@@ -144,7 +144,7 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 			case MenuPackageImpl.MENU_CONTRIBUTION__POSITION_IN_PARENT:
 				return getPositionInParent();
 			case MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID:
-				return getParentID();
+				return getParentId();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -161,7 +161,7 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 				setPositionInParent((String)newValue);
 				return;
 			case MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID:
-				setParentID((String)newValue);
+				setParentId((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -179,7 +179,7 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 				setPositionInParent(POSITION_IN_PARENT_EDEFAULT);
 				return;
 			case MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID:
-				setParentID(PARENT_ID_EDEFAULT);
+				setParentId(PARENT_ID_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -196,7 +196,7 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 			case MenuPackageImpl.MENU_CONTRIBUTION__POSITION_IN_PARENT:
 				return POSITION_IN_PARENT_EDEFAULT == null ? positionInParent != null : !POSITION_IN_PARENT_EDEFAULT.equals(positionInParent);
 			case MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID:
-				return PARENT_ID_EDEFAULT == null ? parentID != null : !PARENT_ID_EDEFAULT.equals(parentID);
+				return PARENT_ID_EDEFAULT == null ? parentId != null : !PARENT_ID_EDEFAULT.equals(parentId);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -213,8 +213,8 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (positionInParent: "); //$NON-NLS-1$
 		result.append(positionInParent);
-		result.append(", parentID: "); //$NON-NLS-1$
-		result.append(parentID);
+		result.append(", parentId: "); //$NON-NLS-1$
+		result.append(parentId);
 		result.append(')');
 		return result.toString();
 	}

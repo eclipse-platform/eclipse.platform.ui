@@ -66,7 +66,7 @@ public class MenuContributionItemProvider
 			super.getPropertyDescriptors(object);
 
 			addPositionInParentPropertyDescriptor(object);
-			addParentIDPropertyDescriptor(object);
+			addParentIdPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -94,18 +94,18 @@ public class MenuContributionItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Parent ID feature.
+	 * This adds a property descriptor for the Parent Id feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addParentIDPropertyDescriptor(Object object) {
+	protected void addParentIdPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_MenuContribution_parentID_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_MenuContribution_parentID_feature", "_UI_MenuContribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 getString("_UI_MenuContribution_parentId_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_MenuContribution_parentId_feature", "_UI_MenuContribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 MenuPackageImpl.Literals.MENU_CONTRIBUTION__PARENT_ID,
 				 true,
 				 false,

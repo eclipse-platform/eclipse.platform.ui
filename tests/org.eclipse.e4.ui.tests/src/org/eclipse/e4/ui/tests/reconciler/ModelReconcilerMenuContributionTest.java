@@ -81,14 +81,14 @@ public abstract class ModelReconcilerMenuContributionTest extends
 		MMenuContribution contribution = MenuFactoryImpl.eINSTANCE
 				.createMenuContribution();
 		application.getMenuContributions().add(contribution);
-		contribution.setParentID(before);
+		contribution.setParentId(before);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		contribution.setParentID(after);
+		contribution.setParentId(after);
 
 		Object state = reconciler.serialize();
 
@@ -99,13 +99,13 @@ public abstract class ModelReconcilerMenuContributionTest extends
 
 		assertEquals(1, application.getMenuContributions().size());
 		assertEquals(contribution, application.getMenuContributions().get(0));
-		assertEquals(before, contribution.getParentID());
+		assertEquals(before, contribution.getParentId());
 
 		applyAll(deltas);
 
 		assertEquals(1, application.getMenuContributions().size());
 		assertEquals(contribution, application.getMenuContributions().get(0));
-		assertEquals(after, contribution.getParentID());
+		assertEquals(after, contribution.getParentId());
 	}
 
 	public void testMenuContribution_ParentID_NullNull() {

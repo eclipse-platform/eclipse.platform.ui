@@ -226,9 +226,9 @@ public class MenuAdditionCacheEntry {
 			menuContribution.setElementId(idContrib);
 		}
 		if ("org.eclipse.ui.popup.any".equals(location.getPath())) { //$NON-NLS-1$
-			menuContribution.setParentID("popup"); //$NON-NLS-1$
+			menuContribution.setParentId("popup"); //$NON-NLS-1$
 		} else {
-			menuContribution.setParentID(location.getPath());
+			menuContribution.setParentId(location.getPath());
 		}
 		String query = location.getQuery();
 		if (query == null || query.length() == 0) {
@@ -316,7 +316,7 @@ public class MenuAdditionCacheEntry {
 			if (idContrib != null && idContrib.length() > 0) {
 				menuContribution.setElementId(idContrib);
 			}
-			menuContribution.setParentID(idContrib);
+			menuContribution.setParentId(idContrib);
 			menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
 			menuContribution.getTags().add("scheme:" + location.getScheme()); //$NON-NLS-1$
 			menuContribution.getTags().add(filter);

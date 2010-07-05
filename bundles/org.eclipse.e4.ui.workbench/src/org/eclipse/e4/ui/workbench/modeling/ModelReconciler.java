@@ -349,7 +349,7 @@ public abstract class ModelReconciler {
 	 * Attribute defined by MMenuContribution (value is <code>parentID</code>).
 	 */
 	public static final String MENUCONTRIBUTION_PARENTID_ATTNAME = MenuPackageImpl.eINSTANCE
-			.getMenuContribution_ParentID().getName();
+			.getMenuContribution_ParentId().getName();
 
 	/**
 	 * Attribute defined by MPartDescriptor (value is <code>allowMultiple</code>).

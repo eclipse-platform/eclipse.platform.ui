@@ -217,7 +217,7 @@ public class ActionSet {
 			parentId = menuPath.segment(segmentCount - 2);
 			positionInParent = "after=" + menuPath.segment(segmentCount - 1); //$NON-NLS-1$
 		}
-		menuContribution.setParentID(parentId);
+		menuContribution.setParentId(parentId);
 		menuContribution.setPositionInParent(positionInParent);
 		if (isMenu) {
 			MMenu menu = MenuHelper.createMenuAddition(element);
@@ -226,7 +226,7 @@ public class ActionSet {
 			if (parentId.equals(MAIN_MENU)) {
 				E4Util.unsupported("****MC: bad pie: " + menuPath); //$NON-NLS-1$
 				parentId = IWorkbenchActionConstants.M_WINDOW;
-				menuContribution.setParentID(parentId);
+				menuContribution.setParentId(parentId);
 			}
 			MMenuElement action = MenuHelper.createLegacyMenuActionAdditions(application, element);
 			if (action != null) {
@@ -252,7 +252,7 @@ public class ActionSet {
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
 		menuContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 		menuContribution.getTags().add("scheme:menu"); //$NON-NLS-1$
-		menuContribution.setParentID(parentId);
+		menuContribution.setParentId(parentId);
 		menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
 		MMenuElement sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
 		sep.setElementId(group);
@@ -382,7 +382,7 @@ public class ActionSet {
 		} else {
 			menuContribution.setElementId(elementId + ".groups"); //$NON-NLS-1$
 		}
-		menuContribution.setParentID(elementId);
+		menuContribution.setParentId(elementId);
 		menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
 		IConfigurationElement[] children = element.getChildren();
 		for (IConfigurationElement sepAddition : children) {

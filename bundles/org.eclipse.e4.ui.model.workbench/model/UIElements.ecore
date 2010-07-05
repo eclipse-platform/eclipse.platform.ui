@@ -235,7 +235,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="MenuContribution">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
             defaultValueLiteral=""/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentID" lowerBound="1"
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentId" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
           <eTypeArguments eClassifier="#//ui/menu/MenuElement"/>

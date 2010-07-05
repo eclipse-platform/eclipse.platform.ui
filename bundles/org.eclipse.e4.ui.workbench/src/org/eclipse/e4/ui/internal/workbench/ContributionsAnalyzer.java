@@ -93,7 +93,7 @@ public final class ContributionsAnalyzer {
 			boolean includePopups) {
 		boolean menuBar = (((MUIElement) ((EObject) menuModel).eContainer()) instanceof MWindow);
 		for (MMenuContribution menuContribution : menuContributionList) {
-			String parentID = menuContribution.getParentID();
+			String parentID = menuContribution.getParentId();
 			boolean popup = parentID.equals(POPUP_PARENT_ID) && (menuModel instanceof MPopupMenu)
 					&& includePopups;
 			boolean filtered = isFiltered(menuModel, menuContribution);
@@ -355,7 +355,7 @@ public final class ContributionsAnalyzer {
 		private MMenuContribution contribution;
 
 		public MenuKey(MMenuContribution mc) {
-			super(mc.getParentID(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
+			super(mc.getParentId(), mc.getPositionInParent(), mc.getTags(), (MCoreExpression) mc
 					.getVisibleWhen());
 			this.contribution = mc;
 			mc.setWidget(this);

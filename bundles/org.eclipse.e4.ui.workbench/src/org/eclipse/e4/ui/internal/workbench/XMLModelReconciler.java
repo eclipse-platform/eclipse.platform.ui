@@ -181,8 +181,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			Node node = rootNodeList.item(i);
 			if (node instanceof Element) {
 				Element element = (Element) node;
-				constructDeltas(deltas, references, rootObject, element, element
-						.getAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME));
+				constructDeltas(deltas, references, rootObject, element,
+						element.getAttribute(APPLICATIONELEMENT_ELEMENTID_ATTNAME));
 			}
 		}
 
@@ -318,7 +318,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			}
 			return MenuPackageImpl.eINSTANCE.getMenuContribution_PositionInParent();
 		} else if (featureName.equals(MENUCONTRIBUTION_PARENTID_ATTNAME)) {
-			return MenuPackageImpl.eINSTANCE.getMenuContribution_ParentID();
+			return MenuPackageImpl.eINSTANCE.getMenuContribution_ParentId();
 		} else if (featureName.equals(TOOLBARCONTRIBUTION_PARENTID_ATTNAME)
 				|| featureName.equals(TRIMCONTRIBUTION_PARENTID_ATTNAME)) {
 			// technically both names are the same
@@ -522,8 +522,9 @@ public class XMLModelReconciler extends ModelReconciler {
 			constructEntryDelta(deltas, UiPackageImpl.eINSTANCE.getContext_Properties(), object,
 					element);
 		} else if (elementName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
-			constructEntryDelta(deltas, ApplicationPackageImpl.eINSTANCE
-					.getContribution_PersistedState(), object, element);
+			constructEntryDelta(deltas,
+					ApplicationPackageImpl.eINSTANCE.getContribution_PersistedState(), object,
+					element);
 		} else {
 			constructObjectDeltas(deltas, references, object, element);
 		}
@@ -532,12 +533,13 @@ public class XMLModelReconciler extends ModelReconciler {
 	private void constructEntryDelta(Collection<ModelDelta> deltas, EStructuralFeature feature,
 			EObject object, Element element) {
 		if (element.getAttribute(UNSET_ATTNAME).equals(UNSET_ATTVALUE_TRUE)) {
-			EMFDeltaEntrySet delta = new EMFDeltaEntrySet(object, feature, element
-					.getAttribute(ENTRY_ATTVALUE_KEY), null);
+			EMFDeltaEntrySet delta = new EMFDeltaEntrySet(object, feature,
+					element.getAttribute(ENTRY_ATTVALUE_KEY), null);
 			deltas.add(delta);
 		} else {
-			EMFDeltaEntrySet delta = new EMFDeltaEntrySet(object, feature, element
-					.getAttribute(ENTRY_ATTVALUE_KEY), element.getAttribute(ENTRY_ATTVALUE_VALUE));
+			EMFDeltaEntrySet delta = new EMFDeltaEntrySet(object, feature,
+					element.getAttribute(ENTRY_ATTVALUE_KEY),
+					element.getAttribute(ENTRY_ATTVALUE_VALUE));
 			deltas.add(delta);
 		}
 	}
@@ -902,13 +904,13 @@ public class XMLModelReconciler extends ModelReconciler {
 								Node entry = attributes.item(j);
 								if (entry instanceof Element) {
 									Element keyValue = (Element) entry;
-									map.put(keyValue.getAttribute(ENTRY_ATTVALUE_KEY), keyValue
-											.getAttribute(ENTRY_ATTVALUE_VALUE));
+									map.put(keyValue.getAttribute(ENTRY_ATTVALUE_KEY),
+											keyValue.getAttribute(ENTRY_ATTVALUE_VALUE));
 								}
 							}
 						} else {
-							object.eSet(attributeFeature, getValue(attributeFeature, item
-									.getAttribute(attributeName)));
+							object.eSet(attributeFeature,
+									getValue(attributeFeature, item.getAttribute(attributeName)));
 						}
 					}
 				}
@@ -1706,8 +1708,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			// record what we're currently referencing
 			appendReferenceElements(document, featureElement, (List<?>) value);
 			// record what was originally referenced
-			appendOriginalReferenceElements(document, featureElement, (List<?>) featureChange
-					.getValue());
+			appendOriginalReferenceElements(document, featureElement,
+					(List<?>) featureChange.getValue());
 		} else if (isUnorderedChainedAttribute(featureName)) {
 			List<?> attributes = (List<?>) value;
 			for (Object attribute : attributes) {
@@ -1733,8 +1735,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			String featureName) {
 		Element featureElement = document.createElement(featureName);
 		if (isChainedReference(featureName)) {
-			appendOriginalReferenceElements(document, featureElement, (List<?>) featureChange
-					.getValue());
+			appendOriginalReferenceElements(document, featureElement,
+					(List<?>) featureChange.getValue());
 		} else {
 			featureElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
 		}
@@ -1814,8 +1816,8 @@ public class XMLModelReconciler extends ModelReconciler {
 		// when the deltas are applied
 		referenceElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
 		// note what we need to create by storing the type
-		referenceElement.setAttribute(TYPE_ATTNAME, eObject.getClass().getInterfaces()[0]
-				.getCanonicalName());
+		referenceElement.setAttribute(TYPE_ATTNAME,
+				eObject.getClass().getInterfaces()[0].getCanonicalName());
 
 		for (EStructuralFeature collectedFeature : collectFeatures(eObject)) {
 			String featureName = collectedFeature.getName();
@@ -1890,8 +1892,8 @@ public class XMLModelReconciler extends ModelReconciler {
 					referenceAttributeElement.appendChild(entryElement);
 				}
 			} else {
-				referenceAttributeElement.setAttribute(featureName, String.valueOf(object
-						.eGet(feature)));
+				referenceAttributeElement.setAttribute(featureName,
+						String.valueOf(object.eGet(feature)));
 			}
 		} else {
 			referenceAttributeElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
