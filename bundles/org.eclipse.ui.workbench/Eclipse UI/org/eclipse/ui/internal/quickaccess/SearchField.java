@@ -20,6 +20,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -64,6 +66,13 @@ public class SearchField {
 		quickAccessContents.hookFilterText(text);
 		shell = new Shell(parent.getShell(), SWT.RESIZE | SWT.ON_TOP);
 		shell.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		shell.addShellListener(new ShellAdapter() {
+			@Override
+			public void shellClosed(ShellEvent e) {
+				text.setText(""); //$NON-NLS-1$
+				e.doit = false;
+			}
+		});
 		GridLayoutFactory.fillDefaults().applyTo(shell);
 		quickAccessContents.createTable(shell, Window.getDefaultOrientation());
 		text.addModifyListener(new ModifyListener() {
