@@ -68,6 +68,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
+import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -539,25 +540,34 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
 		spacerControl
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.SpacerToolControl"); //$NON-NLS-1$
-
-		MToolControl switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
-		switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
-		switcherControl
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.LayoutModifierToolControl"); //$NON-NLS-1$
+		spacerControl.getTags().add(TrimBarLayout.SPACER);
 
 		MToolControl searchControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		searchControl.setElementId("SearchField"); //$NON-NLS-1$
 		searchControl
 				.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.quickaccess.SearchField"); //$NON-NLS-1$
 
+		MToolControl glueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+		glueControl.setElementId("Search-PS Glue"); //$NON-NLS-1$
+		glueControl
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.LayoutModifierToolControl"); //$NON-NLS-1$
+		glueControl.getTags().add(TrimBarLayout.GLUE);
+
+		MToolControl switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+		switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
+		switcherControl
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
+
 		trimBar.getChildren().add(spacerControl);
 		trimBar.getChildren().add(searchControl);
+		trimBar.getChildren().add(glueControl);
 		trimBar.getChildren().add(switcherControl);
 		trimBar.setToBeRendered(true);
 
 		workbenchTrimElements.add(spacerControl);
 		workbenchTrimElements.add(searchControl);
+		workbenchTrimElements.add(glueControl);
 		workbenchTrimElements.add(switcherControl);
 	}
 

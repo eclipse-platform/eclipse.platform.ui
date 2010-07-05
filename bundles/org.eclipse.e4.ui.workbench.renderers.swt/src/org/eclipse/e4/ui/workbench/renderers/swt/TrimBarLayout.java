@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
 public class TrimBarLayout extends Layout {
+	public static String SPACER = "stretch"; //$NON-NLS-1$
+	public static String GLUE = "glue"; //$NON-NLS-1$
+
 	private boolean horizontal;
 
 	public int marginLeft = 0;
@@ -51,14 +54,32 @@ public class TrimBarLayout extends Layout {
 		int extraLines = 0;
 
 		Control[] kids = composite.getChildren();
-		for (Control ctrl : kids) {
+		for (int i = 0; i < kids.length; i++) {
+			Control ctrl = kids[i];
+
 			if (isSpacer(ctrl))
 				continue;
 
 			ctrl.pack(true);
+
 			Point ctrlSize = ctrl.getSize();
 			int major = horizontal ? ctrlSize.x : ctrlSize.y;
 			int minor = horizontal ? ctrlSize.y : ctrlSize.x;
+
+			List<Control> segment = new ArrayList<Control>();
+			segment.add(ctrl);
+			while (i < (kids.length - 2) && isGlue(kids[i + 1])) {
+				ctrl = kids[i + 2];
+				ctrl.pack(true);
+				segment.add(ctrl);
+				ctrlSize = ctrl.getSize();
+				major += horizontal ? ctrlSize.x : ctrlSize.y;
+				int innerMinor = horizontal ? ctrlSize.y : ctrlSize.x;
+				if (innerMinor > minor)
+					minor = innerMinor;
+				i += 2;
+			}
+
 			if (major <= spaceLeft) {
 				if (minor > maxMinor)
 					maxMinor = minor;
@@ -101,7 +122,9 @@ public class TrimBarLayout extends Layout {
 
 			Control[] kids = composite.getChildren();
 			Control curSpacer = null;
-			for (Control ctrl : kids) {
+			for (int i = 0; i < kids.length; i++) {
+				Control ctrl = kids[i];
+
 				if (isSpacer(ctrl)) {
 					curSpacer = ctrl;
 					continue;
@@ -110,6 +133,19 @@ public class TrimBarLayout extends Layout {
 				Point ctrlSize = ctrl.getSize();
 				int major = horizontal ? ctrlSize.x : ctrlSize.y;
 				int minor = horizontal ? ctrlSize.y : ctrlSize.x;
+
+				List<Control> segment = new ArrayList<Control>();
+				segment.add(ctrl);
+				while (i < (kids.length - 2) && isGlue(kids[i + 1])) {
+					ctrl = kids[i + 2];
+					segment.add(ctrl);
+					ctrlSize = ctrl.getSize();
+					major += horizontal ? ctrlSize.x : ctrlSize.y;
+					int innerMinor = horizontal ? ctrlSize.y : ctrlSize.x;
+					if (innerMinor > minor)
+						minor = innerMinor;
+					i += 2;
+				}
 
 				if (major <= spaceLeft) {
 					if (minor > maxMinor)
@@ -121,7 +157,7 @@ public class TrimBarLayout extends Layout {
 						spacers.add(curSpacer);
 						curLine.add(curSpacer);
 					}
-					curLine.add(ctrl);
+					curLine.addAll(segment);
 				} else {
 					tileLine(curLine, spacers, curMinor, maxMinor, spaceLeft);
 
@@ -137,7 +173,7 @@ public class TrimBarLayout extends Layout {
 						spacers.add(curSpacer);
 						curLine.add(curSpacer);
 					}
-					curLine.add(ctrl);
+					curLine.addAll(segment);
 					spaceLeft -= major;
 				}
 				curSpacer = null;
@@ -193,7 +229,16 @@ public class TrimBarLayout extends Layout {
 	private boolean isSpacer(Control ctrl) {
 		MUIElement element = (MUIElement) ctrl
 				.getData(AbstractPartRenderer.OWNING_ME);
-		if (element != null && element.getTags().contains("stretch")) //$NON-NLS-1$
+		if (element != null && element.getTags().contains(SPACER))
+			return true;
+
+		return false;
+	}
+
+	private boolean isGlue(Control ctrl) {
+		MUIElement element = (MUIElement) ctrl
+				.getData(AbstractPartRenderer.OWNING_ME);
+		if (element != null && element.getTags().contains(GLUE))
 			return true;
 
 		return false;

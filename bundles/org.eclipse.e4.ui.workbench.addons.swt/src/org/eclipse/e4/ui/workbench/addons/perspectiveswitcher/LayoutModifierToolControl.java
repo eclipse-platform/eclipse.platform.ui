@@ -16,10 +16,12 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class SpacerToolControl {
+/**
+ * This is a specialized tool control used by the TrimBarLayout to modify the layout mechanisms.
+ */
+public class LayoutModifierToolControl {
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl tc) {
-		tc.getTags().add("stretch"); //$NON-NLS-1$
 		Composite comp = new Composite(parent, SWT.NO_BACKGROUND);
 		comp.setSize(0, 0);
 	}
