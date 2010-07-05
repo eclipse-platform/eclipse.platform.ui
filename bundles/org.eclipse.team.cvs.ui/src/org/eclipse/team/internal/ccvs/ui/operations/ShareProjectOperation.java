@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,7 +102,7 @@ public class ShareProjectOperation extends CVSOperation {
 	 * Repository Provider with the project and, at the very least,
 	 * assigning the folder sync info for the remote folder as the
 	 * folder sync info for the project.
-	 * @param remote the remote folder to which the projetc is being mapped
+	 * @param remote the remote folder to which the project is being mapped
 	 * @param monitor a progress monitor
 	 * @throws CVSException
 	 */
@@ -185,9 +185,9 @@ public class ShareProjectOperation extends CVSOperation {
 	}
 	
 	/**
-	 * Method findCommonRootInSubfolders.
-	 * @param monitor 
-	 * @return String
+	 * Purge any CVS folders.
+	 * 
+	 * @param monitor a progress monitor
 	 */
 	private void purgeAnyCVSFolders(final IProgressMonitor monitor) {
 		try {
