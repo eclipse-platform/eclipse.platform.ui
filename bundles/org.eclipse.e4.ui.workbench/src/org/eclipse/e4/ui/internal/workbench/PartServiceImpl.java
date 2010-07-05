@@ -333,8 +333,13 @@ public class PartServiceImpl implements EPartService {
 					return true;
 				}
 			} else if (object instanceof MPlaceholder) {
-				if (((MPlaceholder) object).getRef() == part) {
+				MUIElement ref = ((MPlaceholder) object).getRef();
+				if (ref == part) {
 					return true;
+				} else if (ref instanceof MElementContainer<?>) {
+					if (isInContainer((MElementContainer<?>) ref, part)) {
+						return true;
+					}
 				}
 			}
 		}
