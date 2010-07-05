@@ -70,7 +70,6 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image image;
 	private EMFDataBindingContext context;
-	private IProject project;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
@@ -89,7 +88,6 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 
 	public MenuContributionEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
 		super(editingDomain, editor);
-		this.project = project;
 	}
 
 	@Override
