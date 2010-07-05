@@ -53,36 +53,10 @@ public class HandlerServiceImpl implements EHandlerService {
 		context.set(handlerId, handler);
 	}
 
-	/**
-	 * @param command
-	 */
-	private void addParmsToContext(ParameterizedCommand command) {
-		final Map parms = command.getParameterMap();
-		Iterator i = parms.entrySet().iterator();
-		while (i.hasNext()) {
-			Map.Entry entry = (Map.Entry) i.next();
-			context.set((String) entry.getKey(), entry.getValue());
-		}
-		context.set(PARM_MAP, parms);
-	}
-
-	private void removeParmsFromContext(ParameterizedCommand command) {
-		if (context == null) {
-			return;
-		}
-		final Map<?, ?> parms = command.getParameterMap();
-		Iterator<?> i = parms.entrySet().iterator();
-		while (i.hasNext()) {
-			Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
-			context.set((String) entry.getKey(), null);
-		}
-		context.set(PARM_MAP, null);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @seeorg.eclipse.e4.core.commands.EHandlerService#canExecute(org.eclipse.core.commands.
+	 * @see org.eclipse.e4.core.commands.EHandlerService#canExecute(org.eclipse.core.commands.
 	 * ParameterizedCommand)
 	 */
 	public boolean canExecute(ParameterizedCommand command) {
@@ -92,13 +66,13 @@ public class HandlerServiceImpl implements EHandlerService {
 			return false;
 		}
 
+		IEclipseContext paramsContext = createParamsContext(command);
 		try {
-			addParmsToContext(command);
 			Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
-					context, Boolean.TRUE));
+					paramsContext, Boolean.TRUE));
 			return result.booleanValue();
 		} finally {
-			removeParmsFromContext(command);
+			paramsContext.dispose();
 		}
 	}
 
@@ -125,17 +99,31 @@ public class HandlerServiceImpl implements EHandlerService {
 			return null;
 		}
 
+		IEclipseContext paramsContext = createParamsContext(command);
 		try {
-			addParmsToContext(command);
 
-			Object rc = ContextInjectionFactory.invoke(handler, CanExecute.class, context,
+			Object rc = ContextInjectionFactory.invoke(handler, CanExecute.class, paramsContext,
 					Boolean.TRUE);
 			if (Boolean.FALSE.equals(rc))
 				return null;
-			return ContextInjectionFactory.invoke(handler, Execute.class, context, null);
+			Object result = ContextInjectionFactory.invoke(handler, Execute.class, paramsContext,
+					null);
+			return result;
 		} finally {
-			removeParmsFromContext(command);
+			paramsContext.dispose();
 		}
+	}
+
+	private IEclipseContext createParamsContext(ParameterizedCommand command) {
+		IEclipseContext context = this.context.createChild();
+		final Map<?, ?> parms = command.getParameterMap();
+		Iterator<?> i = parms.entrySet().iterator();
+		while (i.hasNext()) {
+			Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
+			context.set((String) entry.getKey(), entry.getValue());
+		}
+		context.set(PARM_MAP, parms);
+		return context;
 	}
 
 	@Inject
