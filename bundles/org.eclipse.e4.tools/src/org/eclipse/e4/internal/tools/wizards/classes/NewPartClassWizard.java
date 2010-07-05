@@ -45,8 +45,6 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 				{
 					Label l = new Label(parent, SWT.NONE);
 					l.setText("PostContruct Method");
-					l.setLayoutData(new GridData(GridData.END, GridData.CENTER,
-							false, false));
 
 					Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -68,8 +66,6 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 				{
 					Label l = new Label(parent, SWT.NONE);
 					l.setText("Predestroy Method");
-					l.setLayoutData(new GridData(GridData.END, GridData.CENTER,
-							false, false));
 
 					Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -91,8 +87,6 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 				{
 					Label l = new Label(parent, SWT.NONE);
 					l.setText("Focus Method");
-					l.setLayoutData(new GridData(GridData.END, GridData.CENTER,
-							false, false));
 
 					Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -114,8 +108,6 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 				{
 					Label l = new Label(parent, SWT.NONE);
 					l.setText("Persist Method");
-					l.setLayoutData(new GridData(GridData.END, GridData.CENTER,
-							false, false));
 
 					Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

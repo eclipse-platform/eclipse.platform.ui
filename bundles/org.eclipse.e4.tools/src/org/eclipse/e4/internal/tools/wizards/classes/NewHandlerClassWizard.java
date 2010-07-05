@@ -51,8 +51,6 @@ public class NewHandlerClassWizard extends AbstractNewClassWizard {
 				{
 					Label l = new Label(parent, SWT.NONE);
 					l.setText("Execute Method");
-					l.setLayoutData(new GridData(GridData.END, GridData.CENTER,
-							false, false));
 
 					Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -67,8 +65,6 @@ public class NewHandlerClassWizard extends AbstractNewClassWizard {
 				{
 					Label l = new Label(parent, SWT.NONE);
 					l.setText("Can-Execute Method");
-					l.setLayoutData(new GridData(GridData.END, GridData.CENTER,
-							false, false));
 
 					Text t = new Text(parent, SWT.BORDER);
 					t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

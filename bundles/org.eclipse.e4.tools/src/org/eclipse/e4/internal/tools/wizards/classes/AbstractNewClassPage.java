@@ -143,7 +143,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Source folder");
-			l.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -171,7 +170,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 			l.setText("Package");
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -207,7 +205,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 			IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 			Label l = new Label(parent, SWT.NONE);
-			l.setLayoutData(new GridData(GridData.END, GridData.CENTER, false, false));
 			l.setText("Name");
 
 			Text t = new Text(parent, SWT.BORDER);
