@@ -131,22 +131,6 @@ public class UIEvents {
 		public static final String PERSISTEDSTATE = "persistedState"; //$NON-NLS-1$
 	}
 
-	public static interface ModelComponent {
-		public static final String TOPIC = UITopicBase + "/application/ModelComponent"; //$NON-NLS-1$
-		public static final String BINDINGS = "bindings"; //$NON-NLS-1$
-		public static final String CHILDREN = "children"; //$NON-NLS-1$
-		public static final String COMMANDS = "commands"; //$NON-NLS-1$
-		public static final String PARENTID = "parentID"; //$NON-NLS-1$
-		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
-		public static final String PROCESSOR = "processor"; //$NON-NLS-1$
-	}
-
-	public static interface ModelComponents {
-		public static final String TOPIC = UITopicBase + "/application/ModelComponents"; //$NON-NLS-1$
-		public static final String COMPONENTS = "components"; //$NON-NLS-1$
-		public static final String IMPORTS = "imports"; //$NON-NLS-1$
-	}
-
 	public static interface StringToStringMap {
 		public static final String TOPIC = UITopicBase + "/application/StringToStringMap"; //$NON-NLS-1$
 		public static final String KEY = "key"; //$NON-NLS-1$
@@ -266,7 +250,7 @@ public class UIEvents {
 
 	public static interface MenuContribution {
 		public static final String TOPIC = UITopicBase + "/menu/MenuContribution"; //$NON-NLS-1$
-		public static final String PARENTID = "parentID"; //$NON-NLS-1$
+		public static final String PARENTID = "parentId"; //$NON-NLS-1$
 		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
 	}
 
@@ -285,6 +269,11 @@ public class UIEvents {
 		public static final String CONTRIBUTIONMANAGER = "contributionManager"; //$NON-NLS-1$
 	}
 
+	public static interface RenderedMenuItem {
+		public static final String TOPIC = UITopicBase + "/menu/RenderedMenuItem"; //$NON-NLS-1$
+		public static final String CONTRIBUTIONITEM = "contributionItem"; //$NON-NLS-1$
+	}
+
 	public static interface RenderedToolBar {
 		public static final String TOPIC = UITopicBase + "/menu/RenderedToolBar"; //$NON-NLS-1$
 		public static final String CONTRIBUTIONMANAGER = "contributionManager"; //$NON-NLS-1$
@@ -299,6 +288,11 @@ public class UIEvents {
 	public static interface ToolBarContributions {
 		public static final String TOPIC = UITopicBase + "/menu/ToolBarContributions"; //$NON-NLS-1$
 		public static final String TOOLBARCONTRIBUTIONS = "toolBarContributions"; //$NON-NLS-1$
+	}
+
+	public static interface ToolItem {
+		public static final String TOPIC = UITopicBase + "/menu/ToolItem"; //$NON-NLS-1$
+		public static final String MENU = "menu"; //$NON-NLS-1$
 	}
 
 	public static interface TrimContribution {
