@@ -53,8 +53,7 @@ public class ConstructorRequestor extends Requestor {
 		return result;
 	}
 
-	@Override
-	public IObjectDescriptor[] getDependentObjects() {
+	public IObjectDescriptor[] calcDependentObjects() {
 		Annotation[][] annotations = constructor.getParameterAnnotations();
 		Type[] logicalParams = constructor.getGenericParameterTypes();
 		// JDK bug: different methods see / don't see generated args for nested classes

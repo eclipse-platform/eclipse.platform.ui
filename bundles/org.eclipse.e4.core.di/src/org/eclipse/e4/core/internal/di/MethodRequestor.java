@@ -14,8 +14,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
@@ -24,6 +24,9 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 public class MethodRequestor extends Requestor {
 
 	final private Method method;
+
+	// Having a *static* map is valuable as it changes the hit rate from about 60% to about 90%.
+	private static Map<Method, Annotation[][]> annotationCache = new WeakHashMap<Method, Annotation[][]>();
 
 	public MethodRequestor(Method method, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		super(method, injector, primarySupplier, tempSupplier, requestingObject, track);
@@ -57,9 +60,9 @@ public class MethodRequestor extends Requestor {
 	}
 
 	@Override
-	public IObjectDescriptor[] getDependentObjects() {
+	protected IObjectDescriptor[] calcDependentObjects() {
 		Type[] parameterTypes = method.getGenericParameterTypes();
-		Annotation[][] annotations = getParameterAnnotations(method);
+		Annotation[][] annotations = getParameterAnnotations();
 		IObjectDescriptor[] descriptors = new IObjectDescriptor[parameterTypes.length];
 		for (int i = 0; i < parameterTypes.length; i++) {
 			descriptors[i] = new ObjectDescriptor(parameterTypes[i], annotations[i]);
@@ -67,10 +70,10 @@ public class MethodRequestor extends Requestor {
 		return descriptors;
 	}
 
-	// TODO we should use weak references here...
-	static Map<Method, Annotation[][]> annotationCache = new HashMap<Method, Annotation[][]>();
-
-	static synchronized Annotation[][] getParameterAnnotations(Method method) {
+	private Annotation[][] getParameterAnnotations() {
+		// We don't synchronize annotationCache to avoid performance overhead.
+		// The code below should be fine non-synchronized; but this needs to be
+		// kept in mind if this method is updated.
 		Annotation[][] result = annotationCache.get(method);
 		if (result == null) {
 			result = method.getParameterAnnotations();

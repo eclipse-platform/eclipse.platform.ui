@@ -49,8 +49,6 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 						context.getParent(); // creates pseudo-link
 					} else if (context.containsKey(keys[i]))
 						result[i] = context.get(keys[i]);
-					else
-						result[i] = IInjector.NOT_A_VALUE;
 				}
 				return true;
 			}
@@ -128,30 +126,26 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 	}
 
 	@Override
-	public Object[] get(IObjectDescriptor[] descriptors, final IRequestor requestor, boolean track, boolean group) {
-		final Object[] result = new Object[descriptors.length];
+	public void get(IObjectDescriptor[] descriptors, Object[] actualArgs, final IRequestor requestor, boolean track, boolean group) {
 		final String[] keys = new String[descriptors.length];
 
 		for (int i = 0; i < descriptors.length; i++) {
-			keys[i] = (descriptors[i] == null) ? null : getKey(descriptors[i]);
+			keys[i] = (actualArgs[i] == IInjector.NOT_A_VALUE) ? getKey(descriptors[i]) : null;
 		}
 
 		if (requestor != null && track) { // only track if requested
-			RunAndTrack trackable = new ContextInjectionListener(context, result, keys, requestor, group);
+			RunAndTrack trackable = new ContextInjectionListener(context, actualArgs, keys, requestor, group);
 			context.runAndTrack(trackable);
 		} else {
 			for (int i = 0; i < descriptors.length; i++) {
 				if (keys[i] == null)
 					continue;
 				if (ECLIPSE_CONTEXT_NAME.equals(keys[i]))
-					result[i] = context;
+					actualArgs[i] = context;
 				else if (context.containsKey(keys[i]))
-					result[i] = context.get(keys[i]);
-				else
-					result[i] = IInjector.NOT_A_VALUE;
+					actualArgs[i] = context.get(keys[i]);
 			}
 		}
-		return result;
 	}
 
 	private String getKey(IObjectDescriptor descriptor) {

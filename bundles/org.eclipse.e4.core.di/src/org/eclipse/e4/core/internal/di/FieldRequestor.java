@@ -30,8 +30,7 @@ public class FieldRequestor extends Requestor {
 		return null;
 	}
 
-	@Override
-	public IObjectDescriptor[] getDependentObjects() {
+	protected IObjectDescriptor[] calcDependentObjects() {
 		IObjectDescriptor objectDescriptor = new ObjectDescriptor(field.getGenericType(), field.getAnnotations());
 		return new IObjectDescriptor[] {objectDescriptor};
 	}

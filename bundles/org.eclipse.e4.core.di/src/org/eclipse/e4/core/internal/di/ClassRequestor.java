@@ -28,14 +28,13 @@ public class ClassRequestor extends Requestor {
 
 	@Optional
 	@Named("e4.internal.injectionLink")
-	public String pseudoVariable = "pseudoVariable"; //$NON-NLS-1$
+	final static public String pseudoVariable = null;
 
-	private String clazzName;
+	final private String clazzName;
 
 	public ClassRequestor(Class<?> clazz, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		super(null, injector, primarySupplier, tempSupplier, requestingObject, track);
-		if (clazz != null)
-			clazzName = clazz.getSimpleName();
+		clazzName = (clazz == null) ? null : clazz.getSimpleName();
 	}
 
 	public Object execute() throws InjectionException {
@@ -44,10 +43,10 @@ public class ClassRequestor extends Requestor {
 	}
 
 	@Override
-	public IObjectDescriptor[] getDependentObjects() {
-		Field field;
+	public IObjectDescriptor[] calcDependentObjects() {
+		Field field = null;
 		try {
-			field = this.getClass().getField(pseudoVariable);
+			field = ClassRequestor.class.getField("pseudoVariable"); //$NON-NLS-1$
 		} catch (SecurityException e) {
 			e.printStackTrace(); // tested - not going to happen
 			return null;
@@ -55,8 +54,7 @@ public class ClassRequestor extends Requestor {
 			e.printStackTrace(); // tested - not going to happen
 			return null;
 		}
-		IObjectDescriptor objectDescriptor = new ObjectDescriptor(field.getGenericType(), field.getAnnotations());
-		return new IObjectDescriptor[] {objectDescriptor};
+		return new IObjectDescriptor[] {new ObjectDescriptor(field.getGenericType(), field.getAnnotations())};
 	}
 
 	@Override

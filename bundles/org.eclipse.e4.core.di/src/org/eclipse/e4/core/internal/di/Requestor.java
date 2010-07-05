@@ -35,7 +35,9 @@ abstract public class Requestor implements IRequestor {
 
 	protected Object[] actualArgs;
 
-	public abstract IObjectDescriptor[] getDependentObjects();
+	private IObjectDescriptor[] objectDescriptors;
+
+	protected abstract IObjectDescriptor[] calcDependentObjects();
 
 	public Requestor(AccessibleObject reflectionObject, IInjector injector, PrimaryObjectSupplier primarySupplier, PrimaryObjectSupplier tempSupplier, Object requestingObject, boolean track) {
 		this.injector = injector;
@@ -121,4 +123,9 @@ abstract public class Requestor implements IRequestor {
 		return false;
 	}
 
+	public IObjectDescriptor[] getDependentObjects() {
+		if (objectDescriptors == null)
+			objectDescriptors = calcDependentObjects();
+		return objectDescriptors;
+	}
 }

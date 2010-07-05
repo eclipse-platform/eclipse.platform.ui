@@ -19,6 +19,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -228,9 +229,10 @@ public class InjectorImpl implements IInjector {
 			implementationClass = binding.getImplementationClass();
 		if (objectSupplier != null) {
 			IObjectDescriptor actualClass = new ObjectDescriptor(implementationClass, null);
-			Object[] result = objectSupplier.get(new IObjectDescriptor[] {actualClass}, null, false, false);
-			if (result[0] != IInjector.NOT_A_VALUE)
-				return result[0];
+			Object[] actualArgs = new Object[] {IInjector.NOT_A_VALUE};
+			objectSupplier.get(new IObjectDescriptor[] {actualClass}, actualArgs, null, false, false);
+			if (actualArgs[0] != IInjector.NOT_A_VALUE)
+				return actualArgs[0];
 		}
 		return internalMake(implementationClass, objectSupplier, null);
 	}
@@ -342,16 +344,10 @@ public class InjectorImpl implements IInjector {
 
 	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean track) {
 		IObjectDescriptor[] descriptors = requestor.getDependentObjects();
-		// keep a copy because we'll be nulling out elements of descriptors, but we need all of them back later
-		// TODO maybe use an array of boolean instead of nulling out?
-		IObjectDescriptor[] cachedDescriptors = new IObjectDescriptor[descriptors.length];
-		System.arraycopy(descriptors, 0, cachedDescriptors, 0, descriptors.length);
 
-		// 0) initial fill - all are unresolved
+		// 0) initial fill - all values are unresolved
 		Object[] actualArgs = new Object[descriptors.length];
-		for (int i = 0; i < actualArgs.length; i++) {
-			actualArgs[i] = NOT_A_VALUE;
-		}
+		Arrays.fill(actualArgs, NOT_A_VALUE);
 
 		// 1) check if we have a Provider<T>
 		for (int i = 0; i < actualArgs.length; i++) {
@@ -359,83 +355,51 @@ public class InjectorImpl implements IInjector {
 			if (providerClass == null)
 				continue;
 			actualArgs[i] = new ProviderImpl<Class<?>>(descriptors[i], this, objectSupplier);
-			descriptors[i] = null; // mark as used
 		}
 
 		// 2) use the temporary supplier
-		if (tempSupplier != null) {
-			Object[] tempSupplierArgs = tempSupplier.get(descriptors, requestor, false /* no tracking */, requestor.shouldGroupUpdates());
-			for (int i = 0; i < actualArgs.length; i++) {
-				if (descriptors[i] == null)
-					continue; // already resolved
-				if (tempSupplierArgs[i] != NOT_A_VALUE) {
-					actualArgs[i] = tempSupplierArgs[i];
-					descriptors[i] = null; // mark as used
-				}
-			}
-		}
+		if (tempSupplier != null)
+			tempSupplier.get(descriptors, actualArgs, requestor, false /* no tracking */, requestor.shouldGroupUpdates());
 
 		// 3) use the primary supplier
-		if (objectSupplier != null) {
-			Object[] primarySupplierArgs = objectSupplier.get(descriptors, requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
-			for (int i = 0; i < actualArgs.length; i++) {
-				if (descriptors[i] == null)
-					continue; // already resolved
-				if (primarySupplierArgs[i] != NOT_A_VALUE) {
-					actualArgs[i] = primarySupplierArgs[i];
-					descriptors[i] = null; // mark as used
-				}
-			}
-		}
+		if (objectSupplier != null)
+			objectSupplier.get(descriptors, actualArgs, requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
 
 		// 4) try extended suppliers
 		for (int i = 0; i < actualArgs.length; i++) {
-			if (descriptors[i] == null)
+			if (actualArgs[i] != NOT_A_VALUE)
 				continue; // already resolved
 			ExtendedObjectSupplier extendedSupplier = findExtendedSupplier(descriptors[i], objectSupplier);
 			if (extendedSupplier == null)
 				continue;
-			Object result = extendedSupplier.get(descriptors[i], requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
-			if (result != NOT_A_VALUE) {
-				actualArgs[i] = result;
-				descriptors[i] = null; // mark as used
-			}
+			actualArgs[i] = extendedSupplier.get(descriptors[i], requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
 		}
 
 		// 5) try the bindings
 		for (int i = 0; i < actualArgs.length; i++) {
-			if (descriptors[i] == null)
+			if (actualArgs[i] != NOT_A_VALUE)
 				continue; // already resolved
 			Binding binding = findBinding(descriptors[i]);
-			if (binding != null) {
+			if (binding != null)
 				actualArgs[i] = internalMake(binding.getImplementationClass(), objectSupplier, tempSupplier);
-				if (actualArgs[i] != NOT_A_VALUE)
-					descriptors[i] = null; // mark as used
-			}
 		}
 
 		// 5) create simple classes (implied bindings) - unless we uninject or optional
 		if (!fillNulls && !requestor.isOptional()) {
 			for (int i = 0; i < actualArgs.length; i++) {
-				if (descriptors[i] == null)
+				if (actualArgs[i] != NOT_A_VALUE)
 					continue; // already resolved
 				if (descriptors[i].hasQualifier(Optional.class))
 					continue;
-				Object result = null;
 				try {
-					result = internalMake(getDesiredClass(descriptors[i].getDesiredType()), objectSupplier, tempSupplier);
+					actualArgs[i] = internalMake(getDesiredClass(descriptors[i].getDesiredType()), objectSupplier, tempSupplier);
 				} catch (InjectionException e) {
 					// ignore
-				}
-				if (result != null && result != NOT_A_VALUE) {
-					actualArgs[i] = result;
-					descriptors[i] = null; // mark as used
 				}
 			}
 		}
 
 		// 6) post process
-		descriptors = cachedDescriptors; // reset nulled out values
 		for (int i = 0; i < descriptors.length; i++) {
 			// check that values are of a correct type
 			if (actualArgs[i] != null && actualArgs[i] != IInjector.NOT_A_VALUE) {

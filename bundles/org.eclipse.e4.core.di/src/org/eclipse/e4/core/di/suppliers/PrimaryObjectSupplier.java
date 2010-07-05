@@ -15,7 +15,7 @@ package org.eclipse.e4.core.di.suppliers;
  * corresponding to the object descriptor.
  * <p> 
  * If supplier is asked to track changes, it should notify requestor whenever any of the objects
- * produced by the {@link #get(IObjectDescriptor[], IRequestor, boolean, boolean)} method change.
+ * produced by the {@link #get(IObjectDescriptor[], Object[], IRequestor, boolean, boolean)} method change.
  * The supplier can do this by performing calls to the {@link IRequestor#resolveArguments()} and
  * {@link IRequestor#execute()}.
  * </p>
@@ -36,12 +36,12 @@ abstract public class PrimaryObjectSupplier {
 	 * to the object descriptors. If the supplier is asked to track changes, it should notify requestor 
 	 * whenever it detects a change that would result in a different result produced by this method.
 	 * @param descriptors descriptors to the objects requested by the requestor
+	 * @param actualValues the values of actual arguments computed so far for the descriptors (in/out)
 	 * @param requestor the requestor originating this request
 	 * @param track <code>true</code> if the object suppliers should notify requestor of
 	 * changes to the returned objects; <code>false</code> otherwise
 	 * @param group <code>true</code> if the change notifications can be grouped; 
 	 * <code>false</code> otherwise
-	 * @return objects corresponding to the object descriptors
 	 */
-	abstract public Object[] get(IObjectDescriptor[] descriptors, IRequestor requestor, boolean track, boolean group);
+	abstract public void get(IObjectDescriptor[] descriptors, Object[] actualValues, IRequestor requestor, boolean track, boolean group);
 }
