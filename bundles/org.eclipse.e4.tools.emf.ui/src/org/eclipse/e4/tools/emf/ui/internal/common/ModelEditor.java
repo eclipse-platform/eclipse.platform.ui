@@ -71,6 +71,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.PartStackEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveStackEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PlaceholderEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.PopupMenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.StringModelFragment;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
@@ -567,6 +568,7 @@ public class ModelEditor {
 		registerEditor(MenuPackageImpl.Literals.TOOL_CONTROL, new ToolControlEditor(modelProvider.getEditingDomain(), this, project));
 
 		registerEditor(MenuPackageImpl.Literals.MENU, new MenuEditor(modelProvider.getEditingDomain(), project, this));
+		registerEditor(MenuPackageImpl.Literals.POPUP_MENU, new PopupMenuEditor(modelProvider.getEditingDomain(), project, this));
 		registerEditor(MenuPackageImpl.Literals.MENU_SEPARATOR, new MenuSeparatorEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, new HandledMenuItemEditor(modelProvider.getEditingDomain(), this, project, modelProvider));
 		registerEditor(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this, project));
