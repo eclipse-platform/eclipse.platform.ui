@@ -543,7 +543,7 @@ public class StackRenderer extends LazyStackRenderer {
 				return oldTB;
 			}
 			tbModel.setToBeRendered(true);
-			tb = (ToolBar) renderer.createGui(tbModel, ctf);
+			tb = (ToolBar) renderer.createGui(tbModel, ctf, part.getContext());
 		} else {
 			tb = new ToolBar(ctf, SWT.FLAT | SWT.HORIZONTAL);
 		}
@@ -599,7 +599,7 @@ public class StackRenderer extends LazyStackRenderer {
 		final MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
 		MPart part = (MPart) item.getData("thePart"); //$NON-NLS-1$
 		Control ctrl = (Control) part.getWidget();
-		Menu menu = (Menu) renderer.createGui(menuModel, ctrl.getShell());
+		Menu menu = (Menu) renderer.createGui(menuModel, ctrl.getShell(), part.getContext());
 
 		// ...and Show it...
 		Rectangle ib = item.getBounds();

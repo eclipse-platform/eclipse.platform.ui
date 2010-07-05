@@ -29,11 +29,14 @@ public interface IPresentationEngine {
 	 * 
 	 * @param element
 	 *            the model element
-	 * @param parent
+	 * @param parentWidget
 	 *            the parent
+	 * @param parentContext
+	 *            the context within which this element is being rendered
+	 * 
 	 * @return the created UI element
 	 */
-	public Object createGui(MUIElement element, Object parent);
+	public Object createGui(MUIElement element, Object parentWidget, IEclipseContext parentContext);
 
 	/**
 	 * Create UI element which is at the top of the widget hierarchy

@@ -305,7 +305,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 						public void widgetSelected(SelectionEvent e) {
 							if (e.detail == SWT.ARROW) {
 								Menu menu = (Menu) engine.createGui(mmenu, ti
-										.getParent().getShell());
+										.getParent().getShell(), null);
 
 								Rectangle itemBounds = ti.getBounds();
 								Point displayAt = ti.getParent().toDisplay(

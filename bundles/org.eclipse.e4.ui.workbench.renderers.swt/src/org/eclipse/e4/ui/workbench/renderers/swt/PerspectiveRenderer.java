@@ -64,7 +64,7 @@ public class PerspectiveRenderer extends SWTPartRenderer {
 		MPerspective persp = (MPerspective) ((MUIElement) container);
 		Shell shell = ((Composite) persp.getWidget()).getShell();
 		for (MWindow dw : persp.getWindows()) {
-			renderer.createGui(dw, shell);
+			renderer.createGui(dw, shell, persp.getContext());
 		}
 	}
 

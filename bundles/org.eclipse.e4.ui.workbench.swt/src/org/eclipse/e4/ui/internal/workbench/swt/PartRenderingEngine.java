@@ -143,7 +143,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				MUIElement added = (MUIElement) event
 						.getProperty(UIEvents.EventTags.NEW_VALUE);
 				if (added.isToBeRendered())
-					createGui(added, window.getWidget());
+					createGui(added, window.getWidget(), window.getContext());
 			}
 		}
 	};
@@ -328,16 +328,17 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return builder.toString();
 	}
 
-	public Object createGui(MUIElement element, Object parent) {
+	public Object createGui(MUIElement element, Object parentWidget,
+			IEclipseContext parentContext) {
 		if (!element.isToBeRendered())
 			return null;
 
 		if (element.getWidget() != null) {
 			if (element.getWidget() instanceof Control
-					&& parent instanceof Composite) {
+					&& parentWidget instanceof Composite) {
 				Control ctrl = (Control) element.getWidget();
-				if (ctrl.getParent() != parent) {
-					ctrl.setParent((Composite) parent);
+				if (ctrl.getParent() != parentWidget) {
+					ctrl.setParent((Composite) parentWidget);
 				}
 			}
 			return element.getWidget();
@@ -348,18 +349,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 			// Assert.isTrue(ctxt.getContext() == null,
 			// "Before rendering Context should be null");
 			if (ctxt.getContext() == null) {
-				IEclipseContext parentContext = null;
-				if (element.getCurSharedRef() != null) {
-					MPlaceholder ph = element.getCurSharedRef();
-					parentContext = getContext(ph.getParent());
-				} else if (parentContext == null && element.getParent() != null) {
-					parentContext = getContext(element.getParent());
-				} else if (parentContext == null && element.getParent() == null) {
-					getContext((MElementContainer<MUIElement>) ((EObjectImpl) element)
-							.eContainer());
-				}
-				if (parentContext == null)
-					parentContext = appContext;
 				IEclipseContext lclContext = parentContext
 						.createChild(getContextName(element));
 				populateModelInterfaces(ctxt, lclContext, element.getClass()
@@ -385,7 +374,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 
 		// Create a control appropriate to the part
-		Object newWidget = createWidget(element, parent);
+		Object newWidget = createWidget(element, parentWidget);
 
 		// Remember that we've created the control
 		if (newWidget != null) {
@@ -433,7 +422,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	public Object createGui(MUIElement element) {
-		// Obtain the necessary parent and context
+		// Obtain the necessary parent widget
 		Object parent = null;
 		MUIElement parentME = element.getParent();
 		if (parentME == null)
@@ -449,7 +438,19 @@ public class PartRenderingEngine implements IPresentationEngine {
 			}
 		}
 
-		return createGui(element, parent);
+		// Obtain the necessary parent context
+		IEclipseContext parentContext = null;
+		if (element.getCurSharedRef() != null) {
+			MPlaceholder ph = element.getCurSharedRef();
+			parentContext = getContext(ph.getParent());
+		} else if (parentContext == null && element.getParent() != null) {
+			parentContext = getContext(element.getParent());
+		} else if (parentContext == null && element.getParent() == null) {
+			getContext((MElementContainer<MUIElement>) ((EObjectImpl) element)
+					.eContainer());
+		}
+
+		return createGui(element, parent, parentContext);
 	}
 
 	private Shell getLimboShell() {
@@ -643,7 +644,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					} else {
 						// Special handling for partial models (for testing...)
 						testShell = new Shell(display, SWT.SHELL_TRIM);
-						createGui((MUIElement) uiRoot, testShell);
+						createGui((MUIElement) uiRoot, testShell, null);
 					}
 				}
 

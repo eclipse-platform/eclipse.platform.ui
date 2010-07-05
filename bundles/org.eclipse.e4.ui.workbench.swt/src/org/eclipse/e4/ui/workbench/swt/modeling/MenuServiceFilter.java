@@ -233,7 +233,7 @@ public class MenuServiceFilter implements Listener {
 	private void render(final Menu menu, final MMenu menuModel) {
 		trace("render", menu, menuModel);
 		for (MMenuElement element : menuModel.getChildren()) {
-			renderer.createGui(element, menu);
+			renderer.createGui(element, menu, null);
 			if (element instanceof MHandledMenuItem) {
 				setEnabled((MHandledMenuItem) element);
 			}

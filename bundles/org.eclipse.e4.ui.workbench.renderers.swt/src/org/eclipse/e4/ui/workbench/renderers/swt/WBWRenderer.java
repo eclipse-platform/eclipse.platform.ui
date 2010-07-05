@@ -467,14 +467,14 @@ public class WBWRenderer extends SWTPartRenderer {
 		IPresentationEngine renderer = (IPresentationEngine) context
 				.get(IPresentationEngine.class.getName());
 		if (wbwModel.getMainMenu() != null) {
-			renderer.createGui(wbwModel.getMainMenu(), me.getWidget());
+			renderer.createGui(wbwModel.getMainMenu(), me.getWidget(), null);
 			Shell shell = (Shell) me.getWidget();
 			shell.setMenuBar((Menu) wbwModel.getMainMenu().getWidget());
 		}
 
 		// create Detached Windows
 		for (MWindow dw : wbwModel.getWindows()) {
-			renderer.createGui(dw, me.getWidget());
+			renderer.createGui(dw, me.getWidget(), wbwModel.getContext());
 		}
 
 		// Populate the trim (if any)
@@ -482,7 +482,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			Shell shell = (Shell) wbwModel.getWidget();
 			MTrimmedWindow tWindow = (MTrimmedWindow) wbwModel;
 			for (MTrimBar trimBar : tWindow.getTrimBars()) {
-				renderer.createGui(trimBar, shell);
+				renderer.createGui(trimBar, shell, wbwModel.getContext());
 			}
 		}
 	}

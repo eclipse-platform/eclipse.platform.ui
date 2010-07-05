@@ -46,7 +46,7 @@ public class ImageDialogHandler {
 			// Create the model and use it to fill in the composite
 			MUIElement dlgModel = createDlgModel();
 			//Workbench.initializeContext(dlgContext, dlgModel);
-			theRenderer.createGui(dlgModel, comp);
+			theRenderer.createGui(dlgModel, comp, null);
 
 			// Declare the source for selection listeners
 			//dlgContext.set(IServiceConstants.ACTIVE_CHILD, dlgModel.getContext());

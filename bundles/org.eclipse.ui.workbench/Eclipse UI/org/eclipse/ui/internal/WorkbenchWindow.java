@@ -494,7 +494,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 			fill(mainMenu, menuManager);
 			model.setMainMenu(mainMenu);
-			Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget());
+			Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(), model.getContext());
 			shell.setMenuBar(menu);
 		}
 
