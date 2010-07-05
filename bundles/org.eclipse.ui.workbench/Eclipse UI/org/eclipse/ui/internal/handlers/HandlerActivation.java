@@ -11,22 +11,17 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import org.eclipse.e4.ui.internal.workbench.Activator;
-import org.eclipse.e4.ui.internal.workbench.Policy;
-
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.services.LegacyEvalContext;
 import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
 
 /**
@@ -47,7 +42,7 @@ import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
  * 
  * @since 3.1
  */
-final class HandlerActivation extends RunAndTrack implements IHandlerActivation {
+final class HandlerActivation implements IHandlerActivation {
 	IEclipseContext context;
 	private String commandId;
 	private IHandler handler;
@@ -171,39 +166,6 @@ final class HandlerActivation extends RunAndTrack implements IHandlerActivation 
 		final int thatDepth = activation.getDepth();
 		difference = thisDepth - thatDepth;
 		return difference;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.core.services.context.IRunAndTrack#notify(org.eclipse.
-	 * e4.core.services.context.ContextChangeEvent)
-	 */
-	public boolean changed(IEclipseContext context) {
-		if (!participating) {
-			return false;
-		}
-		final EHandlerService hs = (EHandlerService) this.context.get(EHandlerService.class
-				.getName());
-		Object obj = HandlerServiceImpl.lookUpHandler(this.context, commandId);
-
-		if (evaluate(new LegacyEvalContext(this.context))) {
-			if (obj instanceof E4HandlerProxy) {
-				final HandlerActivation bestActivation = ((E4HandlerProxy) obj).activation;
-				final int comparison = bestActivation.compareTo(this);
-				if (comparison < 0) {
-					hs.activateHandler(commandId, proxy);
-				}
-			} else if (obj == null) {
-				hs.activateHandler(commandId, proxy);
-			}
-		} else {
-			if (obj == proxy) {
-				hs.deactivateHandler(commandId, proxy);
-			}
-		}
-		return participating;
 	}
 
 	/*

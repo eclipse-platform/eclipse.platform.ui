@@ -26,7 +26,7 @@ import org.eclipse.e4.core.di.annotations.Execute;
  *
  */
 public class HandlerServiceImpl implements EHandlerService {
-	final static String H_ID = "handler::"; //$NON-NLS-1$
+	public final static String H_ID = "handler::"; //$NON-NLS-1$
 	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
 	final static String LOOKUP_HANDLER = "handler"; //$NON-NLS-1$
 
