@@ -43,7 +43,7 @@ public class SearchIndexCreation extends TestCase {
 		BaseHelpSystem.setMode(mode);
 	}
 
-	public void testSearchIndexMakesNoRemoteCalls() throws Exception {
+	public void testSearchIndexMakesNoRemoteCalls() throws Throwable {
 		int initialCallCount = MockContentServlet.getCallcount();
 		SearchIndexWithIndexingProgress index = new SearchIndexWithIndexingProgress("en-us", analyzerDesc, HelpPlugin
 				.getTocManager());
@@ -55,7 +55,7 @@ public class SearchIndexCreation extends TestCase {
 		assertEquals("Remote server called", 0, finalCallCount - initialCallCount);
 	}
 	
-	public void testSearchIndexMakesNoRemoteCallsRemotePriority() throws Exception {
+	public void testSearchIndexMakesNoRemoteCallsRemotePriority() throws Throwable {
 		RemotePreferenceStore.setMockRemotePriority();
 		int initialCallCount = MockContentServlet.getCallcount();
 		SearchIndexWithIndexingProgress index = new SearchIndexWithIndexingProgress("en-us", analyzerDesc, HelpPlugin
@@ -69,10 +69,13 @@ public class SearchIndexCreation extends TestCase {
 	}
 
 	private void addHrefToIndex(SearchIndexWithIndexingProgress index,
-			String doc, boolean exists) {
+			String doc, boolean exists) throws Throwable {
 		URL url = SearchIndex.getIndexableURL(index.getLocale(), doc);
 		IStatus status = index.addDocument(url.getFile(), url);
 		if (exists && !status.isOK()) {
+			if (status.getException() != null) {
+				throw status.getException();
+			}
 		    fail(doc + " status = " + status.getMessage());
 		}
 	}
