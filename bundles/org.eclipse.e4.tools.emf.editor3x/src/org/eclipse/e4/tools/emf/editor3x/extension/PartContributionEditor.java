@@ -52,7 +52,6 @@ public class PartContributionEditor implements IContributionClassCreator {
 					if( cmd.canExecute() ) {
 						domain.getCommandStack().execute(cmd);
 					}
-					el.open(null);
 				} catch (JavaModelException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

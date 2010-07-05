@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -117,8 +118,8 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 		IPackageFragment fragment = clazz.getPackageFragment();
 		if (fragment != null) {
 			String cuName = clazz.getName() + ".java";
-			IResource resource = fragment.getCompilationUnit(cuName)
-					.getResource();
+			ICompilationUnit unit = fragment.getCompilationUnit(cuName); 
+			IResource resource = unit.getResource();
 			file = (IFile) resource;
 			try {
 				if (!file.exists()) {
@@ -128,6 +129,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 					file.setContents(new ByteArrayInputStream(content.getBytes()),
 							IFile.FORCE | IFile.KEEP_HISTORY, null);
 				}
+				unit.open(null);
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
