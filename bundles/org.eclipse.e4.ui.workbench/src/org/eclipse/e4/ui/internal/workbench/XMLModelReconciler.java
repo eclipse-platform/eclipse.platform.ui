@@ -317,14 +317,15 @@ public class XMLModelReconciler extends ModelReconciler {
 				return MenuPackageImpl.eINSTANCE.getTrimContribution_PositionInParent();
 			}
 			return MenuPackageImpl.eINSTANCE.getMenuContribution_PositionInParent();
-		} else if (featureName.equals(MENUCONTRIBUTION_PARENTID_ATTNAME)) {
-			return MenuPackageImpl.eINSTANCE.getMenuContribution_ParentId();
 		} else if (featureName.equals(TOOLBARCONTRIBUTION_PARENTID_ATTNAME)
-				|| featureName.equals(TRIMCONTRIBUTION_PARENTID_ATTNAME)) {
-			// technically both names are the same
+				|| featureName.equals(TRIMCONTRIBUTION_PARENTID_ATTNAME)
+				|| featureName.equals(MENUCONTRIBUTION_PARENTID_ATTNAME)) {
+			// technically all three names are the same
 
 			if (object instanceof MTrimContribution) {
 				return MenuPackageImpl.eINSTANCE.getTrimContribution_ParentId();
+			} else if (object instanceof MMenuContribution) {
+				return MenuPackageImpl.eINSTANCE.getMenuContribution_ParentId();
 			}
 			return MenuPackageImpl.eINSTANCE.getToolBarContribution_ParentId();
 		} else if (featureName.equals(MENUITEM_MNEMONICS_ATTNAME)) {
