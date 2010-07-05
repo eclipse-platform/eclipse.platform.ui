@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -180,20 +180,19 @@ abstract class SWTFocusCellManager {
 						if (row == null)
 							return;
 						
-						Object element = row.getItem().getData();
 						ViewerColumn viewPart = viewer.getViewerColumn(cell
 								.getColumnIndex());
 						
 						if (viewPart == null)
 							return;
 						
-						ColumnLabelProvider labelProvider = (ColumnLabelProvider) viewPart
+						CellLabelProvider labelProvider = viewPart
 								.getLabelProvider();
 						
 						if (labelProvider == null)
 							return;
-						
-						event.result = labelProvider.getText(element);
+						labelProvider.update(cell);
+						event.result = cell.getText();
 					}
 				});
 
