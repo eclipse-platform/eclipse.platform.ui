@@ -222,7 +222,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.BindingTableEditor_Up);
+			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -249,7 +249,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.BindingTableEditor_Down);
+			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -276,7 +276,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.BindingTableEditor_Add);
+			b.setText(Messages.ModelTooling_Common_AddEllipsis);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -294,7 +294,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.BindingTableEditor_Remove);
+			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {

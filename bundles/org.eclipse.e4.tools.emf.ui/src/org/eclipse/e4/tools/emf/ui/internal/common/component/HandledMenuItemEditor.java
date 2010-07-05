@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -19,6 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandledMenuItemCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
@@ -67,7 +66,7 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 	private IModelResource resource;
 
 	public HandledMenuItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project, IModelResource resource) {
-		super(editingDomain,editor,project);
+		super(editingDomain, editor, project);
 		this.resource = resource;
 	}
 
@@ -234,17 +233,17 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.HandledMenuItemEditor_Up);
+			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.HandledMenuItemEditor_Down);
+			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.HandledMenuItemEditor_Add);
+			b.setText(Messages.ModelTooling_Common_AddEllipsis);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -261,7 +260,7 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.HandledMenuItemEditor_Remove);
+			b.setText(Messages.ModelTooling_Common_Remove);
 			b.addSelectionListener(new SelectionAdapter() {
 
 				public void widgetSelected(SelectionEvent e) {

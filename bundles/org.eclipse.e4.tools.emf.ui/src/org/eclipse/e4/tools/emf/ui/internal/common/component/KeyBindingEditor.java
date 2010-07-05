@@ -285,17 +285,17 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		buttonComp.setLayout(gl);
 
 		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.KeyBindingEditor_Up);
+		b.setText(Messages.ModelTooling_Common_Up);
 		b.setImage(getImage(b.getDisplay(), ARROW_UP));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.KeyBindingEditor_Down);
+		b.setText(Messages.ModelTooling_Common_Down);
 		b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.KeyBindingEditor_Add);
+		b.setText(Messages.ModelTooling_Common_AddEllipsis);
 		b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -312,7 +312,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.KeyBindingEditor_Remove);
+		b.setText(Messages.ModelTooling_Common_Remove);
 		b.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {

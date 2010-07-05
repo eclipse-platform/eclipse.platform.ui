@@ -238,7 +238,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.PartSashContainerEditor_Up);
+			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -265,7 +265,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.PartSashContainerEditor_Down);
+			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -325,7 +325,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.PartSashContainerEditor_Remove);
+			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {

@@ -246,7 +246,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.MenuContributionEditor_Up);
+			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -273,7 +273,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.MenuContributionEditor_Down);
+			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -338,7 +338,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.MenuContributionEditor_Remove);
+			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {

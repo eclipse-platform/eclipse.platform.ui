@@ -382,14 +382,16 @@ public class PartEditor extends AbstractComponentEditor {
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.PartEditor_Add);
+			b.setText(Messages.ModelTooling_Common_AddEllipsis);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			// FIXME Implementation is missing
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.PartEditor_Remove);
+			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			// FIXME Implementation is missing
 		}
 
 		ControlFactory.createStringListWidget(parent, this, "Variables", UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);

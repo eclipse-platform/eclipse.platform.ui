@@ -188,7 +188,7 @@ public class ControlFactory {
 		});
 
 		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_AddNoEllipse);
+		b.setText(Messages.ModelTooling_Common_Add);
 		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
 		gd = new GridData(GridData.FILL, GridData.CENTER, false, false);
 		gd.verticalIndent = vIndent;
@@ -222,7 +222,7 @@ public class ControlFactory {
 		buttonComp.setLayout(gl);
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Up);
+		b.setText(Messages.ModelTooling_Common_Up);
 		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_UP));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -249,7 +249,7 @@ public class ControlFactory {
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Down);
+		b.setText(Messages.ModelTooling_Common_Down);
 		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_DOWN));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -276,7 +276,7 @@ public class ControlFactory {
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ControlFactory_Remove);
+		b.setText(Messages.ModelTooling_Common_Remove);
 		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_DELETE_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {

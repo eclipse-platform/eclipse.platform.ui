@@ -182,7 +182,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.PartStackEditor_Up);
+			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -209,7 +209,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.PartStackEditor_Down);
+			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -237,7 +237,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setText(Messages.PerspectiveStackEditor_Add);
+			b.setText(Messages.ModelTooling_Common_AddEllipsis);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -254,7 +254,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.PartStackEditor_Remove);
+			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {

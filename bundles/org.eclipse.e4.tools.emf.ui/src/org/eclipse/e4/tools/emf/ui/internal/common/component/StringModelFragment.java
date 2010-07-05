@@ -10,80 +10,58 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.jface.viewers.ViewerComparator;
-
-import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
-
-import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
-
-import org.eclipse.emf.ecore.EPackage;
-
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-
-import org.eclipse.emf.ecore.EClassifier;
-
-import org.eclipse.e4.ui.model.fragment.MModelFragment;
-
 import java.util.List;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
+import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.fragment.MModelFragment;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
+import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.IEMFListProperty;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.widgets.Button;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
-import org.eclipse.emf.databinding.IEMFListProperty;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
-
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-
-import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
-
-import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.emf.databinding.EMFProperties;
-
-import org.eclipse.e4.tools.emf.ui.internal.Messages;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.eclipse.emf.databinding.EMFDataBindingContext;
-
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.emf.edit.domain.EditingDomain;
-
-import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class StringModelFragment extends AbstractComponentEditor {
 	private Composite composite;
@@ -93,7 +71,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 	private IListProperty MODEL_FRAGMENT__ELEMENTS = EMFProperties.list(FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS);
 
 	public StringModelFragment(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 	}
 
 	@Override
@@ -160,27 +138,27 @@ public class StringModelFragment extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			comp.setLayoutData(gd);
-			GridLayout gl = new GridLayout(2,false);
-			gl.marginWidth=gl.marginHeight=0;
-			gl.verticalSpacing=0;
-			gl.marginLeft=gl.marginBottom=gl.marginRight=gl.marginTop=0;
+			GridLayout gl = new GridLayout(2, false);
+			gl.marginWidth = gl.marginHeight = 0;
+			gl.verticalSpacing = 0;
+			gl.marginLeft = gl.marginBottom = gl.marginRight = gl.marginTop = 0;
 			comp.setLayout(gl);
-			
+
 			Text t = new Text(comp, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME).observeDetail(getMaster()));
-			
+
 			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
 			button.setText(Messages.StringModelFragment_Find);
 			button.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					FeatureSelectionDialog dialog = new FeatureSelectionDialog(button.getShell(),getEditingDomain(),(MStringModelFragment) getMaster().getValue());
+					FeatureSelectionDialog dialog = new FeatureSelectionDialog(button.getShell(), getEditingDomain(), (MStringModelFragment) getMaster().getValue());
 					dialog.open();
 				}
 			});
-			
+
 		}
 
 		{
@@ -199,7 +177,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.StringModelFragment_Elements);
-			l.setLayoutData(new GridData(GridData.END,GridData.BEGINNING,false,false));
+			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());
@@ -221,7 +199,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.StringModelFragment_Up);
+			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -248,7 +226,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.StringModelFragment_Down);
+			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -296,7 +274,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			List<FeatureClass> list = new ArrayList<FeatureClass>();
 			addClasses(ApplicationPackageImpl.eINSTANCE, list);
 			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
-			
+
 			childrenDropDown.setInput(list);
 			childrenDropDown.getCombo().select(0);
 
@@ -319,7 +297,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.StringModelFragment_Remove);
+			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
