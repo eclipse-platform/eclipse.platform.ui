@@ -37,6 +37,8 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PlatformUI;
@@ -501,6 +503,11 @@ public class MenuHelper {
 					}
 					if (handlerProxy.getDelegate() == null) {
 						handlerProxy.loadDelegate();
+
+						ISelectionService service = PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getSelectionService();
+						IActionDelegate delegate = handlerProxy.getDelegate();
+						delegate.selectionChanged(handlerProxy.getAction(), service.getSelection());
 					}
 					return (IWorkbenchWindowPulldownDelegate) handlerProxy.getDelegate();
 				}

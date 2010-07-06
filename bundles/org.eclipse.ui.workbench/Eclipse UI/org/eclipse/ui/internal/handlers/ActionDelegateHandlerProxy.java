@@ -380,7 +380,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * @return The current action; <code>null</code> if there is no currently
 	 *         active workbench window.
 	 */
-	private final CommandLegacyActionWrapper getAction() {
+	public final CommandLegacyActionWrapper getAction() {
 		if (action == null) {
 			action = new CommandLegacyActionWrapper(actionId, command, style,
 					window);
