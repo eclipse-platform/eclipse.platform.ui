@@ -170,6 +170,7 @@ public class ControlFactory {
 
 					@Override
 					protected Control createDialogArea(Composite parent) {
+						getShell().setText("Key/Value Pair");
 						Composite comp = (Composite) super.createDialogArea(parent);
 						Composite container = new Composite(comp, SWT.NONE);
 						container.setLayout(new GridLayout(2, false));
