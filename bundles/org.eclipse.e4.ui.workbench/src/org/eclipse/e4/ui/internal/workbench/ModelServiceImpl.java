@@ -534,7 +534,7 @@ public class ModelServiceImpl implements EModelService {
 	 */
 	public MWindow getTopLevelWindowFor(MUIElement element) {
 		EObjectImpl eObj = (EObjectImpl) element;
-		while (!(eObj.eContainer() instanceof MApplication))
+		while (eObj != null && !(eObj.eContainer() instanceof MApplication))
 			eObj = (EObjectImpl) eObj.eContainer();
 
 		if (eObj instanceof MWindow)
