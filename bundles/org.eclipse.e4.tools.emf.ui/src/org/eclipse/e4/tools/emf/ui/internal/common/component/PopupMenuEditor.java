@@ -10,14 +10,28 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.swt.widgets.Composite;
 
 public class PopupMenuEditor extends MenuEditor {
 
 	public PopupMenuEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
 		super(editingDomain, project, editor);
+	}
+
+	@Override
+	protected Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean rootMenu, boolean isImport) {
+		Composite comp = super.createForm(parent, context, master, rootMenu, isImport);
+		if (!isImport) {
+			ControlFactory.createStringListWidget(comp, this, "Variables", UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
+		}
+
+		return comp;
 	}
 
 	@Override
