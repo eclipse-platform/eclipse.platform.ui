@@ -534,7 +534,7 @@ public class ModelServiceImpl implements EModelService {
 	 */
 	public MWindow getTopLevelWindowFor(MUIElement element) {
 		EObjectImpl eObj = (EObjectImpl) element;
-		while (eObj != null && !(eObj.eContainer() instanceof MApplication))
+		while (!(eObj.eContainer() instanceof MApplication))
 			eObj = (EObjectImpl) eObj.eContainer();
 
 		if (eObj instanceof MWindow)
@@ -589,6 +589,11 @@ public class ModelServiceImpl implements EModelService {
 			toolControl.getParent().getChildren().remove(toolControl);
 		}
 
+		// find the editor area
+		//		MUIElement editorArea = find("org.eclipse.ui.editorss", persp); //$NON-NLS-1$
+		// if (editorArea instanceof MPlaceholder)
+		// ((MPlaceholder) editorArea).setRef(null);
+		// editorArea.getParent().getChildren().remove(editorArea);
 		persp.setToBeRendered(false);
 
 		MUIElement psElement = persp.getParent();

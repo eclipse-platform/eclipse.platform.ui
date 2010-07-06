@@ -526,8 +526,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 						refCtrl.setParent(getLimboShell());
 				}
 
-				if (ref instanceof MContext) {
-					IEclipseContext lclContext = ((MContext) ref).getContext();
+				List<MContext> containedContexts = modelService.findElements(
+						ref, null, MContext.class, null);
+				for (MContext ctxt : containedContexts) {
+					IEclipseContext lclContext = ctxt.getContext();
 					if (lclContext != null) {
 						IEclipseContext parentContext = lclContext.getParent();
 						Object child = parentContext
