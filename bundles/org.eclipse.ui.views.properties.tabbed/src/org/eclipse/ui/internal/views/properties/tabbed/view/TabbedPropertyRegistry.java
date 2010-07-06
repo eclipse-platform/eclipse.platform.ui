@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2008 IBM Corporation and others.
+ * Copyright (c) 2001, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,15 +16,19 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewPlugin;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewStatusCodes;
@@ -36,8 +40,6 @@ import org.eclipse.ui.views.properties.tabbed.ISectionDescriptorProvider;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ITabDescriptorProvider;
 import org.eclipse.ui.views.properties.tabbed.ITypeMapper;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Provides information about the tabbed property extension points. Each tabbed
@@ -70,7 +72,7 @@ public class TabbedPropertyRegistry {
 
 	private static final String ATT_CONTRIBUTOR_ID = "contributorId"; //$NON-NLS-1$
 
-	private static final String ATT_TYPE_MAPPER = "typeMapper"; //$NON-NLS-1$	
+	private static final String ATT_TYPE_MAPPER = "typeMapper"; //$NON-NLS-1$
 
 	private static final String ATT_LABEL_PROVIDER = "labelProvider"; //$NON-NLS-1$
 
@@ -536,5 +538,24 @@ public class TabbedPropertyRegistry {
 		IStatus status = new Status(IStatus.ERROR, pluginId,
 				TabbedPropertyViewStatusCodes.TAB_ERROR, message, null);
 		TabbedPropertyViewPlugin.getPlugin().getLog().log(status);
+	}
+
+	/**
+	 * Disposes this registry.
+	 * 
+	 * @since 3.7
+	 */
+	public void dispose() {
+		if (labelProvider != null) {
+			labelProvider.dispose();
+			labelProvider = null;
+		}
+
+		if (tabDescriptors != null) {
+			for (int i= 0; i < tabDescriptors.length; i++) {
+				if (tabDescriptors[i] instanceof TabDescriptor)
+					((TabDescriptor)tabDescriptors[i]).dispose();
+			}
+		}
 	}
 }

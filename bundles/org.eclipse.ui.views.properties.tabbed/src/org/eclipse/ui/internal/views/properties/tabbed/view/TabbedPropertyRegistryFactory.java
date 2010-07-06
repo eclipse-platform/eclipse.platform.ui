@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2007 IBM Corporation and others.
+ * Copyright (c) 2001, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,7 @@ public class TabbedPropertyRegistryFactory {
 		String key = target.getContributorId();
 		CacheData data = (CacheData) idToCacheData.get(key);
 		if (data != null) {
+			data.registry.dispose();
 			data.references.remove(target);
 			if (data.references.isEmpty()) {
 				idToCacheData.remove(key);

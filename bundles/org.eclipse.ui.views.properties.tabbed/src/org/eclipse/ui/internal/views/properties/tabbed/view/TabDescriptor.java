@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2007 IBM Corporation and others.
+ * Copyright (c) 2001, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,21 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties.tabbed.view;
 
+import com.ibm.icu.text.MessageFormat;
+
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewPlugin;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewStatusCodes;
 import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Represents the default implementation of a tab descriptor on the tabbed
@@ -285,5 +287,17 @@ public class TabDescriptor extends AbstractTabDescriptor {
 	 */
 	public String getText() {
 		return label;
+	}
+
+	/**
+	 * Disposes this descriptor.
+	 * 
+	 * @since 3.7
+	 */
+	public void dispose() {
+		if (image != null) {
+			image.dispose();
+			image = null;
+		}
 	}
 }
