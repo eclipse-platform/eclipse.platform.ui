@@ -311,16 +311,9 @@ public class EclipseContext implements IEclipseContext {
 	 */
 	public void removeLocalValueComputations(String name) {
 		synchronized (localValueComputations) {
-			// remove all keys with a matching name
-			for (Iterator<String> it = localValueComputations.keySet().iterator(); it.hasNext();) {
-				String key = it.next();
-				if (key.equals(name)) {
-					ValueComputation removed = localValueComputations.get(key);
-					if (removed != null)
-						removed.stopListening(this, name);
-					it.remove();
-				}
-			}
+			ValueComputation removed = localValueComputations.remove(name);
+			if (removed != null)
+				removed.stopListening(this, name);
 		}
 	}
 
