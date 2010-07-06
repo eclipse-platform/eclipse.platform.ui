@@ -27,15 +27,17 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 	class UIEventHandler implements EventHandler {
 
 		final protected IRequestor requestor;
+		final private String topic;
 
-		public UIEventHandler(IRequestor requestor) {
+		public UIEventHandler(String topic, IRequestor requestor) {
+			this.topic = topic;
 			this.requestor = requestor;
 		}
 
 		public void handleEvent(org.osgi.service.event.Event event) {
-			addCurrentEvent(event.getTopic(), event);
+			addCurrentEvent(topic, event);
 			requestor.resolveArguments();
-			removeCurrentEvent(event.getTopic());
+			removeCurrentEvent(topic);
 			Display display = getDisplay();
 			if (display == null || display.isDisposed()) {
 				if (logger != null)
@@ -69,8 +71,8 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 	@Inject @Optional
 	protected Logger logger;
 
-	protected EventHandler makeHandler(IRequestor requestor) {
-		return new UIEventHandler(requestor);
+	protected EventHandler makeHandler(String topic, IRequestor requestor) {
+		return new UIEventHandler(topic, requestor);
 	}
 
 	protected String getTopic(IObjectDescriptor descriptor) {

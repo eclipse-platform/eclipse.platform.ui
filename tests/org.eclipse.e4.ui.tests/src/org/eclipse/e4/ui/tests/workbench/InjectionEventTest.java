@@ -80,6 +80,19 @@ public class InjectionEventTest extends TestCase {
 		}
 	}
 
+	// Class used to test receiving events using wildcard
+	static class InjectStarEvent {
+		public int counter1 = 0;
+		public String data;
+
+		@Inject
+		@Optional
+		public void receivedEvent1(@UIEventTopic("e4/test/*") String data) {
+			counter1++;
+			this.data = data;
+		}
+	}
+
 	// This tests and demos sending events
 	static public class EventAdminHelper {
 		@Inject
@@ -186,6 +199,22 @@ public class InjectionEventTest extends TestCase {
 		helper.sendEvent("e4/test/event1", "wrong");
 		assertFalse(testFailed); // target would have asserted if it is still
 									// subscribed
+	}
+
+	public void testInjectWildCard() {
+		IEclipseContext context = EclipseContextFactory.create();
+		InjectStarEvent target = ContextInjectionFactory.make(
+				InjectStarEvent.class, context);
+
+		// initial state
+		assertEquals(0, target.counter1);
+		assertNull(target.data);
+
+		// send event
+		helper.sendEvent("e4/test/eventInjection", "sample");
+
+		assertEquals(1, target.counter1);
+		assertEquals("sample", target.data);
 	}
 
 	private void wrapSetup() {
