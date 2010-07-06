@@ -182,13 +182,13 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     
     private IWorkbenchAction exportResourcesAction;
 
-    IWorkbenchAction buildAllAction; // Incremental workspace build
+	private IWorkbenchAction buildAllAction; // Incremental workspace build
 
     private IWorkbenchAction cleanAction;
 
     private IWorkbenchAction toggleAutoBuildAction;
 
-    MenuManager buildWorkingSetMenu;
+	private MenuManager buildWorkingSetMenu;
 
     private IWorkbenchAction quickStartAction;
 
@@ -201,7 +201,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction introAction;
 
     // IDE-specific retarget actions
-    IWorkbenchAction buildProjectAction;
+	private IWorkbenchAction buildProjectAction;
 
     // contribution items
     // @issue should obtain from ContributionItemFactory
@@ -796,7 +796,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         showInQuickMenu.dispose();
         newQuickMenu.dispose();
         
-		super.dispose();
 
         // null out actions to make leak debugging easier
         closeAction = null;
@@ -865,6 +864,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         prefListener = null;
         propPrefListener = null;
         introAction = null;
+
+		super.dispose();
     }
 
     void updateModeLine(final String text) {
