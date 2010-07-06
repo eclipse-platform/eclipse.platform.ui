@@ -114,7 +114,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	/**
 	 * The property change listener.
-	 * @since 3.7
+	 * @since 3.6.1
 	 */
 	private IPropertyChangeListener propertyChangeListener;
 
