@@ -12,7 +12,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map.Entry;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -44,18 +43,12 @@ import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -345,105 +338,6 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false, 2, 1));
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CATEGORY).observeDetail(master));
-		}
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartDescriptorEditor_PersitedState);
-			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
-
-			TableViewer tableviewer = new TableViewer(parent);
-			tableviewer.getTable().setHeaderVisible(true);
-			ObservableListContentProvider cp = new ObservableListContentProvider();
-			tableviewer.setContentProvider(cp);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 80;
-			tableviewer.getControl().setLayoutData(gd);
-
-			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText(Messages.PartDescriptorEditor_PersitedStateKey);
-			column.getColumn().setWidth(200);
-			column.setLabelProvider(new ColumnLabelProvider() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public String getText(Object element) {
-					Entry<String, String> entry = (Entry<String, String>) element;
-					return entry.getKey();
-				}
-			});
-
-			// FIXME How can we react upon changes in the Map-Value?
-			column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText(Messages.PartDescriptorEditor_PersitedStateValue);
-			column.getColumn().setWidth(200);
-			column.setLabelProvider(new ColumnLabelProvider() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public String getText(Object element) {
-					Entry<String, String> entry = (Entry<String, String>) element;
-					return entry.getValue();
-				}
-			});
-
-			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE);
-			tableviewer.setInput(prop.observeDetail(getMaster()));
-
-			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout();
-			gl.marginLeft = 0;
-			gl.marginRight = 0;
-			gl.marginWidth = 0;
-			gl.marginHeight = 0;
-			buttonComp.setLayout(gl);
-
-			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_AddEllipsis);
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			// FIXME Implementation is missing
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Remove);
-			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			// FIXME Implementation is missing
-		}
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartDescriptorEditor_Variables);
-			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
-
-			ListViewer viewer = new ListViewer(parent);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			gd.heightHint = 80;
-			viewer.getList().setLayoutData(gd);
-		}
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartDescriptorEditor_Properties);
-			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
-
-			TableViewer tableviewer = new TableViewer(parent);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			gd.heightHint = 80;
-			tableviewer.getTable().setHeaderVisible(true);
-			tableviewer.getControl().setLayoutData(gd);
-
-			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText(Messages.PartDescriptorEditor_PropertiesKey);
-			column.getColumn().setWidth(200);
-
-			column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText(Messages.PartDescriptorEditor_PropertiesValue);
-			column.getColumn().setWidth(200);
 		}
 
 		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);

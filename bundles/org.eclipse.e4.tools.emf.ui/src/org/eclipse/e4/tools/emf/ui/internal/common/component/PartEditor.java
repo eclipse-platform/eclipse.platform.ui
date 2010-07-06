@@ -12,7 +12,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Map.Entry;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -33,7 +32,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.Contributio
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PartIconDialogEditor;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -42,30 +40,17 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.EditingSupport;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -335,161 +320,8 @@ public class PartEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		ControlFactory.createStringListWidget(parent, this, "Binding Contexts", CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, VERTICAL_LIST_WIDGET_INDENT);
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartEditor_PersitedState);
-			GridData gd = new GridData(GridData.END, GridData.BEGINNING, false, false);
-			gd.verticalIndent = VERTICAL_LIST_WIDGET_INDENT;
-			l.setLayoutData(gd);
-
-			final TableViewer tableviewer = new TableViewer(parent);
-			tableviewer.getTable().setHeaderVisible(true);
-			ObservableListContentProvider cp = new ObservableListContentProvider();
-			tableviewer.setContentProvider(cp);
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 80;
-			gd.verticalIndent = VERTICAL_LIST_WIDGET_INDENT;
-			tableviewer.getControl().setLayoutData(gd);
-
-			TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText(Messages.PartEditor_PersitedStateKey);
-			column.getColumn().setWidth(200);
-			column.setLabelProvider(new ColumnLabelProvider() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public String getText(Object element) {
-					Entry<String, String> entry = (Entry<String, String>) element;
-					return entry.getKey();
-				}
-			});
-
-			// FIXME How can we react upon changes in the Map-Value?
-			column = new TableViewerColumn(tableviewer, SWT.NONE);
-			column.getColumn().setText(Messages.PartEditor_PersitedStateValue);
-			column.getColumn().setWidth(200);
-			column.setLabelProvider(new ColumnLabelProvider() {
-				@SuppressWarnings("unchecked")
-				@Override
-				public String getText(Object element) {
-					Entry<String, String> entry = (Entry<String, String>) element;
-					return entry.getValue();
-				}
-			});
-
-			final TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
-			column.setEditingSupport(new EditingSupport(tableviewer) {
-
-				@Override
-				protected void setValue(Object element, Object value) {
-					Command cmd = SetCommand.create(getEditingDomain(), element, ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP__KEY, value.toString().trim().length() == 0 ? null : value.toString());
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-					}
-				}
-
-				@SuppressWarnings("unchecked")
-				@Override
-				protected Object getValue(Object element) {
-					Entry<String, String> entry = (Entry<String, String>) element;
-					return entry.getValue() == null ? "" : entry.getValue(); //$NON-NLS-1$
-				}
-
-				@Override
-				protected CellEditor getCellEditor(Object element) {
-					return cellEditor;
-				}
-
-				@Override
-				protected boolean canEdit(Object element) {
-					return true;
-				}
-			});
-
-			IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE);
-			tableviewer.setInput(prop.observeDetail(getMaster()));
-
-			final Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout();
-			gl.marginLeft = 0;
-			gl.marginRight = 0;
-			gl.marginWidth = 0;
-			gl.marginHeight = 0;
-			buttonComp.setLayout(gl);
-
-			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_AddEllipsis);
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					Dialog dialog = new Dialog(buttonComp.getShell()) {
-						private Text key;
-						private Text value;
-
-						@Override
-						protected Control createDialogArea(Composite parent) {
-							Composite comp = (Composite) super.createDialogArea(parent);
-							Composite container = new Composite(comp, SWT.NONE);
-							container.setLayout(new GridLayout(2, false));
-							container.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-							Label l = new Label(container, SWT.NONE);
-							l.setText("Key");
-
-							key = new Text(container, SWT.BORDER);
-							key.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-							l = new Label(container, SWT.NONE);
-							l.setText("Value");
-
-							value = new Text(container, SWT.BORDER);
-							value.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-							return comp;
-						}
-
-						@Override
-						protected void okPressed() {
-							if (key.getText().trim().length() > 0) {
-								BasicEMap.Entry<String, String> entry = (org.eclipse.emf.common.util.BasicEMap.Entry<String, String>) ApplicationFactoryImpl.eINSTANCE.createStringToStringMap();
-								entry.setHash(key.hashCode());
-								entry.setKey(key.getText());
-								entry.setValue(value.getText().trim().length() > 0 ? value.getText() : null);
-								Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, entry);
-								if (cmd.canExecute()) {
-									getEditingDomain().getCommandStack().execute(cmd);
-									super.okPressed();
-								}
-							}
-						}
-					};
-					dialog.open();
-
-				}
-			});
-
-			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.ModelTooling_Common_Remove);
-			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					IStructuredSelection selection = (IStructuredSelection) tableviewer.getSelection();
-					if (!selection.isEmpty()) {
-						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, selection.toList());
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
-					}
-				}
-			});
-		}
-
+		ControlFactory.createMapProperties(parent, this, "Persisted State", ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, this, "Context Properties", UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createStringListWidget(parent, this, "Variables", UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
