@@ -467,16 +467,18 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// either their widgets or context disposed
 		final MWindow win = modelService.getTopLevelWindowFor(element);
 
-		if (win != element && win != null) {
-			// make sure no shared elements get destroyed
-			unhookReferences(element, win.getContext());
-		} else {
-			// Make sure *all* sheared elements get destroyed
-			List<MUIElement> seList = win.getSharedElements();
-			for (MUIElement se : seList) {
-				if (se.getWidget() instanceof Control) {
-					Control ctrl = (Control) se.getWidget();
-					ctrl.dispose();
+		if (win != null) {
+			if (win != element) {
+				// make sure no shared elements get destroyed
+				unhookReferences(element, win.getContext());
+			} else {
+				// Make sure *all* sheared elements get destroyed
+				List<MUIElement> seList = win.getSharedElements();
+				for (MUIElement se : seList) {
+					if (se.getWidget() instanceof Control) {
+						Control ctrl = (Control) se.getWidget();
+						ctrl.dispose();
+					}
 				}
 			}
 		}
