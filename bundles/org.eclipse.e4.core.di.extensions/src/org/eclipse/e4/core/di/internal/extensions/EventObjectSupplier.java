@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     ARTAL Technologies <simon.chemouil@artal.fr> - Allow wildcards in topic names
  *******************************************************************************/
 package org.eclipse.e4.core.di.internal.extensions;
 
@@ -62,8 +63,10 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 	class DIEventHandler implements EventHandler {
 
 		final private IRequestor requestor;
+		final private String topic;
 
-		public DIEventHandler(IRequestor requestor) {
+		public DIEventHandler(String topic, IRequestor requestor) {
+			this.topic = topic;
 			this.requestor = requestor;
 		}
 
@@ -73,10 +76,9 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 				return;
 			}
 
-			String key = event.getTopic();
-			addCurrentEvent(key, event);
+			addCurrentEvent(topic, event);
 			requestor.resolveArguments();
-			removeCurrentEvent(key);
+			removeCurrentEvent(topic);
 
 			requestor.execute();
 		}
@@ -179,7 +181,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		String[] topics = new String[] {topic};
 		Dictionary<String, Object> d = new Hashtable<String, Object>();
 		d.put(EventConstants.EVENT_TOPIC, topics);
-		EventHandler wrappedHandler = makeHandler(requestor);
+		EventHandler wrappedHandler = makeHandler(topic, requestor);
 		ServiceRegistration registration = bundleContext.registerService(EventHandler.class.getName(), wrappedHandler, d);
 		// due to the way requestors are constructed this limited synch should be OK
 		synchronized (registrations) {
@@ -187,8 +189,8 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 		}
 	}
 
-	protected EventHandler makeHandler(IRequestor requestor) {
-		return new DIEventHandler(requestor);
+	protected EventHandler makeHandler(String topic, IRequestor requestor) {
+		return new DIEventHandler(topic, requestor);
 	}
 
 	protected String getTopic(IObjectDescriptor descriptor) {
