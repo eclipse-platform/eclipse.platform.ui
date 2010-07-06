@@ -1061,15 +1061,6 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Set the generator for the view.
-	 * 
-	 * @param generator
-	 */
-	void internalSetGenerator(MarkerContentGenerator generator) {
-		this.generator=generator;
-	}
-
-	/**
 	 * @return Returns the generator.
 	 */
 	MarkerContentGenerator getGenerator() {
@@ -1215,19 +1206,6 @@ public class ExtendedMarkersView extends ViewPart {
 	void setCategoryGroup(MarkerGroup group) {
 		getCategoriesToExpand().clear();
 		builder.setCategoryGroup(group);
-	}
-
-	/**
-	 * Set the content generator for the receiver and update.
-	 * 
-	 * @param generator
-	 */
-	void setContentGenerator(MarkerContentGenerator generator) {
-		viewer.setSelection(new StructuredSelection());
-		viewer.removeAndClearAll();
-		internalSetGenerator(generator);
-		createColumns(viewer.getTree().getColumns());
-		builder.setGenerator(generator);
 	}
 
 	/*
