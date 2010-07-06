@@ -456,7 +456,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		initializeDefaultServices();
 
+		// register with the tracker
+
+		fireWindowOpening();
+
 		ContextInjectionFactory.inject(page, model.getContext());
+		firePageOpened();
 
 		// Fill the action bars
 		fillActionBars(FILL_ALL_ACTION_BARS);
@@ -476,15 +481,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		}
 		page.setPerspective(perspective);
+		firePageActivated();
 
 		if (curPersp != null) {
 			populateTrimContributions(ModeledPageLayout.getIds(curPersp, ACTION_SET_CMD_PREFIX),
 					true);
 		}
-
-		// register with the tracker
-
-		fireWindowOpening();
 
 		Shell shell = (Shell) model.getWidget();
 		MMenu mainMenu = model.getMainMenu();
@@ -919,6 +921,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private int largeUpdates = 0;
 
 	private IExtensionTracker tracker;
+
+	private void firePageOpened() {
+		pageListeners.firePageOpened(page);
+	}
+
+	private void firePageActivated() {
+		pageListeners.firePageActivated(page);
+	}
 
 	void registerGlobalAction(IAction globalAction) {
 		String commandId = globalAction.getActionDefinitionId();
