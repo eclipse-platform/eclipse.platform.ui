@@ -99,7 +99,7 @@ public class ValueComputation extends Computation {
 		if (eventType == ContextChangeEvent.DISPOSE) {
 			IEclipseContext eventsContext = event.getContext();
 			if (originatingContext.equals(eventsContext)) {
-				removeAll(originatingContext);
+				removeAll();
 				return;
 			}
 			return;
@@ -127,7 +127,7 @@ public class ValueComputation extends Computation {
 			computing = false;
 			EclipseContext.currentComputation.set(oldComputation);
 		}
-		startListening(originatingContext);
+		startListening();
 		return cachedValue;
 	}
 

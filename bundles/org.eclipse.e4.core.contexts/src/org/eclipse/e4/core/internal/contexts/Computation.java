@@ -63,16 +63,14 @@ abstract public class Computation {
 	/**
 	 * Remove this computation from all contexts that are tracking it
 	 */
-	protected void removeAll(EclipseContext originatingContext) {
+	protected void removeAll() {
 		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
 			((EclipseContext) it.next()).listeners.remove(this);
 		}
 		dependencies.clear();
-		// Bug 304859
-		originatingContext.listeners.remove(this);
 	}
 
-	public void startListening(EclipseContext originatingContext) {
+	public void startListening() {
 		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
 			EclipseContext c = (EclipseContext) it.next();
 			Computation existingComputation = c.listeners.get(this);
@@ -88,22 +86,22 @@ abstract public class Computation {
 			} else
 				c.listeners.put(this, this);
 		}
-		// Bug 304859
-		if (!dependencies.containsKey(originatingContext))
-			originatingContext.listeners.remove(this);
 	}
 
 	public void stopListening(IEclipseContext context, String name) {
 		if (name == null) {
 			dependencies.remove(context);
+			((EclipseContext) context).listeners.remove(this);
 			return;
 		}
 		Set<String> properties = dependencies.get(context);
 		if (properties != null) {
 			properties.remove(name);
 			// if we no longer track any values in the context, remove dependency
-			if (properties.isEmpty())
+			if (properties.isEmpty()) {
 				dependencies.remove(context);
+				((EclipseContext) context).listeners.remove(this);
+			}
 		}
 	}
 

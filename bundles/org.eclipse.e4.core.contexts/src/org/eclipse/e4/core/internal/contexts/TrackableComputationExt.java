@@ -102,14 +102,14 @@ public class TrackableComputationExt extends Computation implements IContextReco
 
 		if (eventType == ContextChangeEvent.DISPOSE) {
 			if (originatingContext.equals(eventsContext)) {
-				removeAll(eventsContext);
+				removeAll();
 				return false;
 			}
 		}
 		if (result)
-			startListening(eventsContext);
+			startListening();
 		else
-			removeAll(eventsContext);
+			removeAll();
 		return result;
 	}
 
