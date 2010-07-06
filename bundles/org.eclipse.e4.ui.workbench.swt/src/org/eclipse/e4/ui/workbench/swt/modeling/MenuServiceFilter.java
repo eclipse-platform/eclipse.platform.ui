@@ -84,6 +84,10 @@ public class MenuServiceFilter implements Listener {
 			return;
 		}
 		final Menu menu = (Menu) event.widget;
+		if (event.type == SWT.Dispose) {
+			trace("handleMenu.Dispose", menu, null);
+			cleanUp(menu);
+		}
 		Object obj = menu.getData(AbstractPartRenderer.OWNING_ME);
 		if (obj == null && menu.getParentItem() != null) {
 			obj = menu.getParentItem().getData(AbstractPartRenderer.OWNING_ME);
@@ -112,10 +116,6 @@ public class MenuServiceFilter implements Listener {
 		case SWT.Hide:
 			trace("handleMenu.Hide", menu, menuModel);
 			// TODO we'll clean up on show
-			break;
-		case SWT.Dispose:
-			trace("handleMenu.Dispose", menu, menuModel);
-			cleanUp(menu);
 			break;
 		}
 	}
@@ -168,10 +168,6 @@ public class MenuServiceFilter implements Listener {
 		case SWT.Hide:
 			trace("handleContextMenu.Hide", menu, menuModel);
 			hidePopup(event, menu, menuModel);
-			break;
-		case SWT.Dispose:
-			trace("handleContextMenu.Dispose", menu, menuModel);
-			cleanUp(menu);
 			break;
 		}
 	}
@@ -283,10 +279,6 @@ public class MenuServiceFilter implements Listener {
 		case SWT.Hide:
 			trace("handlerRenderedMenu.Hide", menu, menuModel);
 			// TODO don't care
-			break;
-		case SWT.Dispose:
-			trace("handlerRenderedMenu.Dispose", menu, menuModel);
-			cleanUp(menu);
 			break;
 		}
 	}
