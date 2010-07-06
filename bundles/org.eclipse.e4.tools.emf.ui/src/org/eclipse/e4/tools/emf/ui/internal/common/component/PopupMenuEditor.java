@@ -28,6 +28,7 @@ public class PopupMenuEditor extends MenuEditor {
 	protected Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean rootMenu, boolean isImport) {
 		Composite comp = super.createForm(parent, context, master, rootMenu, isImport);
 		if (!isImport) {
+			ControlFactory.createMapProperties(parent, this, "Context Properties", UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
 			ControlFactory.createStringListWidget(comp, this, "Variables", UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
 		}
 
