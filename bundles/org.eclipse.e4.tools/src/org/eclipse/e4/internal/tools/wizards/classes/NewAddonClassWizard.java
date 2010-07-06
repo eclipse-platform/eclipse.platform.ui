@@ -19,8 +19,8 @@ public class NewAddonClassWizard extends AbstractNewClassWizard {
 	@Override
 	public void addPages() {
 		addPage(new AbstractNewClassPage("Classinformation",
-				"New Handler",
-				"Create a new handler class", root, ResourcesPlugin.getWorkspace().getRoot()) {
+				"New Addon",
+				"Create a new addon class", root, ResourcesPlugin.getWorkspace().getRoot()) {
 
 					@Override
 					protected void createFields(Composite parent,
