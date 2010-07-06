@@ -71,7 +71,7 @@ public class MarkerContentGenerator {
 	/*Use this to indicate filter change rather than a null*/
 	private final Collection FILTERS_CHANGED = Collections.EMPTY_SET;
 
-	//Carries the description for the generator, as coded in the given extension point 
+	//Carries the description for the generator, as coded in the given extension point
 	private ContentGeneratorDescriptor generatorDescriptor;
 
 	// fields
@@ -99,8 +99,8 @@ public class MarkerContentGenerator {
 	 * Create a new MarkerContentGenerator
 	 * 
 	 * @param generatorDescriptor
-	 * @param builder 
-	 * @param viewId 
+	 * @param builder
+	 * @param viewId
 	 * 				needed for backward compatibility
 	 */
 	public MarkerContentGenerator(
@@ -754,7 +754,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Select the given MarkerEntry
-	 * 	@return <code>true</code> if it matches all enabled filters 
+	 * 	@return <code>true</code> if it matches all enabled filters
 	 */
 	boolean select(MarkerEntry entry) {
 		try {
@@ -911,7 +911,7 @@ public class MarkerContentGenerator {
 	 * would need a good amount of testing with various combination of filters
 	 * and scopes. The key here is to understand and getting it right how filter
 	 * scope and our trimmed, optimized resources and selected resource elements
-	 * interact. 
+	 * interact.
 	 * Another possible way to check if content has changed is by
 	 * comparing the markers gathered freshly with the previously gathered
 	 * markers(cache them when an update is not canceled), whether this up to a
@@ -928,8 +928,8 @@ public class MarkerContentGenerator {
 //	 * manually is not required at all since nothing had changed.This is
 //	 * particularly useful when a filter is set to 'On Selected element scope'.A
 //	 * change in a filter is a combination of both its scope and other settings.
-//	 * 
-//	 * 
+//	 *
+//	 *
 //	 * @return true if the resource-content has changed due to change in filter
 //	 *         settings or selection. false if content has not change or an
 //	 *         update has cleared the changes.
@@ -1026,7 +1026,7 @@ public class MarkerContentGenerator {
 				}
 			}
 		} catch (Exception e) {
-			//do not propagate but do show the error 
+			//do not propagate but do show the error
 			MarkerSupportInternalUtilities.showViewError(e);
 			return false;
 		} finally {
@@ -1084,6 +1084,9 @@ public class MarkerContentGenerator {
 	}
 
 	void dispose() {
-
+		if (filterPreferenceListener != null) {
+			IDEWorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(filterPreferenceListener);
+			filterPreferenceListener = null;
+		}
 	}
 }

@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -106,6 +107,13 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 	private IAdaptable lastInput;
 	private IWorkbenchAction openPerspectiveAction;
+
+	/**
+	 * The property change listener.
+	 * @since 3.6.1
+	 */
+	private IPropertyChangeListener propertyChangeListener;
+
 
 	/**
 	 * Crates a new IDE workbench window advisor.
@@ -315,18 +323,19 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				});
 		
 		// Listen for changes of the workspace name.
+		propertyChangeListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (IDEInternalPreferences.WORKSPACE_NAME.equals(event
+						.getProperty())) {
+					// Make sure the title is actually updated by
+					// setting last active page.
+					lastActivePage = null;
+					updateTitle(false);
+				}
+			}
+		};
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.addPropertyChangeListener(new IPropertyChangeListener() {
-					public void propertyChange(PropertyChangeEvent event) {
-						if (IDEInternalPreferences.WORKSPACE_NAME.equals(event
-								.getProperty())) {
-							// Make sure the title is actually updated by
-							// setting last active page.
-							lastActivePage = null;
-							updateTitle(false);
-						}
-					}
-				});
+				.addPropertyChangeListener(propertyChangeListener);
 	}
 
 	private String computeTitle() {
@@ -362,7 +371,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			if (input != null && !input.equals(wbAdvisor.getDefaultPageInput())) {
 				label = currentPage.getLabel();
 			}
-			if (label != null && !label.equals("")) { //$NON-NLS-1$ 
+			if (label != null && !label.equals("")) { //$NON-NLS-1$
 				title = NLS.bind(
 						IDEWorkbenchMessages.WorkbenchWindow_shellTitle, label,
 						title);
@@ -702,6 +711,11 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#dispose()
 	 */
 	public void dispose() {
+		if (propertyChangeListener != null) {
+			IDEWorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(propertyChangeListener);
+			propertyChangeListener = null;
+		}
+
 		if (openPerspectiveAction!=null) {
 			openPerspectiveAction.dispose();
 			openPerspectiveAction = null;

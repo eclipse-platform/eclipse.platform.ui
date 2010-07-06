@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.workbench" version="2">
     <resource path="Eclipse UI/org/eclipse/ui/branding/IBundleGroupConstants.java" type="org.eclipse.ui.branding.IBundleGroupConstants">
         <filter id="403767336">
@@ -41,13 +41,13 @@
         <filter id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.progress.IProgressConstants"/>
-                <message_argument value="SHOW_IN_TASKBAR_ICON_PROPERTY"/>
+                <message_argument value="COMMAND_PROPERTY"/>
             </message_arguments>
         </filter>
         <filter id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.progress.IProgressConstants"/>
-                <message_argument value="COMMAND_PROPERTY"/>
+                <message_argument value="SHOW_IN_TASKBAR_ICON_PROPERTY"/>
             </message_arguments>
         </filter>
     </resource>
@@ -69,14 +69,6 @@
         <filter id="336744520">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="META-INF/MANIFEST.MF">
-        <filter id="923795461">
-            <message_arguments>
-                <message_argument value="3.6.0.qualifier"/>
-                <message_argument value="3.5.0.I20090603-2000"/>
             </message_arguments>
         </filter>
     </resource>
