@@ -1084,6 +1084,9 @@ public class MarkerContentGenerator {
 	}
 
 	void dispose() {
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(filterPreferenceListener);
+		if (filterPreferenceListener != null) {
+			IDEWorkbenchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(filterPreferenceListener);
+			filterPreferenceListener = null;
+		}
 	}
 }
