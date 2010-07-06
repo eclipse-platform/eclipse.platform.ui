@@ -167,29 +167,35 @@ public class EclipseContext implements IEclipseContext {
 	 */
 	public void dispose() {
 		// dispose of child contexts first
-		EclipseContext[] currentChildren;
+		EclipseContext[] currentChildren = null;
 		synchronized (children) {
-			Set<EclipseContext> localCopy = new HashSet<EclipseContext>(children.size());
-			for (WeakReference<EclipseContext> childContextRef : children) {
-				EclipseContext childContext = childContextRef.get();
-				if (childContext != null)
-					localCopy.add(childContext);
+			if (children.size() > 0) {
+				Set<EclipseContext> localCopy = new HashSet<EclipseContext>(children.size());
+				for (WeakReference<EclipseContext> childContextRef : children) {
+					EclipseContext childContext = childContextRef.get();
+					if (childContext != null)
+						localCopy.add(childContext);
+				}
+				currentChildren = new EclipseContext[localCopy.size()];
+				localCopy.toArray(currentChildren);
+				children.clear(); // just in case
 			}
-			currentChildren = new EclipseContext[localCopy.size()];
-			localCopy.toArray(currentChildren);
-			children.clear(); // just in case
 		}
-		for (EclipseContext childContext : currentChildren) {
-			childContext.dispose();
+		if (currentChildren != null) {
+			for (EclipseContext childContext : currentChildren) {
+				childContext.dispose();
+			}
 		}
 
-		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
-		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
-		// reverse order of listeners
-		for (int i = ls.length - 1; i >= 0; i--) {
-			List<Scheduled> scheduled = new ArrayList<Scheduled>();
-			ls[i].handleInvalid(event, scheduled);
-			processScheduled(scheduled);
+		if (listeners.size() > 0) {
+			Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
+			ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
+			// reverse order of listeners
+			for (int i = ls.length - 1; i >= 0; i--) {
+				List<Scheduled> scheduled = new ArrayList<Scheduled>();
+				ls[i].handleInvalid(event, scheduled);
+				processScheduled(scheduled);
+			}
 		}
 
 		synchronized (notifyOnDisposal) {
