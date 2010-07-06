@@ -467,7 +467,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// either their widgets or context disposed
 		final MWindow win = modelService.getTopLevelWindowFor(element);
 
-		if (win != element) {
+		if (win != element && win != null) {
 			// make sure no shared elements get destroyed
 			unhookReferences(element, win.getContext());
 		} else {
