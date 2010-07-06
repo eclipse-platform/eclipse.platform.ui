@@ -72,6 +72,9 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PerspectiveStackEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PlaceholderEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.PopupMenuEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.RenderedMenuEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.RenderedMenuItem;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.RenderedToolBarEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.StringModelFragment;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarContributionEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ToolBarEditor;
@@ -562,16 +565,19 @@ public class ModelEditor {
 		registerEditor(CommandsPackageImpl.Literals.BINDING_CONTEXT, new BindingContextEditor(modelProvider.getEditingDomain(), this));
 
 		registerEditor(MenuPackageImpl.Literals.TOOL_BAR, new ToolBarEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(MenuPackageImpl.Literals.RENDERED_TOOL_BAR, new RenderedToolBarEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, new DirectToolItemEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, new HandledToolItemEditor(modelProvider.getEditingDomain(), this, project, modelProvider));
 		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, new ToolBarSeparatorEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MenuPackageImpl.Literals.TOOL_CONTROL, new ToolControlEditor(modelProvider.getEditingDomain(), this, project));
 
 		registerEditor(MenuPackageImpl.Literals.MENU, new MenuEditor(modelProvider.getEditingDomain(), project, this));
+		registerEditor(MenuPackageImpl.Literals.RENDERED_MENU, new RenderedMenuEditor(modelProvider.getEditingDomain(), project, this));
 		registerEditor(MenuPackageImpl.Literals.POPUP_MENU, new PopupMenuEditor(modelProvider.getEditingDomain(), project, this));
 		registerEditor(MenuPackageImpl.Literals.MENU_SEPARATOR, new MenuSeparatorEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, new HandledMenuItemEditor(modelProvider.getEditingDomain(), this, project, modelProvider));
 		registerEditor(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this, project));
+		registerEditor(MenuPackageImpl.Literals.RENDERED_MENU_ITEM, new RenderedMenuItem(modelProvider.getEditingDomain(), this, project));
 		registerEditor(MenuPackageImpl.Literals.MENU_CONTRIBUTION, new MenuContributionEditor(modelProvider.getEditingDomain(), project, this));
 		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION, new ToolBarContributionEditor(modelProvider.getEditingDomain(), project, this));
 		registerEditor(MenuPackageImpl.Literals.TRIM_CONTRIBUTION, new TrimContributionEditor(modelProvider.getEditingDomain(), project, this));
