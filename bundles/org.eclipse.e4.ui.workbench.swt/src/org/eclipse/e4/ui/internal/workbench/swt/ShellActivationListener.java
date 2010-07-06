@@ -89,7 +89,17 @@ public class ShellActivationListener implements Listener {
 
 		SafeRunner.run(new ISafeRunnable() {
 			public void run() throws Exception {
+				// activate this shell
 				parentContext.set(IContextConstants.ACTIVE_CHILD, shellContext);
+
+				// now ensure that the chain is pointing down appropriately
+				IEclipseContext parent = parentContext;
+				IEclipseContext recurse = parentContext.getParent();
+				while (recurse != null) {
+					recurse.set(IContextConstants.ACTIVE_CHILD, parent);
+					parent = recurse;
+					recurse = recurse.getParent();
+				}
 			}
 
 			public void handleException(Throwable exception) {
@@ -107,9 +117,6 @@ public class ShellActivationListener implements Listener {
 		}
 		final IEclipseContext prevChild = (IEclipseContext) parent
 				.getData(ECLIPSE_CONTEXT_PREV_CHILD);
-		if (prevChild == null) {
-			return;
-		}
 		final IEclipseContext parentContext = getParentContext(shell);
 		SafeRunner.run(new ISafeRunnable() {
 			public void run() throws Exception {
