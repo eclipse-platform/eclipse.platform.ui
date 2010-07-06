@@ -476,7 +476,8 @@ public class ModelServiceImpl implements EModelService {
 
 			MWindow window = getTopLevelWindowFor(persp);
 			IPresentationEngine renderingEngine = persp.getContext().get(IPresentationEngine.class);
-			Object foo = renderingEngine.createGui(newWindow, window.getWidget(), window.getContext());
+			Object foo = renderingEngine.createGui(newWindow, window.getWidget(),
+					window.getContext());
 			if (foo != null)
 				System.out.println(foo.toString());
 		} else if (curParent instanceof MWindow) {
@@ -533,7 +534,7 @@ public class ModelServiceImpl implements EModelService {
 	 */
 	public MWindow getTopLevelWindowFor(MUIElement element) {
 		EObjectImpl eObj = (EObjectImpl) element;
-		while (!(eObj.eContainer() instanceof MApplication))
+		while (eObj != null && !(eObj.eContainer() instanceof MApplication))
 			eObj = (EObjectImpl) eObj.eContainer();
 
 		if (eObj instanceof MWindow)
