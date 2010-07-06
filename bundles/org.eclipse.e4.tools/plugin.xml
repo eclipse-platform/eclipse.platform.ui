@@ -53,6 +53,13 @@
             id="org.eclipse.e4.tools.newpart"
             name="New Part Class">
       </wizard>
+      <wizard
+            category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
+            class="org.eclipse.e4.internal.tools.wizards.classes.NewAddonClassWizard"
+            icon="icons/full/obj16/Addons.png"
+            id="org.eclipse.e4.tools.newaddon"
+            name="New Addon Class">
+      </wizard>
    </extension>
 
 </plugin>

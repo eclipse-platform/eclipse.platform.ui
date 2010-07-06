@@ -362,7 +362,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 		
 		public Object convert(Object fromObject) {
-			System.err.println(" =======================> Converting: " + fromObject);
 			if( fromObject == null ) {
 				return "";
 			}
