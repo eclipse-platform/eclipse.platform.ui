@@ -14,7 +14,7 @@ package org.eclipse.e4.core.internal.contexts;
 
 public interface IContextRecorder {
 
-	public void startAcessRecording();
+	public void startAccessRecording();
 
 	public void stopAccessRecording();
 }

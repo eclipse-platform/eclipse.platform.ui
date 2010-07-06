@@ -117,7 +117,7 @@ public class TrackableComputationExt extends Computation implements IContextReco
 		return "TrackableComputationExt(" + runnable + ')'; //$NON-NLS-1$
 	}
 
-	public void startAcessRecording() {
+	public void startAccessRecording() {
 		EclipseContext.localComputation().set(this);
 	}
 

@@ -74,7 +74,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 					requestor.execute();
 				} finally {
 					if (recorder != null)
-						recorder.startAcessRecording();
+						recorder.startAccessRecording();
 				}
 			}
 			return true;
