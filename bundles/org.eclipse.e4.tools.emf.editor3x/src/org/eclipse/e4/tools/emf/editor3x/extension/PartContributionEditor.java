@@ -38,18 +38,26 @@ public class PartContributionEditor implements IContributionClassCreator {
 
 	public void createOpen(MContribution contribution, EditingDomain domain,
 			IProject project, Shell shell) {
-		if( contribution.getContributionURI() == null || contribution.getContributionURI().trim().length() == 0 ) {
+		if (contribution.getContributionURI() == null
+				|| contribution.getContributionURI().trim().length() == 0) {
 			NewPartClassWizard wizard = new NewPartClassWizard();
-			wizard.init( null, new StructuredSelection(project));
+			wizard.init(null, new StructuredSelection(project));
 			WizardDialog dialog = new WizardDialog(shell, wizard);
-			if( dialog.open() == WizardDialog.OK ) {
+			if (dialog.open() == WizardDialog.OK) {
 				IFile f = wizard.getFile();
 				ICompilationUnit el = JavaCore.createCompilationUnitFrom(f);
 				try {
-					String packageName = el.getPackageDeclarations()[0].getElementName();
+					String packageName = el.getPackageDeclarations()[0]
+							.getElementName();
 					String className = wizard.getDomainClass().getName();
-					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "platform:/plugin/" + f.getProject().getName() + "/" + packageName+"."+className);
-					if( cmd.canExecute() ) {
+					Command cmd = SetCommand
+							.create(domain,
+									contribution,
+									ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
+									"platform:/plugin/"
+											+ f.getProject().getName() + "/"
+											+ packageName + "." + className);
+					if (cmd.canExecute()) {
 						domain.getCommandStack().execute(cmd);
 					}
 				} catch (JavaModelException e) {
@@ -59,9 +67,10 @@ public class PartContributionEditor implements IContributionClassCreator {
 			}
 		} else {
 			URI uri = URI.createURI(contribution.getContributionURI());
-			IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(uri.segment(1));
-			//TODO If this is not a WS-Resource we need to open differently 
-			if( p != null ) {
+			IProject p = ResourcesPlugin.getWorkspace().getRoot()
+					.getProject(uri.segment(1));
+			// TODO If this is not a WS-Resource we need to open differently
+			if (p != null) {
 				IJavaProject jp = JavaCore.create(p);
 				try {
 					IType t = jp.findType(uri.segment(2));
@@ -78,9 +87,7 @@ public class PartContributionEditor implements IContributionClassCreator {
 	}
 
 	public boolean isSupported(EClass element) {
-		return BasicPackageImpl.Literals.PART == element
-				|| element.getEAllSuperTypes().contains(
-						BasicPackageImpl.Literals.PART);
+		return Util.isTypeOrSuper(BasicPackageImpl.Literals.PART, element);
 	}
 
 }

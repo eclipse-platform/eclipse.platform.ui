@@ -28,6 +28,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 public abstract class AbstractNewClassWizard extends Wizard implements INewWizard {
 	protected IPackageFragmentRoot root;
@@ -35,7 +37,6 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		root = getFragmentRoot(getInitialJavaElement(selection));
-		System.err.println("Root: " + root);
 	}
 
 	protected IJavaElement getInitialJavaElement(IStructuredSelection selection) {
@@ -129,6 +130,7 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 					file.setContents(new ByteArrayInputStream(content.getBytes()),
 							IFile.FORCE | IFile.KEEP_HISTORY, null);
 				}
+				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
 				unit.open(null);
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block

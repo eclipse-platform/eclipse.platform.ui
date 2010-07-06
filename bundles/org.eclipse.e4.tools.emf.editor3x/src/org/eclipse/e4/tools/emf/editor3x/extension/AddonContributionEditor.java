@@ -13,12 +13,11 @@ package org.eclipse.e4.tools.emf.editor3x.extension;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.e4.internal.tools.wizards.classes.NewAddonClassWizard;
 import org.eclipse.e4.internal.tools.wizards.classes.NewHandlerClassWizard;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.ui.model.application.MContribution;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
@@ -35,11 +34,16 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
 
-public class HandlerContributionEditor implements IContributionClassCreator {
+public class AddonContributionEditor implements IContributionClassCreator {
 
-	public void createOpen(MContribution contribution, EditingDomain domain, IProject project, Shell shell) {
+	public boolean isSupported(EClass element) {
+		return Util.isTypeOrSuper(ApplicationPackageImpl.Literals.ADDON, element);
+	}
+
+	public void createOpen(MContribution contribution, EditingDomain domain,
+			IProject project, Shell shell) {
 		if( contribution.getContributionURI() == null || contribution.getContributionURI().trim().length() == 0 ) {
-			NewHandlerClassWizard wizard = new NewHandlerClassWizard();
+			NewAddonClassWizard wizard = new NewAddonClassWizard();
 			wizard.init( null, new StructuredSelection(project));
 			WizardDialog dialog = new WizardDialog(shell, wizard);
 			if( dialog.open() == WizardDialog.OK ) {
@@ -77,14 +81,4 @@ public class HandlerContributionEditor implements IContributionClassCreator {
 		}
 	}
 
-	public boolean isSupported(EClass element) {
-		return 
-			Util.isTypeOrSuper(CommandsPackageImpl.Literals.HANDLER,element)
-			|| 
-			Util.isTypeOrSuper(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, element)
-			||
-			Util.isTypeOrSuper(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, element);
-	}
-	
-	
 }

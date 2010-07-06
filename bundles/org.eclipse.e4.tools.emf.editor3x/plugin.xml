@@ -20,6 +20,9 @@
       <contributionClassCreator
             class="org.eclipse.e4.tools.emf.editor3x.extension.PartContributionEditor">
       </contributionClassCreator>
+      <contributionClassCreator
+            class="org.eclipse.e4.tools.emf.editor3x.extension.AddonContributionEditor">
+      </contributionClassCreator>
    </extension>
 
 </plugin>

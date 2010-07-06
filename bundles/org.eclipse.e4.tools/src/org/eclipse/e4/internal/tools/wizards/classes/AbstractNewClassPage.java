@@ -197,11 +197,6 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		}
 
 		{
-			Label l = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
-			l.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false, 3, 1));
-		}
-
-		{
 			IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 			Label l = new Label(parent, SWT.NONE);
