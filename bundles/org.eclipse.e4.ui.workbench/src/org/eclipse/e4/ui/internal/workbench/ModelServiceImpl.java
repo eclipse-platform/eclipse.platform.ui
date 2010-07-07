@@ -477,7 +477,7 @@ public class ModelServiceImpl implements EModelService {
 			MWindow window = getTopLevelWindowFor(persp);
 			IPresentationEngine renderingEngine = persp.getContext().get(IPresentationEngine.class);
 			Object foo = renderingEngine.createGui(newWindow, window.getWidget(),
-					window.getContext());
+					persp.getContext());
 			if (foo != null)
 				System.out.println(foo.toString());
 		} else if (curParent instanceof MWindow) {

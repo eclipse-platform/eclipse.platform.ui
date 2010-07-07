@@ -27,10 +27,12 @@ import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.osgi.service.event.Event;
@@ -221,6 +223,20 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 									childContext);
 						}
 					}
+				}
+			}
+
+			if (element instanceof MWindow) {
+				MWindow window = (MWindow) element;
+				for (MWindow childWindow : window.getWindows()) {
+					createGui(childWindow, element, window.getContext());
+				}
+			}
+
+			if (element instanceof MPerspective) {
+				MPerspective perspective = (MPerspective) element;
+				for (MWindow childWindow : perspective.getWindows()) {
+					createGui(childWindow, element, perspective.getContext());
 				}
 			}
 		} else if (element instanceof MPlaceholder) {

@@ -37,6 +37,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
@@ -341,6 +342,34 @@ public class PartServiceImpl implements EPartService {
 						return true;
 					}
 				}
+			} else if (object instanceof MPerspective) {
+				MPerspective persp = (MPerspective) object;
+				for (MWindow dw : persp.getWindows()) {
+					if (isInContainer(dw, part))
+						return true;
+				}
+			} else if (object instanceof MWindow) {
+				MWindow win = (MWindow) object;
+				for (MWindow dw : win.getWindows()) {
+					if (isInContainer(dw, part))
+						return true;
+				}
+			}
+		}
+
+		if (container instanceof MWindow) {
+			MWindow win = (MWindow) container;
+			for (MWindow dw : win.getWindows()) {
+				if (isInContainer(dw, part))
+					return true;
+			}
+		}
+
+		if (container instanceof MPerspective) {
+			MPerspective persp = (MPerspective) container;
+			for (MWindow dw : persp.getWindows()) {
+				if (isInContainer(dw, part))
+					return true;
 			}
 		}
 

@@ -908,6 +908,78 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(editorB.wasFocusCalled());
 	}
 
+	public void testActivate_ChildWindow() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.getWindows().add(detachedWindow);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		detachedWindow.getChildren().add(partB);
+		detachedWindow.setSelectedElement(partB);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+	}
+
+	public void testActivate_DetachedWindow() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		perspective.getChildren().add(partA);
+		perspective.setSelectedElement(partA);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspective.getWindows().add(detachedWindow);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		detachedWindow.getChildren().add(partB);
+		detachedWindow.setSelectedElement(partB);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+	}
+
 	public void testCreatePart() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);
