@@ -21,12 +21,14 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.keys.KeySequenceBinding;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.keys.KeySequence;
 
 /**
@@ -168,7 +170,9 @@ final class CommandLegacyWrapper implements ICommand {
 		if (parameterizedCommand == null) {
 			parameterizedCommand = new ParameterizedCommand(command, null);
 		}
-		final TriggerSequence[] activeBindings = bindingManager
+		IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getService(
+				IBindingService.class);
+		final TriggerSequence[] activeBindings = bindingService
 				.getActiveBindingsFor(parameterizedCommand);
 		final int activeBindingsCount = activeBindings.length;
 		for (int i = 0; i < activeBindingsCount; i++) {
