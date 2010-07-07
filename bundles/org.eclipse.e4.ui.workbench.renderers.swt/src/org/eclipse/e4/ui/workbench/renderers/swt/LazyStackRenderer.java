@@ -58,7 +58,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 			MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
 			LazyStackRenderer lsr = (LazyStackRenderer) stack.getRenderer();
-			if (lsr == null)
+			if (lsr != LazyStackRenderer.this)
 				return;
 
 			// Gather up the elements that are being 'hidden' by this change
