@@ -171,6 +171,8 @@ import org.osgi.service.event.EventHandler;
  */
 public class WorkbenchWindow implements IWorkbenchWindow {
 
+	private static final String MAIN_TOOLBAR_ID = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+
 	public static final String ACTION_SET_CMD_PREFIX = "AS::"; //$NON-NLS-1$
 
 	@Inject
@@ -261,6 +263,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == model
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
 				removeTrimContributions();
+				removeTopTrimChildren();
 				MMenu menu = model.getMainMenu();
 				if (menu != null) {
 					engine.removeGui(menu);
@@ -518,6 +521,22 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		workbenchTrimElements.clear();
 	}
 
+	private void removeTopTrimChildren() {
+		MTrimBar trimBar = null;
+		List<MTrimBar> trimBars = model.getTrimBars();
+		for (MTrimBar bar : trimBars) {
+			if (MAIN_TOOLBAR_ID.equals(bar.getElementId())) {
+				trimBar = bar;
+				break;
+			}
+		}
+		if (trimBar == null) {
+			return;
+		}
+		engine.removeGui(trimBar);
+		trimBars.remove(trimBar);
+	}
+
 	void populateTrimContributions(List<String> actionSets, boolean reload) {
 		removeTrimContributions();
 
@@ -576,13 +595,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private MTrimBar getTopTrim() {
 		List<MTrimBar> trimBars = model.getTrimBars();
-		if (trimBars.size() == 0) {
-			MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-			trimBar.setElementId("org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
-			trimBars.add(trimBar);
-			return trimBar;
+		for (MTrimBar bar : trimBars) {
+			if (MAIN_TOOLBAR_ID.equals(bar.getElementId())) {
+				return bar;
+			}
 		}
-		return trimBars.get(0);
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		trimBar.setElementId(MAIN_TOOLBAR_ID);
+		trimBars.add(0, trimBar);
+		return trimBar;
 	}
 
 	private void fill(MMenu menu, IMenuManager manager) {
