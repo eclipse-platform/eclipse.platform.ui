@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
@@ -30,6 +31,20 @@ public class SeparatorRenderer extends SWTPartRenderer {
 		if (!element.isVisible()) {
 			return null;
 		}
+		int objIndex = calcIndex(element);
+		MUIElement nextVisibleChild = getNextVisibleChild(element, objIndex);
+		if (nextVisibleChild == null) {
+			return null;
+		}
+		if (nextVisibleChild.isVisible()
+				&& (nextVisibleChild instanceof MMenuSeparator || nextVisibleChild instanceof MToolBarSeparator)) {
+			return null;
+		}
+		// determine the index at which we should create the new item
+		int addIndex = calcVisibleIndex(element);
+		if (addIndex == 0) {
+			return null;
+		}
 		if (element instanceof MMenuSeparator) {
 			Menu menu = null;
 			Object widget = element.getParent().getWidget();
@@ -39,29 +54,25 @@ public class SeparatorRenderer extends SWTPartRenderer {
 				menu = ((MenuItem) widget).getMenu();
 			}
 			if (menu != null) {
-				int objIndex = calcIndex(element);
-				if (objIndex == element.getParent().getChildren().size() - 1) {
-					return null;
-				}
-				if (element.getParent().getChildren().get(objIndex + 1) instanceof MMenuSeparator) {
-					return null;
-				}
-				// determine the index at which we should create the new item
-				int addIndex = calcVisibleIndex(element);
-				if (addIndex == 0) {
-					return null;
-				}
-				// this shouldn't happen, but it might
 				newSep = new MenuItem(menu, SWT.SEPARATOR, addIndex);
 			}
 		} else if (element instanceof MToolBarSeparator) {
 			ToolBar tb = parent instanceof ToolBar ? (ToolBar) parent
 					: (ToolBar) element.getParent().getWidget();
-			// determine the index at which we should create the new item
-			int addIndex = calcVisibleIndex(element);
 			newSep = new ToolItem(tb, SWT.SEPARATOR, addIndex);
 		}
 
 		return newSep;
+	}
+
+	MUIElement getNextVisibleChild(final MUIElement element, int objIndex) {
+		List<MUIElement> children = element.getParent().getChildren();
+		for (int i = objIndex + 1; i < children.size(); i++) {
+			MUIElement child = children.get(i);
+			if (child.isVisible()) {
+				return child;
+			}
+		}
+		return null;
 	}
 }
