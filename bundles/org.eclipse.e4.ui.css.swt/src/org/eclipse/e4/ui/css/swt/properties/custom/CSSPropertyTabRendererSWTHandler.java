@@ -10,14 +10,18 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.swt.custom.CTabFolderRenderer;
+
+import java.lang.reflect.Constructor;
+
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
+import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.widgets.Control;
+import org.osgi.framework.Bundle;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
@@ -32,15 +36,30 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			if (((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
 				String rendURL = ((CSSPrimitiveValue) value).getStringValue();
-			
-				Object cssContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
-				if (cssContext != null && cssContext instanceof IEclipseContext) {
-					IEclipseContext context = (IEclipseContext) cssContext;
-					context.set(CTabFolder.class.getName(), control);
-					IContributionFactory factory = (IContributionFactory) context.get(IContributionFactory.class.getName());
-					Object rend = factory.create(rendURL, context);
-					if (rend != null && rend instanceof CTabFolderRenderer){
-						((CTabFolder) control).setRenderer((CTabFolderRenderer)rend);
+				URI uri = URI.createURI(rendURL);
+				Bundle bundle = CSSActivator.getDefault().getBundleForName(uri.segment(1));
+				if (bundle != null) {
+					if (uri.segmentCount() > 3) {
+						//TODO: handle this case?
+					} else {
+						String clazz = uri.segment(2);
+						try {
+							Class<?> targetClass = bundle.loadClass(clazz);
+							Constructor constructor = targetClass.getConstructor(CTabFolder.class);
+							if (constructor != null) {
+								Object rend = constructor.newInstance(control);
+								if (rend != null && rend instanceof CTabFolderRenderer) {
+									((CTabFolder) control).setRenderer((CTabFolderRenderer)rend);
+								}
+							}
+						} catch (ClassNotFoundException e) {
+							String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
+									+ bundle.getBundleId() + "'"; //$NON-NLS-1$
+							System.err.println(message);
+							if (e != null) {
+								e.printStackTrace(System.err);
+							}
+						} 
 					}
 				}
 			} else {

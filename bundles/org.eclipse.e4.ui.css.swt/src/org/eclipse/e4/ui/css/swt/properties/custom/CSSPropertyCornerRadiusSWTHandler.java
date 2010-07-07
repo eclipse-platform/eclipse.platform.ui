@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import java.lang.reflect.Method;
+import org.eclipse.swt.graphics.Color;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
@@ -31,15 +34,9 @@ public class CSSPropertyCornerRadiusSWTHandler extends AbstractCSSPropertySWTHan
 		if (!(control instanceof CTabFolder)) return;
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			int radiusValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
-			
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-					
-			Object cssContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
-			if (cssContext != null && cssContext instanceof IEclipseContext) {
-				IEclipseContext context = (IEclipseContext) cssContext;
-				context.set("radius", new Integer(radiusValue));
-				ContextInjectionFactory.inject(renderer, context); 
-			}
+			Method m = renderer.getClass().getMethod("setCornerRadius", new Class[]{int.class});
+			m.invoke(renderer, radiusValue);
 		}
 	}
 	

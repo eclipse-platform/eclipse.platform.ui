@@ -1,8 +1,6 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
@@ -876,23 +874,17 @@ public class CTabRendering extends CTabFolderRenderer {
 		return kernel;
 	}
 
-	@Inject
-	@Optional
-	public void setCornerRadius(@Named("radius") Integer radius) {
-		cornerSize = radius.intValue();
+	public void setCornerRadius(int radius) {
+		cornerSize = radius;
 		parent.redraw();
 	}
 
-	@Inject
-	@Optional
-	public void setShadowVisible(@Named("shadowVisible") Boolean visible) {
-		this.shadowEnabled = visible.booleanValue();
+	public void setShadowVisible(boolean visible) {
+		this.shadowEnabled = visible;
 		parent.redraw();
 	}
 
-	@Inject
-	@Optional
-	public void setOuterKeyline(@Named("outerKeyline") Color color) {
+	public void setOuterKeyline(Color color) {
 		this.outerKeyline = color;
 		// TODO: HACK! Should be set based on pseudo-state.
 		setActive(!(color.getRed() == 255 && color.getGreen() == 255 && color
@@ -900,27 +892,17 @@ public class CTabRendering extends CTabFolderRenderer {
 		parent.redraw();
 	}
 
-	@Inject
-	@Optional
-	public void setInnerKeyline(@Named("innerKeyline") Color color) {
+	public void setInnerKeyline(Color color) {
 		this.innerKeyline = color;
 		parent.redraw();
 	}
 
-	@Inject
-	@Optional
-	public void setActiveToolbarGradient(
-			@Named("activeToolbarColors") Color[] color,
-			@Named("activeToolbarPercents") int[] percents) {
+	public void setActiveToolbarGradient(Color[] color, int[] percents) {
 		activeToolbar = color;
 		activePercents = percents;
 	}
 
-	@Inject
-	@Optional
-	public void setInactiveToolbarGradient(
-			@Named("inactiveToolbarColors") Color[] color,
-			@Named("inactiveToolbarPercents") int[] percents) {
+	public void setInactiveToolbarGradient(Color[] color, int[] percents) {
 		inactiveToolbar = color;
 		inactivePercents = percents;
 	}

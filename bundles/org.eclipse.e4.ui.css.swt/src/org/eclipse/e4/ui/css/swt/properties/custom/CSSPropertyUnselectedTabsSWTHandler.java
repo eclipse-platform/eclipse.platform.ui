@@ -8,6 +8,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import java.lang.reflect.Method;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
@@ -38,17 +40,13 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 			folder.setBackground(colors, percents, true);
 			
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-			Object cssContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
-			if (cssContext != null && cssContext instanceof IEclipseContext) {
-				IEclipseContext context = (IEclipseContext) cssContext;
-				if (pseudo != null && pseudo.equals("selected")) {
-					context.set("activeToolbarColors", colors);
-					context.set("activeToolbarPercents", percents);
-				} else {
-					context.set("inactiveToolbarColors", colors);
-					context.set("inactiveToolbarPercents", percents);
-				}
-				ContextInjectionFactory.inject(renderer, context); 
+			
+			if (pseudo != null && pseudo.equals("selected")) {
+				Method m = renderer.getClass().getMethod("setActiveToolbarGradient",  new Class[]{Color[].class, int[].class});
+				m.invoke(renderer, colors, percents);
+			} else {
+				Method m = renderer.getClass().getMethod("setInactiveToolbarGradient",  new Class[]{Color[].class, int[].class});
+				m.invoke(renderer, colors, percents);
 			}
 		}
 	}

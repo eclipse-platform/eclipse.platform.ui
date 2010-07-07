@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
-import java.util.HashMap;
-
 import java.lang.reflect.Method;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
@@ -26,8 +22,6 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyOuterKeylineSWTHandler extends AbstractCSSPropertySWTHandler {
 
-	HashMap contexts = new HashMap();
-	
 	public static final ICSSPropertyHandler INSTANCE = new CSSPropertyOuterKeylineSWTHandler();
 	
 	@Override
@@ -36,27 +30,9 @@ public class CSSPropertyOuterKeylineSWTHandler extends AbstractCSSPropertySWTHan
 		if (!(control instanceof CTabFolder)) return;
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
-			
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-			Object cssContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
-			if (cssContext != null && cssContext instanceof IEclipseContext) {
-				IEclipseContext context = (IEclipseContext) cssContext;
-				IEclipseContext childContext = (IEclipseContext) contexts.get(control);
-				if (childContext == null) {
-						childContext = context.createChild();
-						contexts.put(control, childContext);
-				}
-				childContext.set("outerKeyline", newColor);
-				ContextInjectionFactory.inject(renderer, childContext); 
-			} else {
-				Method[] methods = renderer.getClass().getMethods();
-				for (int i = 0; i < methods.length; i++) {
-					Method m = methods[i];
-					if (m.getName().toLowerCase().contains("setouterkeyline")) {
-						m.invoke(renderer, newColor);
-					}
-				}
-			}
+			Method m = renderer.getClass().getMethod("setOuterKeyline", new Class[]{Color.class});
+			m.invoke(renderer, newColor);
 		}
 	}
 	

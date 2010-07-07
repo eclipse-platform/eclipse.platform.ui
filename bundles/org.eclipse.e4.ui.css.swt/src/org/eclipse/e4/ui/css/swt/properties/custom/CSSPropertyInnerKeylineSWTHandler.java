@@ -33,22 +33,9 @@ public class CSSPropertyInnerKeylineSWTHandler extends AbstractCSSPropertySWTHan
 		if (!(control instanceof CTabFolder)) return;
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
-			
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-			Object cssContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
-			if (cssContext != null && cssContext instanceof IEclipseContext) {
-				IEclipseContext context = (IEclipseContext) cssContext;
-				context.set("innerKeyline", newColor);
-				ContextInjectionFactory.inject(renderer, context); 
-			} else {
-				Method[] methods = renderer.getClass().getMethods();
-				for (int i = 0; i < methods.length; i++) {
-					Method m = methods[i];
-					if (m.getName().toLowerCase().contains("setinnerkeyline")) {
-						m.invoke(renderer, newColor);
-					}
-				}
-			}
+			Method m = renderer.getClass().getMethod("setInnerKeyline", new Class[]{Color.class});
+			m.invoke(renderer, newColor);
 		}
 	}
 	

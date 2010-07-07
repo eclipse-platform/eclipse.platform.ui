@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import java.lang.reflect.Method;
+import org.eclipse.swt.graphics.Color;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
@@ -29,16 +32,9 @@ public class CSSPropertyShadowVisibleSWTHandler extends AbstractCSSPropertySWTHa
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if (!(control instanceof CTabFolder)) return;
 		boolean shadowVisible = (Boolean) engine.convert(value, Boolean.class, null);
-		
 		CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-		
-		Object appContext = control.getDisplay().getData("org.eclipse.e4.ui.css.context");
-		if (appContext != null && appContext instanceof IEclipseContext) {
-			IEclipseContext context = (IEclipseContext) appContext;
-			IEclipseContext childContext = context.createChild();
-			childContext.set("shadowVisible", new Boolean(shadowVisible));
-			ContextInjectionFactory.inject(renderer, childContext); 
-		}
+		Method m = renderer.getClass().getMethod("setShadowVisible",  new Class[]{boolean.class});
+		m.invoke(renderer, shadowVisible);
 	}
 	
 	protected String retrieveCSSProperty(Control control, String property,
