@@ -153,6 +153,7 @@ import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
@@ -594,14 +595,27 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				fill(subMenu, menuManager);
 				menu.getChildren().add(subMenu);
 			} else if (item instanceof CommandContributionItem) {
-				String id = ((CommandContributionItem) item).getCommand().getId();
+				CommandContributionItem cci = (CommandContributionItem) item;
+				String id = cci.getCommand().getId();
 				for (MCommand command : application.getCommands()) {
 					if (id.equals(command.getElementId())) {
+						CommandContributionItemParameter data = cci.getData();
 						MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
 								.createHandledMenuItem();
 						menuItem.setCommand(command);
-						menuItem.setLabel(command.getCommandName());
-						menuItem.setIconURI(getIconURI(id));
+						if (data.label != null) {
+							menuItem.setLabel(data.label);
+						} else {
+							menuItem.setLabel(command.getCommandName());
+						}
+						if (data.mnemonic != null) {
+							menuItem.setMnemonics(data.mnemonic);
+						}
+						if (data.icon != null) {
+							menuItem.setIconURI(getIconURI(data.icon));
+						} else {
+							menuItem.setIconURI(getIconURI(id));
+						}
 						menu.getChildren().add(menuItem);
 						break;
 					}
@@ -641,7 +655,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
 									.createHandledMenuItem();
 							menuItem.setCommand(command);
-							menuItem.setLabel(command.getCommandName());
+							if (action.getText() != null) {
+								menuItem.setLabel(action.getText());
+							} else {
+								menuItem.setLabel(command.getCommandName());
+							}
 							menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
 
 							switch (action.getStyle()) {
@@ -732,18 +750,29 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			} else if (item instanceof IContributionManager) {
 				fill(container, (IContributionManager) item);
 			} else if (item instanceof CommandContributionItem) {
-				String id = ((CommandContributionItem) item).getCommand().getId();
+				CommandContributionItem cci = (CommandContributionItem) item;
+				String id = cci.getCommand().getId();
 				for (MCommand command : application.getCommands()) {
 					if (id.equals(command.getElementId())) {
+						CommandContributionItemParameter data = cci.getData();
 						MHandledToolItem menuItem = MenuFactoryImpl.eINSTANCE
 								.createHandledToolItem();
 						menuItem.setCommand(command);
 
-						String iconURI = getIconURI(id);
+						String iconURI = null;
+						if (data.icon != null) {
+							iconURI = getIconURI(data.icon);
+						}
+						if (iconURI == null) {
+							iconURI = getIconURI(id);
+						}
 						if (iconURI == null) {
 							menuItem.setLabel(command.getCommandName());
 						} else {
 							menuItem.setIconURI(iconURI);
+						}
+						if (data.tooltip != null) {
+							menuItem.setTooltip(data.tooltip);
 						}
 
 						container.getChildren().add(menuItem);
@@ -776,6 +805,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 								}
 							} else {
 								toolItem.setIconURI(iconURI);
+							}
+							if (action.getToolTipText() != null) {
+								toolItem.setTooltip(action.getToolTipText());
 							}
 
 							switch (action.getStyle()) {

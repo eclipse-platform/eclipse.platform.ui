@@ -170,6 +170,8 @@ public class CommandContributionItem extends ContributionItem {
 
 	private ImageDescriptor contributedHoverIcon;
 
+	private IServiceLocator serviceLocator;
+
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
@@ -185,6 +187,8 @@ public class CommandContributionItem extends ContributionItem {
 		contributedIcon = contributionParameters.icon;
 		contributedDisabledIcon = contributionParameters.disabledIcon;
 		contributedHoverIcon = contributionParameters.hoverIcon;
+		this.serviceLocator = contributionParameters.serviceLocator;
+
 
 		this.icon = contributionParameters.icon;
 		this.disabledIcon = contributionParameters.disabledIcon;
@@ -992,4 +996,28 @@ public class CommandContributionItem extends ContributionItem {
 		}
 
 	};
+
+	/**
+	 * Provide info on the rendering data contained in this item.
+	 * 
+	 * @return a {@link CommandContributionItemParameter}. Valid fields are
+	 *         serviceLocator, id, style, icon, disabledIcon, hoverIcon, label,
+	 *         helpContextId, mnemonic, tooltip. The Object will never be
+	 *         <code>null</code>, although any of the fields may be
+	 *         <code>null</code>.
+	 * @since 3.100
+	 */
+	public CommandContributionItemParameter getData() {
+		CommandContributionItemParameter data = new CommandContributionItemParameter(
+				serviceLocator, getId(), null, style);
+		data.icon = contributedIcon;
+		data.disabledIcon = contributedDisabledIcon;
+		data.hoverIcon = contributedHoverIcon;
+		data.label = contributedLabel;
+		data.helpContextId = helpContextId;
+		data.mnemonic = mnemonic;
+		data.tooltip = tooltip;
+		return data;
+	}
+
 }
