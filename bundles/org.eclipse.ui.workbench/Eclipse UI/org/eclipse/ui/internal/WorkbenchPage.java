@@ -443,7 +443,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPart mpart = findPart(part);
 		if (mpart != null) {
 			partService.activate(mpart);
-			part.setFocus();
 		}
 	}
 
