@@ -25,12 +25,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -53,17 +50,6 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		super.init(context);
 		application = context.get(MApplication.class);
 	}
-
-	ControlListener childResizeListener = new ControlListener() {
-		public void controlResized(ControlEvent e) {
-			Control ctrl = (Control) e.widget;
-			Control[] changed = { ctrl };
-			ctrl.getShell().layout(changed, SWT.DEFER);
-		}
-
-		public void controlMoved(ControlEvent e) {
-		}
-	};
 
 	/*
 	 * (non-Javadoc)
@@ -190,26 +176,6 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			// if the list hasn't changed at all (no hope)
 			done = (toContribute.size() == 0)
 					|| (toContribute.size() == retryCount);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#childRendered
-	 * (org.eclipse.e4.ui.model.application.MElementContainer,
-	 * org.eclipse.e4.ui.model.application.MUIElement)
-	 */
-	@Override
-	public void childRendered(MElementContainer<MUIElement> parentElement,
-			MUIElement element) {
-		super.childRendered(parentElement, element);
-
-		// Add a size change listener to auto-layout
-		if (element.getWidget() instanceof Control) {
-			final Control ctrl = (Control) element.getWidget();
-			ctrl.addControlListener(childResizeListener);
 		}
 	}
 
