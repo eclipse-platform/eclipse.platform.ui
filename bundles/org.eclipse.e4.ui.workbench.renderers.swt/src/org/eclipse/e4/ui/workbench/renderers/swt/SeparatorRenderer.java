@@ -32,18 +32,20 @@ public class SeparatorRenderer extends SWTPartRenderer {
 			return null;
 		}
 		int objIndex = calcIndex(element);
-		MUIElement nextVisibleChild = getNextVisibleChild(element, objIndex);
-		if (nextVisibleChild == null) {
-			return null;
-		}
-		if (nextVisibleChild.isVisible()
-				&& (nextVisibleChild instanceof MMenuSeparator || nextVisibleChild instanceof MToolBarSeparator)) {
-			return null;
-		}
-		// determine the index at which we should create the new item
 		int addIndex = calcVisibleIndex(element);
+		MUIElement nextVisibleChild = getNextVisibleChild(element, objIndex);
 		if (addIndex == 0) {
-			return null;
+			if (element instanceof MMenuSeparator || nextVisibleChild == null) {
+				return null;
+			}
+		} else {
+			if (nextVisibleChild == null) {
+				return null;
+			}
+			if (nextVisibleChild.isVisible()
+					&& (nextVisibleChild instanceof MMenuSeparator || nextVisibleChild instanceof MToolBarSeparator)) {
+				return null;
+			}
 		}
 		if (element instanceof MMenuSeparator) {
 			Menu menu = null;
