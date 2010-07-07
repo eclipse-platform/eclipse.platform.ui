@@ -501,7 +501,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 
 		createProgressIndicator(shell);
-		createHeapStatus(shell);
+		showHeapStatus(getShowHeapStatus());
 
 		eventBroker.subscribe(
 				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
