@@ -237,6 +237,12 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 						if (oldCTF.getTopRight() == oldTB)
 							oldCTF.setTopRight(null);
 					}
+
+					// Dispose the current TB (if any)
+					Control curTopRight = ctf.getTopRight();
+					if (curTopRight != null && !curTopRight.isDisposed())
+						curTopRight.dispose();
+
 					oldTB.setParent(ctf);
 					ctf.setTopRight(oldTB);
 				}
