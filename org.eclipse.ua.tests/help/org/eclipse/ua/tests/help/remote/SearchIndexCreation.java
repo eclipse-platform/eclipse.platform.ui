@@ -51,6 +51,20 @@ public class SearchIndexCreation extends TestCase {
 		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test7.html", true);
 		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test8.htm", true);
 		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test77.htm", false); // Does not exist
+		index.endAddBatch(false, true);
+		int finalCallCount = MockContentServlet.getCallcount();
+		assertEquals("Remote server called", 0, finalCallCount - initialCallCount);
+	}
+	
+	public void testSearchIndexMakesNoRemoteCalls2() throws Throwable {
+		int initialCallCount = MockContentServlet.getCallcount();
+		SearchIndexWithIndexingProgress index = new SearchIndexWithIndexingProgress("en-us", analyzerDesc, HelpPlugin
+				.getTocManager());
+		index.beginAddBatch(true);
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test7.html", true);
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test8.htm", true);
+		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test77.htm", false); // Does not exist
+		index.endAddBatch(false, true);
 		int finalCallCount = MockContentServlet.getCallcount();
 		assertEquals("Remote server called", 0, finalCallCount - initialCallCount);
 	}
@@ -64,6 +78,7 @@ public class SearchIndexCreation extends TestCase {
 		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test7.html", true);
 		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test8.htm", true);
 		addHrefToIndex(index, "/org.eclipse.ua.tests/data/help/search/test77.htm", false); // Does not exist
+		index.endAddBatch(false, true);
 		int finalCallCount = MockContentServlet.getCallcount();
 		assertEquals("Remote server called", 0, finalCallCount - initialCallCount);
 	}
