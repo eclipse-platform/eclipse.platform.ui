@@ -40,8 +40,6 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class DirectToolItemEditor extends ToolItemEditor {
-	private Image image;
-	private Image tbrImage;
 
 	public DirectToolItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain, editor, project);
@@ -50,26 +48,21 @@ public class DirectToolItemEditor extends ToolItemEditor {
 	@Override
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
-			if (((MUIElement) element).isToBeRendered()) {
-				if (image == null) {
-					try {
-						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/DirectToolItem.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+			MUIElement uiElement = (MUIElement) element;
+			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
+				try {
+					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/DirectToolItem.gif"));//$NON-NLS-1$
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				return image;
 			} else {
-				if (tbrImage == null) {
-					try {
-						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/DirectToolItem.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				try {
+					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/DirectToolItem.gif"));//$NON-NLS-1$
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				return tbrImage;
 			}
 		}
 

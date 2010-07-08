@@ -59,7 +59,11 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 				Styler styler = null;
 
 				if (o instanceof MUIElement) {
-					if (!((MUIElement) o).isToBeRendered()) {
+					if (!((MUIElement) o).isVisible()) {
+						label += "<invisible>";
+						styler = NOT_RENDERED_STYLER;
+					} else if (!((MUIElement) o).isToBeRendered()) {
+						label += "<not rendered>";
 						styler = NOT_RENDERED_STYLER;
 					}
 				}
