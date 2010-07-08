@@ -44,6 +44,7 @@ public class ToolControlRenderer extends SWTPartRenderer {
 		final Composite newComposite = new Composite((Composite) parentWidget,
 				SWT.NONE);
 		newComposite.setLayout(new FillLayout());
+		bindWidget(element, newComposite);
 
 		// Create a context just to contain the parameters for injection
 		IContributionFactory contributionFactory = parentContext
