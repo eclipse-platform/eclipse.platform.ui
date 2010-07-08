@@ -1788,6 +1788,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			List<String> ids = ModeledPageLayout.getIds(newPersp,
 					ModeledPageLayout.ACTION_SET_TAG);
 			legacyWindow.populateTrimContributions(ids, true);
+
+			legacyWindow.firePerspectiveActivated(WorkbenchPage.this, perspective);
 		}
 	};
 
