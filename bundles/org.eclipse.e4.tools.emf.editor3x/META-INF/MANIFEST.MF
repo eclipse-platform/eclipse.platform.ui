@@ -26,7 +26,6 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0",
  org.eclipse.e4.tools.compat;bundle-version="1.0.0",
  org.eclipse.e4.tools.services;bundle-version="1.0.0",
  org.eclipse.e4.tools;bundle-version="0.9.0",
- org.eclipse.jdt.ui;bundle-version="3.6.0",
- org.eclipse.search;bundle-version="3.6.0"
-Service-Component: OSGI-INF/pdecontributionprovider.xml, OSGI-INF/xmiresourcecontextfunction.xml, OSGI-INF/projectfunction.xml, OSGI-INF/workspacee4xmiprovider.xml
+ org.eclipse.jdt.ui;bundle-version="3.6.0"
+Service-Component: OSGI-INF/pdecontributionprovider.xml, OSGI-INF/xmiresourcecontextfunction.xml, OSGI-INF/projectfunction.xml, OSGI-INF/pdee4xmiprovider.xml
 Bundle-ActivationPolicy: lazy

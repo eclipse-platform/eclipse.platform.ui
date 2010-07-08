@@ -90,9 +90,10 @@ public class FindImportElementDialog extends TitleAreaDialog {
 				EObject o = (EObject) cell.getElement();
 				cell.setImage(editor.getImage(o, searchText.getDisplay()));
 
-				StyledString styledString = new StyledString(editor.getLabel(o), null);
+				MApplicationElement appEl = (MApplicationElement) o;
+				StyledString styledString = new StyledString(editor.getLabel(o) + " (" + appEl.getElementId() + ")", null);
 				String detailLabel = editor.getDetailLabel(o);
-				if (detailLabel != null) {
+				if (detailLabel != null && !detailLabel.equals(appEl.getElementId())) {
 					styledString.append(" - " + detailLabel, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				}
 
@@ -122,8 +123,8 @@ public class FindImportElementDialog extends TitleAreaDialog {
 					currentResultHandler.cancled = true;
 				}
 				list.clear();
-				currentResultHandler = new ModelResultHandlerImpl(list);
 				Filter filter = new Filter(element, searchText.getText());
+				currentResultHandler = new ModelResultHandlerImpl(list, filter, editor);
 				collector.findModelElements(filter, currentResultHandler);
 			}
 		});
@@ -169,16 +170,34 @@ public class FindImportElementDialog extends TitleAreaDialog {
 	private static class ModelResultHandlerImpl implements ModelResultHandler {
 		private boolean cancled = false;
 		private IObservableList list;
+		private Filter filter;
+		private AbstractComponentEditor editor;
 
-		public ModelResultHandlerImpl(IObservableList list) {
+		public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor) {
 			this.list = list;
+			this.filter = filter;
+			this.editor = editor;
 		}
 
 		public void result(EObject data) {
 			if (!cancled) {
-				list.add(data);
+				if (data instanceof MApplicationElement) {
+					String elementId = ((MApplicationElement) data).getElementId();
+					if (elementId != null && elementId.trim().length() > 0) {
+						if (filter.elementIdPattern.matcher(elementId).matches()) {
+							list.add(data);
+							return;
+						}
+					}
+
+					String label = editor.getDetailLabel(data);
+					if (label != null && label.trim().length() > 0) {
+						if (filter.elementIdPattern.matcher(label).matches()) {
+							list.add(data);
+						}
+					}
+				}
 			}
 		}
-
 	}
 }

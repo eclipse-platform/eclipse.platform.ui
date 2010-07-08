@@ -12,7 +12,7 @@ public interface IModelElementProvider {
 		public Filter(EObject object, String elementId) {
 			this.object = object;
 			this.elementId = elementId;
-			this.elementIdPattern = Pattern.compile(".*" + elementId.replaceAll("\\.", "\\\\.") + ".*");
+			this.elementIdPattern = Pattern.compile(".*" + elementId.replaceAll("\\.", "\\\\.").replaceAll("\\*", ".*") + ".*");
 		}
 	}
 
