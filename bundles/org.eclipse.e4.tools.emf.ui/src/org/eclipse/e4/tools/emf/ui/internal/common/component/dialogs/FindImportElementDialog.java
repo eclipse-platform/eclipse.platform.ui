@@ -83,7 +83,9 @@ public class FindImportElementDialog extends TitleAreaDialog {
 		l = new Label(container, SWT.PUSH);
 
 		viewer = new TableViewer(container);
-		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 200;
+		viewer.getControl().setLayoutData(gd);
 		viewer.setLabelProvider(new StyledCellLabelProvider() {
 			@Override
 			public void update(ViewerCell cell) {
@@ -191,7 +193,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 					}
 
 					String label = editor.getDetailLabel(data);
-					if (label != null && label.trim().length() > 0) {
+					if (elementId != null && label != null && label.trim().length() > 0) {
 						if (filter.elementIdPattern.matcher(label).matches()) {
 							list.add(data);
 						}

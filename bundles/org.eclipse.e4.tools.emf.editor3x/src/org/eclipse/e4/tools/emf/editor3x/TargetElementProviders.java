@@ -1,0 +1,122 @@
+package org.eclipse.e4.tools.emf.editor3x;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider;
+import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.Filter;
+import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandler;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.pde.core.plugin.IPluginModelBase;
+import org.eclipse.pde.internal.core.PDECore;
+import org.eclipse.pde.internal.core.PDEExtensionRegistry;
+import org.eclipse.pde.internal.core.PluginModelManager;
+
+public class TargetElementProviders implements IModelElementProvider {
+	private ResourceSet resourceSet;
+	
+	public void getModelElements(Filter filter, ModelResultHandler handler) {
+		if( resourceSet == null ) {
+			resourceSet = new ResourceSetImpl();
+			PDEExtensionRegistry reg = new PDEExtensionRegistry();
+			IExtension[] extensions = reg.findExtensions("org.eclipse.e4.workbench.model", true);
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			
+			for( IExtension ext : extensions ) {
+				for( IConfigurationElement el : ext.getConfigurationElements() ) {
+					if( el.getName().equals("fragment") ) {
+						URI uri;
+//						System.err.println("Model-Ext: Checking: " + ext.getContributor().getName());
+						IProject p = root.getProject(ext.getContributor().getName());
+						if( p.exists() && p.isOpen() ) {
+							uri = URI.createPlatformResourceURI(ext.getContributor().getName() + "/" + el.getAttribute("uri"), true);	
+						} else {
+							uri = URI.createURI("platform:/plugin/" + ext.getContributor().getName() + "/" + el.getAttribute("uri") );							
+						}
+//						System.err.println(uri);
+						try {
+							resourceSet.getResource(uri, true);							
+						} catch (Exception e) {
+							e.printStackTrace();
+//							System.err.println("=============> Failing");
+						}
+
+					}
+				}
+			}
+			
+			extensions = reg.findExtensions("org.eclipse.core.runtime.products", true);
+			for( IExtension ext : extensions ) {
+				for( IConfigurationElement el : ext.getConfigurationElements() ) {
+					if( el.getName().equals("product") ) {
+						for( IConfigurationElement prop: el.getChildren("property") ) {
+							if( prop.getAttribute("name").equals("applicationXMI") ) {
+								String v = prop.getAttribute("value");
+								String[] s = v.split("/");
+								URI uri;
+//								System.err.println("Product-Ext: Checking: " + v + " => P:" +  s[0] + "");
+								IProject p = root.getProject(s[0]);
+								if( p.exists() && p.isOpen() ) {
+									uri = URI.createPlatformResourceURI(v, true );	
+								} else {
+									uri = URI.createURI("platform:/plugin/" + v );
+								}
+								
+//								System.err.println(uri);
+								try {
+									resourceSet.getResource(uri, true);							
+								} catch (Exception e) {
+									e.printStackTrace();
+//									System.err.println("=============> Failing");
+								}
+								break;
+							}
+						}
+					}
+				}
+			}			
+		}
+		
+		applyFilter(filter, handler);
+	}
+	
+	private void applyFilter(Filter filter, ModelResultHandler handler) {
+		for (Resource res : resourceSet.getResources()) {
+			if (res.getURI().equals(filter.object.eResource().getURI())) {
+//				System.err.println("Skipped because self");
+			} else {
+				TreeIterator<EObject> it = EcoreUtil.getAllContents(res,
+						true);
+				while (it.hasNext()) {
+					EObject o = it.next();
+					if (o.eContainingFeature() == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
+//						System.err
+//								.println("Skipped because it is an import");
+					} else {
+						if (o.eClass().equals(filter.object.eClass())) {
+							handler.result(o);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void clearCache() {
+		for (Resource r : resourceSet.getResources()) {
+			r.unload();
+		}
+		resourceSet = null;
+	}
+	
+}
