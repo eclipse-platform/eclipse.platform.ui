@@ -210,42 +210,6 @@ create the cheat sheet can be found <a href="legacy_tests.htm">here</a>.</p>
 
 <h4>D1: Help preferences and Webapp extensibility </h4>
 
-<p >Create a file plugin_customization.ini in the root of
-Eclipse installation. Edit the file and paste the following key/values pairs: </p>
-
-<p><code>org.eclipse.help/baseTOCS=/org.eclipse.platform.doc.isv/toc.xml,/org.eclipse.jdt.doc.isv/toc.xml</code><span
-style='font-family:"Courier New"'><br>
-org.eclipse.help/ignoredTOCS=/org.eclipse.platform.doc.user/toc.xml,/org.eclipse.jdt.doc.user/toc.xml,/org.eclipse.pde.doc.user/toc.xml<br>
-org.eclipse.help/HELP_DATA=<br>
-</span><span
-style='font-family:"Courier New"'><br>
-org.eclipse.help.base/topic_css=/org.eclipse.ua.tests/non_junit/css/topic.css<br>
-org.eclipse.help.base/nav_css=/org.eclipse.ua.tests/non_junit/css/nav.css<br>
-org.eclipse.help.base/narrow_css=/org.eclipse.ua.tests/non_junit/css/narrow.css<br>
-org.eclipse.help.base/disabled_css=/org.eclipse.ua.tests/non_junit/css/disabled.css<br>
-<br>
-org.eclipse.help.base/help_home=http://www.eclipse.org<br>
-<br>
-org.eclipse.help.base/banner=/org.eclipse.help.webapp/advanced/banner.html<br>
-org.eclipse.help.base/banner_height=60<br>
-org.eclipse.help.base/footer=/org.eclipse.help.webapp/advanced/banner.html<br>
-org.eclipse.help.base/footer_height=40<br>
-org.eclipse.help.base/help_home=http://www.eclipse.org<br>
-org.eclipse.help.base/linksView=false<br>
-org.eclipse.help.base/bookmarksView=false<br>
-org.eclipse.help.base/windowTitlePrefix=false<br>
-org.eclipse.help.base/advanced.toolbarBackground=green<br>
-org.eclipse.help.base/advanced.viewBackground=yellow<br>
-org.eclipse.help.base/advanced.toolbarFont=bold 1.0em sans-serif<br>
-org.eclipse.help.base/advanced.viewFont=italic 1.0em sans-serif<br>
-org.eclipse.help.base/showDisabledActivityTopics=never<br>
-org.eclipse.help.base/activeHelp=false<br>
-org.eclipse.ua.tests/extraFrame=true<br>
-org.eclipse.ua.tests/extraButton=true<br>
-org.eclipse.ua.tests/extraView=true </span></p>
-
-<p>&nbsp;</p>
-
 <ol>
   <li>
 
@@ -260,9 +224,7 @@ org.eclipse.ua.tests/extraView=true </span></p>
   </li>
   <li>
 
-<p  >Launch Eclipse, pointing to the 
-preferences customization, e.g. eclipse -pluginCustomization 
-plugin_customization.ini</p>
+<p  >Launch Eclipse, with the parameter <code>-product org.eclipse.ua.tests.testproduct</code>, e.g. eclipse -product org.eclipse.ua.tests.testproduct</p>
 
   </li>
   <li>
