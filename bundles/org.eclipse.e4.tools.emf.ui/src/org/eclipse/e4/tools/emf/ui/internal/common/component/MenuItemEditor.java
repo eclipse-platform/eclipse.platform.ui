@@ -26,6 +26,7 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuItemIconDialogEditor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
@@ -58,7 +59,8 @@ import org.eclipse.swt.widgets.Text;
 public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private Image menuImage;
+	private Image image;
+	private Image tbrImage;
 	private EMFDataBindingContext context;
 	protected IProject project;
 	private EStackLayout stackLayout;
@@ -70,16 +72,31 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if (menuImage == null) {
-			try {
-				menuImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/MenuItem.gif")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (element instanceof MUIElement) {
+			if (((MUIElement) element).isToBeRendered()) {
+				if (image == null) {
+					try {
+						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/MenuItem.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return image;
+			} else {
+				if (tbrImage == null) {
+					try {
+						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/MenuItem.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return tbrImage;
 			}
 		}
 
-		return menuImage;
+		return null;
 	}
 
 	@Override

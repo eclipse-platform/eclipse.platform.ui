@@ -31,6 +31,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.WindowIconDialogEditor;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -78,6 +79,7 @@ public class WindowEditor extends AbstractComponentEditor {
 	private Action addMainMenu;
 	private Button createRemoveMainMenu;
 	private EStackLayout stackLayout;
+	private Image tbrImage;
 
 	public WindowEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain, editor);
@@ -92,16 +94,31 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if (image == null) {
-			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Window.gif"));
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (element instanceof MUIElement) {
+			if (((MUIElement) element).isToBeRendered()) {
+				if (image == null) {
+					try {
+						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Window.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return image;
+			} else {
+				if (tbrImage == null) {
+					try {
+						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/Window.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return tbrImage;
 			}
 		}
 
-		return image;
+		return null;
 	}
 
 	@Override

@@ -70,6 +70,8 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private Image vImage;
 	private Image hImage;
+	private Image vTbrImage;
+	private Image hTbrImage;
 	private EMFDataBindingContext context;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
@@ -83,29 +85,56 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		boolean horizontal = ((MPartSashContainer) element).isHorizontal();
 
-		if (vImage == null && !horizontal) {
-			try {
-				vImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer_vertical.gif")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		if (!horizontal) {
+			if (((MPartSashContainer) element).isToBeRendered()) {
+				if (vImage == null) {
+					try {
+						vImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer_vertical.gif")); //$NON-NLS-1$	
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 
-		if (hImage == null && horizontal) {
-			try {
-				hImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer.gif")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				return vImage;
+			} else {
+				if (vTbrImage == null) {
+					try {
+						vTbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/PartSashContainer_vertical.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return vTbrImage;
 			}
 		}
 
 		if (horizontal) {
-			return hImage;
-		} else {
-			return vImage;
+			if (((MPartSashContainer) element).isToBeRendered()) {
+				if (hImage != null) {
+					try {
+						hImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return hImage;
+			} else {
+				if (hTbrImage != null) {
+					try {
+						hTbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/PartSashContainer.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return hTbrImage;
+
+			}
 		}
+		return null;
 	}
 
 	@Override

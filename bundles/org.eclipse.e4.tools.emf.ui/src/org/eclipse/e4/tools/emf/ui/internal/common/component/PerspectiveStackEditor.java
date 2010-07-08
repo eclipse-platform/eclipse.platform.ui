@@ -24,6 +24,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -64,6 +65,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
+	private Image tbrImage;
 
 	public PerspectiveStackEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
@@ -71,16 +73,31 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if (image == null) {
-			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PerspectiveStack.gif")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (element instanceof MUIElement) {
+			if (((MUIElement) element).isToBeRendered()) {
+				if (image == null) {
+					try {
+						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PerspectiveStack.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return image;
+			} else {
+				if (tbrImage == null) {
+					try {
+						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/PerspectiveStack.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return tbrImage;
 			}
 		}
 
-		return image;
+		return null;
 	}
 
 	@Override

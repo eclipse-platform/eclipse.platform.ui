@@ -20,6 +20,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class DirectToolItemEditor extends ToolItemEditor {
 	private Image image;
+	private Image tbrImage;
 
 	public DirectToolItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain, editor, project);
@@ -47,16 +49,31 @@ public class DirectToolItemEditor extends ToolItemEditor {
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if (image == null) {
-			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/DirectToolItem.gif")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (element instanceof MUIElement) {
+			if (((MUIElement) element).isToBeRendered()) {
+				if (image == null) {
+					try {
+						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/DirectToolItem.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return image;
+			} else {
+				if (tbrImage == null) {
+					try {
+						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/DirectToolItem.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return tbrImage;
 			}
 		}
 
-		return image;
+		return null;
 	}
 
 	@Override

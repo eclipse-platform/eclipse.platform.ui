@@ -25,6 +25,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
@@ -70,6 +71,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
+	private Image tbrImage;
 
 	private static class Struct {
 		private final String label;
@@ -90,16 +92,31 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if (image == null) {
-			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/TrimContribution.gif")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (element instanceof MUIElement) {
+			if (((MUIElement) element).isToBeRendered()) {
+				if (image == null) {
+					try {
+						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/TrimContribution.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return image;
+			} else {
+				if (tbrImage == null) {
+					try {
+						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/TrimContribution.gif")); //$NON-NLS-1$
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return tbrImage;
 			}
 		}
 
-		return image;
+		return null;
 	}
 
 	@Override
