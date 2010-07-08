@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ public class ViewRegistry implements IViewRegistry {
 
 	private Map<String, IViewDescriptor> descriptors = new HashMap<String, IViewDescriptor>();
 
+	private List<ViewCategory> categories = new ArrayList<ViewCategory>();
+
 	@PostConstruct
 	void postConstruct() {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
@@ -55,12 +58,17 @@ public class ViewRegistry implements IViewRegistry {
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.views"); //$NON-NLS-1$
 		for (IExtension extension : point.getExtensions()) {
 			// find the category first
-			String category = WorkbenchMessages.ICategory_general;
 			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				if (element.getName().equals(IWorkbenchRegistryConstants.TAG_CATEGORY)) {
-					category = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+					ViewCategory category = new ViewCategory(
+							element.getAttribute(IWorkbenchRegistryConstants.ATT_ID),
+							element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
+					categories.add(category);
 				}
 			}
+		}
+
+		for (IExtension extension : point.getExtensions()) {
 			for (IConfigurationElement element : extension.getConfigurationElements()) {
 				if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
 					MPartDescriptor descriptor = BasicFactoryImpl.eINSTANCE.createPartDescriptor();
@@ -78,7 +86,7 @@ public class ViewRegistry implements IViewRegistry {
 
 					List<String> tags = descriptor.getTags();
 					tags.add("View"); //$NON-NLS-1$
-					tags.add("categoryTag:" + category); //$NON-NLS-1$
+
 					descriptor.setCloseable(true);
 					descriptor.setAllowMultiple(Boolean.parseBoolean(element
 							.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
@@ -98,9 +106,22 @@ public class ViewRegistry implements IViewRegistry {
 						descriptor.setIconURI(builder.toString());
 					}
 
+					ViewDescriptor viewDescriptor = new ViewDescriptor(application, descriptor,
+							element);
+
 					application.getDescriptors().add(descriptor);
-					descriptors.put(descriptor.getElementId(), new ViewDescriptor(application,
-							descriptor, element));
+					descriptors.put(descriptor.getElementId(), viewDescriptor);
+
+					String categoryId = element
+							.getAttribute(IWorkbenchRegistryConstants.ATT_CATEGORY);
+					ViewCategory category = findCategory(categoryId);
+
+					if (category == null) {
+						tags.add("categoryTag:" + WorkbenchMessages.ICategory_other); //$NON-NLS-1$	
+					} else {
+						tags.add("categoryTag:" + category.getLabel()); //$NON-NLS-1$
+						category.addDescriptor(viewDescriptor);
+					}
 				}
 			}
 		}
@@ -116,9 +137,7 @@ public class ViewRegistry implements IViewRegistry {
 	 * @see org.eclipse.ui.views.IViewRegistry#getCategories()
 	 */
 	public IViewCategory[] getCategories() {
-		// FIXME: compat getCategories
-		E4Util.unsupported("getCategories"); //$NON-NLS-1$
-		return null;
+		return categories.toArray(new IViewCategory[categories.size()]);
 	}
 
 	/*
@@ -149,11 +168,18 @@ public class ViewRegistry implements IViewRegistry {
 	}
 
 	/**
-	 * @param string
+	 * @param id
 	 * @return
 	 */
-	public IViewCategory findCategory(String string) {
-		// TODO Auto-generated method stub
+	public ViewCategory findCategory(String id) {
+		if (id == null) {
+			return null;
+		}
+		for (ViewCategory category : categories) {
+			if (id.equals(category.getId())) {
+				return category;
+			}
+		}
 		return null;
 	}
 
