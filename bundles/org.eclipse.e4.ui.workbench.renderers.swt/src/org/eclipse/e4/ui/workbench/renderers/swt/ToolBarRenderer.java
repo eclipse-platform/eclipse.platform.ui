@@ -30,6 +30,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 
@@ -98,8 +99,23 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		// Since there's no place to 'store' a child that's not in a menu
 		// we'll blow it away and re-create on an add
 		Widget widget = (Widget) child.getWidget();
-		if (widget != null && !widget.isDisposed())
+		if (widget != null && !widget.isDisposed()) {
 			widget.dispose();
+		}
+		ToolBar toolbar = (ToolBar) getUIContainer(child);
+		if (toolbar != null && !toolbar.isDisposed()) {
+			toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
+		}
+	}
+
+	@Override
+	public void childRendered(MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
+		super.childRendered(parentElement, element);
+		ToolBar toolbar = (ToolBar) getUIContainer(element);
+		if (toolbar != null && !toolbar.isDisposed()) {
+			toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
+		}
 	}
 
 	/*
