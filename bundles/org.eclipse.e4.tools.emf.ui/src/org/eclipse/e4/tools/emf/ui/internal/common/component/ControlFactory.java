@@ -477,4 +477,15 @@ public class ControlFactory {
 			tagText.setText(""); //$NON-NLS-1$
 		}
 	}
+
+	public static void createCheckBox(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty selectionProp, IEMFEditValueProperty modelProp) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setText(label);
+		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+		Button t = new Button(parent, SWT.CHECK);
+		t.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
+		context.bindValue(selectionProp.observe(t), modelProp.observeDetail(master));
+
+	}
 }
