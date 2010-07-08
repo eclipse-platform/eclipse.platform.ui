@@ -76,7 +76,11 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			cssClassStr += ' ' + tag;
 
 		// this will trigger style()
-		engine.setClassnameAndId(widget, cssClassStr, me.getElementId());
+		String id = me.getElementId();
+		if (id != null) {
+			id = id.replace(".", "-"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		engine.setClassnameAndId(widget, cssClassStr, id);
 	}
 
 	public void bindWidget(MUIElement me, Object widget) {
