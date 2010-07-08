@@ -5,4 +5,5 @@
    <service>
       <provide interface="org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector"/>
    </service>
+   <reference bind="addModelElementContributor" cardinality="0..n" interface="org.eclipse.e4.tools.emf.ui.common.IModelElementProvider" name="IModelElementProvider" policy="dynamic" unbind="removeModelElementContributor"/>
 </scr:component>

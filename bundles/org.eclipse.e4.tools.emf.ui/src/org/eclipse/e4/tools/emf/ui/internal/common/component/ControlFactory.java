@@ -260,7 +260,7 @@ public class ControlFactory {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FindImportElementDialog dialog = new FindImportElementDialog(b.getShell(), editor.getEditingDomain(), (EObject) editor.getMaster().getValue());
+				FindImportElementDialog dialog = new FindImportElementDialog(b.getShell(), editor, (EObject) editor.getMaster().getValue());
 				dialog.open();
 			}
 		});
