@@ -377,18 +377,24 @@ public class E4Application implements IApplication {
 					perceivedRoot = (MContext) context.get(MApplication.class
 							.getName());
 					if (perceivedRoot == null) {
-						log();
 						IEclipseContext ctxt = (IEclipseContext) appContext
 								.getLocal(IContextConstants.ACTIVE_CHILD);
+						if (ctxt == null) {
+							return null;
+						}
+						log();
 						return ctxt.get(MWindow.class);
 					}
 				}
 
 				IEclipseContext current = perceivedRoot.getContext();
 				if (current == null) {
-					log();
 					IEclipseContext ctxt = (IEclipseContext) appContext
 							.getLocal(IContextConstants.ACTIVE_CHILD);
+					if (ctxt == null) {
+						return null;
+					}
+					log();
 					return ctxt.get(MWindow.class);
 				}
 
@@ -413,9 +419,12 @@ public class E4Application implements IApplication {
 				MUIElement window = (MUIElement) current.get(MWindow.class
 						.getName());
 				if (window == null) {
-					log();
 					IEclipseContext ctxt = (IEclipseContext) appContext
 							.getLocal(IContextConstants.ACTIVE_CHILD);
+					if (ctxt == null) {
+						return null;
+					}
+					log();
 					return ctxt.get(MWindow.class);
 				}
 				MElementContainer<?> parent = window.getParent();
