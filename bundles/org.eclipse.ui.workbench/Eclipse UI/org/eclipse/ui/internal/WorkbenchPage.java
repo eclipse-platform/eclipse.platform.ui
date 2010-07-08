@@ -170,6 +170,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		((WorkbenchWindow) getWorkbenchWindow()).getStatusLineManager().update(false);
+
+		IWorkbenchPart workbenchPart = getWorkbenchPart(part);
+		if (workbenchPart instanceof IEditorPart) {
+			navigationHistory.markEditor((IEditorPart) workbenchPart);
+		}
 	}
 
 	private void updateActivePartSources(MPart part) {
