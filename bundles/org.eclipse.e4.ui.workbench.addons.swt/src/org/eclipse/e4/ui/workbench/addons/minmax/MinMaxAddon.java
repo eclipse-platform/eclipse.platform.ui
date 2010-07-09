@@ -12,7 +12,9 @@
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -37,6 +39,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IPageLayout;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -54,24 +57,56 @@ public class MinMaxAddon {
 	@Inject
 	EModelService modelService;
 
+	Map<MWindow, List<MPerspective>> maxPerspMap = new HashMap<MWindow, List<MPerspective>>();
+
 	private EventHandler installHook = new EventHandler() {
 		public void handleEvent(Event event) {
 			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
 			Widget widget = (Widget) event.getProperty(EventTags.NEW_VALUE);
 			if (changedElement instanceof MPartStack && widget instanceof CTabFolder
-					&& !changedElement.getTags().contains("EditorStack") //$NON-NLS-1$
 					&& changedElement.getElementId() != null) {
 				final CTabFolder folder = (CTabFolder) widget;
-				folder.setMinimizeVisible(true);
-				folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
-					public void minimize(CTabFolderEvent event) {
-						minimizeStack((MPartStack) changedElement);
-					}
+				if (!changedElement.getTags().contains("EditorStack")) { //$NON-NLS-1$
+					folder.setMinimizeVisible(true);
+					folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+						public void minimize(CTabFolderEvent event) {
+							minimizeStack((MPartStack) changedElement);
+						}
 
-					public void restore(CTabFolderEvent event) {
-						restoreStack((MPartStack) changedElement);
-					}
-				});
+						public void restore(CTabFolderEvent event) {
+							restoreStack((MPartStack) changedElement);
+						}
+					});
+				} else {
+					folder.setMaximizeVisible(true);
+					folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+						public void maximize(CTabFolderEvent event) {
+							maximizeEA((MPartStack) changedElement);
+						}
+
+						public void restore(CTabFolderEvent event) {
+							unmaximizeEA((MPartStack) changedElement);
+						}
+					});
+				}
+			}
+		}
+	};
+
+	private EventHandler perspectiveChangeListener = new EventHandler() {
+		public void handleEvent(Event event) {
+			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
+			if (!(changedElement instanceof MPerspectiveStack))
+				return;
+
+			MPerspectiveStack ps = (MPerspectiveStack) changedElement;
+			MPerspective curPersp = ps.getSelectedElement();
+			if (curPersp != null) {
+				MWindow win = modelService.getTopLevelWindowFor(curPersp);
+				List<MPerspective> perspList = maxPerspMap.get(win);
+				MPartStack eStack = getEditorStack(win);
+				CTabFolder ctf = (CTabFolder) eStack.getWidget();
+				ctf.setMaximized(perspList != null && perspList.contains(curPersp));
 			}
 		}
 	};
@@ -115,12 +150,28 @@ public class MinMaxAddon {
 		topic = UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN);
 		eventBroker.subscribe(topic, null, perspectiveRemovedListener, false);
+		topic = UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.SELECTEDELEMENT);
+		eventBroker.subscribe(topic, null, perspectiveChangeListener, false);
+	}
+
+	/**
+	 * @param win
+	 * @return
+	 */
+	protected MPartStack getEditorStack(MWindow win) {
+		MUIElement ea = modelService.find(IPageLayout.ID_EDITOR_AREA, win);
+		List<MPartStack> eStacks = modelService.findElements(ea, null, MPartStack.class, null);
+		if (eStacks.size() == 0)
+			return null;
+		return eStacks.get(0);
 	}
 
 	@PreDestroy
 	void unhookListeners() {
 		eventBroker.unsubscribe(installHook);
 		eventBroker.unsubscribe(perspectiveRemovedListener);
+		eventBroker.unsubscribe(perspectiveChangeListener);
 	}
 
 	void minimizeStack(MPartStack stack) {
@@ -185,6 +236,54 @@ public class MinMaxAddon {
 		MToolControl trimStack = (MToolControl) modelService.find(trimId, window);
 		TrimStack ts = (TrimStack) trimStack.getObject();
 		ts.restoreStack();
+		stack.getTags().remove("zoomed");
+	}
+
+	void maximizeEA(MPartStack stack) {
+		MWindow win = modelService.getTopLevelWindowFor(stack);
+		MPerspective persp = modelService.getActivePerspective(win);
+		MUIElement toSearch = persp != null ? persp : win;
+		List<MPartStack> stacks = modelService.findElements(toSearch, null, MPartStack.class, null);
+		for (MPartStack theStack : stacks) {
+			if (!theStack.getTags().contains("EditorStack") && theStack.getWidget() != null
+					&& theStack.isVisible()) {
+				minimizeStack(theStack);
+				theStack.getTags().add("zoomed");
+			}
+		}
+
+		// Remember that the EA is max'd in this perspective for this window
+		List<MPerspective> perspsList = maxPerspMap.get(win);
+		if (perspsList == null) {
+			perspsList = new ArrayList<MPerspective>();
+			maxPerspMap.put(win, perspsList);
+		}
+		perspsList.add(persp);
+
+		CTabFolder ctf = (CTabFolder) stack.getWidget();
+		ctf.setMaximized(true);
+	}
+
+	void unmaximizeEA(MPartStack stack) {
+		MWindow win = modelService.getTopLevelWindowFor(stack);
+		MPerspective persp = modelService.getActivePerspective(win);
+		MUIElement toSearch = persp != null ? persp : win;
+		List<MPartStack> stacks = modelService.findElements(toSearch, null, MPartStack.class, null);
+		for (MPartStack theStack : stacks) {
+			if (!theStack.getTags().contains("EditorStack") && theStack.getWidget() != null
+					&& !theStack.isVisible() && theStack.getTags().contains("zoomed")) {
+				restoreStack(theStack);
+			}
+		}
+
+		// Forget that the EA is max'd in this perspective for this window
+		List<MPerspective> perspsList = maxPerspMap.get(win);
+		if (perspsList != null) {
+			perspsList.remove(persp);
+		}
+
+		CTabFolder ctf = (CTabFolder) stack.getWidget();
+		ctf.setMaximized(false);
 	}
 
 	/**

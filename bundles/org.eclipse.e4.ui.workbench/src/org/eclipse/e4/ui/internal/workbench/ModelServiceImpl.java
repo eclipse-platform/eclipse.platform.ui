@@ -610,4 +610,19 @@ public class ModelServiceImpl implements EModelService {
 			ps.setSelectedElement(null);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getActivePerspective(org.eclipse.e4.ui
+	 * .model.application.ui.basic.MWindow)
+	 */
+	public MPerspective getActivePerspective(MWindow window) {
+		List<MPerspectiveStack> pStacks = findElements(window, null, MPerspectiveStack.class, null);
+		if (pStacks.size() == 1)
+			return pStacks.get(0).getSelectedElement();
+
+		return null;
+	}
 }
