@@ -1,26 +1,37 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandler;
+import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.e4.tools.emf.ui.common.Util.InternalPackage;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
+import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -42,14 +53,14 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-public class FindImportElementDialog extends TitleAreaDialog {
-	private EObject element;
+public class FindParentReferenceElementDialog extends TitleAreaDialog {
+	private MStringModelFragment fragment;
 	private AbstractComponentEditor editor;
 	private TableViewer viewer;
 
-	public FindImportElementDialog(Shell parentShell, AbstractComponentEditor editor, EObject element) {
+	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor, MStringModelFragment fragment) {
 		super(parentShell);
-		this.element = element;
+		this.fragment = fragment;
 		this.editor = editor;
 	}
 
@@ -66,15 +77,42 @@ public class FindImportElementDialog extends TitleAreaDialog {
 			}
 		});
 
-		getShell().setText("Find Import Elements");
-		setTitle("Find Import Elements");
-		setMessage("Search for an elements whose ID you'd like to import");
+		getShell().setText("Find Parent Elements");
+		setTitle("Find Parent Elements");
+		setMessage("Search for an elements who you like to references as parent");
 
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
 
 		Label l = new Label(container, SWT.NONE);
+		l.setText("Container-Type");
+
+		final ComboViewer eClassViewer = new ComboViewer(container);
+		eClassViewer.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element) {
+				return ((EClass) element).getName();
+			}
+		});
+		eClassViewer.setContentProvider(new ArrayContentProvider());
+		List<EClass> eClassList = new ArrayList<EClass>();
+		for (InternalPackage p : Util.loadPackages()) {
+			eClassList.addAll(p.getAllClasses());
+		}
+		eClassViewer.setComparator(new ViewerComparator() {
+			@Override
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				EClass ec1 = (EClass) e1;
+				EClass ec2 = (EClass) e2;
+				return ec1.getName().compareTo(ec2.getName());
+			}
+		});
+		eClassViewer.setInput(eClassList);
+		eClassViewer.getCombo().select(0);
+		eClassViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		l = new Label(container, SWT.NONE);
 		l.setText("Search");
 
 		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
@@ -91,10 +129,12 @@ public class FindImportElementDialog extends TitleAreaDialog {
 			@Override
 			public void update(ViewerCell cell) {
 				EObject o = (EObject) cell.getElement();
+				AbstractComponentEditor editor = FindParentReferenceElementDialog.this.editor.getEditor().getEditor(o.eClass());
 				cell.setImage(editor.getImage(o, searchText.getDisplay()));
 
 				MApplicationElement appEl = (MApplicationElement) o;
-				StyledString styledString = new StyledString(editor.getLabel(o) + " (" + appEl.getElementId() + ")", null);
+
+				StyledString styledString = new StyledString(editor.getLabel(o) + " (" + (appEl.getElementId() == null ? "<no id>" : appEl.getElementId()) + ")", null);
 				String detailLabel = editor.getDetailLabel(o);
 				if (detailLabel != null && !detailLabel.equals(appEl.getElementId())) {
 					styledString.append(" - " + detailLabel, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
@@ -126,8 +166,10 @@ public class FindImportElementDialog extends TitleAreaDialog {
 					currentResultHandler.cancled = true;
 				}
 				list.clear();
-				Filter filter = new Filter(element.eClass(), searchText.getText());
-				currentResultHandler = new ModelResultHandlerImpl(list, filter, editor, element.eResource());
+
+				Filter filter = new Filter((EClass) ((IStructuredSelection) eClassViewer.getSelection()).getFirstElement(), searchText.getText());
+
+				currentResultHandler = new ModelResultHandlerImpl(list, filter, editor, ((EObject) fragment).eResource());
 				collector.findModelElements(filter, currentResultHandler);
 			}
 		});
@@ -151,19 +193,19 @@ public class FindImportElementDialog extends TitleAreaDialog {
 		if (!s.isEmpty()) {
 			MApplicationElement el = (MApplicationElement) s.getFirstElement();
 			if (el.getElementId() != null && el.getElementId().trim().length() > 0) {
-				Command cmd = SetCommand.create(editor.getEditingDomain(), element, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID, el.getElementId());
+				Command cmd = SetCommand.create(editor.getEditingDomain(), fragment, FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID, el.getElementId());
 				if (cmd.canExecute()) {
 					editor.getEditingDomain().getCommandStack().execute(cmd);
 					super.okPressed();
 				}
 			} else {
-				setErrorMessage("You can not import an element without an ID");
+				setErrorMessage("You can not reference an element without an ID");
 			}
 		}
 	}
 
 	private ClassContributionCollector getCollector() {
-		Bundle bundle = FrameworkUtil.getBundle(FindImportElementDialog.class);
+		Bundle bundle = FrameworkUtil.getBundle(FindParentReferenceElementDialog.class);
 		BundleContext context = bundle.getBundleContext();
 		ServiceReference ref = context.getServiceReference(ClassContributionCollector.class.getName());
 		if (ref != null) {
@@ -179,6 +221,8 @@ public class FindImportElementDialog extends TitleAreaDialog {
 		private AbstractComponentEditor editor;
 		private Resource resource;
 
+		private List<EObject> noId = new ArrayList<EObject>();
+
 		public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor, Resource resource) {
 			this.list = list;
 			this.filter = filter;
@@ -188,7 +232,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 
 		public void result(EObject data) {
 			if (!cancled) {
-				if (!resource.getURI().equals(data.eResource().getURI()))
+				if (!resource.getURI().equals(data.eResource().getURI())) {
 					if (data instanceof MApplicationElement) {
 						String elementId = ((MApplicationElement) data).getElementId();
 						if (elementId == null) {
@@ -207,10 +251,13 @@ public class FindImportElementDialog extends TitleAreaDialog {
 						if (elementId != null && label != null && label.trim().length() > 0) {
 							if (filter.elementIdPattern.matcher(label).matches()) {
 								list.add(data);
+								return;
 							}
 						}
 					}
+				}
 			}
 		}
 	}
+
 }

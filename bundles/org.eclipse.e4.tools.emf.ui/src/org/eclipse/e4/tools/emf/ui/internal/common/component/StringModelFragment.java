@@ -17,11 +17,13 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindParentReferenceElementDialog;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
@@ -32,9 +34,7 @@ import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFListProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
@@ -123,10 +123,20 @@ public class StringModelFragment extends AbstractComponentEditor {
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
+			t.setEditable(false);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
+
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setText("Find");
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					FindParentReferenceElementDialog dialog = new FindParentReferenceElementDialog(b.getShell(), StringModelFragment.this, (MStringModelFragment) getMaster().getValue());
+					dialog.open();
+				}
+			});
 		}
 
 		{
@@ -272,7 +282,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			});
 
 			List<FeatureClass> list = new ArrayList<FeatureClass>();
-			addClasses(ApplicationPackageImpl.eINSTANCE, list);
+			Util.addClasses(ApplicationPackageImpl.eINSTANCE, list);
 			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENT__ELEMENTS));
 
 			childrenDropDown.setInput(list);
@@ -316,21 +326,6 @@ public class StringModelFragment extends AbstractComponentEditor {
 		}
 
 		return parent;
-	}
-
-	public void addClasses(EPackage ePackage, List<FeatureClass> list) {
-		for (EClassifier c : ePackage.getEClassifiers()) {
-			if (c instanceof EClass) {
-				EClass eclass = (EClass) c;
-				if (eclass != ApplicationPackageImpl.Literals.APPLICATION && !eclass.isAbstract() && !eclass.isInterface() && eclass.getEAllSuperTypes().contains(ApplicationPackageImpl.Literals.APPLICATION_ELEMENT)) {
-					list.add(new FeatureClass(eclass.getName(), eclass));
-				}
-			}
-		}
-
-		for (EPackage eSubPackage : ePackage.getESubpackages()) {
-			addClasses(eSubPackage, list);
-		}
 	}
 
 	public void dispose() {

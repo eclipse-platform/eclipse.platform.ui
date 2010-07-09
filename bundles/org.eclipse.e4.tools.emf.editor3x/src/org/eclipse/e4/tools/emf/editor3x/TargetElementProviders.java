@@ -92,9 +92,6 @@ public class TargetElementProviders implements IModelElementProvider {
 	
 	private void applyFilter(Filter filter, ModelResultHandler handler) {
 		for (Resource res : resourceSet.getResources()) {
-			if (res.getURI().equals(filter.object.eResource().getURI())) {
-//				System.err.println("Skipped because self");
-			} else {
 				TreeIterator<EObject> it = EcoreUtil.getAllContents(res,
 						true);
 				while (it.hasNext()) {
@@ -103,12 +100,12 @@ public class TargetElementProviders implements IModelElementProvider {
 //						System.err
 //								.println("Skipped because it is an import");
 					} else {
-						if (o.eClass().equals(filter.object.eClass())) {
+						if (o.eClass().equals(filter.eClass)) {
+							System.err.println("Found: " + o);
 							handler.result(o);
 						}
 					}
 				}
-			}
 		}
 	}
 
