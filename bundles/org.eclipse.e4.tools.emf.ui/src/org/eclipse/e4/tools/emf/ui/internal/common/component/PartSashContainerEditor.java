@@ -24,6 +24,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -68,10 +69,6 @@ import org.eclipse.swt.widgets.Text;
 public class PartSashContainerEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private Image vImage;
-	private Image hImage;
-	private Image vTbrImage;
-	private Image hTbrImage;
 	private EMFDataBindingContext context;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
@@ -86,52 +83,40 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		boolean horizontal = ((MPartSashContainer) element).isHorizontal();
 
 		if (!horizontal) {
-			if (((MPartSashContainer) element).isToBeRendered()) {
-				if (vImage == null) {
-					try {
-						vImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer_vertical.gif")); //$NON-NLS-1$	
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+			MUIElement uiElement = (MUIElement) element;
+			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
+				try {
+					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer_vertical.gif")); //$NON-NLS-1$	
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-
-				return vImage;
 			} else {
-				if (vTbrImage == null) {
-					try {
-						vTbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/PartSashContainer_vertical.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				try {
+					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/PartSashContainer_vertical.gif")); //$NON-NLS-1$
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				return vTbrImage;
 			}
 		}
 
 		if (horizontal) {
-			if (((MPartSashContainer) element).isToBeRendered()) {
-				if (hImage != null) {
-					try {
-						hImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+			MUIElement uiElement = (MUIElement) element;
+			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
+				try {
+					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer.gif")); //$NON-NLS-1$
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				return hImage;
 			} else {
-				if (hTbrImage != null) {
-					try {
-						hTbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/PartSashContainer.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				try {
+					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/PartSashContainer.gif")); //$NON-NLS-1$
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-				return hTbrImage;
-
 			}
 		}
 		return null;
