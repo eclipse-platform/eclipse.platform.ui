@@ -115,7 +115,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 				Activator.trace(Policy.DEBUG_RENDERER, "visible -> true", null); //$NON-NLS-1$
 
 				// Note that the 'createGui' protocol calls 'childAdded'
-				createGui(changedElement);
+				Widget w = (Widget) createGui(changedElement);
+				if (w instanceof Control && !(w instanceof Shell)) {
+					fixZOrder(changedElement);
+				}
 			} else {
 				Activator
 						.trace(Policy.DEBUG_RENDERER, "visible -> false", null); //$NON-NLS-1$
@@ -183,6 +186,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					// NOTE: createGui will call 'childAdded' if successful
 					Widget w = (Widget) createGui(added);
 					if (w instanceof Control && !(w instanceof Shell)) {
+						fixZOrder(added);
 						((Control) w).getShell().layout(
 								new Control[] { (Control) w }, SWT.DEFER);
 					}
@@ -237,6 +241,26 @@ public class PartRenderingEngine implements IPresentationEngine {
 			factoryUrl = defaultFactoryUrl;
 		}
 		this.factoryUrl = factoryUrl;
+	}
+
+	protected void fixZOrder(MUIElement element) {
+		MElementContainer<MUIElement> parent = element.getParent();
+		if (parent == null || !(element.getWidget() instanceof Control))
+			return;
+
+		Control elementCtrl = (Control) element.getWidget();
+		Control prevCtrl = null;
+		for (MUIElement kid : parent.getChildren()) {
+			if (kid == element) {
+				if (prevCtrl != null)
+					elementCtrl.moveBelow(prevCtrl);
+				else
+					elementCtrl.moveAbove(null);
+				return;
+			} else if (kid.getWidget() instanceof Control) {
+				prevCtrl = (Control) kid.getWidget();
+			}
+		}
 	}
 
 	/**
