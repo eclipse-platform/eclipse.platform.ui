@@ -1,85 +1,49 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
-import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
-
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
-
-import org.eclipse.emf.edit.command.SetCommand;
-
-import org.eclipse.emf.common.command.Command;
-
-import org.eclipse.jface.viewers.IStructuredSelection;
-
-import org.eclipse.e4.tools.emf.ui.common.IModelResource;
-
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-
-import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-
-import org.eclipse.jface.viewers.StyledString;
-
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
-
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.jface.viewers.ViewerCell;
-
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
-
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
-
-import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
-
-import org.eclipse.e4.ui.model.fragment.MModelFragment;
-
-import org.eclipse.e4.ui.model.fragment.MModelFragments;
-
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
-
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-
 import java.util.ArrayList;
-
 import java.util.List;
-
-import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.e4.ui.model.application.MApplicationElement;
-
+import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.MApplication;
-
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.fragment.MModelFragment;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
+import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
-
-import org.eclipse.jface.viewers.ArrayContentProvider;
-
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
-
-import org.eclipse.swt.layout.GridData;
-
-import org.eclipse.swt.layout.GridLayout;
-
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
-
-import org.eclipse.swt.widgets.Label;
-
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.swt.widgets.Text;
 
 public class SharedElementsDialog extends TitleAreaDialog {
 	private TableViewer viewer;

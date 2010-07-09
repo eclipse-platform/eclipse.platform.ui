@@ -1,7 +1,9 @@
 package org.eclipse.e4.tools.compat.internal;
 
 import java.util.ArrayList;
+
 import javax.inject.Inject;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;

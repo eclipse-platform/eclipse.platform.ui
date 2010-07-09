@@ -1,42 +1,23 @@
 package org.eclipse.e4.tools.emf.ui.common;
 
-import java.io.FileNotFoundException;
-
-import java.text.DecimalFormat;
-
-import java.text.NumberFormat;
-
 import java.io.ByteArrayInputStream;
-
-import org.eclipse.swt.graphics.ImageData;
-
 import java.io.ByteArrayOutputStream;
-
-import org.eclipse.swt.layout.GridLayout;
-
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-
+import java.text.DecimalFormat;
 import org.eclipse.emf.common.util.URI;
-
 import org.eclipse.jface.resource.JFaceResources;
-
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.swt.graphics.Font;
-
-import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.swt.SWT;
-
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-
-import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.jface.window.ToolTip;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 
 public abstract class ImageTooltip extends ToolTip {
 	private Image image;

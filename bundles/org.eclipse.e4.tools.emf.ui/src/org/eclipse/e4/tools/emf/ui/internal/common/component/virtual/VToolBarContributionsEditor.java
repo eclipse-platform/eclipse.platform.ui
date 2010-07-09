@@ -10,20 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
-
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
-
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
-
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuContributions;
-
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
-
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
-
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -32,11 +18,11 @@ import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
-import org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory;
-import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
-import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
-import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContributions;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;

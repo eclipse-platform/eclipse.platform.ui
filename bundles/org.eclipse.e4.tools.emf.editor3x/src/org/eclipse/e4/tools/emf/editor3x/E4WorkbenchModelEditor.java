@@ -13,7 +13,6 @@ package org.eclipse.e4.tools.emf.editor3x;
 import org.eclipse.e4.tools.compat.parts.DIEditorPart;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource.ModelListener;
 import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
 
 @SuppressWarnings("restriction")

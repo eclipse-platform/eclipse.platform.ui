@@ -1,10 +1,8 @@
 package org.eclipse.e4.tools.emf.ui.common;
 
-import org.eclipse.emf.ecore.EStructuralFeature;
-
 import java.util.List;
-
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 public interface IEditorFeature {
 	public class FeatureClass {

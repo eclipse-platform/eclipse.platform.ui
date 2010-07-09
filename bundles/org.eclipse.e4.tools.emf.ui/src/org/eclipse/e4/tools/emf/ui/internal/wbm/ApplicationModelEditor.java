@@ -10,9 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.wbm;
 
-import javax.inject.Named;
-
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;

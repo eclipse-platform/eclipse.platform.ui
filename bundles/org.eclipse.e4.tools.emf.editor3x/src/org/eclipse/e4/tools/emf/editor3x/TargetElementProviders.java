@@ -6,9 +6,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider;
-import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.Filter;
-import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandler;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -17,10 +14,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.pde.core.plugin.IPluginModelBase;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
-import org.eclipse.pde.internal.core.PluginModelManager;
 
 public class TargetElementProviders implements IModelElementProvider {
 	private ResourceSet resourceSet;
