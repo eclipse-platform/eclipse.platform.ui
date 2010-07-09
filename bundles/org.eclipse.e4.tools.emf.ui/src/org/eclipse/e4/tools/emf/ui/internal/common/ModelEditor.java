@@ -700,6 +700,16 @@ public class ModelEditor {
 				}
 			}
 
+			if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS && container != null) {
+				MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) o).eClass());
+				el.setElementId(((MApplicationElement) o).getElementId());
+				Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature, el);
+				if (cmd.canExecute()) {
+					getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
+				}
+				return;
+			}
+
 			if (feature != null && container != null) {
 				Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature, o);
 				if (cmd.canExecute()) {
@@ -844,7 +854,7 @@ public class ModelEditor {
 					}
 				}
 
-				if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS) {
+				if (feature == FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS && parent != null) {
 					MApplicationElement el = (MApplicationElement) EcoreUtil.create(((EObject) data).eClass());
 					el.setElementId(((MApplicationElement) data).getElementId());
 					Command cmd = AddCommand.create(domain, parent, feature, el);
