@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -121,16 +120,6 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
                 }
             }
         });
-
-		
-		fContainer.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-			    if (fGradientBackground != null) {
-			        fGradientBackground.dispose();
-			        fGradientBackground = null;
-			    }
-			}
-		});
 
 		hookControl(fContainer);
 
@@ -872,5 +861,29 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	private static int blend(int v1, int v2, int ratio) {
 		int b = (ratio * v1 + (100 - ratio) * v2) / 100;
 		return Math.min(255, b);
-	}	
+	}
+
+	/*
+	 * @see
+	 * org.eclipse.jface.viewers.StructuredViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
+	 * 
+	 * @since 3.7
+	 */
+	protected void handleDispose(DisposeEvent event) {
+		if (fGradientBackground != null) {
+			fGradientBackground.dispose();
+			fGradientBackground= null;
+		}
+
+		if (fBreadcrumbItems != null) {
+			Iterator iterator= fBreadcrumbItems.iterator();
+			while (iterator.hasNext()) {
+				BreadcrumbItem item= (BreadcrumbItem)iterator.next();
+				item.dispose();
+			}
+		}
+
+		super.handleDispose(event);
+	}
+
 }
