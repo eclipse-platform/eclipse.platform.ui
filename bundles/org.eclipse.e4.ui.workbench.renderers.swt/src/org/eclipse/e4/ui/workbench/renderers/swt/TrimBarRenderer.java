@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
@@ -22,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.SWT;
@@ -132,6 +134,14 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	private void addTrimContributions(final MTrimBar trimModel,
 			ArrayList<MTrimContribution> toContribute, IEclipseContext ctx,
 			final ExpressionContext eContext) {
+		HashSet<String> existingToolbarIds = new HashSet<String>();
+		for (MTrimElement item : trimModel.getChildren()) {
+			String id = item.getElementId();
+			if (item instanceof MToolBar && id != null) {
+				existingToolbarIds.add(id);
+			}
+		}
+
 		boolean done = toContribute.size() == 0;
 		while (!done) {
 			ArrayList<MTrimContribution> curList = new ArrayList<MTrimContribution>(
@@ -142,7 +152,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			for (final MTrimContribution contribution : curList) {
 				final ArrayList<MTrimElement> toRemove = new ArrayList<MTrimElement>();
 				if (!ContributionsAnalyzer.processAddition(trimModel,
-						contribution, toRemove)) {
+						contribution, toRemove, existingToolbarIds)) {
 					toContribute.add(contribution);
 				} else {
 					if (contribution.getVisibleWhen() != null) {

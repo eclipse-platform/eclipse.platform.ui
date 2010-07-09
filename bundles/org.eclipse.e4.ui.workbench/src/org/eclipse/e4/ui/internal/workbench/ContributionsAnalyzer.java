@@ -213,6 +213,8 @@ public final class ContributionsAnalyzer {
 			menuModel.getChildren().add(idx++, copy);
 			if (copy instanceof MMenu) {
 				existingMenuIds.add(copy.getElementId());
+			} else if (copy instanceof MMenuSeparator && copy.getElementId() != null) {
+				existingSeparatorNames.add(copy.getElementId());
 			}
 		}
 		return true;
@@ -226,29 +228,44 @@ public final class ContributionsAnalyzer {
 			return false;
 		}
 		for (MToolBarElement item : toolBarContribution.getChildren()) {
+			if (item instanceof MToolBarSeparator
+					&& existingSeparatorNames.contains(item.getElementId())) {
+				// skip this, it's already there
+				continue;
+			}
 			MToolBarElement copy = (MToolBarElement) EcoreUtil.copy((EObject) item);
 			if (DEBUG) {
 				trace("addToolBarContribution " + copy, toolBarModel.getWidget(), toolBarModel); //$NON-NLS-1$
 			}
 			toolBarModel.getChildren().add(idx++, copy);
 			contributions.add(copy);
+			if (copy instanceof MToolBarSeparator && copy.getElementId() != null) {
+				existingSeparatorNames.add(copy.getElementId());
+			}
 		}
 		return true;
 	}
 
 	public static boolean processAddition(final MTrimBar trimBar, MTrimContribution contribution,
-			List<MTrimElement> contributions) {
+			List<MTrimElement> contributions, HashSet<String> existingToolbarIds) {
 		int idx = getIndex(trimBar, contribution.getPositionInParent());
 		if (idx == -1) {
 			return false;
 		}
 		for (MTrimElement item : contribution.getChildren()) {
+			if (item instanceof MToolBar && existingToolbarIds.contains(item.getElementId())) {
+				// skip this, it's already there
+				continue;
+			}
 			MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
 			if (DEBUG) {
 				trace("addTrimContribution " + copy, trimBar.getWidget(), trimBar); //$NON-NLS-1$
 			}
 			trimBar.getChildren().add(idx++, copy);
 			contributions.add(copy);
+			if (copy instanceof MToolBar && copy.getElementId() != null) {
+				existingToolbarIds.add(copy.getElementId());
+			}
 		}
 		return true;
 	}
