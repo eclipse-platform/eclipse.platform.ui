@@ -131,7 +131,6 @@ import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
-import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
@@ -487,10 +486,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		page.setPerspective(perspective);
 		firePageActivated();
 
-		if (curPersp != null) {
-			populateTrimContributions(ModeledPageLayout.getIds(curPersp, ACTION_SET_CMD_PREFIX),
-					true);
-		}
+		populateTrimContributions();
 
 		Shell shell = (Shell) model.getWidget();
 		MMenu mainMenu = model.getMainMenu();
@@ -537,25 +533,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		trimBars.remove(trimBar);
 	}
 
-	void populateTrimContributions(List<String> actionSets, boolean reload) {
-		removeTrimContributions();
-
-		MTrimBar trimBar = getTopTrim();
-		fill(trimBar, getCoolBarManager2());
-
-		if (false) {
-			// TODO don't do this yet, it should be handled by the TrimRenderer
-			for (String actionSet : actionSets) {
-				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-				toolBar.setElementId(actionSet);
-				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
-				separator.setElementId(actionSet);
-				separator.setToBeRendered(false);
-				toolBar.getChildren().add(separator);
-				trimBar.getChildren().add(toolBar);
-				workbenchTrimElements.add(toolBar);
-			}
+	void populateTrimContributions() {
+		if (getTopTrim() != null) {
+			throw new IllegalStateException("The top trim is already set"); //$NON-NLS-1$
 		}
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		trimBar.setElementId(MAIN_TOOLBAR_ID);
+
+		fill(trimBar, getCoolBarManager2());
 
 		// TODO why aren't these added as trim contributions
 		// that would remove everything from this method except the fill(*)
@@ -591,6 +576,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		workbenchTrimElements.add(searchControl);
 		workbenchTrimElements.add(glueControl);
 		workbenchTrimElements.add(switcherControl);
+
+		// and now add it to the model, start the rendering
+		List<MTrimBar> trimBars = model.getTrimBars();
+		trimBars.add(0, trimBar);
 	}
 
 	private MTrimBar getTopTrim() {
@@ -600,10 +589,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				return bar;
 			}
 		}
-		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-		trimBar.setElementId(MAIN_TOOLBAR_ID);
-		trimBars.add(0, trimBar);
-		return trimBar;
+		return null;
 	}
 
 	private void fill(MMenu menu, IMenuManager manager) {
@@ -731,6 +717,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				container.getChildren().add(toolBar);
 				workbenchTrimElements.add(toolBar);
 			} else if (item instanceof AbstractGroupMarker) {
+				System.out.println("group: " + item.getId()); //$NON-NLS-1$
 				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
 				separator.setToBeRendered(item.isVisible());
 				separator.setElementId(item.getId());
