@@ -717,7 +717,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				container.getChildren().add(toolBar);
 				workbenchTrimElements.add(toolBar);
 			} else if (item instanceof AbstractGroupMarker) {
-				System.out.println("group: " + item.getId()); //$NON-NLS-1$
 				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
 				separator.setToBeRendered(item.isVisible());
 				separator.setElementId(item.getId());
