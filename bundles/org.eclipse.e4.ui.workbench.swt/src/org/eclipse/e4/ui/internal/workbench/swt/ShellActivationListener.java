@@ -40,8 +40,11 @@ public class ShellActivationListener implements Listener {
 	 */
 	public static final String DIALOG_IGNORE_KEY = "org.eclipse.e4.ui.ignoreDialog"; //$NON-NLS-1$
 
-	private static final String ECLIPSE_CONTEXT_DIALOG_ID = "org.eclipse.e4.ui.dialogContext"; //$NON-NLS-1$
-	private static final String ECLIPSE_CONTEXT_PREV_CHILD = "org.eclipse.e4.ui.dialogContext.prevChild"; //$NON-NLS-1$
+	/**
+	 * A string key for use with a shell's keyed data to retrieve the top level
+	 * eclipse context that the shell is supposed to represent.
+	 */
+	private static final String ECLIPSE_CONTEXT_SHELL_CONTEXT = "org.eclipse.e4.ui.shellContext"; //$NON-NLS-1$
 
 	private MApplication application;
 
@@ -57,13 +60,7 @@ public class ShellActivationListener implements Listener {
 		Shell shell = (Shell) event.widget;
 		Object obj = shell.getData(AbstractPartRenderer.OWNING_ME);
 		if (obj instanceof MWindow) {
-			if (event.type == SWT.Deactivate) {
-				Object local = ((MWindow) obj).getContext().getLocal(
-						IContextConstants.ACTIVE_CHILD);
-				WorkbenchSWTActivator.trace("/trace/workbench",
-						"setting mwindow context " + local, null);
-				shell.setData(ECLIPSE_CONTEXT_PREV_CHILD, local);
-			}
+			processWindow(event, shell, (MWindow) obj);
 			return;
 		}
 
@@ -82,8 +79,45 @@ public class ShellActivationListener implements Listener {
 		}
 	}
 
+	private void processWindow(Event event, Shell shell, MWindow window) {
+		switch (event.type) {
+		case SWT.Activate:
+			final IEclipseContext local = ((MWindow) window).getContext();
+			WorkbenchSWTActivator.trace("/trace/workbench",
+					"setting mwindow context " + local, null);
+			// record this shell's context
+			shell.setData(ECLIPSE_CONTEXT_SHELL_CONTEXT, local);
+
+			SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					// reconstruct the active chain for this mwindow
+					IEclipseContext context = local;
+					IEclipseContext parent = context.getParent();
+					while (parent != null) {
+						parent.set(IContextConstants.ACTIVE_CHILD, context);
+						context = parent;
+						parent = parent.getParent();
+					}
+				}
+
+				public void handleException(Throwable exception) {
+					WorkbenchSWTActivator.trace("/trace/workbench",
+							"failed correcting context chain", exception);
+				}
+			});
+			break;
+		case SWT.Deactivate:
+			Object context = window.getContext();
+			WorkbenchSWTActivator.trace("/trace/workbench",
+					"setting mwindow context " + context, null);
+			// record this shell's context
+			shell.setData(ECLIPSE_CONTEXT_SHELL_CONTEXT, context);
+			break;
+		}
+	}
+
 	private void activate(Shell shell) {
-		final IEclipseContext parentContext = getParentContext(shell);
+		final IEclipseContext parentContext = application.getContext();
 		final IEclipseContext shellContext = getShellContext(shell,
 				parentContext);
 
@@ -91,15 +125,6 @@ public class ShellActivationListener implements Listener {
 			public void run() throws Exception {
 				// activate this shell
 				parentContext.set(IContextConstants.ACTIVE_CHILD, shellContext);
-
-				// now ensure that the chain is pointing down appropriately
-				IEclipseContext parent = parentContext;
-				IEclipseContext recurse = parentContext.getParent();
-				while (recurse != null) {
-					recurse.set(IContextConstants.ACTIVE_CHILD, parent);
-					parent = recurse;
-					recurse = recurse.getParent();
-				}
 			}
 
 			public void handleException(Throwable exception) {
@@ -113,11 +138,14 @@ public class ShellActivationListener implements Listener {
 	private void deactivate(Shell shell) {
 		Shell parent = (Shell) shell.getParent();
 		if (parent == null) {
+			// no parent shell, clear the chain to reflect reality, if there are
+			// other shells, the chain will be reconstructed on activation
+			application.getContext().set(IContextConstants.ACTIVE_CHILD, null);
 			return;
 		}
 		final IEclipseContext prevChild = (IEclipseContext) parent
-				.getData(ECLIPSE_CONTEXT_PREV_CHILD);
-		final IEclipseContext parentContext = getParentContext(shell);
+				.getData(ECLIPSE_CONTEXT_SHELL_CONTEXT);
+		final IEclipseContext parentContext = application.getContext();
 		SafeRunner.run(new ISafeRunnable() {
 			public void run() throws Exception {
 				parentContext.set(IContextConstants.ACTIVE_CHILD, prevChild);
@@ -131,10 +159,22 @@ public class ShellActivationListener implements Listener {
 
 	}
 
+	/**
+	 * Retrieves the eclipse context for the specified shell. If one cannot be
+	 * found, a child context will be created off of the provided parent
+	 * context.
+	 * 
+	 * @param shell
+	 *            the shell of interest, must not be <code>null</code>
+	 * @param parentContext
+	 *            the parent context that the shell's context should be created
+	 *            off of if it doesn't have one, must not be <code>null</code>
+	 * @return the shell's eclipse context
+	 */
 	private IEclipseContext getShellContext(final Shell shell,
 			IEclipseContext parentContext) {
 		IEclipseContext shellContext = (IEclipseContext) shell
-				.getData(ECLIPSE_CONTEXT_DIALOG_ID);
+				.getData(ECLIPSE_CONTEXT_SHELL_CONTEXT);
 		if (shellContext != null) {
 			return shellContext;
 		}
@@ -144,7 +184,7 @@ public class ShellActivationListener implements Listener {
 		context.set(E4Workbench.LOCAL_ACTIVE_SHELL, shell);
 
 		// set the context into the widget for future retrieval
-		shell.setData(ECLIPSE_CONTEXT_DIALOG_ID, context);
+		shell.setData(ECLIPSE_CONTEXT_SHELL_CONTEXT, context);
 
 		EContextService contextService = context.get(EContextService.class);
 		contextService.activateContext(EBindingService.DIALOG_CONTEXT_ID);
@@ -157,28 +197,5 @@ public class ShellActivationListener implements Listener {
 		});
 
 		return context;
-	}
-
-	private IEclipseContext getParentContext(Shell shell) {
-		IEclipseContext shellContext = (IEclipseContext) shell
-				.getData(ECLIPSE_CONTEXT_DIALOG_ID);
-		if (shellContext != null) {
-			return shellContext.getParent();
-		}
-		Shell current = null;
-		Shell parent = (Shell) shell.getParent();
-		while (parent != null) {
-			current = parent;
-			Object obj = current.getData(AbstractPartRenderer.OWNING_ME);
-			if (obj instanceof MWindow) {
-				return ((MWindow) obj).getContext();
-			}
-			obj = current.getData(ECLIPSE_CONTEXT_DIALOG_ID);
-			if (obj != null) {
-				return (IEclipseContext) obj;
-			}
-			parent = (Shell) parent.getParent();
-		}
-		return application.getContext();
 	}
 }
