@@ -35,6 +35,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -312,8 +313,8 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 				}
 			}
 		}
-		if (object instanceof IDebugElement) {
-			return new String[] { ((IDebugElement) object).getModelIdentifier() };
+		if (object instanceof IStackFrame) {
+			return new String[] { ((IStackFrame) object).getModelIdentifier() };
 		}
 		return null;
 	}	
