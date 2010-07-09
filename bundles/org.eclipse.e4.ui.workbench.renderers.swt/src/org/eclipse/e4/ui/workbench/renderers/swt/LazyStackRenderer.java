@@ -17,6 +17,7 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
@@ -26,14 +27,15 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -229,22 +231,25 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				// Reparent the existing Toolbar
 				MPart part = (MPart) ref;
 				CTabFolder ctf = (CTabFolder) ph.getParent().getWidget();
+				IPresentationEngine renderer = part.getContext().get(
+						IPresentationEngine.class);
+
+				// Dispose the existing toolbar
+				if (ctf.getTopRight() != null) {
+					Control curTB = ctf.getTopRight();
+					ctf.setTopRight(null);
+					MUIElement tbME = (MUIElement) curTB
+							.getData(AbstractPartRenderer.OWNING_ME);
+					if (tbME instanceof MRenderedToolBar)
+						renderer.removeGui(tbME);
+					else
+						curTB.dispose();
+				}
 				MToolBar tbModel = part.getToolbar();
-				if (tbModel != null && tbModel.getWidget() != null) {
-					ToolBar oldTB = (ToolBar) tbModel.getWidget();
-					if (oldTB.getParent() instanceof CTabFolder) {
-						CTabFolder oldCTF = (CTabFolder) oldTB.getParent();
-						if (oldCTF.getTopRight() == oldTB)
-							oldCTF.setTopRight(null);
-					}
-
-					// Dispose the current TB (if any)
-					Control curTopRight = ctf.getTopRight();
-					if (curTopRight != null && !curTopRight.isDisposed())
-						curTopRight.dispose();
-
-					oldTB.setParent(ctf);
-					ctf.setTopRight(oldTB);
+				if (tbModel != null) {
+					Control c = (Control) renderer.createGui(tbModel, ctf,
+							part.getContext());
+					ctf.setTopRight(c);
 				}
 			}
 

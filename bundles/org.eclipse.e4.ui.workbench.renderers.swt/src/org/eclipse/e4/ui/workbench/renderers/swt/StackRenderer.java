@@ -26,11 +26,13 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -38,18 +40,9 @@ import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -487,74 +480,30 @@ public class StackRenderer extends LazyStackRenderer {
 		if (ctf.getTopRight() != null) {
 			Control curTB = ctf.getTopRight();
 			ctf.setTopRight(null);
-			curTB.dispose();
+			MUIElement tbME = (MUIElement) curTB
+					.getData(AbstractPartRenderer.OWNING_ME);
+			if (tbME instanceof MRenderedToolBar)
+				renderer.removeGui(tbME);
+			else
+				curTB.dispose();
 		}
 
-		ToolBar tb = getToolbar(element);
-		if (tb != null) {
-			if (tb.getSize().y > ctf.getTabHeight())
-				ctf.setTabHeight(tb.getSize().y);
-
-			// TODO HACK: see Bug 283073 [CSS] CTabFolder.getTopRight() should
-			// get same background color
-			String cssClassName = (String) ctf
-					.getData("org.eclipse.e4.ui.css.CssClassName"); //$NON-NLS-1$
-			stylingEngine.setClassname(tb, cssClassName);
-
-			ctf.setTopRight(tb, SWT.RIGHT);
-			ctf.layout(true);
-
-			// TBD In 3.x views listening on the "parent" get an intermediary
-			// composite parented of the CTabFolder, but in E4 they get
-			// the CTabFolder itself.
-			// The layout() call above generates resize messages for children,
-			// but not for the CTabFlder itself. Hence, children listening for
-			// this message on the parent don't receive notifications in E4.
-			// For now, send an explicit Resize message to the CTabFolder
-			// listeners.
-			// The enhancement request 279263 suggests a more general solution.
-			ctf.notifyListeners(SWT.Resize, null);
-		}
-
-	}
-
-	private ToolBar getToolbar(MUIElement uiElement) {
-		MPart part = (MPart) ((uiElement instanceof MPart) ? uiElement
-				: ((MPlaceholder) uiElement).getRef());
-
+		MPart part = (MPart) ((element instanceof MPart) ? element
+				: ((MPlaceholder) element).getRef());
 		MMenu viewMenu = getViewMenu(part);
-		boolean hasTB = part.getToolbar() != null;
-		if (viewMenu == null && !hasTB)
-			return null;
-
-		CTabFolder ctf = (CTabFolder) getParentWidget(uiElement);
-
-		ToolBar tb;
-		MToolBar tbModel = part.getToolbar();
-		if (tbModel != null) {
-			if (tbModel.getWidget() != null) {
-				ToolBar oldTB = (ToolBar) tbModel.getWidget();
-				if (oldTB.getParent() instanceof CTabFolder) {
-					CTabFolder oldCTF = (CTabFolder) oldTB.getParent();
-					if (oldCTF.getTopRight() == oldTB)
-						oldCTF.setTopRight(null);
-				}
-				oldTB.setParent(ctf);
-				return oldTB;
-			}
-			tbModel.setToBeRendered(true);
-			tb = (ToolBar) renderer.createGui(tbModel, ctf, part.getContext());
-		} else {
-			tb = new ToolBar(ctf, SWT.FLAT | SWT.HORIZONTAL);
+		if (part.getToolbar() == null && viewMenu != null) {
+			MRenderedToolBar rtb = MenuFactoryImpl.eINSTANCE
+					.createRenderedToolBar();
+			rtb.setContributionManager(new ToolBarManager());
+			part.setToolbar(rtb);
 		}
 
-		// View menu (if any)
-		if (viewMenu != null) {
-			addMenuButton(part, tb, viewMenu);
+		if (part.getToolbar() != null) {
+			Control c = (Control) renderer.createGui(part.getToolbar(), ctf,
+					part.getContext());
+			ctf.setTopRight(c);
+			ctf.layout();
 		}
-
-		tb.pack();
-		return tb;
 	}
 
 	private MMenu getViewMenu(MPart part) {
@@ -567,93 +516,5 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * @param tb
-	 */
-	private void addMenuButton(MPart part, ToolBar tb, MMenu menu) {
-		ToolItem ti = new ToolItem(tb, SWT.PUSH);
-		ti.setImage(getViewMenuImage());
-		ti.setHotImage(null);
-		ti.setToolTipText("View Menu"); //$NON-NLS-1$
-		ti.setData("theMenu", menu); //$NON-NLS-1$
-		ti.setData("thePart", part); //$NON-NLS-1$
-
-		ti.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				showMenu((ToolItem) e.widget);
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				showMenu((ToolItem) e.widget);
-			}
-		});
-	}
-
-	/**
-	 * @param item
-	 */
-	protected void showMenu(ToolItem item) {
-		// Create the UI for the menu
-		final MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
-		MPart part = (MPart) item.getData("thePart"); //$NON-NLS-1$
-		Control ctrl = (Control) part.getWidget();
-		Menu menu = (Menu) renderer.createGui(menuModel, ctrl.getShell(), part.getContext());
-
-		// ...and Show it...
-		Rectangle ib = item.getBounds();
-		Point displayAt = item.getParent().toDisplay(ib.x, ib.y + ib.height);
-		menu.setLocation(displayAt);
-		menu.setVisible(true);
-
-		Display display = Display.getCurrent();
-		while (!menu.isDisposed() && menu.isVisible()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-		menu.dispose();
-	}
-
-	private Image getViewMenuImage() {
-		if (viewMenuImage == null) {
-			Display d = Display.getCurrent();
-
-			Image viewMenu = new Image(d, 16, 16);
-			Image viewMenuMask = new Image(d, 16, 16);
-
-			Display display = Display.getCurrent();
-			GC gc = new GC(viewMenu);
-			GC maskgc = new GC(viewMenuMask);
-			gc.setForeground(display
-					.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-			gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
-			int[] shapeArray = new int[] { 6, 1, 15, 1, 11, 5, 10, 5 };
-			gc.fillPolygon(shapeArray);
-			gc.drawPolygon(shapeArray);
-
-			Color black = display.getSystemColor(SWT.COLOR_BLACK);
-			Color white = display.getSystemColor(SWT.COLOR_WHITE);
-
-			maskgc.setBackground(black);
-			maskgc.fillRectangle(0, 0, 16, 16);
-
-			maskgc.setBackground(white);
-			maskgc.setForeground(white);
-			maskgc.fillPolygon(shapeArray);
-			maskgc.drawPolygon(shapeArray);
-			gc.dispose();
-			maskgc.dispose();
-
-			ImageData data = viewMenu.getImageData();
-			data.transparentPixel = data.getPixel(0, 0);
-
-			viewMenuImage = new Image(d, viewMenu.getImageData(),
-					viewMenuMask.getImageData());
-			viewMenu.dispose();
-			viewMenuMask.dispose();
-		}
-		return viewMenuImage;
 	}
 }
