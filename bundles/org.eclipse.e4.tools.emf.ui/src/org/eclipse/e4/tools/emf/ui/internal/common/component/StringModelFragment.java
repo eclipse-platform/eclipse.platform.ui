@@ -122,14 +122,24 @@ public class StringModelFragment extends AbstractComponentEditor {
 			l.setText(Messages.StringModelFragment_ParentId);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Text t = new Text(parent, SWT.BORDER);
-			t.setEditable(false);
+			Composite comp = new Composite(parent, SWT.NONE);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			comp.setLayoutData(gd);
+			GridLayout gl = new GridLayout(2, false);
+			gl.marginWidth = gl.marginHeight = 0;
+			gl.verticalSpacing = 0;
+			gl.marginLeft = gl.marginBottom = gl.marginRight = gl.marginTop = 0;
+			comp.setLayout(gl);
+
+			Text t = new Text(comp, SWT.BORDER);
+			t.setEditable(false);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
 
-			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setText("Find");
+			final Button b = new Button(comp, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.StringModelFragment_Find);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
