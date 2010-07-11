@@ -2415,9 +2415,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * IWorkbenchPartReference)
 	 */
 	public void toggleZoom(IWorkbenchPartReference ref) {
-		// FIXME compat toggleZoom
-		E4Util.unsupported("toggleZoom"); //$NON-NLS-1$
-
+		MPerspective curPersp = modelService.getActivePerspective(window);
+		// HACK!! Constant is defined in MinMaxAddon
+		String EAMaximizedHack = "EAMaximized"; //$NON-NLS-1$
+		if (curPersp.getTags().contains(EAMaximizedHack)) {
+			curPersp.getTags().remove(EAMaximizedHack);
+		} else {
+			curPersp.getTags().add(EAMaximizedHack);
+		}
 	}
 
 

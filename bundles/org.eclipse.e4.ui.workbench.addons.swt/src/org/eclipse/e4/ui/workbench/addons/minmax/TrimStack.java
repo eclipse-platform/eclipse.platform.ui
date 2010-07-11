@@ -244,11 +244,11 @@ public class TrimStack {
 		restoreBtn.setImage(getRestoreImage(parent.getDisplay()));
 		restoreBtn.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				restoreStack();
+				theStack.getTags().remove(MinMaxAddon.MINIMIZED);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				restoreStack();
+				theStack.getTags().remove(MinMaxAddon.MINIMIZED);
 			}
 		});
 
@@ -349,11 +349,6 @@ public class TrimStack {
 			hostPane.getDisplay().addFilter(SWT.MouseDown, mouseDownListener);
 			getShellClientComposite().addControlListener(caResizeListener);
 
-			// Button Hack to show a 'restore' button while avoiding the 'minimized' layout
-			ctf.setMinimizeVisible(false);
-			ctf.setMaximizeVisible(true);
-			ctf.setMaximized(true);
-
 			updateSelection(theStack.getSelectedElement());
 
 			// Set the initial location
@@ -381,13 +376,6 @@ public class TrimStack {
 				Point size = hostPane.getSize();
 				toolControl.getPersistedState().put("XSize", Integer.toString(size.x));
 				toolControl.getPersistedState().put("YSize", Integer.toString(size.y));
-			}
-
-			// Button Hack to show a 'restore' button while avoiding the 'minimized' layout
-			if (ctf != null) {
-				ctf.setMinimizeVisible(true);
-				ctf.setMaximizeVisible(false);
-				ctf.setMaximized(false);
 			}
 		}
 	}
