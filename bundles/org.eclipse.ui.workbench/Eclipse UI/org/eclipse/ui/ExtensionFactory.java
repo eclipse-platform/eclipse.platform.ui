@@ -25,8 +25,7 @@ import org.eclipse.ui.internal.dialogs.FileEditorsPreferencePage;
 import org.eclipse.ui.internal.dialogs.PerspectivesPreferencePage;
 import org.eclipse.ui.internal.dialogs.ViewsPreferencePage;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
-import org.eclipse.ui.internal.keys.KeysPreferencePage;
-import org.eclipse.ui.internal.keys.NewKeysPreferencePage;
+import org.eclipse.ui.internal.keys.NoKeysPreferencePage;
 import org.eclipse.ui.internal.progress.ProgressView;
 import org.eclipse.ui.internal.themes.ColorsAndFontsPreferencePage;
 import org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard;
@@ -160,10 +159,10 @@ public class ExtensionFactory implements IExecutableExtensionFactory,
 			return configure(new FileEditorsPreferencePage());
 		}
 		if (KEYS_PREFERENCE_PAGE.equals(id)) {
-			return configure(new KeysPreferencePage());
+			return configure(new NoKeysPreferencePage());
 		}
 		if (NEW_KEYS_PREFERENCE_PAGE.equals(id)) {
-			return configure(new NewKeysPreferencePage());
+			return configure(new NoKeysPreferencePage());
 		}
 		if (PERSPECTIVES_PREFERENCE_PAGE.equals(id)) {
 			return configure(new PerspectivesPreferencePage());
