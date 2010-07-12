@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br&gt;
+&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br&gt; 
 Do not use this extension point, it will be removed in future versions of this product.
 Instead, use the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt;
 &lt;/p&gt;
@@ -432,43 +432,6 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
 
    <annotation>
       <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The value of the class attribute must be the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.ui.IWorkbenchWindowActionDelegate&lt;/samp&gt; or &lt;samp&gt;org.eclipse.ui.IWorkbenchWindowPulldownDelegate&lt;/samp&gt;. The latter should be implemented in cases where the &lt;samp&gt;style&lt;/samp&gt; attribute has the value &lt;samp&gt;pulldown&lt;/samp&gt;. This class is the handler responsible for performing the action. If the &lt;samp&gt;retarget&lt;/samp&gt; attribute is true, this attribute is ignored and should not be supplied. This class is loaded as late as possible to avoid loading the entire plug-in before it is really needed.
-&lt;p&gt;
-The enablement criteria for an action extension is initially defined by &lt;samp&gt;enablesFor&lt;/samp&gt;, and also either &lt;samp&gt;selection&lt;/samp&gt; or &lt;samp&gt;enablement&lt;/samp&gt;. However, once the action delegate has been instantiated, it may control the action enable state directly within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
-&lt;p&gt;
-It is important to note that the workbench does not generate menus on a plug-in&apos;s behalf. Menu paths must reference menus that already exist.
-&lt;p&gt;
-Action and menu labels may contain special characters that encode mnemonics using the following rules:
-&lt;ol&gt;
-&lt;li&gt;
-Mnemonics are specified using the ampersand (&apos;&amp;amp;&apos;) character in front of a selected character in the translated text. Since ampersand is not allowed in XML strings, use &lt;samp&gt;&amp;amp;amp;&lt;/samp&gt; character entity.&lt;/li&gt;
-&lt;/ol&gt;
-If two or more actions are contributed to a menu or toolbar by a single extension the actions will appear in the reverse order of how they are listed in the plugin.xml file. This behavior is admittedly unintuitive.  However, it was discovered after the Eclipse Platform API was frozen. Changing the behavior now would break every plug-in which relies upon the existing behavior.
-&lt;p&gt;
-The &lt;samp&gt;selection&lt;/samp&gt; and &lt;samp&gt;enablement&lt;/samp&gt; elements are mutually exclusive. The &lt;samp&gt;enablement&lt;/samp&gt; element can replace the &lt;samp&gt;selection&lt;/samp&gt; element using the sub-elements &lt;samp&gt;objectClass&lt;/samp&gt; and &lt;samp&gt;objectState&lt;/samp&gt;. For example, the following:
-&lt;pre&gt;
- &lt;selection
-  class=&quot;org.eclipse.core.resources.IFile&quot;
-  name=&quot;*.java&quot;&gt;
- &lt;/selection&gt;
-&lt;/pre&gt;
-can be expressed using:
-&lt;pre&gt;
- &lt;enablement&gt;
-  &lt;and&gt;
-   &lt;objectClass name=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
-   &lt;objectState name=&quot;extension&quot; value=&quot;java&quot;/&gt;
-  &lt;/and&gt;
- &lt;/enablement&gt;
-&lt;/pre&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
@@ -619,6 +582,43 @@ All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
 href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute must be the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.ui.IWorkbenchWindowActionDelegate&lt;/samp&gt; or &lt;samp&gt;org.eclipse.ui.IWorkbenchWindowPulldownDelegate&lt;/samp&gt;. The latter should be implemented in cases where the &lt;samp&gt;style&lt;/samp&gt; attribute has the value &lt;samp&gt;pulldown&lt;/samp&gt;. This class is the handler responsible for performing the action. If the &lt;samp&gt;retarget&lt;/samp&gt; attribute is true, this attribute is ignored and should not be supplied. This class is loaded as late as possible to avoid loading the entire plug-in before it is really needed.
+&lt;p&gt;
+The enablement criteria for an action extension is initially defined by &lt;samp&gt;enablesFor&lt;/samp&gt;, and also either &lt;samp&gt;selection&lt;/samp&gt; or &lt;samp&gt;enablement&lt;/samp&gt;. However, once the action delegate has been instantiated, it may control the action enable state directly within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
+&lt;p&gt;
+It is important to note that the workbench does not generate menus on a plug-in&apos;s behalf. Menu paths must reference menus that already exist.
+&lt;p&gt;
+Action and menu labels may contain special characters that encode mnemonics using the following rules:
+&lt;ol&gt;
+&lt;li&gt;
+Mnemonics are specified using the ampersand (&apos;&amp;amp;&apos;) character in front of a selected character in the translated text. Since ampersand is not allowed in XML strings, use &lt;samp&gt;&amp;amp;amp;&lt;/samp&gt; character entity.&lt;/li&gt;
+&lt;/ol&gt;
+If two or more actions are contributed to a menu or toolbar by a single extension the actions will appear in the reverse order of how they are listed in the plugin.xml file. This behavior is admittedly unintuitive.  However, it was discovered after the Eclipse Platform API was frozen. Changing the behavior now would break every plug-in which relies upon the existing behavior.
+&lt;p&gt;
+The &lt;samp&gt;selection&lt;/samp&gt; and &lt;samp&gt;enablement&lt;/samp&gt; elements are mutually exclusive. The &lt;samp&gt;enablement&lt;/samp&gt; element can replace the &lt;samp&gt;selection&lt;/samp&gt; element using the sub-elements &lt;samp&gt;objectClass&lt;/samp&gt; and &lt;samp&gt;objectState&lt;/samp&gt;. For example, the following:
+&lt;pre&gt;
+ &lt;selection
+  class=&quot;org.eclipse.core.resources.IFile&quot;
+  name=&quot;*.java&quot;&gt;
+ &lt;/selection&gt;
+&lt;/pre&gt;
+can be expressed using:
+&lt;pre&gt;
+ &lt;enablement&gt;
+  &lt;and&gt;
+   &lt;objectClass name=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+   &lt;objectState name=&quot;extension&quot; value=&quot;java&quot;/&gt;
+  &lt;/and&gt;
+ &lt;/enablement&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
