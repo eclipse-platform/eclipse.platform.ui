@@ -20,6 +20,7 @@ import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -117,6 +118,16 @@ public class E4CommandProcessor {
 		manager.addTable(table);
 		ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
 		EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
+		if (cs == null) {
+			Activator
+					.log(IStatus.ERROR, "cannot run without ECommandService in defineBindingTable"); //$NON-NLS-1$
+			return;
+		}
+		if (bs == null) {
+			Activator
+					.log(IStatus.ERROR, "cannot run without EBindingService in defineBindingTable"); //$NON-NLS-1$
+			return;
+		}
 		List<MKeyBinding> bindings = bt.getBindings();
 		for (MKeyBinding binding : bindings) {
 			Map<String, Object> parameters = null;
