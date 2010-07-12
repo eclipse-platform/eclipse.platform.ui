@@ -87,20 +87,24 @@ public class ActionSet {
 
 		IConfigurationElement[] menus = configElement
 				.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
-		for (IConfigurationElement element : menus) {
-			addContribution(idContrib, menuContributions, element, true, MAIN_MENU);
+		if (menus.length > 0) {
+			for (int i = menus.length; i > 0; i--) {
+				IConfigurationElement element = menus[i - 1];
+				addContribution(idContrib, menuContributions, element, true, MAIN_MENU);
+			}
+
 		}
 
 		IConfigurationElement[] actions = configElement
 				.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
-		for (IConfigurationElement element : actions) {
-			addContribution(idContrib, menuContributions, element, false, MAIN_MENU);
-			addToolBarContribution(idContrib, toolBarContributions, trimContributions, element,
-					MAIN_TOOLBAR);
+		if (actions.length > 0) {
+			for (int i = actions.length; i > 0; i--) {
+				IConfigurationElement element = actions[i - 1];
+				addContribution(idContrib, menuContributions, element, false, MAIN_MENU);
+				addToolBarContribution(idContrib, toolBarContributions, trimContributions, element,
+						MAIN_TOOLBAR);
+			}
 		}
-
-		// for entertainment purposes only
-		// printContributions(contributions);
 	}
 
 	protected Expression createExpression(IConfigurationElement configElement) {
