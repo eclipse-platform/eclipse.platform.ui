@@ -2535,7 +2535,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * The save action.
-	 * @since 3.7
+	 * @since 3.6.1
 	 */
 	private IWorkbenchAction fSaveAction;
 
