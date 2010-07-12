@@ -2,11 +2,16 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="editorActions" name="Editor Menus, Toolbars and Actions"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         This extension point is used to add actions to the menu 
+         &lt;p&gt;
+&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br&gt;
+Do not use this extension point, it will be removed in future versions of this product.
+Instead, use the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt;
+&lt;/p&gt;
+This extension point is used to add actions to the menu 
 and toolbar for editors registered by other plug-ins.
 &lt;p&gt;
 You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.ui.menus&lt;/a&gt; to place commands in menus and toolbars as well.
@@ -32,6 +37,11 @@ The active editor is passed to the delegate by invoking
    <include schemaLocation="commonExpression.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true" />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="editorContribution" minOccurs="1" maxOccurs="unbounded"/>
@@ -55,9 +65,9 @@ The active editor is passed to the delegate by invoking
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -65,6 +75,9 @@ The active editor is passed to the delegate by invoking
 
    <element name="editorContribution">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             This element is used to define a group of editor actions and/or menus.
          </documentation>
@@ -86,9 +99,9 @@ The active editor is passed to the delegate by invoking
                <documentation>
                   a unique identifier of a registered editor that is the target of this contribution.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -96,6 +109,9 @@ The active editor is passed to the delegate by invoking
 
    <element name="action">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             This element defines an action that the user can invoke in the UI.
          </documentation>
@@ -120,9 +136,9 @@ The active editor is passed to the delegate by invoking
                <documentation>
                   a translatable name used either as the menu item text or toolbar button label.  The name can include mnenomic information. This label should either be non-empty or a definitionId should be provided.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="accelerator" type="string">
@@ -130,9 +146,9 @@ The active editor is passed to the delegate by invoking
                <documentation>
                   &lt;b&gt;&lt;font color=&quot;#FF0000&quot;&gt;Deprecated:&lt;/font&gt;&lt;/b&gt; Use the &lt;samp&gt;definitionId&lt;/samp&gt; attribute instead.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute deprecated="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="definitionId" type="string">
@@ -140,9 +156,9 @@ The active editor is passed to the delegate by invoking
                <documentation>
                   Specifies the command that this action will handle. By specifying and action, the key binding service can assign a key sequence to this action. See the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt; for more information.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="menubarPath" type="string">
@@ -167,9 +183,9 @@ If toolbarPath is omitted, the action will not appear in the toolbar.
                   a relative path of an icon used to visually represent the action in its context.
 If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in. The icon will appear in toolbars but not in menus. Enabled actions will be represented in menus by the hoverIcon.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="disabledIcon" type="string">
@@ -177,9 +193,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a relative path of an icon used to visually represent the action in its context when the action is disabled. If omitted, the normal icon will simply appear greyed out. The path is relative to the location of the plugin.xml file of the contributing plug-in. The disabled icon will appear in toolbars but not in menus. Icons for disabled actions in menus will be supplied by the OS.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="hoverIcon" type="string">
@@ -187,9 +203,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a relative path of an icon used to visually represent the action in its context when the mouse pointer is over the action. If omitted, the normal icon will be used. The path is relative to the location of the plugin.xml file of the contributing plug-in.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">
@@ -197,9 +213,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a translatable text representing the action&apos;s tool tip. Only used if the action appears in the toolbar.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string">
@@ -255,9 +271,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   the name of the fully qualified class that implements &lt;samp&gt;org.eclipse.ui.IEditorActionDelegate&lt;/samp&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IEditorActionDelegate"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="enablesFor" type="string">
@@ -337,6 +353,9 @@ If multiple extensions contribute ruler actions to the same text editor, the ext
 
    <element name="parameter">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             A parameter element to be used within an IExecutableExtension element.  This will be passed as initialization data to the instantiated class.
          </documentation>
@@ -361,6 +380,9 @@ If multiple extensions contribute ruler actions to the same text editor, the ext
 
    <element name="class">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             The element version of the &lt;code&gt;class&lt;/code&gt; attribute.  This is used when the class implements &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt; and there is parameterized data that you wish used in its initialization.
          </documentation>
@@ -374,18 +396,19 @@ If multiple extensions contribute ruler actions to the same text editor, the ext
                <documentation>
                   A class that implements &lt;code&gt;org.eclipse.ui.IEditorActionDelegate&lt;/code&gt;.  It may also implement &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
+
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of an editor action extension: 
 &lt;p&gt;
@@ -460,9 +483,31 @@ In the example above, the specified action will appear as a menu item in the sub
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The Workbench provides a built-in &quot;Default Text Editor&quot;. Plug-ins can contribute into this default editor or editors provided by other plug-ins.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2000, 2007 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which accompanies
+this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The value of the class attribute must be a fully qualified
 name of a Java class that implements 
@@ -529,30 +574,6 @@ can be expressed using:
   &lt;/and&gt;
  &lt;/enablement&gt;
 &lt;/pre&gt;
-      </documentation>
-   </annotation>
-
-
-
-   <annotation>
-      <appinfo>
-         <meta.section type="implementation"/>
-      </appinfo>
-      <documentation>
-         The Workbench provides a built-in &quot;Default Text Editor&quot;. Plug-ins can contribute into this default editor or editors provided by other plug-ins.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appinfo>
-         <meta.section type="copyright"/>
-      </appinfo>
-      <documentation>
-         Copyright (c) 2000, 2007 IBM Corporation and others.&lt;br&gt;
-All rights reserved. This program and the accompanying materials are made
-available under the terms of the Eclipse Public License v1.0 which accompanies
-this distribution, and is available at &lt;a 
-href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 

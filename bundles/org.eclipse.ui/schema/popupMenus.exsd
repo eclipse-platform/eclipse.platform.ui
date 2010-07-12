@@ -6,7 +6,12 @@
          <meta.schema plugin="org.eclipse.ui" id="popupMenus" name="Pop-up Menus"/>
       </appInfo>
       <documentation>
-         This extension point is used to add new actions to context menus owned by other plug-ins.  Action contributions may be made against a specific object type (&lt;samp&gt;objectContribution&lt;/samp&gt;) or against a specific context menu of a view or editor part (&lt;samp&gt;viewerContribution&lt;/samp&gt;). When using &lt;samp&gt;objectContribution&lt;/samp&gt;, the contribution will appear in all view or editor part context menus where objects of the specified type are selected. In contrast, using &lt;samp&gt;viewerContribution&lt;/samp&gt;, the contribution will only appear in the specified context menu of a view or editor, regardless of the selection.
+         &lt;p&gt;
+&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br&gt;
+Do not use this extension point, it will be removed in future versions of this product.
+Instead, use the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt;
+&lt;/p&gt;
+This extension point is used to add new actions to context menus owned by other plug-ins.  Action contributions may be made against a specific object type (&lt;samp&gt;objectContribution&lt;/samp&gt;) or against a specific context menu of a view or editor part (&lt;samp&gt;viewerContribution&lt;/samp&gt;). When using &lt;samp&gt;objectContribution&lt;/samp&gt;, the contribution will appear in all view or editor part context menus where objects of the specified type are selected. In contrast, using &lt;samp&gt;viewerContribution&lt;/samp&gt;, the contribution will only appear in the specified context menu of a view or editor, regardless of the selection.
 &lt;p&gt;
 You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.ui.menus&lt;/a&gt; to place commands editor or view contexts menus as well.
 &lt;/p&gt;
@@ -32,7 +37,7 @@ The &lt;code&gt;objectContribution&lt;/code&gt; element uses the core expression
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element />
+            <meta.element deprecated="true" />
          </appInfo>
       </annotation>
       <complexType>
@@ -69,6 +74,9 @@ The &lt;code&gt;objectContribution&lt;/code&gt; element uses the core expression
 
    <element name="objectContribution">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             This element is used to define a group of actions and/or menus for any viewer context menus for which the objects of the specified type are selected.  &lt;code&gt;enablement&lt;/code&gt; in this element refers to core expression enablement, as defined in &lt;a href=&quot;org_eclipse_core_expressions_definitions.html&quot;&gt;org.eclipse.core.expressions.definitions&lt;/a&gt;, and effects the enablement of the objectContribution not the contained actions.
          </documentation>
@@ -118,6 +126,9 @@ selection must subclass or implement.
 
    <element name="viewerContribution">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             This element is used to define a group of actions and/or menus for a specific view or editor part context menu.
          </documentation>
@@ -148,7 +159,7 @@ selection must subclass or implement.
    <element name="action">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="label" icon="icon"/>
+            <meta.element labelAttribute="label" icon="icon" deprecated="true"/>
          </appInfo>
          <documentation>
             This element defines an action that the user can invoke in the UI.
@@ -346,7 +357,7 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
    <element name="filter">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="name"/>
+            <meta.element labelAttribute="name" deprecated="true"/>
          </appInfo>
          <documentation>
             This element is used to evaluate the attribute state of each object in the current selection. A match only if each object in the selection has the specified attribute state. Each object in the selection must implement, or adapt to, &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt;.
@@ -372,6 +383,9 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
 
    <element name="parameter">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             A parameter element to be used within an IExecutableExtension element.  This will be passed as initialization data to the instantiated class.
          </documentation>
@@ -396,6 +410,9 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
 
    <element name="class">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             The element version of the &lt;code&gt;class&lt;/code&gt; attribute.  This is used when the class implements &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt; and there is parameterized data that you wish used in its initialization.
          </documentation>
@@ -417,100 +434,6 @@ within its &lt;samp&gt;selectionChanged&lt;/samp&gt; method.
       </complexType>
    </element>
 
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The value of the action attribute &lt;samp&gt;class&lt;/samp&gt;
-must be a fully qualified class name of a Java class 
-that implements &lt;samp&gt;org.eclipse.ui.IObjectActionDelegate&lt;/samp&gt;
-in the case of object contributions, 
-&lt;samp&gt;org.eclipse.ui.IViewActionDelegate&lt;/samp&gt;
-for contributions to context menus that belong to views, 
-or &lt;samp&gt;org.eclipse.ui.IEditorActionDelegate&lt;/samp&gt;
-for contributions to context menus that belong to editors.  
-In all cases, the implementing class is loaded as late 
-as possible to avoid loading the entire plug-in before 
-it is really needed. 
-&lt;p&gt;
-Note: For backwards compatibility, 
-&lt;samp&gt;org.eclipse.ui.IActionDelegate&lt;/samp&gt; may be 
-implemented for object contributions. 
-&lt;p&gt;
-Conext menu extension within a part is only possible 
-when the target part publishes a menu for extension.  
-This is strongly encouraged, as it improves the 
-extensibility of the product. To accomplish this 
-each part should publish any context menus which are 
-defined by calling 
-&lt;samp&gt;IWorkbenchPartSite.registerContextMenu&lt;/samp&gt;.  
-Once this has been done the workbench will 
-automatically insert any action extensions which exist. 
-&lt;p&gt;
-A menu id must be provided for each registered menu.  
-For consistency across parts the following strategy 
-should be adopted by all part implementors. 
-&lt;p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-If the target part has only one context menu it 
-should be registered with id == part id.  This can be 
-done easily by calling 
-&lt;samp&gt;registerContextMenu(MenuManager, ISelectionProvider)&lt;/samp&gt;.  
-Extenders may use the part id itself as the targetID for 
-the action extension. &lt;/li&gt;
-&lt;li&gt;
-If the target part has more than one context menu a 
-unique id should be defined for each.  Prefix each id 
-with the part id and publish these id&apos;s within 
-the javadoc for the target part.  Register each 
-menu at runtime by calling 
-&lt;samp&gt;registerContextMenu(String, MenuManager, ISelectionProvider)&lt;/samp&gt;. 
-Extenders will use the unique menu id as the targetID 
-for the action extension. &lt;/li&gt;&lt;/ul&gt;
-&lt;p&gt;
-Any context menu which is registered with the workbench 
-also should contain a standard insertion point with id 
-&lt;samp&gt;IWorkbenchActionConstants.MB_ADDITIONS&lt;/samp&gt;.  
-Other plug-ins will use this value as a reference 
-point for insertion.  The insertion point may be 
-defined by adding a GroupMarker to the menu at an 
-appropriate location for insertion. 
-&lt;p&gt;
-An object in the workbench which is the selection 
-in a context menu may define an 
-&lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt;.  This is a 
-filtering strategy which can perform type specific 
-filtering.  The workbench will retrieve the filter 
-for the selection by testing to see if it implements 
-&lt;samp&gt;IActionFilter&lt;/samp&gt;.  If that fails, the 
-workbench will ask for a filter through the 
-&lt;samp&gt;IAdaptable&lt;/samp&gt; mechanism.
-&lt;p&gt;
-Action and menu labels may contain special characters that encode mnemonics which are specified using the ampersand (&apos;&amp;amp;&apos;) character in front of a selected character in the translated text. Since ampersand is not allowed in XML strings, use &lt;samp&gt;&amp;amp;amp;&lt;/samp&gt; character entity. 
-&lt;p&gt;
-If two or more actions are contributed to a menu by a single extension the actions will appear in the reverse order of how they are listed in the plugin.xml file. This behavior is admittedly unintuitive.  However, it was discovered after the  Eclipse Platform API was frozen.  Changing the behavior now would break every plug-in which relies upon the existing behavior.
-&lt;p&gt;
-The &lt;samp&gt;selection&lt;/samp&gt; and &lt;samp&gt;enablement&lt;/samp&gt; elements are mutually exclusive. The &lt;samp&gt;enablement&lt;/samp&gt; element can replace the &lt;samp&gt;selection&lt;/samp&gt; element using the sub-elements &lt;samp&gt;objectClass&lt;/samp&gt; and &lt;samp&gt;objectState&lt;/samp&gt;. For example, the following:
-&lt;pre&gt;
- &lt;selection
-  class=&quot;org.eclipse.core.resources.IFile&quot;
-  name=&quot;*.java&quot;&gt;
- &lt;/selection&gt;
-&lt;/pre&gt;
-can be expressed using:
-&lt;pre&gt;
- &lt;enablement&gt;
-  &lt;and&gt;
-   &lt;objectClass name=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
-   &lt;objectState name=&quot;extension&quot; value=&quot;java&quot;/&gt;
-  &lt;/and&gt;
- &lt;/enablement&gt;
-&lt;/pre&gt;
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
@@ -637,6 +560,100 @@ All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
 href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the action attribute &lt;samp&gt;class&lt;/samp&gt;
+must be a fully qualified class name of a Java class 
+that implements &lt;samp&gt;org.eclipse.ui.IObjectActionDelegate&lt;/samp&gt;
+in the case of object contributions, 
+&lt;samp&gt;org.eclipse.ui.IViewActionDelegate&lt;/samp&gt;
+for contributions to context menus that belong to views, 
+or &lt;samp&gt;org.eclipse.ui.IEditorActionDelegate&lt;/samp&gt;
+for contributions to context menus that belong to editors.  
+In all cases, the implementing class is loaded as late 
+as possible to avoid loading the entire plug-in before 
+it is really needed. 
+&lt;p&gt;
+Note: For backwards compatibility, 
+&lt;samp&gt;org.eclipse.ui.IActionDelegate&lt;/samp&gt; may be 
+implemented for object contributions. 
+&lt;p&gt;
+Conext menu extension within a part is only possible 
+when the target part publishes a menu for extension.  
+This is strongly encouraged, as it improves the 
+extensibility of the product. To accomplish this 
+each part should publish any context menus which are 
+defined by calling 
+&lt;samp&gt;IWorkbenchPartSite.registerContextMenu&lt;/samp&gt;.  
+Once this has been done the workbench will 
+automatically insert any action extensions which exist. 
+&lt;p&gt;
+A menu id must be provided for each registered menu.  
+For consistency across parts the following strategy 
+should be adopted by all part implementors. 
+&lt;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+If the target part has only one context menu it 
+should be registered with id == part id.  This can be 
+done easily by calling 
+&lt;samp&gt;registerContextMenu(MenuManager, ISelectionProvider)&lt;/samp&gt;.  
+Extenders may use the part id itself as the targetID for 
+the action extension. &lt;/li&gt;
+&lt;li&gt;
+If the target part has more than one context menu a 
+unique id should be defined for each.  Prefix each id 
+with the part id and publish these id&apos;s within 
+the javadoc for the target part.  Register each 
+menu at runtime by calling 
+&lt;samp&gt;registerContextMenu(String, MenuManager, ISelectionProvider)&lt;/samp&gt;. 
+Extenders will use the unique menu id as the targetID 
+for the action extension. &lt;/li&gt;&lt;/ul&gt;
+&lt;p&gt;
+Any context menu which is registered with the workbench 
+also should contain a standard insertion point with id 
+&lt;samp&gt;IWorkbenchActionConstants.MB_ADDITIONS&lt;/samp&gt;.  
+Other plug-ins will use this value as a reference 
+point for insertion.  The insertion point may be 
+defined by adding a GroupMarker to the menu at an 
+appropriate location for insertion. 
+&lt;p&gt;
+An object in the workbench which is the selection 
+in a context menu may define an 
+&lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt;.  This is a 
+filtering strategy which can perform type specific 
+filtering.  The workbench will retrieve the filter 
+for the selection by testing to see if it implements 
+&lt;samp&gt;IActionFilter&lt;/samp&gt;.  If that fails, the 
+workbench will ask for a filter through the 
+&lt;samp&gt;IAdaptable&lt;/samp&gt; mechanism.
+&lt;p&gt;
+Action and menu labels may contain special characters that encode mnemonics which are specified using the ampersand (&apos;&amp;amp;&apos;) character in front of a selected character in the translated text. Since ampersand is not allowed in XML strings, use &lt;samp&gt;&amp;amp;amp;&lt;/samp&gt; character entity. 
+&lt;p&gt;
+If two or more actions are contributed to a menu by a single extension the actions will appear in the reverse order of how they are listed in the plugin.xml file. This behavior is admittedly unintuitive.  However, it was discovered after the  Eclipse Platform API was frozen.  Changing the behavior now would break every plug-in which relies upon the existing behavior.
+&lt;p&gt;
+The &lt;samp&gt;selection&lt;/samp&gt; and &lt;samp&gt;enablement&lt;/samp&gt; elements are mutually exclusive. The &lt;samp&gt;enablement&lt;/samp&gt; element can replace the &lt;samp&gt;selection&lt;/samp&gt; element using the sub-elements &lt;samp&gt;objectClass&lt;/samp&gt; and &lt;samp&gt;objectState&lt;/samp&gt;. For example, the following:
+&lt;pre&gt;
+ &lt;selection
+  class=&quot;org.eclipse.core.resources.IFile&quot;
+  name=&quot;*.java&quot;&gt;
+ &lt;/selection&gt;
+&lt;/pre&gt;
+can be expressed using:
+&lt;pre&gt;
+ &lt;enablement&gt;
+  &lt;and&gt;
+   &lt;objectClass name=&quot;org.eclipse.core.resources.IFile&quot;/&gt;
+   &lt;objectState name=&quot;extension&quot; value=&quot;java&quot;/&gt;
+  &lt;/and&gt;
+ &lt;/enablement&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
