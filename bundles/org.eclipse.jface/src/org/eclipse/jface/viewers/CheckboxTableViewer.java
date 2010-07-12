@@ -366,13 +366,16 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * @param state <code>true</code> if the element should be checked,
      *  and <code>false</code> if it should be unchecked
      */
-    public void setAllChecked(boolean state) {
-        TableItem[] children = getTable().getItems();
-        for (int i = 0; i < children.length; i++) {
-            TableItem item = children[i];
-            item.setChecked(state);
-        }
-    }
+	public void setAllChecked(boolean state) {
+		TableItem[] children = getTable().getItems();
+		for (int i = 0; i < children.length; i++) {
+			TableItem item = children[i];
+			if (item.getData() != null) {
+				if (item.getChecked() != state)
+					item.setChecked(state);
+			}
+		}
+	}
 
     /**
      * Sets to the given value the grayed state for all elements in this viewer.
@@ -384,7 +387,10 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
         TableItem[] children = getTable().getItems();
         for (int i = 0; i < children.length; i++) {
             TableItem item = children[i];
-            item.setGrayed(state);
+			if (item.getData() != null) {
+				if (item.getGrayed() != state)
+					item.setGrayed(state);
+			}
         }
     }
 
@@ -394,10 +400,12 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
     public boolean setChecked(Object element, boolean state) {
         Assert.isNotNull(element);
         Widget widget = findItem(element);
-        if (widget instanceof TableItem) {
-            ((TableItem) widget).setChecked(state);
-            return true;
-        }
+		if (widget instanceof TableItem) {
+			TableItem item = (TableItem) widget;
+			if (item.getChecked() != state)
+				item.setChecked(state);
+			return true;
+		}
         return false;
     }
 
@@ -446,10 +454,12 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
     public boolean setGrayed(Object element, boolean state) {
         Assert.isNotNull(element);
         Widget widget = findItem(element);
-        if (widget instanceof TableItem) {
-            ((TableItem) widget).setGrayed(state);
-            return true;
-        }
+		if (widget instanceof TableItem) {
+			TableItem item = (TableItem) widget;
+			if (item.getGrayed() != state)
+				item.setGrayed(state);
+			return true;
+		}
         return false;
     }
 
