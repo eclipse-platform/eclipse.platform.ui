@@ -238,13 +238,16 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				if (ctf.getTopRight() != null) {
 					Control curTB = ctf.getTopRight();
 					ctf.setTopRight(null);
-					MUIElement tbME = (MUIElement) curTB
-							.getData(AbstractPartRenderer.OWNING_ME);
-					if (tbME instanceof MRenderedToolBar)
-						renderer.removeGui(tbME);
-					else
-						curTB.dispose();
+					if (!curTB.isDisposed()) {
+						MUIElement tbME = (MUIElement) curTB
+								.getData(AbstractPartRenderer.OWNING_ME);
+						if (tbME instanceof MRenderedToolBar)
+							renderer.removeGui(tbME);
+						else
+							curTB.dispose();
+					}
 				}
+
 				MToolBar tbModel = part.getToolbar();
 				if (tbModel != null) {
 					Control c = (Control) renderer.createGui(tbModel, ctf,
