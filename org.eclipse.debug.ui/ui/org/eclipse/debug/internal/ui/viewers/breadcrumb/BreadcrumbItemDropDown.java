@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.viewers.ISelection;
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -151,8 +153,16 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		}
 	}
 
-	private static final int DROP_DOWN_HIGHT= 300;
-	private static final int DROP_DOWN_WIDTH= 500;
+	// Workaround for bug 258196: set the minimum size to 500 because on Linux
+	// the size is not adjusted correctly in a virtual tree.
+    private static final int DROP_DOWN_MIN_WIDTH= 500;
+    private static final int DROP_DOWN_MAX_WIDTH= 501;
+    
+    private static final int DROP_DOWN_DEFAULT_MIN_HEIGHT= 300;
+    private static final int DROP_DOWN_DEFAULT_MAX_HEIGHT= 500;
+
+    private static final String DIALOG_SETTINGS= "BreadcrumbItemDropDown"; //$NON-NLS-1$
+    private static final String DIALOG_HEIGHT= "height"; //$NON-NLS-1$
 
 	private final BreadcrumbItem fParent;
 	private final Composite fParentComposite;
@@ -161,6 +171,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	private boolean fMenuIsShown;
 	private boolean fEnabled;
 	private Shell fShell;
+    private boolean fIsResizingProgrammatically;
 
 	public BreadcrumbItemDropDown(BreadcrumbItem parent, Composite composite) {
 		fParent= parent;
@@ -264,6 +275,20 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		fShell= new Shell(fToolBar.getShell(), SWT.RESIZE | SWT.TOOL | SWT.ON_TOP);
 		if (DEBUG)
 			System.out.println("	creating new shell"); //$NON-NLS-1$
+
+	      
+        fShell.addControlListener(new ControlAdapter() {
+            /*
+             * @see org.eclipse.swt.events.ControlAdapter#controlResized(org.eclipse.swt.events.ControlEvent)
+             */
+            public void controlResized(ControlEvent e) {
+                if (fIsResizingProgrammatically)
+                    return;
+                
+                Point size= fShell.getSize();
+                getDialogSettings().put(DIALOG_HEIGHT, size.y);
+            }
+        });
 
 		GridLayout layout= new GridLayout(1, false);
 		layout.marginHeight= 0;
@@ -386,6 +411,22 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		});
 	}
 
+	private IDialogSettings getDialogSettings() {
+	    IDialogSettings javaSettings= DebugUIPlugin.getDefault().getDialogSettings();
+	    IDialogSettings settings= javaSettings.getSection(DIALOG_SETTINGS);
+	    if (settings == null)
+	        settings= javaSettings.addNewSection(DIALOG_SETTINGS);
+	    return settings;
+	}
+	    
+	private int getMaxHeight() {
+	    try {
+	        return getDialogSettings().getInt(DIALOG_HEIGHT);
+	    } catch (NumberFormatException e) {
+	        return DROP_DOWN_DEFAULT_MAX_HEIGHT;
+	    }
+	}
+
 	/**
 	 * Calculates a useful size for the given shell.
 	 *
@@ -397,12 +438,8 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		Rectangle toolbarBounds= fToolBar.getBounds();
 
 		Point size = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, false);
-		int height= Math.min(size.y, DROP_DOWN_HIGHT);
-		// TODO: Because of bug 258196 the drop down does not resize correctly 
-		// on GTK.  As a workaround temporarily increase the initial width of 
-		// the drop down to 500.
-		//int width= Math.max(Math.min(size.x, DROP_DOWN_WIDTH), 250);
-        int width= Math.max(Math.min(size.x, DROP_DOWN_WIDTH), 500);
+		int height= Math.max(Math.min(size.y, getMaxHeight()), DROP_DOWN_DEFAULT_MIN_HEIGHT);
+		int width= Math.max(Math.min(size.x, DROP_DOWN_MAX_WIDTH), DROP_DOWN_MIN_WIDTH);
 
 		int imageBoundsX= 0;
 		if (fParent.getImage() != null) {
@@ -431,7 +468,12 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			pt.x= monitor.x;
 
 		shell.setLocation(pt);
-		shell.setSize(width, height);
+        fIsResizingProgrammatically= true;
+        try {
+            shell.setSize(width, height);
+        } finally {
+            fIsResizingProgrammatically= false;
+        }
 	}
 
 	/**
@@ -471,7 +513,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 
 	/**
 	 * Set the size of the given shell such that more content can be shown. The shell size does not
-	 * exceed {@link #DROP_DOWN_HIGHT} and {@link #DROP_DOWN_WIDTH}.
+     * exceed a user-configurable maximum.
 	 *
 	 * @param shell the shell to resize
 	 */
@@ -480,27 +522,33 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		int currentWidth= size.x;
 		int currentHeight= size.y;
 
-		if (currentHeight >= DROP_DOWN_HIGHT && currentWidth >= DROP_DOWN_WIDTH)
+        int maxHeight= getMaxHeight();
+        
+        if (currentHeight >= maxHeight && currentWidth >= DROP_DOWN_MAX_WIDTH)
 			return;
 
 		Point preferedSize= shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 
 		int newWidth;
-		if (currentWidth >= DROP_DOWN_WIDTH) {
+        if (currentWidth >= DROP_DOWN_MAX_WIDTH) {
 			newWidth= currentWidth;
 		} else {
-			newWidth= Math.min(Math.max(preferedSize.x, currentWidth), DROP_DOWN_WIDTH);
+		    // Workaround for bug 319612: Do not resize width below the 
+		    // DROP_DOWN_MIN_WIDTH.  This can happen because the Shell.getSize()
+		    // is incorrectly small on Linux.
+            newWidth= Math.min(Math.max(Math.max(preferedSize.x, currentWidth), DROP_DOWN_MIN_WIDTH), DROP_DOWN_MAX_WIDTH);
 		}
 		int newHeight;
-		if (currentHeight >= DROP_DOWN_HIGHT) {
+        if (currentHeight >= maxHeight) {
 			newHeight= currentHeight;
 		} else {
-			newHeight= Math.min(Math.max(preferedSize.y, currentHeight), DROP_DOWN_HIGHT);
+            newHeight= Math.min(Math.max(preferedSize.y, currentHeight), maxHeight);
 		}
 
 		if (newHeight != currentHeight || newWidth != currentWidth) {
 			shell.setRedraw(false);
 			try {
+                fIsResizingProgrammatically= true;
 				shell.setSize(newWidth, newHeight);
 				
 				Point location = shell.getLocation();
@@ -515,6 +563,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	                shell.setLocation(newLocation.x, newLocation.y);
 				}
 			} finally {
+                fIsResizingProgrammatically= false;
 				shell.setRedraw(true);
 			}
 		}
