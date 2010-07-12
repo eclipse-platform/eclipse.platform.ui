@@ -68,6 +68,9 @@ public abstract class CompoundContributionItem extends ContributionItem {
         }
         
         IContributionItem[] items = getContributionItemsToFill();
+		if (index > menu.getItemCount()) {
+			index = menu.getItemCount();
+		}
         for (int i = 0; i < items.length; i++) {
             IContributionItem item = items[i];
             int oldItemCount = menu.getItemCount();

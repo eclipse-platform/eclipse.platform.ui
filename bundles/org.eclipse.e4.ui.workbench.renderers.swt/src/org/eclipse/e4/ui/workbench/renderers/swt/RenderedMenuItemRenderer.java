@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 import org.eclipse.e4.ui.internal.workbench.ExtensionPointProxy;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
@@ -24,6 +32,27 @@ import org.eclipse.swt.widgets.Widget;
  * Create a contribute part.
  */
 public class RenderedMenuItemRenderer extends SWTPartRenderer {
+
+	private static Method aboutToShow;
+
+	private static Method getAboutToShow() {
+		if (aboutToShow == null) {
+			try {
+				aboutToShow = MenuManager.class
+						.getDeclaredMethod("handleAboutToShow"); //$NON-NLS-1$
+				aboutToShow.setAccessible(true);
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return aboutToShow;
+	}
+
+	private Map<IContributionItem, List<MenuRecord>> map = new WeakHashMap<IContributionItem, List<MenuRecord>>();
 
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MRenderedMenuItem)
@@ -47,13 +76,81 @@ public class RenderedMenuItemRenderer extends SWTPartRenderer {
 	}
 
 	private Object fill(IContributionItem item, Menu menu) {
-		int index = menu.getItemCount();
-		item.fill(menu, index);
-
-		if (index == menu.getItemCount()) {
+		ContributionItem contribution = (ContributionItem) item;
+		MenuManager manager = (MenuManager) contribution.getParent();
+		try {
+			if (manager == null) {
+				manager = new MenuManager();
+				manager.add(contribution);
+			}
+			getAboutToShow().invoke(manager, new Object[0]);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return null;
 		}
-		return menu.getItem(index);
+
+		int itemCount = menu.getItemCount();
+		List<MenuRecord> list = map.get(item);
+		if (list != null) {
+			for (int i = 0; i < list.size(); i++) {
+				MenuRecord record = list.get(i);
+				Menu storedMenu = record.getMenu();
+				if (storedMenu.isDisposed()) {
+					list.remove(i);
+					i--;
+				} else if (storedMenu == menu) {
+					record.dispose();
+					itemCount = menu.getItemCount();
+					list.remove(i);
+					break;
+				}
+			}
+		}
+
+		item.fill(menu, itemCount);
+		int endIndex = menu.getItemCount();
+
+		if (list == null) {
+			if (itemCount != endIndex) {
+				list = new ArrayList<MenuRecord>();
+				MenuRecord record = new MenuRecord(menu);
+				for (int i = itemCount; i < endIndex; i++) {
+					record.addItem(menu.getItem(i));
+				}
+				list.add(record);
+				map.put(item, list);
+			}
+		} else {
+			for (int i = 0; i < list.size(); i++) {
+				MenuRecord record = list.get(i);
+				if (record.getMenu() == menu) {
+					list.remove(i);
+					record = new MenuRecord(menu);
+					for (int j = itemCount; j < endIndex; j++) {
+						record.addItem(menu.getItem(j));
+					}
+					list.add(record);
+					return null;
+				}
+			}
+
+			MenuRecord record = new MenuRecord(menu);
+			for (int i = itemCount; i < endIndex; i++) {
+				record.addItem(menu.getItem(i));
+			}
+			list.add(record);
+			map.put(item, list);
+		}
+		return null;
 	}
 
 	/*
@@ -133,5 +230,29 @@ public class RenderedMenuItemRenderer extends SWTPartRenderer {
 	public void processContents(MElementContainer<MUIElement> container) {
 		// We've delegated further rendering to the ContributionManager
 		// it's their fault the menu items don't show up!
+	}
+
+	class MenuRecord {
+
+		private Menu menu;
+		private List<MenuItem> items = new ArrayList<MenuItem>();
+
+		public MenuRecord(Menu menu) {
+			this.menu = menu;
+		}
+
+		public Menu getMenu() {
+			return menu;
+		}
+
+		public void addItem(MenuItem item) {
+			items.add(item);
+		}
+
+		public void dispose() {
+			for (MenuItem item : items) {
+				item.dispose();
+			}
+		}
 	}
 }
