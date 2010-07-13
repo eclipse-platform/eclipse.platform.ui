@@ -151,6 +151,13 @@ public class E4Application implements IApplication {
 		IEclipseContext appContext = createDefaultContext();
 		appContext.set(IApplicationContext.class, applicationContext);
 
+		// Check if DS is running
+		if (!appContext
+				.containsKey("org.eclipse.e4.ui.workbench.modeling.EModelService")) {
+			throw new IllegalStateException(
+					"Core services not available. Please make sure that a declarative service implementation (such as the bundle 'org.eclipse.equinox.ds') is available!");
+		}
+
 		// Get the factory to create DI instances with
 		IContributionFactory factory = (IContributionFactory) appContext
 				.get(IContributionFactory.class.getName());
