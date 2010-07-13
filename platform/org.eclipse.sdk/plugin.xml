@@ -11,7 +11,7 @@
           <property name="preferenceCustomization" value="plugin_customization.ini"/>
           <property
                 name="startupForegroundColor"
-                value="C8D5EA"/>
+                value="38385A"/>
           <property
                 name="startupMessageRect"
                 value="7,220,441,20"/>
@@ -50,7 +50,7 @@
 		  </property>
     <property
           name="buildIdLocation"
-          value="312,204">
+          value="312,116">
     </property>
       </product> 
     </extension> 
