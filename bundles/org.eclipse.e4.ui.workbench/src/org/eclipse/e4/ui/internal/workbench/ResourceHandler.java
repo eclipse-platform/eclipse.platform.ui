@@ -18,6 +18,7 @@ import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -55,12 +56,6 @@ import org.w3c.dom.Document;
  */
 public class ResourceHandler implements IModelResourceHandler {
 
-	/**
-	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
-	 */
-	private static final boolean RESTORE_VIA_DELTAS = true;
-
 	private File workbenchData;
 
 	private ResourceSetImpl resourceSetImpl;
@@ -78,13 +73,28 @@ public class ResourceHandler implements IModelResourceHandler {
 	@Named(E4Workbench.INITIAL_WORKBENCH_MODEL_URI)
 	private URI applicationDefinitionInstance;
 
+	@Inject
+	@Named(E4Workbench.INSTANCE_LOCATION)
+	private Location instanceLocation;
+
+	@Inject
+	@Named(E4Workbench.PERSIST_STATE)
+	private boolean saveAndRestore;
+
+	@Inject
+	@Named(E4Workbench.CLEAR_PERSISTED_STATE)
+	private boolean clearPersistedState;
+
 	/**
-	 * @param instanceLocation
-	 * @param saveAndRestore
+	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
 	 */
 	@Inject
-	public ResourceHandler(@Named(E4Workbench.INSTANCE_LOCATION) Location instanceLocation,
-			@Named(E4Workbench.SAVE_AND_RESTORE) boolean saveAndRestore) {
+	@Named(E4Workbench.DELTA_RESTORE)
+	private boolean deltaRestore = true;
+
+	@PostConstruct
+	void init() {
 		resourceSetImpl = new ResourceSetImpl();
 		resourceSetImpl.getResourceFactoryRegistry().getExtensionToFactoryMap()
 				.put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
@@ -115,10 +125,16 @@ public class ResourceHandler implements IModelResourceHandler {
 		workbenchData = new File(workbenchData, ".plugins"); //$NON-NLS-1$
 		workbenchData = new File(workbenchData, "org.eclipse.e4.workbench"); //$NON-NLS-1$
 
-		if (RESTORE_VIA_DELTAS) {
+		if (deltaRestore) {
 			workbenchData = new File(workbenchData, "deltas.xml"); //$NON-NLS-1$	
 		} else {
 			workbenchData = new File(workbenchData, "workbench.xmi"); //$NON-NLS-1$			
+		}
+
+		if (workbenchData != null && clearPersistedState) {
+			if (workbenchData.exists()) {
+				workbenchData.delete();
+			}
 		}
 
 		if (workbenchData != null && saveAndRestore) {
@@ -141,7 +157,7 @@ public class ResourceHandler implements IModelResourceHandler {
 	public Resource loadBaseModel() {
 		Activator.trace(Policy.DEBUG_WORKBENCH,
 				"Initializing workbench: " + applicationDefinitionInstance, null); //$NON-NLS-1$
-		if (RESTORE_VIA_DELTAS) {
+		if (deltaRestore) {
 			resource = loadResource(applicationDefinitionInstance);
 		} else {
 			resource = new E4XMIResource();
@@ -173,7 +189,7 @@ public class ResourceHandler implements IModelResourceHandler {
 	}
 
 	public void save() throws IOException {
-		if (RESTORE_VIA_DELTAS) {
+		if (deltaRestore && reconciler != null) {
 			try {
 				Document document = (Document) reconciler.serialize();
 
@@ -197,7 +213,7 @@ public class ResourceHandler implements IModelResourceHandler {
 	}
 
 	public Resource loadMostRecentModel() {
-		if (RESTORE_VIA_DELTAS) {
+		if (deltaRestore) {
 			try {
 				Resource resource = loadBaseModel();
 				MApplication appElement = (MApplication) resource.getContents().get(0);

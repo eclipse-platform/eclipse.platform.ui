@@ -158,7 +158,7 @@ public class E4Application implements IApplication {
 		// Install the life-cycle manager for this session if there's one
 		// defined
 		String lifeCycleURI = getArgValue(E4Workbench.LIFE_CYCLE_URI_ARG,
-				applicationContext);
+				applicationContext, false);
 		Object lcManager = null;
 		if (lifeCycleURI != null) {
 			lcManager = factory.create(lifeCycleURI, appContext);
@@ -201,13 +201,16 @@ public class E4Application implements IApplication {
 
 		// Parse out parameters from both the command line and/or the product
 		// definition (if any) and put them in the context
-		String xmiURI = getArgValue(E4Workbench.XMI_URI_ARG, applicationContext);
+		String xmiURI = getArgValue(E4Workbench.XMI_URI_ARG,
+				applicationContext, false);
 		appContext.set(E4Workbench.XMI_URI_ARG, xmiURI);
 
-		String themeId = getArgValue(E4Application.THEME_ID, applicationContext);
+		String themeId = getArgValue(E4Application.THEME_ID,
+				applicationContext, false);
 		appContext.set(E4Application.THEME_ID, themeId);
 
-		String cssURI = getArgValue(E4Workbench.CSS_URI_ARG, applicationContext);
+		String cssURI = getArgValue(E4Workbench.CSS_URI_ARG,
+				applicationContext, false);
 		if (cssURI != null) {
 			appContext.set(E4Workbench.CSS_URI_ARG, cssURI);
 		}
@@ -222,16 +225,16 @@ public class E4Application implements IApplication {
 		}
 
 		String cssResourcesURI = getArgValue(E4Workbench.CSS_RESOURCE_URI_ARG,
-				applicationContext);
+				applicationContext, false);
 		appContext.set(E4Workbench.CSS_RESOURCE_URI_ARG, cssResourcesURI);
 		appContext.set(
 				E4Workbench.RENDERER_FACTORY_URI,
 				getArgValue(E4Workbench.RENDERER_FACTORY_URI,
-						applicationContext));
+						applicationContext, false));
 
 		// This is a default arg, if missing we use the default rendering engine
 		String presentationURI = getArgValue(E4Workbench.PRESENTATION_URI_ARG,
-				applicationContext);
+				applicationContext, false);
 		if (presentationURI == null) {
 			presentationURI = PartRenderingEngine.engineURI;
 		}
@@ -250,25 +253,42 @@ public class E4Application implements IApplication {
 		Location instanceLocation = WorkbenchSWTActivator.getDefault()
 				.getInstanceLocation();
 
-		String appModelPath = getArgValue(E4Workbench.XMI_URI_ARG, appContext);
+		String appModelPath = getArgValue(E4Workbench.XMI_URI_ARG, appContext,
+				false);
 		Assert.isNotNull(appModelPath, E4Workbench.XMI_URI_ARG
 				+ " argument missing"); //$NON-NLS-1$
 		final URI initialWorkbenchDefinitionInstance = URI
 				.createPlatformPluginURI(appModelPath, true);
 
-		boolean saveAndRestore;
-		String value = getArgValue(E4Workbench.SAVE_AND_RESTORE, appContext);
-
-		saveAndRestore = value == null || Boolean.getBoolean(value);
-
-		eclipseContext.set(E4Workbench.SAVE_AND_RESTORE,
-				Boolean.valueOf(saveAndRestore));
 		eclipseContext.set(E4Workbench.INITIAL_WORKBENCH_MODEL_URI,
 				initialWorkbenchDefinitionInstance);
 		eclipseContext.set(E4Workbench.INSTANCE_LOCATION, instanceLocation);
 
+		// Save and restore
+		boolean saveAndRestore;
+		String value = getArgValue(E4Workbench.PERSIST_STATE, appContext, false);
+
+		saveAndRestore = value == null || Boolean.parseBoolean(value);
+
+		eclipseContext.set(E4Workbench.PERSIST_STATE,
+				Boolean.valueOf(saveAndRestore));
+
+		// Persisted state
+		boolean clearPersistedState;
+		value = getArgValue(E4Workbench.CLEAR_PERSISTED_STATE, appContext, true);
+		clearPersistedState = value != null && Boolean.parseBoolean(value);
+		eclipseContext.set(E4Workbench.CLEAR_PERSISTED_STATE,
+				Boolean.valueOf(clearPersistedState));
+
+		// Delta save and restore
+		boolean deltaRestore;
+		value = getArgValue(E4Workbench.DELTA_RESTORE, appContext, true);
+		deltaRestore = value == null || Boolean.parseBoolean(value);
+		eclipseContext.set(E4Workbench.DELTA_RESTORE,
+				Boolean.valueOf(deltaRestore));
+
 		String resourceHandler = getArgValue(
-				E4Workbench.MODEL_RESOURCE_HANDLER, appContext);
+				E4Workbench.MODEL_RESOURCE_HANDLER, appContext, false);
 
 		if (resourceHandler == null) {
 			resourceHandler = "platform:/plugin/org.eclipse.e4.ui.workbench/"
@@ -287,14 +307,22 @@ public class E4Application implements IApplication {
 		return theApp;
 	}
 
-	private String getArgValue(String argName, IApplicationContext appContext) {
+	private String getArgValue(String argName, IApplicationContext appContext,
+			boolean singledCmdArgValue) {
 		// Is it in the arg list ?
 		if (argName == null || argName.length() == 0)
 			return null;
 
-		for (int i = 0; i < args.length; i += 2) {
-			if (argName.equals(args[i]))
-				return args[i + 1];
+		if (singledCmdArgValue) {
+			for (int i = 0; i < args.length; i++) {
+				if (("-" + argName).equals(args[i]))
+					return "true";
+			}
+		} else {
+			for (int i = 0; i < args.length; i++) {
+				if (("-" + argName).equals(args[i]) && i + 1 < args.length)
+					return args[i + 1];
+			}
 		}
 
 		return appContext.getBrandingProperty(argName);
