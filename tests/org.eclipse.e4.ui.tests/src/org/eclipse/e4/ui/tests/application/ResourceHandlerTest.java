@@ -55,7 +55,10 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 	private ResourceHandler createHandler(URI uri) {
 		IEclipseContext localContext = applicationContext.createChild();
 		localContext.set(E4Workbench.INSTANCE_LOCATION, getInstanceLocation());
-		localContext.set(E4Workbench.PERSIST_STATE, true);
+		localContext.set(E4Workbench.PERSIST_STATE, Boolean.TRUE);
+		localContext.set(E4Workbench.CLEAR_PERSISTED_STATE, Boolean.TRUE);
+		localContext.set(E4Workbench.DELTA_RESTORE, Boolean.TRUE);
+
 		localContext.set(E4Workbench.INITIAL_WORKBENCH_MODEL_URI, uri);
 
 		return ContextInjectionFactory
