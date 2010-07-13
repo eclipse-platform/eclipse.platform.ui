@@ -33,6 +33,8 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -91,6 +93,23 @@ public class MinMaxAddon {
 							MWindow window = modelService.getTopLevelWindowFor(changedElement);
 							MPerspective curPersp = modelService.getActivePerspective(window);
 							curPersp.getTags().remove(EA_MAXIMIZED);
+						}
+					});
+
+					folder.addMouseListener(new MouseListener() {
+						public void mouseUp(MouseEvent e) {
+						}
+
+						public void mouseDown(MouseEvent e) {
+						}
+
+						public void mouseDoubleClick(MouseEvent e) {
+							MWindow window = modelService.getTopLevelWindowFor(changedElement);
+							MPerspective curPersp = modelService.getActivePerspective(window);
+							if (curPersp.getTags().contains(EA_MAXIMIZED))
+								curPersp.getTags().remove(EA_MAXIMIZED);
+							else
+								curPersp.getTags().add(EA_MAXIMIZED);
 						}
 					});
 				}
