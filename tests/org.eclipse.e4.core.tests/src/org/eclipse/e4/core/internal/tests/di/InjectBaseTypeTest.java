@@ -18,6 +18,7 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 
 /**
  * Checks conversion of primitive types
@@ -27,6 +28,9 @@ public class InjectBaseTypeTest extends TestCase {
 	static class TestClass {
 		@Inject @Named("test_int")
 		public int intField;
+		
+		@Inject @Named("test_int_optional") @Optional
+		public int intFieldOptional;
 		
 		@Inject @Named("test_long")
 		public long longField;
@@ -76,6 +80,7 @@ public class InjectBaseTypeTest extends TestCase {
 		TestClass testClass = ContextInjectionFactory.make(TestClass.class, context);
 		
 		assertEquals(12, testClass.intField);
+		assertEquals(0, testClass.intFieldOptional);
 		assertEquals(124564523466L, testClass.longField);
 		assertEquals(12.34f, testClass.floatField);
 		assertEquals(12.34534534563463466546d, testClass.doubleField);
@@ -87,5 +92,23 @@ public class InjectBaseTypeTest extends TestCase {
 		assertEquals(12, testClass.intArg);
 		assertEquals('a', testClass.charArg);
 		assertEquals(true, testClass.booleanArg);
+		
+		// test end-of-life reset of values
+		ContextInjectionFactory.uninject(testClass, context);
+		
+		assertEquals(0, testClass.intField);
+		assertEquals(0, testClass.intFieldOptional);
+		assertEquals(0L, testClass.longField);
+		assertEquals(0f, testClass.floatField);
+		assertEquals(0.0d, testClass.doubleField);
+		assertEquals((short)0, testClass.shortField);
+		assertEquals((byte)0, testClass.byteField);
+		assertEquals(false, testClass.booleanField);
+		assertEquals((char)0, testClass.charField);
+		
+		assertEquals(0, testClass.intArg);
+		assertEquals((char)0, testClass.charArg);
+		assertEquals(false, testClass.booleanArg);
+		
 	}
 }

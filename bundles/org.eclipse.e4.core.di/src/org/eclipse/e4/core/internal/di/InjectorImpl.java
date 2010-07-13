@@ -52,6 +52,15 @@ public class InjectorImpl implements IInjector {
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 
+	final private static Boolean DEFAULT_BOOLEAN = new Boolean(false);
+	final private static Integer DEFAULT_INTEGER = new Integer(0);
+	final private static Character DEFAULT_CHAR = new Character((char) 0);
+	final private static Float DEFAULT_FLOAT = new Float(0.0f);
+	final private static Double DEFAULT_DOUBLE = new Double(0.0d);
+	final private static Long DEFAULT_LONG = new Long(0L);
+	final private static Short DEFAULT_SHORT = new Short((short) 0);
+	final private static Byte DEFAULT_BYTE = new Byte((byte) 0);
+
 	private Map<PrimaryObjectSupplier, List<WeakReference<?>>> injectedObjects = new HashMap<PrimaryObjectSupplier, List<WeakReference<?>>>();
 	private Set<WeakReference<Class<?>>> injectedClasses = new HashSet<WeakReference<Class<?>>>();
 	private HashMap<Class<?>, Object> singletonCache = new HashMap<Class<?>, Object>();
@@ -428,13 +437,31 @@ public class InjectorImpl implements IInjector {
 				if (!descriptorsClass.isAssignableFrom(actualArgs[i].getClass()))
 					actualArgs[i] = IInjector.NOT_A_VALUE;
 			}
-			// replace optional unresolved values with null
-			if (actualArgs[i] == IInjector.NOT_A_VALUE && descriptors[i].hasQualifier(Optional.class))
-				actualArgs[i] = null;
-			else if (fillNulls && actualArgs[i] == IInjector.NOT_A_VALUE)
-				actualArgs[i] = null;
+			if (actualArgs[i] == IInjector.NOT_A_VALUE) { // still unresolved?
+				if (fillNulls || descriptors[i].hasQualifier(Optional.class)) { // uninject or optional - fill defaults
+					Class<?> descriptorsClass = getDesiredClass(descriptors[i].getDesiredType());
+					if (descriptorsClass.isPrimitive()) {
+						if (descriptorsClass.equals(boolean.class))
+							actualArgs[i] = DEFAULT_BOOLEAN;
+						else if (descriptorsClass.equals(int.class))
+							actualArgs[i] = DEFAULT_INTEGER;
+						else if (descriptorsClass.equals(char.class))
+							actualArgs[i] = DEFAULT_CHAR;
+						else if (descriptorsClass.equals(float.class))
+							actualArgs[i] = DEFAULT_FLOAT;
+						else if (descriptorsClass.equals(double.class))
+							actualArgs[i] = DEFAULT_DOUBLE;
+						else if (descriptorsClass.equals(long.class))
+							actualArgs[i] = DEFAULT_LONG;
+						else if (descriptorsClass.equals(short.class))
+							actualArgs[i] = DEFAULT_SHORT;
+						else if (descriptorsClass.equals(byte.class))
+							actualArgs[i] = DEFAULT_BYTE;
+					} else
+						actualArgs[i] = null;
+				}
+			}
 		}
-
 		return actualArgs;
 	}
 
