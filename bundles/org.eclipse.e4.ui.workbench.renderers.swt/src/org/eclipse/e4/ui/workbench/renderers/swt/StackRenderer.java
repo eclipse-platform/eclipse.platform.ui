@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -491,11 +492,19 @@ public class StackRenderer extends LazyStackRenderer {
 		MPart part = (MPart) ((element instanceof MPart) ? element
 				: ((MPlaceholder) element).getRef());
 		MMenu viewMenu = getViewMenu(part);
-		if (part.getToolbar() == null && viewMenu != null) {
-			MRenderedToolBar rtb = MenuFactoryImpl.eINSTANCE
-					.createRenderedToolBar();
-			rtb.setContributionManager(new ToolBarManager());
-			part.setToolbar(rtb);
+		MToolBar toolbar = part.getToolbar();
+		if (toolbar == null) {
+			if (viewMenu != null) {
+				MRenderedToolBar rtb = MenuFactoryImpl.eINSTANCE
+						.createRenderedToolBar();
+				rtb.setContributionManager(new ToolBarManager());
+				part.setToolbar(rtb);
+			}
+		} else if (toolbar instanceof MRenderedToolBar) {
+			MRenderedToolBar rtb = (MRenderedToolBar) toolbar;
+			if (rtb.getContributionManager() == null) {
+				rtb.setContributionManager(new ToolBarManager());
+			}
 		}
 
 		if (part.getToolbar() != null) {
