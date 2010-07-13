@@ -24,8 +24,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
+import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -94,10 +94,19 @@ public class MenuRenderer extends SWTPartRenderer {
 	@Override
 	public void processContents(MElementContainer<MUIElement> container) {
 		if (container.getChildren().size() == 0) {
-			MMenuSeparator sep = MenuFactoryImpl.eINSTANCE
-					.createMenuSeparator();
-			sep.setElementId("menu.placeholder"); //$NON-NLS-1$
-			container.getChildren().add(sep);
+			Object obj = container.getWidget();
+			if (obj instanceof MenuItem) {
+				MenuItem mi = (MenuItem) obj;
+				if (mi.getMenu() == null) {
+					mi.setMenu(new Menu(mi));
+				}
+				Menu menu = mi.getMenu();
+				if (menu != null) {
+					MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
+					menuItem.setText(MenuServiceFilter.NUL_MENU_ITEM);
+					menuItem.setEnabled(false);
+				}
+			}
 		}
 
 		super.processContents(container);

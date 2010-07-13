@@ -39,9 +39,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class MenuServiceFilter implements Listener {
+	public static final String NUL_MENU_ITEM = "(none)"; //$NON-NLS-1$
+
 	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context";
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
@@ -131,15 +134,11 @@ public class MenuServiceFilter implements Listener {
 		ContributionsAnalyzer.gatherMenuContributions(menuModel,
 				application.getMenuContributions(), menuModel.getElementId(),
 				toContribute, eContext, false);
-		if (toContribute.size() > 0) {
-			List<MMenuElement> items = menuModel.getChildren();
-
-			if (!items.isEmpty()
-					&& "menu.placeholder".equals(items.get(0).getElementId())) {
-				MMenuElement item = items.get(0);
-				trace("removed " + item, menu, menuModel);
-				renderer.removeGui(item);
-				items.remove(0);
+		List<MMenuElement> items = menuModel.getChildren();
+		if (toContribute.size() > 0 && items.size() == 0) {
+			if (menu.getItemCount() == 1) {
+				MenuItem item = menu.getItem(0);
+				item.dispose();
 			}
 		}
 		ContributionsAnalyzer.addMenuContributions(menuModel, toContribute,
@@ -155,6 +154,11 @@ public class MenuServiceFilter implements Listener {
 			}
 		});
 		render(menu, menuModel);
+		if (items.size() == 0 && toContribute.size() > 0) {
+			MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
+			menuItem.setText(NUL_MENU_ITEM);
+			menuItem.setEnabled(false);
+		}
 	}
 
 	private void handleContextMenu(final Event event, final Menu menu,
