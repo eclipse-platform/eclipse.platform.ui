@@ -101,11 +101,9 @@ public class MenuRenderer extends SWTPartRenderer {
 					mi.setMenu(new Menu(mi));
 				}
 				Menu menu = mi.getMenu();
-				if (menu != null) {
-					MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
-					menuItem.setText(MenuServiceFilter.NUL_MENU_ITEM);
-					menuItem.setEnabled(false);
-				}
+				MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
+				menuItem.setText(MenuServiceFilter.NUL_MENU_ITEM);
+				menuItem.setEnabled(false);
 			}
 		}
 

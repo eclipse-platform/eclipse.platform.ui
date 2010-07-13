@@ -134,10 +134,9 @@ public class MenuServiceFilter implements Listener {
 		ContributionsAnalyzer.gatherMenuContributions(menuModel,
 				application.getMenuContributions(), menuModel.getElementId(),
 				toContribute, eContext, false);
-		List<MMenuElement> items = menuModel.getChildren();
-		if (toContribute.size() > 0 && items.size() == 0) {
-			if (menu.getItemCount() == 1) {
-				MenuItem item = menu.getItem(0);
+		if (menu.getItemCount() == 1) {
+			MenuItem item = menu.getItem(0);
+			if (NUL_MENU_ITEM.equals(item.getText())) {
 				item.dispose();
 			}
 		}
@@ -154,7 +153,7 @@ public class MenuServiceFilter implements Listener {
 			}
 		});
 		render(menu, menuModel);
-		if (items.size() == 0 && toContribute.size() > 0) {
+		if (menu.getItemCount() == 0) {
 			MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 			menuItem.setText(NUL_MENU_ITEM);
 			menuItem.setEnabled(false);
