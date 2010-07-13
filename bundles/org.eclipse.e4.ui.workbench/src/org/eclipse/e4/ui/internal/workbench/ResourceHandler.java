@@ -77,21 +77,24 @@ public class ResourceHandler implements IModelResourceHandler {
 	@Named(E4Workbench.INSTANCE_LOCATION)
 	private Location instanceLocation;
 
-	@Inject
-	@Named(E4Workbench.PERSIST_STATE)
 	private boolean saveAndRestore;
 
-	@Inject
-	@Named(E4Workbench.CLEAR_PERSISTED_STATE)
 	private boolean clearPersistedState;
 
 	/**
 	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
 	 */
-	@Inject
-	@Named(E4Workbench.DELTA_RESTORE)
 	private boolean deltaRestore = true;
+
+	@Inject
+	public ResourceHandler(@Named(E4Workbench.PERSIST_STATE) boolean saveAndRestore,
+			@Named(E4Workbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState,
+			@Named(E4Workbench.DELTA_RESTORE) boolean deltaRestore) {
+		this.saveAndRestore = saveAndRestore;
+		this.clearPersistedState = clearPersistedState;
+		this.deltaRestore = deltaRestore;
+	}
 
 	@PostConstruct
 	void init() {
