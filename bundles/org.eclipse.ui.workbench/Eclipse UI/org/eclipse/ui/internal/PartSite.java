@@ -309,7 +309,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
 	 */
 	public String getId() {
-		return extensionId == null ? element.getAttribute(IWorkbenchRegistryConstants.ATT_ID)
+		return extensionId == null ? element == null ? model.getElementId() : element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_ID)
 				: extensionId;
 	}
 
@@ -319,7 +320,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getPluginId()
 	 */
 	public String getPluginId() {
-		return element.getNamespaceIdentifier();
+		return element == null ? model.getElementId() : element.getNamespaceIdentifier();
 	}
 
 	/*
@@ -328,7 +329,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getRegisteredName()
 	 */
 	public String getRegisteredName() {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+		return element == null ? model.getLabel() : element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
 	/**

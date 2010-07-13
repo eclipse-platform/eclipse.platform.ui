@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -33,7 +35,11 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		super(windowContext, page, part);
 		this.descriptor = descriptor;
 
-		setImageDescriptor(descriptor.getImageDescriptor());
+		if (descriptor == null) {
+			setImageDescriptor(ImageDescriptor.getMissingImageDescriptor());
+		} else {
+			setImageDescriptor(descriptor.getImageDescriptor());
+		}
 	}
 
 	public String getPartName() {
@@ -64,6 +70,12 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	@Override
 	public IWorkbenchPart createPart() throws PartInitException {
 		try {
+			if (descriptor == null) {
+				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS.bind(
+						WorkbenchMessages.ViewFactory_initException, getModel().getElementId()));
+				return new ErrorViewPart(status);
+			}
+
 			return descriptor.createView();
 		} catch (CoreException e) {
 			IStatus status = e.getStatus();
@@ -81,7 +93,8 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	 */
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
-		viewSite = new ViewSite(getModel(), part, descriptor.getConfigurationElement());
+		viewSite = new ViewSite(getModel(), part, descriptor == null ? null
+				: descriptor.getConfigurationElement());
 		ContextInjectionFactory.inject(viewSite, getModel().getContext());
 		((IViewPart) part).init(viewSite, null);
 	}
