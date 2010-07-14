@@ -1060,11 +1060,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			// Remove from caches
 			sortedPerspectives.remove(desc);
 			openedPerspectives.remove(desc);
-		}
 
-		// Clear up the model
-		MPerspective persp = (MPerspective) modelService.find(desc.getId(), window);
-		modelService.removePerspectiveModel(persp, window);
+			// Clear up the model
+			MPerspective persp = (MPerspective) modelService.find(desc.getId(), window);
+			modelService.removePerspectiveModel(persp, window);
+		}
 	}
 
 	/*
@@ -1087,7 +1087,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		if (closePage) {
 			legacyWindow.setActivePage(null);
+			partService.removePartListener(e4PartListener);
 		}
+
+		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
+				MPerspectiveStack.class, null).get(0);
+		MPerspective perspective = perspectiveStack.getSelectedElement();
+		while (perspective != null && !perspectiveStack.getChildren().isEmpty()) {
+			modelService.removePerspectiveModel(perspective, window);
+			perspective = perspectiveStack.getSelectedElement();
+		}
+
+		viewReferences.clear();
+		editorReferences.clear();
 	}
 
 	/**

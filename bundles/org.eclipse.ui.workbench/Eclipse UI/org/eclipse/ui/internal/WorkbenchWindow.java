@@ -1586,13 +1586,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 *            active page
 	 */
 	public void setActivePage(final IWorkbenchPage in) {
-		if (getActivePage() == in) {
-			return;
+		if (getActivePage() != in) {
+			page = (WorkbenchPage) in;
+			partService.setPage(page);
 		}
-
-		E4Util.unsupported("setActivePage(page) == broken"); //$NON-NLS-1$
-		page = (WorkbenchPage) in;
-		partService.setPage(page);
 	}
 
 	private Set menuRestrictions = new HashSet();
