@@ -170,8 +170,6 @@ public class MenuAdditionCacheEntry {
 			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
 				MMenuElement element = createMenuCommandAddition(items[i]);
 				container.getChildren().add(element);
-			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
-				E4Util.unsupported("Dynamic: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
 			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
 				E4Util.unsupported("Control: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
