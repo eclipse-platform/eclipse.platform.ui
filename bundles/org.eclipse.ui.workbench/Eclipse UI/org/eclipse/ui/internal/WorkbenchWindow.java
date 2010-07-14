@@ -1329,7 +1329,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @return an array of pages
 	 */
 	public IWorkbenchPage[] getPages() {
-		return new IWorkbenchPage[] { page };
+		return page == null ? new IWorkbenchPage[0] : new IWorkbenchPage[] { page };
 	}
 
 	/**
