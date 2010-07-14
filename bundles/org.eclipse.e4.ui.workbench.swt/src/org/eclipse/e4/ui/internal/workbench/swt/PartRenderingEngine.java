@@ -478,8 +478,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	private Shell getLimboShell() {
-		if (limbo == null)
+		if (limbo == null) {
 			limbo = new Shell(Display.getCurrent(), SWT.NONE);
+			limbo.setData(ShellActivationListener.DIALOG_IGNORE_KEY,
+					Boolean.TRUE);
+		}
 		return limbo;
 	}
 
