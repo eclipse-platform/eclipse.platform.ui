@@ -237,17 +237,20 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * @return the array of checked elements
      * @see #setCheckedElements
      */
-    public Object[] getCheckedElements() {
-        TableItem[] children = getTable().getItems();
-        ArrayList v = new ArrayList(children.length);
-        for (int i = 0; i < children.length; i++) {
-            TableItem item = children[i];
-            if (item.getChecked()) {
-				v.add(item.getData());
+	public Object[] getCheckedElements() {
+		TableItem[] children = getTable().getItems();
+		ArrayList v = new ArrayList(children.length);
+		for (int i = 0; i < children.length; i++) {
+			TableItem item = children[i];
+			Object data = item.getData();
+			if (data != null) {
+				if (item.getChecked()) {
+					v.add(data);
+				}
 			}
-        }
-        return v.toArray();
-    }
+		}
+		return v.toArray();
+	}
 
     /**
      * Returns the grayed state of the given element.
@@ -275,17 +278,20 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * @return the array of grayed elements
      * @see #setGrayedElements
      */
-    public Object[] getGrayedElements() {
-        TableItem[] children = getTable().getItems();
-        List v = new ArrayList(children.length);
-        for (int i = 0; i < children.length; i++) {
-            TableItem item = children[i];
-            if (item.getGrayed()) {
-				v.add(item.getData());
+	public Object[] getGrayedElements() {
+		TableItem[] children = getTable().getItems();
+		List v = new ArrayList(children.length);
+		for (int i = 0; i < children.length; i++) {
+			TableItem item = children[i];
+			Object data = item.getData();
+			if (data != null) {
+				if (item.getGrayed()) {
+					v.add(data);
+				}
 			}
-        }
-        return v.toArray();
-    }
+		}
+		return v.toArray();
+	}
 
     /* (non-Javadoc)
      * Method declared on StructuredViewer.
