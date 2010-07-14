@@ -127,42 +127,47 @@
    <extension
          point="org.eclipse.e4.ui.css.swt.theme">
       <theme
+            basestylesheeturi="css/e4_default.css"
+            id="org.eclipse.e4.ui.css.theme.e4_default.noos"
+            label="Default Theme">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_classic.css"
+            id="org.eclipse.e4.ui.css.theme.e4_classic"
+            label="Classic">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_gtk.css"
+            id="org.eclipse.e4.ui.css.theme.e4_default"
+            label="GTK"
+            os="linux">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_mac.css"
+            id="org.eclipse.e4.ui.css.theme.e4_default"
+            label="Mac"
+            os="macosx">
+      </theme>
+      <theme
+            basestylesheeturi="css/e4_default_win7.css"
+            id="org.eclipse.e4.ui.css.theme.e4_default.win7"
+            label="Win7"
+            os="win32"
+            ws="win7">
+      </theme>
+            <theme
             basestylesheeturi="css/e4_default_winxp_blu.css"
             id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="e4DefaultWinXPBlue"
+            label="Win XP Blue"
             os="win32"
             ws="winxp">
       </theme>
 	  <theme
             basestylesheeturi="css/e4_default_winxp_olv.css"
             id="org.eclipse.e4.ui.css.theme.e4_default.xpolive"
-            label="e4DefaultWinXPOlive"
+            label="Win XP Olive"
             os="win32"
             ws="winxp">
-      </theme>
-      <theme
-            basestylesheeturi="css/e4_default.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default.noos"
-            label="e4DefaultTheme">
-      </theme>
-      <theme
-            basestylesheeturi="css/e4_default_gtk.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="e4DefaultGtk"
-            os="linux">
-      </theme>
-      <theme
-            basestylesheeturi="css/e4_default_mac.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="e4DefaultMac"
-            os="macosx">
-      </theme>
-      <theme
-            basestylesheeturi="css/e4_default_win7.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default.win7"
-            label="e4DefaultWin7"
-            os="win32"
-            ws="win7">
       </theme>
       </extension>
 
