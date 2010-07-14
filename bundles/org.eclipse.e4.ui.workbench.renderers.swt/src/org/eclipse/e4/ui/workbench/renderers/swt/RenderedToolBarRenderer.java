@@ -15,6 +15,7 @@ import java.util.HashMap;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -90,6 +91,7 @@ public class RenderedToolBarRenderer extends SWTPartRenderer {
 		ToolBar tb = tbm.createControl((Composite) parent);
 		if (tb.getParent() != parent) {
 			tb.setParent((Composite) parent);
+			tb.setVisible(true);
 		}
 
 		tbm.update(true);
@@ -201,6 +203,7 @@ public class RenderedToolBarRenderer extends SWTPartRenderer {
 		ToolBar tb = (ToolBar) element.getWidget();
 		tb.setVisible(false);
 		unbindWidget(element);
+		tb.setData(AbstractPartRenderer.OWNING_ME, element);
 	}
 
 	/**

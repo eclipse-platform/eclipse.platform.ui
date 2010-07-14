@@ -48,8 +48,10 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
@@ -555,6 +557,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 						refCtrl.setParent(getLimboShell());
 				}
 
+				if (ref instanceof MPart) {
+					MToolBar tbME = ((MPart) ref).getToolbar();
+					if (tbME != null && tbME.getWidget() instanceof Control) {
+						Control tbCtrl = (Control) tbME.getWidget();
+						if (!tbCtrl.isDisposed())
+							tbCtrl.setParent(getLimboShell());
+					}
+				}
+
 				List<MContext> containedContexts = modelService.findElements(
 						ref, null, MContext.class, null);
 				for (MContext ctxt : containedContexts) {
@@ -595,6 +606,17 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	protected Object createWidget(MUIElement element, Object parent) {
+		if (element.getWidget() != null) {
+			if (element.getWidget() instanceof Control
+					&& parent instanceof Composite) {
+				Control ctrl = (Control) element.getWidget();
+				if (ctrl.getParent() != parent) {
+					ctrl.setParent((Composite) parent);
+				}
+			}
+			return element.getWidget();
+		}
+
 		AbstractPartRenderer renderer = getRenderer(element, parent);
 		if (renderer != null) {
 			Object newWidget = renderer.createWidget(element, parent);

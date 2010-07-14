@@ -369,11 +369,15 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// Check if we have to reset the currently active child for the stack
 		if (parentElement.getSelectedElement() == child) {
-			// Remove the TB (if any)
-			Control tb = ctf.getTopRight();
-			if (tb != null) {
+			if (ctf.getTopRight() != null) {
+				Control curTB = ctf.getTopRight();
 				ctf.setTopRight(null);
-				tb.dispose();
+				MUIElement tbME = (MUIElement) curTB
+						.getData(AbstractPartRenderer.OWNING_ME);
+				if (tbME instanceof MRenderedToolBar)
+					renderer.removeGui(tbME);
+				else
+					curTB.dispose();
 			}
 
 			// HACK!! we'll reset to the first element for now but really should
@@ -456,7 +460,7 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	protected void showTab(MUIElement element) {
-		super.showTab(element);
+		// super.showTab(element);
 
 		CTabFolder ctf = (CTabFolder) getParentWidget(element);
 		CTabItem cti = findItemForPart(element, null);
@@ -489,6 +493,7 @@ public class StackRenderer extends LazyStackRenderer {
 				curTB.dispose();
 		}
 
+		// Show the TB, create one if necessary
 		MPart part = (MPart) ((element instanceof MPart) ? element
 				: ((MPlaceholder) element).getRef());
 		MMenu viewMenu = getViewMenu(part);
