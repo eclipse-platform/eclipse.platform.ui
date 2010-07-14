@@ -202,6 +202,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private PerspectiveListenerList perspectiveListeners = new PerspectiveListenerList();
 
+	private PartService partService = new PartService();
+
 	private WWinActionBars actionBars;
 
 	private boolean updateDisabled = true;
@@ -506,6 +508,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		eventBroker.subscribe(
 				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
 				windowWidgetHandler);
+
+		partService.setPage(page);
 	}
 
 	private void removeTrimContributions() {
@@ -1336,7 +1340,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see IWorkbenchWindow
 	 */
 	public IPartService getPartService() {
-		return page;
+		return partService;
 	}
 
 	/**
@@ -1561,6 +1565,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		E4Util.unsupported("setActivePage(page) == broken"); //$NON-NLS-1$
 		page = (WorkbenchPage) in;
+		partService.setPage(page);
 	}
 
 	private Set menuRestrictions = new HashSet();
