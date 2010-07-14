@@ -61,6 +61,10 @@ public class TrimBarLayout extends Layout {
 				continue;
 
 			ctrl.pack(true);
+			if (ctrl instanceof Composite
+					&& ((Composite) ctrl).getChildren().length == 0) {
+				ctrl.setSize(new Point(0, 0));
+			}
 
 			Point ctrlSize = ctrl.getSize();
 			int major = horizontal ? ctrlSize.x : ctrlSize.y;

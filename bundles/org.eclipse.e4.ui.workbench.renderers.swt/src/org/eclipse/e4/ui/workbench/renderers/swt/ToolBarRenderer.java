@@ -26,12 +26,15 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
+import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -59,38 +62,68 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		if (!(element instanceof MToolBar) || !(parent instanceof Composite))
 			return null;
 
-		int orientation = SWT.HORIZONTAL;
+		// HACK!! This should be done using a separate renderer
+		Composite intermediate = new Composite((Composite) parent, SWT.NONE);
+		createToolbar(element, intermediate);
+		intermediate.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cleanUp((MToolBar) element);
+			}
+		});
 
+		return intermediate;
+	}
+
+	void createToolbar(final MUIElement element, Composite intermediate) {
+		int orientation = getOrientation(element);
+		RowLayout layout = RowLayoutFactory.fillDefaults().wrap(false)
+				.spacing(0).type(orientation).create();
+		layout.marginLeft = 3;
+		layout.center = true;
+		intermediate.setLayout(layout);
+		// new Label(intermediate, (orientation == SWT.HORIZONTAL ? SWT.VERTICAL
+		// : SWT.HORIZONTAL) | SWT.SEPARATOR);
+		ToolBar separatorToolBar = new ToolBar(intermediate, orientation
+				| SWT.WRAP | SWT.FLAT | SWT.RIGHT);
+		new ToolItem(separatorToolBar, SWT.SEPARATOR);
+		new ToolBar(intermediate, orientation | SWT.WRAP | SWT.FLAT | SWT.RIGHT);
+	}
+
+	int getOrientation(final MUIElement element) {
 		MUIElement theParent = element.getParent();
 		if (theParent instanceof MTrimBar) {
 			MTrimBar trimContainer = (MTrimBar) theParent;
 			SideValue side = trimContainer.getSide();
 			if (side.getValue() == SideValue.LEFT_VALUE
 					|| side.getValue() == SideValue.RIGHT_VALUE)
-				orientation = SWT.VERTICAL;
+				return SWT.VERTICAL;
 		}
-
-		// HACK!! This should be done using a separate renderer
-		ToolBar tb = null;
-		tb = new ToolBar((Composite) parent, orientation | SWT.WRAP | SWT.FLAT
-				| SWT.RIGHT);
-		tb.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				cleanUp((MToolBar) element);
-			}
-		});
-
-		return tb;
+		return SWT.HORIZONTAL;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#hideChild
-	 * (org.eclipse.e4.ui.model.application.MElementContainer,
-	 * org.eclipse.e4.ui.model.application.MUIElement)
-	 */
+	public Object getUIContainer(MUIElement childElement) {
+		Composite intermediate = (Composite) super.getUIContainer(childElement);
+		if (intermediate == null || intermediate.isDisposed()) {
+			return null;
+		}
+		ToolBar toolbar = findToolbar(intermediate);
+		if (toolbar == null) {
+			createToolbar(childElement.getParent(), intermediate);
+		}
+		return toolbar;
+	}
+
+	ToolBar findToolbar(Composite intermediate) {
+		if (!intermediate.isDisposed()) {
+			Control[] children = intermediate.getChildren();
+			int length = children.length;
+			if (length > 0 && children[length - 1] instanceof ToolBar) {
+				return (ToolBar) children[length - 1];
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public void hideChild(MElementContainer<MUIElement> parentElement,
 			MUIElement child) {
@@ -106,6 +139,28 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		if (toolbar != null && !toolbar.isDisposed()) {
 			toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
 		}
+		disposeToolbarIfNecessary(parentElement);
+	}
+
+	private void disposeToolbarIfNecessary(MUIElement element) {
+		Composite composite = (Composite) element.getWidget();
+		ToolBar toolbar = findToolbar(composite);
+		if (toolbar != null && hasOnlySeparators(toolbar)) {
+			toolbar.dispose();
+			if (composite.getChildren().length > 0) {
+				composite.getChildren()[0].dispose();
+			}
+		}
+	}
+
+	boolean hasOnlySeparators(ToolBar toolbar) {
+		ToolItem[] children = toolbar.getItems();
+		for (ToolItem toolItem : children) {
+			if ((toolItem.getStyle() & SWT.SEPARATOR) == 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -118,13 +173,6 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#processContents
-	 * (org.eclipse.e4.ui.model.application.ui.MElementContainer)
-	 */
 	@Override
 	public void processContents(MElementContainer<MUIElement> container) {
 		super.processContents(container);
@@ -138,6 +186,12 @@ public class ToolBarRenderer extends SWTPartRenderer {
 				toolbarModel.getElementId(), toContribute, eContext);
 		addToolBarContributions(toolbarModel, toContribute, ctx, eContext,
 				pendingCleanup);
+	}
+
+	@Override
+	public void postProcess(MUIElement element) {
+		super.postProcess(element);
+		disposeToolbarIfNecessary(element);
 	}
 
 	public static void addToolBarContributions(

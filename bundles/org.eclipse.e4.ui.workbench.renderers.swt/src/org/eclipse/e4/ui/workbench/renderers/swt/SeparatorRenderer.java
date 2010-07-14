@@ -35,17 +35,14 @@ public class SeparatorRenderer extends SWTPartRenderer {
 		int addIndex = calcVisibleIndex(element);
 		MUIElement nextVisibleChild = getNextVisibleChild(element, objIndex);
 		if (addIndex == 0) {
-			if (element instanceof MMenuSeparator || nextVisibleChild == null) {
-				return null;
-			}
-		} else {
-			if (nextVisibleChild == null) {
-				return null;
-			}
-			if (nextVisibleChild.isVisible()
-					&& (nextVisibleChild instanceof MMenuSeparator || nextVisibleChild instanceof MToolBarSeparator)) {
-				return null;
-			}
+			return null;
+		}
+		if (nextVisibleChild == null) {
+			return null;
+		}
+		if (nextVisibleChild.isVisible()
+				&& (nextVisibleChild instanceof MMenuSeparator || nextVisibleChild instanceof MToolBarSeparator)) {
+			return null;
 		}
 		if (element instanceof MMenuSeparator) {
 			Menu menu = null;
