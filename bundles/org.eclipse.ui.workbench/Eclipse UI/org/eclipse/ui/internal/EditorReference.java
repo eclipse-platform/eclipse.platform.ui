@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -259,7 +261,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		return editorSite;
 	}
 
-	private static HashMap<String, EditorActionBars> actionCache = new HashMap<String, EditorActionBars>();
+	private static HashMap<String, Set<EditorActionBars>> actionCache = new HashMap<String, Set<EditorActionBars>>();
 
 	/*
 	 * Creates the action bars for an editor. Editors of the same type should
@@ -272,16 +274,25 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		String type = desc.getId();
 
 		// If an action bar already exists for this editor type return it.
-		EditorActionBars actionBars = actionCache.get(type);
-		if (actionBars != null) {
-			actionBars.addRef();
-			return actionBars;
+		Set<EditorActionBars> candidates = actionCache.get(type);
+		if (candidates != null) {
+			for (EditorActionBars candidate : candidates) {
+				if (candidate.getPage() == page) {
+					candidate.addRef();
+					return candidate;
+				}
+			}
 		}
 
 		// Create a new action bar set.
-		actionBars = new EditorActionBars(page, site, type);
+		EditorActionBars actionBars = new EditorActionBars(page, site, type);
 		actionBars.addRef();
-		actionCache.put(type, actionBars);
+		if (candidates == null) {
+			candidates = new HashSet<EditorActionBars>(3);
+			candidates.add(actionBars);
+			actionCache.put(type, candidates);
+		} else
+			candidates.add(actionBars);
 
 		// Read base contributor.
 		IEditorActionBarContributor contr = desc.createActionBarContributor();
