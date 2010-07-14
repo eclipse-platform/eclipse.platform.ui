@@ -15,7 +15,7 @@
 	font-size: 9;
 }
 
-.MTrimBar  {
+.MTrimBar#org-eclipse-ui-main-toolbar {
     background-image:  url(./winXPOlive.PNG);	
 }
 

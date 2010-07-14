@@ -15,7 +15,11 @@
 	font-size: 11;
 }
 
-.MTrimBar  {
+.MTrimBar {
+    background-color: #E2E2E2; 
+}
+
+.MTrimBar#org-eclipse-ui-main-toolbar  {
     background-image:  url(./gtkGrey.PNG);	
 }
 

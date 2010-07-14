@@ -17,7 +17,12 @@
 	inner-keyline-color: #FFFFFF;
 }
 
-.MTrimBar  {
+.MTrimBar {
+    background-color: #EEF2F7 #DEEBF3 100%;
+}
+
+
+.MTrimBar#org-eclipse-ui-main-toolbar  {
     background-image:  url(./winXPBlue.PNG);	
 }
 
