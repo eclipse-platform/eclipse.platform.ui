@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -170,8 +171,6 @@ public class MenuAdditionCacheEntry {
 			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
 				MMenuElement element = createMenuCommandAddition(items[i]);
 				container.getChildren().add(element);
-			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
-				E4Util.unsupported("Control: " + id + " in " + location); //$NON-NLS-1$//$NON-NLS-2$
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
 				MMenuElement element = createMenuSeparatorAddition(items[i]);
 				container.getChildren().add(element);
@@ -296,10 +295,22 @@ public class MenuAdditionCacheEntry {
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
 				MToolBarElement element = createToolBarSeparatorAddition(items[i]);
 				toolBarContribution.getChildren().add(element);
+			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
+				MToolBarElement element = createToolControlAddition(items[i]);
+				toolBarContribution.getChildren().add(element);
 			}
 		}
 
 		contributions.add(toolBarContribution);
+	}
+
+	private MToolBarElement createToolControlAddition(IConfigurationElement element) {
+		String id = MenuHelper.getId(element);
+		MToolControl control = MenuFactoryImpl.eINSTANCE.createToolControl();
+		control.setElementId(id);
+		control.setContributionURI(CompatibilityWorkbenchWindowControlContribution.CONTROL_CONTRIBUTION_URI);
+		ControlContributionRegistry.add(id, element);
+		return control;
 	}
 
 	private void processMenuChildren(ArrayList<MMenuContribution> contributions,

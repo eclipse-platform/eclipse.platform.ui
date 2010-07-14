@@ -70,6 +70,7 @@ final class MenuPersistence extends RegistryPersistence {
 	}
 
 	public final void dispose() {
+		ControlContributionRegistry.clear();
 		application.getMenuContributions().removeAll(menuContributions);
 		application.getToolBarContributions().removeAll(toolBarContributions);
 		application.getTrimContributions().removeAll(trimContributions);
