@@ -367,6 +367,10 @@ public class ToolItemRenderer extends SWTPartRenderer {
 						public void run() throws Exception {
 							EHandlerService service = lclContext
 									.get(EHandlerService.class);
+							if (service == null) {
+								// no localized handler service
+								return;
+							}
 							ParameterizedCommand cmd = item.getWbCommand();
 							if (cmd == null) {
 								cmd = generateParameterizedCommand(item,
