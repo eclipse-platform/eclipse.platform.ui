@@ -93,6 +93,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -452,6 +453,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		windowContext.set(IWorkbenchWindow.class.getName(), this);
 		windowContext.set(IWorkbenchPage.class.getName(), page);
+		windowContext.set(IPartService.class, partService);
 
 		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
 		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, getShell());
@@ -1483,7 +1485,32 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
 			throws WorkbenchException {
-		return workbench.openWorkbenchWindow(perspectiveId, input).getActivePage();
+		IPerspectiveDescriptor descriptor = workbench.getPerspectiveRegistry()
+				.findPerspectiveWithId(perspectiveId);
+		if (descriptor == null) {
+			throw new WorkbenchException(NLS.bind(
+					WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
+		}
+
+		if (page == null) {
+			try {
+				page = new WorkbenchPage(this, input);
+			} catch (WorkbenchException e) {
+				WorkbenchPlugin.log(e);
+			}
+
+			model.getContext().set(IWorkbenchPage.class.getName(), page);
+
+			ContextInjectionFactory.inject(page, model.getContext());
+			firePageOpened();
+
+			partService.setPage(page);
+		}
+	
+		page.setPerspective(perspective);
+		firePageActivated();
+
+		return page;
 	}
 
 	/*

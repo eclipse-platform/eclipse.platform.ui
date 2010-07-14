@@ -66,7 +66,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -1737,7 +1736,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	@PostConstruct
 	public void setup() {
 		partService.addPartListener(e4PartListener);
-		window.getContext().set(IPartService.class.getName(), this);
 
 		Collection<MPart> parts = partService.getParts();
 		for (MPart part : parts) {
