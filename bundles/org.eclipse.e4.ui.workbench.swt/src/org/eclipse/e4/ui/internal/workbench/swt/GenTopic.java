@@ -82,7 +82,7 @@ public class GenTopic implements IApplication {
 	 */
 	private void processHeader() {
 		System.out
-				.print("/*******************************************************************************\n * Copyright (c) 2009 IBM Corporation and others.\n * All rights reserved. This program and the accompanying materials\n * are made available under the terms of the Eclipse Public License v1.0\n * which accompanies this distribution, and is available at\n * http://www.eclipse.org/legal/epl-v10.html\n *\n * Contributors:\n *     IBM Corporation - initial API and implementation\n ******************************************************************************/" //$NON-NLS-1$
+				.print("/*******************************************************************************\n * Copyright (c) 2009,2010 IBM Corporation and others.\n * All rights reserved. This program and the accompanying materials\n * are made available under the terms of the Eclipse Public License v1.0\n * which accompanies this distribution, and is available at\n * http://www.eclipse.org/legal/epl-v10.html\n *\n * Contributors:\n *     IBM Corporation - initial API and implementation\n ******************************************************************************/" //$NON-NLS-1$
 						+ "\npackage org.eclipse.e4.ui.workbench;\n\npublic class UIEvents {" //$NON-NLS-1$
 						+ "\n\tpublic static final String TOPIC_SEP = \"/\"; //$NON-NLS-1$" //$NON-NLS-1$
 						+ "\n\tpublic static final String ALL_SUB_TOPICS = \"*\"; //$NON-NLS-1$" //$NON-NLS-1$
