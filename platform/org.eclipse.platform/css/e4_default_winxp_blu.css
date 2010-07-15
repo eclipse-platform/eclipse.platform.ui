@@ -1,10 +1,10 @@
 
 .MTrimmedWindow { 
  	background-color: #F0ECE0; 
-    margin-top: 12px;
+    margin-top: 24px;
     margin-bottom: 2px;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 12px;
+    margin-right: 12px;
 }
 
 .MPartStack {
