@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -396,7 +396,7 @@ public final class Team {
 	public static IProjectSetSerializer getProjectSetSerializer(String id) {
 		TeamPlugin plugin = TeamPlugin.getPlugin();
 		if (plugin != null) {
-			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(TeamPlugin.PROJECT_SET_EXTENSION);
+			IExtensionPoint extension = RegistryFactory.getRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.PROJECT_SET_EXTENSION);
 			if (extension != null) {
 				IExtension[] extensions =  extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
