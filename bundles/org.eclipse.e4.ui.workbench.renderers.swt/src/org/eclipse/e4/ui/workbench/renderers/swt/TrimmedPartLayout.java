@@ -112,82 +112,75 @@ public class TrimmedPartLayout extends Layout {
 	}
 
 	protected void layout(Composite composite, boolean flushCache) {
-		composite.setRedraw(false);
-		try {
-			Rectangle ca = composite.getClientArea();
-			Rectangle caRect = new Rectangle(ca.x, ca.y, ca.width, ca.height);
+		Rectangle ca = composite.getClientArea();
+		Rectangle caRect = new Rectangle(ca.x, ca.y, ca.width, ca.height);
 
-			// 'Top' spans the entire area
-			if (top != null) {
-				Point topSize = top
-						.computeSize(caRect.width, SWT.DEFAULT, true);
-				caRect.y += topSize.y;
-				caRect.height -= topSize.y;
-
-				// Don't layout unless we've changed
-				Rectangle newBounds = new Rectangle(ca.x, ca.y, caRect.width,
-						topSize.y);
-				if (!newBounds.equals(top.getBounds())) {
-					top.setBounds(newBounds);
-				}
-			}
-			// Include the gutter whether there is a top area or not.
-			caRect.y += gutterTop;
-			caRect.height -= gutterTop;
-
-			// 'Bottom' spans the entire area
-			if (bottom != null) {
-				Point bottomSize = bottom.computeSize(caRect.width,
-						SWT.DEFAULT, true);
-				caRect.height -= bottomSize.y;
-
-				// Don't layout unless we've changed
-				Rectangle newBounds = new Rectangle(caRect.x, caRect.y
-						+ caRect.height, caRect.width, bottomSize.y);
-				if (!newBounds.equals(bottom.getBounds())) {
-					bottom.setBounds(newBounds);
-				}
-			}
-			caRect.height -= gutterBottom;
-
-			// 'Left' spans between 'top' and 'bottom'
-			if (left != null) {
-				Point leftSize = left.computeSize(SWT.DEFAULT, caRect.height,
-						true);
-				caRect.x += leftSize.x;
-				caRect.width -= leftSize.x;
-
-				// Don't layout unless we've changed
-				Rectangle newBounds = new Rectangle(caRect.x - leftSize.x,
-						caRect.y, leftSize.x, caRect.height);
-				if (!newBounds.equals(left.getBounds())) {
-					left.setBounds(newBounds);
-				}
-			}
-			caRect.x += gutterLeft;
-			caRect.width -= gutterLeft;
-
-			// 'Right' spans between 'top' and 'bottom'
-			if (right != null) {
-				Point rightSize = right.computeSize(SWT.DEFAULT, caRect.height,
-						true);
-				caRect.width -= rightSize.x;
-
-				// Don't layout unless we've changed
-				Rectangle newBounds = new Rectangle(caRect.x + caRect.width,
-						caRect.y, rightSize.x, caRect.height);
-				if (!newBounds.equals(right.getBounds())) {
-					right.setBounds(newBounds);
-				}
-			}
-			caRect.width -= gutterRight;
+		// 'Top' spans the entire area
+		if (top != null) {
+			Point topSize = top.computeSize(caRect.width, SWT.DEFAULT, true);
+			caRect.y += topSize.y;
+			caRect.height -= topSize.y;
 
 			// Don't layout unless we've changed
-			if (!caRect.equals(clientArea.getBounds())) {
-				clientArea.setBounds(caRect);
+			Rectangle newBounds = new Rectangle(ca.x, ca.y, caRect.width,
+					topSize.y);
+			if (!newBounds.equals(top.getBounds())) {
+				top.setBounds(newBounds);
 			}
-		} finally {
-			composite.setRedraw(true);
+		}
+		// Include the gutter whether there is a top area or not.
+		caRect.y += gutterTop;
+		caRect.height -= gutterTop;
+
+		// 'Bottom' spans the entire area
+		if (bottom != null) {
+			Point bottomSize = bottom.computeSize(caRect.width, SWT.DEFAULT,
+					true);
+			caRect.height -= bottomSize.y;
+
+			// Don't layout unless we've changed
+			Rectangle newBounds = new Rectangle(caRect.x, caRect.y
+					+ caRect.height, caRect.width, bottomSize.y);
+			if (!newBounds.equals(bottom.getBounds())) {
+				bottom.setBounds(newBounds);
+			}
+		}
+		caRect.height -= gutterBottom;
+
+		// 'Left' spans between 'top' and 'bottom'
+		if (left != null) {
+			Point leftSize = left.computeSize(SWT.DEFAULT, caRect.height, true);
+			caRect.x += leftSize.x;
+			caRect.width -= leftSize.x;
+
+			// Don't layout unless we've changed
+			Rectangle newBounds = new Rectangle(caRect.x - leftSize.x,
+					caRect.y, leftSize.x, caRect.height);
+			if (!newBounds.equals(left.getBounds())) {
+				left.setBounds(newBounds);
+			}
+		}
+		caRect.x += gutterLeft;
+		caRect.width -= gutterLeft;
+
+		// 'Right' spans between 'top' and 'bottom'
+		if (right != null) {
+			Point rightSize = right.computeSize(SWT.DEFAULT, caRect.height,
+					true);
+			caRect.width -= rightSize.x;
+
+			// Don't layout unless we've changed
+			Rectangle newBounds = new Rectangle(caRect.x + caRect.width,
+					caRect.y, rightSize.x, caRect.height);
+			if (!newBounds.equals(right.getBounds())) {
+				right.setBounds(newBounds);
+			}
+		}
+		caRect.width -= gutterRight;
+
+		// Don't layout unless we've changed
+		if (!caRect.equals(clientArea.getBounds())) {
+			clientArea.setBounds(caRect);
 		}
 	}
 

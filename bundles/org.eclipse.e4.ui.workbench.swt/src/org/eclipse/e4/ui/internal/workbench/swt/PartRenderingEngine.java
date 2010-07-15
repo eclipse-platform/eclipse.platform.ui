@@ -666,6 +666,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 				// Show the initial UI
 
+				// Create a 'limbo' shell (used to host controls that shouldn't
+				// be in the current layout)
+				Shell limbo = getLimboShell();
+				runContext.set("limbo", limbo);
+
 				// HACK!! we should loop until the display gets disposed...
 				// ...then we listen for the last 'main' window to get disposed
 				// and dispose the Display

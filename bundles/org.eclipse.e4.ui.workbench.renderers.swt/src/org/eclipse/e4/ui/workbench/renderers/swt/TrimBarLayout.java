@@ -110,82 +110,76 @@ public class TrimBarLayout extends Layout {
 	}
 
 	protected void layout(Composite composite, boolean flushCache) {
-		composite.setRedraw(false);
-		try {
-			Rectangle bounds = composite.getBounds();
-			int totalSpace = horizontal ? bounds.width
-					- (marginLeft + marginRight) : bounds.height
-					- (marginTop + marginBottom);
+		Rectangle bounds = composite.getBounds();
+		int totalSpace = horizontal ? bounds.width - (marginLeft + marginRight)
+				: bounds.height - (marginTop + marginBottom);
 
-			List<Control> curLine = new ArrayList<Control>();
-			List<Control> spacers = new ArrayList<Control>();
+		List<Control> curLine = new ArrayList<Control>();
+		List<Control> spacers = new ArrayList<Control>();
 
-			int curMinor = horizontal ? marginTop : marginLeft;
-			int maxMinor = 0;
-			int spaceLeft = totalSpace;
+		int curMinor = horizontal ? marginTop : marginLeft;
+		int maxMinor = 0;
+		int spaceLeft = totalSpace;
 
-			Control[] kids = composite.getChildren();
-			Control curSpacer = null;
-			for (int i = 0; i < kids.length; i++) {
-				Control ctrl = kids[i];
+		Control[] kids = composite.getChildren();
+		Control curSpacer = null;
+		for (int i = 0; i < kids.length; i++) {
+			Control ctrl = kids[i];
 
-				if (isSpacer(ctrl)) {
-					curSpacer = ctrl;
-					continue;
-				}
-
-				Point ctrlSize = ctrl.getSize();
-				int major = horizontal ? ctrlSize.x : ctrlSize.y;
-				int minor = horizontal ? ctrlSize.y : ctrlSize.x;
-
-				List<Control> segment = new ArrayList<Control>();
-				segment.add(ctrl);
-				while (i < (kids.length - 2) && isGlue(kids[i + 1])) {
-					ctrl = kids[i + 2];
-					segment.add(ctrl);
-					ctrlSize = ctrl.getSize();
-					major += horizontal ? ctrlSize.x : ctrlSize.y;
-					int innerMinor = horizontal ? ctrlSize.y : ctrlSize.x;
-					if (innerMinor > minor)
-						minor = innerMinor;
-					i += 2;
-				}
-
-				if (major <= spaceLeft) {
-					if (minor > maxMinor)
-						maxMinor = minor;
-
-					spaceLeft -= major;
-
-					if (curSpacer != null) {
-						spacers.add(curSpacer);
-						curLine.add(curSpacer);
-					}
-					curLine.addAll(segment);
-				} else {
-					tileLine(curLine, spacers, curMinor, maxMinor, spaceLeft);
-
-					// reset the tiling parameters
-					spaceLeft = totalSpace;
-					curMinor += maxMinor + wrapSpacing;
-					maxMinor = 0;
-
-					spacers.clear();
-					curLine.clear();
-
-					if (curSpacer != null) {
-						spacers.add(curSpacer);
-						curLine.add(curSpacer);
-					}
-					curLine.addAll(segment);
-					spaceLeft -= major;
-				}
-				curSpacer = null;
+			if (isSpacer(ctrl)) {
+				curSpacer = ctrl;
+				continue;
 			}
-			tileLine(curLine, spacers, curMinor, maxMinor, spaceLeft);
-		} finally {
-			composite.setRedraw(true);
+
+			Point ctrlSize = ctrl.getSize();
+			int major = horizontal ? ctrlSize.x : ctrlSize.y;
+			int minor = horizontal ? ctrlSize.y : ctrlSize.x;
+
+			List<Control> segment = new ArrayList<Control>();
+			segment.add(ctrl);
+			while (i < (kids.length - 2) && isGlue(kids[i + 1])) {
+				ctrl = kids[i + 2];
+				segment.add(ctrl);
+				ctrlSize = ctrl.getSize();
+				major += horizontal ? ctrlSize.x : ctrlSize.y;
+				int innerMinor = horizontal ? ctrlSize.y : ctrlSize.x;
+				if (innerMinor > minor)
+					minor = innerMinor;
+				i += 2;
+			}
+
+			if (major <= spaceLeft) {
+				if (minor > maxMinor)
+					maxMinor = minor;
+
+				spaceLeft -= major;
+
+				if (curSpacer != null) {
+					spacers.add(curSpacer);
+					curLine.add(curSpacer);
+				}
+				curLine.addAll(segment);
+			} else {
+				tileLine(curLine, spacers, curMinor, maxMinor, spaceLeft);
+
+				// reset the tiling parameters
+				spaceLeft = totalSpace;
+				curMinor += maxMinor + wrapSpacing;
+				maxMinor = 0;
+
+				spacers.clear();
+				curLine.clear();
+
+				if (curSpacer != null) {
+					spacers.add(curSpacer);
+					curLine.add(curSpacer);
+				}
+				curLine.addAll(segment);
+				spaceLeft -= major;
+			}
+			curSpacer = null;
 		}
+		tileLine(curLine, spacers, curMinor, maxMinor, spaceLeft);
 	}
 
 	private void tileLine(List<Control> curLine, List<Control> spacers,

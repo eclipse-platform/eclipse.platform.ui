@@ -25,6 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  *
@@ -95,16 +96,20 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 	 */
 	@Override
 	protected void showTab(MUIElement tabElement) {
+		MPerspective persp = (MPerspective) tabElement;
+
 		Control ctrl = (Control) tabElement.getWidget();
 		if (ctrl == null) {
 			ctrl = (Control) renderer.createGui(tabElement);
+		} else if (ctrl.getParent() != tabElement.getParent().getWidget()) {
+			Composite parent = (Composite) tabElement.getParent().getWidget();
+			ctrl.setParent(parent);
 		}
 
 		super.showTab(tabElement);
 
 		// Force a context switch
 		if (tabElement instanceof MPerspective) {
-			MPerspective persp = (MPerspective) tabElement;
 			IEclipseContext context = persp.getContext();
 			context.getParent().set(IContextConstants.ACTIVE_CHILD, context);
 		}
@@ -115,5 +120,14 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		psComp.layout();
 
 		ctrl.moveAbove(null);
+
+		// Move any other controls to 'limbo'
+		Control[] kids = ctrl.getParent().getChildren();
+		Shell limbo = (Shell) persp.getContext().get("limbo"); //$NON-NLS-1$
+		for (Control child : kids) {
+			if (child != ctrl) {
+				child.setParent(limbo);
+			}
+		}
 	}
 }
