@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -40,6 +42,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 
@@ -983,12 +986,30 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 			// add our selection listener
 			ISelectionProvider provider = pageSite.getSelectionProvider();
-			if (provider != null) {
+			if (provider == null) {
+				/* BEGIN workaround for bug 319846 BEGIN */
+				WorkbenchPage page = (WorkbenchPage) getSite().getPage();
+				MPart part = page.findPart(this);
+				if (part != null) {
+					part.getContext().get(ESelectionService.class)
+							.setSelection(StructuredSelection.EMPTY);
+				}
+				/* END workaround for bug 319846 END */
+			} else {
 				provider.addSelectionChangedListener(selectionChangedListener);
 				if (provider instanceof IPostSelectionProvider) {
 					((IPostSelectionProvider) provider)
 							.addPostSelectionChangedListener(postSelectionListener);
 				}
+
+				/* BEGIN workaround for bug 319846 BEGIN */
+				WorkbenchPage page = (WorkbenchPage) getSite().getPage();
+				MPart part = page.findPart(this);
+				if (part != null) {
+					part.getContext().get(ESelectionService.class)
+							.setSelection(provider.getSelection());
+				}
+				/* END workaround for bug 319846 END */
 			}
 			// Update action bars.
 			getViewSite().getActionBars().updateActionBars();
