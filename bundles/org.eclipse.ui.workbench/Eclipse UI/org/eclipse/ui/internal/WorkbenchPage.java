@@ -1634,7 +1634,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * a List of Strings.
      */
     public ArrayList getShowInPartIds() {
-		return new ArrayList();
+		MPerspective perspective = getPerspectiveStack().getSelectedElement();
+		return new ArrayList(ModeledPageLayout.getIds(perspective,
+				ModeledPageLayout.SHOW_IN_PART_TAG));
     }
 
     /**
