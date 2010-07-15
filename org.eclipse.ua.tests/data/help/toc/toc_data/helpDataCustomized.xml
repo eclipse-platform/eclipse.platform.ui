@@ -13,5 +13,5 @@
 	<tocOrder>
 		<toc id="/org.eclipse.platform.doc.isv/toc.xml"/>
 		<toc id="/org.eclipse.jdt.doc.isv/toc.xml"/>
-	</tocOrder>	<hidden>	    <toc id="/org.eclipse.platform.doc.user/toc.xml"/>	    <toc id="/org.eclipse.jdt.doc.user/toc.xml"/>	    <toc id="/org.eclipse.pde.doc.user/toc.xml"/>	</hidden>
+	</tocOrder>	<hidden>	    <toc id="/org.eclipse.platform.doc.user/toc.xml"/>	    <toc id="/org.eclipse.jdt.doc.user/toc.xml"/>	    <toc id="/org.eclipse.pde.doc.user/toc.xml"/>	    <toc id="/org.eclipse.platform.doc.isv/topics_Porting.xml"/>	</hidden>
 </extensions>
