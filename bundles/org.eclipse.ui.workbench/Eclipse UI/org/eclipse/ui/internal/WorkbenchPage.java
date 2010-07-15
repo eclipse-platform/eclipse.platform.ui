@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.services.EContextService;
@@ -387,6 +388,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	@Inject
 	private EModelService modelService;
 
+	@Inject
+	private IEventBroker broker;
 
 
     /**
@@ -1073,7 +1076,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#closeAllPerspectives(boolean, boolean)
 	 */
 	public void closeAllPerspectives(boolean saveEditors, boolean closePage) {
-		// TODO Auto-generated method stub
 		if (saveEditors) {
 			saveAllEditors(true, true);
 		}
@@ -1088,6 +1090,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (closePage) {
 			legacyWindow.setActivePage(null);
 			partService.removePartListener(e4PartListener);
+			broker.unsubscribe(selectionHandler);
 		}
 
 		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
@@ -1765,7 +1768,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		IEventBroker broker = window.getContext().get(IEventBroker.class);
 		broker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
 		if (getPerspectiveStack() != null) {
@@ -1800,6 +1802,50 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 			for (String id : newIds) {
 				contextService.activateContext(id);
+			}
+
+			List<MPart> hiddenParts = new ArrayList<MPart>();
+			List<MPart> visibleParts = new ArrayList<MPart>();
+
+			List<MPartStack> oldStacks = modelService.findElements(oldPersp, null,
+					MPartStack.class, null);
+			List<MPartStack> newStacks = modelService.findElements(newPersp, null,
+					MPartStack.class, null);
+
+			for (MPartStack oldStack : oldStacks) {
+				MStackElement element = oldStack.getSelectedElement();
+				if (element instanceof MPlaceholder) {
+					hiddenParts.add((MPart) ((MPlaceholder) element).getRef());
+				} else if (element instanceof MPart) {
+					hiddenParts.add((MPart) element);
+				}
+			}
+
+			for (MPartStack newStack : newStacks) {
+				MStackElement element = newStack.getSelectedElement();
+				if (element instanceof MPlaceholder) {
+					visibleParts.add((MPart) ((MPlaceholder) element).getRef());
+				} else if (element instanceof MPart) {
+					visibleParts.add((MPart) element);
+				}
+			}
+
+			List<MPart> ignoredParts = new ArrayList<MPart>();
+			for (MPart hiddenPart : hiddenParts) {
+				if (visibleParts.contains(hiddenPart)) {
+					ignoredParts.add(hiddenPart);
+				}
+			}
+
+			hiddenParts.removeAll(ignoredParts);
+			visibleParts.removeAll(ignoredParts);
+
+			for (MPart hiddenPart : hiddenParts) {
+				firePartHidden(hiddenPart);
+			}
+
+			for (MPart visiblePart : visibleParts) {
+				firePartVisible(visiblePart);
 			}
 
 			legacyWindow.firePerspectiveActivated(WorkbenchPage.this, perspective);
