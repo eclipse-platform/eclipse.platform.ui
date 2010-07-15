@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import org.eclipse.e4.ui.widgets.CTabFolder;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -32,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
@@ -164,7 +163,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (element instanceof MPlaceholder) {
 			MPlaceholder ph = (MPlaceholder) element;
 			MUIElement ref = ph.getRef();
-			if (ref instanceof MPart
+			if (ref instanceof MPart && ph.getParent() != null
 					&& ph.getParent().getWidget() instanceof CTabFolder) {
 				// Reparent the existing Toolbar
 				MPart part = (MPart) ref;
