@@ -12,36 +12,36 @@
 
 <toc label="extraContent2" topic="data/help/toc/extraContent/simple_page.html" link_to="data/help/toc/root.xml#content">
  	<topic label="extraContent2">
-	   <topic label="Bats FOR product: Happy Bats, WAS; version: 9.0,8.0 ; platform: z/OS;AIX" href="data/help/toc/extraContent/simple_page.html">
-	   	  <criteria name="prodname" value="Happy Bats" />
+	   <topic label="Tests FOR product: Unit Tests, WAS; version: 9.0,8.0 ; platform: z/OS;AIX" href="data/help/toc/extraContent/simple_page.html">
+	   	  <criteria name="prodname" value="Happy Tests" />
 	   	  <criteria name="prodname" value="WAS" />
 	   	  <criteria name="version" value="9.0" />
 		  <criteria name="version" value="8.0" />
 	   	  <criteria name="platform" value="z/OS" />
 	   	  <criteria name="platform" value="AIX" />
-	      <topic label="Caring for your fruit bat FOR Version: 9.0; platform: z/OS; product: WAS" href="data/help/toc/extraContent/simple_page.html">
+	      <topic label="Creating a unit test FOR Version: 9.0; platform: z/OS; product: WAS" href="data/help/toc/extraContent/simple_page.html">
 		  	<criteria name="version" value="9.0" />
 	   	  	<criteria name="platform" value="z/OS" />
 	   	  	<criteria name="prodname" value="WAS" />
 		  </topic>
-	      <topic label="Cleaning your fruit bat FOR Version: 8.0; platform: AIX; product: Happy Bats" href="data/help/toc/extraContent/simple_page.html">
+	      <topic label="Documenting your test FOR Version: 8.0; platform: AIX; product: Happy Tests" href="data/help/toc/extraContent/simple_page.html">
 	   	  	<criteria name="platform" value="AIX" />
 		  	<criteria name="version" value="8.0" />
-		  	<criteria name="prodname" value="Happy Bats" />
+		  	<criteria name="prodname" value="Happy Tests" />
 	   	  </topic>
-	      <topic label="Feeding your bat" href="data/help/toc/extraContent/simple_page.html"/>
-	      <topic label="Bat sonar" href="data/help/toc/extraContent/simple_page.html"/>
-	      <topic label="Bat guano" href="data/help/toc/extraContent/simple_page.html"/>
-	      <topic label="Bat history" href="data/help/toc/extraContent/simple_page.html"/>
-	      <topic label="Bat recycling" href="data/help/toc/extraContent/simple_page.html"/>
+	      <topic label="Maintaining your test" href="data/help/toc/extraContent/simple_page.html"/>
+	      <topic label="Test classes" href="data/help/toc/extraContent/simple_page.html"/>
+	      <topic label="Test artifacts" href="data/help/toc/extraContent/simple_page.html"/>
+	      <topic label="Test history" href="data/help/toc/extraContent/simple_page.html"/>
+	      <topic label="Test reuse" href="data/help/toc/extraContent/simple_page.html"/>
 	    </topic>
-		<topic label="Bats FOR product: Happy Bats" href="data/help/toc/extraContent/simple_page.html">
-			  <criteria name="prodname" value="Happy Bats" />
-		      <topic label="Feeding your bat" href="data/help/toc/extraContent/simple_page.html"/>
-		      <topic label="Bat sonar" href="data/help/toc/extraContent/simple_page.html"/>
-		      <topic label="Bat guano" href="data/help/toc/extraContent/simple_page.html"/>
-		      <topic label="Bat history" href="data/help/toc/extraContent/simple_page.html"/>
-		      <topic label="Bat recycling" href="data/help/toc/extraContent/simple_page.html"/>
+		<topic label="Tests FOR product: Unit Tests" href="data/help/toc/extraContent/simple_page.html">
+			  <criteria name="prodname" value="Happy Tests" />
+		      <topic label="Maintaining your test" href="data/help/toc/extraContent/simple_page.html"/>
+		      <topic label="Test classes" href="data/help/toc/extraContent/simple_page.html"/>
+		      <topic label="Test artifacts" href="data/help/toc/extraContent/simple_page.html"/>
+		      <topic label="Test history" href="data/help/toc/extraContent/simple_page.html"/>
+		      <topic label="Test reuse" href="data/help/toc/extraContent/simple_page.html"/>
 		</topic>
 	</topic>
 </toc>
