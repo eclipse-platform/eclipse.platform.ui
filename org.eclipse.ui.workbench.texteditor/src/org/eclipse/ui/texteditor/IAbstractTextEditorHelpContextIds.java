@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -391,7 +391,7 @@ public interface IAbstractTextEditorHelpContextIds {
 
 	/**
 	 * Help context id for the block selection mode toggle action. Value:
-	 * <code>"block_selection_mode_context_action_context"</code>
+	 * <code>"org.eclipse.ui.block_selection_mode_context_action_context"</code>
 	 * @since 3.5
 	 */
 	String BLOCK_SELECTION_MODE_ACTION= PREFIX + "block_selection_mode" + ACTION_POSTFIX; //$NON-NLS-1$
