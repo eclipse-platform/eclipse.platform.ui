@@ -389,4 +389,8 @@ public final class BindingService implements IBindingService {
 		manager.removeBinding(binding);
 	}
 
+	public BindingManager getBindingManager() {
+		return manager;
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     ARTAL Technologies <simon.chemouil@artal.fr> - Bug 293044 added keybindings display 
  *******************************************************************************/
 
 package org.eclipse.ui.internal.quickaccess;
@@ -14,11 +15,16 @@ package org.eclipse.ui.internal.quickaccess;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.menus.CommandMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -26,8 +32,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * 
  */
 public class CommandElement extends QuickAccessElement {
-
-	private static final String separator = " - "; //$NON-NLS-1$
 
 	private ParameterizedCommand command;
 
@@ -79,18 +83,55 @@ public class CommandElement extends QuickAccessElement {
 		return null;
 	}
 
-	public String getLabel() {
+	/**
+	 * Returns a formatted string describes this command.
+	 * 
+	 * @return a description of the command of this element
+	 * @since 3.6
+	 */
+	public String getCommand() {
+		final StringBuilder label = new StringBuilder();
+
 		try {
 			Command nestedCommand = command.getCommand();
+			label.append(command.getName());
 			if (nestedCommand != null && nestedCommand.getDescription() != null
 					&& nestedCommand.getDescription().length() != 0) {
-				return command.getName() + separator
-						+ nestedCommand.getDescription();
+				label.append(separator).append(nestedCommand.getDescription());
 			}
-			return command.getName();
 		} catch (NotDefinedException e) {
-			return command.toString();
+			label.append(command.toString());
 		}
+
+		return label.toString();
+	}
+
+	public String getLabel() {
+		String command = getCommand();
+		String binding = getBinding();
+		if (binding != null) {
+			return NLS.bind(CommandMessages.Tooltip_Accelerator, command, binding);
+		}
+		return command;
+	}
+
+	/**
+	 * Returns a formatted string that can be used to invoke this element's
+	 * command. <code>null</code> may be returned if a binding cannot be found.
+	 * 
+	 * @return the string keybinding for invoking this element's command, may be
+	 *         <code>null</code>
+	 * @since 3.6
+	 */
+	public String getBinding() {
+		BindingService service = (BindingService) PlatformUI.getWorkbench().getService(
+				IBindingService.class);
+		TriggerSequence[] triggerSeq = service.getBindingManager()
+				.getActiveBindingsDisregardingContextFor(command);
+		if (triggerSeq != null && triggerSeq.length > 0) {
+			return triggerSeq[0].format();
+		}
+		return null;
 	}
 
 	public int hashCode() {
