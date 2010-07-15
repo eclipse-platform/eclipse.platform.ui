@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,6 +93,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	private List fConsoleColorList;
 	private ColorEditor fConsoleColorEditor;
 	private IntegerFieldEditor timeout;
+	private BooleanFieldEditor workspacejre = null;
 
 	private BooleanFieldEditor fToolsWarningEditor= null;
 	
@@ -149,8 +150,12 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
         editor = new URLFieldEditor(IAntUIPreferenceConstants.DOCUMENTATION_URL, AntPreferencesMessages.AntPreferencePage_2, getFieldEditorParent());
 		addField(editor);
 		
-		createSpace();
-	
+		workspacejre = new BooleanFieldEditor(IAntUIPreferenceConstants.USE_WORKSPACE_JRE, AntPreferencesMessages.always_run_in_workspace_jre, getFieldEditorParent());
+	    workspacejre.fillIntoGrid(getFieldEditorParent(), 3);
+	    addField(workspacejre);
+	      
+	    createSpace();
+		
 		if (!AntUIPlugin.isMacOS()) {
 			//the mac does not have a tools.jar Bug 40778
 		    label= new Label(getFieldEditorParent(), SWT.WRAP);
@@ -167,7 +172,6 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.AntPreferencePage_12, getFieldEditorParent()));
 		createSpace();
-		
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_CREATE_MARKERS, AntPreferencesMessages.AntPreferencePage_15, getFieldEditorParent()));
 		label= new Label(getFieldEditorParent(), SWT.WRAP);

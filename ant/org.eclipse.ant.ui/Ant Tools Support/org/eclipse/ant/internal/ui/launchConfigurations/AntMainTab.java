@@ -162,6 +162,14 @@ public class AntMainTab extends ExternalToolsMainTab {
 			}
 		});
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		super.setDefaults(configuration);
+		//prevent a new blank configuration from being dirty when first created and not yet edited
+		setMappedResources(configuration);
+	}
 	
 	private void updateCheckButtons(ILaunchConfiguration configuration) {
 		boolean setInputHandler= true;

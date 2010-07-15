@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2000, 2010 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -106,6 +106,8 @@ public class AntPreferencesMessages extends NLS {
 	public static String AddPropertyDialog__Name__1;
 	public static String AddPropertyDialog__Value__2;
 	public static String AddPropertyDialog_2;
+
+	public static String always_run_in_workspace_jre;
 
 	public static String AntCodeAssistPreferencePage_Insert;
 	public static String AntCodeAssistPreferencePage_0;

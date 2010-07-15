@@ -13,12 +13,15 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.regex.Pattern;
 
+import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
@@ -216,13 +219,15 @@ public class AntJRETab extends JavaJRETab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
-		IVMInstall defaultVMInstall= getDefaultVMInstall(config);
-		if (defaultVMInstall != null) {
-			config.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
-			setDefaultVMInstallAttributes(defaultVMInstall, config);
-			applySeparateVMAttributes(config);
+		boolean usedefault = new InstanceScope().getNode(AntUIPlugin.PI_ANTUI).getBoolean(IAntUIPreferenceConstants.USE_WORKSPACE_JRE, false);
+		if (!usedefault) {
+			IVMInstall defaultVMInstall = getDefaultVMInstall(config);
+			if(defaultVMInstall != null) {
+				config.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
+				setDefaultVMInstallAttributes(defaultVMInstall, config);
+				applySeparateVMAttributes(config);
+			}
 		}
-		
 	}
 
 	/**
@@ -246,7 +251,7 @@ public class AntJRETab extends JavaJRETab {
 			return JavaRuntime.getDefaultVMInstall();
 		}
 	}
-
+	
 	private void setDefaultVMInstallAttributes(IVMInstall defaultVMInstall, ILaunchConfigurationWorkingCopy config) {
 		String vmName = defaultVMInstall.getName();
 		String vmTypeID = defaultVMInstall.getVMInstallType().getId();
