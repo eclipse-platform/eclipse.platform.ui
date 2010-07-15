@@ -8,6 +8,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabFolderRenderer;
+
 import java.lang.reflect.Method;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -17,8 +20,6 @@ import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSValue;
@@ -40,7 +41,7 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 			folder.setBackground(colors, percents, true);
 			
 			CTabFolderRenderer renderer = ((CTabFolder) control).getRenderer();
-			
+			if (renderer == null) return;
 			if (pseudo != null && pseudo.equals("selected")) {
 				Method m = renderer.getClass().getMethod("setActiveToolbarGradient",  new Class[]{Color[].class, int[].class});
 				m.invoke(renderer, colors, percents);

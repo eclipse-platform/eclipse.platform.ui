@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Widgets
+Bundle-SymbolicName: org.eclipse.e4.ui.widgets
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.eclipse.e4.ui.widgets
+Require-Bundle: org.eclipse.swt;bundle-version="3.6.0"

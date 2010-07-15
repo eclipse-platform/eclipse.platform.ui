@@ -1,9 +1,10 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabFolderRenderer;
+
 import javax.inject.Inject;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -90,9 +91,13 @@ public class CTabRendering extends CTabFolderRenderer {
 				// - borderTop: y - marginHeight - highlight_header - tabHeight
 				// - borderTop;
 
-				y = y - marginHeight - tabHeight - borderTop - (cornerSize / 4);
+				int headerHeight = parent.getHeaderControl() != null ? parent
+						.getHeaderControl().getSize().y : 0;
+				y = y - headerHeight - marginHeight - tabHeight - borderTop
+						- (cornerSize / 4);
 				height = height + borderBottom + borderTop + 2 * marginHeight
-						+ tabHeight + cornerSize / 2 + cornerSize / 4
+						+ tabHeight + headerHeight + cornerSize / 2
+						+ cornerSize / 4
 						+ (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
 			}
 			break;

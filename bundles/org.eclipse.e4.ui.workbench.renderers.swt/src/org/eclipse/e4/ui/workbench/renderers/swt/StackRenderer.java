@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabFolder2Adapter;
+import org.eclipse.e4.ui.widgets.CTabFolderEvent;
+import org.eclipse.e4.ui.widgets.CTabItem;
+
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -35,13 +40,12 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.osgi.service.event.Event;
@@ -462,7 +466,7 @@ public class StackRenderer extends LazyStackRenderer {
 	protected void showTab(MUIElement element) {
 		// super.showTab(element);
 
-		CTabFolder ctf = (CTabFolder) getParentWidget(element);
+		final CTabFolder ctf = (CTabFolder) getParentWidget(element);
 		CTabItem cti = findItemForPart(element, null);
 		if (cti == null) {
 			createTab(element.getParent(), element);
@@ -513,9 +517,81 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		if (part.getToolbar() != null) {
-			Control c = (Control) renderer.createGui(part.getToolbar(), ctf,
-					part.getContext());
-			ctf.setTopRight(c);
+			final Control c = (Control) renderer.createGui(part.getToolbar(),
+					ctf, part.getContext());
+
+			final Composite toolComposite = new Composite(ctf, SWT.NONE) {
+				public Point computeSize(int wHint, int hHint, boolean changed) {
+					return getChildren()[0].computeSize(wHint, hHint, changed);
+				}
+			};
+			c.setParent(toolComposite);
+			final Composite measureComposite = new Composite(ctf, SWT.NONE);
+			toolComposite.addControlListener(new ControlAdapter() {
+				Image toolImage;
+				boolean ignoreResize;
+
+				@Override
+				public void controlResized(ControlEvent e) {
+					if (ignoreResize)
+						return;
+
+					int topRightWidth = 0, headerWidth = 0;
+
+					Control topRight = ctf.getTopRight();
+					if (topRight != null)
+						topRightWidth = topRight.getSize().x;
+
+					Control headerControl = ctf.getHeaderControl();
+					if (headerControl != null)
+						headerWidth = headerControl.getSize().x;
+					Point barSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					int requiredWidth = barSize.x;
+					int requiredHeight = barSize.y;
+
+					if (topRightWidth == 0 && headerWidth == 0)
+						return;
+
+					ignoreResize = true;
+					if (topRightWidth > requiredWidth) {
+						measureComposite.setVisible(false);
+						if (toolImage != null) {
+							toolComposite.setBackground(null);
+							toolComposite.setBackgroundImage(toolImage);
+						}
+						ctf.setTopRight(toolComposite, SWT.FILL);
+						ctf.setHeaderControl(null);
+						// ctf.reskin(SWT.ALL);
+						ctf.layout();
+					} else {
+						if (toolImage == null)
+							toolImage = toolComposite.getBackgroundImage();
+						measureComposite.setVisible(true);
+						measureComposite.setBackgroundImage(toolImage);
+						toolComposite.setBackground(c.getDisplay()
+								.getSystemColor(SWT.COLOR_WHITE));
+						toolComposite.setBackgroundImage(null);
+						ctf.setTopRight(measureComposite, SWT.FILL);
+						ctf.setHeaderControl(toolComposite);
+						ctf.layout();
+					}
+
+					int compWidth = toolComposite.getSize().x;
+					if (compWidth > requiredWidth) {
+						c.setBounds(compWidth - requiredWidth, 0,
+								requiredWidth, requiredHeight);
+					} else {
+						barSize = c.computeSize(compWidth, SWT.DEFAULT);
+						c.setBounds(compWidth - barSize.x, 0, compWidth,
+								barSize.y);
+
+					}
+					ignoreResize = false;
+
+				}
+			});
+
+			ctf.setTopRight(toolComposite, SWT.FILL);
 			ctf.layout();
 		}
 	}
