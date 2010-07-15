@@ -1,9 +1,8 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import javax.inject.Inject;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabFolderRenderer;
-
-import javax.inject.Inject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -914,7 +913,7 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	public void setActive(boolean active) {
 		this.active = active;
-		Control topRight = parent.getTopRight();
+		Control topRight = parent.getTopControl();
 		if (topRight != null) {
 			if (active && toolbarActiveImage == null)
 				createActiveToolbarImages(Display.getCurrent());

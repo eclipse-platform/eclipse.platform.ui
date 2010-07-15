@@ -168,6 +168,8 @@ public class CTabFolder extends Composite {
 	int topRightAlignment = SWT.RIGHT;
 	
 	Control headerControl;
+	Composite measureComposite;
+	Composite topRightComposite;
 	
 	// when disposing CTabFolder, don't try to layout the items or 
 	// change the selection as each child is destroyed.
@@ -926,6 +928,14 @@ public int getTabPosition(){
 	return onBottom ? SWT.BOTTOM : SWT.TOP;
 }
 /**
+ * WARNING: Provisional API. This API is temporary and is not guaranteed to exist in
+ * future releases.
+ */
+public Control getTopControl (){
+	checkWidget ();
+	return topRight;
+}
+/**
  * Returns the control in the top right corner of the tab folder. 
  * Typically this is a close button or a composite with a menu and close button.
  *
@@ -940,6 +950,7 @@ public int getTabPosition(){
  */
 public Control getTopRight() {
 	checkWidget();
+	if (topRightComposite != null) return topRightComposite.getChildren()[0];
 	return topRight;
 }
 /**
@@ -957,6 +968,7 @@ public Control getTopRight() {
  */
 public int getTopRightAlignment() {
 	checkWidget();
+	if (topRightComposite != null) return SWT.RIGHT | SWT.WRAP;
 	return topRightAlignment;
 }
 /**
@@ -2268,7 +2280,6 @@ public void setForeground (Color color) {
 	super.setForeground(color);
 	redraw();
 }
-
 /**
  * WARNING: Provisional API. This API is temporary and is not guaranteed to exist in
  * future releases.
@@ -3168,16 +3179,108 @@ public void setTopRight(Control control) {
  */
 public void setTopRight(Control control, int alignment) {
 	checkWidget();
-	if (alignment != SWT.RIGHT && alignment != SWT.FILL) {
+	if (alignment != SWT.RIGHT && alignment != SWT.FILL && alignment != (SWT.RIGHT | SWT.WRAP)) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	if (control != null && control.getParent() != this) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
+	
+	headerControl = null;
+	
+	if (control == null) {
+		if (topRightComposite != null) {
+			topRightComposite.getChildren()[0].setParent(this);
+			topRightComposite.dispose();
+			topRightComposite = null;
+		}
+		if (measureComposite != null) {
+			measureComposite.dispose();
+			measureComposite = null;
+		}
+	} else {
+		if (alignment == (SWT.RIGHT | SWT.WRAP)) {
+			final Control c = control;
+			topRightComposite = new Composite(this, SWT.NONE) {
+				public Point computeSize(int wHint, int hHint, boolean changed) {
+					return c.computeSize(wHint, hHint, changed);
+				}
+			};
+			c.setParent(topRightComposite);
+			measureComposite = new Composite(this, SWT.NONE);
+			topRightComposite.addControlListener(new ControlAdapter() {
+				Image toolImage;
+				boolean ignoreResize;
+				
+				@Override
+				public void controlResized(ControlEvent e) {
+					if (ignoreResize)
+						return;
+					
+					int topRightWidth = 0, headerWidth = 0;
+					
+					Control topRight = CTabFolder.this.topRight == measureComposite ? measureComposite : topRightComposite;
+					if (topRight != null)
+						topRightWidth = topRight.getSize().x;
+					
+					Control headerControl = CTabFolder.this.getHeaderControl();
+					if (headerControl != null)
+						headerWidth = headerControl.getSize().x;
+					Point barSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					int requiredWidth = barSize.x;
+					int requiredHeight = barSize.y;
+					
+					if (topRightWidth == 0 && headerWidth == 0)
+						return;
+					
+					ignoreResize = true;
+					if (topRightWidth > requiredWidth) {
+						measureComposite.setVisible(false);
+						if (toolImage != null) {
+							topRightComposite.setBackground(null);
+							topRightComposite.setBackgroundImage(toolImage);
+						}
+						CTabFolder.this.setTopRight(topRightComposite, SWT.FILL);
+						CTabFolder.this.setHeaderControl(null);
+						// ctf.reskin(SWT.ALL);
+						CTabFolder.this.layout();
+					} else {
+						if (toolImage == null)
+							toolImage = topRightComposite.getBackgroundImage();
+						measureComposite.setVisible(true);
+						measureComposite.setBackgroundImage(toolImage);
+						topRightComposite.setBackground(c.getDisplay()
+								.getSystemColor(SWT.COLOR_WHITE));
+						topRightComposite.setBackgroundImage(null);
+						CTabFolder.this.setTopRight(measureComposite, SWT.FILL);
+						CTabFolder.this.setHeaderControl(topRightComposite);
+						CTabFolder.this.layout();
+					}
+					
+					int compWidth = topRightComposite.getSize().x;
+					if (compWidth > requiredWidth) {
+						c.setBounds(compWidth - requiredWidth, 0,
+								requiredWidth, requiredHeight);
+					} else {
+						barSize = c.computeSize(compWidth, SWT.DEFAULT);
+						c.setBounds(compWidth - barSize.x, 0, compWidth,
+								barSize.y);
+						
+					}
+					ignoreResize = false;
+				}
+			});
+			
+			this.setTopRight(topRightComposite, SWT.FILL);
+			return;
+		}
+	}
 	topRight = control;
 	topRightAlignment = alignment;
 	if (updateItems()) redraw();
 }
+
+
 /**
  * Specify whether the close button appears 
  * when the user hovers over an unselected tabs.
