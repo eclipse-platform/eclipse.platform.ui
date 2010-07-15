@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
+import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
@@ -324,13 +325,22 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int COMMAND__PARAMETERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int COMMAND__CATEGORY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>Command</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	public static final int COMMAND_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
@@ -645,6 +655,61 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int PARAMETER_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl <em>Category</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl
+	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getCategory()
+	 * @generated
+	 */
+	public static final int CATEGORY = 11;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CATEGORY__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CATEGORY__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CATEGORY__NAME = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CATEGORY__DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Category</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CATEGORY_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
 	 * The meta object id for the '<em>Parameterized Command</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -652,7 +717,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getParameterizedCommand()
 	 * @generated
 	 */
-	public static final int PARAMETERIZED_COMMAND = 11;
+	public static final int PARAMETERIZED_COMMAND = 12;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -730,6 +795,13 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass parameterEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass categoryEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1024,6 +1096,20 @@ public class CommandsPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.commands.MCommand#getCategory <em>Category</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Category</em>'.
+	 * @see org.eclipse.e4.ui.model.application.commands.MCommand#getCategory()
+	 * @see #getCommand()
+	 * @generated
+	 */
+	public EReference getCommand_Category() {
+		return (EReference)commandEClass.getEStructuralFeatures().get(3);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.commands.MCommandParameter <em>Command Parameter</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1226,6 +1312,47 @@ public class CommandsPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.commands.MCategory <em>Category</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Category</em>'.
+	 * @see org.eclipse.e4.ui.model.application.commands.MCategory
+	 * @generated
+	 */
+	public EClass getCategory() {
+		return categoryEClass;
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.commands.MCategory#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.eclipse.e4.ui.model.application.commands.MCategory#getName()
+	 * @see #getCategory()
+	 * @generated
+	 */
+	public EAttribute getCategory_Name() {
+		return (EAttribute)categoryEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.commands.MCategory#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.eclipse.e4.ui.model.application.commands.MCategory#getDescription()
+	 * @see #getCategory()
+	 * @generated
+	 */
+	public EAttribute getCategory_Description() {
+		return (EAttribute)categoryEClass.getEStructuralFeatures().get(1);
+	}
+
+
+	/**
 	 * Returns the meta object for data type '{@link org.eclipse.core.commands.ParameterizedCommand <em>Parameterized Command</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1288,6 +1415,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		createEAttribute(commandEClass, COMMAND__COMMAND_NAME);
 		createEAttribute(commandEClass, COMMAND__DESCRIPTION);
 		createEReference(commandEClass, COMMAND__PARAMETERS);
+		createEReference(commandEClass, COMMAND__CATEGORY);
 
 		commandParameterEClass = createEClass(COMMAND_PARAMETER);
 		createEAttribute(commandParameterEClass, COMMAND_PARAMETER__NAME);
@@ -1310,6 +1438,10 @@ public class CommandsPackageImpl extends EPackageImpl {
 		parameterEClass = createEClass(PARAMETER);
 		createEAttribute(parameterEClass, PARAMETER__NAME);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
+
+		categoryEClass = createEClass(CATEGORY);
+		createEAttribute(categoryEClass, CATEGORY__NAME);
+		createEAttribute(categoryEClass, CATEGORY__DESCRIPTION);
 
 		// Create data types
 		parameterizedCommandEDataType = createEDataType(PARAMETERIZED_COMMAND);
@@ -1354,6 +1486,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		keyBindingEClass.getESuperTypes().add(this.getKeySequence());
 		keyBindingEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		parameterEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
+		categoryEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(bindingTableContainerEClass, MBindingTableContainer.class, "BindingTableContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1376,6 +1509,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		initEAttribute(getCommand_CommandName(), ecorePackage.getEString(), "commandName", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getCommand_Description(), ecorePackage.getEString(), "description", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getCommand_Parameters(), this.getCommandParameter(), null, "parameters", null, 0, -1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getCommand_Category(), this.getCategory(), null, "category", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(commandParameterEClass, MCommandParameter.class, "CommandParameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getCommandParameter_Name(), ecorePackage.getEString(), "name", null, 1, 1, MCommandParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1398,6 +1532,10 @@ public class CommandsPackageImpl extends EPackageImpl {
 		initEClass(parameterEClass, MParameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getParameter_Name(), ecorePackage.getEString(), "name", null, 0, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getParameter_Value(), ecorePackage.getEString(), "value", null, 0, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(categoryEClass, MCategory.class, "Category", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getCategory_Name(), ecorePackage.getEString(), "name", null, 1, 1, MCategory.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getCategory_Description(), ecorePackage.getEString(), "description", null, 0, 1, MCategory.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Initialize data types
 		initEDataType(parameterizedCommandEDataType, ParameterizedCommand.class, "ParameterizedCommand", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1555,6 +1693,14 @@ public class CommandsPackageImpl extends EPackageImpl {
 		public static final EReference COMMAND__PARAMETERS = eINSTANCE.getCommand_Parameters();
 
 		/**
+		 * The meta object literal for the '<em><b>Category</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference COMMAND__CATEGORY = eINSTANCE.getCommand_Category();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.commands.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1693,6 +1839,32 @@ public class CommandsPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute PARAMETER__VALUE = eINSTANCE.getParameter_Value();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl <em>Category</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.commands.impl.CategoryImpl
+		 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getCategory()
+		 * @generated
+		 */
+		public static final EClass CATEGORY = eINSTANCE.getCategory();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute CATEGORY__NAME = eINSTANCE.getCategory_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute CATEGORY__DESCRIPTION = eINSTANCE.getCategory_Description();
 
 		/**
 		 * The meta object literal for the '<em>Parameterized Command</em>' data type.

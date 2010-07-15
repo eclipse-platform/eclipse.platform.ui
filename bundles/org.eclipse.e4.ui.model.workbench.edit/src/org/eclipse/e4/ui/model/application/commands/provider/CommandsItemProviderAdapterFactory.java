@@ -238,6 +238,29 @@ public class CommandsItemProviderAdapterFactory extends CommandsAdapterFactory i
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.commands.MCategory} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected CategoryItemProvider categoryItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.commands.MCategory}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createCategoryAdapter() {
+		if (categoryItemProvider == null) {
+			categoryItemProvider = new CategoryItemProvider(this);
+		}
+
+		return categoryItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -343,6 +366,7 @@ public class CommandsItemProviderAdapterFactory extends CommandsAdapterFactory i
 		if (handlerItemProvider != null) handlerItemProvider.dispose();
 		if (keyBindingItemProvider != null) keyBindingItemProvider.dispose();
 		if (parameterItemProvider != null) parameterItemProvider.dispose();
+		if (categoryItemProvider != null) categoryItemProvider.dispose();
 	}
 
 }

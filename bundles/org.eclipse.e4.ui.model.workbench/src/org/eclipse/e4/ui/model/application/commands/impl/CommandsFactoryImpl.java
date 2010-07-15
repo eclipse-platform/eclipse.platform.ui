@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.commands.impl;
 
+import org.eclipse.e4.ui.model.application.commands.*;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -84,6 +85,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 			case CommandsPackageImpl.HANDLER: return (EObject)createHandler();
 			case CommandsPackageImpl.KEY_BINDING: return (EObject)createKeyBinding();
 			case CommandsPackageImpl.PARAMETER: return (EObject)createParameter();
+			case CommandsPackageImpl.CATEGORY: return (EObject)createCategory();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -183,6 +185,16 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	public MParameter createParameter() {
 		ParameterImpl parameter = new ParameterImpl();
 		return parameter;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MCategory createCategory() {
+		CategoryImpl category = new CategoryImpl();
+		return category;
 	}
 
 	/**

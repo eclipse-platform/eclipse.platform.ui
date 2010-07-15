@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
+import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
@@ -71,6 +72,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getTrimContributions <em>Trim Contributions</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getAddons <em>Addons</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCategories <em>Categories</em>}</li>
  * </ul>
  * </p>
  *
@@ -216,6 +218,16 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * @ordered
 	 */
 	protected EList<MAddon> addons;
+
+	/**
+	 * The cached value of the '{@link #getCategories() <em>Categories</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCategories()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MCategory> categories;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -437,6 +449,18 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public List<MCategory> getCategories() {
+		if (categories == null) {
+			categories = new EObjectContainmentEList<MCategory>(MCategory.class, this, ApplicationPackageImpl.APPLICATION__CATEGORIES);
+		}
+		return categories;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -460,6 +484,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
 				return ((InternalEList<?>)getAddons()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+				return ((InternalEList<?>)getCategories()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -499,6 +525,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return getCommands();
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
 				return getAddons();
+			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+				return getCategories();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -561,6 +589,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				getAddons().clear();
 				getAddons().addAll((Collection<? extends MAddon>)newValue);
 				return;
+			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+				getCategories().clear();
+				getCategories().addAll((Collection<? extends MCategory>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -612,6 +644,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
 				getAddons().clear();
 				return;
+			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+				getCategories().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -650,6 +685,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return commands != null && !commands.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
 				return addons != null && !addons.isEmpty();
+			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
+				return categories != null && !categories.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

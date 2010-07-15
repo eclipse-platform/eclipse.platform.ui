@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.model.application;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
+import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
@@ -33,6 +34,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplication#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplication#getAddons <em>Addons</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MApplication#getCategories <em>Categories</em>}</li>
  * </ul>
  * </p>
  *
@@ -69,5 +71,20 @@ public interface MApplication extends MElementContainer<MWindow>, MContext, MHan
 	 * @generated
 	 */
 	List<MAddon> getAddons();
+
+	/**
+	 * Returns the value of the '<em><b>Categories</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.commands.MCategory}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Categories</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Categories</em>' containment reference list.
+	 * @model containment="true"
+	 * @generated
+	 */
+	List<MCategory> getCategories();
 
 } // MApplication

@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestHarnessImpl.java,v 1.4 2010/05/25 18:07:13 pwebster Exp $
+ * $Id: TestHarnessImpl.java,v 1.5 2010/06/04 20:22:20 johna Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
@@ -54,6 +55,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getCommandName <em>Command Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getCategory <em>Category</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getProperties <em>Properties</em>}</li>
@@ -125,6 +127,15 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	 * @ordered
 	 */
 	protected EList<MCommandParameter> parameters;
+	/**
+	 * The cached value of the '{@link #getCategory() <em>Category</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCategory()
+	 * @generated
+	 * @ordered
+	 */
+	protected MCategory category;
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -513,6 +524,44 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			parameters = new EObjectContainmentEList<MCommandParameter>(MCommandParameter.class, this, MTestPackage.TEST_HARNESS__PARAMETERS);
 		}
 		return parameters;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MCategory getCategory() {
+		if (category != null && ((EObject)category).eIsProxy()) {
+			InternalEObject oldCategory = (InternalEObject)category;
+			category = (MCategory)eResolveProxy(oldCategory);
+			if (category != oldCategory) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MTestPackage.TEST_HARNESS__CATEGORY, oldCategory, category));
+			}
+		}
+		return category;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MCategory basicGetCategory() {
+		return category;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCategory(MCategory newCategory) {
+		MCategory oldCategory = category;
+		category = newCategory;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MTestPackage.TEST_HARNESS__CATEGORY, oldCategory, category));
 	}
 
 	/**
@@ -1089,6 +1138,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return getDescription();
 			case MTestPackage.TEST_HARNESS__PARAMETERS:
 				return getParameters();
+			case MTestPackage.TEST_HARNESS__CATEGORY:
+				if (resolve) return getCategory();
+				return basicGetCategory();
 			case MTestPackage.TEST_HARNESS__CONTEXT:
 				return getContext();
 			case MTestPackage.TEST_HARNESS__VARIABLES:
@@ -1162,6 +1214,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__PARAMETERS:
 				getParameters().clear();
 				getParameters().addAll((Collection<? extends MCommandParameter>)newValue);
+				return;
+			case MTestPackage.TEST_HARNESS__CATEGORY:
+				setCategory((MCategory)newValue);
 				return;
 			case MTestPackage.TEST_HARNESS__CONTEXT:
 				setContext((IEclipseContext)newValue);
@@ -1257,6 +1312,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__PARAMETERS:
 				getParameters().clear();
 				return;
+			case MTestPackage.TEST_HARNESS__CATEGORY:
+				setCategory((MCategory)null);
+				return;
 			case MTestPackage.TEST_HARNESS__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
@@ -1346,6 +1404,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 			case MTestPackage.TEST_HARNESS__PARAMETERS:
 				return parameters != null && !parameters.isEmpty();
+			case MTestPackage.TEST_HARNESS__CATEGORY:
+				return category != null;
 			case MTestPackage.TEST_HARNESS__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MTestPackage.TEST_HARNESS__VARIABLES:
@@ -1409,6 +1469,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				case MTestPackage.TEST_HARNESS__COMMAND_NAME: return CommandsPackageImpl.COMMAND__COMMAND_NAME;
 				case MTestPackage.TEST_HARNESS__DESCRIPTION: return CommandsPackageImpl.COMMAND__DESCRIPTION;
 				case MTestPackage.TEST_HARNESS__PARAMETERS: return CommandsPackageImpl.COMMAND__PARAMETERS;
+				case MTestPackage.TEST_HARNESS__CATEGORY: return CommandsPackageImpl.COMMAND__CATEGORY;
 				default: return -1;
 			}
 		}
@@ -1490,6 +1551,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				case CommandsPackageImpl.COMMAND__COMMAND_NAME: return MTestPackage.TEST_HARNESS__COMMAND_NAME;
 				case CommandsPackageImpl.COMMAND__DESCRIPTION: return MTestPackage.TEST_HARNESS__DESCRIPTION;
 				case CommandsPackageImpl.COMMAND__PARAMETERS: return MTestPackage.TEST_HARNESS__PARAMETERS;
+				case CommandsPackageImpl.COMMAND__CATEGORY: return MTestPackage.TEST_HARNESS__CATEGORY;
 				default: return -1;
 			}
 		}

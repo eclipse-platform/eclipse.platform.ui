@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.model.application.commands.util;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.commands.*;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
@@ -174,6 +175,13 @@ public class CommandsSwitch<T> {
 				MParameter parameter = (MParameter)theEObject;
 				T result = caseParameter(parameter);
 				if (result == null) result = caseApplicationElement(parameter);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CommandsPackageImpl.CATEGORY: {
+				MCategory category = (MCategory)theEObject;
+				T result = caseCategory(category);
+				if (result == null) result = caseApplicationElement(category);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -343,6 +351,21 @@ public class CommandsSwitch<T> {
 	 * @generated
 	 */
 	public T caseParameter(MParameter object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Category</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Category</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCategory(MCategory object) {
 		return null;
 	}
 

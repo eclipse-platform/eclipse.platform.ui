@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
@@ -31,42 +32,96 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
+import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EContentAdapter;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  *
  */
 public class E4CommandProcessor {
+	public static void processCategories(IEclipseContext context, List<MCategory> categories) {
+		Activator.trace(Policy.DEBUG_CMDS, "Initialize contexts from model", null); //$NON-NLS-1$
+		ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
+		for (MCategory category : categories) {
+			createCategory(cs, category);
+		}
+	}
+
 	public static void processCommands(IEclipseContext context, List<MCommand> commands) {
 		// fill in commands
 		Activator.trace(Policy.DEBUG_CMDS, "Initialize commands from model", null); //$NON-NLS-1$
 		ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
-		Category cat = cs
-				.defineCategory(MApplication.class.getName(), "Application Category", null); //$NON-NLS-1$
+		Category undefinedCategory = cs.defineCategory(MApplication.class.getName(),
+				"Application Category", null); //$NON-NLS-1$
 		for (MCommand cmd : commands) {
-			IParameter[] parms = null;
-			String id = cmd.getElementId();
-			String name = cmd.getCommandName();
-			List<MCommandParameter> modelParms = cmd.getParameters();
-			if (modelParms != null && !modelParms.isEmpty()) {
-				ArrayList<Parameter> parmList = new ArrayList<Parameter>();
-				for (MCommandParameter cmdParm : modelParms) {
-					parmList.add(new Parameter(cmdParm.getElementId(), cmdParm.getName(), null,
-							null, cmdParm.isOptional()));
-				}
-				parms = parmList.toArray(new Parameter[parmList.size()]);
-			}
-			cs.defineCommand(id, name, null, cat, parms);
+			createCommand(cs, undefinedCategory, cmd);
 		}
+	}
 
+	private static void createCategory(ECommandService cs, MCategory category) {
+		if (category.getElementId() != null && category.getName() != null) {
+			cs.defineCategory(category.getElementId(), category.getName(),
+					category.getDescription());
+		}
+	}
+
+	private static void createCommand(ECommandService cs, Category undefinedCategory, MCommand cmd) {
+		IParameter[] parms = null;
+		String id = cmd.getElementId();
+		String name = cmd.getCommandName();
+		List<MCommandParameter> modelParms = cmd.getParameters();
+		if (modelParms != null && !modelParms.isEmpty()) {
+			ArrayList<Parameter> parmList = new ArrayList<Parameter>();
+			for (MCommandParameter cmdParm : modelParms) {
+				parmList.add(new Parameter(cmdParm.getElementId(), cmdParm.getName(), null, null,
+						cmdParm.isOptional()));
+			}
+			parms = parmList.toArray(new Parameter[parmList.size()]);
+		}
+		Category cat = undefinedCategory;
+		if (cmd.getCategory() != null) {
+			cat = cs.getCategory(cmd.getCategory().getElementId());
+		}
+		cs.defineCommand(id, name, null, cat, parms);
+	}
+
+	public static void watchForCommandChanges(IEclipseContext context) {
+		final MApplication application = context.get(MApplication.class);
+		final ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
+		final Category undefinedCategory = cs.getCategory(MApplication.class.getName());
+
+		IEventBroker broker = context.get(IEventBroker.class);
+		EventHandler handler = new EventHandler() {
+			public void handleEvent(Event event) {
+				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
+					if (UIEvents.EventTypes.ADD.equals(event.getProperty(UIEvents.EventTags.TYPE))) {
+						Object obj = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+						if (obj instanceof MCommand) {
+							createCommand(cs, undefinedCategory, (MCommand) obj);
+						} else if (obj instanceof MCategory) {
+							createCategory(cs, (MCategory) obj);
+						}
+					}
+				}
+			}
+		};
+		broker.subscribe(
+				UIEvents.buildTopic(UIEvents.Application.TOPIC, UIEvents.Application.COMMANDS),
+				handler);
+		broker.subscribe(
+				UIEvents.buildTopic(UIEvents.Application.TOPIC, UIEvents.Application.CATEGORIES),
+				handler);
 	}
 
 	public static void processBindings(IEclipseContext context,

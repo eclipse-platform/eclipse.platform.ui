@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.commands.impl;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
@@ -19,6 +20,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
@@ -34,6 +36,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getCommandName <em>Command Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl#getCategory <em>Category</em>}</li>
  * </ul>
  * </p>
  *
@@ -89,6 +92,16 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * @ordered
 	 */
 	protected EList<MCommandParameter> parameters;
+
+	/**
+	 * The cached value of the '{@link #getCategory() <em>Category</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCategory()
+	 * @generated
+	 * @ordered
+	 */
+	protected MCategory category;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -168,6 +181,44 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MCategory getCategory() {
+		if (category != null && ((EObject)category).eIsProxy()) {
+			InternalEObject oldCategory = (InternalEObject)category;
+			category = (MCategory)eResolveProxy(oldCategory);
+			if (category != oldCategory) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, CommandsPackageImpl.COMMAND__CATEGORY, oldCategory, category));
+			}
+		}
+		return category;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MCategory basicGetCategory() {
+		return category;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCategory(MCategory newCategory) {
+		MCategory oldCategory = category;
+		category = newCategory;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND__CATEGORY, oldCategory, category));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -191,6 +242,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 				return getDescription();
 			case CommandsPackageImpl.COMMAND__PARAMETERS:
 				return getParameters();
+			case CommandsPackageImpl.COMMAND__CATEGORY:
+				if (resolve) return getCategory();
+				return basicGetCategory();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -214,6 +268,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 				getParameters().clear();
 				getParameters().addAll((Collection<? extends MCommandParameter>)newValue);
 				return;
+			case CommandsPackageImpl.COMMAND__CATEGORY:
+				setCategory((MCategory)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -235,6 +292,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 			case CommandsPackageImpl.COMMAND__PARAMETERS:
 				getParameters().clear();
 				return;
+			case CommandsPackageImpl.COMMAND__CATEGORY:
+				setCategory((MCategory)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -253,6 +313,8 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 			case CommandsPackageImpl.COMMAND__PARAMETERS:
 				return parameters != null && !parameters.isEmpty();
+			case CommandsPackageImpl.COMMAND__CATEGORY:
+				return category != null;
 		}
 		return super.eIsSet(featureID);
 	}

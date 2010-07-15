@@ -398,13 +398,22 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__ADDONS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
 
 	/**
+	 * The feature id for the '<em><b>Categories</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__CATEGORIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
+
+	/**
 	 * The number of structural features of the '<em>Application</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
+	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.
@@ -747,6 +756,20 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MApplication#getCategories <em>Categories</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Categories</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplication#getCategories()
+	 * @see #getApplication()
+	 * @generated
+	 */
+	public EReference getApplication_Categories() {
+		return (EReference)applicationEClass.getEStructuralFeatures().get(2);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -897,6 +920,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		applicationEClass = createEClass(APPLICATION);
 		createEReference(applicationEClass, APPLICATION__COMMANDS);
 		createEReference(applicationEClass, APPLICATION__ADDONS);
+		createEReference(applicationEClass, APPLICATION__CATEGORIES);
 
 		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
@@ -984,6 +1008,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		initEClass(applicationEClass, MApplication.class, "Application", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getApplication_Commands(), theCommandsPackage.getCommand(), null, "commands", null, 0, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getApplication_Addons(), this.getAddon(), null, "addons", null, 0, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getApplication_Categories(), theCommandsPackage.getCategory(), null, "categories", null, 0, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(applicationElementEClass, MApplicationElement.class, "ApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1067,6 +1092,14 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference APPLICATION__ADDONS = eINSTANCE.getApplication_Addons();
+
+		/**
+		 * The meta object literal for the '<em><b>Categories</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference APPLICATION__CATEGORIES = eINSTANCE.getApplication_Categories();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl <em>Element</em>}' class.

@@ -55,8 +55,15 @@ public class UIEvents {
 		public static final String BINDINGCONTEXTS = "bindingContexts"; //$NON-NLS-1$
 	}
 
+	public static interface Category {
+		public static final String TOPIC = UITopicBase + "/commands/Category"; //$NON-NLS-1$
+		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
+		public static final String NAME = "name"; //$NON-NLS-1$
+	}
+
 	public static interface Command {
 		public static final String TOPIC = UITopicBase + "/commands/Command"; //$NON-NLS-1$
+		public static final String CATEGORY = "category"; //$NON-NLS-1$
 		public static final String COMMANDNAME = "commandName"; //$NON-NLS-1$
 		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 		public static final String PARAMETERS = "parameters"; //$NON-NLS-1$
@@ -115,6 +122,7 @@ public class UIEvents {
 	public static interface Application {
 		public static final String TOPIC = UITopicBase + "/application/Application"; //$NON-NLS-1$
 		public static final String ADDONS = "addons"; //$NON-NLS-1$
+		public static final String CATEGORIES = "categories"; //$NON-NLS-1$
 		public static final String COMMANDS = "commands"; //$NON-NLS-1$
 	}
 

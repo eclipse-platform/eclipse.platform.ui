@@ -110,7 +110,9 @@ public class E4Workbench implements IWorkbench {
 	private void init(MApplication appElement) {
 		Activator.trace(Policy.DEBUG_WORKBENCH, "init() workbench", null); //$NON-NLS-1$
 
+		E4CommandProcessor.processCategories(appElement.getContext(), appElement.getCategories());
 		E4CommandProcessor.processCommands(appElement.getContext(), appElement.getCommands());
+		E4CommandProcessor.watchForCommandChanges(appElement.getContext());
 		E4CommandProcessor.processBindings(appElement.getContext(), appElement);
 
 		// Do a top level processHierarchy for the application?

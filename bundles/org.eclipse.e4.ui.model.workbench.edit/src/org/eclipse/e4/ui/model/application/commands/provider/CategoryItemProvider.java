@@ -8,32 +8,42 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.menu.provider;
+package org.eclipse.e4.ui.model.application.commands.provider;
 
 
 import java.util.Collection;
 import java.util.List;
+
+import org.eclipse.e4.ui.model.application.commands.MCategory;
+
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+
+import org.eclipse.e4.ui.model.application.provider.ApplicationElementItemProvider;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.provider.ElementContainerItemProvider;
+
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.common.util.ResourceLocator;
+
+import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MToolBar} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.commands.MCategory} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ToolBarItemProvider
-	extends ElementContainerItemProvider
+public class CategoryItemProvider
+	extends ApplicationElementItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -46,7 +56,7 @@ public class ToolBarItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ToolBarItemProvider(AdapterFactory adapterFactory) {
+	public CategoryItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -61,33 +71,79 @@ public class ToolBarItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addNamePropertyDescriptor(object);
+			addDescriptionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This returns ToolBar.gif.
+	 * This adds a property descriptor for the Name feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addNamePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Category_name_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Category_name_feature", "_UI_Category_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 CommandsPackageImpl.Literals.CATEGORY__NAME,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Description feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDescriptionPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Category_description_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Category_description_feature", "_UI_Category_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 CommandsPackageImpl.Literals.CATEGORY__DESCRIPTION,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This returns Category.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/ToolBar")); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Category")); //$NON-NLS-1$
 	}
 
 	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; //((MToolBar)object).getElementId();
+		String label = ((MCategory)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_ToolBar_type") : //$NON-NLS-1$
-			getString("_UI_ToolBar_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_Category_type") : //$NON-NLS-1$
+			getString("_UI_Category_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -100,6 +156,13 @@ public class ToolBarItemProvider
 	@Override
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
+
+		switch (notification.getFeatureID(MCategory.class)) {
+			case CommandsPackageImpl.CATEGORY__NAME:
+			case CommandsPackageImpl.CATEGORY__DESCRIPTION:
+				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
+				return;
+		}
 		super.notifyChanged(notification);
 	}
 

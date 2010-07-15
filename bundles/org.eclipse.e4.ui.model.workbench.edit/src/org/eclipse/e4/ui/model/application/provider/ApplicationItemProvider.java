@@ -164,6 +164,7 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			childrenFeatures.add(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__COMMANDS);
 			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__ADDONS);
+			childrenFeatures.add(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES);
 		}
 		return childrenFeatures;
 	}
@@ -231,6 +232,7 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			case ApplicationPackageImpl.APPLICATION__TRIM_CONTRIBUTIONS:
 			case ApplicationPackageImpl.APPLICATION__COMMANDS:
 			case ApplicationPackageImpl.APPLICATION__ADDONS:
+			case ApplicationPackageImpl.APPLICATION__CATEGORIES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -298,6 +300,11 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 			(createChildParameter
 				(ApplicationPackageImpl.Literals.APPLICATION__ADDONS,
 				 MApplicationFactory.INSTANCE.createAddon()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES,
+				 MCommandsFactory.INSTANCE.createCategory()));
 	}
 
 	/**

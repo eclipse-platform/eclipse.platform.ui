@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestFactoryImpl.java,v 1.2 2010/04/16 17:28:39 pwebster Exp $
+ * $Id: TestFactoryImpl.java,v 1.3 2010/06/04 20:22:20 johna Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
@@ -16,35 +16,35 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**
- * <!-- begin-user-doc -->
- * An implementation of the model <b>Factory</b>.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> An implementation of the model <b>Factory</b>. <!--
+ * end-user-doc -->
+ * 
  * @generated
  */
 public class TestFactoryImpl extends EFactoryImpl implements MTestFactory {
 	/**
-	 * Creates the default factory implementation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Creates the default factory implementation. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public static MTestFactory init() {
 		try {
-			MTestFactory theTestFactory = (MTestFactory)EPackage.Registry.INSTANCE.getEFactory("http://www.eclipse.org/ui/2010/Test/UIModel/test"); 
+			MTestFactory theTestFactory = (MTestFactory) EPackage.Registry.INSTANCE
+					.getEFactory("http://www.eclipse.org/ui/2010/Test/UIModel/test");
 			if (theTestFactory != null) {
 				return theTestFactory;
 			}
-		}
-		catch (Exception exception) {
+		} catch (Exception exception) {
 			EcorePlugin.INSTANCE.log(exception);
 		}
 		return new TestFactoryImpl();
 	}
 
 	/**
-	 * Creates an instance of the factory.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Creates an instance of the factory. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public TestFactoryImpl() {
@@ -52,22 +52,24 @@ public class TestFactoryImpl extends EFactoryImpl implements MTestFactory {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case MTestPackage.TEST_HARNESS: return (EObject)createTestHarness();
-			default:
-				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		case MTestPackage.TEST_HARNESS:
+			return (EObject) createTestHarness();
+		default:
+			throw new IllegalArgumentException("The class '" + eClass.getName()
+					+ "' is not a valid classifier");
 		}
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public MTestHarness createTestHarness() {
@@ -76,17 +78,17 @@ public class TestFactoryImpl extends EFactoryImpl implements MTestFactory {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public MTestPackage getTestPackage() {
-		return (MTestPackage)getEPackage();
+		return (MTestPackage) getEPackage();
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @deprecated
 	 * @generated
 	 */
@@ -95,4 +97,4 @@ public class TestFactoryImpl extends EFactoryImpl implements MTestFactory {
 		return MTestPackage.eINSTANCE;
 	}
 
-} //TestFactoryImpl
+} // TestFactoryImpl

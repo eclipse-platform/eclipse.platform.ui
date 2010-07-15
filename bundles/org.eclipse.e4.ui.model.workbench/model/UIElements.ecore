@@ -14,6 +14,8 @@
         eType="#//commands/Command" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="addons" upperBound="-1"
         eType="#//Addon" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="categories" upperBound="-1"
+        eType="#//commands/Category" containment="true"/>
     <eGenericSuperTypes eClassifier="#//ui/ElementContainer">
       <eTypeArguments eClassifier="#//ui/basic/Window"/>
     </eGenericSuperTypes>
@@ -68,6 +70,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
           eType="#//commands/CommandParameter" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="category" eType="#//commands/Category"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CommandParameter" eSuperTypes="#//ApplicationElement">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
@@ -101,6 +104,11 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EDataType" name="ParameterizedCommand" instanceClassName="org.eclipse.core.commands.ParameterizedCommand"
         serializable="false"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Category" eSuperTypes="#//ApplicationElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
   </eSubpackages>
   <eSubpackages name="ui" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui"
       nsPrefix="ui">

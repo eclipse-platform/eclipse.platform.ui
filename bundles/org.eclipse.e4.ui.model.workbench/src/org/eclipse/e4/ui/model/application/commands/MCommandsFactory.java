@@ -90,4 +90,13 @@ public interface MCommandsFactory {
 	 */
 	MParameter createParameter();
 
+	/**
+	 * Returns a new object of class '<em>Category</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Category</em>'.
+	 * @generated
+	 */
+	MCategory createCategory();
+
 } //MCommandsFactory

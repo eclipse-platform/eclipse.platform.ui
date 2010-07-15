@@ -31,10 +31,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
@@ -72,7 +75,9 @@ import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -162,6 +167,7 @@ import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
 import org.eclipse.ui.internal.commands.CommandImageManager;
 import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.commands.CommandService;
+import org.eclipse.ui.internal.commands.Parameter;
 import org.eclipse.ui.internal.commands.WorkbenchCommandSupport;
 import org.eclipse.ui.internal.contexts.ActiveContextSourceProvider;
 import org.eclipse.ui.internal.contexts.ContextService;
@@ -1718,15 +1724,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	}
 
+	private ArrayList<MCommand> commandsToRemove = new ArrayList<MCommand>();
+	private ArrayList<MCategory> categoriesToRemove = new ArrayList<MCategory>();
+
 	private CommandService initializeCommandService(IEclipseContext appContext) {
 		MApplication app = (MApplication) appContext.get(MApplication.class.getName());
 
 		// save the e4 commands, just in case
 		ArrayList<MCommand> existing = new ArrayList<MCommand>(app.getCommands());
-		HashSet<String> existingIds = new HashSet<String>();
-		for (MCommand mCommand : existing) {
-			existingIds.add(mCommand.getElementId());
-		}
+		ArrayList<MCategory> existingCats = new ArrayList<MCategory>(app.getCategories());
 
 		CommandService service = new CommandService(commandManager);
 		service.readRegistry();
@@ -1734,6 +1740,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		// put back the e4 commands
 		E4CommandProcessor.processCommands(appContext, existing);
+		E4CommandProcessor.processCategories(appContext, existingCats);
 
 		MakeHandlersGo allHandlers = new MakeHandlersGo();
 
@@ -1748,24 +1755,42 @@ public final class Workbench extends EventManager implements IWorkbench {
 				continue;
 			}
 			cmd.setHandler(allHandlers);
-
-			MCommand mcmd = null;
-			List<MCommand> appCommands = app.getCommands();
-			for (MCommand appCommand : appCommands) {
-				if (appCommand.getElementId().equals(cmdId)) {
-					mcmd = appCommand;
-					break;
-				}
-			}
-
-			if (mcmd == null) {
-				mcmd = CommandsFactoryImpl.eINSTANCE.createCommand();
-				mcmd.setElementId(cmdId);
-				app.getCommands().add(mcmd);
-			}
-
 			try {
-				mcmd.setCommandName(cmd.getName());
+				MCommand mcmd = null;
+				List<MCommand> appCommands = app.getCommands();
+				for (MCommand appCommand : appCommands) {
+					if (appCommand.getElementId().equals(cmdId)) {
+						mcmd = appCommand;
+						break;
+					}
+				}
+
+				if (mcmd == null) {
+					Category category = cmd.getCategory();
+					MCategory catModel = getCategory(category);
+					mcmd = CommandsFactoryImpl.eINSTANCE.createCommand();
+					mcmd.setElementId(cmdId);
+					mcmd.setCategory(catModel);
+					mcmd.setCommandName(cmd.getName());
+					mcmd.setDescription(cmd.getDescription());
+					IParameter[] parameters = cmd.getParameters();
+					if (parameters != null) {
+						for (IParameter parm : parameters) {
+							MCommandParameter parmModel = CommandsFactoryImpl.eINSTANCE
+									.createCommandParameter();
+							parmModel.setElementId(parm.getId());
+							parmModel.setName(parm.getName());
+							parmModel.setOptional(parm.isOptional());
+							ParameterType parameterType = ((Parameter) parm).getParameterType();
+							if (parameterType != null) {
+								parmModel.setTypeId(parameterType.getId());
+							}
+							mcmd.getParameters().add(parmModel);
+						}
+					}
+					app.getCommands().add(mcmd);
+					commandsToRemove.add(mcmd);
+				}
 			} catch (NotDefinedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -1773,6 +1798,22 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		return service;
+	}
+
+	private MCategory getCategory(Category cat) throws NotDefinedException {
+		application.getCategories();
+		for (MCategory catModel : application.getCategories()) {
+			if (catModel.getElementId().equals(cat.getId())) {
+				return catModel;
+			}
+		}
+		MCategory catModel = CommandsFactoryImpl.eINSTANCE.createCategory();
+		catModel.setElementId(cat.getId());
+		catModel.setName(cat.getName());
+		catModel.setDescription(cat.getDescription());
+		application.getCategories().add(catModel);
+		categoriesToRemove.add(catModel);
+		return catModel;
 	}
 
 	private void defineBindingTable(String id) {
@@ -2555,6 +2596,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		// Bring down all of the services.
 		serviceLocator.dispose();
+		application.getCommands().removeAll(commandsToRemove);
+		application.getCategories().removeAll(categoriesToRemove);
 
 		workbenchActivitySupport.dispose();
 		WorkbenchHelpSystem.disposeIfNecessary();
