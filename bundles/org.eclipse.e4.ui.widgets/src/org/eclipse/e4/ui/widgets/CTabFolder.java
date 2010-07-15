@@ -950,7 +950,7 @@ public Control getTopControl (){
  */
 public Control getTopRight() {
 	checkWidget();
-	if (topRightComposite != null) return topRightComposite.getChildren()[0];
+	if (topRightComposite != null && !topRightComposite.isDisposed() && topRightComposite.getChildren().length > 0) return topRightComposite.getChildren()[0];
 	return topRight;
 }
 /**
@@ -3189,7 +3189,7 @@ public void setTopRight(Control control, int alignment) {
 	headerControl = null;
 	
 	if (control == null) {
-		if (topRightComposite != null) {
+		if (topRightComposite != null && !topRightComposite.isDisposed() && topRightComposite.getChildren().length > 0) {
 			topRightComposite.getChildren()[0].setParent(this);
 			topRightComposite.dispose();
 			topRightComposite = null;
