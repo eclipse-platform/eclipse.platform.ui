@@ -296,7 +296,7 @@ public class PerspectiveSwitcher {
 
 	private Image getOpenPerspectiveImage(Display display) {
 		ImageDescriptor desc = WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW);
+				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE);
 		return desc.createImage();
 	}
 
