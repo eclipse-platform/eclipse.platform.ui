@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.tests.workbench.MSashTest;
 import org.eclipse.e4.ui.tests.workbench.MSaveablePartTest;
 import org.eclipse.e4.ui.tests.workbench.MToolItemTest;
 import org.eclipse.e4.ui.tests.workbench.MWindowTest;
+import org.eclipse.e4.ui.tests.workbench.PartFocusTest;
 import org.eclipse.e4.ui.tests.workbench.PartRenderingEngineTests;
 import org.eclipse.e4.ui.tests.workbench.SashRendererTest;
 
@@ -63,5 +64,6 @@ public class UIAllTests extends TestSuite {
 		addTestSuite(ModelRobustnessTest.class);
 		addTestSuite(ResourceHandlerTest.class);
 		addTestSuite(InjectionEventTest.class);
+		addTestSuite(PartFocusTest.class);
 	}
 }

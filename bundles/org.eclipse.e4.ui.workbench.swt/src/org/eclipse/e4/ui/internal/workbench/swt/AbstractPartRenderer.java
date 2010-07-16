@@ -102,9 +102,17 @@ public abstract class AbstractPartRenderer {
 			EPartService ps = (EPartService) curContext.get(EPartService.class
 					.getName());
 			if (ps != null)
-				ps.activate(element);
+				ps.activate(element, requiresFocus(element));
 		}
 	}
+
+	/**
+	 * Check if activating {@code element} requires that the part set the focus.
+	 * 
+	 * @param element
+	 * @return true if the part requires focus
+	 */
+	protected abstract boolean requiresFocus(MPart element);
 
 	public void removeGui(MUIElement element, Object widget) {
 	}

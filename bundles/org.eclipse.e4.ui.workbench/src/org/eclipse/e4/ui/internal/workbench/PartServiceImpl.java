@@ -384,6 +384,17 @@ public class PartServiceImpl implements EPartService {
 	 * .MPart)
 	 */
 	public void activate(MPart part) {
+		activate(part, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EPartService#activate(org.eclipse.e4.ui.model.application
+	 * .MPart,boolean)
+	 */
+	public void activate(MPart part, boolean requiresFocus) {
 		if (part == activePart)
 			return;
 
@@ -401,7 +412,7 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		Object object = part.getObject();
-		if (object != null) {
+		if (object != null && requiresFocus) {
 			ContextInjectionFactory.invoke(object, Focus.class, part.getContext(), null);
 		}
 	}

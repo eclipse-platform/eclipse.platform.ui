@@ -3,6 +3,7 @@ package org.eclipse.e4.ui.tests;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
@@ -11,6 +12,7 @@ import org.osgi.util.tracker.ServiceTracker;
 public class Activator extends Plugin {
 
 	private ServiceTracker eventAdminTracker;
+	private ServiceTracker packageAdminTracker;
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.e4.ui.tests";
 
@@ -45,6 +47,10 @@ public class Activator extends Plugin {
 			eventAdminTracker.close();
 			eventAdminTracker = null;
 		}
+		if (packageAdminTracker != null) {
+			packageAdminTracker.close();
+			packageAdminTracker = null;
+		}
 		plugin = null;
 		super.stop(context);
 	}
@@ -68,6 +74,31 @@ public class Activator extends Plugin {
 			eventAdminTracker.open();
 		}
 		return (EventAdmin) eventAdminTracker.getService();
+	}
+
+	public PackageAdmin getPackageAdmin() {
+		if (packageAdminTracker == null) {
+			BundleContext bundleContext = plugin.getBundle().getBundleContext();
+			if (bundleContext == null)
+				return null;
+			packageAdminTracker = new ServiceTracker(bundleContext,
+					PackageAdmin.class.getName(), null);
+			packageAdminTracker.open();
+		}
+		return (PackageAdmin) packageAdminTracker.getService();
+	}
+
+	/**
+	 * Generate a platform URI referencing the provided class.
+	 * 
+	 * @param clazz
+	 *            the class to be referenced
+	 * @return the platform-based URI: platform:/plugin/X/X.Y
+	 */
+	public static String asURI(Class<?> clazz) {
+		PackageAdmin pkgadm = getDefault().getPackageAdmin();
+		return "platform:/plugin/" + pkgadm.getBundle(clazz).getSymbolicName()
+				+ '/' + clazz.getName();
 	}
 
 }

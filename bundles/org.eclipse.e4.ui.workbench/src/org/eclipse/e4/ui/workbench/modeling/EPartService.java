@@ -92,6 +92,17 @@ public interface EPartService {
 	public void activate(MPart part);
 
 	/**
+	 * Activates the given part. The part will be brought to top (if necessary) and, if
+	 * {@code requiresFocus} is true, then granted focus.
+	 * 
+	 * @param part
+	 *            the part to activate, must not be <code>null</code>
+	 * @param requiresFocus
+	 *            if true, then also cause the part to acquire focus
+	 */
+	public void activate(MPart part, boolean requiresFocus);
+
+	/**
 	 * This method may be removed before 1.0 is released.
 	 * 
 	 * @noreference This method is not intended to be referenced by clients.

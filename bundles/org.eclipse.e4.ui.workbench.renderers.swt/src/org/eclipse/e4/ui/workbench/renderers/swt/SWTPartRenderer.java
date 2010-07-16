@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
@@ -226,4 +227,42 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			}
 		});
 	}
+
+	@Override
+	protected boolean requiresFocus(MPart element) {
+		MUIElement focussed = getModelElement(Display.getDefault()
+				.getFocusControl());
+		if (focussed == null) {
+			return true;
+		}
+		// we ignore menus
+		do {
+			if (focussed == element || focussed == element.getToolbar()) {
+				return false;
+			}
+			focussed = focussed.getParent();
+		} while (focussed != null);
+		return true;
+	}
+
+	static protected MUIElement getModelElement(Control ctrl) {
+		if (ctrl == null)
+			return null;
+
+		MUIElement element = (MUIElement) ctrl
+				.getData(AbstractPartRenderer.OWNING_ME);
+		if (element != null) {
+			return element;
+			// FIXME: DndUtil.getModelElement() has the following check;
+			// do we need this?
+			// if (modelService.getTopLevelWindowFor(element) == topLevelWindow)
+			// {
+			// return element;
+			// }
+			// return null;
+		}
+
+		return getModelElement(ctrl.getParent());
+	}
+
 }
