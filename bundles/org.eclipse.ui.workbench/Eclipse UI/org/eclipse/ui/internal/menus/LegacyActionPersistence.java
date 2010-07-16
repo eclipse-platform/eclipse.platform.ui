@@ -132,6 +132,10 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	private final void clearActivations() {
 		final IHandlerService service = (IHandlerService) window
 				.getService(IHandlerService.class);
+		if (service == null) {
+			handlerActivations.clear();
+			return;
+		}
 		service.deactivateHandlers(handlerActivations);
 		final Iterator activationItr = handlerActivations.iterator();
 		while (activationItr.hasNext()) {

@@ -11,8 +11,9 @@
 
 package org.eclipse.ui.internal.services;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
@@ -39,6 +40,8 @@ public final class ServiceLocator implements IDisposable, INestable,
 	private final IDisposable owner;
 
 	private IEclipseContext e4Context;
+
+	private ArrayList servicesToDispose = new ArrayList();
 
 	/**
 	 * Constructs a service locator with no parent.
@@ -73,7 +76,14 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	public final void dispose() {
-		// parent = null;
+		Iterator i = servicesToDispose.iterator();
+		while (i.hasNext()) {
+			Object obj = i.next();
+			if (obj instanceof IDisposable) {
+				((IDisposable) obj).dispose();
+			}
+		}
+		servicesToDispose.clear();
 		e4Context = null;
 		disposed = true;
 	}
@@ -113,6 +123,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 			throw new IllegalArgumentException(
 					"The service does not implement the given interface"); //$NON-NLS-1$
 		}
+		servicesToDispose.add(service);
 		e4Context.set(api.getName(), service);
 	}
 

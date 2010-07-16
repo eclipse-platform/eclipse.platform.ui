@@ -38,9 +38,8 @@ import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EContentAdapter;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.osgi.service.event.Event;
@@ -134,45 +133,8 @@ public class E4CommandProcessor {
 		if (root == null) {
 			return;
 		}
-		final ContextManager manager = (ContextManager) context.get(ContextManager.class.getName());
-		defineContexts(null, root, manager);
-		for (MBindingTable bt : bindingContainer.getBindingTables()) {
-			Context c = manager.getContext(bt.getBindingContextId());
-			defineBindingTable(context, c, bindingTables, bt);
-		}
-
-		((EObject) bindingContainer).eAdapters().add(new EContentAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.emf.ecore.util.EContentAdapter#notifyChanged(org.eclipse.emf.common.notify
-			 * .Notification)
-			 */
-			@Override
-			public void notifyChanged(Notification notification) {
-				super.notifyChanged(notification);
-				if (notification.isTouch()) {
-					return;
-				}
-
-				if (notification.getEventType() == Notification.ADD
-						&& notification.getNewValue() instanceof MBindingTable) {
-					MBindingTable bt = (MBindingTable) notification.getNewValue();
-					Context bindingContext = manager.getContext(bt.getBindingContextId());
-					BindingTable table = new BindingTable(bindingContext);
-					bindingTables.addTable(table);
-				}
-			}
-		});
-	}
-
-	private static void defineBindingTable(IEclipseContext context, Context bindingContext,
-			BindingTableManager manager, MBindingTable bt) {
-		BindingTable table = new BindingTable(bindingContext);
-		manager.addTable(table);
-		ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
-		EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
+		final ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
+		final EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
 		if (cs == null) {
 			Activator
 					.log(IStatus.ERROR, "cannot run without ECommandService in defineBindingTable"); //$NON-NLS-1$
@@ -183,27 +145,152 @@ public class E4CommandProcessor {
 					.log(IStatus.ERROR, "cannot run without EBindingService in defineBindingTable"); //$NON-NLS-1$
 			return;
 		}
-		List<MKeyBinding> bindings = bt.getBindings();
-		for (MKeyBinding binding : bindings) {
-			Map<String, Object> parameters = null;
-			List<MParameter> modelParms = binding.getParameters();
-			if (modelParms != null && !modelParms.isEmpty()) {
-				parameters = new HashMap<String, Object>();
-				for (MParameter mParm : modelParms) {
-					parameters.put(mParm.getName(), mParm.getValue());
+		final ContextManager manager = (ContextManager) context.get(ContextManager.class.getName());
+		defineContexts(null, root, manager);
+		for (MBindingTable bt : bindingContainer.getBindingTables()) {
+			final Context bindingContext = manager.getContext(bt.getBindingContextId());
+			final BindingTable table = new BindingTable(bindingContext);
+			bindingTables.addTable(table);
+			List<MKeyBinding> bindings = bt.getBindings();
+			for (MKeyBinding binding : bindings) {
+				Binding keyBinding = createBinding(bindingContext, cs, bs, binding.getCommand(),
+						binding.getParameters(), binding.getKeySequence(), binding);
+				if (keyBinding != null) {
+					table.addBinding(keyBinding);
 				}
 			}
-			ParameterizedCommand cmd = cs.createCommand(binding.getCommand().getElementId(),
-					parameters);
-			TriggerSequence sequence = bs.createSequence(binding.getKeySequence());
-			if (cmd == null || sequence == null) {
-				System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
-			} else {
-				Binding keyBinding = bs.createBinding(sequence, cmd,
-						"org.eclipse.ui.defaultAcceleratorConfiguration", bindingContext.getId()); //$NON-NLS-1$
-				table.addBinding(keyBinding);
+		}
+
+	}
+
+	public static void watchForBindingChanges(IEclipseContext context) {
+		final ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
+		final EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
+		final ContextManager manager = (ContextManager) context.get(ContextManager.class.getName());
+		final BindingTableManager bindingTables = context.get(BindingTableManager.class);
+
+		IEventBroker broker = context.get(IEventBroker.class);
+		EventHandler handler = new EventHandler() {
+			public void handleEvent(Event event) {
+				Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
+				if (elementObj instanceof MApplication) {
+					Object newObj = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+					if (UIEvents.EventTypes.ADD.equals(event.getProperty(UIEvents.EventTags.TYPE))
+							&& newObj instanceof MBindingTable) {
+						MBindingTable bt = (MBindingTable) newObj;
+						final Context bindingContext = manager.getContext(bt.getBindingContextId());
+						final BindingTable table = new BindingTable(bindingContext);
+						bindingTables.addTable(table);
+						List<MKeyBinding> bindings = bt.getBindings();
+						for (MKeyBinding binding : bindings) {
+							Binding keyBinding = createBinding(bindingContext, cs, bs,
+									binding.getCommand(), binding.getParameters(),
+									binding.getKeySequence(), binding);
+							if (keyBinding != null) {
+								table.addBinding(keyBinding);
+							}
+						}
+					}
+				} else if (elementObj instanceof MBindingTable) {
+					Object newObj = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+					Object oldObj = event.getProperty(UIEvents.EventTags.OLD_VALUE);
+					if (UIEvents.EventTypes.ADD.equals(event.getProperty(UIEvents.EventTags.TYPE))
+							&& newObj instanceof MKeyBinding) {
+						MKeyBinding binding = (MKeyBinding) newObj;
+						updateBinding(cs, bs, manager, bindingTables, binding, true);
+					} else if (UIEvents.EventTypes.REMOVE.equals(event
+							.getProperty(UIEvents.EventTags.TYPE)) && oldObj instanceof MKeyBinding) {
+						MKeyBinding binding = (MKeyBinding) oldObj;
+						updateBinding(cs, bs, manager, bindingTables, binding, false);
+					}
+				} else if (elementObj instanceof MKeyBinding) {
+					MKeyBinding binding = (MKeyBinding) elementObj;
+					String attrName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
+					if (UIEvents.EventTypes.SET.equals(event.getProperty(UIEvents.EventTags.TYPE))) {
+						Object oldObj = event.getProperty(UIEvents.EventTags.OLD_VALUE);
+						if (UIEvents.KeyBinding.COMMAND.equals(attrName)) {
+							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
+									.copy((EObject) binding);
+							oldBinding.setCommand((MCommand) oldObj);
+							updateBinding(cs, bs, manager, bindingTables, oldBinding, false);
+							updateBinding(cs, bs, manager, bindingTables, binding, true);
+						} else if (UIEvents.KeySequence.KEYSEQUENCE.equals(attrName)) {
+							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
+									.copy((EObject) binding);
+							oldBinding.setKeySequence((String) oldObj);
+							updateBinding(cs, bs, manager, bindingTables, oldBinding, false);
+							updateBinding(cs, bs, manager, bindingTables, binding, true);
+						}
+					} else if (UIEvents.KeyBinding.PARAMETERS.equals(attrName)) {
+						if (UIEvents.EventTypes.ADD.equals(event
+								.getProperty(UIEvents.EventTags.TYPE))) {
+							Object newObj = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
+									.copy((EObject) binding);
+							oldBinding.getParameters().remove(newObj);
+							updateBinding(cs, bs, manager, bindingTables, oldBinding, false);
+							updateBinding(cs, bs, manager, bindingTables, binding, true);
+						} else if (UIEvents.EventTypes.REMOVE.equals(event
+								.getProperty(UIEvents.EventTags.TYPE))) {
+							Object oldObj = event.getProperty(UIEvents.EventTags.OLD_VALUE);
+							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
+									.copy((EObject) binding);
+							oldBinding.getParameters().add((MParameter) oldObj);
+							updateBinding(cs, bs, manager, bindingTables, oldBinding, false);
+							updateBinding(cs, bs, manager, bindingTables, binding, true);
+						}
+					}
+				}
+			}
+		};
+		broker.subscribe(UIEvents.buildTopic(UIEvents.BindingTableContainer.TOPIC,
+				UIEvents.BindingTableContainer.BINDINGTABLES), handler);
+		broker.subscribe(
+				UIEvents.buildTopic(UIEvents.BindingTable.TOPIC, UIEvents.BindingTable.BINDINGS),
+				handler);
+		broker.subscribe(
+				UIEvents.buildTopic(UIEvents.KeyBinding.TOPIC, UIEvents.KeyBinding.COMMAND),
+				handler);
+		broker.subscribe(
+				UIEvents.buildTopic(UIEvents.KeyBinding.TOPIC, UIEvents.KeyBinding.PARAMETERS),
+				handler);
+		broker.subscribe(
+				UIEvents.buildTopic(UIEvents.KeySequence.TOPIC, UIEvents.KeySequence.KEYSEQUENCE),
+				handler);
+	}
+
+	private static Binding createBinding(Context bindingContext, ECommandService cs,
+			EBindingService bs, MCommand cmdModel, List<MParameter> modelParms, String keySequence,
+			MKeyBinding binding) {
+		if (cmdModel == null) {
+			Activator.log(IStatus.ERROR, "binding with no command: " + binding); //$NON-NLS-1$
+			return null;
+		}
+		Map<String, Object> parameters = null;
+		if (modelParms != null && !modelParms.isEmpty()) {
+			parameters = new HashMap<String, Object>();
+			for (MParameter mParm : modelParms) {
+				parameters.put(mParm.getName(), mParm.getValue());
 			}
 		}
+		ParameterizedCommand cmd = cs.createCommand(cmdModel.getElementId(), parameters);
+		TriggerSequence sequence = null;
+		try {
+			sequence = bs.createSequence(keySequence);
+		} catch (IllegalArgumentException ex) {
+			// the sequence is not complete
+			Activator.trace(Policy.DEBUG_MENUS, "failed to create: " + binding, ex); //$NON-NLS-1$
+			return null;
+		}
+		Binding keyBinding = null;
+		if (cmd == null || sequence == null) {
+			System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
+		} else {
+			keyBinding = bs.createBinding(sequence, cmd,
+					"org.eclipse.ui.defaultAcceleratorConfiguration", bindingContext.getId()); //$NON-NLS-1$
+
+		}
+		return keyBinding;
 	}
 
 	private static void defineContexts(MBindingContext parent, MBindingContext current,
@@ -215,6 +302,32 @@ public class E4CommandProcessor {
 		}
 		for (MBindingContext child : current.getChildren()) {
 			defineContexts(current, child, manager);
+		}
+	}
+
+	static void updateBinding(final ECommandService cs, final EBindingService bs,
+			final ContextManager manager, final BindingTableManager bindingTables,
+			MKeyBinding binding, boolean add) {
+		Object parentObj = ((EObject) binding).eContainer();
+		if (!(parentObj instanceof MBindingTable)) {
+			return;
+		}
+		MBindingTable bt = (MBindingTable) parentObj;
+		final Context bindingContext = manager.getContext(bt.getBindingContextId());
+		BindingTable table = bindingTables.getTable(bindingContext.getId());
+		if (table == null) {
+			Activator.log(IStatus.ERROR, "Trying to create \'" + binding //$NON-NLS-1$
+					+ "\' without binding table " + bindingContext.getId()); //$NON-NLS-1$
+			return;
+		}
+		Binding keyBinding = createBinding(bindingContext, cs, bs, binding.getCommand(),
+				binding.getParameters(), binding.getKeySequence(), binding);
+		if (keyBinding != null) {
+			if (add) {
+				table.addBinding(keyBinding);
+			} else {
+				table.removeBinding(keyBinding);
+			}
 		}
 	}
 }

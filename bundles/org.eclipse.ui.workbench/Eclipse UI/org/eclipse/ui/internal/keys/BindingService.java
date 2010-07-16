@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.keys;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +23,12 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.IBindingManagerListener;
@@ -46,6 +53,9 @@ import org.eclipse.ui.keys.IBindingService;
 public final class BindingService implements IBindingService {
 
 	@Inject
+	private MApplication application;
+
+	@Inject
 	private EBindingService bindingService;
 
 	@Inject
@@ -64,8 +74,13 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
-		// TODO Auto-generated method stub
-
+		System.err.println("BindingService.dispose()"); //$NON-NLS-1$
+		for (Runnable r : bindingsToRemove) {
+			r.run();
+		}
+		for (MBindingTable table : tablesToRemove) {
+			application.getBindingTables().remove(table);
+		}
 	}
 
 	/*
@@ -309,6 +324,9 @@ public final class BindingService implements IBindingService {
 		E4Util.unsupported("openKeyAssistDialog"); //$NON-NLS-1$
 	}
 
+	private ArrayList<MBindingTable> tablesToRemove = new ArrayList<MBindingTable>();
+	private ArrayList<Runnable> bindingsToRemove = new ArrayList<Runnable>();
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -321,9 +339,18 @@ public final class BindingService implements IBindingService {
 		reader.reRead();
 		Iterator i = manager.getActiveBindingsDisregardingContextFlat().iterator();
 		while (i.hasNext()) {
-			Binding b = (Binding) i.next();
-			bindingService.activateBinding(b);
+			Binding binding = (Binding) i.next();
+			addBinding(binding);
 		}
+	}
+
+	private MCommand findCommand(String id) {
+		for (MCommand cmd : application.getCommands()) {
+			if (id.equals(cmd.getElementId())) {
+				return cmd;
+			}
+		}
+		return null;
 	}
 
 	/*
@@ -375,7 +402,46 @@ public final class BindingService implements IBindingService {
 	 *            The binding to be added; must not be <code>null</code>.
 	 */
 	public final void addBinding(final Binding binding) {
-		manager.addBinding(binding);
+		MBindingTable table = null;
+		for (MBindingTable bt : application.getBindingTables()) {
+			if (bt.getBindingContextId().equals(binding.getContextId())) {
+				table = bt;
+				break;
+			}
+		}
+		if (table == null) {
+			table = CommandsFactoryImpl.eINSTANCE.createBindingTable();
+			tablesToRemove.add(table);
+			table.setBindingContextId(binding.getContextId());
+			table.setElementId(binding.getContextId());
+			application.getBindingTables().add(table);
+		}
+		final MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
+		ParameterizedCommand parmCmd = binding.getParameterizedCommand();
+
+		MCommand cmd = findCommand(parmCmd.getId());
+		if (cmd == null) {
+			return;
+		}
+		keyBinding.setCommand(cmd);
+		keyBinding.setKeySequence(binding.getTriggerSequence().format());
+		for (Object obj : parmCmd.getParameterMap().entrySet()) {
+			Map.Entry entry = (Map.Entry) obj;
+			MParameter p = CommandsFactoryImpl.eINSTANCE.createParameter();
+			p.setElementId((String) entry.getKey());
+			p.setName((String) entry.getKey());
+			p.setValue((String) entry.getValue());
+			keyBinding.getParameters().add(p);
+		}
+		table.getBindings().add(keyBinding);
+		if (!tablesToRemove.contains(table)) {
+			final MBindingTable theTable = table;
+			bindingsToRemove.add(new Runnable() {
+				public void run() {
+					theTable.getBindings().remove(keyBinding);
+				}
+			});
+		}
 	}
 
 	/**
@@ -386,6 +452,35 @@ public final class BindingService implements IBindingService {
 	 *            The binding to be removed; must not be <code>null</code>.
 	 */
 	public final void removeBinding(final Binding binding) {
+		MBindingTable table = null;
+		for (MBindingTable bt : application.getBindingTables()) {
+			if (bt.getBindingContextId().equals(binding.getContextId())) {
+				table = bt;
+				break;
+			}
+		}
+		if (table == null) {
+			return;
+		}
+		final MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
+		ParameterizedCommand parmCmd = binding.getParameterizedCommand();
+
+		MCommand cmd = findCommand(parmCmd.getId());
+		if (cmd == null) {
+			return;
+		}
+		keyBinding.setCommand(cmd);
+		keyBinding.setKeySequence(binding.getTriggerSequence().format());
+		for (Object obj : parmCmd.getParameterMap().entrySet()) {
+			Map.Entry entry = (Map.Entry) obj;
+			MParameter p = CommandsFactoryImpl.eINSTANCE.createParameter();
+			p.setElementId((String) entry.getKey());
+			p.setName((String) entry.getKey());
+			p.setValue((String) entry.getValue());
+			keyBinding.getParameters().add(p);
+		}
+		table.getBindings().remove(keyBinding);
+		// if we need to be clean:
 		manager.removeBinding(binding);
 	}
 

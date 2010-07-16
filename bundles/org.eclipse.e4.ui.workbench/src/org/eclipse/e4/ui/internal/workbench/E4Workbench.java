@@ -114,6 +114,7 @@ public class E4Workbench implements IWorkbench {
 		E4CommandProcessor.processCommands(appElement.getContext(), appElement.getCommands());
 		E4CommandProcessor.watchForCommandChanges(appElement.getContext());
 		E4CommandProcessor.processBindings(appElement.getContext(), appElement);
+		E4CommandProcessor.watchForBindingChanges(appElement.getContext());
 
 		// Do a top level processHierarchy for the application?
 		processHierarchy(appElement);
