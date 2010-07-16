@@ -54,6 +54,12 @@ final class MenuPersistence extends RegistryPersistence {
 	private ArrayList<MMenuContribution> menuContributions = new ArrayList<MMenuContribution>();
 	private ArrayList<MToolBarContribution> toolBarContributions = new ArrayList<MToolBarContribution>();
 	private ArrayList<MTrimContribution> trimContributions = new ArrayList<MTrimContribution>();
+	private final Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
+		public int compare(IConfigurationElement c1, IConfigurationElement c2) {
+			return c1.getContributor().getName()
+					.compareToIgnoreCase(c2.getContributor().getName());
+		}
+	};
 
 	/**
 	 * Constructs a new instance of {@link MenuPersistence}.
@@ -215,11 +221,6 @@ final class MenuPersistence extends RegistryPersistence {
 				configElements.add(menusExtensionPoint[i]);
 			}
 		}
-		Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
-			public int compare(IConfigurationElement c1, IConfigurationElement c2) {
-				return c1.getNamespaceIdentifier().compareToIgnoreCase(c2.getNamespaceIdentifier());
-			}
-		};
 		Collections.sort(configElements, comparer);
 
 		Iterator<IConfigurationElement> i = configElements.iterator();
@@ -265,11 +266,6 @@ final class MenuPersistence extends RegistryPersistence {
 		configElements.addAll(Arrays.asList(registry
 				.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_ACTION_SETS)));
 
-		Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
-			public int compare(IConfigurationElement c1, IConfigurationElement c2) {
-				return c1.getNamespaceIdentifier().compareToIgnoreCase(c2.getNamespaceIdentifier());
-			}
-		};
 		Collections.sort(configElements, comparer);
 
 		for (IConfigurationElement element : configElements) {
@@ -289,11 +285,6 @@ final class MenuPersistence extends RegistryPersistence {
 				.addAll(Arrays.asList(registry
 						.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_EDITOR_ACTIONS)));
 
-		Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
-			public int compare(IConfigurationElement c1, IConfigurationElement c2) {
-				return c1.getNamespaceIdentifier().compareToIgnoreCase(c2.getNamespaceIdentifier());
-			}
-		};
 		Collections.sort(configElements, comparer);
 
 		for (IConfigurationElement element : configElements) {
@@ -319,11 +310,6 @@ final class MenuPersistence extends RegistryPersistence {
 				.addAll(Arrays.asList(registry
 				.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_VIEW_ACTIONS)));
 
-		Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
-			public int compare(IConfigurationElement c1, IConfigurationElement c2) {
-				return c1.getNamespaceIdentifier().compareToIgnoreCase(c2.getNamespaceIdentifier());
-			}
-		};
 		Collections.sort(configElements, comparer);
 
 		for (IConfigurationElement element : configElements) {
