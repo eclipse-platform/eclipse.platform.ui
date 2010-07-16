@@ -3199,6 +3199,13 @@ public void setTopRight(Control control, int alignment) {
 	topRightAlignment = alignment;
 	if (updateItems()) redraw();
 	updateTopRightBackground();
+	if (control != null) {
+		control.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				if (updateItems()) redraw();
+			}
+		});
+	}
 }
 
 
