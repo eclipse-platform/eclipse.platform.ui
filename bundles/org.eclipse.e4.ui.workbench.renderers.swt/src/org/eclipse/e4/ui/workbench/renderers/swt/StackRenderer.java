@@ -387,12 +387,14 @@ public class StackRenderer extends LazyStackRenderer {
 			if (ctf.getTopRight() != null) {
 				Control curTB = ctf.getTopRight();
 				ctf.setTopRight(null);
-				MUIElement tbME = (MUIElement) curTB
-						.getData(AbstractPartRenderer.OWNING_ME);
-				if (tbME instanceof MRenderedToolBar)
-					renderer.removeGui(tbME);
-				else
-					curTB.dispose();
+				if (!curTB.isDisposed()) {
+					MUIElement tbME = (MUIElement) curTB
+							.getData(AbstractPartRenderer.OWNING_ME);
+					if (tbME instanceof MRenderedToolBar)
+						renderer.removeGui(tbME);
+					else
+						curTB.dispose();
+				}
 			}
 
 			// HACK!! we'll reset to the first element for now but really should
@@ -500,12 +502,14 @@ public class StackRenderer extends LazyStackRenderer {
 		if (ctf.getTopRight() != null) {
 			Control curTB = ctf.getTopRight();
 			ctf.setTopRight(null);
-			MUIElement tbME = (MUIElement) curTB
-					.getData(AbstractPartRenderer.OWNING_ME);
-			if (tbME instanceof MRenderedToolBar)
-				renderer.removeGui(tbME);
-			else
-				curTB.dispose();
+			if (!curTB.isDisposed()) {
+				MUIElement tbME = (MUIElement) curTB
+						.getData(AbstractPartRenderer.OWNING_ME);
+				if (tbME instanceof MRenderedToolBar)
+					renderer.removeGui(tbME);
+				else
+					curTB.dispose();
+			}
 		}
 
 		// Show the TB, create one if necessary
