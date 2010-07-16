@@ -472,7 +472,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		} else if (parentContext == null && element.getParent() != null) {
 			parentContext = getContext(element.getParent());
 		} else if (parentContext == null && element.getParent() == null) {
-			getContext((MElementContainer<MUIElement>) ((EObjectImpl) element)
+			parentContext = getContext((MElementContainer<MUIElement>) ((EObjectImpl) element)
 					.eContainer());
 		}
 
@@ -606,17 +606,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	protected Object createWidget(MUIElement element, Object parent) {
-		if (element.getWidget() != null) {
-			if (element.getWidget() instanceof Control
-					&& parent instanceof Composite) {
-				Control ctrl = (Control) element.getWidget();
-				if (ctrl.getParent() != parent) {
-					ctrl.setParent((Composite) parent);
-				}
-			}
-			return element.getWidget();
-		}
-
 		AbstractPartRenderer renderer = getRenderer(element, parent);
 		if (renderer != null) {
 			Object newWidget = renderer.createWidget(element, parent);
