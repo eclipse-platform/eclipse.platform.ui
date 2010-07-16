@@ -657,7 +657,9 @@ public class ModelEditor {
 		if (clipboardHandler == null) {
 			clipboardHandler = new ClipboardHandler();
 		}
-		clipboardService.setHandler(clipboardHandler);
+		if (clipboardService != null) {
+			clipboardService.setHandler(clipboardHandler);
+		}
 		viewer.getControl().setFocus();
 	}
 
