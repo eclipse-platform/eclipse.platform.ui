@@ -77,42 +77,23 @@ public class CompatibilityView extends CompatibilityPart {
 
 		MenuManager mm = (MenuManager) ((ViewPart) legacyPart).getViewSite().getActionBars()
 				.getMenuManager();
-		if (mm.getItems().length > 0) {
-			MRenderedMenu menu = null;
-			for (MMenu me : part.getMenus()) {
-				if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU)
-						&& (me instanceof MRenderedMenu)) {
-					menu = (MRenderedMenu) me;
-					break;
-				}
-			}
-			if (menu == null) {
-				menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
-				menu.setElementId(part.getElementId());
-
-				menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
-				menu.getTags().add(ContributionsAnalyzer.MC_MENU);
-				part.getMenus().add(menu);
-
-			}
-			menu.setContributionManager(mm);
-		} else {
-			MMenu menu = null;
-			for (MMenu me : part.getMenus()) {
-				if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
-					menu = me;
-					break;
-				}
-			}
-			if (menu == null) {
-				menu = MenuFactoryImpl.eINSTANCE.createMenu();
-				menu.setElementId(part.getElementId());
-
-				menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
-				menu.getTags().add(ContributionsAnalyzer.MC_MENU);
-				part.getMenus().add(menu);
+		MRenderedMenu menu = null;
+		for (MMenu me : part.getMenus()) {
+			if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU) && (me instanceof MRenderedMenu)) {
+				menu = (MRenderedMenu) me;
+				break;
 			}
 		}
+		if (menu == null) {
+			menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
+			menu.setElementId(part.getElementId());
+
+			menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
+			menu.getTags().add(ContributionsAnalyzer.MC_MENU);
+			part.getMenus().add(menu);
+
+		}
+		menu.setContributionManager(mm);
 
 		// Construct the toolbar (if necessary)
 		MToolBar toolbar = part.getToolbar();
