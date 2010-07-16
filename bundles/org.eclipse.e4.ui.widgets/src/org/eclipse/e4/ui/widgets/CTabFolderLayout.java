@@ -43,14 +43,18 @@ protected Point computeSize(Composite composite, int wHint, int hHint, boolean f
 	if (folder.showMax) tabW += renderer.computeSize(CTabFolderRenderer.PART_MAX_BUTTON, SWT.NONE, gc, SWT.DEFAULT, SWT.DEFAULT).x;
 	if (folder.showMin) tabW += renderer.computeSize(CTabFolderRenderer.PART_MIN_BUTTON, SWT.NONE, gc, SWT.DEFAULT, SWT.DEFAULT).x;
 	if (folder.single) tabW += renderer.computeSize(CTabFolderRenderer.PART_CHEVRON_BUTTON, SWT.NONE, gc, SWT.DEFAULT, SWT.DEFAULT).x;
+	int headerH = 0;
 	if (folder.topRight != null) {
 		Point pt = folder.topRight.computeSize(SWT.DEFAULT, folder.tabHeight, flushCache);
-		tabW += 3 + pt.x;
-	}
-	int headerH = 0;
-	if (folder.headerControl != null) {
-		Point pt = folder.headerControl.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-		headerH += pt.y;
+		if (wHint == SWT.DEFAULT || folder.topRightAlignment != (SWT.RIGHT | SWT.WRAP)) {
+			tabW += 3 + pt.x;
+		} else {
+			if (wHint - tabW > pt.x) {
+				tabW += 3 + pt.x;
+			} else {
+				headerH += pt.y;
+			}
+		}
 	}
 
 	gc.dispose();

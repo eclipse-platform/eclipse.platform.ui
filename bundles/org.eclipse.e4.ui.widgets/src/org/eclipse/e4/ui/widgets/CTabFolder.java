@@ -167,9 +167,7 @@ public class CTabFolder extends Composite {
 	Rectangle topRightRect = new Rectangle(0, 0, 0, 0);
 	int topRightAlignment = SWT.RIGHT;
 	
-	Control headerControl;
-	Composite measureComposite;
-	Composite topRightComposite;
+	Image topRightImage;
 	
 	// when disposing CTabFolder, don't try to layout the items or 
 	// change the selection as each child is destroyed.
@@ -430,7 +428,17 @@ public void addSelectionListener(SelectionListener listener) {
 //}
 public Rectangle computeTrim (int x, int y, int width, int height) {
 	checkWidget();
-	return renderer.computeTrim(CTabFolderRenderer.PART_BODY, SWT.NONE, x, y, width, height);
+	Rectangle trim =  renderer.computeTrim(CTabFolderRenderer.PART_BODY, SWT.NONE, x, y, width, height);
+	if (topRight != null && topRightAlignment == (SWT.RIGHT | SWT.WRAP)) {
+		Rectangle bounds = topRight.getBounds();
+		if (bounds.y >= getTabHeight()) {
+			if (!onBottom) {
+				trim.y -= bounds.height;
+			}
+			trim.height += bounds.height;
+		}
+	}
+	return trim;
 }
 void createItem (CTabItem item, int index) {
 	if (0 > index || index > getItemCount ())SWT.error (SWT.ERROR_INVALID_RANGE);
@@ -529,20 +537,18 @@ public boolean getBorderVisible() {
 	checkWidget();
 	return borderVisible;
 }
-/**
- * WARNING: Provisional API. This API is temporary and is not guaranteed to exist in
- * future releases.
- * 
- * Returns the header control in the CTabFolder or null if no header control has been set.
- * 
- */
-public Control getHeaderControl() {
-	checkWidget();
-	return headerControl;
-}
 public Rectangle getClientArea() {
 	checkWidget();
 	Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BODY, SWT.NONE, 0, 0, 0, 0);
+	if (topRight != null && topRightAlignment == (SWT.RIGHT | SWT.WRAP)) {
+		Rectangle bounds = topRight.getBounds();
+		if (bounds.y >= getTabHeight()) { 
+			if (!onBottom) {
+				trim.y -= bounds.height;
+			}
+			trim.height += bounds.height;
+		}
+	}
 	if (minimized) return new Rectangle(-trim.x, -trim.y, 0, 0);
 	Point size = getSize();
 	int width = size.x - trim.width;
@@ -794,7 +800,7 @@ int getRightItemEdge (GC gc){
 	if (showMin) x -= renderer.computeSize(CTabFolderRenderer.PART_MIN_BUTTON, SWT.NONE, gc, SWT.DEFAULT, SWT.DEFAULT).x;
 	if (showMax) x -= renderer.computeSize(CTabFolderRenderer.PART_MAX_BUTTON, SWT.NONE, gc, SWT.DEFAULT, SWT.DEFAULT).x;
 	if (showChevron) x -= renderer.computeSize(CTabFolderRenderer.PART_CHEVRON_BUTTON, SWT.NONE, gc, SWT.DEFAULT, SWT.DEFAULT).x;
-	if (topRight != null && topRightAlignment != SWT.FILL) {
+	if (topRight != null && topRightAlignment == SWT.RIGHT) {
 		Point rightSize = topRight.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		x -= rightSize.x + 3;
 	}
@@ -950,7 +956,6 @@ public Control getTopControl (){
  */
 public Control getTopRight() {
 	checkWidget();
-	if (topRightComposite != null && !topRightComposite.isDisposed() && topRightComposite.getChildren().length > 0) return topRightComposite.getChildren()[0];
 	return topRight;
 }
 /**
@@ -968,7 +973,6 @@ public Control getTopRight() {
  */
 public int getTopRightAlignment() {
 	checkWidget();
-	if (topRightComposite != null) return SWT.RIGHT | SWT.WRAP;
 	return topRightAlignment;
 }
 /**
@@ -1306,6 +1310,9 @@ void onDispose(Event event) {
 
 	selectionBackground = null;
 	selectionForeground = null;
+	
+	if (topRightImage != null) topRightImage.dispose();
+	topRightImage = null;
 	
 	if (renderer != null) renderer.dispose();
 	renderer = null;
@@ -1944,6 +1951,7 @@ public void reskin(int flags) {
 public void setBackground (Color color) {
 	super.setBackground(color);
 	renderer.createAntialiasColors(); //TODO: need better caching strategy
+	updateTopRightBackground();
 	redraw();
 }
 /**
@@ -2195,9 +2203,48 @@ void setButtonBounds(GC gc) {
 				topRightRect.width = topRightSize.x;
 				topRightRect.y = onBottom ? size.y - borderBottom - tabHeight: borderTop + 1;
 				topRightRect.height = tabHeight - 1;
+				break;
+			}
+			case SWT.RIGHT | SWT.WRAP: {
+				Point topRightSize = topRight.computeSize(SWT.DEFAULT, tabHeight, false);
+				int rightEdge = size.x - borderRight - 3 - maxRect.width - minRect.width;
+				if (!simple && borderRight > 0 && !showMax && !showMin) rightEdge -= 2;
+				int leftEdge = 0;
+				if (items.length == 0) {
+					leftEdge = borderLeft + 3;
+				} else {
+					int lastIndex = items.length - 1;
+					CTabItem lastItem = items[lastIndex];
+					leftEdge = lastItem.x + lastItem.width;
+				}
+				
+				if (topRightSize.x <= rightEdge - leftEdge) {
+					topRightRect.x = rightEdge - topRightSize.x;
+					topRightRect.width = topRightSize.x;
+					topRightRect.y = onBottom ? size.y - borderBottom - tabHeight: borderTop + 1;
+					topRightRect.height = tabHeight - 1;
+				} else {
+					int compWidth = size.x - borderLeft - borderRight;
+					Point preferredSize = topRight.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					if (compWidth > preferredSize.x) {
+						topRightRect.width = preferredSize.x;
+						topRightRect.y = tabHeight + 1 + borderTop;
+						topRightRect.height = preferredSize.y;
+						topRightRect.x = compWidth - preferredSize.x + borderLeft;
+					} else {
+						preferredSize = topRight.computeSize(compWidth, SWT.DEFAULT);
+						topRightRect.width = compWidth;
+						topRightRect.y = tabHeight + 1 + borderTop;
+						topRightRect.height = preferredSize.y;
+						topRightRect.x = compWidth - preferredSize.x + borderLeft;
+					}
+				}
 			}
 		}
 		topRight.setBounds(topRightRect);
+	}
+	if (oldY != topRightRect.y || oldHeight != topRightRect.height) {	
+		updateTopRightBackground();
 	}
 	if (oldX != topRightRect.x || oldWidth != topRightRect.width ||
 		oldY != topRightRect.y || oldHeight != topRightRect.height) {	
@@ -2205,19 +2252,6 @@ void setButtonBounds(GC gc) {
 		int right = Math.max(oldX + oldWidth, topRightRect.x + topRightRect.width);
 		int top = onBottom ? size.y - borderBottom - tabHeight : borderTop + 1;
 		redraw(left, top, right - left, tabHeight, false);
-	}
-	
-	// header control
-	Rectangle headerControlRect = new Rectangle(0, 0, 0, 0);
-	if (headerControl != null) {
-				headerControlRect.x = borderLeft;
-				headerControlRect.width = size.x - borderLeft - borderRight;
-				headerControlRect.y = tabHeight + 1 + borderTop;
-				headerControlRect.height = headerControl.computeSize(headerControlRect.width, SWT.DEFAULT).y;
-				//TODO: Bottom
-//				headerControlRect.y = onBottom ? size.y - borderBottom - tabHeight: borderTop + 1;
-//				topRightRect.height = tabHeight - 1;
-		headerControl.setBounds(headerControlRect);
 	}
 	
 	// chevron button
@@ -2280,30 +2314,6 @@ public void setForeground (Color color) {
 	super.setForeground(color);
 	redraw();
 }
-/**
- * WARNING: Provisional API. This API is temporary and is not guaranteed to exist in
- * future releases.
- * 
- * Sets a header control in the CTabFolder.
- * 
- * @param control the control to insert in the header
- */
-public void setHeaderControl (Control control) {
-	checkWidget();
-	
-	if (control != null && control.getParent() != this) {
-		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-	}
-	Rectangle rectBefore = getClientArea();
-	headerControl = control;
-	updateItems();
-	Rectangle rectAfter = getClientArea();
-	if (!rectBefore.equals(rectAfter)) {
-		notifyListeners(SWT.Resize, new Event());
-	}
-	redraw();
-}
-
 /**
  * Display an insert marker before or after the specified tab item. 
  * 
@@ -3185,99 +3195,10 @@ public void setTopRight(Control control, int alignment) {
 	if (control != null && control.getParent() != this) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
-	
-	headerControl = null;
-	
-	if (control == null) {
-		if (topRightComposite != null && !topRightComposite.isDisposed() && topRightComposite.getChildren().length > 0) {
-			topRightComposite.getChildren()[0].setParent(this);
-			topRightComposite.dispose();
-			topRightComposite = null;
-		}
-		if (measureComposite != null) {
-			measureComposite.dispose();
-			measureComposite = null;
-		}
-	} else {
-		if (alignment == (SWT.RIGHT | SWT.WRAP)) {
-			final Control c = control;
-			topRightComposite = new Composite(this, SWT.NONE) {
-				public Point computeSize(int wHint, int hHint, boolean changed) {
-					return c.computeSize(wHint, hHint, changed);
-				}
-			};
-			c.setParent(topRightComposite);
-			measureComposite = new Composite(this, SWT.NONE);
-			topRightComposite.addControlListener(new ControlAdapter() {
-				Image toolImage;
-				boolean ignoreResize;
-				
-				@Override
-				public void controlResized(ControlEvent e) {
-					if (ignoreResize)
-						return;
-					
-					int topRightWidth = 0, headerWidth = 0;
-					
-					Control topRight = CTabFolder.this.topRight == measureComposite ? measureComposite : topRightComposite;
-					if (topRight != null)
-						topRightWidth = topRight.getSize().x;
-					
-					Control headerControl = CTabFolder.this.getHeaderControl();
-					if (headerControl != null)
-						headerWidth = headerControl.getSize().x;
-					Point barSize = c.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					int requiredWidth = barSize.x;
-					int requiredHeight = barSize.y;
-					
-					if (topRightWidth == 0 && headerWidth == 0)
-						return;
-					
-					ignoreResize = true;
-					if (topRightWidth > requiredWidth) {
-						measureComposite.setVisible(false);
-						if (toolImage != null) {
-							topRightComposite.setBackground(null);
-							topRightComposite.setBackgroundImage(toolImage);
-						}
-						CTabFolder.this.setTopRight(topRightComposite, SWT.FILL);
-						CTabFolder.this.setHeaderControl(null);
-						// ctf.reskin(SWT.ALL);
-						CTabFolder.this.layout();
-					} else {
-						if (toolImage == null)
-							toolImage = topRightComposite.getBackgroundImage();
-						measureComposite.setVisible(true);
-						measureComposite.setBackgroundImage(toolImage);
-						topRightComposite.setBackground(c.getDisplay()
-								.getSystemColor(SWT.COLOR_WHITE));
-						topRightComposite.setBackgroundImage(null);
-						CTabFolder.this.setTopRight(measureComposite, SWT.FILL);
-						CTabFolder.this.setHeaderControl(topRightComposite);
-						CTabFolder.this.layout();
-					}
-					
-					int compWidth = topRightComposite.getSize().x;
-					if (compWidth > requiredWidth) {
-						c.setBounds(compWidth - requiredWidth, 0,
-								requiredWidth, requiredHeight);
-					} else {
-						barSize = c.computeSize(compWidth, SWT.DEFAULT);
-						c.setBounds(compWidth - barSize.x, 0, compWidth,
-								barSize.y);
-						
-					}
-					ignoreResize = false;
-				}
-			});
-			
-			this.setTopRight(topRightComposite, SWT.FILL);
-			return;
-		}
-	}
 	topRight = control;
 	topRightAlignment = alignment;
 	if (updateItems()) redraw();
+	updateTopRightBackground();
 }
 
 
@@ -3515,6 +3436,30 @@ boolean updateTabHeight(boolean force){
 	oldSize = null;
 	notifyListeners(SWT.Resize, new Event());
 	return true;
+}
+void updateTopRightBackground() {
+	if (topRightImage != null) {
+		topRightImage.dispose();
+		topRightImage = null;
+	}
+	if (topRight == null) return;
+	
+	Rectangle bounds = topRight.getBounds();
+	if (bounds.y > getTabHeight() || gradientColors == null) {
+		topRight.setBackgroundImage(null);
+		topRight.setBackground(getBackground());
+	} else {
+		bounds.width = 10;
+		bounds.y = -bounds.y;
+		bounds.height -= 2*bounds.y;
+		bounds.x = 0;
+		Image image = topRightImage = new Image(topRight.getDisplay(), bounds);
+		GC gc = new GC(image);
+		renderer.drawBackground(gc, bounds, 0);
+		gc.dispose();
+		topRight.setBackground(null);
+		topRight.setBackgroundImage(image);
+	}
 }
 String _getToolTip(int x, int y) {
 	if (showMin && minRect.contains(x, y)) return minimized ? SWT.getMessage("SWT_Restore") : SWT.getMessage("SWT_Minimize"); //$NON-NLS-1$ //$NON-NLS-2$

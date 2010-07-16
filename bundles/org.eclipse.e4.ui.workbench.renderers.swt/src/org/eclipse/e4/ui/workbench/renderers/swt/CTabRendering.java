@@ -13,7 +13,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 public class CTabRendering extends CTabFolderRenderer {
@@ -89,14 +88,9 @@ public class CTabRendering extends CTabFolderRenderer {
 				// y = tabFolder.onBottom ? y - marginHeight - highlight_margin
 				// - borderTop: y - marginHeight - highlight_header - tabHeight
 				// - borderTop;
-
-				int headerHeight = parent.getHeaderControl() != null ? parent
-						.getHeaderControl().getSize().y : 0;
-				y = y - headerHeight - marginHeight - tabHeight - borderTop
-						- (cornerSize / 4);
+				y = y - marginHeight - tabHeight - borderTop - (cornerSize / 4);
 				height = height + borderBottom + borderTop + 2 * marginHeight
-						+ tabHeight + headerHeight + cornerSize / 2
-						+ cornerSize / 4
+						+ tabHeight + cornerSize / 2 + cornerSize / 4
 						+ (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
 			}
 			break;
@@ -656,110 +650,6 @@ public class CTabRendering extends CTabFolderRenderer {
 		}
 	}
 
-	void createActiveToolbarImages(final Display display) {
-		Object active = display.getData(E4_TOOLBAR_ACTIVE_IMAGE);
-		if (active != null) {
-			toolbarActiveImage = (Image) active;
-		} else {
-			// No colors or percents set
-			if (activeToolbar == null || activePercents == null)
-				return;
-			int width = 5;
-			int height = parent.getTabHeight() + 4;
-			int x = 0;
-			int y = -1;
-			toolbarActiveImage = new Image(display, width, 30);
-			GC gc = new GC(toolbarActiveImage);
-
-			//
-			Color lastColor = activeToolbar[0];
-			if (lastColor == null)
-				lastColor = parent.getBackground();
-			int pos = 0;
-			for (int i = 0; i < activePercents.length; i++) {
-				gc.setForeground(lastColor);
-				lastColor = activeToolbar[i + 1];
-				if (lastColor == null)
-					lastColor = parent.getBackground();
-				gc.setBackground(lastColor);
-				int percentage = i > 0 ? activePercents[i]
-						- activePercents[i - 1] : activePercents[i];
-				int gradientHeight = percentage * height / 100;
-				gc.fillGradientRectangle(x, y + pos, width, gradientHeight,
-						true);
-				pos += gradientHeight;
-			}
-			if (pos < height) {
-				gc.setBackground(parent.getBackground());
-				gc.fillRectangle(x, pos, width, height - pos + 1);
-			}
-
-			gc.dispose();
-			display.setData(E4_TOOLBAR_ACTIVE_IMAGE, toolbarActiveImage);
-			display.disposeExec(new Runnable() {
-				public void run() {
-					Object obj = display.getData(E4_TOOLBAR_ACTIVE_IMAGE);
-					if (obj != null) {
-						Image tmp = (Image) obj;
-						tmp.dispose();
-						display.setData(E4_TOOLBAR_ACTIVE_IMAGE, null);
-					}
-				}
-			});
-		}
-	}
-
-	void createInactiveToolbarImages(final Display display) {
-		Object inactive = display.getData(E4_TOOLBAR_INACTIVE_IMAGE);
-		if (inactive != null) {
-			toolbarInactiveImage = (Image) inactive;
-		} else {
-			// No colors or percents set
-			if (inactiveToolbar == null || inactivePercents == null)
-				return;
-			int width = 5;
-			int height = parent.getTabHeight() + 4;
-			int x = 0;
-			int y = -4;
-			toolbarInactiveImage = new Image(display, 5, 30);
-			GC gc = new GC(toolbarInactiveImage);
-
-			Color lastColor = inactiveToolbar[0];
-			if (lastColor == null)
-				lastColor = parent.getBackground();
-			int pos = 0;
-			for (int i = 0; i < inactivePercents.length; i++) {
-				gc.setForeground(lastColor);
-				lastColor = inactiveToolbar[i + 1];
-				if (lastColor == null)
-					lastColor = parent.getBackground();
-				gc.setBackground(lastColor);
-				int percentage = i > 0 ? inactivePercents[i]
-						- inactivePercents[i - 1] : inactivePercents[i];
-				int gradientHeight = percentage * height / 100;
-				gc.fillGradientRectangle(x, y + pos, width, gradientHeight,
-						true);
-				pos += gradientHeight;
-			}
-			if (pos < height) {
-				gc.setBackground(parent.getBackground());
-				gc.fillRectangle(x, pos, width, height - pos + 1);
-			}
-			gc.dispose();
-			display.setData(E4_TOOLBAR_INACTIVE_IMAGE, toolbarInactiveImage);
-			display.disposeExec(new Runnable() {
-				public void run() {
-					Object obj = display.getData(E4_TOOLBAR_INACTIVE_IMAGE);
-					if (obj != null) {
-						Image tmp = (Image) obj;
-						tmp.dispose();
-						display.setData(E4_TOOLBAR_INACTIVE_IMAGE, null);
-					}
-				}
-			});
-		}
-	}
-
 	public ImageData blur(Image src, int radius, int sigma) {
 		float[] kernel = create1DKernel(radius, sigma);
 
@@ -913,15 +803,5 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	public void setActive(boolean active) {
 		this.active = active;
-		Control topRight = parent.getTopControl();
-		if (topRight != null) {
-			if (active && toolbarActiveImage == null)
-				createActiveToolbarImages(Display.getCurrent());
-			if (!active && toolbarInactiveImage == null)
-				createInactiveToolbarImages(Display.getCurrent());
-			topRight.setBackgroundImage(active ? toolbarActiveImage
-					: toolbarInactiveImage);
-			parent.redraw();
-		}
 	}
 }

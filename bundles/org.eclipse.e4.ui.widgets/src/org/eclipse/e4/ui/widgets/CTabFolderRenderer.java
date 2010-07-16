@@ -343,9 +343,8 @@ public class CTabFolderRenderer {
 					y = parent.onBottom ? y - borderTop : y - highlight_header - tabHeight - borderTop;
 					height = borderTop + borderBottom + tabHeight + highlight_header;
 				} else {
-					int headerHeight = parent.headerControl != null ? parent.headerControl.getSize().y : 0;
-					y = parent.onBottom ? y - marginHeight - highlight_margin - borderTop : y - headerHeight - marginHeight - highlight_header - tabHeight - borderTop;
-					height = height + borderTop + borderBottom + 2*marginHeight + tabHeight + highlight_header + highlight_margin + headerHeight;
+					y = parent.onBottom ? y - marginHeight - highlight_margin - borderTop : y - marginHeight - highlight_header - tabHeight - borderTop;
+					height = height + borderTop + borderBottom + 2*marginHeight + tabHeight + highlight_header + highlight_margin;
 				}
 				break;
 			case PART_HEADER:
