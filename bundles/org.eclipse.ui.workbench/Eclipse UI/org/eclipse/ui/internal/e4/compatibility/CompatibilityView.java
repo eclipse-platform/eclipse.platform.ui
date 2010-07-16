@@ -11,9 +11,8 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
-
 import javax.inject.Inject;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
@@ -116,16 +115,14 @@ public class CompatibilityView extends CompatibilityPart {
 		}
 
 		// Construct the toolbar (if necessary)
-		if (tbm.getItems().length > 0) {
-			MToolBar toolbar = part.getToolbar();
-			if (toolbar == null) {
-				toolbar = MenuFactoryImpl.eINSTANCE.createRenderedToolBar();
-				toolbar.setElementId(part.getElementId());
-				part.setToolbar(toolbar);
-			}
-			if (toolbar instanceof MRenderedToolBar) {
-				((MRenderedToolBar) toolbar).setContributionManager(tbm);
-			}
+		MToolBar toolbar = part.getToolbar();
+		if (toolbar == null) {
+			toolbar = MenuFactoryImpl.eINSTANCE.createRenderedToolBar();
+			toolbar.setElementId(part.getElementId());
+			part.setToolbar(toolbar);
+		}
+		if (toolbar instanceof MRenderedToolBar) {
+			((MRenderedToolBar) toolbar).setContributionManager(tbm);
 		}
 	}
 }
