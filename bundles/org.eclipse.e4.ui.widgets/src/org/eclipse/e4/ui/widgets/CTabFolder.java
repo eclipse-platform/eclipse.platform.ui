@@ -168,6 +168,11 @@ public class CTabFolder extends Composite {
 	int topRightAlignment = SWT.RIGHT;
 	
 	Image topRightImage;
+	ControlAdapter topRightResize = new ControlAdapter() {
+		public void controlResized(ControlEvent e) {
+			if (updateItems()) redraw();
+		}
+	};
 	
 	// when disposing CTabFolder, don't try to layout the items or 
 	// change the selection as each child is destroyed.
@@ -1310,6 +1315,9 @@ void onDispose(Event event) {
 
 	selectionBackground = null;
 	selectionForeground = null;
+	
+	if (topRight != null && !topRight.isDisposed())
+		topRight.removeControlListener(topRightResize);
 	
 	if (topRightImage != null) topRightImage.dispose();
 	topRightImage = null;
@@ -3195,17 +3203,18 @@ public void setTopRight(Control control, int alignment) {
 	if (control != null && control.getParent() != this) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
+	
+	if (topRight != null && !topRight.isDisposed())
+		topRight.removeControlListener(topRightResize);
+	
 	topRight = control;
+
+	if (topRight != null)
+		topRight.addControlListener(topRightResize);
+	
 	topRightAlignment = alignment;
 	if (updateItems()) redraw();
 	updateTopRightBackground();
-	if (control != null) {
-		control.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				if (updateItems()) redraw();
-			}
-		});
-	}
 }
 
 
