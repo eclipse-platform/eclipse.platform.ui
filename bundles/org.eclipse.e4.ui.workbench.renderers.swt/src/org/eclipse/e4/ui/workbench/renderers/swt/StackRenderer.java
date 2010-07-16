@@ -21,10 +21,12 @@ import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -75,6 +77,19 @@ public class StackRenderer extends LazyStackRenderer {
 			activationJob = null;
 			if (stackToActivate != null
 					&& stackToActivate.getSelectedElement() != null) {
+				// Ensure we're activating a stack in the current perspective,
+				// when using a dialog to open a perspective
+				// we end up in the situation where this stack is in the
+				// previously active perspective
+				MWindow win = modelService
+						.getTopLevelWindowFor(stackToActivate);
+				MPerspective activePersp = modelService
+						.getActivePerspective(win);
+				MPerspective myPersp = modelService
+						.getPerspectiveFor(stackToActivate);
+				if (activePersp != null && myPersp != activePersp)
+					return;
+
 				MUIElement selElement = stackToActivate.getSelectedElement();
 				if (!selElement.isToBeRendered())
 					return;
