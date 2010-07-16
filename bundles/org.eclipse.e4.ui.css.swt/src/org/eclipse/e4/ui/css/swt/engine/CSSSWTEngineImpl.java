@@ -55,7 +55,10 @@ import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyWebbyStyleHandler;
 import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyBackgroundXMLHandler;
 import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyFontXMLHandler;
 import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyTextXMLHandler;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * CSS SWT Engine implementation which configure CSSEngineImpl to apply styles
@@ -63,12 +66,24 @@ import org.eclipse.swt.widgets.Display;
  */
 public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 
+	private DisposeListener disposeListener;
+
 	public CSSSWTEngineImpl(Display display) {
 		super(display);
+		init();
 	}
 
 	public CSSSWTEngineImpl(Display display, boolean lazyApplyingStyles) {
 		super(display, lazyApplyingStyles);
+		init();
+	}
+
+	private void init() {
+		disposeListener = new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				handleWidgetDisposed(e.widget);
+			}
+		};
 	}
 
 	protected void initializeCSSPropertyHandlers() {
@@ -258,6 +273,12 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSProperty("tab-margin-offset", CSSPropertyTabMarginOffsetHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyTabMarginOffsetHandler.class,
 				CSSPropertyTabMarginOffsetHandler.INSTANCE);
+	}
+	
+	@Override
+	protected void hookNativeWidget(Object widget) {
+		Widget swtWidget = (Widget) widget;
+		swtWidget.addDisposeListener(disposeListener);
 	}
 
 }

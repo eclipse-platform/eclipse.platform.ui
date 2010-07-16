@@ -11,8 +11,6 @@
 package org.eclipse.e4.ui.css.core.impl.engine;
 
 import org.eclipse.core.runtime.CoreException;
-
-import java.util.Map;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -30,7 +28,7 @@ import org.eclipse.e4.ui.css.core.impl.sac.CSSConditionFactoryImpl;
 import org.eclipse.e4.ui.css.core.impl.sac.CSSSelectorFactoryImpl;
 import org.w3c.css.sac.ConditionFactory;
 
-public class CSSEngineImpl extends AbstractCSSEngine {
+public abstract class CSSEngineImpl extends AbstractCSSEngine {
 
 	public static final ConditionFactory CONDITIONFACTORY_INSTANCE = new CSSConditionFactoryImpl(
 			null, "class", null, "id");

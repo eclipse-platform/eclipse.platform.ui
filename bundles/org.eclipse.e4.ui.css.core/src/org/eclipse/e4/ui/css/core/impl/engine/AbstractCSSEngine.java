@@ -108,8 +108,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	private IResourcesLocatorManager resourcesLocatorManager;
 
-	private Map dynamicPseudoClassesHandler = new HashMap();
-
 	private IResourcesRegistry resourcesRegistry;
 
 	/**
@@ -430,7 +428,6 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 * @see org.eclipse.e4.ui.core.css.engine.CSSEngine#applyStyleDeclaration(java.lang.Object,
 	 *      org.w3c.dom.css.CSSStyleDeclaration, java.lang.String)
 	 */
-
 	public void applyStyleDeclaration(Object element,
 			CSSStyleDeclaration style, String pseudo) {
 		// Apply style
@@ -806,7 +803,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		if (elt != null) {
 			if (elementContext == null) {
 				elementContext = new CSSElementContextImpl();
-				getElementsContext().put(getNativeWidget(element),
+				Object nativeWidget = getNativeWidget(element);
+				hookNativeWidget(nativeWidget);
+				getElementsContext().put(nativeWidget,
 						elementContext);
 			}
 			elementContext.setElementProvider(elementProvider);
@@ -818,6 +817,32 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 		}
 		return elt;
+	}
+
+	/**
+	 * Called when an element context is created for a native widget and
+	 * registered with this engine. Subclasses should override and install
+	 * a listener on the widget that will call {@link #handleWidgetDisposed(Object)}
+	 * when the widget is disposed.
+	 * <p>
+	 * The default implementation of this method does nothing.
+	 * </p> 
+	 * 
+	 * @param widget the native widget to hook 
+	 */
+	protected void hookNativeWidget(Object widget) {
+	}
+	
+	/**
+	 * Called when a widget is disposed. Removes the element context
+	 * from the element contexts map and the widgets map. Overriding
+	 * classes must call the super implementation.
+	 */
+	protected void handleWidgetDisposed(Object widget) {
+		if (widgetsMap != null)
+			widgetsMap.remove(widget);
+		if (elementsContext != null)
+			elementsContext.remove(widget);
 	}
 
 	public Object getDocument() {
@@ -901,6 +926,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			}
 		}
 		elementsContext = null;
+		widgetsMap = null;
 		if (resourcesRegistry != null)
 			resourcesRegistry.dispose();
 	}
