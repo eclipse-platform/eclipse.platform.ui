@@ -477,7 +477,7 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	protected void showTab(MUIElement element) {
-		// super.showTab(element);
+		super.showTab(element);
 
 		CTabFolder ctf = (CTabFolder) getParentWidget(element);
 		CTabItem cti = findItemForPart(element, null);
