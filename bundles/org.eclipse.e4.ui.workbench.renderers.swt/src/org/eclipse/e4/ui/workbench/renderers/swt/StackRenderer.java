@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -41,17 +43,24 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class StackRenderer extends LazyStackRenderer {
 
 	public static final String TAG_VIEW_MENU = "ViewMenu"; //$NON-NLS-1$
+	private static final String STACK_SELECTED_PART = "stack_selected_part"; //$NON-NLS-1$
 
 	Image viewMenuImage;
 
@@ -69,6 +78,11 @@ public class StackRenderer extends LazyStackRenderer {
 	private EventHandler dirtyUpdater;
 
 	private boolean ignoreTabSelChanges = false;
+
+	/**
+	 * Context menu for tabs in this stack, filled lazily
+	 */
+	private Menu tabMenu;
 
 	private class ActivationJob implements Runnable {
 		public MElementContainer<MUIElement> stackToActivate = null;
@@ -243,6 +257,10 @@ public class StackRenderer extends LazyStackRenderer {
 
 	@PreDestroy
 	public void contextDisposed() {
+		if (tabMenu != null) {
+			tabMenu.dispose();
+			tabMenu = null;
+		}
 		super.contextDisposed(eventBroker);
 
 		eventBroker.unsubscribe(itemUpdater);
@@ -479,7 +497,7 @@ public class StackRenderer extends LazyStackRenderer {
 	protected void showTab(MUIElement element) {
 		super.showTab(element);
 
-		CTabFolder ctf = (CTabFolder) getParentWidget(element);
+		final CTabFolder ctf = (CTabFolder) getParentWidget(element);
 		CTabItem cti = findItemForPart(element, null);
 		if (cti == null) {
 			createTab(element.getParent(), element);
@@ -536,6 +554,107 @@ public class StackRenderer extends LazyStackRenderer {
 					part.getContext());
 			ctf.setTopRight(c, SWT.RIGHT | SWT.WRAP);
 			ctf.layout();
+		}
+
+		ctf.addMenuDetectListener(new MenuDetectListener() {
+			public void menuDetected(MenuDetectEvent e) {
+				Point absolutePoint = new Point(e.x, e.y);
+				Point relativePoint = ctf.getDisplay().map(null, ctf,
+						absolutePoint);
+				CTabItem eventTabItem = ctf.getItem(relativePoint);
+				if (eventTabItem != null) {
+					MUIElement uiElement = (MUIElement) eventTabItem
+							.getData(AbstractPartRenderer.OWNING_ME);
+					MPart tabPart = (MPart) ((uiElement instanceof MPart) ? uiElement
+							: ((MPlaceholder) uiElement).getRef());
+					if (isEditor(tabPart))
+						openMenuFor(tabPart, ctf, absolutePoint);
+				}
+			}
+		});
+	}
+
+	private void openMenuFor(MPart part, CTabFolder folder, Point point) {
+		if (tabMenu == null)
+			tabMenu = createTabMenu(folder);
+		tabMenu.setData(STACK_SELECTED_PART, part);
+		tabMenu.setLocation(point.x, point.y);
+		tabMenu.setVisible(true);
+	}
+
+	private Menu createTabMenu(CTabFolder folder) {
+		final Menu menu = new Menu(folder);
+
+		MenuItem menuItemClose = new MenuItem(menu, SWT.NONE);
+		menuItemClose.setText(SWTRenderersMessages.menuClose);
+		menuItemClose.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
+				EPartService partService = getContextForParent(part).get(
+						EPartService.class);
+				if (partService.savePart(part, true))
+					partService.hidePart(part);
+			}
+		});
+
+		MenuItem menuItemOthers = new MenuItem(menu, SWT.NONE);
+		menuItemOthers.setText(SWTRenderersMessages.menuCloseOthers);
+		menuItemOthers.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
+				closeSiblingEditors(part, true);
+			}
+		});
+		MenuItem menuItemAll = new MenuItem(menu, SWT.NONE);
+		menuItemAll.setText(SWTRenderersMessages.menuCloseAll);
+		menuItemAll.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
+				closeSiblingEditors(part, false);
+			}
+		});
+
+		return menu;
+	}
+
+	private boolean isEditor(MPart part) {
+		if (part == null)
+			return false;
+		return part.getTags().contains("Editor"); //$NON-NLS-1$
+	}
+
+	private void closeSiblingEditors(MPart part, boolean skipThisPart) {
+		MElementContainer<MUIElement> container = part.getParent();
+		if (container == null)
+			return;
+
+		List<MUIElement> children = container.getChildren();
+		List<MPart> others = new LinkedList<MPart>();
+		for (MUIElement child : children) {
+			MPart otherPart = null;
+			if (child instanceof MPart)
+				otherPart = (MPart) child;
+			else if (child instanceof MPlaceholder) {
+				MUIElement otherItem = ((MPlaceholder) child).getRef();
+				if (otherItem instanceof MPart)
+					otherPart = (MPart) otherItem;
+			}
+			if (otherPart == null)
+				continue;
+
+			if (skipThisPart && part.equals(otherPart))
+				continue; // skip selected item
+			if (!isEditor(otherPart))
+				continue;
+			if (otherPart.isToBeRendered())
+				others.add(otherPart);
+		}
+
+		EPartService partService = getContextForParent(part).get(
+				EPartService.class);
+		for (MPart otherPart : others) {
+			if (partService.savePart(otherPart, true))
+				partService.hidePart(otherPart);
 		}
 	}
 
