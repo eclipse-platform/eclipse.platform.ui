@@ -124,7 +124,7 @@ class DnDManager {
 		baseWindow = window;
 
 		dragAgents.add(new PartDragAgent());
-		dropAgents.add(new StackDropAgent());
+		dropAgents.add(new StackDropAgent(window));
 
 		modelService = (EModelService) window.getContext().get(EModelService.class.getName());
 		dropAgents.add(new SplitDropAgent(modelService));

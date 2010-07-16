@@ -11,20 +11,33 @@
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
-import org.eclipse.e4.ui.widgets.CTabFolder;
-import org.eclipse.e4.ui.widgets.CTabItem;
-
+import java.util.List;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabItem;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
  *
  */
 public class StackDropAgent extends DropAgent {
+	private MWindow window;
+
+	/**
+	 * @param window
+	 */
+	public StackDropAgent(MWindow window) {
+		this.window = window;
+	}
+
 	@Override
 	public boolean canDrop(MUIElement dragElement, CursorInfo info) {
 		if (info.curElement == dragElement.getParent()) {
@@ -68,7 +81,41 @@ public class StackDropAgent extends DropAgent {
 		}
 		dropStack.setSelectedElement((MStackElement) dragElement);
 
+		if (dragElement instanceof MPlaceholder) {
+			if (isContainedInSharedPart(dragElement)) {
+				MPlaceholder placeholder = (MPlaceholder) dragElement;
+				EModelService modelService = window.getContext().get(EModelService.class);
+				MPerspective currentPerspective = modelService.getActivePerspective(modelService
+						.getTopLevelWindowFor(placeholder));
+				List<MPerspective> perspectives = (List) currentPerspective.getParent()
+						.getChildren();
+				for (MUIElement perspective : perspectives) {
+					if (perspective == currentPerspective) {
+						continue;
+					}
+					List<MPlaceholder> phList = modelService.findElements(perspective, null,
+							MPlaceholder.class, null);
+					for (MPlaceholder ph : phList) {
+						if (ph != placeholder && ph.getRef() == placeholder.getRef()) {
+							ph.getParent().getChildren().remove(ph);
+						}
+					}
+				}
+			}
+		}
+
 		return true;
+	}
+
+	private boolean isContainedInSharedPart(MUIElement element) {
+		MUIElement parent = element.getParent();
+		while (parent != null) {
+			if (parent.getCurSharedRef() != null) {
+				return true;
+			}
+			parent = parent.getParent();
+		}
+		return false;
 	}
 
 	/*

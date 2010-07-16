@@ -889,7 +889,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			for (IEditorReference editorRef : editorRefs) {
 				MPart model = ((EditorReference) editorRef).getModel();
 				// saving should've been handled earlier above
-				if (!(hidePart(model, false, confirm))) {
+				if (!(hidePart(model, false, confirm, false))) {
 					return false;
 				}
 			}
@@ -915,8 +915,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @param part
 	 *            the part that should be hidden
 	 */
-	private void hidePart(MPart part) {
-		partService.hidePart(part);
+	private void hidePart(MPart part, boolean force) {
+		partService.hidePart(part, force);
 
 		for (Iterator<ViewReference> it = viewReferences.iterator(); it.hasNext();) {
 			ViewReference reference = it.next();
@@ -935,7 +935,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 	}
 
-	private boolean hidePart(MPart part, boolean save, boolean confirm) {
+	private boolean hidePart(MPart part, boolean save, boolean confirm, boolean force) {
 		if (!partService.getParts().contains(part)) {
 			return false;
 		}
@@ -946,12 +946,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (save) {
 				// save as necessary
 				if (partService.savePart(part, confirm)) {
-					hidePart(part);
+					hidePart(part, force);
 					return true;
 				}
 				return false;
 			}
-			hidePart(part);
+			hidePart(part, force);
 			return true;
 		}
 
@@ -976,7 +976,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		if (reference != null) {
-			partService.hidePart(part);
+			partService.hidePart(part, force);
 			// viewReferences.remove(reference);
 			return true;
 		}
@@ -989,7 +989,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		if (reference != null) {
-			partService.hidePart(part);
+			partService.hidePart(part, force);
 			editorReferences.remove(reference);
 			return true;
 		}
@@ -1000,7 +1000,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private void hidePart(String id) {
 		MPart part = partService.findPart(id);
 		if (part != null) {
-			hidePart(part, true, true);
+			hidePart(part, true, true, false);
 		}
 	}
     
@@ -1077,14 +1077,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public void closeAllPerspectives(boolean saveEditors, boolean closePage) {
 		if (saveEditors) {
-			saveAllEditors(true, true);
+			if (!saveAllEditors(true, true)) {
+				return;
+			}
 		}
 
 		sortedPerspectives.clear();
 		openedPerspectives.clear();
 
 		for (MPart part : partService.getParts()) {
-			hidePart(part, false, true);
+			// no save, no confirm, force
+			hidePart(part, false, true, true);
 		}
 
 		if (closePage) {
@@ -2115,7 +2118,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		// For now just close and re-open it
 		closePerspective(desc, true, false);
-		setPerspective(desc);
+		if (persp.getParent() == null) {
+			setPerspective(desc);
+		}
 	}
 
 

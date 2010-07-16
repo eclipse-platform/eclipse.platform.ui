@@ -249,6 +249,21 @@ public interface EPartService {
 	public void hidePart(MPart part);
 
 	/**
+	 * Hides the given part. The part must be a part managed by this service.
+	 * <p>
+	 * If <code>force</code> is <code>true</code> or the part has been tagged with the
+	 * {@link #REMOVE_ON_HIDE_TAG} tag, it will be removed from the model when the service hides it.
+	 * </p>
+	 * 
+	 * @param part
+	 *            the part to hide
+	 * @param force
+	 *            if the part should be removed from the model regardless of its
+	 *            {@link #REMOVE_ON_HIDE_TAG} tag
+	 */
+	public void hidePart(MPart part, boolean force);
+
+	/**
 	 * Returns a collection of all the dirty parts that are being managed by this service.
 	 * 
 	 * 

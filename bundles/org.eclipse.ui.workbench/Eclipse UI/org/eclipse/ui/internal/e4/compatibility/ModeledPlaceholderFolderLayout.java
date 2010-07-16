@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.ui.IPlaceholderFolderLayout;
@@ -30,6 +32,11 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 	}
 
 	public void addPlaceholder(String viewId) {
+		MUIElement existingView = layout.findElement(layout.perspModel, viewId);
+		if (existingView instanceof MPlaceholder) {
+			existingView.getParent().getChildren().remove(existingView);
+		}
+
 		MStackElement viewModel = ModeledPageLayout.createViewModel(application, viewId, false,
 				layout.page, layout.partService, layout.createReferences);
 		folderModel.getChildren().add(viewModel);

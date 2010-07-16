@@ -66,7 +66,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 	EPartService partService;
 	WorkbenchPage page;
-	private MPerspective perspModel;
+	MPerspective perspModel;
 	private IPerspectiveDescriptor descriptor;
 
 	private MPartStack editorStack;
@@ -308,6 +308,11 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private MStackElement insertView(String viewId, int relationship, float ratio,
 			String refId, boolean visible, boolean withStack) {
+		MUIElement existingView = findElement(perspModel, viewId);
+		if (existingView instanceof MPlaceholder) {
+			existingView.getParent().getChildren().remove(existingView);
+		}
+
 		MUIElement refModel = findElement(perspModel, refId);
 		if (refModel instanceof MPart) {
 			refModel = refModel.getParent();
@@ -490,7 +495,7 @@ public class ModeledPageLayout implements IPageLayout {
 		insert(toInsert, relTo, swtSide, pct);
 	}
 
-	private MUIElement findElement(MUIElement toSearch, String id) {
+	MUIElement findElement(MUIElement toSearch, String id) {
 		return modelService.find(id, toSearch);
 	}
 
@@ -520,6 +525,11 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void stackView(String id, String refId, boolean visible) {
+		MUIElement existingView = findElement(perspModel, id);
+		if (existingView instanceof MPlaceholder) {
+			existingView.getParent().getChildren().remove(existingView);
+		}
+
 		MUIElement refModel = findElement(perspModel, refId);
 		if (refModel instanceof MPart || refModel instanceof MPlaceholder) {
 			refModel = refModel.getParent();
