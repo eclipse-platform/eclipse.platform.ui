@@ -26,6 +26,9 @@ public class Messages extends NLS {
 
 	public static String ModelTooling_Context_Variables;
 
+	public static String ModelTooling_ApplicationElement_Tags;
+	public static String ModelTooling_Contribution_PersistedState;
+
 	public static String AbstractCommandSelectionDialog_Label_CommandId;
 
 	public static String ApplicationEditor_Label;
@@ -220,7 +223,6 @@ public class Messages extends NLS {
 	public static String AddonsEditor_ClassURI;
 	public static String AddonsEditor_TreeLabel;
 	public static String AddonsEditor_TreeLabelDescription;
-	public static String AddonsEditor_PersistedState;
 	public static String AddonsEditor_Tags;
 
 	public static String ContributionClassDialog_DialogMessage;

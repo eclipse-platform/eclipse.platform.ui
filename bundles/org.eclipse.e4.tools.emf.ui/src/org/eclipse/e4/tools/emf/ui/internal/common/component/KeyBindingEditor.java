@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -27,6 +26,7 @@ import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.KeyBindingCommandSelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
@@ -47,22 +47,13 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ColumnViewerEditor;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
-import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TableViewerEditor;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -82,6 +73,8 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private IModelResource resource;
 	private EStackLayout stackLayout;
+
+	private IEMFEditListProperty KEY_BINDING__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS);
 
 	public KeyBindingEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource) {
 		super(editingDomain, editor);
@@ -242,81 +235,16 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		l.setText(Messages.KeyBindingEditor_Parameters);
 		l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
-		final TableViewer tableviewer = new TableViewer(parent);
+		final TableViewer viewer = new TableViewer(parent, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
+		ObservableListContentProvider cp = new ObservableListContentProvider();
+		viewer.setContentProvider(cp);
+		viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
+
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 120;
-		tableviewer.getTable().setHeaderVisible(true);
-		tableviewer.getControl().setLayoutData(gd);
-		IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS);
+		viewer.getControl().setLayoutData(gd);
 
-		TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText(Messages.KeyBindingEditor_ParametersKey);
-		column.getColumn().setWidth(200);
-		column.setEditingSupport(new EditingSupport(tableviewer) {
-			private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
-
-			@Override
-			protected void setValue(Object element, Object value) {
-				((MParameter) element).setName((String) value);
-			}
-
-			@Override
-			protected Object getValue(Object element) {
-				String val = ((MParameter) element).getName();
-				return val == null ? "" : val; //$NON-NLS-1$
-			}
-
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return cellEditor;
-			}
-
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-		});
-
-		column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText(Messages.KeyBindingEditor_ParametersValue);
-		column.getColumn().setWidth(200);
-		column.setEditingSupport(new EditingSupport(tableviewer) {
-			private TextCellEditor cellEditor = new TextCellEditor(tableviewer.getTable());
-
-			@Override
-			protected void setValue(Object element, Object value) {
-				((MParameter) element).setValue((String) value);
-			}
-
-			@Override
-			protected Object getValue(Object element) {
-				String val = ((MParameter) element).getValue();
-				return val == null ? "" : val; //$NON-NLS-1$
-			}
-
-			@Override
-			protected CellEditor getCellEditor(Object element) {
-				return cellEditor;
-			}
-
-			@Override
-			protected boolean canEdit(Object element) {
-				return true;
-			}
-		});
-
-		ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(tableviewer) {
-			@Override
-			protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
-				boolean singleSelect = ((IStructuredSelection) tableviewer.getSelection()).size() == 1;
-				boolean isLeftDoubleMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION && ((MouseEvent) event.sourceEvent).button == 1;
-
-				return singleSelect && (isLeftDoubleMouseSelect || event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC || event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
-			}
-		};
-		TableViewerEditor.create(tableviewer, editorActivationStrategy, ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR);
-
-		ViewerSupport.bind(tableviewer, prop.observeDetail(getMaster()), new IValueProperty[] { EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__NAME), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.PARAMETER__VALUE) });
+		viewer.setInput(KEY_BINDING__PARAMETERS.observeDetail(getMaster()));
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
@@ -350,7 +278,6 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);
 				}
-				tableviewer.editElement(param, 0);
 			}
 		});
 
@@ -359,7 +286,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		b.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection s = (IStructuredSelection) tableviewer.getSelection();
+				IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 				if (!s.isEmpty()) {
 					MKeyBinding item = (MKeyBinding) getMaster().getValue();
 					Command cmd = RemoveCommand.create(getEditingDomain(), item, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS, s.toList());
@@ -373,14 +300,14 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 
-		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		return null;
+		return KEY_BINDING__PARAMETERS.observe(element);
 	}
 
 	@Override

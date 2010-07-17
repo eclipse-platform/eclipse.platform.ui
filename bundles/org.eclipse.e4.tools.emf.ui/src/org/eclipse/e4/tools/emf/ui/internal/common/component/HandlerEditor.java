@@ -174,7 +174,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 			final IContributionClassCreator c = getEditor().getContributionCreator(CommandsPackageImpl.Literals.HANDLER);
 			if (project != null && c != null) {
 				final Link l = new Link(parent, SWT.NONE);
-				l.setText("<A>" + Messages.HandlerEditor_ClassURI + "</A>");
+				l.setText("<A>" + Messages.HandlerEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
 				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				l.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -204,8 +204,8 @@ public class HandlerEditor extends AbstractComponentEditor {
 				}
 			});
 		}
-		ControlFactory.createMapProperties(parent, this, "Persisted State", ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

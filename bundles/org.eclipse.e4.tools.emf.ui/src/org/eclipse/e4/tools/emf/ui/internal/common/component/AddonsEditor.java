@@ -182,7 +182,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 			});
 		}
 
-		ControlFactory.createMapProperties(parent, this, Messages.AddonsEditor_PersistedState, ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createStringListWidget(parent, this, Messages.AddonsEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
