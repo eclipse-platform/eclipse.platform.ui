@@ -26,6 +26,7 @@ public class Messages extends NLS {
 	public static String ModelTooling_UIElement_Visible;
 
 	public static String ModelTooling_Context_Variables;
+	public static String ModelTooling_Context_Properties;
 
 	public static String ModelTooling_ApplicationElement_Tags;
 	public static String ModelTooling_Contribution_PersistedState;
@@ -161,6 +162,7 @@ public class Messages extends NLS {
 	public static String PartEditor_Handlers;
 	public static String PartEditor_ContainerData;
 	public static String PartEditor_ToolBar;
+	public static String PartEditor_BindingContexts;
 
 	public static String PartSashContainerEditor_Label;
 	public static String PartSashContainerEditor_Description;
@@ -240,6 +242,7 @@ public class Messages extends NLS {
 	public static String ModelFragmentsEditor_ModelFragments;
 	public static String ModelFragmentsEditor_Label;
 	public static String ModelFragmentsEditor_Description;
+	public static String ModelFragmentsEditor_Imports;
 
 	public static String StringModelFragment_Label;
 	public static String StringModelFragment_Description;
@@ -277,6 +280,11 @@ public class Messages extends NLS {
 	public static String CommandParameterEditor_Name;
 	public static String CommandParameterEditor_TypeId;
 	public static String CommandParameterEditor_Optional;
+
+	public static String ParameterEditor_TreeLabel;
+	public static String ParameterEditor_TreeLabelDescription;
+	public static String ParameterEditor_Name;
+	public static String ParameterEditor_Value;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
