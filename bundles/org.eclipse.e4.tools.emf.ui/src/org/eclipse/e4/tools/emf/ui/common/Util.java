@@ -5,13 +5,19 @@ import java.util.List;
 import java.util.Map.Entry;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.edit.command.MoveCommand;
+import org.eclipse.emf.edit.domain.EditingDomain;
 
 public class Util {
 	public static final boolean isNullOrEmpty(String element) {
@@ -67,6 +73,25 @@ public class Util {
 		}
 
 		return packs;
+	}
+
+	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel, int index) {
+		if (liveModel) {
+			MElementContainer<MUIElement> container = element.getParent();
+			container.getChildren().remove(element);
+			container.getChildren().add(index, element);
+			container.setSelectedElement(element);
+			return true;
+		} else {
+			MElementContainer<MUIElement> container = element.getParent();
+			Command cmd = MoveCommand.create(editingDomain, container, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, element, index);
+
+			if (cmd.canExecute()) {
+				editingDomain.getCommandStack().execute(cmd);
+				return true;
+			}
+			return false;
+		}
 	}
 
 	public static class InternalPackage {
