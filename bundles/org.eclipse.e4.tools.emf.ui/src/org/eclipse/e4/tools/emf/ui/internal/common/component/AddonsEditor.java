@@ -72,7 +72,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Addon";
+		return Messages.AddonsEditor_TreeLabel;
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Addon Bla Bla Bla";
+		return Messages.AddonsEditor_TreeLabelDescription;
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 			final IContributionClassCreator c = getEditor().getContributionCreator(ApplicationPackageImpl.Literals.ADDON);
 			if (project != null && c != null) {
 				final Link l = new Link(parent, SWT.NONE);
-				l.setText("<A>" + Messages.PartEditor_ClassURI + "</A>");
+				l.setText("<A>" + Messages.PartEditor_ClassURI + "</A>"); //$NON-NLS-1$//$NON-NLS-2$
 				l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				l.addSelectionListener(new SelectionAdapter() {
 					@Override
@@ -172,7 +172,7 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
-			b.setText(Messages.AddonsEditor_Find);
+			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -182,8 +182,8 @@ public class AddonsEditor extends AbstractComponentEditor {
 			});
 		}
 
-		ControlFactory.createMapProperties(parent, this, "Persisted State", ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, this, Messages.AddonsEditor_PersistedState, ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.AddonsEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

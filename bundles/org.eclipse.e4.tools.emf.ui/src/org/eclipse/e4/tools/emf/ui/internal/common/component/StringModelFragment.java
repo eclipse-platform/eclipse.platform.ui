@@ -141,7 +141,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID).observeDetail(getMaster()));
 
 			final Button b = new Button(comp, SWT.PUSH | SWT.FLAT);
-			b.setText(Messages.StringModelFragment_Find);
+			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -172,7 +172,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME).observeDetail(getMaster()));
 
 			final Button button = new Button(comp, SWT.PUSH | SWT.FLAT);
-			button.setText(Messages.StringModelFragment_Find);
+			button.setText(Messages.ModelTooling_Common_FindEllipsis);
 			button.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {

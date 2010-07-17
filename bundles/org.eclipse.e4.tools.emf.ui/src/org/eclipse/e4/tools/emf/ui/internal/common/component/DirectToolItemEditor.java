@@ -95,7 +95,7 @@ public class DirectToolItemEditor extends ToolItemEditor {
 		context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
 
 		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.DirectToolItemEditor_Find);
+		b.setText(Messages.ModelTooling_Common_FindEllipsis);
 		b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {

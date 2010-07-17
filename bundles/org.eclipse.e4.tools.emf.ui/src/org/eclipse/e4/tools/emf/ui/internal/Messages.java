@@ -19,6 +19,7 @@ public class Messages {
 	public static String ModelTooling_Common_Add;
 	public static String ModelTooling_Common_Remove;
 	public static String ModelTooling_Common_Id;
+	public static String ModelTooling_Common_FindEllipsis;
 
 	public static String AbstractCommandSelectionDialog_Label_CommandId;
 
@@ -37,7 +38,6 @@ public class Messages {
 	public static String BindingTableEditor_Label;
 	public static String BindingTableEditor_Description;
 	public static String BindingTableEditor_ContextId;
-	public static String BindingTableEditor_Find;
 	public static String BindingTableEditor_Keybindings;
 	public static String BindingTableEditor_KeySequence;
 	public static String BindingTableEditor_Command;
@@ -57,7 +57,6 @@ public class Messages {
 	public static String DirectMenuItemEditor_Label;
 	public static String DirectMenuItemEditor_Description;
 	public static String DirectMenuItemEditor_ClassURI;
-	public static String DirectMenuItemEditor_Find;
 
 	public static String ControlFactory_BindingContexts;
 	public static String ControlFactory_Tags;
@@ -66,20 +65,17 @@ public class Messages {
 	public static String ControlFactory_ContextVariables;
 
 	public static String DirectToolItemEditor_ClassURI;
-	public static String DirectToolItemEditor_Find;
 	public static String DirectToolItemEditor_Label;
 	public static String DirectToolItemEditor_Description;
 
 	public static String HandledMenuItemEditor_Label;
 	public static String HandledMenuItemEditor_Description;
 	public static String HandledMenuItemEditor_Command;
-	public static String HandledMenuItemEditor_Find;
 	public static String HandledMenuItemEditor_Parameters;
 	public static String HandledMenuItemEditor_Tag;
 	public static String HandledMenuItemEditor_Value;
 
 	public static String HandledToolItemEditor_Command;
-	public static String HandledToolItemEditor_Find;
 	public static String HandledToolItemEditor_Parameters;
 	public static String HandledToolItemEditor_ParametersName;
 	public static String HandledToolItemEditor_ParametersValue;
@@ -89,7 +85,6 @@ public class Messages {
 	public static String HandlerEditor_Label;
 	public static String HandlerEditor_Description;
 	public static String HandlerEditor_Command;
-	public static String HandlerEditor_Find;
 	public static String HandlerEditor_ClassURI;
 
 	public static String InputPartEditor_Label;
@@ -99,7 +94,6 @@ public class Messages {
 	public static String KeyBindingEditor_Description;
 	public static String KeyBindingEditor_Sequence;
 	public static String KeyBindingEditor_Command;
-	public static String KeyBindingEditor_Find;
 	public static String KeyBindingEditor_Parameters;
 	public static String KeyBindingEditor_ParametersKey;
 	public static String KeyBindingEditor_ParametersValue;
@@ -121,7 +115,6 @@ public class Messages {
 	public static String MenuItemEditor_Label;
 	public static String MenuItemEditor_Tooltip;
 	public static String MenuItemEditor_IconURI;
-	public static String MenuItemEditor_Find;
 	public static String MenuEditor_MainMenu;
 
 	public static String MenuSeparatorEditor_Label;
@@ -131,7 +124,6 @@ public class Messages {
 	public static String PartDescriptorEditor_LabelLabel;
 	public static String PartDescriptorEditor_Tooltip;
 	public static String PartDescriptorEditor_IconURI;
-	public static String PartDescriptorEditor_Find;
 	public static String PartDescriptorEditor_ClassURI;
 	public static String PartDescriptorEditor_Dirtyable;
 	public static String PartDescriptorEditor_Closeable;
@@ -153,7 +145,6 @@ public class Messages {
 	public static String PartEditor_LabelLabel;
 	public static String PartEditor_Tooltip;
 	public static String PartEditor_IconURI;
-	public static String PartEditor_Find;
 	public static String PartEditor_ClassURI;
 	public static String PartEditor_Closeable;
 	public static String PartEditor_PersitedState;
@@ -185,7 +176,6 @@ public class Messages {
 	public static String PerspectiveEditor_SelectedElement;
 	public static String PerspectiveEditor_Tooltip;
 	public static String PerspectiveEditor_IconURI;
-	public static String PerspectiveEditor_Find;
 	public static String PerspectiveEditor_Controls;
 
 	public static String PerspectiveStackEditor_Perspectives;
@@ -195,7 +185,6 @@ public class Messages {
 
 	public static String PlaceholderEditor_Label;
 	public static String PlaceholderEditor_Descriptor;
-	public static String PlaceholderEditor_FindReference;
 
 	public static String ToolBarEditor_Label;
 	public static String ToolBarEditor_Description;
@@ -220,7 +209,10 @@ public class Messages {
 	public static String VBindingTableEditor_LabelDescription;
 
 	public static String AddonsEditor_ClassURI;
-	public static String AddonsEditor_Find;
+	public static String AddonsEditor_TreeLabel;
+	public static String AddonsEditor_TreeLabelDescription;
+	public static String AddonsEditor_PersistedState;
+	public static String AddonsEditor_Tags;
 
 	public static String ContributionClassDialog_DialogMessage;
 	public static String ContributionClassDialog_DialogTitle;
@@ -247,7 +239,6 @@ public class Messages {
 	public static String StringModelFragment_ParentId;
 	public static String StringModelFragment_PositionInList;
 	public static String StringModelFragment_Elements;
-	public static String StringModelFragment_Find;
 
 	public static String FeatureSelectionDialog_Filter;
 	public static String FeatureSelectionDialog_ShellTitle;
