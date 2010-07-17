@@ -155,7 +155,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 	
 	protected abstract EObject createInitialModel();
 
-	private IFile getModelFile() throws CoreException {
+	protected IFile getModelFile() throws CoreException {
 		String containerName = page.getContainerName();
 		String fileName = page.getFileName();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

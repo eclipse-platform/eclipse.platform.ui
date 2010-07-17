@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.model;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.emf.ecore.EObject;
 
@@ -22,6 +24,13 @@ public class NewApplicationModelWizard extends BaseApplicationModelWizard {
 	}
 	
 	protected EObject createInitialModel() {
-		return (EObject) MApplicationFactory.INSTANCE.createApplication();
+		MApplication application = MApplicationFactory.INSTANCE.createApplication();
+		try {
+			application.setElementId(getModelFile().getProject().getName() + ".application");
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return (EObject) application;
 	}
 }
