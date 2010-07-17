@@ -21,6 +21,11 @@ public class Messages {
 	public static String ModelTooling_Common_Id;
 	public static String ModelTooling_Common_FindEllipsis;
 
+	public static String ModelTooling_UIElement_ToBeRendered;
+	public static String ModelTooling_UIElement_Visible;
+
+	public static String ModelTooling_Context_Variables;
+
 	public static String AbstractCommandSelectionDialog_Label_CommandId;
 
 	public static String ApplicationEditor_Label;
@@ -34,6 +39,8 @@ public class Messages {
 	public static String ApplicationEditor_MenuContributions;
 	public static String ApplicationEditor_ToolBarContributions;
 	public static String ApplicationEditor_TrimContributions;
+	public static String ApplicationEditor_RootContext;
+	public static String ApplicationEditor_BindingContexts;
 
 	public static String BindingTableEditor_Label;
 	public static String BindingTableEditor_Description;
