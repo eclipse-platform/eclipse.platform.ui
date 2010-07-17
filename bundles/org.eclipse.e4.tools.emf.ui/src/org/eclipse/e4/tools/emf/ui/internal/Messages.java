@@ -269,6 +269,12 @@ public class Messages extends NLS {
 	public static String ComponentLabelProvider_invisible;
 	public static String ComponentLabelProvider_notrendered;
 
+	public static String BindingContextEditor_TreeLabel;
+	public static String BindingContextEditor_TreeLabelDescription;
+	public static String BindingContextEditor_Name;
+	public static String BindingContextEditor_Description;
+	public static String BindingContextEditor_Subcontexts;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

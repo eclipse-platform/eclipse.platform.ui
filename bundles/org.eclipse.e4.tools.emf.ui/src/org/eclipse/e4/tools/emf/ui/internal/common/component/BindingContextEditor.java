@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
@@ -81,7 +82,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Binding Context";
+		return Messages.BindingContextEditor_TreeLabel;
 	}
 
 	@Override
@@ -97,7 +98,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Binding Context Bla Bla Bla";
+		return Messages.BindingContextEditor_TreeLabelDescription;
 	}
 
 	@Override
@@ -146,12 +147,12 @@ public class BindingContextEditor extends AbstractComponentEditor {
 			return parent;
 		}
 
-		ControlFactory.createTextField(parent, "Id", master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, "Name", master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME));
-		ControlFactory.createTextField(parent, "Description", master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__DESCRIPTION));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.BindingContextEditor_Name, master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME));
+		ControlFactory.createTextField(parent, Messages.BindingContextEditor_Description, master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__DESCRIPTION));
 
 		Label l = new Label(parent, SWT.NONE);
-		l.setText("Childcontexts");
+		l.setText(Messages.BindingContextEditor_Subcontexts);
 		l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 		final TableViewer viewer = new TableViewer(parent);
@@ -176,7 +177,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		buttonComp.setLayout(gl);
 
 		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Up");
+		b.setText(Messages.ModelTooling_Common_Up);
 		b.setImage(getImage(b.getDisplay(), ARROW_UP));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -203,7 +204,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Down");
+		b.setText(Messages.ModelTooling_Common_Down);
 		b.setImage(getImage(b.getDisplay(), ARROW_UP));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -230,7 +231,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Add ...");
+		b.setText(Messages.ModelTooling_Common_AddEllipsis);
 		b.setImage(getImage(b.getDisplay(), ARROW_UP));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -249,7 +250,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Remove ...");
+		b.setText(Messages.ModelTooling_Common_Remove);
 		b.setImage(getImage(b.getDisplay(), ARROW_UP));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
