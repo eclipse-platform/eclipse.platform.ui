@@ -262,6 +262,8 @@ public class Messages extends NLS {
 
 	public static String CommandCategorySelectionDialog_LabelCategoryId;
 
+	public static String BindingContextSelectionDialog_LabelContextId;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

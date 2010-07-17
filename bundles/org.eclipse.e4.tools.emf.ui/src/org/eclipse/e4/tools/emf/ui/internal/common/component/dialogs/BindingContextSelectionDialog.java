@@ -15,14 +15,11 @@ import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
-import org.eclipse.e4.ui.model.application.commands.MCategory;
-import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -49,23 +46,26 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class CommandCategorySelectionDialog extends TitleAreaDialog {
+public class BindingContextSelectionDialog extends TitleAreaDialog {
 	private IModelResource resource;
 	private TableViewer viewer;
-	private MCommand command;
+	private String selectedId;
 
-	public CommandCategorySelectionDialog(Shell parentShell, IModelResource resource, MCommand command) {
+	public BindingContextSelectionDialog(Shell parentShell, IModelResource resource) {
 		super(parentShell);
 		this.resource = resource;
-		this.command = command;
+	}
+
+	public String getSelectedId() {
+		return selectedId;
 	}
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		getShell().setText("Command Category Dialog");
-		setTitle("Command Category");
-		setMessage("Search for a Command Category");
+		getShell().setText("BindingContext Dialog");
+		setTitle("BindingContext");
+		setMessage("Search for a BindingContext");
 
 		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newexp_wiz.png"));
 		setTitleImage(titleImage);
@@ -81,7 +81,7 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 		container.setLayout(new GridLayout(2, false));
 
 		Label l = new Label(container, SWT.NONE);
-		l.setText(Messages.CommandCategorySelectionDialog_LabelCategoryId);
+		l.setText(Messages.BindingContextSelectionDialog_LabelContextId);
 
 		Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -102,7 +102,7 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 		TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
 		while (it.hasNext()) {
 			EObject o = it.next();
-			if (o.eClass() == CommandsPackageImpl.Literals.CATEGORY) {
+			if (o.eClass() == CommandsPackageImpl.Literals.BINDING_CONTEXT) {
 				categories.add(o);
 			}
 		}
@@ -130,10 +130,11 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 		if (!s.isEmpty()) {
-			Command cmd = SetCommand.create(resource.getEditingDomain(), command, CommandsPackageImpl.Literals.COMMAND__CATEGORY, s.getFirstElement());
-			if (cmd.canExecute()) {
-				resource.getEditingDomain().getCommandStack().execute(cmd);
+			selectedId = ((MBindingContext) s.getFirstElement()).getElementId();
+			if (selectedId != null && selectedId.trim().length() > 0) {
 				super.okPressed();
+			} else {
+				setErrorMessage("You can not reference an element without an ID");
 			}
 		}
 	}
@@ -141,20 +142,23 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 	private static class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
 
 		public void update(final ViewerCell cell) {
-			MCategory cmd = (MCategory) cell.getElement();
+			MBindingContext cmd = (MBindingContext) cell.getElement();
 
 			StyledString styledString = new StyledString();
 			if (cmd.getName() != null) {
 				styledString.append(cmd.getName());
 			}
+
 			if (cmd.getElementId() != null) {
 				styledString.append(" (" + cmd.getElementId() + ")", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				styledString.append(" (<no id>)", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}
+
 			if (cmd.getDescription() != null) {
 				styledString.append(" - " + cmd.getDescription(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}
+
 			cell.setText(styledString.getString());
 			cell.setStyleRanges(styledString.getStyleRanges());
 		}
@@ -164,7 +168,7 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 		}
 
 		public String getText(Object element) {
-			MCategory command = (MCategory) element;
+			MBindingContext command = (MBindingContext) element;
 			String s = ""; //$NON-NLS-1$
 			if (command.getName() != null) {
 				s += command.getName();

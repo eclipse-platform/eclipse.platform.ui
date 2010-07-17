@@ -50,7 +50,7 @@ public class SharedElementsDialog extends TitleAreaDialog {
 	private MPlaceholder placeholder;
 	private IModelResource resource;
 	private ModelEditor editor;
-	
+
 	public SharedElementsDialog(Shell parentShell, ModelEditor editor, MPlaceholder placeholder, IModelResource resource) {
 		super(parentShell);
 		this.editor = editor;
@@ -65,49 +65,48 @@ public class SharedElementsDialog extends TitleAreaDialog {
 		setTitle("Find Shared Elements");
 		setMessage("Find Shared Elements of an Window");
 
-		
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Label l = new Label(container, SWT.NONE);
 		l.setText("Name");
-		
+
 		Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+
 		l = new Label(container, SWT.NONE);
-		
+
 		viewer = new TableViewer(container);
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setLabelProvider(new LabelProviderImpl());
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			
+
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
 		});
-		
-		if( resource.getRoot().get(0) instanceof MApplication ) {
+
+		if (resource.getRoot().get(0) instanceof MApplication) {
 			List<MUIElement> list = new ArrayList<MUIElement>();
-			for( MWindow m : ((MApplication)resource.getRoot().get(0)).getChildren() ) {
+			for (MWindow m : ((MApplication) resource.getRoot().get(0)).getChildren()) {
 				list.addAll(filter(m.getSharedElements()));
 			}
 			viewer.setInput(list);
-		} else if( resource.getRoot().get(0) instanceof MModelFragments ) {
+		} else if (resource.getRoot().get(0) instanceof MModelFragments) {
 			List<MApplicationElement> list = new ArrayList<MApplicationElement>();
-			for( MModelFragment f : ((MModelFragments)resource.getRoot().get(0)).getFragments() ) {
-				if( f instanceof MStringModelFragment ) {
-					if( ((MStringModelFragment)f).getFeaturename().equals("sharedElements") ) { //$NON-NLS-1$
+			for (MModelFragment f : ((MModelFragments) resource.getRoot().get(0)).getFragments()) {
+				if (f instanceof MStringModelFragment) {
+					if (((MStringModelFragment) f).getFeaturename().equals("sharedElements")) { //$NON-NLS-1$
 						list.addAll(filter(f.getElements()));
 					}
 				}
 			}
 			viewer.setInput(list);
 		}
-		
+
 		final PatternFilter filter = new PatternFilter() {
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {
@@ -122,74 +121,74 @@ public class SharedElementsDialog extends TitleAreaDialog {
 				viewer.refresh();
 			}
 		});
-		
+
 		return comp;
 	}
-	
+
 	@Override
 	protected void okPressed() {
-		if( ! viewer.getSelection().isEmpty() ) {
+		if (!viewer.getSelection().isEmpty()) {
 			IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 			Command cmd = SetCommand.create(resource.getEditingDomain(), placeholder, AdvancedPackageImpl.Literals.PLACEHOLDER__REF, s.getFirstElement());
-			if( cmd.canExecute() ) {
+			if (cmd.canExecute()) {
 				resource.getEditingDomain().getCommandStack().execute(cmd);
 				super.okPressed();
 			}
 		}
 	}
-	
+
 	private static <T> List<T> filter(List<T> o) {
 		List<T> rv = new ArrayList<T>();
-		for( T i : o ) {
-			if( i instanceof MPart || i instanceof MPartSashContainer ) {
+		for (T i : o) {
+			if (i instanceof MPart || i instanceof MPartSashContainer) {
 				rv.add(i);
 			}
 		}
 		return rv;
 	}
-	
+
 	private class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
 		public void update(final ViewerCell cell) {
 			EObject o = (EObject) cell.getElement();
-			
+
 			StyledString string = new StyledString(getTypename(o));
-			
-			if( o instanceof MUILabel ) {
-				string.append(" - " + ((MUILabel)o).getLabel(), StyledString.DECORATIONS_STYLER);
+
+			if (o instanceof MUILabel) {
+				string.append(" - " + ((MUILabel) o).getLabel(), StyledString.DECORATIONS_STYLER);
 			}
-			
+
 			MApplicationElement el = (MApplicationElement) o;
 			string.append(" - " + el.getElementId(), StyledString.DECORATIONS_STYLER);
-			
+
 			cell.setText(string.getString());
 			cell.setStyleRanges(string.getStyleRanges());
 			cell.setImage(getImage(o));
 		}
-		
+
 		public String getText(Object element) {
 			EObject o = (EObject) element;
 			MApplicationElement el = (MApplicationElement) o;
-			
-			if( el instanceof MUILabel ) {
+
+			if (el instanceof MUILabel) {
 				MUILabel label = (MUILabel) el;
 				return getTypename(o) + " - " + el.getElementId() + " - " + label.getLabel();
 			} else {
-				return getTypename(o) + " - " + el.getElementId() + " - ";	
+				return getTypename(o) + " - " + el.getElementId() + " - ";
 			}
 		}
-		
+
 		private String getTypename(EObject o) {
 			AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor((o).eClass());
-			if( editor != null ) {
+			if (editor != null) {
 				return editor.getLabel(o);
 			} else {
 				return o.eClass().getName();
 			}
 		}
-		
+
 		public Image getImage(Object element) {
-			AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor(((EObject)element).eClass());
-			if( editor != null ) {
+			AbstractComponentEditor editor = SharedElementsDialog.this.editor.getEditor(((EObject) element).eClass());
+			if (editor != null) {
 				return editor.getImage(element, getShell().getDisplay());
 			}
 			return null;
