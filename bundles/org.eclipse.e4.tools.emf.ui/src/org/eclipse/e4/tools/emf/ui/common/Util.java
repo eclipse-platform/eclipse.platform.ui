@@ -79,7 +79,13 @@ public class Util {
 		if (liveModel) {
 			MElementContainer<MUIElement> container = element.getParent();
 			container.getChildren().remove(element);
-			container.getChildren().add(index, element);
+
+			if (index >= 0) {
+				container.getChildren().add(index, element);
+			} else {
+				container.getChildren().add(element);
+			}
+
 			container.setSelectedElement(element);
 			return true;
 		} else {

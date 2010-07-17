@@ -717,6 +717,11 @@ public class ModelEditor {
 				Command cmd = AddCommand.create(getModelProvider().getEditingDomain(), container, feature, o);
 				if (cmd.canExecute()) {
 					getModelProvider().getEditingDomain().getCommandStack().execute(cmd);
+					if (isLiveModel()) {
+						if (container instanceof MElementContainer<?> && o instanceof MUIElement) {
+							((MElementContainer<MUIElement>) container).setSelectedElement((MUIElement) o);
+						}
+					}
 				}
 			}
 		}
@@ -827,6 +832,11 @@ public class ModelEditor {
 					Command cmd = AddCommand.create(domain, parent, feature, data);
 					if (cmd.canExecute()) {
 						domain.getCommandStack().execute(cmd);
+						if (isLiveModel()) {
+							if (parent instanceof MElementContainer<?> && data instanceof MUIElement) {
+								((MElementContainer<MUIElement>) parent).setSelectedElement((MUIElement) data);
+							}
+						}
 					}
 				}
 			} else if (getCurrentLocation() == LOCATION_AFTER || getCurrentLocation() == LOCATION_BEFORE) {
@@ -894,6 +904,12 @@ public class ModelEditor {
 						Command cmd = AddCommand.create(domain, parent, feature, data, index);
 						if (cmd.canExecute()) {
 							domain.getCommandStack().execute(cmd);
+							if (isLiveModel()) {
+								if (parent instanceof MElementContainer<?> && data instanceof MUIElement) {
+									((MElementContainer<MUIElement>) parent).setSelectedElement((MUIElement) data);
+								}
+							}
+
 							return true;
 						}
 					}
