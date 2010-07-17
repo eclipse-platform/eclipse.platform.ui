@@ -13,11 +13,13 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -29,7 +31,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -57,7 +58,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 	private TableViewer viewer;
 
 	public VWindowEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 	}
 
 	@Override
@@ -156,7 +157,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-		GridLayout gl = new GridLayout(2,false);
+		GridLayout gl = new GridLayout(2, false);
 		gl.marginLeft = 0;
 		gl.marginRight = 0;
 		gl.marginWidth = 0;
@@ -164,28 +165,25 @@ public class VWindowEditor extends AbstractComponentEditor {
 		buttonComp.setLayout(gl);
 
 		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		
+
 		b.setText("Up");
 		b.setImage(getImage(b.getDisplay(), ARROW_UP));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if( ! viewer.getSelection().isEmpty() ) {
-					IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
-					if( s.size() == 1 ) {
+				if (!viewer.getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+					if (s.size() == 1) {
 						Object obj = s.getFirstElement();
 						MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
 						int idx = container.getChildren().indexOf(obj) - 1;
-						if( idx >= 0 ) {
-							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
-							
-							if( cmd.canExecute() ) {
-								getEditingDomain().getCommandStack().execute(cmd);
+						if (idx >= 0) {
+							if (Util.moveElementByIndex(getEditingDomain(), (MUIElement) obj, getEditor().isLiveModel(), idx)) {
 								viewer.setSelection(new StructuredSelection(obj));
 							}
 						}
-						
+
 					}
 				}
 			}
@@ -194,25 +192,21 @@ public class VWindowEditor extends AbstractComponentEditor {
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText("Down");
 		b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if( ! viewer.getSelection().isEmpty() ) {
-					IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
-					if( s.size() == 1 ) {
+				if (!viewer.getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+					if (s.size() == 1) {
 						Object obj = s.getFirstElement();
 						MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
 						int idx = container.getChildren().indexOf(obj) + 1;
-						if( idx < container.getChildren().size() ) {
-							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, obj, idx);
-							
-							if( cmd.canExecute() ) {
-								getEditingDomain().getCommandStack().execute(cmd);
+						if (idx < container.getChildren().size()) {
+							if (Util.moveElementByIndex(getEditingDomain(), (MUIElement) obj, getEditor().isLiveModel(), idx)) {
 								viewer.setSelection(new StructuredSelection(obj));
 							}
 						}
-						
 					}
 				}
 			}
@@ -230,16 +224,16 @@ public class VWindowEditor extends AbstractComponentEditor {
 		});
 		childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.WINDOW, BasicPackageImpl.Literals.TRIMMED_WINDOW });
 		childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.WINDOW));
-		
+
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				EClass eClass = (EClass) ((IStructuredSelection)childrenDropDown.getSelection()).getFirstElement();
+				EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
 				EObject handler = EcoreUtil.create(eClass);
-				
+
 				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
 
 				if (cmd.canExecute()) {
@@ -252,7 +246,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText("Remove");
 		b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false,2,1));
+		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -262,7 +256,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 					Command cmd = RemoveCommand.create(getEditingDomain(), container, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, windows);
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
-						if( container.getChildren().size() > 0 ) {
+						if (container.getChildren().size() > 0) {
 							viewer.setSelection(new StructuredSelection(container.getChildren().get(0)));
 						}
 					}
