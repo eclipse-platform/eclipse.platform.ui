@@ -123,7 +123,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Menu Contribution";
+		return Messages.MenuContributionEditor_TreeLabel;
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Menu Contribution Bla Bla Bla Bla";
+		return Messages.MenuContributionEditor_TreeLabelDescription;
 	}
 
 	@Override
@@ -371,7 +371,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
 		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
 
-		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

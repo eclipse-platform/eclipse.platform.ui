@@ -242,7 +242,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Enabled");
+			l.setText(Messages.MenuItemEditor_Enabled);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Button b = new Button(parent, SWT.CHECK);
@@ -252,7 +252,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Selected");
+			l.setText(Messages.MenuItemEditor_Selected);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Button b = new Button(parent, SWT.CHECK);
@@ -283,7 +283,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
 		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
 
-		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

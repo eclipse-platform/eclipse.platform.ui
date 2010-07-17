@@ -127,6 +127,8 @@ public class Messages extends NLS {
 	public static String MenuItemEditor_Tooltip;
 	public static String MenuItemEditor_IconURI;
 	public static String MenuEditor_MainMenu;
+	public static String MenuItemEditor_Enabled;
+	public static String MenuItemEditor_Selected;
 
 	public static String MenuSeparatorEditor_Label;
 
@@ -232,6 +234,8 @@ public class Messages extends NLS {
 	public static String MenuContributionEditor_DirectMenuItem;
 	public static String MenuContributionEditor_ParentId;
 	public static String MenuContributionEditor_Position;
+	public static String MenuContributionEditor_TreeLabel;
+	public static String MenuContributionEditor_TreeLabelDescription;
 
 	public static String ModelFragmentsEditor_ModelFragments;
 	public static String ModelFragmentsEditor_Label;
