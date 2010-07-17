@@ -183,7 +183,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE).observeDetail(getMaster()), new UpdateValueStrategy().setBeforeSetValidator(new BindingValidator()), new UpdateValueStrategy());
 
-			final ControlDecoration dec = new ControlDecoration(t, SWT.TOP);
+			final ControlDecoration dec = new ControlDecoration(t, SWT.BOTTOM);
 			binding.getValidationStatus().addValueChangeListener(new IValueChangeListener() {
 
 				public void handleValueChange(ValueChangeEvent event) {
@@ -400,16 +400,17 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	class BindingValidator implements IValidator {
 
 		public IStatus validate(Object value) {
+			int statusCode = getEditor().isLiveModel() ? IStatus.ERROR : IStatus.WARNING;
 			if (value != null && value.toString().trim().length() > 0) {
 				try {
 					KeySequence.getInstance(value.toString());
 					return Status.OK_STATUS;
 				} catch (Exception e) {
-					return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", e.getMessage(), e);
+					return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", e.getMessage(), e);
 				}
 			}
 
-			return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", "Keybinding must not be empty!");
+			return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", "Keybinding must not be empty!");
 		}
 	}
 }
