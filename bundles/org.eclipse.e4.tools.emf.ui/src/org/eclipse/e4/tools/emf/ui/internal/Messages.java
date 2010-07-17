@@ -19,6 +19,7 @@ public class Messages extends NLS {
 	public static String ModelTooling_Common_Add;
 	public static String ModelTooling_Common_Remove;
 	public static String ModelTooling_Common_Id;
+	public static String ModelTooling_Common_RefId;
 	public static String ModelTooling_Common_FindEllipsis;
 
 	public static String ModelTooling_UIElement_ToBeRendered;
@@ -70,11 +71,9 @@ public class Messages extends NLS {
 	public static String DirectMenuItemEditor_Description;
 	public static String DirectMenuItemEditor_ClassURI;
 
-	public static String ControlFactory_BindingContexts;
-	public static String ControlFactory_Tags;
 	public static String ControlFactory_Key;
 	public static String ControlFactory_Value;
-	public static String ControlFactory_ContextVariables;
+	public static String ControlFactory_KeyValueShellTitle;
 
 	public static String DirectToolItemEditor_ClassURI;
 	public static String DirectToolItemEditor_Label;
@@ -107,8 +106,8 @@ public class Messages extends NLS {
 	public static String KeyBindingEditor_Sequence;
 	public static String KeyBindingEditor_Command;
 	public static String KeyBindingEditor_Parameters;
-	public static String KeyBindingEditor_ParametersKey;
-	public static String KeyBindingEditor_ParametersValue;
+	public static String KeyBindingEditor_SequenceNotComplete;
+	public static String KeyBindingEditor_SequenceEmpty;
 
 	public static String MenuEditor_Label;
 	public static String MenuEditor_Description;
@@ -141,9 +140,6 @@ public class Messages extends NLS {
 	public static String PartDescriptorEditor_Closeable;
 	public static String PartDescriptorEditor_Multiple;
 	public static String PartDescriptorEditor_Category;
-	public static String PartDescriptorEditor_PersitedState;
-	public static String PartDescriptorEditor_PersitedStateKey;
-	public static String PartDescriptorEditor_PersitedStateValue;
 	public static String PartDescriptorEditor_Variables;
 	public static String PartDescriptorEditor_Properties;
 	public static String PartDescriptorEditor_PropertiesKey;
@@ -159,9 +155,6 @@ public class Messages extends NLS {
 	public static String PartEditor_IconURI;
 	public static String PartEditor_ClassURI;
 	public static String PartEditor_Closeable;
-	public static String PartEditor_PersitedState;
-	public static String PartEditor_PersitedStateKey;
-	public static String PartEditor_PersitedStateValue;
 	public static String PartEditor_Menus;
 	public static String PartEditor_Handlers;
 	public static String PartEditor_ContainerData;
@@ -274,6 +267,12 @@ public class Messages extends NLS {
 	public static String BindingContextEditor_Name;
 	public static String BindingContextEditor_Description;
 	public static String BindingContextEditor_Subcontexts;
+
+	public static String CommandParameterEditor_TreeLabel;
+	public static String CommandParameterEditor_TreeLabelDescritpion;
+	public static String CommandParameterEditor_Name;
+	public static String CommandParameterEditor_TypeId;
+	public static String CommandParameterEditor_Optional;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

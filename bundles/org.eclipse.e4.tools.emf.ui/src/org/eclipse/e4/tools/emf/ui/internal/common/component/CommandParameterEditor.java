@@ -17,6 +17,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
@@ -65,7 +66,7 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Command Parameter";
+		return Messages.CommandParameterEditor_TreeLabel;
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Command Parameter Bla Bla Bla Bla";
+		return Messages.CommandParameterEditor_TreeLabelDescritpion;
 	}
 
 	@Override
@@ -130,13 +131,13 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 			return parent;
 		}
 
-		ControlFactory.createTextField(parent, "Id", master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, "Name", master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME));
-		ControlFactory.createTextField(parent, "TypeId", master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
+		ControlFactory.createTextField(parent, Messages.CommandParameterEditor_Name, master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__NAME));
+		ControlFactory.createTextField(parent, Messages.CommandParameterEditor_TypeId, master, context, textProp, EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND_PARAMETER__TYPE_ID));
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Optional");
+			l.setText(Messages.CommandParameterEditor_Optional);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Button checkbox = new Button(parent, SWT.CHECK);
@@ -153,7 +154,6 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

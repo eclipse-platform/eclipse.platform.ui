@@ -92,7 +92,7 @@ public class ControlFactory {
 		tableviewer.getControl().setLayoutData(gd);
 
 		TableViewerColumn column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText("Key");
+		column.getColumn().setText(Messages.ControlFactory_Key);
 		column.getColumn().setWidth(200);
 		column.setLabelProvider(new ColumnLabelProvider() {
 			@SuppressWarnings("unchecked")
@@ -105,7 +105,7 @@ public class ControlFactory {
 
 		// FIXME How can we react upon changes in the Map-Value?
 		column = new TableViewerColumn(tableviewer, SWT.NONE);
-		column.getColumn().setText("Value");
+		column.getColumn().setText(Messages.ControlFactory_Value);
 		column.getColumn().setWidth(200);
 		column.setLabelProvider(new ColumnLabelProvider() {
 			@SuppressWarnings("unchecked")
@@ -170,20 +170,20 @@ public class ControlFactory {
 
 					@Override
 					protected Control createDialogArea(Composite parent) {
-						getShell().setText("Key/Value Pair");
+						getShell().setText(Messages.ControlFactory_KeyValueShellTitle);
 						Composite comp = (Composite) super.createDialogArea(parent);
 						Composite container = new Composite(comp, SWT.NONE);
 						container.setLayout(new GridLayout(2, false));
 						container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 						Label l = new Label(container, SWT.NONE);
-						l.setText("Key");
+						l.setText(Messages.ControlFactory_Key);
 
 						key = new Text(container, SWT.BORDER);
 						key.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 						l = new Label(container, SWT.NONE);
-						l.setText("Value");
+						l.setText(Messages.ControlFactory_Value);
 
 						value = new Text(container, SWT.BORDER);
 						value.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -246,7 +246,7 @@ public class ControlFactory {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		Label l = new Label(parent, SWT.NONE);
-		l.setText("Reference-Id");
+		l.setText(Messages.ModelTooling_Common_RefId);
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 		Text t = new Text(parent, SWT.BORDER);
@@ -255,7 +255,7 @@ public class ControlFactory {
 		context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(editor.getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(editor.getMaster()));
 
 		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-		b.setText("Find ...");
+		b.setText(Messages.ModelTooling_Common_FindEllipsis);
 		b.setImage(editor.getImage(t.getDisplay(), AbstractComponentEditor.SEARCH_IMAGE));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -307,7 +307,7 @@ public class ControlFactory {
 				if (element instanceof MUILabel) {
 					MUILabel label = (MUILabel) element;
 					if (!Util.isNullOrEmpty(label.getLabel())) {
-						return rv + " - " + label.getLabel().trim();
+						return rv + " - " + label.getLabel().trim(); //$NON-NLS-1$
 					}
 
 				}
@@ -315,11 +315,11 @@ public class ControlFactory {
 				if (element instanceof MApplicationElement) {
 					MApplicationElement appEl = (MApplicationElement) element;
 					if (!Util.isNullOrEmpty(appEl.getElementId())) {
-						return rv + " - " + appEl.getElementId();
+						return rv + " - " + appEl.getElementId(); //$NON-NLS-1$
 					}
 				}
 
-				return rv + "[" + list.indexOf(element) + "]";
+				return rv + "[" + list.indexOf(element) + "]"; //$NON-NLS-1$//$NON-NLS-2$
 			}
 		});
 		viewer.setInput(list);
