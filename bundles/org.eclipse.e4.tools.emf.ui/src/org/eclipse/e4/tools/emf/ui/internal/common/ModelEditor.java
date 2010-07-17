@@ -44,6 +44,7 @@ import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.ISelectionProviderService;
 import org.eclipse.e4.tools.emf.ui.common.MemoryTransfer;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
@@ -787,7 +788,7 @@ public class ModelEditor {
 		}
 	}
 
-	static class DropListener extends ViewerDropAdapter {
+	class DropListener extends ViewerDropAdapter {
 		private EditingDomain domain;
 
 		protected DropListener(Viewer viewer, EditingDomain domain) {
@@ -866,7 +867,7 @@ public class ModelEditor {
 					return true;
 				}
 
-				if (feature != null && parent != null) {
+				if (feature != null && parent != null && parent.eGet(feature) instanceof List<?>) {
 					List<Object> list = (List<Object>) parent.eGet(feature);
 					int index = list.indexOf(getCurrentTarget());
 
@@ -875,10 +876,14 @@ public class ModelEditor {
 					}
 
 					if (parent == ((EObject) data).eContainer()) {
-						Command cmd = MoveCommand.create(domain, parent, feature, data, index);
-						if (cmd.canExecute()) {
-							domain.getCommandStack().execute(cmd);
-							return true;
+						if (parent instanceof MElementContainer<?> && data instanceof MUIElement) {
+							Util.moveElementByIndex(domain, (MUIElement) data, isLiveModel(), index);
+						} else {
+							Command cmd = MoveCommand.create(domain, parent, feature, data, index);
+							if (cmd.canExecute()) {
+								domain.getCommandStack().execute(cmd);
+								return true;
+							}
 						}
 					} else {
 						// Moving between different sources is always a copy
