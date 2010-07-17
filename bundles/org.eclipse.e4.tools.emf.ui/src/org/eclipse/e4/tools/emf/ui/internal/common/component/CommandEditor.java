@@ -21,6 +21,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.CommandCategorySelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
@@ -72,7 +73,7 @@ public class CommandEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if (image == null) {
 			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Command.gif")); //$NON-NLS-1$
+				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Command.png")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -176,6 +177,31 @@ public class CommandEditor extends AbstractComponentEditor {
 			gd.heightHint = 100;
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__DESCRIPTION).observeDetail(getMaster()));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.CommandEditor_Category);
+			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			t.setLayoutData(gd);
+			t.setEditable(false);
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND__CATEGORY, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID)).observeDetail(getMaster()));
+
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_FindEllipsis);
+			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					CommandCategorySelectionDialog dialog = new CommandCategorySelectionDialog(b.getShell(), getEditor().getModelProvider(), (MCommand) getMaster().getValue());
+					dialog.open();
+				}
+			});
 		}
 
 		// ------------------------------------------------------------

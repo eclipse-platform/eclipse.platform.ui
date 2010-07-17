@@ -12,7 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal;
 
 import org.eclipse.osgi.util.NLS;
 
-public class Messages {
+public class Messages extends NLS {
 	public static String ModelTooling_Common_Up;
 	public static String ModelTooling_Common_Down;
 	public static String ModelTooling_Common_AddEllipsis;
@@ -41,6 +41,7 @@ public class Messages {
 	public static String ApplicationEditor_TrimContributions;
 	public static String ApplicationEditor_RootContext;
 	public static String ApplicationEditor_BindingContexts;
+	public static String ApplicationEditor_Categories;
 
 	public static String BindingTableEditor_Label;
 	public static String BindingTableEditor_Description;
@@ -60,6 +61,7 @@ public class Messages {
 	public static String CommandEditor_ParameterOptional_No;
 	public static String CommandEditor_ParameterOptional_Yes;
 	public static String CommandEditor_ParameterId;
+	public static String CommandEditor_Category;
 
 	public static String DirectMenuItemEditor_Label;
 	public static String DirectMenuItemEditor_Description;
@@ -251,6 +253,14 @@ public class Messages {
 	public static String FeatureSelectionDialog_ShellTitle;
 	public static String FeatureSelectionDialog_DialogTitle;
 	public static String FeatureSelectionDialog_DialogMessage;
+
+	public static String CategoryEditor_TreeLabel;
+	public static String CategoryEditor_TreeLabelDescriptor;
+	public static String CategoryEditor_Name;
+	public static String CategoryEditor_Description;
+	public static String CategoryEditor_Tags;
+
+	public static String CommandCategorySelectionDialog_LabelCategoryId;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);

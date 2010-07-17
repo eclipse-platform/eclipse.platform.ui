@@ -51,6 +51,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingContextEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingTableEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.CategoryEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CommandParameterEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.DirectMenuItemEditor;
@@ -86,6 +87,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimContributionEdi
 import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimmedWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationAddons;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationCategoriesEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
@@ -181,6 +183,7 @@ public class ModelEditor {
 	public static final String VIRTUAL_WINDOW_SHARED_ELEMENTS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_SHARED_ELEMENTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MODEL_FRAGEMENTS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_FRAGEMENTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MODEL_IMPORTS = ModelEditor.class.getName() + ".VIRTUAL_MODEL_IMPORTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_CATEGORIES = ModelEditor.class.getName() + ".VIRTUAL_CATEGORIES"; //$NON-NLS-1$
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private Map<String, AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
@@ -520,7 +523,7 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_WINDOW_SHARED_ELEMENTS, new VWindowSharedElementsEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_MODEL_FRAGEMENTS, new VModelFragmentsEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_MODEL_IMPORTS, new VModelImportsEditor(modelProvider.getEditingDomain(), this));
-
+		registerVirtualEditor(VIRTUAL_CATEGORIES, new VApplicationCategoriesEditor(modelProvider.getEditingDomain(), this));
 	}
 
 	private void registerVirtualEditor(String id, AbstractComponentEditor editor) {
@@ -564,6 +567,7 @@ public class ModelEditor {
 		registerEditor(CommandsPackageImpl.Literals.PARAMETER, new ParameterEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(CommandsPackageImpl.Literals.BINDING_TABLE, new BindingTableEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(CommandsPackageImpl.Literals.BINDING_CONTEXT, new BindingContextEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(CommandsPackageImpl.Literals.CATEGORY, new CategoryEditor(modelProvider.getEditingDomain(), this));
 
 		registerEditor(MenuPackageImpl.Literals.TOOL_BAR, new ToolBarEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(MenuPackageImpl.Literals.RENDERED_TOOL_BAR, new RenderedToolBarEditor(modelProvider.getEditingDomain(), this));
