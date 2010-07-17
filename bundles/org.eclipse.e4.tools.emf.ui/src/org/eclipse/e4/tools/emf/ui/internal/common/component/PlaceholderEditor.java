@@ -149,7 +149,9 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 
 	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master, boolean isImport) {
 		parent = new Composite(parent, SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 

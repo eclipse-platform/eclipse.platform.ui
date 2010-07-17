@@ -32,16 +32,15 @@ public class InputPartEditor extends PartEditor {
 		super(editingDomain, editor, project);
 	}
 
-
 	@Override
 	public String getLabel(Object element) {
 		return Messages.InputPartEditor_Label;
 	}
-	
+
 	@Override
 	protected void createSubformElements(Composite parent, EMFDataBindingContext context, IObservableValue master) {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-		
+
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -50,9 +49,9 @@ public class InputPartEditor extends PartEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan=2;
+			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200,t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.INPUT__INPUT_URI).observeDetail(master));			
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.INPUT__INPUT_URI).observeDetail(master));
 		}
 	}
 }

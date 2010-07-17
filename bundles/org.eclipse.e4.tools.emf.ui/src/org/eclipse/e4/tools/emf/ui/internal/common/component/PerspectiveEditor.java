@@ -165,7 +165,9 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 
 	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master, boolean isImport) {
 		parent = new Composite(parent, SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
@@ -267,7 +269,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout(2, false);
+			gl = new GridLayout(2, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;

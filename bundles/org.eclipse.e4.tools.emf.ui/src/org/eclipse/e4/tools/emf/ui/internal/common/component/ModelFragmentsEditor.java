@@ -106,7 +106,9 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 	private Composite createForm(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
 
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -125,7 +127,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout(2, false);
+			gl = new GridLayout(2, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;
@@ -266,7 +268,7 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout();
+			gl = new GridLayout();
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;

@@ -114,7 +114,9 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 	private Composite createForm(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 		{
@@ -126,7 +128,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			comp.setLayoutData(gd);
-			GridLayout gl = new GridLayout(2, false);
+			gl = new GridLayout(2, false);
 			gl.marginWidth = gl.marginHeight = 0;
 			gl.verticalSpacing = 0;
 			gl.marginLeft = gl.marginBottom = gl.marginRight = gl.marginTop = 0;
@@ -158,7 +160,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			comp.setLayoutData(gd);
-			GridLayout gl = new GridLayout(2, false);
+			gl = new GridLayout(2, false);
 			gl.marginWidth = gl.marginHeight = 0;
 			gl.verticalSpacing = 0;
 			gl.marginLeft = gl.marginBottom = gl.marginRight = gl.marginTop = 0;
@@ -211,7 +213,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout(2, false);
+			gl = new GridLayout(2, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;

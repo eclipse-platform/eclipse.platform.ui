@@ -23,19 +23,19 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 
 public class TrimmedWindowEditor extends WindowEditor {
 	private IListProperty TRIMMED_WINDOW__TRIM_BARS = EMFProperties.list(BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS);
-	
+
 	public TrimmedWindowEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain,editor, project);
+		super(editingDomain, editor, project);
 	}
 
 	public IObservableList getChildList(Object element) {
 		IObservableList list = super.getChildList(element);
-		
-		if( getEditor().isModelFragment() && Util.isImport((EObject) element) ) {
+
+		if (getEditor().isModelFragment() && Util.isImport((EObject) element)) {
 			return list;
 		}
-		
-		list.add(new VirtualEntry<Object>( ModelEditor.VIRTUAL_TRIMMED_WINDOW_TRIMS, TRIMMED_WINDOW__TRIM_BARS, element, "TrimBars") {
+
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TRIMMED_WINDOW_TRIMS, TRIMMED_WINDOW__TRIM_BARS, element, "TrimBars") {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -45,7 +45,7 @@ public class TrimmedWindowEditor extends WindowEditor {
 		});
 		return list;
 	}
-	
+
 	@Override
 	public String getLabel(Object element) {
 		return "Trimmed Window";

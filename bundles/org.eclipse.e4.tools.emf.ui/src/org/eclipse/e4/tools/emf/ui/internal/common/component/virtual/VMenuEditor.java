@@ -50,7 +50,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 	private EStructuralFeature feature;
 
 	public VMenuEditor(EditingDomain editingDomain, ModelEditor editor, EStructuralFeature feature) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 		this.feature = feature;
 	}
 
@@ -88,8 +88,10 @@ public class VMenuEditor extends AbstractComponentEditor {
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
 		parent = new Composite(parent, SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
-		
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
+
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("Menus");
 		l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
@@ -97,17 +99,17 @@ public class VMenuEditor extends AbstractComponentEditor {
 		viewer = new TableViewer(parent);
 		ObservableListContentProvider cp = new ObservableListContentProvider();
 		viewer.setContentProvider(cp);
-		
+
 		IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
 		viewer.setLabelProvider(new ObservableColumnLabelProvider<MMenu>(valProp.observeDetail(cp.getKnownElements())));
-		
+
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 300;
 		viewer.getControl().setLayoutData(gd);
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-		GridLayout gl = new GridLayout();
+		gl = new GridLayout();
 		gl.marginLeft = 0;
 		gl.marginRight = 0;
 		gl.marginWidth = 0;
@@ -157,10 +159,10 @@ public class VMenuEditor extends AbstractComponentEditor {
 				}
 			}
 		});
-		
+
 		return parent;
 	}
-	
+
 	@Override
 	public IObservableList getChildList(Object element) {
 		// TODO Auto-generated method stub

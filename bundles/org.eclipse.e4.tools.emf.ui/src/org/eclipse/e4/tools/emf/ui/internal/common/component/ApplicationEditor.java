@@ -130,7 +130,9 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 	protected Composite createForm(Composite parent, EMFDataBindingContext context) {
 		parent = new Composite(parent, SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 

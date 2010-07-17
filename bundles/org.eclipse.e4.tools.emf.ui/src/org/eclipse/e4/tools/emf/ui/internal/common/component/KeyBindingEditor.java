@@ -12,9 +12,16 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.property.value.IValueProperty;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
@@ -37,9 +44,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
@@ -136,7 +147,9 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
 		parent = new Composite(parent, SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
@@ -164,11 +177,41 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			l.setText(Messages.KeyBindingEditor_Sequence);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-			Text t = new Text(parent, SWT.BORDER);
+			final Text t = new Text(parent, SWT.BORDER);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE).observeDetail(getMaster()));
+			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE).observeDetail(getMaster()), new UpdateValueStrategy().setBeforeSetValidator(new BindingValidator()), new UpdateValueStrategy());
+
+			final ControlDecoration dec = new ControlDecoration(t, SWT.TOP);
+			binding.getValidationStatus().addValueChangeListener(new IValueChangeListener() {
+
+				public void handleValueChange(ValueChangeEvent event) {
+					IStatus s = (IStatus) event.getObservableValue().getValue();
+					if (s.isOK()) {
+						dec.setDescriptionText(null);
+						dec.setImage(null);
+					} else {
+						dec.setDescriptionText(s.getMessage());
+
+						String fieldDecorationID = null;
+						switch (s.getSeverity()) {
+						case IStatus.INFO:
+							fieldDecorationID = FieldDecorationRegistry.DEC_INFORMATION;
+							break;
+						case IStatus.WARNING:
+							fieldDecorationID = FieldDecorationRegistry.DEC_WARNING;
+							break;
+						case IStatus.ERROR:
+						case IStatus.CANCEL:
+							fieldDecorationID = FieldDecorationRegistry.DEC_ERROR;
+							break;
+						}
+						FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(fieldDecorationID);
+						dec.setImage(fieldDecoration == null ? null : fieldDecoration.getImage());
+					}
+				}
+			});
 		}
 
 		// ------------------------------------------------------------
@@ -277,7 +320,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-		GridLayout gl = new GridLayout();
+		gl = new GridLayout();
 		gl.marginLeft = 0;
 		gl.marginRight = 0;
 		gl.marginWidth = 0;
@@ -352,5 +395,21 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE) };
+	}
+
+	class BindingValidator implements IValidator {
+
+		public IStatus validate(Object value) {
+			if (value != null && value.toString().trim().length() > 0) {
+				try {
+					KeySequence.getInstance(value.toString());
+					return Status.OK_STATUS;
+				} catch (Exception e) {
+					return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", e.getMessage(), e);
+				}
+			}
+
+			return new Status(IStatus.ERROR, "org.eclipse.e4.tools.emf.ui", "Keybinding must not be empty!");
+		}
 	}
 }

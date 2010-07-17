@@ -45,7 +45,7 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 	private TableViewer viewer;
 
 	public VWindowTrimEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain,editor);
+		super(editingDomain, editor);
 	}
 
 	@Override
@@ -70,20 +70,21 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context, getMaster());
+			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>)object;
+		VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context,
-			WritableValue master) {
-		parent = new Composite(parent,SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+		parent = new Composite(parent, SWT.NONE);
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
 
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -94,20 +95,20 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
-			
+
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
-			
+
 			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
-			GridLayout gl = new GridLayout();
-			gl.marginLeft=0;
-			gl.marginRight=0;
-			gl.marginWidth=0;
-			gl.marginHeight=0;
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			gl = new GridLayout();
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
 			buttonComp.setLayout(gl);
-			
+
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText("Add Trim");
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
@@ -117,8 +118,8 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					MTrimBar handler = MBasicFactory.INSTANCE.createTrimBar();
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS, handler);
-					
-					if( cmd.canExecute() ) {
+
+					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 						getEditor().setSelection(handler);
 					}
@@ -132,10 +133,10 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! viewer.getSelection().isEmpty() ) {
-						List<?> trimElements = ((IStructuredSelection)viewer.getSelection()).toList();
+					if (!viewer.getSelection().isEmpty()) {
+						List<?> trimElements = ((IStructuredSelection) viewer.getSelection()).toList();
 						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS, trimElements);
-						if( cmd.canExecute() ) {
+						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}

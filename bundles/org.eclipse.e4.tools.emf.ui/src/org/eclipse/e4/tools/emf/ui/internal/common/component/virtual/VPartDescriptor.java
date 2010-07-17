@@ -78,20 +78,21 @@ public class VPartDescriptor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context, getMaster());
+			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>)object;
+		VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context,
-			WritableValue master) {
-		parent = new Composite(parent,SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+		parent = new Composite(parent, SWT.NONE);
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
 
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -108,29 +109,29 @@ public class VPartDescriptor extends AbstractComponentEditor {
 
 			{
 				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL);
-					
+
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText("Name");
 				column.getColumn().setWidth(200);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
 			}
-			
+
 			{
 				IEMFEditValueProperty prop = EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CATEGORY);
-					
+
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.getColumn().setText("Category");
 				column.getColumn().setWidth(200);
 				column.setLabelProvider(new ObservableColumnLabelProvider<MHandler>(prop.observeDetail(cp.getKnownElements())));
 			}
-						
+
 			Composite buttonComp = new Composite(parent, SWT.NONE);
-			buttonComp.setLayoutData(new GridData(GridData.FILL,GridData.END,false,false));
-			GridLayout gl = new GridLayout();
-			gl.marginLeft=0;
-			gl.marginRight=0;
-			gl.marginWidth=0;
-			gl.marginHeight=0;
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			gl = new GridLayout();
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
@@ -140,21 +141,21 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! viewer.getSelection().isEmpty() ) {
-						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
-						if( s.size() == 1 ) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
 							Object obj = s.getFirstElement();
 							MPartDescriptorContainer container = (MPartDescriptorContainer) getMaster().getValue();
 							int idx = container.getDescriptors().indexOf(obj) - 1;
-							if( idx >= 0 ) {
+							if (idx >= 0) {
 								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, obj, idx);
-								
-								if( cmd.canExecute() ) {
+
+								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
 									viewer.setSelection(new StructuredSelection(obj));
 								}
 							}
-							
+
 						}
 					}
 				}
@@ -167,21 +168,21 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! viewer.getSelection().isEmpty() ) {
-						IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
-						if( s.size() == 1 ) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
 							Object obj = s.getFirstElement();
 							MPartDescriptorContainer container = (MPartDescriptorContainer) getMaster().getValue();
 							int idx = container.getDescriptors().indexOf(obj) + 1;
-							if( idx < container.getDescriptors().size() ) {
+							if (idx < container.getDescriptors().size()) {
 								Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, obj, idx);
-								
-								if( cmd.canExecute() ) {
+
+								if (cmd.canExecute()) {
 									getEditingDomain().getCommandStack().execute(cmd);
 									viewer.setSelection(new StructuredSelection(obj));
 								}
 							}
-							
+
 						}
 					}
 				}
@@ -196,8 +197,8 @@ public class VPartDescriptor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					MPartDescriptor command = MBasicFactory.INSTANCE.createPartDescriptor();
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, command);
-					
-					if( cmd.canExecute() ) {
+
+					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 						getEditor().setSelection(command);
 					}
@@ -211,10 +212,10 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					if( ! viewer.getSelection().isEmpty() ) {
-						List<?> commands = ((IStructuredSelection)viewer.getSelection()).toList();
+					if (!viewer.getSelection().isEmpty()) {
+						List<?> commands = ((IStructuredSelection) viewer.getSelection()).toList();
 						Command cmd = RemoveCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, commands);
-						if( cmd.canExecute() ) {
+						if (cmd.canExecute()) {
 							getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}

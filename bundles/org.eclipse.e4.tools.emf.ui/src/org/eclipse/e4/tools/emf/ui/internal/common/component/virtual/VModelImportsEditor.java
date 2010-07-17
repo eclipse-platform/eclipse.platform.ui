@@ -61,7 +61,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 	public VModelImportsEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
 	}
- 
+
 	@Override
 	public Image getImage(Object element, Display display) {
 		return null;
@@ -84,36 +84,37 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 
 	@Override
 	public Composite getEditor(Composite parent, Object object) {
-		if( composite == null ) {
+		if (composite == null) {
 			context = new EMFDataBindingContext();
-			composite = createForm(parent,context, getMaster());
+			composite = createForm(parent, context, getMaster());
 		}
-		VirtualEntry<?> o = (VirtualEntry<?>)object;
+		VirtualEntry<?> o = (VirtualEntry<?>) object;
 		viewer.setInput(o.getList());
 		getMaster().setValue(o.getOriginalParent());
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context,
-			WritableValue master) {
-		parent = new Composite(parent,SWT.NONE);
-		parent.setLayout(new GridLayout(3, false));
+	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
+		parent = new Composite(parent, SWT.NONE);
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		parent.setLayout(gl);
 
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText("Imports");
 			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
-			
+
 			viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 200;
 			viewer.getControl().setLayoutData(gd);
-			
+
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			GridLayout gl = new GridLayout(2, false);
+			gl = new GridLayout(2, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;
@@ -196,7 +197,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 			List<FeatureClass> list = new ArrayList<FeatureClass>();
 			addClasses(ApplicationPackageImpl.eINSTANCE, list);
 			list.addAll(getEditor().getFeatureClasses(FragmentPackageImpl.Literals.MODEL_FRAGMENT, FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS));
-			
+
 			childrenDropDown.setInput(list);
 			childrenDropDown.getCombo().select(0);
 
@@ -254,7 +255,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 			addClasses(eSubPackage, list);
 		}
 	}
-	
+
 	@Override
 	public IObservableList getChildList(Object element) {
 		// TODO Auto-generated method stub
