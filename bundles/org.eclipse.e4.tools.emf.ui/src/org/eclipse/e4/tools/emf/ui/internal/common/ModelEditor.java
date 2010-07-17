@@ -674,6 +674,7 @@ public class ModelEditor {
 
 	class ClipboardHandler implements Handler {
 
+		@SuppressWarnings("unchecked")
 		public void paste() {
 			Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
 			Object o = clip.getContents(MemoryTransfer.getInstance());
@@ -805,6 +806,7 @@ public class ModelEditor {
 			this.domain = domain;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean performDrop(Object data) {
 			if (getCurrentLocation() == LOCATION_ON) {
@@ -945,6 +947,7 @@ public class ModelEditor {
 
 		private boolean isValidDrop(Object target, MApplicationElement instance, boolean isIndex) {
 			if (target instanceof MElementContainer<?>) {
+				@SuppressWarnings("unchecked")
 				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) target;
 
 				if (isIndex || !container.getChildren().contains(instance)) {
@@ -952,6 +955,7 @@ public class ModelEditor {
 					return classifier.isInstance(instance);
 				}
 			} else if (target instanceof VirtualEntry<?>) {
+				@SuppressWarnings("unchecked")
 				VirtualEntry<Object> vTarget = (VirtualEntry<Object>) target;
 				if (isIndex || !vTarget.getList().contains(instance)) {
 					if (vTarget.getProperty() instanceof IEMFProperty) {
