@@ -403,14 +403,20 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			int statusCode = getEditor().isLiveModel() ? IStatus.ERROR : IStatus.WARNING;
 			if (value != null && value.toString().trim().length() > 0) {
 				try {
-					KeySequence.getInstance(value.toString());
+					KeySequence keySequence = KeySequence.getInstance(value.toString());
+					if (!keySequence.isComplete()) {
+						return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", "Keysequence is not complete");
+					}
+					if (keySequence.isEmpty()) {
+						return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", "Keysequence must not be empty!");
+					}
 					return Status.OK_STATUS;
 				} catch (Exception e) {
 					return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", e.getMessage(), e);
 				}
 			}
 
-			return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", "Keybinding must not be empty!");
+			return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", "Keysequence must not be empty!");
 		}
 	}
 }
