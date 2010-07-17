@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.JFaceResources;
@@ -32,14 +33,16 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 
 	private ModelEditor editor;
 
+	private static final String NOT_RENDERED_KEY = "NOT_RENDERED_STYLER";//$NON-NLS-1$
+
 	private static Styler NOT_RENDERED_STYLER = new Styler() {
 		{
-			JFaceResources.getColorRegistry().put("NOT_RENDERED_STYLER", new RGB(200, 200, 200));
+			JFaceResources.getColorRegistry().put(NOT_RENDERED_KEY, new RGB(200, 200, 200));
 		}
 
 		@Override
 		public void applyStyles(TextStyle textStyle) {
-			textStyle.foreground = JFaceResources.getColorRegistry().get("NOT_RENDERED_STYLER");
+			textStyle.foreground = JFaceResources.getColorRegistry().get(NOT_RENDERED_KEY);
 		}
 	};
 
@@ -60,10 +63,10 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 
 				if (o instanceof MUIElement) {
 					if (!((MUIElement) o).isVisible()) {
-						label += "<invisible>";
+						label += "<" + Messages.ComponentLabelProvider_invisible + ">"; //$NON-NLS-1$//$NON-NLS-2$
 						styler = NOT_RENDERED_STYLER;
 					} else if (!((MUIElement) o).isToBeRendered()) {
-						label += "<not rendered>";
+						label += "<" + Messages.ComponentLabelProvider_notrendered + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 						styler = NOT_RENDERED_STYLER;
 					}
 				}

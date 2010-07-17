@@ -266,6 +266,9 @@ public class Messages extends NLS {
 
 	public static String BindingContextSelectionDialog_LabelContextId;
 
+	public static String ComponentLabelProvider_invisible;
+	public static String ComponentLabelProvider_notrendered;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
