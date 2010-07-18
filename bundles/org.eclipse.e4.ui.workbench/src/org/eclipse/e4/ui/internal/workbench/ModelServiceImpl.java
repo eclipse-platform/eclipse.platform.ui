@@ -41,7 +41,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 /**
  *
@@ -533,9 +532,9 @@ public class ModelServiceImpl implements EModelService {
 	 * .model .application.ui.MUIElement)
 	 */
 	public MWindow getTopLevelWindowFor(MUIElement element) {
-		EObjectImpl eObj = (EObjectImpl) element;
+		EObject eObj = (EObject) element;
 		while (eObj != null && !(eObj.eContainer() instanceof MApplication))
-			eObj = (EObjectImpl) eObj.eContainer();
+			eObj = (EObject) eObj.eContainer();
 
 		if (eObj instanceof MWindow)
 			return (MWindow) eObj;
@@ -551,15 +550,25 @@ public class ModelServiceImpl implements EModelService {
 	 * .application.ui.MUIElement)
 	 */
 	public MPerspective getPerspectiveFor(MUIElement element) {
-		EObjectImpl eObj = (EObjectImpl) element;
-		while (!(eObj.eContainer() instanceof MApplication)
-				&& !(eObj.eContainer() instanceof MPerspectiveStack))
-			eObj = (EObjectImpl) eObj.eContainer();
 
-		if (eObj instanceof MPerspective)
-			return (MPerspective) eObj;
+		while (true) {
+			// if we have a placeholder, reassign ourselves
+			MPlaceholder placeholder = element.getCurSharedRef();
+			if (placeholder != null) {
+				element = placeholder;
+			}
+			EObject container = ((EObject) element).eContainer();
+			if (container == null || container instanceof MApplication) {
+				// climbed to the top and found nothing, return null
+				return null;
+			} else if (container instanceof MPerspectiveStack) {
+				// parent is a perspective stack, we ourselves should be a perspective
+				return (MPerspective) element;
+			}
 
-		return null; // Ooops!
+			// climb up
+			element = (MUIElement) container;
+		}
 	}
 
 	public void removePerspectiveModel(MPerspective persp, MWindow window) {

@@ -19,6 +19,7 @@ public class StartupTestSuite extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new StartupTestSuite();
 
+		suite.addTestSuite(EModelServiceTest.class);
 		suite.addTestSuite(EModelServiceFindTest.class);
 		suite.addTestSuite(EModelServiceInsertTest.class);
 		suite.addTestSuite(EPartServiceTest.class);
