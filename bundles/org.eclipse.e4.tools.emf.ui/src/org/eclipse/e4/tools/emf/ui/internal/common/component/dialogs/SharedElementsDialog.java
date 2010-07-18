@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.PatternFilter;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -62,15 +63,16 @@ public class SharedElementsDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 
-		setTitle("Find Shared Elements");
-		setMessage("Find Shared Elements of an Window");
+		getShell().setText(Messages.SharedElementsDialog_ShellTitle);
+		setTitle(Messages.SharedElementsDialog_Title);
+		setMessage(Messages.SharedElementsDialog_Message);
 
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label l = new Label(container, SWT.NONE);
-		l.setText("Name");
+		l.setText(Messages.SharedElementsDialog_Name);
 
 		Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		searchText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -154,11 +156,11 @@ public class SharedElementsDialog extends TitleAreaDialog {
 			StyledString string = new StyledString(getTypename(o));
 
 			if (o instanceof MUILabel) {
-				string.append(" - " + ((MUILabel) o).getLabel(), StyledString.DECORATIONS_STYLER);
+				string.append(" - " + ((MUILabel) o).getLabel(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}
 
 			MApplicationElement el = (MApplicationElement) o;
-			string.append(" - " + el.getElementId(), StyledString.DECORATIONS_STYLER);
+			string.append(" - " + el.getElementId(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 
 			cell.setText(string.getString());
 			cell.setStyleRanges(string.getStyleRanges());
@@ -171,9 +173,9 @@ public class SharedElementsDialog extends TitleAreaDialog {
 
 			if (el instanceof MUILabel) {
 				MUILabel label = (MUILabel) el;
-				return getTypename(o) + " - " + el.getElementId() + " - " + label.getLabel();
+				return getTypename(o) + " - " + el.getElementId() + " - " + label.getLabel(); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				return getTypename(o) + " - " + el.getElementId() + " - ";
+				return getTypename(o) + " - " + el.getElementId() + " - "; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 

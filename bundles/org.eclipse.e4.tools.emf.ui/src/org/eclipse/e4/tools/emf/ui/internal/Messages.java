@@ -465,6 +465,19 @@ public class Messages extends NLS {
 	public static String PerspectiveIconDialogEditor_DialogTitle;
 	public static String PerspectiveIconDialogEditor_DialogMessage;
 
+	public static String SharedElementsDialog_ShellTitle;
+	public static String SharedElementsDialog_Title;
+	public static String SharedElementsDialog_Message;
+	public static String SharedElementsDialog_Name;
+
+	public static String ToolItemIconDialogEditor_ShellTitle;
+	public static String ToolItemIconDialogEditor_DialogTitle;
+	public static String ToolItemIconDialogEditor_DialogMessage;
+
+	public static String WindowIconDialogEditor_ShellTitle;
+	public static String WindowIconDialogEditor_DialogTitle;
+	public static String WindowIconDialogEditor_DialogMessage;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
