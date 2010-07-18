@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
@@ -21,29 +22,29 @@ import org.eclipse.swt.widgets.Shell;
 
 public class HandlerCommandSelectionDialog extends AbstractCommandSelectionDialog {
 	private MHandler handler;
-	
+
 	public HandlerCommandSelectionDialog(Shell parentShell, MHandler handler, IModelResource resource) {
 		super(parentShell, resource);
 		this.handler = handler;
 	}
-	
+
 	@Override
 	protected String getShellTitle() {
-		return  "Handler Command";
-	}
-	
-	@Override
-	protected String getDialogTitle() {
-		return "Handler-Command";
-	}
-	
-	@Override
-	protected String getDialogMessage() {
-		return "Connect the handler to a command";
+		return Messages.HandlerCommandSelectionDialog_ShellTitle;
 	}
 
 	@Override
-	protected Command createStoreCommand( EditingDomain editingDomain, MCommand command) {
+	protected String getDialogTitle() {
+		return Messages.HandlerCommandSelectionDialog_DialogTitle;
+	}
+
+	@Override
+	protected String getDialogMessage() {
+		return Messages.HandlerCommandSelectionDialog_DialogMessage;
+	}
+
+	@Override
+	protected Command createStoreCommand(EditingDomain editingDomain, MCommand command) {
 		return SetCommand.create(editingDomain, handler, CommandsPackageImpl.Literals.HANDLER__COMMAND, command);
 	}
 }

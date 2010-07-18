@@ -57,10 +57,10 @@ public class ContributionClassDialog extends TitleAreaDialog {
 	private EditingDomain editingDomain;
 	private TableViewer viewer;
 	private EStructuralFeature feature;
-	
+
 	public ContributionClassDialog(Shell parentShell, IProject project, EditingDomain editingDomain, MApplicationElement contribution, EStructuralFeature feature) {
 		super(parentShell);
-		this.project = project;	
+		this.project = project;
 		this.contribution = contribution;
 		this.editingDomain = editingDomain;
 		this.feature = feature;
@@ -69,36 +69,36 @@ public class ContributionClassDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
-		
+
 		getShell().setText(Messages.ContributionClassDialog_ShellTitle);
 		setTitle(Messages.ContributionClassDialog_DialogTitle);
 		setMessage(Messages.ContributionClassDialog_DialogMessage);
-		
-		final Image titleImage = new Image(comp.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newclass_wiz.png"));
+
+		final Image titleImage = new Image(comp.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newclass_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
-		
+
 		getShell().addDisposeListener(new DisposeListener() {
-			
+
 			public void widgetDisposed(DisposeEvent e) {
 				javaClassImage.dispose();
 				titleImage.dispose();
 			}
 		});
-		
+
 		javaClassImage = new Image(getShell().getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/obj16/class_obj.gif")); //$NON-NLS-1$
-		
+
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		container.setLayout(new GridLayout(2,false));
-		
+		container.setLayout(new GridLayout(2, false));
+
 		Label l = new Label(container, SWT.NONE);
 		l.setText(Messages.ContributionClassDialog_Label_Classname);
-		
+
 		final Text t = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		new Label(container,SWT.NONE);
-		
+
+		new Label(container, SWT.NONE);
+
 		viewer = new TableViewer(container);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		viewer.getControl().setLayoutData(gd);
@@ -108,42 +108,41 @@ public class ContributionClassDialog extends TitleAreaDialog {
 			public void update(ViewerCell cell) {
 				ContributionData data = (ContributionData) cell.getElement();
 				StyledString styledString = new StyledString(data.className, null);
-				
-				if( data.bundleName != null ) {
+
+				if (data.bundleName != null) {
 					styledString.append(" - " + data.bundleName, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 				}
-				
-				if( data.sourceType != null ) {
+
+				if (data.sourceType != null) {
 					styledString.append(" - ", StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 					styledString.append(data.sourceType + "", StyledString.COUNTER_STYLER); //$NON-NLS-1$
 				}
-				
-				if( data.iconPath == null ) {
+
+				if (data.iconPath == null) {
 					cell.setImage(javaClassImage);
 				}
-				
+
 				cell.setText(styledString.getString());
 				cell.setStyleRanges(styledString.getStyleRanges());
 			}
 		});
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			
+
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
 		});
-		
-		
+
 		final WritableList list = new WritableList();
 		viewer.setInput(list);
-		
+
 		final ClassContributionCollector collector = getCollector();
-		
+
 		t.addModifyListener(new ModifyListener() {
 			private ContributionResultHandlerImpl currentResultHandler;
-			
+
 			public void modifyText(ModifyEvent e) {
-				if( currentResultHandler != null ) {
+				if (currentResultHandler != null) {
 					currentResultHandler.cancled = true;
 				}
 				list.clear();
@@ -152,47 +151,47 @@ public class ContributionClassDialog extends TitleAreaDialog {
 				collector.findContributions(filter, currentResultHandler);
 			}
 		});
-				
+
 		return comp;
 	}
-	
+
 	@Override
 	protected void okPressed() {
 		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-		if( ! s.isEmpty() ) {
+		if (!s.isEmpty()) {
 			ContributionData cd = (ContributionData) s.getFirstElement();
 			String uri = "platform:/plugin/" + cd.bundleName + "/" + cd.className; //$NON-NLS-1$ //$NON-NLS-2$
 			Command cmd = SetCommand.create(editingDomain, contribution, feature, uri);
-			if( cmd.canExecute() ) {
+			if (cmd.canExecute()) {
 				editingDomain.getCommandStack().execute(cmd);
 				super.okPressed();
 			}
 		}
 	}
-	
+
 	private ClassContributionCollector getCollector() {
 		Bundle bundle = FrameworkUtil.getBundle(ContributionClassDialog.class);
 		BundleContext context = bundle.getBundleContext();
 		ServiceReference ref = context.getServiceReference(ClassContributionCollector.class.getName());
-		if( ref != null ) {
+		if (ref != null) {
 			return (ClassContributionCollector) context.getService(ref);
 		}
 		return null;
 	}
-	
+
 	private static class ContributionResultHandlerImpl implements ContributionResultHandler {
 		private boolean cancled = false;
 		private IObservableList list;
-		
+
 		public ContributionResultHandlerImpl(IObservableList list) {
 			this.list = list;
 		}
-		
+
 		public void result(ContributionData data) {
-			if( ! cancled ) {
+			if (!cancled) {
 				list.add(data);
 			}
 		}
-		
+
 	}
 }

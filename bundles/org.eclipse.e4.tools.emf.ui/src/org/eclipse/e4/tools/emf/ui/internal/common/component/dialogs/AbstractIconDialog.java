@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.StringMatcher;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.common.command.Command;
@@ -80,7 +81,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 		container.setLayout(new GridLayout(2, false));
 
 		Label l = new Label(container, SWT.NONE);
-		l.setText("IconName");
+		l.setText(Messages.AbstractIconDialog_IconName);
 
 		final Text t = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -118,12 +119,12 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 						}
 					}
 				}
-				
+
 				String bundle = getBundle(file);
-				if( bundle != null ) {
+				if (bundle != null) {
 					styledString.append(" - " + bundle, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$	
 				}
-				
+
 				cell.setImage(img);
 				cell.setText(styledString.getString());
 				cell.setStyleRanges(styledString.getStyleRanges());
@@ -133,7 +134,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 		final WritableList list = new WritableList();
 		viewer.setInput(list);
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			
+
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
@@ -152,7 +153,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 					task.cancel();
 				}
 				list.clear();
-				
+
 				clearImages();
 
 				callback = new IconMatchCallback(list);
@@ -170,23 +171,23 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 
 		return comp;
 	}
-	
+
 	private void clearImages() {
 		for (Image img : icons.values()) {
 			img.dispose();
 		}
 		icons.clear();
 	}
-	
+
 	@Override
 	protected void okPressed() {
 		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-		if( ! s.isEmpty() ) {
+		if (!s.isEmpty()) {
 			IFile file = (IFile) s.getFirstElement();
 			String bundle = getBundle(file);
-			String uri = "platform:/plugin/"+bundle+"/"+file.getProjectRelativePath().toString();
+			String uri = "platform:/plugin/" + bundle + "/" + file.getProjectRelativePath().toString(); //$NON-NLS-1$//$NON-NLS-2$
 			Command cmd = SetCommand.create(editingDomain, element, feature, uri);
-			if( cmd.canExecute() ) {
+			if (cmd.canExecute()) {
 				editingDomain.getCommandStack().execute(cmd);
 				super.okPressed();
 			}
@@ -232,7 +233,7 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 		}
 		return null;
 	}
-	
+
 	private class IconMatchCallback {
 		private volatile boolean cancel;
 		private IObservableList list;

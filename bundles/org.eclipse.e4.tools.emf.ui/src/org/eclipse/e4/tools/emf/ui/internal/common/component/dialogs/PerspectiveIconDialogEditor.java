@@ -1,6 +1,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -14,17 +15,16 @@ public class PerspectiveIconDialogEditor extends AbstractIconDialog {
 
 	@Override
 	protected String getShellTitle() {
-		return "Perspective Icon Search";
+		return Messages.PerspectiveIconDialogEditor_ShellTitle;
 	}
 
 	@Override
 	protected String getDialogTitle() {
-		return "Perspective Icon Search";
+		return Messages.PerspectiveIconDialogEditor_DialogTitle;
 	}
 
 	@Override
 	protected String getDialogMessage() {
-		return "Search for GIF, PNG and JPG icons in the current project";
+		return Messages.PerspectiveIconDialogEditor_DialogMessage;
 	}
-
 }

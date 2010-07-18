@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
@@ -29,21 +30,21 @@ public class KeyBindingCommandSelectionDialog extends AbstractCommandSelectionDi
 
 	@Override
 	protected String getShellTitle() {
-		return  "Keybinding Command";
+		return Messages.KeyBindingCommandSelectionDialog_ShellTitle;
 	}
-	
+
 	@Override
 	protected String getDialogTitle() {
-		return "Keybinding-Command";
+		return Messages.KeyBindingCommandSelectionDialog_DialogTitle;
 	}
-	
+
 	@Override
 	protected String getDialogMessage() {
-		return "Connect the keybinding to a command";
+		return Messages.KeyBindingCommandSelectionDialog_DialogMessage;
 	}
-	
+
 	@Override
-	protected Command createStoreCommand( EditingDomain editingDomain, MCommand command) {
+	protected Command createStoreCommand(EditingDomain editingDomain, MCommand command) {
 		return SetCommand.create(editingDomain, binding, CommandsPackageImpl.Literals.KEY_BINDING__COMMAND, command);
 	}
 }

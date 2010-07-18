@@ -58,25 +58,27 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 	}
 
 	protected abstract String getShellTitle();
+
 	protected abstract String getDialogTitle();
+
 	protected abstract String getDialogMessage();
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		getShell().setText( getShellTitle());
-		setTitle( getDialogTitle() );
-		setMessage( getDialogMessage() );
-		
-		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newexp_wiz.png"));
+		getShell().setText(getShellTitle());
+		setTitle(getDialogTitle());
+		setMessage(getDialogMessage());
+
+		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
-			
+
 			public void widgetDisposed(DisposeEvent e) {
 				titleImage.dispose();
 			}
 		});
-		
+
 		Composite container = new Composite(composite, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
@@ -93,22 +95,22 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 		viewer.setLabelProvider(new LabelProviderImpl());
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			
+
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
 		});
-		
+
 		List<EObject> commands = new ArrayList<EObject>();
-		TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject)resource.getRoot().get(0), true);
-		while( it.hasNext() ) {
+		TreeIterator<EObject> it = EcoreUtil.getAllContents((EObject) resource.getRoot().get(0), true);
+		while (it.hasNext()) {
 			EObject o = it.next();
-			if( o.eClass() == CommandsPackageImpl.Literals.COMMAND ) {
+			if (o.eClass() == CommandsPackageImpl.Literals.COMMAND) {
 				commands.add(o);
 			}
 		}
 		viewer.setInput(commands);
-		
+
 		final PatternFilter filter = new PatternFilter() {
 			@Override
 			protected boolean isParentMatch(Viewer viewer, Object element) {
@@ -130,31 +132,31 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-		if( ! s.isEmpty() ) {
-			Command cmd = createStoreCommand( resource.getEditingDomain(), (MCommand) s.getFirstElement() );
-			if( cmd.canExecute() ) {
+		if (!s.isEmpty()) {
+			Command cmd = createStoreCommand(resource.getEditingDomain(), (MCommand) s.getFirstElement());
+			if (cmd.canExecute()) {
 				resource.getEditingDomain().getCommandStack().execute(cmd);
 				super.okPressed();
 			}
 		}
 	}
-	
-	protected abstract Command createStoreCommand( EditingDomain editingDomain, MCommand command);
-	
+
+	protected abstract Command createStoreCommand(EditingDomain editingDomain, MCommand command);
+
 	private static class LabelProviderImpl extends StyledCellLabelProvider implements ILabelProvider {
-		
+
 		public void update(final ViewerCell cell) {
 			MCommand cmd = (MCommand) cell.getElement();
-			
+
 			StyledString styledString = new StyledString();
-			if( cmd.getCommandName() != null ) {
+			if (cmd.getCommandName() != null) {
 				styledString.append(cmd.getCommandName());
 			}
-			if( cmd.getDescription() != null ) {
-				styledString.append(" - " + cmd.getDescription(),StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+			if (cmd.getDescription() != null) {
+				styledString.append(" - " + cmd.getDescription(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}
-			if( cmd.getElementId() != null ) {
-				styledString.append(" - " + cmd.getElementId(),StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+			if (cmd.getElementId() != null) {
+				styledString.append(" - " + cmd.getElementId(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			}
 			cell.setText(styledString.getString());
 			cell.setStyleRanges(styledString.getStyleRanges());
@@ -167,18 +169,18 @@ public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 		public String getText(Object element) {
 			MCommand command = (MCommand) element;
 			String s = ""; //$NON-NLS-1$
-			if( command.getCommandName() != null ) {
+			if (command.getCommandName() != null) {
 				s += command.getCommandName();
 			}
-			
-			if( command.getDescription() != null ) {
+
+			if (command.getDescription() != null) {
 				s += " " + command.getDescription(); //$NON-NLS-1$
 			}
-			
-			if( command.getElementId() != null ) {
+
+			if (command.getElementId() != null) {
 				s += " " + command.getElementId(); //$NON-NLS-1$
 			}
-			
+
 			return s;
 		}
 	}

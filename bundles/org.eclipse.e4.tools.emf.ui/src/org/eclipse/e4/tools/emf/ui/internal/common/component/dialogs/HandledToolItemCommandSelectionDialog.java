@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
@@ -21,29 +22,29 @@ import org.eclipse.swt.widgets.Shell;
 
 public class HandledToolItemCommandSelectionDialog extends AbstractCommandSelectionDialog {
 	private MHandledItem handler;
-	
+
 	public HandledToolItemCommandSelectionDialog(Shell parentShell, MHandledItem handler, IModelResource resource) {
 		super(parentShell, resource);
 		this.handler = handler;
 	}
-	
+
 	@Override
 	protected String getShellTitle() {
-		return  "ToolItem Command";
-	}
-	
-	@Override
-	protected String getDialogTitle() {
-		return "ToolItem-Command";
-	}
-	
-	@Override
-	protected String getDialogMessage() {
-		return "Connect the ToolItem to a command";
+		return Messages.HandledToolItemCommandSelectionDialog_ShellTitle;
 	}
 
 	@Override
-	protected Command createStoreCommand( EditingDomain editingDomain, MCommand command) {
+	protected String getDialogTitle() {
+		return Messages.HandledToolItemCommandSelectionDialog_DialogTitle;
+	}
+
+	@Override
+	protected String getDialogMessage() {
+		return Messages.HandledToolItemCommandSelectionDialog_DialogMessage;
+	}
+
+	@Override
+	protected Command createStoreCommand(EditingDomain editingDomain, MCommand command) {
 		return SetCommand.create(editingDomain, handler, MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND, command);
 	}
 }

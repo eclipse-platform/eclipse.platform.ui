@@ -5,6 +5,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandler;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -57,7 +58,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 
-		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/import_wiz.png"));
+		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
@@ -66,16 +67,16 @@ public class FindImportElementDialog extends TitleAreaDialog {
 			}
 		});
 
-		getShell().setText("Find Import Elements");
-		setTitle("Find Import Elements");
-		setMessage("Search for an elements whose ID you'd like to import");
+		getShell().setText(Messages.FindImportElementDialog_ShellTitle);
+		setTitle(Messages.FindImportElementDialog_Title);
+		setMessage(Messages.FindImportElementDialog_Message);
 
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
 
 		Label l = new Label(container, SWT.NONE);
-		l.setText("Search");
+		l.setText(Messages.FindImportElementDialog_Search);
 
 		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -94,7 +95,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 				cell.setImage(editor.getImage(o, searchText.getDisplay()));
 
 				MApplicationElement appEl = (MApplicationElement) o;
-				StyledString styledString = new StyledString(editor.getLabel(o) + " (" + appEl.getElementId() + ")", null);
+				StyledString styledString = new StyledString(editor.getLabel(o) + " (" + (appEl.getElementId() == null ? "<" + Messages.FindImportElementDialog_noId + ">" : appEl.getElementId()) + ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				String detailLabel = editor.getDetailLabel(o);
 				if (detailLabel != null && !detailLabel.equals(appEl.getElementId())) {
 					styledString.append(" - " + detailLabel, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
@@ -133,7 +134,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 		});
 
 		Button button = new Button(container, SWT.PUSH);
-		button.setText("Clear Cache");
+		button.setText(Messages.FindImportElementDialog_ClearCache);
 		button.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false, 2, 1));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -157,7 +158,7 @@ public class FindImportElementDialog extends TitleAreaDialog {
 					super.okPressed();
 				}
 			} else {
-				setErrorMessage("You can not import an element without an ID");
+				setErrorMessage(Messages.FindImportElementDialog_NoIdReference);
 			}
 		}
 	}

@@ -63,11 +63,11 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		getShell().setText("Command Category Dialog");
-		setTitle("Command Category");
-		setMessage("Search for a Command Category");
+		getShell().setText(Messages.CommandCategorySelectionDialog_ShellTitle);
+		setTitle(Messages.CommandCategorySelectionDialog_Title);
+		setMessage(Messages.CommandCategorySelectionDialog_Message);
 
-		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newexp_wiz.png"));
+		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 

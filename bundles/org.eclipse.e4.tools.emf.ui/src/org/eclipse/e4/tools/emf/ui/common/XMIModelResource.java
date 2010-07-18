@@ -30,32 +30,26 @@ import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
 
-@SuppressWarnings("restriction")
 public class XMIModelResource implements IModelResource {
 	private EditingDomain editingDomain;
 	private Resource resource;
 	private List<ModelListener> listeners = new ArrayList<IModelResource.ModelListener>();
 	private boolean dirty;
 
-	
 	public XMIModelResource(URI uri) {
-		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(
-				ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
 		ResourceSet resourceSet = new ResourceSetImpl();
 		BasicCommandStack commandStack = new BasicCommandStack();
 		commandStack.addCommandStackListener(new CommandStackListener() {
-			
+
 			public void commandStackChanged(EventObject event) {
 				dirty = true;
 				fireDirtyChanged();
 				fireCommandStackChanged();
 			}
 		});
-		editingDomain = new AdapterFactoryEditingDomain(adapterFactory,
-				commandStack, resourceSet);
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
-				.put(Resource.Factory.Registry.DEFAULT_EXTENSION,
-						new E4XMIResourceFactory());
+		editingDomain = new AdapterFactoryEditingDomain(adapterFactory, commandStack, resourceSet);
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
 		resource = resourceSet.getResource(uri, true);
 	}
 
@@ -76,27 +70,27 @@ public class XMIModelResource implements IModelResource {
 	public void addModelListener(ModelListener listener) {
 		listeners.add(listener);
 	}
-	
+
 	public void removeModelListener(ModelListener listener) {
 		listeners.remove(listener);
 	}
-	
+
 	public boolean isDirty() {
 		return dirty && getEditingDomain().getCommandStack().canUndo();
 	}
-	
+
 	private void fireDirtyChanged() {
-		for( ModelListener listener : listeners ) {
+		for (ModelListener listener : listeners) {
 			listener.dirtyChanged();
 		}
 	}
-	
+
 	private void fireCommandStackChanged() {
-		for( ModelListener listener : listeners ) {
+		for (ModelListener listener : listeners) {
 			listener.commandStackChanged();
 		}
 	}
-	
+
 	public IStatus save() {
 		Map<String, String> map = new HashMap<String, String>();
 		try {

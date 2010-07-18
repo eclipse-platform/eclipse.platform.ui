@@ -9,6 +9,7 @@ import org.eclipse.e4.tools.emf.ui.common.IModelElementProvider.ModelResultHandl
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.Util.InternalPackage;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
@@ -68,7 +69,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
 
-		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/import_wiz.png"));
+		final Image titleImage = new Image(parent.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/import_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
@@ -77,16 +78,16 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			}
 		});
 
-		getShell().setText("Find Parent Elements");
-		setTitle("Find Parent Elements");
-		setMessage("Search for an elements who you like to references as parent");
+		getShell().setText(Messages.FindParentReferenceElementDialog_ShellTitle);
+		setTitle(Messages.FindParentReferenceElementDialog_Title);
+		setMessage(Messages.FindParentReferenceElementDialog_Message);
 
 		Composite container = new Composite(comp, SWT.NONE);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		container.setLayout(new GridLayout(2, false));
 
 		Label l = new Label(container, SWT.NONE);
-		l.setText("Container-Type");
+		l.setText(Messages.FindParentReferenceElementDialog_ContainerType);
 
 		final ComboViewer eClassViewer = new ComboViewer(container);
 		eClassViewer.setLabelProvider(new LabelProvider() {
@@ -113,7 +114,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		eClassViewer.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		l = new Label(container, SWT.NONE);
-		l.setText("Search");
+		l.setText(Messages.FindParentReferenceElementDialog_Search);
 
 		final Text searchText = new Text(container, SWT.BORDER | SWT.SEARCH | SWT.ICON_SEARCH);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -134,7 +135,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 
 				MApplicationElement appEl = (MApplicationElement) o;
 
-				StyledString styledString = new StyledString(editor.getLabel(o) + " (" + (appEl.getElementId() == null ? "<no id>" : appEl.getElementId()) + ")", null);
+				StyledString styledString = new StyledString(editor.getLabel(o) + " (" + (appEl.getElementId() == null ? "<" + Messages.FindParentReferenceElementDialog_NoId + ">" : appEl.getElementId()) + ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				String detailLabel = editor.getDetailLabel(o);
 				if (detailLabel != null && !detailLabel.equals(appEl.getElementId())) {
 					styledString.append(" - " + detailLabel, StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
@@ -175,7 +176,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		});
 
 		Button button = new Button(container, SWT.PUSH);
-		button.setText("Clear Cache");
+		button.setText(Messages.FindParentReferenceElementDialog_ClearCache);
 		button.setLayoutData(new GridData(GridData.END, GridData.CENTER, true, false, 2, 1));
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -199,7 +200,7 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 					super.okPressed();
 				}
 			} else {
-				setErrorMessage("You can not reference an element without an ID");
+				setErrorMessage(Messages.FindParentReferenceElementDialog_NoReferenceId);
 			}
 		}
 	}
@@ -220,8 +221,6 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 		private Filter filter;
 		private AbstractComponentEditor editor;
 		private Resource resource;
-
-		private List<EObject> noId = new ArrayList<EObject>();
 
 		public ModelResultHandlerImpl(IObservableList list, Filter filter, AbstractComponentEditor editor, Resource resource) {
 			this.list = list;

@@ -401,6 +401,70 @@ public class Messages extends NLS {
 	public static String VWindowTrimEditor_TreeLabelDescription;
 	public static String VWindowTrimEditor_Controls;
 
+	public static String AbstractIconDialog_IconName;
+
+	public static String BindingContextSelectionDialog_ShellTitle;
+	public static String BindingContextSelectionDialog_Title;
+	public static String BindingContextSelectionDialog_Message;
+	public static String BindingContextSelectionDialog_NoIdReference;
+
+	public static String CommandCategorySelectionDialog_ShellTitle;
+	public static String CommandCategorySelectionDialog_Title;
+	public static String CommandCategorySelectionDialog_Message;
+
+	public static String FindImportElementDialog_ShellTitle;
+	public static String FindImportElementDialog_Title;
+	public static String FindImportElementDialog_Message;
+	public static String FindImportElementDialog_Search;
+	public static String FindImportElementDialog_ClearCache;
+	public static String FindImportElementDialog_NoIdReference;
+	public static String FindImportElementDialog_noId;
+
+	public static String FindParentReferenceElementDialog_ShellTitle;
+	public static String FindParentReferenceElementDialog_Title;
+	public static String FindParentReferenceElementDialog_Message;
+	public static String FindParentReferenceElementDialog_ContainerType;
+	public static String FindParentReferenceElementDialog_Search;
+	public static String FindParentReferenceElementDialog_NoId;
+	public static String FindParentReferenceElementDialog_ClearCache;
+	public static String FindParentReferenceElementDialog_NoReferenceId;
+
+	public static String HandledMenuItemCommandSelectionDialog_ShellTitle;
+	public static String HandledMenuItemCommandSelectionDialog_DialogTitle;
+	public static String HandledMenuItemCommandSelectionDialog_DialogMessage;
+
+	public static String HandledToolItemCommandSelectionDialog_ShellTitle;
+	public static String HandledToolItemCommandSelectionDialog_DialogTitle;
+	public static String HandledToolItemCommandSelectionDialog_DialogMessage;
+
+	public static String HandlerCommandSelectionDialog_ShellTitle;
+	public static String HandlerCommandSelectionDialog_DialogTitle;
+	public static String HandlerCommandSelectionDialog_DialogMessage;
+
+	public static String KeyBindingCommandSelectionDialog_ShellTitle;
+	public static String KeyBindingCommandSelectionDialog_DialogTitle;
+	public static String KeyBindingCommandSelectionDialog_DialogMessage;
+
+	public static String MenuIconDialogEditor_ShellTitle;
+	public static String MenuIconDialogEditor_DialogTitle;
+	public static String MenuIconDialogEditor_DialogMessage;
+
+	public static String MenuItemIconDialogEditor_ShellTitle;
+	public static String MenuItemIconDialogEditor_DialogTitle;
+	public static String MenuItemIconDialogEditor_DialogMessage;
+
+	public static String PartDescriptorIconDialogEditor_ShellTitle;
+	public static String PartDescriptorIconDialogEditor_DialogTitle;
+	public static String PartDescriptorIconDialogEditor_DialogMessage;
+
+	public static String PartIconDialogEditor_ShellTitle;
+	public static String PartIconDialogEditor_DialogTitle;
+	public static String PartIconDialogEditor_DialogMessage;
+
+	public static String PerspectiveIconDialogEditor_ShellTitle;
+	public static String PerspectiveIconDialogEditor_DialogTitle;
+	public static String PerspectiveIconDialogEditor_DialogMessage;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

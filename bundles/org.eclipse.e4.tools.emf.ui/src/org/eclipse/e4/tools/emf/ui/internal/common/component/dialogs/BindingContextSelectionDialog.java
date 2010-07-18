@@ -63,11 +63,11 @@ public class BindingContextSelectionDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		getShell().setText("BindingContext Dialog");
-		setTitle("BindingContext");
-		setMessage("Search for a BindingContext");
+		getShell().setText(Messages.BindingContextSelectionDialog_ShellTitle);
+		setTitle(Messages.BindingContextSelectionDialog_Title);
+		setMessage(Messages.BindingContextSelectionDialog_Message);
 
-		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newexp_wiz.png"));
+		final Image titleImage = new Image(composite.getDisplay(), getClass().getClassLoader().getResourceAsStream("/icons/full/wizban/newexp_wiz.png")); //$NON-NLS-1$
 		setTitleImage(titleImage);
 		getShell().addDisposeListener(new DisposeListener() {
 
@@ -134,7 +134,7 @@ public class BindingContextSelectionDialog extends TitleAreaDialog {
 			if (selectedId != null && selectedId.trim().length() > 0) {
 				super.okPressed();
 			} else {
-				setErrorMessage("You can not reference an element without an ID");
+				setErrorMessage(Messages.BindingContextSelectionDialog_NoIdReference);
 			}
 		}
 	}
