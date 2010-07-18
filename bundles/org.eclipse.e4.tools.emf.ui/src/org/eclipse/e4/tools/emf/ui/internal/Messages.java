@@ -194,6 +194,7 @@ public class Messages extends NLS {
 
 	public static String PlaceholderEditor_Label;
 	public static String PlaceholderEditor_Descriptor;
+	public static String PlaceholderEditor_Reference;
 
 	public static String ToolBarEditor_Label;
 	public static String ToolBarEditor_Description;
@@ -285,6 +286,9 @@ public class Messages extends NLS {
 	public static String ParameterEditor_TreeLabelDescription;
 	public static String ParameterEditor_Name;
 	public static String ParameterEditor_Value;
+
+	public static String PopupMenuEditor_TreeLabel;
+	public static String PopupMenuEditor_TreeLabelDescription;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
