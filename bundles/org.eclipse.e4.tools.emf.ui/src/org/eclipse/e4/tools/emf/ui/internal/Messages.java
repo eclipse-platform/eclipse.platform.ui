@@ -478,6 +478,13 @@ public class Messages extends NLS {
 	public static String WindowIconDialogEditor_DialogTitle;
 	public static String WindowIconDialogEditor_DialogMessage;
 
+	public static String ImageTooltip_UnknownError;
+	public static String ImageTooltip_FileNotFound;
+	public static String ImageTooltip_Icon;
+	public static String ImageTooltip_Name;
+	public static String ImageTooltip_Dimension;
+	public static String ImageTooltip_FileSize;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

@@ -13,7 +13,7 @@ public interface IModelElementProvider {
 		public Filter(EClass eClass, String elementId) {
 			this.eClass = eClass;
 			this.elementId = elementId;
-			this.elementIdPattern = Pattern.compile(".*" + elementId.replaceAll("\\.", "\\\\.").replaceAll("\\*", ".*") + ".*");
+			this.elementIdPattern = Pattern.compile(".*" + elementId.replaceAll("\\.", "\\\\.").replaceAll("\\*", ".*") + ".*"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		}
 	}
 
