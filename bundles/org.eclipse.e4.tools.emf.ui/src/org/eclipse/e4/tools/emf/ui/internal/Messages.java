@@ -217,6 +217,7 @@ public class Messages extends NLS {
 	public static String VBindingTableEditor_Contexts;
 	public static String VBindingTableEditor_Name;
 	public static String VBindingTableEditor_LabelDescription;
+	public static String VBindingTableEditor_BindingTables;
 
 	public static String AddonsEditor_ClassURI;
 	public static String AddonsEditor_TreeLabel;
@@ -338,6 +339,27 @@ public class Messages extends NLS {
 	public static String WindowEditor_Windows;
 	public static String WindowEditor_Controls;
 	public static String WindowEditor_SharedElements;
+
+	public static String VApplicationAddons_AddAddon;
+	public static String VApplicationAddons_TreeLabel;
+	public static String VApplicationAddons_TreeLabelDescription;
+	public static String VApplicationAddons_Commands;
+
+	public static String VApplicationCategoriesEditor_TreeLabel;
+	public static String VApplicationCategoriesEditor_TreeLabelDescription;
+	public static String VApplicationCategoriesEditor_Categories;
+
+	public static String VCommandEditor_TreeLabel;
+	public static String VCommandEditor_TreeLabelDescription;
+	public static String VCommandEditor_Commands;
+
+	public static String VHandlerEditor_TreeLabel;
+	public static String VHandlerEditor_TreeLabelDescription;
+	public static String VHandlerEditor_Handlers;
+
+	public static String VMenuContributionsEditor_TreeLabel;
+	public static String VMenuContributionsEditor_TreeLabelDescription;
+	public static String VMenuContributionsEditor_MenuContributions;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
