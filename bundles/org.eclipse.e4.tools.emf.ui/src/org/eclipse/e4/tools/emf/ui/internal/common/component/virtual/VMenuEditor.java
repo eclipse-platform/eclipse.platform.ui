@@ -14,23 +14,25 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
-import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -61,7 +63,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Menus";
+		return Messages.VMenuEditor_TreeLabel;
 	}
 
 	@Override
@@ -71,7 +73,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Menus Bla Bla Bla Bla Bla";
+		return Messages.VMenuEditor_TreeLabelDescription;
 	}
 
 	@Override
@@ -93,19 +95,17 @@ public class VMenuEditor extends AbstractComponentEditor {
 		parent.setLayout(gl);
 
 		Label l = new Label(parent, SWT.NONE);
-		l.setText("Menus");
+		l.setText(Messages.VMenuEditor_Menus);
 		l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		viewer = new TableViewer(parent);
 		ObservableListContentProvider cp = new ObservableListContentProvider();
 		viewer.setContentProvider(cp);
-
-		IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID);
-		viewer.setLabelProvider(new ObservableColumnLabelProvider<MMenu>(valProp.observeDetail(cp.getKnownElements())));
-
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 300;
 		viewer.getControl().setLayoutData(gd);
+		viewer.getTable().setHeaderVisible(true);
+		viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
@@ -117,17 +117,62 @@ public class VMenuEditor extends AbstractComponentEditor {
 		buttonComp.setLayout(gl);
 
 		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Up");
+		b.setText(Messages.ModelTooling_Common_Up);
 		b.setImage(getImage(b.getDisplay(), ARROW_UP));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!viewer.getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+					if (s.size() == 1) {
+						Object obj = s.getFirstElement();
+						EObject container = (EObject) getMaster().getValue();
+						int idx = ((List<?>) container.eGet(feature)).indexOf(obj) - 1;
+						if (idx >= 0) {
+							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), feature, obj, idx);
+
+							if (cmd.canExecute()) {
+								getEditingDomain().getCommandStack().execute(cmd);
+								viewer.setSelection(new StructuredSelection(obj));
+							}
+						}
+
+					}
+				}
+			}
+		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Down");
+		b.setText(Messages.ModelTooling_Common_Down);
 		b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!viewer.getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+					if (s.size() == 1) {
+						Object obj = s.getFirstElement();
+						EObject container = (EObject) getMaster().getValue();
+						List<?> list = (List<?>) container.eGet(feature);
+						int idx = list.indexOf(obj) + 1;
+						if (idx < list.size()) {
+							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, obj, idx);
+
+							if (cmd.canExecute()) {
+								getEditingDomain().getCommandStack().execute(cmd);
+								viewer.setSelection(new StructuredSelection(obj));
+							}
+						}
+
+					}
+				}
+			}
+		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Add ...");
+		b.setText(Messages.ModelTooling_Common_AddEllipsis);
 		b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -144,7 +189,7 @@ public class VMenuEditor extends AbstractComponentEditor {
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Remove");
+		b.setText(Messages.ModelTooling_Common_Remove);
 		b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {

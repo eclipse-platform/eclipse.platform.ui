@@ -361,6 +361,46 @@ public class Messages extends NLS {
 	public static String VMenuContributionsEditor_TreeLabelDescription;
 	public static String VMenuContributionsEditor_MenuContributions;
 
+	public static String VMenuEditor_TreeLabel;
+	public static String VMenuEditor_TreeLabelDescription;
+	public static String VMenuEditor_Menus;
+
+	public static String VModelFragmentsEditor_TreeLabel;
+	public static String VModelFragmentsEditor_TreeLabelDescription;
+	public static String VModelFragmentsEditor_Fragments;
+
+	public static String VModelImportsEditor_TreeLabel;
+	public static String VModelImportsEditor_TreeLabelDescription;
+	public static String VModelImportsEditor_Imports;
+
+	public static String VPartDescriptor_TreeLabel;
+	public static String VPartDescriptor_TreeLabelDescription;
+	public static String VPartDescriptor_Descriptors;
+
+	public static String VToolBarContributionsEditor_Contributions;
+	public static String VToolBarContributionsEditor_TreeLabelDescription;
+	public static String VToolBarContributionsEditor_TreeLabel;
+
+	public static String VTrimContributionsEditor_TreeLabel;
+	public static String VTrimContributionsEditor_TreeLabelDescription;
+	public static String VTrimContributionsEditor_Contributions;
+
+	public static String VWindowControlEditor_TreeLabel;
+	public static String VWindowControlEditor_TreeLabelDescription;
+	public static String VWindowControlEditor_Controls;
+
+	public static String VWindowEditor_TreeLabel;
+	public static String VWindowEditor_TreeLabelDescription;
+	public static String VWindowEditor_Windows;
+
+	public static String VWindowSharedElementsEditor_TreeLabel;
+	public static String VWindowSharedElementsEditor_TreeLabelDescription;
+	public static String VWindowSharedElementsEditor_Controls;
+
+	public static String VWindowTrimEditor_TreeLabel;
+	public static String VWindowTrimEditor_TreeLabelDescription;
+	public static String VWindowTrimEditor_Controls;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

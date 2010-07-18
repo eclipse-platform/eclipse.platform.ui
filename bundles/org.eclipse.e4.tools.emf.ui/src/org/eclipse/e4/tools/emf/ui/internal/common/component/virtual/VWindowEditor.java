@@ -15,18 +15,16 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
-import org.eclipse.e4.tools.emf.ui.internal.ObservableColumnLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
-import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -40,7 +38,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -68,7 +65,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Windows";
+		return Messages.VWindowEditor_TreeLabel;
 	}
 
 	@Override
@@ -78,7 +75,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "Windows Bla Bla Bla Bla Bla";
+		return Messages.VWindowEditor_TreeLabelDescription;
 	}
 
 	@Override
@@ -100,62 +97,16 @@ public class VWindowEditor extends AbstractComponentEditor {
 		parent.setLayout(gl);
 
 		Label l = new Label(parent, SWT.NONE);
-		l.setText("Windows");
+		l.setText(Messages.VWindowEditor_Windows);
 		l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 
 		viewer = new TableViewer(parent);
 		ObservableListContentProvider cp = new ObservableListContentProvider();
 		viewer.setContentProvider(cp);
-
+		viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 300;
 		viewer.getControl().setLayoutData(gd);
-		viewer.getTable().setHeaderVisible(true);
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Name");
-			column.getColumn().setWidth(180);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__X);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("X");
-			column.getColumn().setWidth(80);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__Y);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Y");
-			column.getColumn().setWidth(80);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__WIDTH);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Width");
-			column.getColumn().setWidth(100);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
-
-		{
-			IEMFEditValueProperty valProp = EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.WINDOW__HEIGHT);
-
-			TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
-			column.getColumn().setText("Height");
-			column.getColumn().setWidth(100);
-			column.setLabelProvider(new ObservableColumnLabelProvider<MWindow>(valProp.observeDetail(cp.getKnownElements())));
-		}
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
 		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
@@ -168,7 +119,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 
 		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 
-		b.setText("Up");
+		b.setText(Messages.ModelTooling_Common_Up);
 		b.setImage(getImage(b.getDisplay(), ARROW_UP));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -192,7 +143,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Down");
+		b.setText(Messages.ModelTooling_Common_Down);
 		b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -246,7 +197,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText("Remove");
+		b.setText(Messages.ModelTooling_Common_Remove);
 		b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -271,7 +222,6 @@ public class VWindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
