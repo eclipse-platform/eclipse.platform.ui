@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -70,7 +69,6 @@ import org.eclipse.swt.widgets.Text;
 public class ToolBarContributionEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
-	private IProject project;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
@@ -87,9 +85,8 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 		}
 	}
 
-	public ToolBarContributionEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
+	public ToolBarContributionEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
-		this.project = project;
 	}
 
 	@Override
@@ -118,7 +115,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "ToolBar Contribution";
+		return Messages.ToolBarContributionEditor_TreeLabel;
 	}
 
 	@Override
@@ -128,7 +125,7 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDescription(Object element) {
-		return "ToolBar Contribution Bla Bla Bla Bla";
+		return Messages.ToolBarContributionEditor_TreeLabelDescription;
 	}
 
 	@Override
@@ -363,10 +360,10 @@ public class ToolBarContributionEditor extends AbstractComponentEditor {
 			});
 		}
 
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
-		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

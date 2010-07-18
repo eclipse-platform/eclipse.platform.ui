@@ -26,6 +26,7 @@ import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.WindowIconDialogEditor;
@@ -66,7 +67,6 @@ import org.eclipse.swt.widgets.Text;
 public class WindowEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private Image image;
 	private EMFDataBindingContext context;
 	private IProject project;
 
@@ -79,12 +79,11 @@ public class WindowEditor extends AbstractComponentEditor {
 	private Action addMainMenu;
 	private Button createRemoveMainMenu;
 	private EStackLayout stackLayout;
-	private Image tbrImage;
 
 	public WindowEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain, editor);
 		this.project = project;
-		addMainMenu = new Action("Add Main Menu") {
+		addMainMenu = new Action(Messages.WindowEditor_AddMainMenu) {
 			@Override
 			public void run() {
 				addMenu();
@@ -118,12 +117,12 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Window";
+		return Messages.WindowEditor_TreeLabel;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Window bla bla bla";
+		return Messages.WindowEditor_TreeLabelDescription;
 	}
 
 	@Override
@@ -180,7 +179,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Id");
+			l.setText(Messages.ModelTooling_Common_Id);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -193,7 +192,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("X");
+			l.setText(Messages.WindowEditor_X);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -206,7 +205,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Y");
+			l.setText(Messages.WindowEditor_Y);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -219,7 +218,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Width");
+			l.setText(Messages.WindowEditor_Width);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -232,7 +231,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Height");
+			l.setText(Messages.WindowEditor_Height);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -245,7 +244,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Label");
+			l.setText(Messages.WindowEditor_Label);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -258,7 +257,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Tooltip");
+			l.setText(Messages.WindowEditor_Tooltip);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -271,7 +270,7 @@ public class WindowEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Icon URI");
+			l.setText(Messages.WindowEditor_IconURI);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -292,7 +291,7 @@ public class WindowEditor extends AbstractComponentEditor {
 			};
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setText("Find ...");
+			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -306,7 +305,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Main Menu");
+			l.setText(Messages.WindowEditor_MainMenu);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			createRemoveMainMenu = new Button(parent, SWT.CHECK);
@@ -327,11 +326,11 @@ public class WindowEditor extends AbstractComponentEditor {
 		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
 		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
 
-		ControlFactory.createSelectedElement(parent, this, context, "Selected Element");
-		ControlFactory.createStringListWidget(parent, this, "Binding Contexts", CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createMapProperties(parent, this, "Context Properties", UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createStringListWidget(parent, this, "Variables", UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createSelectedElement(parent, this, context, Messages.WindowEditor_SelectedElement);
+		ControlFactory.createStringListWidget(parent, this, Messages.WindowEditor_BindingContexts, CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, this, Messages.ModelTooling_Context_Properties, UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}
@@ -358,7 +357,7 @@ public class WindowEditor extends AbstractComponentEditor {
 			return list;
 		}
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, "Handlers") {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_HANDLER, HANDLER_CONTAINER__HANDLERS, element, Messages.WindowEditor_Handlers) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -367,7 +366,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOWS, WINDOW__WINDOWS, element, "Windows") {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOWS, WINDOW__WINDOWS, element, Messages.WindowEditor_Windows) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -376,7 +375,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_CONTROLS, ELEMENT_CONTAINER__CHILDREN, element, "Controls") {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_CONTROLS, ELEMENT_CONTAINER__CHILDREN, element, Messages.WindowEditor_Controls) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -385,7 +384,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_SHARED_ELEMENTS, SHARED_ELEMENTS, element, "Shared Elements") {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_SHARED_ELEMENTS, SHARED_ELEMENTS, element, Messages.WindowEditor_SharedElements) {
 			protected boolean accepted(Object o) {
 				return true;
 			}

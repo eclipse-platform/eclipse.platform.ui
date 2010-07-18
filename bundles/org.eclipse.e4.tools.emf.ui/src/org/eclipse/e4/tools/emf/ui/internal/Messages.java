@@ -295,6 +295,50 @@ public class Messages extends NLS {
 	public static String RenderedMenuItem_TreeLabel;
 	public static String RenderedMenuItem_TreeLabelDescription;
 
+	public static String RenderedToolBarEditor_TreeLabel;
+
+	public static String ToolBarContributionEditor_TreeLabel;
+	public static String ToolBarContributionEditor_TreeLabelDescription;
+
+	public static String ToolItemEditor_Type;
+	public static String ToolItemEditor_Label;
+	public static String ToolItemEditor_ToolTip;
+	public static String ToolItemEditor_IconURI;
+	public static String ToolItemEditor_Enabled;
+	public static String ToolItemEditor_Selected;
+
+	public static String TrimBarEditor_TreeLabel;
+	public static String TrimBarEditor_TreeLabelDescription;
+	public static String TrimBarEditor_Side;
+	public static String TrimBarEditor_Controls;
+
+	public static String TrimContributionEditor_TreeLabel;
+	public static String TrimContributionEditor_TreeLabelDescription;
+	public static String TrimContributionEditor_ParentId;
+	public static String TrimContributionEditor_Position;
+	public static String TrimContributionEditor_Controls;
+
+	public static String TrimmedWindowEditor_TrimBars;
+	public static String TrimmedWindowEditor_TreeLabel;
+
+	public static String WindowEditor_AddMainMenu;
+	public static String WindowEditor_TreeLabel;
+	public static String WindowEditor_TreeLabelDescription;
+	public static String WindowEditor_X;
+	public static String WindowEditor_Y;
+	public static String WindowEditor_Width;
+	public static String WindowEditor_Height;
+	public static String WindowEditor_Label;
+	public static String WindowEditor_Tooltip;
+	public static String WindowEditor_IconURI;
+	public static String WindowEditor_MainMenu;
+	public static String WindowEditor_SelectedElement;
+	public static String WindowEditor_BindingContexts;
+	public static String WindowEditor_Handlers;
+	public static String WindowEditor_Windows;
+	public static String WindowEditor_Controls;
+	public static String WindowEditor_SharedElements;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

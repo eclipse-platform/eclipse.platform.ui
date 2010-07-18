@@ -168,7 +168,7 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
-			b.setText("Find ...");
+			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -178,11 +178,11 @@ public class ToolControlEditor extends AbstractComponentEditor {
 			});
 		}
 
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
-		ControlFactory.createMapProperties(parent, this, "Persisted State", ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createMapProperties(parent, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

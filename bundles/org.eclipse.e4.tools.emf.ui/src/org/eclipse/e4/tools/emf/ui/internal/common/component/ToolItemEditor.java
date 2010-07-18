@@ -21,6 +21,7 @@ import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ToolItemIconDialogEditor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -108,22 +109,14 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 			return parent;
 		}
 
-		Label l = new Label(parent, SWT.NONE);
-		l.setText("Id");
-		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-		Text t = new Text(parent, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		t.setLayoutData(gd);
-		context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(master));
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 
 		createFormSubTypeForm(parent, context, master);
 
 		return parent;
 	}
 
-	private void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, final WritableValue master) {
+	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, final WritableValue master) {
 		IValueProperty textProp = WidgetProperties.text(SWT.Modify);
 		IWidgetValueProperty checkProp = WidgetProperties.selection();
 		IWidgetValueProperty enabled = WidgetProperties.enabled();
@@ -131,7 +124,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Type");
+			l.setText(Messages.ToolItemEditor_Type);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			ComboViewer viewer = new ComboViewer(parent);
@@ -147,7 +140,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Label");
+			l.setText(Messages.ToolItemEditor_Label);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -160,7 +153,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Tooltip");
+			l.setText(Messages.ToolItemEditor_ToolTip);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -173,7 +166,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Icon URI");
+			l.setText(Messages.ToolItemEditor_IconURI);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -194,7 +187,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 			};
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setText("Find ...");
+			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -208,7 +201,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Enabled");
+			l.setText(Messages.ToolItemEditor_Enabled);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Button b = new Button(parent, SWT.CHECK);
@@ -218,7 +211,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Selected");
+			l.setText(Messages.ToolItemEditor_Selected);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Button b = new Button(parent, SWT.CHECK);
@@ -248,10 +241,10 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 		createSubTypeFormElements(parent, context, master);
 
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
-		ControlFactory.createStringListWidget(parent, this, "Tags", ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 	}
 
 	protected void createSubTypeFormElements(Composite parent, EMFDataBindingContext context, WritableValue master) {
@@ -260,7 +253,6 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

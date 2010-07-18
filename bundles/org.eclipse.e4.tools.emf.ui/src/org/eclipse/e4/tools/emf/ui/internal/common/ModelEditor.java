@@ -584,8 +584,8 @@ public class ModelEditor {
 		registerEditor(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, new DirectMenuItemEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(MenuPackageImpl.Literals.RENDERED_MENU_ITEM, new RenderedMenuItem(modelProvider.getEditingDomain(), this, project));
 		registerEditor(MenuPackageImpl.Literals.MENU_CONTRIBUTION, new MenuContributionEditor(modelProvider.getEditingDomain(), project, this));
-		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION, new ToolBarContributionEditor(modelProvider.getEditingDomain(), project, this));
-		registerEditor(MenuPackageImpl.Literals.TRIM_CONTRIBUTION, new TrimContributionEditor(modelProvider.getEditingDomain(), project, this));
+		registerEditor(MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTION, new ToolBarContributionEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(MenuPackageImpl.Literals.TRIM_CONTRIBUTION, new TrimContributionEditor(modelProvider.getEditingDomain(), this));
 
 		registerEditor(BasicPackageImpl.Literals.PART, new PartEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(BasicPackageImpl.Literals.WINDOW, new WindowEditor(modelProvider.getEditingDomain(), this, project));

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
@@ -21,6 +22,6 @@ public class RenderedToolBarEditor extends ToolBarEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Rendered ToolBar";
+		return Messages.RenderedToolBarEditor_TreeLabel;
 	}
 }

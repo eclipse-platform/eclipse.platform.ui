@@ -14,6 +14,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -35,7 +36,7 @@ public class TrimmedWindowEditor extends WindowEditor {
 			return list;
 		}
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TRIMMED_WINDOW_TRIMS, TRIMMED_WINDOW__TRIM_BARS, element, "TrimBars") {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_TRIMMED_WINDOW_TRIMS, TRIMMED_WINDOW__TRIM_BARS, element, Messages.TrimmedWindowEditor_TrimBars) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -48,6 +49,6 @@ public class TrimmedWindowEditor extends WindowEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Trimmed Window";
+		return Messages.TrimmedWindowEditor_TreeLabel;
 	}
 }

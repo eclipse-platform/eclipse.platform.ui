@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -104,12 +105,12 @@ public class TrimBarEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Window Trim";
+		return Messages.TrimBarEditor_TreeLabel;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Window Trim bla bla bla";
+		return Messages.TrimBarEditor_TreeLabelDescription;
 	}
 
 	@Override
@@ -161,7 +162,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Id");
+			l.setText(Messages.ModelTooling_Common_Id);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -174,7 +175,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Side");
+			l.setText(Messages.TrimBarEditor_Side);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			ComboViewer viewer = new ComboViewer(parent);
@@ -190,7 +191,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Controls");
+			l.setText(Messages.TrimBarEditor_Controls);
 			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 			final TableViewer viewer = new TableViewer(parent);
@@ -213,7 +214,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 			buttonComp.setLayout(gl);
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Up");
+			b.setText(Messages.ModelTooling_Common_Up);
 			b.setImage(getImage(b.getDisplay(), ARROW_UP));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -237,7 +238,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Down");
+			b.setText(Messages.ModelTooling_Common_Down);
 			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -288,7 +289,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 			});
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setText("Remove");
+			b.setText(Messages.ModelTooling_Common_Remove);
 			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
@@ -306,8 +307,10 @@ public class TrimBarEditor extends AbstractComponentEditor {
 			});
 		}
 
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}
