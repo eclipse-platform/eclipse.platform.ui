@@ -290,6 +290,11 @@ public class Messages extends NLS {
 	public static String PopupMenuEditor_TreeLabel;
 	public static String PopupMenuEditor_TreeLabelDescription;
 
+	public static String RenderedMenuEditor_TreeLabel;
+
+	public static String RenderedMenuItem_TreeLabel;
+	public static String RenderedMenuItem_TreeLabelDescription;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

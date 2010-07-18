@@ -176,7 +176,7 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText("Reference");
+			l.setText(Messages.PlaceholderEditor_Reference);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -200,11 +200,11 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 						if (o instanceof MUILabel) {
 							MUILabel label = (MUILabel) o;
 							if (!Util.isNullOrEmpty(label.getLabel())) {
-								return o.eClass().getName() + " - " + label.getLabel();
+								return o.eClass().getName() + " - " + label.getLabel(); //$NON-NLS-1$
 							}
 						}
 
-						return o.eClass().getName() + " - " + ((MUIElement) fromObject).getElementId();
+						return o.eClass().getName() + " - " + ((MUIElement) fromObject).getElementId(); //$NON-NLS-1$
 					}
 					return null;
 				}
@@ -223,8 +223,9 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 				}
 			});
 		}
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}

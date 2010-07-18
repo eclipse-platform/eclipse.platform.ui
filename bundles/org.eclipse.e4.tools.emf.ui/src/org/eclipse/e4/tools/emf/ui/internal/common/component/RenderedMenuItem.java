@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -25,18 +26,16 @@ public class RenderedMenuItem extends MenuItemEditor {
 
 	@Override
 	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, WritableValue master) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public String getLabel(Object element) {
-		return "Rendered MenuItem";
+		return Messages.RenderedMenuItem_TreeLabel;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Rendered MenuItem Bla Bla Bla Bla";
+		return Messages.RenderedMenuItem_TreeLabelDescription;
 	}
-
 }

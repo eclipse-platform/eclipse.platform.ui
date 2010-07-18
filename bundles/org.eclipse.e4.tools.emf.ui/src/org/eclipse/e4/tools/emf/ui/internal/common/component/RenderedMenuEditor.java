@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
@@ -22,6 +23,6 @@ public class RenderedMenuEditor extends MenuEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Rendered Menu";
+		return Messages.RenderedMenuEditor_TreeLabel;
 	}
 }

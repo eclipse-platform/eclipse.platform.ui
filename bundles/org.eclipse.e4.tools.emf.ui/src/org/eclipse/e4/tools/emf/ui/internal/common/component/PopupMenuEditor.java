@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -28,8 +29,8 @@ public class PopupMenuEditor extends MenuEditor {
 	protected Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean rootMenu, boolean isImport) {
 		Composite comp = super.createForm(parent, context, master, rootMenu, isImport);
 		if (!isImport) {
-			ControlFactory.createMapProperties(parent, this, "Context Properties", UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
-			ControlFactory.createStringListWidget(comp, this, "Variables", UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
+			ControlFactory.createMapProperties(parent, this, Messages.ModelTooling_Context_Properties, UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
+			ControlFactory.createStringListWidget(comp, this, Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
 		}
 
 		return comp;
@@ -37,11 +38,11 @@ public class PopupMenuEditor extends MenuEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return "Popup Menu";
+		return Messages.PopupMenuEditor_TreeLabel;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return "Popup Menu Bla Bla Bla Bla";
+		return Messages.PopupMenuEditor_TreeLabelDescription;
 	}
 }
