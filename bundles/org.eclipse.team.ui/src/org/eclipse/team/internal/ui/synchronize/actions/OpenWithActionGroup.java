@@ -65,7 +65,8 @@ public class OpenWithActionGroup extends ActionGroup {
 	}
 
 	private boolean hasFileMenu(IMenuManager menu) {
-		return menu.find(openFileAction.getId()) != null;
+		return menu.find(openFileAction.getId()) != null
+				|| menu.find(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU) != null;
 	}
 
 	/**
@@ -110,45 +111,56 @@ public class OpenWithActionGroup extends ActionGroup {
         	return;
         }
 
+        boolean allFiles = true;
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i].getType() != IResource.FILE) {
-				// Only supported if all the items are files.
-				return;
+				// Open actions are only supported if all the items are files.
+				allFiles = false;
+				break;
+			}
+		}
+		
+		if (allFiles) {
+			if (openInCompareAction != null) {
+				menu.appendToGroup(groupId, openInCompareAction);
+			}
+
+			for (int i = 0; i < resources.length; i++) {
+				if (!resources[i].exists()) {
+					// Only support non-compare actions if all files exist.
+					return;
+				}
+			}
+
+			if (openFileAction != null) {
+				openFileAction.selectionChanged(selection);
+				menu.appendToGroup(groupId, openFileAction);
+			}
+
+			if (resources.length == 1) {
+				// Only support the "Open With..." submenu if exactly one file is selected.
+				IWorkbenchSite ws = getSite().getWorkbenchSite();
+				if (ws != null) {
+					MenuManager openWithSubmenu =
+						new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 
+					openWithSubmenu.add(new OpenWithMenu(ws.getPage(), resources[0]));
+					menu.appendToGroup(groupId, openWithSubmenu);
+				}
 			}
 		}
 
-        if (openInCompareAction != null) {
-            menu.appendToGroup(groupId, openInCompareAction);
-        }
-
-        for (int i = 0; i < resources.length; i++) {
-            if (!resources[i].exists()) {
-                // Only support non-compare actions if all files exist.
-                return;
-            }
-        }
-
-		if (openFileAction != null) {
-			openFileAction.selectionChanged(selection);
-			menu.appendToGroup(groupId, openFileAction);
-		}
-
+		// Add "Show In" submenu, available for projects and folders, but only if one is selected.
         if (resources.length == 1) {
-            // Only support the "Open With..." submenu if exactly one file is selected.
-            IWorkbenchSite ws = getSite().getWorkbenchSite();
-            if (ws != null) {
-                MenuManager openWithSubmenu =
-                    new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 
-                openWithSubmenu.add(new OpenWithMenu(ws.getPage(), resources[0]));
-                menu.appendToGroup(groupId, openWithSubmenu);
-
+        	IWorkbenchSite ws = getSite().getWorkbenchSite();
+        	if (ws != null) {
 				MenuManager showInSubmenu = new MenuManager(
-						getShowInMenuLabel());
+						getShowInMenuLabel(),
+						IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 				IContributionItem showInMenu = ContributionItemFactory.VIEWS_SHOW_IN
 						.create(ws.getWorkbenchWindow());
 				showInSubmenu.add(showInMenu);
 				menu.appendToGroup(groupId, showInSubmenu);
-            }
+        	}
         }
     }
 
