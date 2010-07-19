@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,15 +19,15 @@ import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.harness.TestJob;
 
 /**
- * Tests for {@link Job#yieldRule(IProgressMonitor))}.
+ * Tests for {@link Job#yieldRule(IProgressMonitor)}.
  */
 public class YieldTest extends AbstractJobManagerTest {
 
 	class TestJobListener extends JobChangeAdapter {
-		private Set scheduled = Collections.synchronizedSet(new HashSet());
+		private Set<Job> scheduled = Collections.synchronizedSet(new HashSet<Job>());
 
 		public void cancelAllJobs() {
-			Job[] jobs = (Job[]) scheduled.toArray(new Job[0]);
+			Job[] jobs = scheduled.toArray(new Job[0]);
 			for (int i = 0; i < jobs.length; i++) {
 				jobs[i].cancel();
 			}
@@ -645,7 +645,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final Object SYNC = new Object();
 		final int count = 100;
 		final Integer[] started = new Integer[] {new Integer(0)};
-		final List jobs = new ArrayList();
+		final List<Job> jobs = new ArrayList<Job>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob" + i) {
 				protected IStatus run(IProgressMonitor monitor) {
@@ -659,7 +659,7 @@ public class YieldTest extends AbstractJobManagerTest {
 						if (yieldRule(null) != null)
 							break;
 
-						if (getFinishedJobs((Job[]) jobs.toArray(new Job[jobs.size()])).size() == count - 1) {
+						if (getFinishedJobs(jobs.toArray(new Job[jobs.size()])).size() == count - 1) {
 							System.out.println(this + " Ended via no more jobs to yield");
 							break;
 						}
@@ -673,8 +673,8 @@ public class YieldTest extends AbstractJobManagerTest {
 			jobs.add(conflictingJob);
 		}
 
-		for (Iterator job = jobs.iterator(); job.hasNext();) {
-			Job conflict = (Job) job.next();
+		for (Iterator<Job> job = jobs.iterator(); job.hasNext();) {
+			Job conflict = job.next();
 			conflict.schedule();
 		}
 
@@ -691,10 +691,10 @@ public class YieldTest extends AbstractJobManagerTest {
 		// release all waiting jobs
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
 		// wait for jobs to finish within 5s
-		waitForJobsCompletion((Job[]) jobs.toArray(new Job[jobs.size()]), 5000);
+		waitForJobsCompletion(jobs.toArray(new Job[jobs.size()]), 5000);
 
-		for (Iterator job = jobs.iterator(); job.hasNext();) {
-			Job conflict = (Job) job.next();
+		for (Iterator<Job> job = jobs.iterator(); job.hasNext();) {
+			Job conflict = job.next();
 			assertNotNull("Null result for " + conflict, conflict.getResult());
 			assertTrue(conflict.getResult().isOK());
 		}
@@ -714,7 +714,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final PathRule rule_A = new PathRule(getName() + "_ruleA");
 		final Object SYNC_A = new Object();
 		final Integer[] started_A = new Integer[] {new Integer(0)};
-		final List jobs_A = new ArrayList();
+		final List<Job> jobs_A = new ArrayList<Job>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob_A_" + i) {
 				protected IStatus run(IProgressMonitor monitor) {
@@ -728,7 +728,7 @@ public class YieldTest extends AbstractJobManagerTest {
 						if (yieldRule(null) != null)
 							break;
 
-						if (getFinishedJobs((Job[]) jobs_A.toArray(new Job[jobs_A.size()])).size() == count - 1) {
+						if (getFinishedJobs(jobs_A.toArray(new Job[jobs_A.size()])).size() == count - 1) {
 							System.out.println(this + " Ended via no more jobs to yield");
 							break;
 						}
@@ -742,8 +742,8 @@ public class YieldTest extends AbstractJobManagerTest {
 			jobs_A.add(conflictingJob);
 		}
 
-		for (Iterator job = jobs_A.iterator(); job.hasNext();) {
-			Job conflict = (Job) job.next();
+		for (Iterator<Job> job = jobs_A.iterator(); job.hasNext();) {
+			Job conflict = job.next();
 			conflict.schedule();
 		}
 
@@ -769,7 +769,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final Object SYNC_B = new Object();
 
 		final Integer[] started_B = new Integer[] {new Integer(0)};
-		final List jobs_B = new ArrayList();
+		final List<Job> jobs_B = new ArrayList<Job>();
 		for (int i = 0; i < count; i++) {
 			Job conflictingJob = new Job(getName() + " ConflictingJob_B_" + i) {
 				protected IStatus run(IProgressMonitor monitor) {
@@ -783,7 +783,7 @@ public class YieldTest extends AbstractJobManagerTest {
 						if (yieldRule(null) != null)
 							break;
 
-						if (getFinishedJobs((Job[]) jobs_B.toArray(new Job[jobs_B.size()])).size() == count - 1) {
+						if (getFinishedJobs(jobs_B.toArray(new Job[jobs_B.size()])).size() == count - 1) {
 							System.out.println(this + " Ended via no more jobs to yield");
 							break;
 						}
@@ -797,8 +797,8 @@ public class YieldTest extends AbstractJobManagerTest {
 			jobs_B.add(conflictingJob);
 		}
 
-		for (Iterator job = jobs_B.iterator(); job.hasNext();) {
-			Job conflict = (Job) job.next();
+		for (Iterator<Job> job = jobs_B.iterator(); job.hasNext();) {
+			Job conflict = job.next();
 			conflict.schedule();
 		}
 
@@ -816,19 +816,19 @@ public class YieldTest extends AbstractJobManagerTest {
 		barrier_B.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
 
 		// wait for jobs to finish within 5s
-		waitForJobsCompletion((Job[]) jobs_A.toArray(new Job[jobs_A.size()]), 5000);
+		waitForJobsCompletion(jobs_A.toArray(new Job[jobs_A.size()]), 5000);
 
 		// wait for jobs to finish within 5s
-		waitForJobsCompletion((Job[]) jobs_B.toArray(new Job[jobs_B.size()]), 5000);
+		waitForJobsCompletion(jobs_B.toArray(new Job[jobs_B.size()]), 5000);
 
-		for (Iterator job = jobs_A.iterator(); job.hasNext();) {
-			Job conflict = (Job) job.next();
+		for (Iterator<Job> job = jobs_A.iterator(); job.hasNext();) {
+			Job conflict = job.next();
 			assertNotNull("Null result for " + conflict, conflict.getResult());
 			assertTrue(conflict.getResult().isOK());
 		}
 
-		for (Iterator job = jobs_B.iterator(); job.hasNext();) {
-			Job conflict = (Job) job.next();
+		for (Iterator<Job> job = jobs_B.iterator(); job.hasNext();) {
+			Job conflict = job.next();
 			assertNotNull("Null result for " + conflict, conflict.getResult());
 			assertTrue(conflict.getResult().isOK());
 		}
@@ -872,7 +872,7 @@ public class YieldTest extends AbstractJobManagerTest {
 
 		barrier.setStatus(TestBarrier.STATUS_START);
 
-		List jobs = new ArrayList();
+		List<Job> jobs = new ArrayList<Job>();
 		jobs.add(yieldA);
 		jobs.add(yieldB);
 
@@ -882,9 +882,9 @@ public class YieldTest extends AbstractJobManagerTest {
 		} catch (InterruptedException e) {
 			fail("4.99", e);
 		}
-		waitForJobsCompletion((Job[]) jobs.toArray(new Job[jobs.size()]), 5000);
-		for (Iterator job = jobs.iterator(); job.hasNext();) {
-			Job conflict = (Job) job.next();
+		waitForJobsCompletion(jobs.toArray(new Job[jobs.size()]), 5000);
+		for (Iterator<Job> job = jobs.iterator(); job.hasNext();) {
+			Job conflict = job.next();
 			assertTrue(conflict.getResult().isOK());
 
 		}
@@ -982,6 +982,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		} finally {
 			//clean up even if the test fails
 			yieldA.cancel();
+			Job.getJobManager().removeJobChangeListener(a);
 		}
 
 	}
