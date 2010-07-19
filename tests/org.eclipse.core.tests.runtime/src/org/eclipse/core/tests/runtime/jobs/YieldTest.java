@@ -963,9 +963,8 @@ public class YieldTest extends AbstractJobManagerTest {
 		final int[] count = new int[1];
 		JobChangeAdapter a = new JobChangeAdapter() {
 			public void running(org.eclipse.core.runtime.jobs.IJobChangeEvent event) {
-				if (event.getJob() == conflicting || event.getJob() == yieldA)
-					return;
-				count[0]++;
+				if (event.getJob() == yieldA)
+					count[0]++;
 			}
 		};
 		Job.getJobManager().addJobChangeListener(a);
@@ -978,7 +977,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		try {
 			waitForCompletion(yieldA);
 			waitForCompletion(conflicting);
-			assertEquals("While resuming from yieldRule, implicit Job should only run once", 0, count[0]);
+			assertEquals("While resuming from yieldRule, implicit Job should only run once", 1, count[0]);
 		} finally {
 			//clean up even if the test fails
 			yieldA.cancel();
