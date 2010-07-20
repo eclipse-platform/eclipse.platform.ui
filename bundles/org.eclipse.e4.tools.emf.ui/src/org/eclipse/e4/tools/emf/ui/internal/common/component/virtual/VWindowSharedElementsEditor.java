@@ -197,8 +197,8 @@ public class VWindowSharedElementsEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					if (!childrenDropDown.getSelection().isEmpty()) {
 						EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
-
 						EObject eObject = EcoreUtil.create(eClass);
+						setElementId(eObject);
 
 						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS, eObject);
 

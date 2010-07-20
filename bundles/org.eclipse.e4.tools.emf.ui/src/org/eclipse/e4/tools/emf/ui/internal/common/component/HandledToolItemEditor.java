@@ -122,7 +122,6 @@ public class HandledToolItemEditor extends ToolItemEditor {
 		final TableViewer viewer = new TableViewer(parent);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 120;
-		viewer.getTable().setHeaderVisible(true);
 		viewer.getControl().setLayoutData(gd);
 
 		ObservableListContentProvider cp = new ObservableListContentProvider();
@@ -182,6 +181,8 @@ public class HandledToolItemEditor extends ToolItemEditor {
 			public void widgetSelected(SelectionEvent e) {
 				MHandledItem item = (MHandledItem) master.getValue();
 				MParameter param = MCommandsFactory.INSTANCE.createParameter();
+				setElementId(param);
+
 				Command cmd = AddCommand.create(getEditingDomain(), item, MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS, param);
 				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);

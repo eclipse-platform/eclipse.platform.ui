@@ -101,7 +101,6 @@ public class VTrimContributionsEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
-			viewer.getTable().setHeaderVisible(true);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -175,6 +174,8 @@ public class VTrimContributionsEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MTrimContribution command = MMenuFactory.INSTANCE.createTrimContribution();
+					setElementId(command);
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS, command);
 
 					if (cmd.canExecute()) {

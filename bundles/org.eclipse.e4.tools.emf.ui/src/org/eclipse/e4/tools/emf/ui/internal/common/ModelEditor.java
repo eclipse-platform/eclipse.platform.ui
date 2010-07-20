@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
@@ -203,6 +204,10 @@ public class ModelEditor {
 	@Optional
 	private IClipboardService clipboardService;
 
+	@Inject
+	@Preference(nodePath = "org.eclipse.e4.tools.emf.ui", value = "autoCreateElementId")
+	private boolean autoCreateElementId;
+
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project) {
 		this.modelProvider = modelProvider;
 		this.project = project;
@@ -346,6 +351,14 @@ public class ModelEditor {
 			}
 		});
 		viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
+	}
+
+	public boolean isAutoCreateElementId() {
+		return autoCreateElementId && project != null;
+	}
+
+	public IProject getProject() {
+		return project;
 	}
 
 	private void loadContributionCreators() {

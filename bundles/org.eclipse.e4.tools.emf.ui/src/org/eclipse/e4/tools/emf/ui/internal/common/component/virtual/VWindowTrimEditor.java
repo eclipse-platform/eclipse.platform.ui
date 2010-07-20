@@ -118,6 +118,8 @@ public class VWindowTrimEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MTrimBar handler = MBasicFactory.INSTANCE.createTrimBar();
+					setElementId(handler);
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS, handler);
 
 					if (cmd.canExecute()) {

@@ -215,6 +215,8 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 				public void widgetSelected(SelectionEvent e) {
 					MHandledItem item = (MHandledItem) master.getValue();
 					MParameter param = MCommandsFactory.INSTANCE.createParameter();
+					setElementId(param);
+
 					Command cmd = AddCommand.create(getEditingDomain(), item, MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS, param);
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);

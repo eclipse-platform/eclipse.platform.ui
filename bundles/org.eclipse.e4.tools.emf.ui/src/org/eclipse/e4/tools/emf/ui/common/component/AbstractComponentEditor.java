@@ -18,8 +18,11 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -68,6 +71,15 @@ public abstract class AbstractComponentEditor {
 
 	public WritableValue getMaster() {
 		return master;
+	}
+
+	protected void setElementId(Object element) {
+		if (getEditor().isAutoCreateElementId() && element instanceof MApplicationElement) {
+			MApplicationElement el = (MApplicationElement) element;
+			if (el.getElementId() == null || el.getElementId().trim().length() == 0) {
+				el.setElementId(Util.getDefaultElementId(((EObject) getMaster().getValue()).eResource(), el, getEditor().getProject()));
+			}
+		}
 	}
 
 	public Image getImage(Display d, int id) {

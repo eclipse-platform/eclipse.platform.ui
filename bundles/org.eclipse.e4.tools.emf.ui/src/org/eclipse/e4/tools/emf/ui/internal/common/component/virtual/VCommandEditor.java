@@ -104,7 +104,6 @@ public class VCommandEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
-			viewer.getTable().setHeaderVisible(true);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -178,6 +177,8 @@ public class VCommandEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+					setElementId(command);
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, command);
 
 					if (cmd.canExecute()) {

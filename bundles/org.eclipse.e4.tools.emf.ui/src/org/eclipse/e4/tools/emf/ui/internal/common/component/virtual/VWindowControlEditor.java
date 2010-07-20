@@ -190,6 +190,8 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 
 						EObject eObject = EcoreUtil.create(eClass);
 
+						setElementId(eObject);
+
 						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 
 						if (cmd.canExecute()) {

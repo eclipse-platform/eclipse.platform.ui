@@ -13,19 +13,25 @@ package org.eclipse.e4.tools.emf.ui.common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
@@ -51,6 +57,52 @@ public class Util {
 		for (EPackage eSubPackage : ePackage.getESubpackages()) {
 			addClasses(eSubPackage, list);
 		}
+	}
+
+	// TODO In future support different name formats something like
+	// ${project}.${classname}.${counter}
+	public static final String getDefaultElementId(Resource resource, MApplicationElement element, IProject project) {
+		try {
+			EObject o = (EObject) element;
+			String className = o.eClass().getName();
+			String projectName = project.getName();
+
+			String prefix = projectName + "." + className; //$NON-NLS-1$
+
+			TreeIterator<EObject> it = resource.getAllContents();
+			SortedSet<Integer> numbers = new TreeSet<Integer>();
+
+			while (it.hasNext()) {
+				EObject tmp = it.next();
+				if (tmp instanceof MApplicationElement) {
+					String elementId = ((MApplicationElement) tmp).getElementId();
+					if (elementId != null && elementId.length() > prefix.length() && elementId.startsWith(prefix)) {
+						String suffix = elementId.substring(prefix.length());
+						if (suffix.startsWith(".") && suffix.length() > 1) { //$NON-NLS-1$
+							try {
+								numbers.add(Integer.parseInt(suffix.substring(1)));
+							} catch (Exception e) {
+								// TODO: handle exception
+							}
+						}
+					}
+				}
+			}
+
+			int lastNumber = -1;
+			for (Integer number : numbers) {
+				if ((lastNumber + 1) != number) {
+					break;
+				}
+				lastNumber = number;
+			}
+
+			return prefix + "." + ++lastNumber; //$NON-NLS-1$
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static List<InternalPackage> loadPackages() {

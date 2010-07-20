@@ -346,6 +346,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 					if (!childrenDropDown.getSelection().isEmpty()) {
 						EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
 						EObject eObject = EcoreUtil.create(eClass);
+						setElementId(eObject);
 
 						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 

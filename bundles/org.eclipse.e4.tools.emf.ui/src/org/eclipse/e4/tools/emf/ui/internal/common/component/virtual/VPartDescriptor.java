@@ -101,7 +101,6 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
-			viewer.getTable().setHeaderVisible(true);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -175,6 +174,8 @@ public class VPartDescriptor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MPartDescriptor command = MBasicFactory.INSTANCE.createPartDescriptor();
+					setElementId(command);
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, command);
 
 					if (cmd.canExecute()) {

@@ -111,7 +111,6 @@ public class VApplicationAddons extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
-			viewer.getTable().setHeaderVisible(true);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -206,8 +205,10 @@ public class VApplicationAddons extends AbstractComponentEditor {
 	}
 
 	private void handleAddAddon() {
-		MAddon command = MApplicationFactory.INSTANCE.createAddon();
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__ADDONS, command);
+		MAddon addon = MApplicationFactory.INSTANCE.createAddon();
+		setElementId(addon);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__ADDONS, addon);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

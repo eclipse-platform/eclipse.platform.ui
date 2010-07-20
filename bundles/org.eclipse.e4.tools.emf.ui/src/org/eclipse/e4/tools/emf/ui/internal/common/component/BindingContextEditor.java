@@ -238,6 +238,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				MBindingContext eObject = MCommandsFactory.INSTANCE.createBindingContext();
+				setElementId(eObject);
 
 				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN, eObject);
 

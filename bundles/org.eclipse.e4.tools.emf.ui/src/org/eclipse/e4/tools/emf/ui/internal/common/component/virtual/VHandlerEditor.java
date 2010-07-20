@@ -101,7 +101,6 @@ public class VHandlerEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
-			viewer.getTable().setHeaderVisible(true);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -175,6 +174,8 @@ public class VHandlerEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MHandler handler = MCommandsFactory.INSTANCE.createHandler();
+					setElementId(handler);
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS, handler);
 
 					if (cmd.canExecute()) {

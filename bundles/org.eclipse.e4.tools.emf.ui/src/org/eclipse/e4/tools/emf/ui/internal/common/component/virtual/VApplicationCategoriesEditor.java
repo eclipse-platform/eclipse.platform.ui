@@ -105,7 +105,6 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.heightHint = 300;
 			viewer.getControl().setLayoutData(gd);
-			viewer.getTable().setHeaderVisible(true);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -179,6 +178,8 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MCategory command = CommandsFactoryImpl.eINSTANCE.createCategory();
+					setElementId(command);
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES, command);
 
 					if (cmd.canExecute()) {

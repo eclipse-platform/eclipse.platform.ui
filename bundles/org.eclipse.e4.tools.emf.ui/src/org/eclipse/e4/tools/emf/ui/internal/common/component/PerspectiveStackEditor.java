@@ -249,6 +249,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MPerspective eObject = MAdvancedFactory.INSTANCE.createPerspective();
+					setElementId(eObject);
 
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
 

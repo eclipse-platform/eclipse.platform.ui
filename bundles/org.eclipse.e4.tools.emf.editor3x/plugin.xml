@@ -24,5 +24,13 @@
             class="org.eclipse.e4.tools.emf.editor3x.extension.AddonContributionEditor">
       </contributionClassCreator>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.eclipse.e4.tools.emf.editor3x.ModelEditorPreferencePage"
+            id="org.eclipse.e4.tools.emf.editor3x.modeleditor"
+            name="Model Editor">
+      </page>
+   </extension>
 
 </plugin>

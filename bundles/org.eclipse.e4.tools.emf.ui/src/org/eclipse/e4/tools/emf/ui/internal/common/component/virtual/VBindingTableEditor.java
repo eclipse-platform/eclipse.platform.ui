@@ -174,6 +174,8 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MBindingTable command = MCommandsFactory.INSTANCE.createBindingTable();
+					setElementId(command);
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES, command);
 
 					if (cmd.canExecute()) {

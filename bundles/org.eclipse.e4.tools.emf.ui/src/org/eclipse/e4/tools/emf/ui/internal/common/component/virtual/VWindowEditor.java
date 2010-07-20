@@ -186,6 +186,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 			public void widgetSelected(SelectionEvent e) {
 				EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
 				EObject handler = EcoreUtil.create(eClass);
+				setElementId(handler);
 
 				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
 

@@ -293,6 +293,8 @@ public class CommandEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					MCommandParameter param = MCommandsFactory.INSTANCE.createCommandParameter();
+					setElementId(param);
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS, param);
 
 					if (cmd.canExecute()) {

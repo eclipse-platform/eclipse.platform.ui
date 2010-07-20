@@ -287,6 +287,8 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					EObject toolbar = EcoreUtil.create((EClass) ((IStructuredSelection) typeViewer.getSelection()).getFirstElement());
+					setElementId(toolbar);
+
 					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, toolbar);
 
 					if (cmd.canExecute()) {

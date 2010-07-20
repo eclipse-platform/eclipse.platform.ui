@@ -349,6 +349,8 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 
 	private void addToolBar() {
 		MToolBar menu = MMenuFactory.INSTANCE.createToolBar();
+		setElementId(menu);
+
 		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR__TOOLBAR, menu);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

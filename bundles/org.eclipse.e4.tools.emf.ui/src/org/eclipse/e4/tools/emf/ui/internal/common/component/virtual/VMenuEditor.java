@@ -104,7 +104,6 @@ public class VMenuEditor extends AbstractComponentEditor {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 300;
 		viewer.getControl().setLayoutData(gd);
-		viewer.getTable().setHeaderVisible(true);
 		viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 		Composite buttonComp = new Composite(parent, SWT.NONE);
@@ -179,6 +178,8 @@ public class VMenuEditor extends AbstractComponentEditor {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				MMenu handler = MMenuFactory.INSTANCE.createMenu();
+				setElementId(handler);
+
 				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), feature, handler);
 
 				if (cmd.canExecute()) {

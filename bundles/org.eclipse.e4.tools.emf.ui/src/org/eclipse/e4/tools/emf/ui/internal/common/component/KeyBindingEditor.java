@@ -42,6 +42,7 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.bindings.keys.KeySequence;
@@ -52,6 +53,7 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -259,11 +261,55 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		b.setText(Messages.ModelTooling_Common_Up);
 		b.setImage(getImage(b.getDisplay(), ARROW_UP));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!viewer.getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+					if (s.size() == 1) {
+						Object obj = s.getFirstElement();
+						MKeyBinding container = (MKeyBinding) getMaster().getValue();
+						int idx = container.getParameters().indexOf(obj) - 1;
+						if (idx >= 0) {
+							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS, obj, idx);
+
+							if (cmd.canExecute()) {
+								getEditingDomain().getCommandStack().execute(cmd);
+								viewer.setSelection(new StructuredSelection(obj));
+							}
+						}
+
+					}
+				}
+			}
+		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Down);
 		b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (!viewer.getSelection().isEmpty()) {
+					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+					if (s.size() == 1) {
+						Object obj = s.getFirstElement();
+						MKeyBinding container = (MKeyBinding) getMaster().getValue();
+						int idx = container.getParameters().indexOf(obj) + 1;
+						if (idx < container.getParameters().size()) {
+							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS, obj, idx);
+
+							if (cmd.canExecute()) {
+								getEditingDomain().getCommandStack().execute(cmd);
+								viewer.setSelection(new StructuredSelection(obj));
+							}
+						}
+
+					}
+				}
+			}
+		});
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_AddEllipsis);
@@ -274,6 +320,8 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			public void widgetSelected(SelectionEvent e) {
 				MKeyBinding item = (MKeyBinding) getMaster().getValue();
 				MParameter param = MCommandsFactory.INSTANCE.createParameter();
+				setElementId(param);
+
 				Command cmd = AddCommand.create(getEditingDomain(), item, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS, param);
 				if (cmd.canExecute()) {
 					getEditingDomain().getCommandStack().execute(cmd);

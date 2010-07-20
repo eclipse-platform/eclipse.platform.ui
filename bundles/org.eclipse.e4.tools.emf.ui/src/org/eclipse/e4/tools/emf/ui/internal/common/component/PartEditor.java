@@ -352,6 +352,8 @@ public class PartEditor extends AbstractComponentEditor {
 
 	private void addToolBar() {
 		MToolBar menu = MMenuFactory.INSTANCE.createToolBar();
+		setElementId(menu);
+
 		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART__TOOLBAR, menu);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

@@ -344,6 +344,8 @@ public class WindowEditor extends AbstractComponentEditor {
 
 	void addMenu() {
 		MMenu menu = MMenuFactory.INSTANCE.createMenu();
+		setElementId(menu);
+
 		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.WINDOW__MAIN_MENU, menu);
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);
