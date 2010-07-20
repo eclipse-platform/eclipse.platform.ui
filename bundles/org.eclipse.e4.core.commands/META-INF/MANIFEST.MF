@@ -1,10 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: E4 Core Commands (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.core.commands;singleton:=true
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-Version: 0.9.0.qualifier
 Bundle-Activator: org.eclipse.e4.core.commands.Activator
-Bundle-Vendor: Eclipse Foundation
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.inject;version="1.0.0",

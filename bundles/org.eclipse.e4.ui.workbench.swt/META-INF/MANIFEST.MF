@@ -1,8 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Workbench SWT support (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench.swt;singleton:=true
 Bundle-Version: 0.9.1.qualifier
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-Activator: org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator
 Require-Bundle: org.eclipse.equinox.registry,
  org.eclipse.equinox.app,
@@ -34,7 +36,6 @@ Export-Package: org.eclipse.e4.ui.internal.workbench.swt;x-friends:="org.eclipse
  org.eclipse.e4.ui.workbench.swt.internal.copy;x-internal:=true,
  org.eclipse.e4.ui.workbench.swt.modeling;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench",
  org.eclipse.e4.ui.workbench.swt.util;x-friends:="org.eclipse.e4.ui.workbench.renderers.swt,org.eclipse.ui.workbench"
-Bundle-Vendor: Eclipse.org
 Import-Package: com.ibm.icu.text;version="4.2.1",
  javax.annotation;version="1.0.0",
  javax.inject;version="1.0.0",

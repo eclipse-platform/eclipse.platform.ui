@@ -1,8 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: UI Services Plug-in (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.services;singleton:=true
 Bundle-Version: 0.9.1.qualifier
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: javax.annotation;version="1.0.0",
@@ -24,5 +26,4 @@ Export-Package: org.eclipse.e4.ui.internal.services;x-friends:="org.eclipse.e4.u
  org.eclipse.e4.ui.services.events;x-internal:=true,
  org.eclipse.e4.ui.services.internal.events;x-internal:=true
 Bundle-Activator: org.eclipse.e4.ui.internal.services.Activator
-Bundle-Vendor: Eclipse.org
 Service-Component: OSGI-INF/eventBroker.xml
