@@ -23,3 +23,4 @@ Bundle-Activator: org.eclipse.e4.internal.tools.ToolsPlugin
 Export-Package: org.eclipse.e4.internal.tools.wizards.classes;x-internal:=true,
  org.eclipse.e4.internal.tools.wizards.model;x-internal:=true,
  org.eclipse.e4.internal.tools.wizards.project;x-internal:=true
+Bundle-Vendor: %Bundle-Vendor

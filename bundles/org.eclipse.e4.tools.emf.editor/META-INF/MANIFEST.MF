@@ -21,3 +21,4 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.di.annotations
 Service-Component: OSGI-INF/xmiresourcecontextfunction.xml, OSGI-INF/selectionproviderfunction.xml
+Bundle-Vendor: %Bundle-Vendor
