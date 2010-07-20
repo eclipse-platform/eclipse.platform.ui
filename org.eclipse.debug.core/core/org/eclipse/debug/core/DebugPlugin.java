@@ -280,7 +280,7 @@ public class DebugPlugin extends Plugin {
 	
 	/**
 	 * Boolean preference key (value <code>org.eclipse.debug.core.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE</code>) that controls
-	 * whether to delete associated configurations when a project is deleted. Default value is <code>true</code>.
+	 * whether to delete associated configurations when a project is deleted. Default value is <code>false</code>.
 	 * 
 	 * @since 3.7
 	 */
