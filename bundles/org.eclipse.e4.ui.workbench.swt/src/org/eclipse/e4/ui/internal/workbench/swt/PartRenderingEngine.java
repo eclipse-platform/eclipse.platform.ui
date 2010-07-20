@@ -482,6 +482,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private Shell getLimboShell() {
 		if (limbo == null) {
 			limbo = new Shell(Display.getCurrent(), SWT.NONE);
+			limbo.setBackgroundMode(SWT.INHERIT_DEFAULT);
 			limbo.setData(ShellActivationListener.DIALOG_IGNORE_KEY,
 					Boolean.TRUE);
 		}
