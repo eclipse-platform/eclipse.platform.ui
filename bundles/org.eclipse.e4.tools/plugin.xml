@@ -5,16 +5,16 @@
          point="org.eclipse.ui.newWizards">
       <category
             id="org.eclipse.e4.tools"
-            name="e4">
+            name="%category.name">
       </category>
       <category
             id="org.eclipse.e4.tools.classes"
-            name="Classes"
+            name="%category.name.0"
             parentCategory="org.eclipse.e4.tools">
       </category>
       <category
             id="org.eclipse.e4.tools.model"
-            name="Model"
+            name="%category.name.1"
             parentCategory="org.eclipse.e4.tools">
       </category>
       <wizard
@@ -22,7 +22,7 @@
             class="org.eclipse.e4.internal.tools.wizards.project.E4NewProjectWizard"
             icon="platform:/plugin/org.eclipse.pde.ui/icons/etool16/newpprj_wiz.gif"
             id="org.eclipse.e4.tools.E4NewProjectWizard"
-            name="e4 Application Project"
+            name="%wizard.name"
             project="true">
       </wizard>
       <wizard
@@ -30,35 +30,35 @@
             class="org.eclipse.e4.internal.tools.wizards.model.NewApplicationModelWizard"
             icon="icons/full/obj16/application_view_tile.png"
             id="org.eclipse.e4.tools.newappmodel"
-            name="New Application Model">
+            name="%wizard.name.0">
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.model"
             class="org.eclipse.e4.internal.tools.wizards.model.NewContributionModelWizard"
             icon="icons/full/obj16/plugin.png"
             id="org.eclipse.e4.tools.newmodelfragment"
-            name="New Model Fragment">
+            name="%wizard.name.1">
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
             class="org.eclipse.e4.internal.tools.wizards.classes.NewHandlerClassWizard"
             icon="icons/full/obj16/class_obj.gif"
             id="org.eclipse.e4.tools.newhandler"
-            name="New Handler Class">
+            name="%wizard.name.2">
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
             class="org.eclipse.e4.internal.tools.wizards.classes.NewPartClassWizard"
             icon="icons/full/obj16/Part.gif"
             id="org.eclipse.e4.tools.newpart"
-            name="New Part Class">
+            name="%wizard.name.3">
       </wizard>
       <wizard
             category="org.eclipse.e4.tools/org.eclipse.e4.tools.classes"
             class="org.eclipse.e4.internal.tools.wizards.classes.NewAddonClassWizard"
             icon="icons/full/obj16/Addons.png"
             id="org.eclipse.e4.tools.newaddon"
-            name="New Addon Class">
+            name="%wizard.name.4">
       </wizard>
    </extension>
 

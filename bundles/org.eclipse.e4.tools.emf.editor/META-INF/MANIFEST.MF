@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Editor
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.e4.tools.emf.editor; singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
