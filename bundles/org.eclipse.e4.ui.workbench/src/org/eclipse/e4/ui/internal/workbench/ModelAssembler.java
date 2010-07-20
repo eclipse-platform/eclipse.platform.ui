@@ -142,22 +142,26 @@ public class ModelAssembler {
 						continue;
 					}
 
-					// TODO is this correct? We are only copying the root elements?
-					HashMap<MApplicationElement, String> map = new HashMap<MApplicationElement, String>();
 					for (MApplicationElement el : elements) {
 						EObject o = (EObject) el;
+
 						E4XMIResource r = (E4XMIResource) o.eResource();
-						map.put(el, r.getInternalId(o));
+						applicationResource.setID(o, r.getID(o));
+
+						// Remember IDs of subitems
+						TreeIterator<EObject> treeIt = EcoreUtil.getAllContents(o, true);
+						while (treeIt.hasNext()) {
+							EObject eObj = treeIt.next();
+							r = (E4XMIResource) eObj.eResource();
+							applicationResource.setID(eObj, r.getInternalId(eObj));
+						}
 					}
 
 					List<MApplicationElement> merged = fragment.merge(application);
+
 					if (merged.size() > 0) {
 						evalImports = true;
 						addedElements.addAll(merged);
-						// TODO is this correct? We are only copying the root elements?
-						for (MApplicationElement el : merged) {
-							applicationResource.setInternalId((EObject) el, map.get(el));
-						}
 					}
 				}
 

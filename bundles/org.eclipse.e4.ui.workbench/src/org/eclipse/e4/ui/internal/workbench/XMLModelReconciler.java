@@ -23,7 +23,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -35,7 +34,6 @@ import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -44,12 +42,10 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
@@ -190,162 +186,6 @@ public class XMLModelReconciler extends ModelReconciler {
 	}
 
 	private static EStructuralFeature getStructuralFeature(EObject object, String featureName) {
-		if (featureName.equals(APPLICATIONELEMENT_ELEMENTID_ATTNAME)) {
-			return ApplicationPackageImpl.eINSTANCE.getApplicationElement_ElementId();
-		} else if (featureName.equals(APPLICATIONELEMENT_TAGS_ATTNAME)) {
-			return ApplicationPackageImpl.eINSTANCE.getApplicationElement_Tags();
-		} else if (featureName.equals(APPLICATION_COMMANDS_ATTNAME)) {
-			return ApplicationPackageImpl.eINSTANCE.getApplication_Commands();
-		} else if (featureName.equals(UILABEL_LABEL_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getUILabel_Label();
-		} else if (featureName.equals(UILABEL_TOOLTIP_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getUILabel_Tooltip();
-		} else if (featureName.equals(UILABEL_ICONURI_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getUILabel_IconURI();
-		} else if (featureName.equals(UIELEMENT_TOBERENDERED_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getUIElement_ToBeRendered();
-		} else if (featureName.equals(UIELEMENT_VISIBLE_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getUIElement_Visible();
-		} else if (featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getElementContainer_Children();
-		} else if (featureName.equals(UIELEMENT_VISIBLEWHEN_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getUIElement_VisibleWhen();
-		} else if (featureName.equals(UIELEMENT_PARENT_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getUIElement_Parent();
-		} else if (featureName.equals(UIELEMENT_CONTAINERDATA_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getUIElement_ContainerData();
-		} else if (featureName.equals(ELEMENTCONTAINER_SELECTEDELEMENT_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getElementContainer_SelectedElement();
-		} else if (featureName.equals(COMMAND_COMMANDNAME_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getCommand_CommandName();
-		} else if (featureName.equals(COMMAND_DESCRIPTION_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getCommand_Description();
-		} else if (featureName.equals(KEYSEQUENCE_KEYSEQUENCE_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getKeySequence_KeySequence();
-		} else if (featureName.equals(BINDINGCONTAINER_BINDINGTABLES_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getBindingTableContainer_BindingTables();
-		} else if (featureName.equals(BINDINGCONTAINER_ROOTCONTEXT_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getBindingTableContainer_RootContext();
-		} else if (featureName.equals(BINDINGTABLES_BINDINGS_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getBindingTable_Bindings();
-		} else if (featureName.equals(BINDINGTABLES_BINDINGCONTEXTID_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getBindingTable_BindingContextId();
-		} else if (featureName.equals(HANDLER_COMMAND_ATTNAME)
-				|| featureName.equals(KEYBINDING_COMMAND_ATTNAME)
-				|| featureName.equals(HANDLEDITEM_COMMAND_ATTNAME)) {
-			// technically all three names are the same
-
-			if (object instanceof MKeyBinding) {
-				return CommandsPackageImpl.eINSTANCE.getKeyBinding_Command();
-			} else if (object instanceof MHandler) {
-				return CommandsPackageImpl.eINSTANCE.getHandler_Command();
-			}
-			return MenuPackageImpl.eINSTANCE.getHandledItem_Command();
-		} else if (featureName.equals(COMMAND_PARAMETERS_ATTNAME)
-				|| featureName.equals(HANDLEDITEM_PARAMETERS_ATTNAME)) {
-			// technically both names are the same
-
-			if (object instanceof MHandledItem) {
-				return MenuPackageImpl.eINSTANCE.getHandledItem_Parameters();
-			}
-			return CommandsPackageImpl.eINSTANCE.getCommand_Parameters();
-		} else if (featureName.equals(ITEM_ENABLED_ATTNAME)) {
-			return MenuPackageImpl.eINSTANCE.getItem_Enabled();
-		} else if (featureName.equals(ITEM_SELECTED_ATTNAME)) {
-			return MenuPackageImpl.eINSTANCE.getItem_Selected();
-		} else if (featureName.equals(ITEM_TYPE_ATTNAME)) {
-			return MenuPackageImpl.eINSTANCE.getItem_Type();
-		} else if (featureName.equals(PART_MENUS_ATTNAME)
-				|| featureName.equals(PARTDESCRIPTOR_MENUS_ATTNAME)) {
-			// technically both names are the same
-
-			if (object instanceof MPartDescriptor) {
-				return org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE
-						.getPartDescriptor_Menus();
-			}
-			return BasicPackageImpl.eINSTANCE.getPart_Menus();
-		} else if (featureName.equals(PART_TOOLBAR_ATTNAME)) {
-			return BasicPackageImpl.eINSTANCE.getPart_Toolbar();
-		} else if (featureName.equals(GENERICTILE_HORIZONTAL_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getGenericTile_Horizontal();
-		} else if (featureName.equals(GENERICTRIMCONTAINER_SIDE_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getGenericTrimContainer_Side();
-		} else if (featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getHandlerContainer_Handlers();
-		} else if (featureName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
-			return ApplicationPackageImpl.eINSTANCE.getContribution_PersistedState();
-		} else if (featureName.equals(CONTRIBUTION_URI_ATTNAME)) {
-			return ApplicationPackageImpl.eINSTANCE.getContribution_ContributionURI();
-		} else if (featureName.equals(WINDOW_SHAREDELEMENTS_ATTNAME)) {
-			return BasicPackageImpl.eINSTANCE.getWindow_SharedElements();
-		} else if (featureName.equals(WINDOW_MAINMENU_ATTNAME)) {
-			return BasicPackageImpl.eINSTANCE.getWindow_MainMenu();
-		} else if (featureName.equals(WINDOW_X_ATTNAME)) {
-			return BasicPackageImpl.eINSTANCE.getWindow_X();
-		} else if (featureName.equals(WINDOW_Y_ATTNAME)) {
-			return BasicPackageImpl.eINSTANCE.getWindow_Y();
-		} else if (featureName.equals(WINDOW_WIDTH_ATTNAME)) {
-			return BasicPackageImpl.eINSTANCE.getWindow_Width();
-		} else if (featureName.equals(WINDOW_HEIGHT_ATTNAME)) {
-			return BasicPackageImpl.eINSTANCE.getWindow_Height();
-		} else if (featureName.equals(PARTDESCRIPTOR_ALLOWMULTIPLE_ATTNAME)) {
-			return org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE
-					.getPartDescriptor_AllowMultiple();
-		} else if (featureName.equals(PARTDESCRIPTOR_CATEGORY_ATTNAME)) {
-			return org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl.eINSTANCE
-					.getPartDescriptor_Category();
-		} else if (featureName.equals(PART_CLOSEABLE_ATTNAME)) {
-			return BasicPackageImpl.eINSTANCE.getPart_Closeable();
-		} else if (featureName.equals(INPUT_INPUTURI_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getInput_InputURI();
-		} else if (featureName.equals(CONTEXT_PROPERTIES_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getContext_Properties();
-		} else if (featureName.equals(TRIMMEDWINDOW_TRIMBARS_ATTNAME)) {
-			return BasicPackageImpl.eINSTANCE.getTrimmedWindow_TrimBars();
-		} else if (featureName.equals(PLACEHOLDER_REF_NAME)) {
-			return AdvancedPackageImpl.eINSTANCE.getPlaceholder_Ref();
-		} else if (featureName.equals(MENUCONTRIBUTIONS_MENUCONTRIBUTIONS_ATTNAME)) {
-			return MenuPackageImpl.eINSTANCE.getMenuContributions_MenuContributions();
-		} else if (featureName.equals(MENUCONTRIBUTION_POSITIONINPARENT_ATTNAME)
-				|| featureName.equals(TOOLBARCONTRIBUTION_POSITIONINPARENT_ATTNAME)
-				|| featureName.equals(TRIMCONTRIBUTION_POSITIONINPARENT_ATTNAME)) {
-			// technically all three names are the same
-
-			if (object instanceof MToolBarContribution) {
-				return MenuPackageImpl.eINSTANCE.getToolBarContribution_PositionInParent();
-			} else if (object instanceof MTrimContribution) {
-				return MenuPackageImpl.eINSTANCE.getTrimContribution_PositionInParent();
-			}
-			return MenuPackageImpl.eINSTANCE.getMenuContribution_PositionInParent();
-		} else if (featureName.equals(TOOLBARCONTRIBUTION_PARENTID_ATTNAME)
-				|| featureName.equals(TRIMCONTRIBUTION_PARENTID_ATTNAME)
-				|| featureName.equals(MENUCONTRIBUTION_PARENTID_ATTNAME)) {
-			// technically all three names are the same
-
-			if (object instanceof MTrimContribution) {
-				return MenuPackageImpl.eINSTANCE.getTrimContribution_ParentId();
-			} else if (object instanceof MMenuContribution) {
-				return MenuPackageImpl.eINSTANCE.getMenuContribution_ParentId();
-			}
-			return MenuPackageImpl.eINSTANCE.getToolBarContribution_ParentId();
-		} else if (featureName.equals(MENUITEM_MNEMONICS_ATTNAME)) {
-			return MenuPackageImpl.eINSTANCE.getMenuItem_Mnemonics();
-		} else if (featureName.equals(PARAMETER_NAME_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getParameter_Name();
-		} else if (featureName.equals(PARAMETER_VALUE_ATTNAME)) {
-			return CommandsPackageImpl.eINSTANCE.getParameter_Value();
-		} else if (featureName.equals(COREEXPRESSION_COREEXPRESSIONID_ATTNAME)) {
-			return UiPackageImpl.eINSTANCE.getCoreExpression_CoreExpressionId();
-		} else if (featureName.equals(TOOLBARCONTRIBUTIONS_TOOLBARCONTRIBUTIONS_ATTNAME)) {
-			return MenuPackageImpl.eINSTANCE.getToolBarContributions_ToolBarContributions();
-		} else if (featureName.equals(TRIMCONTRIBUTIONS_TRIMCONTRIBUTIONS_ATTNAME)) {
-			return MenuPackageImpl.eINSTANCE.getTrimContributions_TrimContributions();
-		} else if (featureName.equals(PERSPECTIVE_WINDOWS_ATTNAME)) {
-			return AdvancedPackageImpl.eINSTANCE.getPerspective_Windows();
-		}
-
-		Activator.log(IStatus.WARNING, "Unknown feature found, reconciliation may fail: " //$NON-NLS-1$
-				+ object.eClass().getName() + '#' + featureName);
 		for (EStructuralFeature sf : object.eClass().getEAllStructuralFeatures()) {
 			if (sf.getName().equals(featureName)) {
 				return sf;

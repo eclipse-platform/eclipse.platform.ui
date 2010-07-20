@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.BundleContext;
@@ -122,6 +123,17 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 		assertEquals(2, application.getChildren().size());
 		assertEquals("fragment.contributedWindow", application.getChildren()
 				.get(1).getElementId());
+
+		// Test for XML-ID stuff
+		assertEquals("_w4fQ8HVHEd-aXt9fFntEtw",
+				((E4XMIResource) resource).getID((EObject) application
+						.getChildren().get(1))); // Window Id
+		assertEquals(
+				"_rdlLgJQUEd-6X_lmWgGEDA",
+				((E4XMIResource) resource).getID((EObject) application
+						.getChildren().get(1).getChildren().get(0))); // Perspective
+																		// Id
+
 		assertEquals(1, application.getHandlers().size());
 		assertSame(application.getCommands().get(0), application.getHandlers()
 				.get(0).getCommand());
@@ -143,4 +155,5 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 		assertEquals("fragment.contributedAfterPart2", application
 				.getChildren().get(0).getChildren().get(7).getElementId());
 	}
+
 }
