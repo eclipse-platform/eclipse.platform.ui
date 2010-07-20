@@ -449,7 +449,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 		MPart mpart = findPart(part);
 		if (mpart != null) {
-			partService.activate(mpart);
+			// we show the part instead of simply activating it, this is because
+			// we do not currently clear out our view references, so we may find
+			// a part that is not not actually visible in the current
+			// perspective so we have to force a show, see bug 315133 and bug
+			// 320327
+			partService.showPart(mpart, PartState.ACTIVATE);
 		}
 	}
 
