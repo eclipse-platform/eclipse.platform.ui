@@ -369,12 +369,12 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
         return feedbackEnabled;
     }
 
-    /**
-     * Returns the object currently selected by the viewer.
-     *
-     * @return the selected object, or <code>null</code> if either no object or 
-     *   multiple objects are selected
-     */
+	/**
+	 * Returns the object currently selected by the viewer.
+	 * 
+	 * @return the selected object or the first element in current selection,
+	 *         and null if no objects are selected
+	 */
     protected Object getSelectedObject() {
         ISelection selection = viewer.getSelection();
         if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
