@@ -45,6 +45,9 @@ public class RenderedMenuRenderer extends SWTPartRenderer {
 					.eContainer();
 			if (parent instanceof Decorations && container instanceof MWindow) {
 				newMenu = mm.createMenuBar((Decorations) parent);
+			} else if (parent instanceof Menu) {
+				mm.update(true);
+				newMenu = mm.getMenu();
 			} else {
 				newMenu = mm.createContextMenu((Control) parent);
 			}
