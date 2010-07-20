@@ -15,7 +15,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import org.eclipse.core.databinding.ObservablesManager;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
@@ -208,11 +210,14 @@ public class ModelEditor {
 	@Preference(nodePath = "org.eclipse.e4.tools.emf.ui", value = "autoCreateElementId")
 	private boolean autoCreateElementId;
 
+	private ObservablesManager obsManager;
+
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project) {
 		this.modelProvider = modelProvider;
 		this.project = project;
 		this.context = context;
 		this.context.set(ModelEditor.class, this);
+		this.obsManager = new ObservablesManager();
 
 		registerDefaultEditors();
 		registerVirtualEditors();
@@ -283,28 +288,39 @@ public class ModelEditor {
 
 			public void selectionChanged(SelectionChangedEvent event) {
 				if (!event.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) event.getSelection();
+					final IStructuredSelection s = (IStructuredSelection) event.getSelection();
 					if (s.getFirstElement() instanceof EObject) {
 						EObject obj = (EObject) s.getFirstElement();
-						AbstractComponentEditor editor = getEditor(obj.eClass());
+						final AbstractComponentEditor editor = getEditor(obj.eClass());
 						if (editor != null) {
 							textLabel.setText(editor.getLabel(obj));
 							iconLabel.setImage(editor.getImage(obj, iconLabel.getDisplay()));
-							Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
-							comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
-							layout.topControl = comp;
-							contentContainer.layout(true);
+							obsManager.runAndCollect(new Runnable() {
+
+								public void run() {
+									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
+									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
+									layout.topControl = comp;
+									contentContainer.layout(true);
+								}
+							});
 						}
 					} else {
 						VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
-						AbstractComponentEditor editor = virtualEditors.get(entry.getId());
+						final AbstractComponentEditor editor = virtualEditors.get(entry.getId());
 						if (editor != null) {
 							textLabel.setText(editor.getLabel(entry));
 							iconLabel.setImage(editor.getImage(entry, iconLabel.getDisplay()));
-							Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
-							comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
-							layout.topControl = comp;
-							contentContainer.layout(true);
+							obsManager.runAndCollect(new Runnable() {
+
+								public void run() {
+									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
+									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
+									layout.topControl = comp;
+									contentContainer.layout(true);
+								}
+
+							});
 						}
 					}
 
@@ -679,6 +695,16 @@ public class ModelEditor {
 			clipboardService.setHandler(clipboardHandler);
 		}
 		viewer.getControl().setFocus();
+	}
+
+	@PreDestroy
+	void dispose() {
+		try {
+			obsManager.dispose();
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 
 	public IModelResource getModelProvider() {

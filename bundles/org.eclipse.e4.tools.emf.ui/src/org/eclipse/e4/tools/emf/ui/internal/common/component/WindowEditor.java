@@ -402,14 +402,14 @@ public class WindowEditor extends AbstractComponentEditor {
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getOldValue() != null) {
 					list.remove(event.diff.getOldValue());
-					if (getMaster().getValue() == element) {
+					if (getMaster().getValue() == element && !createRemoveMainMenu.isDisposed()) {
 						createRemoveMainMenu.setSelection(false);
 					}
 				}
 
 				if (event.diff.getNewValue() != null) {
 					list.add(0, event.diff.getNewValue());
-					if (getMaster().getValue() == element) {
+					if (getMaster().getValue() == element && !createRemoveMainMenu.isDisposed()) {
 						createRemoveMainMenu.setSelection(true);
 					}
 				}

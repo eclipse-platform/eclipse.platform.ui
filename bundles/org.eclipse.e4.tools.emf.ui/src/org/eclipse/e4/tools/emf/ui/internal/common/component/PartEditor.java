@@ -372,7 +372,7 @@ public class PartEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public IObservableList getChildList(Object element) {
+	public IObservableList getChildList(final Object element) {
 		final WritableList list = new WritableList();
 
 		if (getEditor().isModelFragment() && Util.isImport((EObject) element)) {
@@ -407,12 +407,17 @@ public class PartEditor extends AbstractComponentEditor {
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getOldValue() != null) {
 					list.remove(event.diff.getOldValue());
-					createRemoveToolBar.setSelection(false);
+					if (getMaster().getValue() == element && !createRemoveToolBar.isDisposed()) {
+						createRemoveToolBar.setSelection(false);
+					}
+
 				}
 
 				if (event.diff.getNewValue() != null) {
 					list.add(0, event.diff.getNewValue());
-					createRemoveToolBar.setSelection(true);
+					if (getMaster().getValue() == element && !createRemoveToolBar.isDisposed()) {
+						createRemoveToolBar.setSelection(true);
+					}
 				}
 			}
 		});
