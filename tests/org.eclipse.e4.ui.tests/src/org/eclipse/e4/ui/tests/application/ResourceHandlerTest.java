@@ -133,6 +133,17 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 				((E4XMIResource) resource).getID((EObject) application
 						.getChildren().get(1).getChildren().get(0))); // Perspective
 																		// Id
+		// Fix test suite when live-tooling is part of the build
+		if (application.getHandlers().size() == 2) {
+			String check = "platform:/plugin/org.eclipse.e4.tools.emf.liveeditor/org.eclipse.e4.tools.emf.liveeditor.OpenLiveDialogHandler";
+			if (check.equals(application.getHandlers().get(0)
+					.getContributionURI())) {
+				application.getHandlers().remove(0);
+			} else if (check.equals(application.getHandlers().get(1)
+					.getContributionURI())) {
+				application.getHandlers().remove(1);
+			}
+		}
 
 		assertEquals(1, application.getHandlers().size());
 		assertSame(application.getCommands().get(0), application.getHandlers()
