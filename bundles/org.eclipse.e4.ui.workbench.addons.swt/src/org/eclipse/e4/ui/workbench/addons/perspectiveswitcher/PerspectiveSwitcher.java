@@ -15,6 +15,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -26,6 +28,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -57,13 +60,19 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -375,8 +384,24 @@ public class PerspectiveSwitcher {
 	// FIXME singletons, singletons, everywhere!!
 	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=313771
 	private void openPerspective(PerspectiveDescriptor desc) {
-		IWorkbenchPage page = window.getContext().get(IWorkbenchPage.class);
-		page.setPerspective(desc);
+		IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
+		IWorkbenchPage page = workbenchWindow.getActivePage();
+		if (page == null) {
+			try {
+				// don't have a page, need to open one
+				workbenchWindow.openPage(desc.getId(),
+						((Workbench) workbenchWindow.getWorkbench()).getDefaultPageInput());
+			} catch (WorkbenchException e) {
+				IStatus errorStatus = new Status(
+						IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH,
+						NLS.bind(WorkbenchMessages.Workbench_showPerspectiveError, desc.getLabel()),
+						e);
+				StatusManager.getManager().handle(errorStatus, StatusManager.SHOW);
+			}
+		} else {
+			page.setPerspective(desc);
+		}
 	}
 
 	private void selectPerspective() {

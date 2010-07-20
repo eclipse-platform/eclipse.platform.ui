@@ -1594,6 +1594,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public void setActivePage(final IWorkbenchPage in) {
 		if (getActivePage() != in) {
 			page = (WorkbenchPage) in;
+			model.getContext().set(IWorkbenchPage.class, page);
 			partService.setPage(page);
 		}
 	}
