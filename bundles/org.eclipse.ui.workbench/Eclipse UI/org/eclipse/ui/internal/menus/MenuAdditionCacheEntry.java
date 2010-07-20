@@ -201,6 +201,14 @@ public class MenuAdditionCacheEntry {
 	public void addToModel(ArrayList<MMenuContribution> menuContributions,
 			ArrayList<MToolBarContribution> toolBarContributions,
 			ArrayList<MTrimContribution> trimContributions) {
+		if ("menu:help?after=additions".equals(location.toString())) { //$NON-NLS-1$
+			IConfigurationElement[] menus = configElement
+					.getChildren(IWorkbenchRegistryConstants.TAG_MENU);
+			if (menus.length == 1
+					&& "org.eclipse.update.ui.updateMenu".equals(MenuHelper.getId(menus[0]))) { //$NON-NLS-1$
+				return;
+			}
+		}
 		if (inToolbar()) {
 			String path = location.getPath();
 			if (path.equals(MAIN_TOOLBAR) || path.equals(TRIM_COMMAND1)
