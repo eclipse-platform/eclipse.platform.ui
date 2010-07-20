@@ -170,7 +170,7 @@ public class VModelFragmentsEditor extends AbstractComponentEditor {
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_AddEllipsis);
 			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
