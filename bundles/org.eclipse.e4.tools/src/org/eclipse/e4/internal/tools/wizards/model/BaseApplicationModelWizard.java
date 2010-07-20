@@ -75,6 +75,12 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 			// Remember the file.
 			//
 			final IFile modelFile = getModelFile();
+			
+			if( modelFile.exists() ) {
+				if( ! MessageDialog.openQuestion(getShell(), "File exists", "The file already exists. Would you like to overwrite?")) {
+					return false;
+				}
+			}
 
 			// Do the work within an operation.
 			//
@@ -90,7 +96,7 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 							// Get the URI of the model file.
 							//
 							URI fileURI = URI.createPlatformResourceURI(modelFile.getFullPath().toString(), true);
-
+							
 							// Create a resource for this file.
 							//
 							Resource resource = resourceSet.createResource(fileURI);
