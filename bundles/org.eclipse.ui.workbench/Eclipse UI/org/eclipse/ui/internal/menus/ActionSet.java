@@ -214,6 +214,9 @@ public class ActionSet {
 			}
 			path = IWorkbenchActionConstants.MB_ADDITIONS;
 		}
+		if (path.endsWith("/")) { //$NON-NLS-1$
+			path += IWorkbenchActionConstants.MB_ADDITIONS;
+		}
 		Path menuPath = new Path(path);
 		String positionInParent = "after=" + menuPath.segment(0); //$NON-NLS-1$
 		int segmentCount = menuPath.segmentCount();
@@ -291,6 +294,9 @@ public class ActionSet {
 		String tpath = MenuHelper.getToolBarPath(element);
 		if (tpath == null) {
 			return;
+		}
+		if (tpath.endsWith("/")) { //$NON-NLS-1$
+			tpath += IWorkbenchActionConstants.MB_ADDITIONS;
 		}
 
 		MToolBarElement action = MenuHelper
