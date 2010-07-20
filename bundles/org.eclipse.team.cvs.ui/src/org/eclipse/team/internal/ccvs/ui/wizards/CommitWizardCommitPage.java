@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,8 +72,9 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 
 	private boolean fIsEmpty;
     
-	private Splitter horizontalSash;
+	private SashForm horizontalSash;
 	private SashForm verticalSash;
+	private Splitter placeholder;
 	private boolean showCompare;
 	
     public CommitWizardCommitPage(IResource [] resources, CommitWizard wizard) {
@@ -115,14 +116,17 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMMIT_COMMENT_PAGE);
         
         
-        horizontalSash = new Splitter(composite, SWT.HORIZONTAL);
+        horizontalSash = new SashForm(composite, SWT.HORIZONTAL);
         horizontalSash.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
         verticalSash = new SashForm(horizontalSash, SWT.VERTICAL);
         verticalSash.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         createCommentArea(verticalSash, converter);
-        
+
+        placeholder = new Splitter(horizontalSash, SWT.VERTICAL /*any*/);
+        placeholder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
         createChangesArea(verticalSash, converter);
 
         IDialogSettings section = getDialogSettings().getSection(CommitWizard.COMMIT_WIZARD_DIALOG_SETTINGS);
@@ -196,6 +200,8 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             });
             showChanges.setLayoutData(new GridData());
             bottomChild.showPage(changeDesc);
+            // Hide compare pane
+            horizontalSash.setMaximizedControl(verticalSash);
         } else {
             final Composite composite= new Composite(parent, SWT.NONE);
             composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
@@ -210,6 +216,10 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         Control c = createChangesPage(bottomChild, fWizard.getParticipant());
         bottomChild.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, SWT.FILL, SWT.FILL, true, true));
         bottomChild.showPage(c);
+        // Restore compare pane. It has been hidden when file display threshold was reached.
+        if (showCompare) {
+        	horizontalSash.setMaximizedControl(null);
+        }
         Dialog.applyDialogFont(getControl());
         ((Composite)getControl()).layout();
     }
@@ -240,7 +250,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 
 		protected CompareViewerSwitchingPane createContentViewerSwitchingPane(
 				Splitter parent, int style, CompareEditorInput cei) {
-			return super.createContentViewerSwitchingPane(horizontalSash, style, cei);
+			return super.createContentViewerSwitchingPane(placeholder, style, cei);
 		}
 
 		protected void setPageDescription(String title) {
