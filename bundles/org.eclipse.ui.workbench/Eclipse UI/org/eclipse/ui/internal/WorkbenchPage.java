@@ -305,7 +305,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private List<ViewReference> viewReferences = new ArrayList<ViewReference>();
 	private List<EditorReference> editorReferences = new ArrayList<EditorReference>();
 
-	private List<IPerspectiveDescriptor> openedPerspectives = new ArrayList<IPerspectiveDescriptor>();
 	private List<IPerspectiveDescriptor> sortedPerspectives = new ArrayList<IPerspectiveDescriptor>();
 
 	private ListenerList partListenerList = new ListenerList();
@@ -1062,12 +1061,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * IPerspectiveDescriptor, boolean, boolean)
 	 */
 	public void closePerspective(IPerspectiveDescriptor desc, boolean saveParts, boolean closePage) {
-		if (openedPerspectives.size() == 1) {
+		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
+				MPerspectiveStack.class, null).get(0);
+		if (perspectiveStack.getChildren().size() == 1) {
 			closeAllPerspectives(saveParts, closePage);
 		} else {
 			// Remove from caches
 			sortedPerspectives.remove(desc);
-			openedPerspectives.remove(desc);
 
 			// Clear up the model
 			MPerspective persp = (MPerspective) modelService.find(desc.getId(), window);
@@ -1088,7 +1088,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		sortedPerspectives.clear();
-		openedPerspectives.clear();
 
 		for (MPart part : partService.getParts()) {
 			// no save, no confirm, force
@@ -2258,10 +2257,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 		sortedPerspectives.add(perspective);
 
-		if (!openedPerspectives.contains(perspective)) {
-			openedPerspectives.add(perspective);
-		}
-
 		MPerspectiveStack perspectives = getPerspectiveStack();
 		for (MPerspective mperspective : perspectives.getChildren()) {
 			if (mperspective.getElementId().equals(perspective.getId())) {
@@ -2500,7 +2495,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#getOpenPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getOpenPerspectives() {
-		return openedPerspectives.toArray(new IPerspectiveDescriptor[openedPerspectives.size()]);
+		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
+				MPerspectiveStack.class, null).get(0);
+		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
+
+		IPerspectiveDescriptor[] descs = new IPerspectiveDescriptor[perspectiveStack.getChildren()
+				.size()];
+		int count = 0;
+		for (MPerspective persp : perspectiveStack.getChildren()) {
+			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(persp.getElementId());
+			descs[count++] = desc;
+		}
+		return descs;
 	}
 
 	/*
