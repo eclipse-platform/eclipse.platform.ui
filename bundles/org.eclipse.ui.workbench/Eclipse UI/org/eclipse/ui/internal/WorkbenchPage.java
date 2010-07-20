@@ -70,6 +70,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
