@@ -74,7 +74,6 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
-		System.err.println("BindingService.dispose()"); //$NON-NLS-1$
 		for (Runnable r : bindingsToRemove) {
 			r.run();
 		}
