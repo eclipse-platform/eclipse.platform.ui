@@ -62,7 +62,6 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.osgi.service.event.Event;
@@ -246,7 +245,6 @@ public class PerspectiveSwitcher {
 		psTB.addMenuDetectListener(new MenuDetectListener() {
 			public void menuDetected(MenuDetectEvent e) {
 				ToolBar tb = (ToolBar) e.widget;
-				System.out.println("Menu Detect"); //$NON-NLS-1$
 				Point p = new Point(e.x, e.y);
 				p = psTB.getDisplay().map(null, psTB, p);
 				ToolItem item = tb.getItem(p);
@@ -405,8 +403,6 @@ public class PerspectiveSwitcher {
 		final Menu menu = new Menu(psTB);
 		menu.setData(persp);
 		if (persp.isVisible()) {
-			addItem(menu, "Customize...");
-			addItem(menu, "Save As...");
 			addCloseItem(menu);
 		}
 		if (persp.getParent().getSelectedElement() == persp) {
@@ -515,19 +511,6 @@ public class PerspectiveSwitcher {
 		// update fix the layout
 		psTB.pack();
 		psTB.getShell().layout(new Control[] { psTB }, SWT.DEFER);
-	}
-
-	private void addItem(final Menu menu, final String label) {
-		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-		menuItem.setText(label);
-		menuItem.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				MPerspective persp = (MPerspective) menu.getData();
-				E4Util.unsupported(label + " " + persp.getLabel());
-			}
-		});
-
 	}
 
 	private void removePerspectiveItem(MPerspective toRemove) {
