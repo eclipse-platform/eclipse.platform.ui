@@ -45,6 +45,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -53,6 +54,8 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.IPartListener;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -458,14 +461,16 @@ public class PartServiceImpl implements EPartService {
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.setElementId(descriptor.getElementId());
-		part.getMenus().addAll(descriptor.getMenus());
-		part.setToolbar(descriptor.getToolbar());
+		part.getMenus().addAll(EcoreUtil.copyAll(descriptor.getMenus()));
+		if (descriptor.getToolbar() != null) {
+			part.setToolbar((MToolBar) EcoreUtil.copy((EObject) descriptor.getToolbar()));
+		}
 		part.setCloseable(descriptor.isCloseable());
 		part.setContributionURI(descriptor.getContributionURI());
 		part.setLabel(descriptor.getLabel());
 		part.setIconURI(descriptor.getIconURI());
 		part.setTooltip(descriptor.getTooltip());
-		part.getHandlers().addAll(descriptor.getHandlers());
+		part.getHandlers().addAll(EcoreUtil.copyAll(descriptor.getHandlers()));
 		part.getTags().addAll(descriptor.getTags());
 		part.getBindingContexts().addAll(descriptor.getBindingContexts());
 		return part;
