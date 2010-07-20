@@ -275,19 +275,18 @@ public class E4CommandProcessor {
 		}
 		ParameterizedCommand cmd = cs.createCommand(cmdModel.getElementId(), parameters);
 		TriggerSequence sequence = null;
-		try {
-			sequence = bs.createSequence(keySequence);
-		} catch (IllegalArgumentException ex) {
-			// the sequence is not complete
-			Activator.trace(Policy.DEBUG_MENUS, "failed to create: " + binding, ex); //$NON-NLS-1$
-			return null;
-		}
+		sequence = bs.createSequence(keySequence);
 		Binding keyBinding = null;
 		if (cmd == null || sequence == null) {
 			System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
 		} else {
-			keyBinding = bs.createBinding(sequence, cmd,
-					"org.eclipse.ui.defaultAcceleratorConfiguration", bindingContext.getId()); //$NON-NLS-1$
+			try {
+				keyBinding = bs.createBinding(sequence, cmd,
+						"org.eclipse.ui.defaultAcceleratorConfiguration", bindingContext.getId()); //$NON-NLS-1$
+			} catch (IllegalArgumentException e) {
+				Activator.trace(Policy.DEBUG_MENUS, "failed to create: " + binding, e); //$NON-NLS-1$
+				return null;
+			}
 
 		}
 		return keyBinding;

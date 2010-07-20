@@ -113,7 +113,7 @@ public class BindingServiceImpl implements EBindingService {
 		try {
 			return KeySequence.getInstance(sequence);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			// should probably log
 		}
 		return null;
 	}
