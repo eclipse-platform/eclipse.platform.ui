@@ -203,7 +203,7 @@ public class MinMaxAddon {
 			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				MUIElement removed = (MUIElement) event.getProperty(UIEvents.EventTags.OLD_VALUE);
 				String perspectiveId = removed.getElementId();
-				System.out.println("Perspective Removed: " + removed.getElementId());
+				// System.out.println("Perspective Removed: " + removed.getElementId());
 				MWindow window = modelService.getTopLevelWindowFor(changedElement);
 				MTrimBar bar = modelService.getTrim((MTrimmedWindow) window, SideValue.TOP);
 
