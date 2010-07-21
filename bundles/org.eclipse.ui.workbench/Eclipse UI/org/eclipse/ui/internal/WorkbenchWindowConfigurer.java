@@ -455,6 +455,7 @@ public final class WorkbenchWindowConfigurer implements
      */
     public void configureEditorAreaDropListener(
             DropTargetListener dropTargetListener) {
+		this.dropTargetListener = dropTargetListener;
     }
 
     /**
