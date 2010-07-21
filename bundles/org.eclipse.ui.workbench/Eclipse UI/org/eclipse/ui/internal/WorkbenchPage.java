@@ -1709,8 +1709,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see IWorkbenchPage
      */
     public void hideActionSet(String actionSetID) {
-		// FIXME compat hideActionSet
-		E4Util.unsupported("hideActionSet"); //$NON-NLS-1$
+		MPerspective persp = getPerspectiveStack().getSelectedElement();
+		if (persp == null) {
+			return;
+		}
+		EContextService contextService = window.getContext().get(EContextService.class);
+		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
+		if (persp.getTags().contains(tag)) {
+			persp.getTags().remove(tag);
+			contextService.deactivateContext(actionSetID);
+		}
     }
 
     /*
@@ -2366,8 +2374,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see IWorkbenchPage
      */
     public void showActionSet(String actionSetID) {
-		// FIXME compat showActionSet
-		E4Util.unsupported("showActionSet"); //$NON-NLS-1$
+		MPerspective persp = getPerspectiveStack().getSelectedElement();
+		if (persp == null) {
+			return;
+		}
+		EContextService contextService = window.getContext().get(EContextService.class);
+		String tag = ModeledPageLayout.ACTION_SET_TAG + actionSetID;
+		if (!persp.getTags().contains(tag)) {
+			persp.getTags().add(tag);
+			contextService.activateContext(actionSetID);
+		}
     }
 
     /**

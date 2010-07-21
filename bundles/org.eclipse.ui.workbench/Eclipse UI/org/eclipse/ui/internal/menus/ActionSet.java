@@ -64,11 +64,17 @@ public class ActionSet {
 
 	private HashSet<String> menuContributionGroupIds = new HashSet<String>();
 	private HashSet<String> toolbarContributionGroupIds = new HashSet<String>();
+	private String id;
+
+	public String getId() {
+		return id;
+	}
 
 	public ActionSet(MApplication application, IEclipseContext appContext,
 			IConfigurationElement element) {
 		this.application = application;
 		this.configElement = element;
+		this.id = MenuHelper.getId(configElement);
 	}
 
 	public void addToModel(ArrayList<MMenuContribution> menuContributions,

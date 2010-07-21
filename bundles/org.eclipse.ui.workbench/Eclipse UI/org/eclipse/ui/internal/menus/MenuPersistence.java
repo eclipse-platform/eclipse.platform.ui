@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -26,6 +28,8 @@ import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -149,61 +153,6 @@ final class MenuPersistence extends RegistryPersistence {
 	// 
 
 	public void readTrimAdditions() {
-		// if (menuService == null)
-		// return;
-		//
-		// final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		// final IConfigurationElement[] configElements = registry
-		// .getConfigurationElementsFor(EXTENSION_MENUS);
-		//
-		// // Create a cache entry for every menu addition
-		// for (int i = 0; i < configElements.length; i++) {
-		// // Only process 'group' entries
-		// if (!TAG_GROUP.equals(configElements[i].getName()))
-		// continue;
-		//
-		// String id = configElements[i]
-		// .getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-		//
-		// // Define the initial URI spec
-		//			String uriSpec = "toolbar:" + id; //$NON-NLS-1$
-		// if (configElements[i].getChildren(TAG_LOCATION).length > 0) {
-		// IConfigurationElement location = configElements[i]
-		// .getChildren(TAG_LOCATION)[0];
-		// if (location.getChildren(TAG_ORDER).length > 0) {
-		// IConfigurationElement order = location
-		// .getChildren(TAG_ORDER)[0];
-		//
-		// String pos = order
-		// .getAttribute(IWorkbenchRegistryConstants.ATT_POSITION);
-		// String relTo = order
-		// .getAttribute(IWorkbenchRegistryConstants.ATT_RELATIVE_TO);
-		//					uriSpec += "?" + pos + "=" + relTo; //$NON-NLS-1$ //$NON-NLS-2$
-		//
-		// // HACK! We expect that the new trim group is -always-
-		// // relative to
-		// // one of the 'default' groups; indicating which trim area
-		// // they're in
-		// MenuLocationURI uri = new MenuLocationURI(
-		//							"toolbar:" + relTo); //$NON-NLS-1$
-		// List trimAdditions = menuService.getAdditionsForURI(uri);
-		//
-		// //
-		// // TODO convert the TrimAdditionCacheEntry over to use the
-		// // new MenuCacheEntry and addCacheForURI(*)
-		// // OK, add the addition to this area
-		// uri = new MenuLocationURI(uriSpec);
-		// trimAdditions.add(new TrimAdditionCacheEntry(
-		// configElements[i], uri, menuService));
-		// } else {
-		// // Must be a default group; make a new entry cache
-		// MenuLocationURI uri = new MenuLocationURI(uriSpec);
-		//
-		// // NOTE: 'getAdditionsForURI' forces creation
-		// menuService.getAdditionsForURI(uri);
-		// }
-		// }
-		// }
 	}
 
 	public void readAdditions(ArrayList<MMenuContribution> menuContributions,
@@ -268,11 +217,43 @@ final class MenuPersistence extends RegistryPersistence {
 
 		Collections.sort(configElements, comparer);
 
+		HashMap<String, ArrayList<MToolBarContribution>> postProcessing = new HashMap<String, ArrayList<MToolBarContribution>>();
 		for (IConfigurationElement element : configElements) {
+			ArrayList<MToolBarContribution> localToolbarContributions = new ArrayList<MToolBarContribution>();
 			ActionSet actionSet = new ActionSet(application, appContext, element);
 			actionContributions.add(actionSet);
-			actionSet.addToModel(menuContributions, toolBarContributions, trimContributions);
+			actionSet.addToModel(menuContributions, localToolbarContributions, trimContributions);
+			toolBarContributions.addAll(localToolbarContributions);
+			postProcessing.put(actionSet.getId(), localToolbarContributions);
 		}
+		for (Entry<String, ArrayList<MToolBarContribution>> entry : postProcessing.entrySet()) {
+			for (MToolBarContribution contribution : entry.getValue()) {
+				String targetParentId = contribution.getParentId();
+				if (entry.getKey().equals(targetParentId)) {
+					continue;
+				}
+				ArrayList<MToolBarContribution> adjunctContributions = postProcessing
+						.get(targetParentId);
+				if (adjunctContributions == null) {
+					continue;
+				}
+				boolean processed = false;
+				Iterator<MToolBarContribution> i = adjunctContributions.iterator();
+				while (i.hasNext() && !processed) {
+					MToolBarContribution adjunctContribution = i.next();
+					if (targetParentId.equals(adjunctContribution.getParentId())) {
+						for (MToolBarElement item : adjunctContribution.getChildren()) {
+							if (!(item instanceof MToolBarSeparator) && item.getElementId() != null) {
+								processed = true;
+								contribution.setPositionInParent("before=" + item.getElementId()); //$NON-NLS-1$
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		postProcessing.clear();
 	}
 
 	private void readEditorActions(ArrayList<MMenuContribution> menuContributions,
