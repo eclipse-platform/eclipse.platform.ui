@@ -53,8 +53,8 @@ public class NewModelFilePage extends WizardPage {
 	 */
 	public NewModelFilePage(ISelection selection, String defaultFilename) {
 		super("wizardPage");
-		setTitle("Multi-page Editor File");
-		setDescription("This wizard creates a new file with *.e4xmi extension that can be opened by a multi-page editor.");
+		setTitle("New application model");
+		setDescription("This wizard creates a new e4 application model");
 		this.selection = selection;
 		this.defaultFilename = defaultFilename;
 	}
