@@ -150,24 +150,22 @@
       </theme>
       <theme
             basestylesheeturi="css/e4_default_win7.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default.win7"
+            id="org.eclipse.e4.ui.css.theme.e4_default"
             label="Win7"
             os="win32"
-            ws="win7">
+            os_version="6.1">
       </theme>
             <theme
-            basestylesheeturi="css/e4_default_winxp_blu.css"
-            id="org.eclipse.e4.ui.css.theme.e4_default"
-            label="Win XP Blue"
-            os="win32"
-            ws="winxp">
+                  basestylesheeturi="css/e4_default_winxp_blu.css"
+                  id="org.eclipse.e4.ui.css.theme.e4_default"
+                  label="Win XP Blue"
+                  os="win32">
       </theme>
 	  <theme
             basestylesheeturi="css/e4_default_winxp_olv.css"
             id="org.eclipse.e4.ui.css.theme.e4_default.xpolive"
             label="Win XP Olive"
-            os="win32"
-            ws="winxp">
+            os="win32">
       </theme>
       </extension>
 
