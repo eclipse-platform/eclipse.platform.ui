@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -59,6 +60,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorLauncher;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -94,9 +96,11 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
+import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
@@ -2954,8 +2958,61 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	public IEditorPart openEditorFromDescriptor(IEditorInput fileEditorInput,
 			IEditorDescriptor editorDescriptor, final boolean activate, final IMemento editorState)
 			throws PartInitException {
+		if (editorDescriptor.isOpenExternal()) {
+			openExternalEditor((EditorDescriptor) editorDescriptor, fileEditorInput);
+			return null;
+		}
 		return openEditor(fileEditorInput, editorDescriptor.getId(), activate, MATCH_INPUT,
 				editorState);
 	}
 
+	/**
+	 * Open a specific external editor on an file based on the descriptor.
+	 */
+	private IEditorReference openExternalEditor(final EditorDescriptor desc, IEditorInput input)
+			throws PartInitException {
+		final CoreException ex[] = new CoreException[1];
+
+		final IPathEditorInput pathInput = getPathEditorInput(input);
+		if (pathInput != null && pathInput.getPath() != null) {
+			BusyIndicator.showWhile(legacyWindow.getWorkbench().getDisplay(), new Runnable() {
+				public void run() {
+					try {
+						if (desc.getLauncher() != null) {
+							// open using launcher
+							Object launcher = WorkbenchPlugin.createExtension(desc
+									.getConfigurationElement(),
+									IWorkbenchRegistryConstants.ATT_LAUNCHER);
+							((IEditorLauncher) launcher).open(pathInput.getPath());
+						} else {
+							// open using command
+							ExternalEditor oEditor = new ExternalEditor(pathInput.getPath(), desc);
+							oEditor.open();
+						}
+					} catch (CoreException e) {
+						ex[0] = e;
+					}
+				}
+			});
+		} else {
+			throw new PartInitException(NLS.bind(
+					WorkbenchMessages.EditorManager_errorOpeningExternalEditor, desc.getFileName(),
+					desc.getId()));
+		}
+
+		if (ex[0] != null) {
+			throw new PartInitException(NLS.bind(
+					WorkbenchMessages.EditorManager_errorOpeningExternalEditor, desc.getFileName(),
+					desc.getId()), ex[0]);
+		}
+
+		// we do not have an editor part for external editors
+		return null;
+	}
+
+	private IPathEditorInput getPathEditorInput(IEditorInput input) {
+		if (input instanceof IPathEditorInput)
+			return (IPathEditorInput) input;
+		return (IPathEditorInput) Util.getAdapter(input, IPathEditorInput.class);
+	}
 }
