@@ -11,14 +11,14 @@
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
-import org.eclipse.e4.ui.widgets.CTabFolder;
-
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
@@ -34,6 +34,8 @@ public class SplitDropAgent extends DropAgent {
 	EModelService modelService;
 
 	/**
+	 * @param modelService
+	 *            The model service related to this agent
 	 * 
 	 */
 	public SplitDropAgent(EModelService modelService) {
@@ -42,16 +44,27 @@ public class SplitDropAgent extends DropAgent {
 
 	@Override
 	public boolean canDrop(MUIElement dragElement, CursorInfo info) {
-		if (dragElement.getCurSharedRef() != null)
-			dragElement = dragElement.getCurSharedRef();
-		if (info.curElement == dragElement) {
-			if (dragElement.getParent().getWidget() instanceof CTabFolder) {
-				CTabFolder ctf = (CTabFolder) dragElement.getParent().getWidget();
+		if (!(dragElement instanceof MPart))
+			return false;
+
+		MPart part = (MPart) dragElement;
+		MStackElement stackElement = part.getCurSharedRef() != null ? part.getCurSharedRef() : part;
+
+		// Don't allow the split if we're the only part in our stack
+		if (info.curElement == stackElement) {
+			if (stackElement.getParent().getWidget() instanceof CTabFolder) {
+				CTabFolder ctf = (CTabFolder) stackElement.getParent().getWidget();
 				return ctf.getItemCount() > 1;
 			}
 		}
 
-		if (dragElement instanceof MStackElement && info.curElement instanceof MStackElement)
+		if (info.curElement instanceof MStackElement)
+			return true;
+
+		// Allow a split of an empty Editor stack to allow re-docking views when
+		// no editors are open
+		if (info.curElement instanceof MPartStack
+				&& info.curElement.getTags().contains("EditorStack")) //$NON-NLS-1$
 			return true;
 
 		return false;
@@ -84,8 +97,8 @@ public class SplitDropAgent extends DropAgent {
 
 	@Override
 	public boolean drop(MUIElement dragElement, CursorInfo info) {
-		if (dragElement.getCurSharedRef() != null)
-			dragElement = dragElement.getCurSharedRef();
+		MPart part = (MPart) dragElement;
+		MStackElement stackElement = part.getCurSharedRef() != null ? part.getCurSharedRef() : part;
 
 		MUIElement relTo = info.curElement;
 		Control ctrl = (Control) relTo.getWidget();
@@ -95,25 +108,49 @@ public class SplitDropAgent extends DropAgent {
 			relTo = relTo.getCurSharedRef();
 
 		MUIElement relParent = relTo.getParent();
-		if (relParent instanceof MPartStack)
-			relTo = relParent;
 
-		if (dragElement.getParent() != null) {
-			dragElement.getParent().getChildren().remove(dragElement);
+		// Special case...dragging into an empty editor area
+		if (relParent instanceof MPartSashContainer && !part.getTags().contains("Editor")) {
+			relTo = getEditorArea(relParent);
+		}
+		if (relParent instanceof MPartStack) {
+			if (!(stackElement.getTags().contains("Editor")) && relParent.getTags().contains("EditorStack")) { //$NON-NLS-1$ //$NON-NLS-2$
+				relTo = getEditorArea(relParent);
+			} else {
+				relTo = relParent;
+			}
 		}
 
+		// Remove the element (or its placeholder) from its current container
+		stackElement.getParent().getChildren().remove(stackElement);
+
 		// If we're dropping a part wrap it in a stack
-		MUIElement toInsert = dragElement;
+		MUIElement toInsert = stackElement;
 		if (dragElement instanceof MStackElement) {
 			MPartStack newPS = BasicFactoryImpl.eINSTANCE.createPartStack();
-			newPS.getChildren().add((MStackElement) dragElement);
-			newPS.setSelectedElement((MStackElement) dragElement);
+			if (relTo.getTags().contains("EditorStack")) { //$NON-NLS-1$
+				newPS.getTags().add("EditorStack"); //$NON-NLS-1$
+				newPS.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
+			}
+			newPS.getChildren().add((MStackElement) stackElement);
+			newPS.setSelectedElement((MStackElement) stackElement);
 			toInsert = newPS;
 		}
 
 		modelService.insert((MPartSashContainerElement) toInsert,
 				(MPartSashContainerElement) relTo, where, 50);
 		return true;
+	}
+
+	/**
+	 * @param relParent
+	 * @return
+	 */
+	private MUIElement getEditorArea(MUIElement relParent) {
+		// Find the placeholder for the editor area
+		while (relParent != null && relParent.getCurSharedRef() == null)
+			relParent = relParent.getParent();
+		return relParent != null ? relParent.getCurSharedRef() : null;
 	}
 
 	/*
@@ -125,8 +162,7 @@ public class SplitDropAgent extends DropAgent {
 	 */
 	@Override
 	public Cursor getCursor(Display display, MUIElement dragElement, CursorInfo info) {
-		MPart dropPart = (MPart) info.curElement;
-		Control ctrl = (Control) dropPart.getWidget();
+		Control ctrl = (Control) info.curElement.getWidget();
 		int where = whereToDrop(ctrl, info.cursorPos);
 		if (where == EModelService.ABOVE)
 			return display.getSystemCursor(SWT.CURSOR_SIZEN);
@@ -149,8 +185,7 @@ public class SplitDropAgent extends DropAgent {
 	 */
 	@Override
 	public Rectangle getRectangle(MUIElement dragElement, CursorInfo info) {
-		MPart dropPart = (MPart) info.curElement;
-		Control ctrl = (Control) dropPart.getWidget();
+		Control ctrl = (Control) info.curElement.getWidget();
 
 		if (ctrl.getParent() instanceof CTabFolder)
 			ctrl = ctrl.getParent();

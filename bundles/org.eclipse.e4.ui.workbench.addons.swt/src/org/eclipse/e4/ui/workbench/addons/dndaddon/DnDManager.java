@@ -158,6 +158,8 @@ class DnDManager {
 		setDisplayFilters(false);
 
 		final Tracker tracker = new Tracker(display, SWT.NULL);
+		tracker.setStippled(true);
+
 		tracker.addListener(SWT.Move, new Listener() {
 			public void handleEvent(final Event event) {
 				display.syncExec(new Runnable() {
@@ -186,20 +188,25 @@ class DnDManager {
 		// other controls will interfere with the cursor
 		baseShell.setCapture(true);
 
-		// Run tracker until mouse up occurs or escape key pressed.
-		boolean performDrop = tracker.open();
-		if (performDrop && dropAgent != null) {
-			dropAgent.drop(dragAgent.getDragElement(), dndUtil.getCursorInfo());
-		} else {
-			System.out.println("Cancel!"); //$NON-NLS-1$
-			dragAgent.cancelDrag();
+		try {
+			// Run tracker until mouse up occurs or escape key pressed.
+			boolean performDrop = tracker.open();
+
+			// Perform either drop or cancel
+			if (performDrop && dropAgent != null) {
+				dropAgent.drop(dragAgent.getDragElement(), dndUtil.getCursorInfo());
+			} else {
+				dragAgent.cancelDrag();
+			}
+		} finally {
+			tracker.dispose();
+
+			baseShell.setCursor(null);
+			baseShell.setCapture(false);
+
+			dragging = false;
+			setDisplayFilters(true);
 		}
-
-		baseShell.setCursor(null);
-		baseShell.setCapture(false);
-
-		dragging = false;
-		setDisplayFilters(true);
 	}
 
 	public void addDragAgent(DragAgent newAgent) {

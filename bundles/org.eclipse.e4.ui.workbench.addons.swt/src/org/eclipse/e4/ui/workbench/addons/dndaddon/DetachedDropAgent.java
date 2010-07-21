@@ -29,7 +29,8 @@ public class DetachedDropAgent extends DropAgent {
 
 	@Override
 	public boolean canDrop(MUIElement dragElement, CursorInfo info) {
-		if (dragElement instanceof MPart && info.curElement == null)
+		if (dragElement instanceof MPart && info.curElement == null
+				&& !dragElement.getTags().contains("Editor")) //$NON-NLS-1$
 			return true;
 
 		return false;
@@ -65,8 +66,8 @@ public class DetachedDropAgent extends DropAgent {
 		curRect.height += 22;
 
 		Point cp = ctrl.getDisplay().getCursorLocation();
-		curRect.x = cp.x - (curRect.width / 2);
-		curRect.y = cp.y - (curRect.height / 2);
+		curRect.x = cp.x - 15;
+		curRect.y = cp.y - 15;
 
 		return curRect;
 	}

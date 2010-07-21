@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.workbench.addons.cleanupaddon;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -22,26 +24,30 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class CleanupAddon {
 	@Inject
-	protected IEventBroker eventBroker;
+	IEventBroker eventBroker;
 
-	Shell limbo;
+	@Inject
+	EModelService modelService;
+
+	@Inject
+	MApplication app;
 
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -63,7 +69,7 @@ public class CleanupAddon {
 				Display display = Display.getCurrent();
 
 				// Stall the removal to handle cases where the container is only transiently empty
-				if (display != null && !container.getTags().contains("EditorStack")) { //$NON-NLS-1$
+				if (display != null) {
 					Display.getCurrent().asyncExec(new Runnable() {
 						public void run() {
 							// Remove it from the display if no visible children
@@ -74,13 +80,15 @@ public class CleanupAddon {
 									break;
 								}
 							}
-							if (hide) {
+							if (hide && !isLastEditorStack(container)) {
 								container.setToBeRendered(false);
 							}
+
 							// Remove it from the model if it has no children at all
 							if (container.getChildren().size() == 0) {
 								MElementContainer<MUIElement> parent = container.getParent();
-								if (parent != null) {
+								if (parent != null && !isLastEditorStack(container)) {
+									container.setToBeRendered(false);
 									parent.getChildren().remove(container);
 								} else if (container instanceof MWindow) {
 									// Must be a Detached Window
@@ -139,21 +147,7 @@ public class CleanupAddon {
 							parent.setVisible(true);
 					}
 				} else {
-					if (limbo == null) {
-						limbo = new Shell(ctrl.getDisplay(), SWT.NONE);
-						limbo.setLayout(new Layout() {
-							@Override
-							protected void layout(Composite composite, boolean flushCache) {
-							}
-
-							@Override
-							protected Point computeSize(Composite composite, int wHint, int hHint,
-									boolean flushCache) {
-								return new Point(600, 400);
-							}
-						});
-						limbo.setVisible(false);
-					}
+					Shell limbo = (Shell) app.getContext().get("limbo");
 
 					// Reparent the control to 'limbo'
 					Composite curParent = ctrl.getParent();
@@ -244,5 +238,19 @@ public class CleanupAddon {
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(renderingChangeHandler);
 		eventBroker.unsubscribe(visibilityChangeHandler);
+	}
+
+	boolean isLastEditorStack(MUIElement element) {
+		if (!element.getTags().contains("EditorStack"))
+			return false;
+
+		// Don't remove the last editor stack
+		MWindow win = modelService.getTopLevelWindowFor(element);
+
+		List<String> editorStackTag = new ArrayList<String>();
+		editorStackTag.add("EditorStack");
+		List<MPartStack> editorStacks = modelService.findElements(win, null, MPartStack.class,
+				editorStackTag);
+		return editorStacks.size() == 1;
 	}
 }

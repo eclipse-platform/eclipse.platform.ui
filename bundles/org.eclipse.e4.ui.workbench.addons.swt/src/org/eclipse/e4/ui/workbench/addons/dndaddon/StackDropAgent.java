@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 
 /**
@@ -47,8 +48,24 @@ public class StackDropAgent extends DropAgent {
 			}
 		}
 
-		if (dragElement instanceof MPart && info.curElement instanceof MPartStack)
+		if (dragElement instanceof MPart && info.curElement instanceof MPartStack) {
+			MPartStack stack = (MPartStack) info.curElement;
+			boolean isView = !dragElement.getTags().contains("Editor"); //$NON-NLS-1$
+			boolean isEditorStack = stack.getTags().contains("EditorStack"); //$NON-NLS-1$
+
+			// special case...don't allow dropping views into an *enpty* Editor Stack
+			if (isView && isEditorStack && stack.getChildren().size() == 0) {
+				CTabFolder ctf = (CTabFolder) stack.getWidget();
+				Point stackPoint = ctf.getDisplay().map(null, ctf, info.cursorPos);
+
+				// If we're in the 'tab area' then allow the drop, else assume another
+				// agent, such as split, will handle it.
+				boolean canDrop = stackPoint.y <= ctf.getTabHeight();
+				return canDrop;
+			}
+
 			return true;
+		}
 
 		return false;
 	}
