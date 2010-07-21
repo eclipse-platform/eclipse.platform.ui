@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.Menu;
@@ -126,16 +125,29 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 				StructuredViewerAdvisor.this.dispose();
 			}
 		});
-		viewer.addOpenListener(new IOpenListener() {
-			public void open(OpenEvent event) {
+
+		new OpenAndLinkWithEditorHelper(viewer) {
+
+			protected void activate(ISelection selection) {
+				final int currentMode= OpenStrategy.getOpenMethod();
+				try {
+					OpenStrategy.setOpenMethod(OpenStrategy.DOUBLE_CLICK);
+					handleOpen();
+				} finally {
+					OpenStrategy.setOpenMethod(currentMode);
+				}
+			}
+
+			protected void linkToEditor(ISelection selection) {
+				// not supported by this part
+			}
+
+			protected void open(ISelection selection, boolean activate) {
 				handleOpen();
 			}
-		});
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				handleDoubleClick(viewer, event);
-			}
-		});
+
+		};
+
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				// Update the action bars enablement for any contributed action groups
