@@ -1,6 +1,13 @@
 
 .MTrimmedWindow { 
  	background-color: #F0ECE0; 
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.MTrimmedWindow.topLevel { 
     margin-top: 24px;
     margin-bottom: 2px;
     margin-left: 12px;
