@@ -11,9 +11,6 @@
 
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
-import org.eclipse.e4.ui.widgets.CTabFolder;
-import org.eclipse.e4.ui.widgets.CTabItem;
-
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -34,6 +31,8 @@ import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -382,6 +381,9 @@ public class TrimStack {
 	}
 
 	Composite getShellClientComposite() {
+		if (trimStackTB.isDisposed()) {
+			return null;
+		}
 		Shell theShell = trimStackTB.getShell();
 		if (!(theShell.getLayout() instanceof TrimmedPartLayout))
 			return null;
