@@ -458,7 +458,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			// a part that is not not actually visible in the current
 			// perspective so we have to force a show, see bug 315133 and bug
 			// 320327
-			partService.showPart(mpart, PartState.ACTIVATE);
+			String secondaryId = null;
+			for (String tag : mpart.getTags()) {
+				if (tag != null && tag.startsWith(SECONDARY_ID_HEADER)) {
+					secondaryId = tag.substring(SECONDARY_ID_HEADER.length());
+				}
+			}
+			
+			try {
+				showView(mpart.getElementId(), secondaryId, VIEW_ACTIVATE);
+			} catch (PartInitException e) {
+				WorkbenchPlugin.log(e);
+			}
 		}
 	}
 
