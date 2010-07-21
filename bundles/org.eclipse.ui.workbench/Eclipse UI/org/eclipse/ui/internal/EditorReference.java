@@ -285,7 +285,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		}
 
 		// Create a new action bar set.
-		EditorActionBars actionBars = new EditorActionBars(page, site, type);
+		EditorActionBars actionBars = new EditorActionBars(page, page.getWorkbenchWindow(), type);
 		actionBars.addRef();
 		if (candidates == null) {
 			candidates = new HashSet<EditorActionBars>(3);

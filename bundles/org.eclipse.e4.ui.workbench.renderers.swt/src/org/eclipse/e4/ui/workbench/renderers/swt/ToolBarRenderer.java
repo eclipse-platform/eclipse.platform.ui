@@ -74,7 +74,7 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		return intermediate;
 	}
 
-	void createToolbar(final MUIElement element, Composite intermediate) {
+	ToolBar createToolbar(final MUIElement element, Composite intermediate) {
 		int orientation = getOrientation(element);
 		RowLayout layout = RowLayoutFactory.fillDefaults().wrap(false)
 				.spacing(0).type(orientation).create();
@@ -86,7 +86,8 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		ToolBar separatorToolBar = new ToolBar(intermediate, orientation
 				| SWT.WRAP | SWT.FLAT | SWT.RIGHT);
 		new ToolItem(separatorToolBar, SWT.SEPARATOR);
-		new ToolBar(intermediate, orientation | SWT.WRAP | SWT.FLAT | SWT.RIGHT);
+		return new ToolBar(intermediate, orientation | SWT.WRAP | SWT.FLAT
+				| SWT.RIGHT);
 	}
 
 	int getOrientation(final MUIElement element) {
@@ -108,7 +109,7 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		}
 		ToolBar toolbar = findToolbar(intermediate);
 		if (toolbar == null) {
-			createToolbar(childElement.getParent(), intermediate);
+			toolbar = createToolbar(childElement.getParent(), intermediate);
 		}
 		return toolbar;
 	}
