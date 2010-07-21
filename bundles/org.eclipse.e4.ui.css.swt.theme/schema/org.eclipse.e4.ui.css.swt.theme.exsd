@@ -126,6 +126,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="os_version" type="string">
+            <annotation>
+               <documentation>
+                  the version the operating system  the theme is applicable for or empty to apply on all
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

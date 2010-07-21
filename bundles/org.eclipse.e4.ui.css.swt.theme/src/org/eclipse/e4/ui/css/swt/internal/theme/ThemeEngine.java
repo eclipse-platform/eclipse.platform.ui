@@ -79,8 +79,10 @@ public class ThemeEngine implements IThemeEngine {
 					.getConfigurationElements())) {
 				if (ce.getName().equals("theme")) {
 					try {
+						String version = ce.getAttribute("os_version");
+						if (version == null) version ="";
 						registerTheme(
-								ce.getAttribute("id"),
+								ce.getAttribute("id") + version,
 								ce.getAttribute("label"),
 								"platform:/plugin/" + ce.getContributor().getName()
 										+ "/"
@@ -227,16 +229,17 @@ public class ThemeEngine implements IThemeEngine {
 		Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
 		String osname = bundle.getBundleContext().getProperty("osgi.os");
 		// TODO: Need to differentiate win32 versions
-		// System.getProperty("os.name");
+		String os_version = System.getProperty("os.version");
 		String wsname = bundle.getBundleContext().getProperty("ogsi.ws");
 		ArrayList<IConfigurationElement> matchingElements = new ArrayList<IConfigurationElement>();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			String elementOs = element.getAttribute("os");
 			String elementWs = element.getAttribute("ws");
+			String elementOsVersion = element.getAttribute("os_version");
 			if (osname != null
 					&& (elementOs == null || elementOs.contains(osname))) {
-				if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
+				if (os_version != null && os_version.equalsIgnoreCase(elementOsVersion)) {
 					// best match
 					matchingElements.add(element);
 					continue;
@@ -251,6 +254,17 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	public void setTheme(String themeId, boolean restore) {
+		String themeVersion = themeId + System.getProperty("os.version");
+		boolean found = false;
+		for (Theme t : themes) {
+			if (t.getId().equals(themeVersion)) {
+				setTheme(t, restore);
+				found = true;
+				break;
+			}
+		}
+		if (found) return;
+		//try generic
 		for (Theme t : themes) {
 			if (t.getId().equals(themeId)) {
 				setTheme(t, restore);
