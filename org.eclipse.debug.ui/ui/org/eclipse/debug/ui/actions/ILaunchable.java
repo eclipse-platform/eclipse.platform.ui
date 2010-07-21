@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,35 @@ package org.eclipse.debug.ui.actions;
  * Interface used to tag objects as launchable. Objects that provide
  * an adapter of this type will be considered by the contextual
  * launch support. 
+ * <p>
+ * The debug platform uses the {@link ILaunchable} interface as a tag for
+ * objects that can be launched via the context menu 'Run As / Debug As' actions
+ * and run/debug tool bar buttons. The platform checks if an {@link ILaunchable}
+ * adapter is available from the selection/active editor to determine if it
+ * should be considered for launching. However, the platform never actually
+ * retrieves the adapter or calls any methods on it (the interface is, in fact, empty).
+ * </p>
+ * <p>The debug platform performs the following test:</p>
+ * <ul>
+ * <li>
+ * <code>Platform.getAdapterManager().hasAdapter(X, ILaunchable.class.getName());</code>
+ * </li>
+ * </ul>
+ * <p>
+ * Thus objects that can be launched need to register {@link ILaunchable} adapters, but
+ * don't have to provide implementations. There is also no harm in implementing the interface
+ * or providing the adapter. For example, JDT contributes an adapter as follows. Although
+ * no adapter is actually provided the platform will answer <code>true</code> to 
+ * <code>hasAdapter(...)</code>.
+ * </p>
+ * <pre>
+ * <extension point="org.eclipse.core.runtime.adapters">
+ *    <factory 
+ *       class="" 
+ *       adaptableType="org.eclipse.jdt.core.IJavaElement">
+ *       <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
+ *   </factory>
+ * </pre>
  * <p>
  * Clients may contribute an adapter of this type for launchable objects
  * via the <code>org.eclipse.core.runtime.adapters</code> extension
