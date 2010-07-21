@@ -278,6 +278,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					Control c = (Control) renderer.createGui(tbModel, ctf,
 							part.getContext());
 					ctf.setTopRight(c, SWT.RIGHT | SWT.WRAP);
+					ctf.layout();
 				}
 			}
 
