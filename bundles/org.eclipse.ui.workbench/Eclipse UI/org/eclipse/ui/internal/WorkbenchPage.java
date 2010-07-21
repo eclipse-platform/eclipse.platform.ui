@@ -453,12 +453,48 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 		MPart mpart = findPart(part);
 		if (mpart != null) {
-			// we show the part instead of simply activating it, this is because
-			// we do not currently clear out our view references, so we may find
-			// a part that is not not actually visible in the current
-			// perspective so we have to force a show, see bug 315133 and bug
-			// 320327
-			partService.showPart(mpart, PartState.ACTIVATE);
+			if (CompatibilityPart.COMPATIBILITY_EDITOR_URI.equals(mpart.getContributionURI())) {
+				for (MPart localPart : partService.getParts()) {
+					if (localPart == mpart) {
+						// this editor is actually in this perspective, just
+						// activate it
+						partService.activate(mpart);
+						return;
+					}
+				}
+
+				// we may get here when an editor's reference is found even
+				// though it does not actually exist in this perspective (that
+				// is, it has been detached from the editor area and is in
+				// another perspective's view stack), in this scenario, we want
+				// to open an editor with the same input/id in the current
+				// perspective, we use MATCH_NONE to ensure that we don't pick
+				// up the extra editor reference
+				try {
+					IEditorPart editor = (IEditorPart) part;
+					openEditor(editor.getEditorInput(), editor.getSite().getId(), true, MATCH_NONE);
+				} catch (PartInitException e) {
+					WorkbenchPlugin.log(e);
+				}
+			} else {
+				// we show the view instead of simply activating it, this is
+				// because we do not currently clear out our view references, so
+				// we may find a part that is not not actually visible in the
+				// current perspective so we have to force a show, see bug
+				// 315133 and bug 320327
+				String secondaryId = null;
+				for (String tag : mpart.getTags()) {
+					if (tag != null && tag.startsWith(SECONDARY_ID_HEADER)) {
+						secondaryId = tag.substring(SECONDARY_ID_HEADER.length());
+					}
+				}
+
+				try {
+					showView(mpart.getElementId(), secondaryId, VIEW_ACTIVATE);
+				} catch (PartInitException e) {
+					WorkbenchPlugin.log(e);
+				}
+			}
 		}
 	}
 
