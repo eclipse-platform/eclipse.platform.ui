@@ -296,6 +296,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		final Shell wbwShell;
 		if (parentShell == null) {
 			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
+			wbwModel.getTags().add("topLevel"); //$NON-NLS-1$
 		} else if (wbwModel.getTags().contains("dragHost")) { //$NON-NLS-1$
 			wbwShell = new Shell(parentShell, SWT.BORDER);
 			wbwShell.setAlpha(110);
