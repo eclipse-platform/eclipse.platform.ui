@@ -90,6 +90,13 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	private ToggleLinkingAction fToggleLinkingAction;
 
 	/**
+	 * Refresh action.
+	 * @since 3.7
+	 */
+	private SynchronizeAndRefreshAction fRefreshAction;
+
+
+	/**
 	 * Action to paste patch into the view, starting a new synchronization.
 	 */
 	private PasteAction fPastePatchAction;
@@ -257,7 +264,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 				TeamUIPlugin.log(IStatus.ERROR, e.getMessage(), e);
 			}
 		}
-		page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), fPageDropDown);
+		page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), fRefreshAction);
 		page.getSite().getActionBars().updateActionBars();
 	}
 
@@ -384,7 +391,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 * participant being displayed.
 	 */
 	protected void createActions() {
-		fPageDropDown = new SynchronizePageDropDownAction(this);
+		fPageDropDown= new SynchronizePageDropDownAction(this);
+		fRefreshAction= new SynchronizeAndRefreshAction(this);
 		fPinAction = new PinParticipantAction();
 		fToggleLinkingAction = new ToggleLinkingAction(this);
 		fRemoveCurrentAction = new RemoveSynchronizeParticipantAction(this, false);
@@ -441,8 +449,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			partActivated(part);
 			fPageDropDown.update();
 			createOpenAndLinkWithEditorHelper(getViewer());
-            rememberCurrentParticipant();
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook().getParent(), participant.getHelpContextId());
+			rememberCurrentParticipant();
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook().getParent(), participant.getHelpContextId());
 		}
 	}
 	

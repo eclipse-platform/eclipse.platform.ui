@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
@@ -23,7 +22,6 @@ import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.actions.RefreshAction;
 
 public class SynchronizePageDropDownAction extends Action implements IMenuCreator, ISynchronizeParticipantListener {
 
@@ -109,51 +107,13 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		runWithEvent(null);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
-	 * @since 3.7
-	 */
-	public void runWithEvent(Event event) {
 		ISynchronizeParticipant current = fView.getParticipant();
 		if(current != null) {
-
-			// Don't refresh local resources if toolbar button was clicked
-			if (event != null && !(event.widget instanceof ToolItem)) {
-				refreshLocal();
-			}
-
 			current.run(fView);
 		} else {
 			synchronizeAction.run();
 		}
 		update();
-	}
-
-	/**
-	 * Refreshes the local resources that are selected in the view.
-	 * 
-	 * @since 3.7
-	 */
-	private void refreshLocal() {
-		final ISelectionProvider selectionProvider= fView.getSite().getSelectionProvider();
-		if (selectionProvider == null)
-			return;
-		
-		ISelection selection= selectionProvider.getSelection();
-		if (!(selection instanceof IStructuredSelection))
-			return;
-			
-		RefreshAction refresh= new RefreshAction(fView.getSite());
-		if (selection.isEmpty())
-			refresh.refreshAll();
-		else {
-			refresh.selectionChanged((IStructuredSelection)selection);
-			refresh.run();
-		}
 	}
 
 	/* (non-Javadoc)
