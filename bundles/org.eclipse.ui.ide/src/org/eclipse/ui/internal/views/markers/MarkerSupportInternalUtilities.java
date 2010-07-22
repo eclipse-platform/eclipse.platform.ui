@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
+import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -394,30 +395,44 @@ public class MarkerSupportInternalUtilities {
 	 * @param exception
 	 */
 	public static void logViewError(Exception exception) {
-		if (exception instanceof CoreException) {
-			StatusManager.getManager().handle(
-					((CoreException) exception).getStatus(),StatusManager.LOG);
-			return;
-		}
-		StatusManager.getManager().handle(
-				new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-						exception.getLocalizedMessage(), exception),
-				StatusManager.LOG);
+		handleViewError(exception, StatusManager.LOG);
 	}
+
 	/**
 	 * Show an exception from a markers view.
 	 * 
 	 * @param exception
 	 */
 	public static void showViewError(Exception exception) {
+		handleViewError(exception, StatusManager.LOG | StatusManager.SHOW);
+	}
+
+	/**
+	 * @param exception
+	 * @param handlingMethod
+	 *            StatusManager.LOG, StatusManager.SHOW,etc, bitwise ORed
+	 */
+	public static void handleViewError(Exception exception, int handlingMethod) {
 		if (exception instanceof CoreException) {
-			StatusManager.getManager().handle(
-					((CoreException) exception).getStatus(),StatusManager.LOG|StatusManager.SHOW);
+			// Check for a nested CoreException
+			IStatus status = ((CoreException) exception).getStatus();
+			if (status != null
+					&& status.getException() instanceof CoreException) {
+				exception = (CoreException) status.getException();
+				status = ((CoreException) exception).getStatus();
+			}
+
+			if (status == null)
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(IStatus.ERROR,
+								exception.getLocalizedMessage(), exception),
+						handlingMethod);
+			else
+				StatusManager.getManager().handle(status, handlingMethod);
 			return;
 		}
-		StatusManager.getManager().handle(
-				new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
-						exception.getLocalizedMessage(), exception),
-				StatusManager.LOG|StatusManager.SHOW);
+		StatusManager.getManager().handle(StatusUtil.newStatus(IStatus.ERROR,
+				exception.getLocalizedMessage(), exception),
+				handlingMethod);
 	}
 }

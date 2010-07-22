@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.IContext;
@@ -1605,24 +1604,7 @@ public class ExtendedMarkersView extends ViewPart {
 			try {
 				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
 			} catch (PartInitException e) {
-
-				// Check for a nested CoreException
-				IStatus status = e.getStatus();
-				if (status != null
-						&& status.getException() instanceof CoreException) {
-					status = ((CoreException) status.getException())
-							.getStatus();
-				}
-
-				if (status == null)
-					StatusManager.getManager().handle(
-							StatusUtil.newStatus(IStatus.ERROR, e.getMessage(),
-									e), StatusManager.SHOW);
-
-				else
-					StatusManager.getManager().handle(status,
-							StatusManager.SHOW);
-
+				MarkerSupportInternalUtilities.showViewError(e);
 			}
 		}
 	}

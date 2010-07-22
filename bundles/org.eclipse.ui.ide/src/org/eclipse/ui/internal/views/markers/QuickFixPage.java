@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -57,7 +58,10 @@ import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.OpenAndLinkWithEditorHelper;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
@@ -455,25 +459,32 @@ public class QuickFixPage extends WizardPage {
 			}
 		});
 
-		markersTable
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-					 */
-					public void selectionChanged(SelectionChangedEvent event) {
+		new OpenAndLinkWithEditorHelper(markersTable) {
+			
+			{ setLinkWithEditor(false); }
 
-						if (event.getSelection().isEmpty())
-							return;
-						IMarker marker = (IMarker) ((IStructuredSelection) event
-								.getSelection()).getFirstElement();
-						ExtendedMarkersView.openMarkerInEditor(marker, site
-								.getPage());
+			protected void activate(ISelection selection) {
+				open(selection, true);
+			}
 
+			/** Not supported*/
+			protected void linkToEditor(ISelection selection) {
+			}
+			
+			protected void open(ISelection selection, boolean activate) {
+				if (selection.isEmpty())
+					return;
+				IMarker marker = (IMarker) ((IStructuredSelection) selection)
+						.getFirstElement();
+				if (marker != null && marker.getResource() instanceof IFile) {
+					try {
+						IDE.openEditor(site.getPage(), marker, activate);
+					} catch (PartInitException e) {
+						MarkerSupportInternalUtilities.showViewError(e);
 					}
-				});
-
+				}
+			}
+		};
 		markersTable.setInput(this);
 	}
 
