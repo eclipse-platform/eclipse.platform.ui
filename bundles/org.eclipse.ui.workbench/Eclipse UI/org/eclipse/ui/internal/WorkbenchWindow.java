@@ -89,7 +89,6 @@ import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -2212,21 +2211,21 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @since 3.3
 	 */
 	public void toggleToolbarVisibility() {
-		boolean coolbarVisible = getCoolBarVisible();
-		boolean perspectivebarVisible = getPerspectiveBarVisible();
-		IPreferenceStore prefs = PrefUtil.getInternalPreferenceStore();
-
-		// only toggle the visibility of the components that
-		// were on initially
-		if (getWindowConfigurer().getShowCoolBar()) {
-			setCoolBarVisible(!coolbarVisible);
-			prefs.setValue(IPreferenceConstants.COOLBAR_VISIBLE, !coolbarVisible);
+		MTrimBar topTrim = getTopTrim();
+		if (topTrim != null) {
+			if (topTrim.isToBeRendered()) {
+				IPresentationEngine presentationEngine = model.getContext().get(
+						IPresentationEngine.class);
+				topTrim.setToBeRendered(false);
+				presentationEngine.removeGui(topTrim);
+			} else {
+				IPresentationEngine presentationEngine = model.getContext().get(
+						IPresentationEngine.class);
+				topTrim.setToBeRendered(true);
+				presentationEngine.createGui(topTrim, model.getWidget(), model.getContext());
+			}
+			getShell().layout();
 		}
-		if (getWindowConfigurer().getShowPerspectiveBar()) {
-			setPerspectiveBarVisible(!perspectivebarVisible);
-			prefs.setValue(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, !perspectivebarVisible);
-		}
-		getShell().layout();
 	}
 
 	/* package */void addBackgroundSaveListener(IBackgroundSaveListener listener) {

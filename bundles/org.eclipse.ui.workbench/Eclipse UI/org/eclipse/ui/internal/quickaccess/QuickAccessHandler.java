@@ -46,7 +46,13 @@ public class QuickAccessHandler extends AbstractHandler {
 		EModelService modelService = mWindow.getContext().get(EModelService.class);
 		MUIElement searchField = modelService.find("SearchField", mWindow); //$NON-NLS-1$
 		Control control = (Control) searchField.getWidget();
-		control.setFocus();
+		if (control == null) {
+			((WorkbenchWindow) window).toggleToolbarVisibility();
+			control = (Control) searchField.getWidget();
+		}
+		if (control != null) {
+			control.setFocus();
+		}
 
 // final PopupDialog popupDialog = new QuickAccessDialog(window,
 		// executionEvent.getCommand());
