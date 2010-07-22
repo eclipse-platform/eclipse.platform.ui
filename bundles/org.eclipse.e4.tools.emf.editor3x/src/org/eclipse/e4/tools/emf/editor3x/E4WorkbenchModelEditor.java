@@ -13,6 +13,7 @@ package org.eclipse.e4.tools.emf.editor3x;
 import org.eclipse.e4.tools.compat.parts.DIEditorPart;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource.ModelListener;
 import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
 
 @SuppressWarnings("restriction")
@@ -36,6 +37,12 @@ public class E4WorkbenchModelEditor extends
 		super(ApplicationModelEditor.class, COPY|CUT|PASTE);
 	}
 
+	@Override
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		setPartName(getEditorInput().getName());
+	}
+	
 	protected void makeActions() {
 		super.makeActions();
 		undoAction = new UndoAction(getComponent().getModelProvider());
