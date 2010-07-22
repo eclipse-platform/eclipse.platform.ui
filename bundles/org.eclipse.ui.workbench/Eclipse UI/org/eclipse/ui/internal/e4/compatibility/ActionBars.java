@@ -74,7 +74,7 @@ public class ActionBars extends SubActionBars {
 		if (toolbarManager != null) {
 			//			System.err.println("update toolbar manager for " + part.getElementId()); //$NON-NLS-1$
 			if (toolbarManager instanceof ToolBarManager) {
-				ToolBarManager tbm = (ToolBarManager) getToolBarManager();
+				ToolBarManager tbm = (ToolBarManager) toolbarManager;
 				Control tbCtrl = tbm.getControl();
 				if (tbCtrl != null && !tbCtrl.isDisposed()) {
 					MUIElement tbModel = (MUIElement) tbCtrl
@@ -86,15 +86,18 @@ public class ActionBars extends SubActionBars {
 							if (part.getContext() != null) {
 								IPresentationEngine renderer = part.getContext().get(
 										IPresentationEngine.class);
-								renderer.removeGui(tbModel);
-								renderer.createGui(tbModel, tbCtrl.getParent(), part.getContext());
-								tbCtrl.getParent().layout();
+								if (renderer != null) {
+									renderer.removeGui(tbModel);
+									renderer.createGui(tbModel, tbCtrl.getParent(),
+											part.getContext());
+									tbCtrl.getParent().layout();
+								}
 							}
 						}
 					}
 				}
 			} else {
-				getToolBarManager().update(false);
+				toolbarManager.update(false);
 			}
 		}
 		super.updateActionBars();
