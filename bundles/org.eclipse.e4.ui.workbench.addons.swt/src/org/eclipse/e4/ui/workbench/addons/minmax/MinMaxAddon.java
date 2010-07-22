@@ -300,7 +300,7 @@ public class MinMaxAddon {
 					bar.setToBeRendered(true);
 			}
 		} else {
-			trimStack.setVisible(true);
+			trimStack.setToBeRendered(true);
 		}
 
 		// Button Hack to show a 'restore' button while avoiding the 'minimized' layout
@@ -311,20 +311,7 @@ public class MinMaxAddon {
 			ctf.setMaximized(true);
 		}
 
-		// Rectangle trimBounds = ((Control) (trimStack.getWidget())).getBounds();
-		// trimBounds = Display.getCurrent()
-		// .map((Control) trimStack.getWidget(), winShell, trimBounds);
-		// Rectangle stackBounds = ((Control) (stack.getWidget())).getBounds();
-		// stackBounds = Display.getCurrent().map((Control) stack.getWidget(), winShell,
-		// stackBounds);
-		// RectangleAnimationImageFeedback feedback = new RectangleAnimationImageFeedback(winShell,
-		// null, null);
-		// feedback.addStartRect((Control) (stack.getWidget()));
-		// feedback.addEndRect((Control) (trimStack.getWidget()));
-		// AnimationEngine engine = new AnimationEngine(feedback, 500);
-
 		stack.setVisible(false);
-		// engine.schedule();
 	}
 
 	void restoreStack(MPartStack stack) {

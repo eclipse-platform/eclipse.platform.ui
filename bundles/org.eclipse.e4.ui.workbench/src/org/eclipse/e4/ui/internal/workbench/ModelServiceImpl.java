@@ -594,6 +594,14 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		for (MToolControl toolControl : toRemove) {
+			// Close any open fast view
+			if (toolControl.getObject() != null
+					&& toolControl.getObject().getClass().getName().contains("TrimStack")) { //$NON-NLS-1$
+				IEclipseContext ctxt = EclipseContextFactory.create();
+				ctxt.set("show", false); //$NON-NLS-1$
+				ContextInjectionFactory.invoke(toolControl.getObject(), Execute.class, ctxt);
+			}
+
 			toolControl.setToBeRendered(false);
 			toolControl.getParent().getChildren().remove(toolControl);
 		}

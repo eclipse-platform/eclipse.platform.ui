@@ -30,7 +30,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  *
@@ -102,10 +101,9 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			MUIElement child) {
 		super.hideChild(parentElement, child);
 
-		Widget widget = (Widget) child.getWidget();
-		if (widget != null) {
-			widget.dispose();
-		}
+		Composite trimCtrl = (Composite) parentElement.getWidget();
+		if (trimCtrl != null && !trimCtrl.isDisposed())
+			trimCtrl.layout();
 	}
 
 	/*

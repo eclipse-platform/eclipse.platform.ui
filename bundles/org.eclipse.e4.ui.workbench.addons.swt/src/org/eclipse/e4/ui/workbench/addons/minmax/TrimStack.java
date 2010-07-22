@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.workbench.addons.minmax;
 
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -40,6 +39,8 @@ import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -64,8 +65,8 @@ public class TrimStack {
 	private static Image restoreImage;
 
 	private ToolBar trimStackTB;
-
-	MPartStack theStack;
+	private boolean isShowing = false;
+	private MPartStack theStack;
 	private Composite hostPane;
 
 	ControlListener caResizeListener = new ControlListener() {
@@ -143,15 +144,21 @@ public class TrimStack {
 
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
-			MUIElement parentElement = changedElement.getParent();
-			if (theStack == null || trimStackTB == null || parentElement != theStack)
+			// if our stack is going away, so should we
+			if (changedElement == theStack && !theStack.isToBeRendered()) {
+				restoreStack();
 				return;
+			}
 
-			trimStackTB.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					updateTrimStackItems();
-				}
-			});
+			// if one of the kids changes state, re-scrape the CTF
+			MUIElement parentElement = changedElement.getParent();
+			if (parentElement == theStack) {
+				trimStackTB.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						updateTrimStackItems();
+					}
+				});
+			}
 		}
 	};
 
@@ -161,14 +168,15 @@ public class TrimStack {
 				return;
 
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-			if (changedObj != theStack)
-				return;
 
-			trimStackTB.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					updateTrimStackItems();
-				}
-			});
+			// if a child has been added or removed, re-scape the CTF
+			if (changedObj == theStack) {
+				trimStackTB.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						updateTrimStackItems();
+					}
+				});
+			}
 		}
 	};
 
@@ -205,24 +213,6 @@ public class TrimStack {
 		eventBroker.subscribe(
 				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
 				widgetHandler);
-	}
-
-	@PreDestroy
-	void cleanUp() {
-		eventBroker.unsubscribe(toBeRenderedHandler);
-		eventBroker.unsubscribe(childrenHandler);
-		eventBroker.unsubscribe(selectionHandler);
-		eventBroker.unsubscribe(widgetHandler);
-
-		showStack(false);
-
-		if (hostPane != null && !hostPane.isDisposed())
-			hostPane.dispose();
-		hostPane = null;
-
-		if (trimStackTB != null && !trimStackTB.isDisposed())
-			trimStackTB.dispose();
-		trimStackTB = null;
 	}
 
 	@PostConstruct
@@ -289,6 +279,11 @@ public class TrimStack {
 		if (ctf == null)
 			return;
 
+		if (ctf.getItemCount() == 0) {
+			restoreStack();
+			return;
+		}
+
 		// Remove any current items except the 'restore' button
 		while (trimStackTB.getItemCount() > 1) {
 			trimStackTB.getItem(trimStackTB.getItemCount() - 1).dispose();
@@ -335,14 +330,31 @@ public class TrimStack {
 	void restoreStack() {
 		showStack(false);
 
+		// ensure the filter is removed
+		Display.getCurrent().removeFilter(SWT.MouseDown, mouseDownListener);
+
 		theStack.setVisible(true);
-		toolControl.setVisible(false);
+		theStack.getTags().remove(MinMaxAddon.MINIMIZED);
+		toolControl.setToBeRendered(false);
+
+		eventBroker.unsubscribe(toBeRenderedHandler);
+		eventBroker.unsubscribe(childrenHandler);
+		eventBroker.unsubscribe(selectionHandler);
+		eventBroker.unsubscribe(widgetHandler);
+
+		if (hostPane != null && !hostPane.isDisposed())
+			hostPane.dispose();
+		hostPane = null;
+
+		if (trimStackTB != null && !trimStackTB.isDisposed())
+			trimStackTB.dispose();
+		trimStackTB = null;
 	}
 
 	@Execute
 	public void showStack(@Named("show") boolean show) {
 		CTabFolder ctf = (CTabFolder) theStack.getWidget();
-		if (show) {
+		if (show && !isShowing) {
 			hostPane = getHostPane();
 			ctf.setParent(hostPane);
 
@@ -357,7 +369,9 @@ public class TrimStack {
 			hostPane.layout(true);
 			hostPane.moveAbove(null);
 			hostPane.setVisible(true);
-		} else {
+
+			isShowing = true;
+		} else if (!show && isShowing) {
 			Display.getCurrent().removeFilter(SWT.MouseDown, mouseDownListener);
 
 			// Check to ensure that the client area is non-null since the
@@ -377,6 +391,8 @@ public class TrimStack {
 				toolControl.getPersistedState().put("XSize", Integer.toString(size.x));
 				toolControl.getPersistedState().put("YSize", Integer.toString(size.y));
 			}
+
+			isShowing = false;
 		}
 	}
 
@@ -396,6 +412,10 @@ public class TrimStack {
 	 * @param showShell2
 	 */
 	private void setPaneLocation(Composite someShell) {
+		Composite clientComp = getShellClientComposite();
+		if (clientComp == null || clientComp.isDisposed())
+			return;
+
 		Rectangle caRect = getShellClientComposite().getBounds();
 
 		Point paneSize = hostPane.getSize();
@@ -433,6 +453,12 @@ public class TrimStack {
 		// Create one
 		hostPane = new Composite(trimStackTB.getShell(), SWT.NONE);
 		hostPane.setData(ShellActivationListener.DIALOG_IGNORE_KEY, Boolean.TRUE);
+
+		hostPane.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				restoreStack();
+			}
+		});
 
 		int xSize = 600;
 		String xSizeStr = toolControl.getPersistedState().get("XSize");
