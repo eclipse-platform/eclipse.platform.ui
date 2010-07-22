@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
@@ -64,5 +63,10 @@ public class ViewProvider extends QuickAccessProvider {
 
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Views;
+	}
+
+	protected void doReset() {
+		cachedElements = null;
+		idToElement = new HashMap();
 	}
 }

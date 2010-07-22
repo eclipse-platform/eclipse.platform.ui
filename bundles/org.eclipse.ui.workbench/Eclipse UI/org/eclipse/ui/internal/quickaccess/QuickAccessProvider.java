@@ -78,4 +78,11 @@ public abstract class QuickAccessProvider {
 	public boolean isAlwaysPresent() {
 		return false;
 	}
+
+	public void reset() {
+		sortedElements = null;
+		doReset();
+	}
+
+	protected abstract void doReset();
 }

@@ -8,14 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-
 package org.eclipse.ui.internal.quickaccess;
 
 import javax.annotation.PostConstruct;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
@@ -26,13 +28,18 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.handlers.IHandlerService;
 
 public class SearchField {
 	Shell shell;
+	private QuickAccessContents quickAccessContents;
+	private MWindow window;
 
 	@PostConstruct
-	void createWidget(final Composite parent) {
+	void createWidget(final Composite parent, MWindow window) {
+		this.window = window;
 		// borderColor = new Color(parent.getDisplay(), 170, 176, 191);
 		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
@@ -40,11 +47,12 @@ public class SearchField {
 		GridDataFactory.fillDefaults().hint(100, SWT.DEFAULT).applyTo(text);
 		text.setMessage(QuickAccessMessages.QuickAccess_EnterSearch);
 
+		final CommandProvider commandProvider = new CommandProvider();
 		QuickAccessProvider[] providers = new QuickAccessProvider[] { new EditorProvider(),
-				new ViewProvider(), new PerspectiveProvider(), new CommandProvider(),
+				new ViewProvider(), new PerspectiveProvider(), commandProvider,
 				new ActionProvider(), new WizardProvider(), new PreferenceProvider(),
 				new PropertiesProvider() };
-		QuickAccessContents quickAccessContents = new QuickAccessContents(providers) {
+		quickAccessContents = new QuickAccessContents(providers) {
 			void updateFeedback(boolean filterTextEmpty, boolean showAllMatches) {
 			}
 
@@ -74,7 +82,28 @@ public class SearchField {
 			}
 		});
 		GridLayoutFactory.fillDefaults().applyTo(shell);
-		quickAccessContents.createTable(shell, Window.getDefaultOrientation());
+		final Table table = quickAccessContents.createTable(shell, Window.getDefaultOrientation());
+		text.addFocusListener(new FocusListener() {
+			public void focusLost(FocusEvent e) {
+				checkFocusLost(table, text);
+			}
+
+			public void focusGained(FocusEvent e) {
+				IHandlerService hs = SearchField.this.window.getContext()
+						.get(IHandlerService.class);
+				if (commandProvider.getContextSnapshot() == null) {
+					commandProvider.setSnapshot(hs.createContextSnapshot(true));
+				}
+			}
+		});
+		shell.addFocusListener(new FocusListener() {
+			public void focusLost(FocusEvent e) {
+				checkFocusLost(table, text);
+			}
+
+			public void focusGained(FocusEvent e) {
+			}
+		});
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				boolean wasVisible = shell.getVisible();
@@ -109,6 +138,24 @@ public class SearchField {
 			}
 		});
 
-	}
-}
 
+	}
+
+	/**
+	 * @param table
+	 * @param text
+	 */
+	protected void checkFocusLost(final Table table, final Text text) {
+		table.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (!table.isDisposed() && !text.isDisposed()) {
+					if (!table.isFocusControl() && !text.isFocusControl()) {
+						text.setText(""); //$NON-NLS-1$
+						quickAccessContents.resetProviders();
+					}
+				}
+			}
+		});
+	}
+
+}

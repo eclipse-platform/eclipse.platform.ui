@@ -414,6 +414,9 @@ public class QuickAccessDialog extends PopupDialog {
 			// TODO Auto-generated method stub
 			return true;
 		}
+
+		protected void doReset() {
+		}
 	}
 
 }

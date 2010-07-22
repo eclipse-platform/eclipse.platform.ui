@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISharedImages;
@@ -60,5 +59,10 @@ public class PerspectiveProvider extends QuickAccessProvider {
 
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Perspectives;
+	}
+
+	protected void doReset() {
+		cachedElements = null;
+		idToElement = new HashMap();
 	}
 }

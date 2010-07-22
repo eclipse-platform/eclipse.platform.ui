@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,10 @@
  *******************************************************************************/
 
 package org.eclipse.ui.internal.quickaccess;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -33,14 +31,17 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class CommandProvider extends QuickAccessProvider {
 
+	private IEvaluationContext currentSnapshot;
+
+	void setSnapshot(IEvaluationContext c) {
+		reset();
+		currentSnapshot = c;
+	}
+
 	private Map idToElement;
-	private IEvaluationContext contextSnapshot;
 	private IHandlerService handlerService;
 	
 	public CommandProvider() {
-		// initialize eagerly
-		saveApplicationContext();
-		getElements();
 	}
 
 	public String getId() {
@@ -94,16 +95,20 @@ public class CommandProvider extends QuickAccessProvider {
 		return QuickAccessMessages.QuickAccess_Commands;
 	}
 	
-	private void saveApplicationContext() {
-		handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-		contextSnapshot = handlerService.createContextSnapshot(true);
-	}
-	
 	IHandlerService getHandlerService() {
+		if (handlerService == null) {
+			handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(
+					IHandlerService.class);
+		}
 		return handlerService;
 	}
 	
 	IEvaluationContext getContextSnapshot() {
-		return contextSnapshot;
+		return currentSnapshot;
+	}
+
+	protected void doReset() {
+		idToElement = null;
+		currentSnapshot = null;
 	}
 }

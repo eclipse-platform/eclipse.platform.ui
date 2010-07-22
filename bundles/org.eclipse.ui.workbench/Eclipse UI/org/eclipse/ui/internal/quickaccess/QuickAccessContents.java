@@ -504,4 +504,13 @@ public abstract class QuickAccessContents {
 		return table;
 	}
 
+	/**
+	 * 
+	 */
+	public void resetProviders() {
+		for (QuickAccessProvider provider : providers) {
+			provider.reset();
+		}
+	}
+
 }
