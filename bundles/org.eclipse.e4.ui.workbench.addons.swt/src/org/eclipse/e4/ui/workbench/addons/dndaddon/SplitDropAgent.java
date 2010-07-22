@@ -187,8 +187,12 @@ public class SplitDropAgent extends DropAgent {
 	public Rectangle getRectangle(MUIElement dragElement, CursorInfo info) {
 		Control ctrl = (Control) info.curElement.getWidget();
 
+		// Show the affordance on the CTF if possible
 		if (ctrl.getParent() instanceof CTabFolder)
 			ctrl = ctrl.getParent();
+		if (ctrl.getParent() != null && ctrl.getParent().getParent() instanceof CTabFolder)
+			ctrl = ctrl.getParent().getParent();
+
 		Rectangle bounds = ctrl.getBounds();
 		int where = whereToDrop(ctrl, info.cursorPos);
 		if (where == EModelService.ABOVE)
