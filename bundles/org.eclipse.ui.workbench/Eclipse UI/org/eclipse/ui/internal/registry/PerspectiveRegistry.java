@@ -131,8 +131,11 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * @see org.eclipse.ui.IPerspectiveRegistry#getDefaultPerspective()
 	 */
 	public String getDefaultPerspective() {
-		return PrefUtil.getAPIPreferenceStore().getString(
+		String defaultId = PrefUtil.getAPIPreferenceStore().getString(
 				IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
+		// empty string may be returned but we want to return null if nothing
+		// found
+		return defaultId.length() == 0 ? null : defaultId;
 	}
 
 	/*

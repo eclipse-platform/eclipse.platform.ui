@@ -233,10 +233,14 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public IViewLayout getViewLayout(String id) {
 		MPart view = findPart(perspModel, id);
-		if (view == null || !(view instanceof MPart))
-			return null;
+		if (view != null)
+			return new ModeledViewLayout(view);
 
-		return new ModeledViewLayout((MPart) view);
+		MPlaceholder placeholder = findPlaceholder(perspModel, id);
+		if (placeholder != null)
+			return new ModeledViewLayout(placeholder);
+
+		return null;
 	}
 
 	public boolean isEditorAreaVisible() {
@@ -502,6 +506,11 @@ public class ModeledPageLayout implements IPageLayout {
 	private MPart findPart(MUIElement toSearch, String id) {
 		MUIElement element = modelService.find(id, toSearch);
 		return element instanceof MPart ? (MPart) element : null;
+	}
+
+	private MPlaceholder findPlaceholder(MUIElement toSearch, String id) {
+		MUIElement element = modelService.find(id, toSearch);
+		return element instanceof MPlaceholder ? (MPlaceholder) element : null;
 	}
 
 	public void addHiddenMenuItemId(String id) {

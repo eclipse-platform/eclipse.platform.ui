@@ -32,6 +32,12 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 	}
 
 	public void addPlaceholder(String viewId) {
+		boolean containsWildcards = viewId.indexOf('*') != -1 || viewId.indexOf('?') != -1;
+		if (containsWildcards) {
+			E4Util.unsupported("IPageLayout.addPlacehoder(): wildcard in view id: " + viewId); //$NON-NLS-1$
+			return;
+		}
+
 		MUIElement existingView = layout.findElement(layout.perspModel, viewId);
 		if (existingView instanceof MPlaceholder) {
 			existingView.getParent().getChildren().remove(existingView);

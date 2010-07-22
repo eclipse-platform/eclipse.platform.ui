@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.ui.IViewLayout;
 
@@ -20,6 +21,9 @@ public class ModeledViewLayout implements IViewLayout {
 
 	public ModeledViewLayout(MPart view) {
 		// viewME = view;
+	}
+
+	public ModeledViewLayout(MPlaceholder placeholder) {
 	}
 
 	public boolean getShowTitle() {

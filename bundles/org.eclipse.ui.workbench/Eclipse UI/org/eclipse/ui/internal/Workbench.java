@@ -1121,7 +1121,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		return createWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
-				.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
+				.findPerspectiveWithId(getDefaultPerspectiveId()),
 				activeWindow, false);
 	}
 
@@ -1594,7 +1594,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			MWindow window = (MWindow) context.get(MWindow.class.getName());
 			Workbench workbench = (Workbench) PlatformUI.getWorkbench();
 			workbench.openWorkbenchWindow(getDefaultPageInput(), getPerspectiveRegistry()
-					.findPerspectiveWithId(getPerspectiveRegistry().getDefaultPerspective()),
+					.findPerspectiveWithId(getDefaultPerspectiveId()),
 					window, false);
 			page = (WorkbenchPage) context.get(IWorkbenchPage.class.getName());
 		}
@@ -2133,7 +2133,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 			});
 
-			openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), input[0]);
+			openWorkbenchWindow(getDefaultPerspectiveId(), input[0]);
 		} catch (final WorkbenchException e) {
 			// Don't use the window's shell as the dialog parent,
 			// as the window is not open yet (bug 76724).
@@ -2182,7 +2182,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input) throws WorkbenchException {
-		return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), input);
+		return openWorkbenchWindow(getDefaultPerspectiveId(), input);
 	}
 
 	/*
@@ -2691,7 +2691,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @return the default perspective id, or <code>null</code>
 	 */
 	public String getDefaultPerspectiveId() {
-		return getAdvisor().getInitialWindowPerspectiveId();
+		String defaultId = getPerspectiveRegistry().getDefaultPerspective();
+		return defaultId == null ? getAdvisor().getInitialWindowPerspectiveId() : defaultId;
 	}
 
 	/**
