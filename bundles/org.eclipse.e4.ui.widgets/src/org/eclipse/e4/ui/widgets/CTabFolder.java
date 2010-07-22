@@ -3204,8 +3204,11 @@ public void setTopRight(Control control, int alignment) {
 		SWT.error(SWT.ERROR_INVALID_ARGUMENT);
 	}
 	
-	if (topRight != null && !topRight.isDisposed())
+	if (topRight != null && !topRight.isDisposed()) {
 		topRight.removeControlListener(topRightResize);
+		topRight.setBackground (null);
+		topRight.setBackgroundImage (null);
+	}
 	
 	topRight = control;
 
@@ -3213,6 +3216,7 @@ public void setTopRight(Control control, int alignment) {
 		topRight.addControlListener(topRightResize);
 	
 	topRightAlignment = alignment;
+	updateTabHeight(false);
 	if (updateItems()) redraw();
 	updateTopRightBackground();
 }
@@ -3448,6 +3452,11 @@ boolean updateTabHeight(boolean force){
 	GC gc = new GC(this);
 	tabHeight = renderer.computeSize(CTabFolderRenderer.PART_HEADER, SWT.NONE, gc, SWT.DEFAULT, SWT.DEFAULT).y;
 	gc.dispose();
+	if (fixedTabHeight == SWT.DEFAULT && topRight != null) {
+		int topHeight = topRight.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		topHeight += renderer.computeTrim(CTabFolderRenderer.PART_HEADER, SWT.NONE, 0,0,0,0).height;
+		tabHeight = Math.max(topHeight, tabHeight);
+	}
 	if (!force && tabHeight == oldHeight) return false;
 	oldSize = null;
 	notifyListeners(SWT.Resize, new Event());
@@ -3461,6 +3470,7 @@ void updateTopRightBackground() {
 	if (topRight == null) return;
 	
 	Rectangle bounds = topRight.getBounds();
+	if (topRight instanceof Composite) ((Composite) topRight).setBackgroundMode(SWT.INHERIT_DEFAULT);
 	if (bounds.y > getTabHeight() || gradientColors == null) {
 		topRight.setBackgroundImage(null);
 		topRight.setBackground(getBackground());
