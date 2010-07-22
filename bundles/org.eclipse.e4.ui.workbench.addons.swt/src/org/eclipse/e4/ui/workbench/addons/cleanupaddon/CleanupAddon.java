@@ -252,6 +252,7 @@ public class CleanupAddon {
 		List<MPartStack> editorStacks = modelService.findElements(win, null, MPartStack.class,
 				editorStackTag);
 
+		// See bug 320655 for details...
 		// When the last perspective closes the code above returns 0
 		// because the perspective has already been removed from the window's model
 		// So we'll try to walk up to the top of the editor stack's containment
