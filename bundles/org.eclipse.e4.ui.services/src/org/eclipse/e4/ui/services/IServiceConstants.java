@@ -28,7 +28,11 @@ public interface IServiceConstants {
 	public static final String ACTIVE_CONTEXTS = "activeContexts"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 * The part active in a given context.
+	 * <p>
+	 * This value can be <code>null</code> if there is no active part in a given
+	 * context.
+	 * </p>
 	 */
 	public static final String ACTIVE_PART = "e4ActivePart"; //$NON-NLS-1$
 
