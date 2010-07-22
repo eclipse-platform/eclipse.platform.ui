@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Widget;
  * Create a contribute part.
  */
 public class ContributedPartRenderer extends SWTPartRenderer {
+	private MUIElement partToActivate;
 
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MPart) || !(parent instanceof Composite))
@@ -58,6 +59,21 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#requiresFocus
+	 * (org.eclipse.e4.ui.model.application.ui.basic.MPart)
+	 */
+	@Override
+	protected boolean requiresFocus(MPart element) {
+		if (element == partToActivate) {
+			return true;
+		}
+		return super.requiresFocus(element);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * org.eclipse.e4.ui.workbench.renderers.swt.PartFactory#hookControllerLogic
 	 * (org.eclipse.e4.ui.model.application.MPart)
 	 */
@@ -71,10 +87,15 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		if (widget instanceof Composite) {
 			((Composite) widget).addListener(SWT.Activate, new Listener() {
 				public void handleEvent(Event event) {
-					activate((MPart) me);
+					try {
+						partToActivate = me;
+						activate((MPart) me);
+					} finally {
+						partToActivate = null;
+					}
 				}
 			});
 		}
-	}
 
+	}
 }
