@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 BestSolution.at and others.
+ * Copyright (c) 2009, 2010 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,10 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 
 /**
- * Engine the workbench delegates the rendering of the ui to a service
+ * The presentation engine is used to translate the generic workbench model into widgets.
+ * Implementations of this service are responsible for creating or destroying widgets corresponding
+ * to model elements, as well as for running any event loop required for handling user events on
+ * those widgets.
  */
 public interface IPresentationEngine {
 	/**
@@ -25,7 +28,7 @@ public interface IPresentationEngine {
 	public static final String SERVICE_NAME = IPresentationEngine.class.getName();
 
 	/**
-	 * Create the UI element for this model element
+	 * Creates and returns the UI element for the given model element.
 	 * 
 	 * @param element
 	 *            the model element
@@ -39,7 +42,8 @@ public interface IPresentationEngine {
 	public Object createGui(MUIElement element, Object parentWidget, IEclipseContext parentContext);
 
 	/**
-	 * Create UI element which is at the top of the widget hierarchy
+	 * Creates and returns the UI element corresponding to the given model element. The resulting UI
+	 * element sits at the top of a widget hierarchy
 	 * 
 	 * @param element
 	 *            the model element
@@ -67,7 +71,7 @@ public interface IPresentationEngine {
 	public Object run(MApplicationElement uiRoot, IEclipseContext appContext);
 
 	/**
-	 * Shuts down the rendering engine
+	 * Shuts down the presentation engine
 	 */
 	public void stop();
 }
