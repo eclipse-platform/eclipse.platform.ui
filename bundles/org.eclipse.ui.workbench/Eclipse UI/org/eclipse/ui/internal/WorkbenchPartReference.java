@@ -428,6 +428,15 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 		}
 	}
 
+	/**
+	 * Create the underlying client object backed by the part model with the
+	 * rendering engine.
+	 */
+	void renderModel() {
+		EPartService partService = windowContext.get(EPartService.class);
+		partService.showPart(part, PartState.CREATE);
+	}
+
     public final IWorkbenchPart getPart(boolean restore) {
         if (isDisposed()) {
             return null;
@@ -435,8 +444,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         
         if (legacyPart == null) {
 			if (restore && part.getWidget() == null) {
-				EPartService partService = windowContext.get(EPartService.class);
-				partService.showPart(part, PartState.CREATE);
+				renderModel();
 			}
 
 			CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();

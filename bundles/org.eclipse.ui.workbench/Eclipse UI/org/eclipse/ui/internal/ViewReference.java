@@ -15,7 +15,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IViewPart;
@@ -40,6 +44,20 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		} else {
 			setImageDescriptor(descriptor.getImageDescriptor());
 		}
+	}
+
+	void renderModel() {
+		EPartService partService = (EPartService) getPage().getWorkbenchWindow().getService(
+				EPartService.class);
+		MPart part = getModel();
+		if (part.getCurSharedRef() == null) {
+			// if this part doesn't currently have a placeholder, make one
+			MPlaceholder placeholder = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+			placeholder.setElementId(part.getElementId());
+			placeholder.setRef(part);
+			part.setCurSharedRef(placeholder);
+		}
+		partService.showPart(part, PartState.CREATE);
 	}
 
 	public String getPartName() {
@@ -104,4 +122,3 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		return viewSite;
 	}
 }
-
