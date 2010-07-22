@@ -244,13 +244,28 @@ public class CleanupAddon {
 		if (!element.getTags().contains("EditorStack"))
 			return false;
 
-		// Don't remove the last editor stack
+		// Don't remove the last editor stack (in the EA)
 		MWindow win = modelService.getTopLevelWindowFor(element);
 
 		List<String> editorStackTag = new ArrayList<String>();
 		editorStackTag.add("EditorStack");
 		List<MPartStack> editorStacks = modelService.findElements(win, null, MPartStack.class,
 				editorStackTag);
+
+		// When the last perspective closes the code above returns 0
+		// because the perspective has already been removed from the window's model
+		// So we'll try to walk up to the top of the editor stack's containment
+		// model and search there (when 'getParent' == null we're at the 'shared element
+		// which is the actual EA model element.
+		if (editorStacks.size() == 0) {
+			MUIElement container = element;
+			while (container.getParent() != null) {
+				container = container.getParent();
+			}
+			editorStacks = modelService.findElements(container, null, MPartStack.class,
+					editorStackTag);
+		}
+
 		return editorStacks.size() == 1;
 	}
 }
