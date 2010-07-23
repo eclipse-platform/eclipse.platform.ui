@@ -21,6 +21,7 @@
 	inner-keyline-color: #FFFFFF;
 	font-size: 9;
 	font-family: 'Segoe UI';
+	simple: false;
 }
 
 .MTrimBar {
@@ -39,5 +40,4 @@
 
 #PerspectiveSwitcher  {
 	background-color: #F5F7FC #E1E6F6 100%;
-	/*keyline-color: #AAB0BF;*/
 }

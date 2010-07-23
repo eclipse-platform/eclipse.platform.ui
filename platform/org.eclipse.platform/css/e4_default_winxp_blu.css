@@ -20,6 +20,7 @@
     outer-keyline-color: #FFFFFF;
 	inner-keyline-color: #FFFFFF;
 	font-size: 9;
+	simple: false;
 }
 
 .MTrimBar {

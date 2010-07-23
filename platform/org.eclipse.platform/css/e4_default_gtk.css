@@ -20,6 +20,7 @@
     outer-keyline-color: #FFFFFF;
 	inner-keyline-color: #FFFFFF;
 	font-size: 11;
+	simple: false;
 }
 
 .MTrimBar {
@@ -32,7 +33,7 @@
 
 .MPartStack.active {
 	unselected-tabs-color: #DCDCDC #E1E1E1 #FFFFFF 100% 100%;
-    	outer-keyline-color: #C4C5C1;
+    outer-keyline-color: #C4C5C1;
 	inner-keyline-color: #FFFFFF;
 }
 
