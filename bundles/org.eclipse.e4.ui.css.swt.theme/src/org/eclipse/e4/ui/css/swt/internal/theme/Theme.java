@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.css.swt.theme.ITheme;
 public class Theme implements ITheme {
 	private String id;
 	private String label;
+	private String osVersion;
 	
 	public Theme(String id, String label) {
 		this.id = id;
@@ -28,4 +29,14 @@ public class Theme implements ITheme {
 	public String getLabel() {
 		return label;
 	}
+	
+	public void setOsVersion(String version) {
+		this.osVersion = version;
+	}
+	
+	public String getOsVersion() {
+		return this.osVersion;
+	}
+	
+	
 }

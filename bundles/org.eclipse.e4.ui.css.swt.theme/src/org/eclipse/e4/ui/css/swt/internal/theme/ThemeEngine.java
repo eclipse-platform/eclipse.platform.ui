@@ -86,7 +86,7 @@ public class ThemeEngine implements IThemeEngine {
 								ce.getAttribute("label"),
 								"platform:/plugin/" + ce.getContributor().getName()
 										+ "/"
-										+ ce.getAttribute("basestylesheeturi"));						
+										+ ce.getAttribute("basestylesheeturi"), version);						
 					} catch (IllegalArgumentException e1) {
 						//TODO Can we somehow use logging?
 						e1.printStackTrace();
@@ -140,6 +140,10 @@ public class ThemeEngine implements IThemeEngine {
 
 	public synchronized ITheme registerTheme(String id, String label,
 			String basestylesheetURI) throws IllegalArgumentException {
+		return  registerTheme(id, label, basestylesheetURI, "");
+	}
+	public synchronized ITheme registerTheme(String id, String label,
+			String basestylesheetURI, String osVersion) throws IllegalArgumentException {
 		for (Theme t : themes) {
 			if (t.getId().equals(id)) {
 				throw new IllegalArgumentException("A theme with the id '" + id
@@ -147,9 +151,9 @@ public class ThemeEngine implements IThemeEngine {
 			}
 		}
 		Theme theme = new Theme(id, label);
+		if (osVersion != "") theme.setOsVersion(osVersion);
 		themes.add(theme);
 		registerStyle(id, basestylesheetURI);
-
 		return theme;
 	}
 
@@ -254,16 +258,22 @@ public class ThemeEngine implements IThemeEngine {
 	}
 
 	public void setTheme(String themeId, boolean restore) {
-		String themeVersion = themeId + System.getProperty("os.version");
-		boolean found = false;
-		for (Theme t : themes) {
-			if (t.getId().equals(themeVersion)) {
-				setTheme(t, restore);
-				found = true;
-				break;
+		String osVersion = System.getProperty("os.version");
+		if (osVersion != null) {
+			boolean found = false;
+			for (Theme t : themes) {
+				String version = t.getOsVersion();
+				if (version != null && osVersion.contains(version)) {
+					String themeVersion = themeId + version;
+					if (t.getId().equals(themeVersion)) {
+						setTheme(t, restore);
+						found = true;
+						break;
+					}
+				}
 			}
+			if (found) return;
 		}
-		if (found) return;
 		//try generic
 		for (Theme t : themes) {
 			if (t.getId().equals(themeId)) {
