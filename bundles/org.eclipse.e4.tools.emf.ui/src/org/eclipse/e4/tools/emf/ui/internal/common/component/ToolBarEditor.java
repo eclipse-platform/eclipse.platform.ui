@@ -188,6 +188,10 @@ public class ToolBarEditor extends AbstractComponentEditor {
 			final TableViewer viewer = new TableViewer(parent);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
+
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.heightHint = 120;
+			viewer.getControl().setLayoutData(gd);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 
 			IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
