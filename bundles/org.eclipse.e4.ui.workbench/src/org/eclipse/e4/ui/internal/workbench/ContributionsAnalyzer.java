@@ -211,7 +211,7 @@ public final class ContributionsAnalyzer {
 			}
 			menuContributionsToRemove.add(copy);
 			menuModel.getChildren().add(idx++, copy);
-			if (copy instanceof MMenu) {
+			if (copy instanceof MMenu && copy.getElementId() != null) {
 				existingMenuIds.add(copy.getElementId());
 			} else if (copy instanceof MMenuSeparator && copy.getElementId() != null) {
 				existingSeparatorNames.add(copy.getElementId());

@@ -53,9 +53,9 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -112,7 +112,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -138,6 +137,7 @@ import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
+import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.progress.ProgressRegion;
@@ -600,102 +600,23 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private void fill(MMenu menu, IMenuManager manager) {
 		for (IContributionItem item : manager.getItems()) {
 			if (item instanceof MenuManager) {
-				MMenu subMenu = MenuFactoryImpl.eINSTANCE.createMenu();
 				MenuManager menuManager = (MenuManager) item;
-				subMenu.setLabel(menuManager.getMenuText());
-				subMenu.setElementId(menuManager.getId());
-				fill(subMenu, menuManager);
-				menu.getChildren().add(subMenu);
+				MMenu subMenu = MenuHelper.createMenu(menuManager);
+				if (subMenu != null) {
+					fill(subMenu, menuManager);
+					menu.getChildren().add(subMenu);
+				}
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
-				String id = cci.getCommand().getId();
-				for (MCommand command : application.getCommands()) {
-					if (id.equals(command.getElementId())) {
-						CommandContributionItemParameter data = cci.getData();
-						MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
-								.createHandledMenuItem();
-						menuItem.setCommand(command);
-						if (data.label != null) {
-							menuItem.setLabel(data.label);
-						} else {
-							menuItem.setLabel(command.getCommandName());
-						}
-						if (data.mnemonic != null) {
-							menuItem.setMnemonics(data.mnemonic);
-						}
-						if (data.icon != null) {
-							menuItem.setIconURI(getIconURI(data.icon));
-						} else {
-							menuItem.setIconURI(getIconURI(id));
-						}
-						menu.getChildren().add(menuItem);
-						break;
-					}
+				MMenuItem menuItem = MenuHelper.createItem(application, cci);
+				if (menuItem != null) {
+					menu.getChildren().add(menuItem);
 				}
 			} else if (item instanceof ActionContributionItem) {
-				IAction action = ((ActionContributionItem) item).getAction();
-				String id = action.getActionDefinitionId();
-				if (action instanceof OpenPreferencesAction) {
-					for (MCommand command : application.getCommands()) {
-						if (IWorkbenchCommandConstants.WINDOW_PREFERENCES.equals(command
-								.getElementId())) {
-							MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
-									.createHandledMenuItem();
-							menuItem.setCommand(command);
-							menuItem.setLabel(command.getCommandName());
-							menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
-
-							switch (action.getStyle()) {
-							case IAction.AS_CHECK_BOX:
-								menuItem.setType(ItemType.CHECK);
-								break;
-							case IAction.AS_RADIO_BUTTON:
-								menuItem.setType(ItemType.RADIO);
-								break;
-							default:
-								menuItem.setType(ItemType.PUSH);
-								break;
-							}
-
-							menu.getChildren().add(menuItem);
-							break;
-						}
-					}
-				} else if (id != null) {
-					// wire these off because we're out of time, see bug 317203
-					if (id.equals(IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS)
-							|| id.equals(IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE)) {
-						continue;
-					}
-
-					for (MCommand command : application.getCommands()) {
-						if (id.equals(command.getElementId())) {
-							MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE
-									.createHandledMenuItem();
-							menuItem.setCommand(command);
-							if (action.getText() != null) {
-								menuItem.setLabel(action.getText());
-							} else {
-								menuItem.setLabel(command.getCommandName());
-							}
-							menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
-
-							switch (action.getStyle()) {
-							case IAction.AS_CHECK_BOX:
-								menuItem.setType(ItemType.CHECK);
-								break;
-							case IAction.AS_RADIO_BUTTON:
-								menuItem.setType(ItemType.RADIO);
-								break;
-							default:
-								menuItem.setType(ItemType.PUSH);
-								break;
-							}
-
-							menu.getChildren().add(menuItem);
-							break;
-						}
-					}
+				MMenuItem menuItem = MenuHelper.createItem(application,
+						(ActionContributionItem) item);
+				if (menuItem != null) {
+					menu.getChildren().add(menuItem);
 				}
 			} else if (item instanceof AbstractGroupMarker) {
 				MMenuSeparator separator = MenuFactoryImpl.eINSTANCE.createMenuSeparator();

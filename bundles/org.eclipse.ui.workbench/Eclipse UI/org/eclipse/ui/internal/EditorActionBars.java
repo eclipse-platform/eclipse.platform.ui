@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.GroupMarker;
@@ -104,6 +105,8 @@ public class EditorActionBars extends SubActionBars2 {
 
 	private WorkbenchPage page;
 
+	private MApplication application;
+
 	/**
 	 * Constructs the EditorActionBars for an editor.
 	 */
@@ -111,6 +114,8 @@ public class EditorActionBars extends SubActionBars2 {
 		super((IActionBars2) page.getActionBars(), serviceLocator);
 		this.page = page;
 		this.type = type;
+
+		application = (MApplication) serviceLocator.getService(MApplication.class);
 	}
 
 	public WorkbenchPage getPage() {
@@ -135,7 +140,7 @@ public class EditorActionBars extends SubActionBars2 {
 	 * (non-Javadoc) Method declared on SubActionBars.
 	 */
 	protected SubMenuManager createSubMenuManager(IMenuManager parent) {
-		return new EditorMenuManager(parent);
+		return new EditorMenuManager(application, page.getWorkbenchWindow(), type, parent);
 	}
 
 	/*

@@ -1,7 +1,19 @@
+/*******************************************************************************
+ * Copyright (c) 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.menus;
 
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +26,9 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.CanExecute;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.ExtensionPointProxy;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
@@ -25,28 +40,41 @@ import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.OpenPreferencesAction;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 public class MenuHelper {
 
@@ -545,5 +573,181 @@ public class MenuHelper {
 		}
 		item.setTooltip(getTooltip(element));
 		return item;
+	}
+
+	public static MMenu createMenu(MenuManager manager) {
+		MMenu subMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		subMenu.setLabel(manager.getMenuText());
+		subMenu.setElementId(manager.getId());
+		return subMenu;
+	}
+
+	public static MMenuItem createItem(MApplication application, CommandContributionItem cci) {
+		String id = cci.getCommand().getId();
+		for (MCommand command : application.getCommands()) {
+			if (id.equals(command.getElementId())) {
+				CommandContributionItemParameter data = cci.getData();
+				MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
+				menuItem.setCommand(command);
+				if (data.label != null) {
+					menuItem.setLabel(data.label);
+				} else {
+					menuItem.setLabel(command.getCommandName());
+				}
+				if (data.mnemonic != null) {
+					menuItem.setMnemonics(data.mnemonic);
+				}
+				if (data.icon != null) {
+					menuItem.setIconURI(getIconURI(data.icon));
+				} else {
+					menuItem.setIconURI(getIconURI(id, application.getContext()));
+				}
+				String itemId = cci.getId();
+				menuItem.setElementId(itemId == null ? id : itemId);
+				return menuItem;
+			}
+		}
+		return null;
+	}
+
+	public static MMenuItem createItem(MApplication application, ActionContributionItem item) {
+		IAction action = item.getAction();
+		String id = action.getActionDefinitionId();
+		if (action instanceof OpenPreferencesAction) {
+			for (MCommand command : application.getCommands()) {
+				if (IWorkbenchCommandConstants.WINDOW_PREFERENCES.equals(command.getElementId())) {
+					MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
+					menuItem.setCommand(command);
+					menuItem.setLabel(command.getCommandName());
+					menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+
+					switch (action.getStyle()) {
+					case IAction.AS_CHECK_BOX:
+						menuItem.setType(ItemType.CHECK);
+						break;
+					case IAction.AS_RADIO_BUTTON:
+						menuItem.setType(ItemType.RADIO);
+						break;
+					default:
+						menuItem.setType(ItemType.PUSH);
+						break;
+					}
+
+					String itemId = item.getId();
+					menuItem.setElementId(itemId == null ? id : itemId);
+					return menuItem;
+				}
+			}
+		} else if (id != null) {
+			// wire these off because we're out of time, see bug 317203
+			if (id.equals(IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS)
+					|| id.equals(IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE)) {
+				return null;
+			}
+
+			for (MCommand command : application.getCommands()) {
+				if (id.equals(command.getElementId())) {
+					MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
+					menuItem.setCommand(command);
+					if (action.getText() != null) {
+						menuItem.setLabel(action.getText());
+					} else {
+						menuItem.setLabel(command.getCommandName());
+					}
+					menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+
+					switch (action.getStyle()) {
+					case IAction.AS_CHECK_BOX:
+						menuItem.setType(ItemType.CHECK);
+						break;
+					case IAction.AS_RADIO_BUTTON:
+						menuItem.setType(ItemType.RADIO);
+						break;
+					default:
+						menuItem.setType(ItemType.PUSH);
+						break;
+					}
+
+					String itemId = item.getId();
+					menuItem.setElementId(itemId == null ? id : itemId);
+					return menuItem;
+				}
+			}
+		} else {
+			MDirectMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+			if (action.getText() != null) {
+				menuItem.setLabel(action.getText());
+			}
+			String itemId = item.getId();
+			menuItem.setElementId(itemId == null ? id : itemId);
+			menuItem.setIconURI(getIconURI(action.getImageDescriptor()));
+			switch (action.getStyle()) {
+			case IAction.AS_CHECK_BOX:
+				menuItem.setType(ItemType.CHECK);
+				break;
+			case IAction.AS_RADIO_BUTTON:
+				menuItem.setType(ItemType.RADIO);
+				break;
+			default:
+				menuItem.setType(ItemType.PUSH);
+				break;
+			}
+			menuItem.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
+			menuItem.setObject(new DirectProxy(action));
+			return menuItem;
+		}
+		return null;
+	}
+
+	static class DirectProxy {
+		private IAction action;
+
+		public DirectProxy(IAction action) {
+			this.action = action;
+		}
+
+		@CanExecute
+		public boolean canExecute(IEclipseContext context) {
+			return action.isEnabled();
+		}
+
+		@Execute
+		public void execute(IEclipseContext context) {
+			action.run();
+		}
+	}
+
+	private static String getIconURI(ImageDescriptor descriptor) {
+		if (descriptor == null) {
+			return null;
+		}
+
+		String string = descriptor.toString();
+		if (string.startsWith("URLImageDescriptor(")) { //$NON-NLS-1$
+			string = string.substring("URLImageDescriptor(".length()); //$NON-NLS-1$
+			string = string.substring(0, string.length() - 1);
+
+			BundleContext ctxt = FrameworkUtil.getBundle(WorkbenchWindow.class).getBundleContext();
+
+			try {
+				URI uri = new URI(string);
+				String host = uri.getHost();
+				String bundleId = host.substring(0, host.indexOf('.'));
+				Bundle bundle = ctxt.getBundle(Long.parseLong(bundleId));
+				StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
+				builder.append(bundle.getSymbolicName());
+				builder.append(uri.getPath());
+				return builder.toString();
+			} catch (URISyntaxException e) {
+				// ignored
+			}
+		}
+		return null;
+	}
+
+	private static String getIconURI(String commandId, IEclipseContext workbench) {
+		ICommandImageService imageService = workbench.get(ICommandImageService.class);
+		ImageDescriptor descriptor = imageService.getImageDescriptor(commandId);
+		return getIconURI(descriptor);
 	}
 }

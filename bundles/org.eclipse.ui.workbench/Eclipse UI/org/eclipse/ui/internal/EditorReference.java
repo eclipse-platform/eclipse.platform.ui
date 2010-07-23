@@ -309,6 +309,8 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			contr.init(actionBars, page);
 		}
 
+		((EditorMenuManager) actionBars.getMenuManager()).processMenuManagers();
+
 		// Return action bars.
 		return actionBars;
 	}
@@ -317,7 +319,10 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		actionBars.removeRef();
 		if (actionBars.getRef() <= 0) {
 			String type = actionBars.getEditorType();
-			actionCache.remove(type);
+			Set<EditorActionBars> set = actionCache.get(type);
+			if (set != null) {
+				set.remove(actionBars);
+			}
 			// refresh the cool bar manager before disposing of a cool item
 			ICoolBarManager2 coolBar = (ICoolBarManager2) ((WorkbenchWindow) actionBars.getPage()
 					.getWorkbenchWindow()).getCoolBarManager2();

@@ -63,6 +63,8 @@ public abstract class CompatibilityPart {
 
 	private boolean beingDisposed = false;
 
+	private boolean alreadyDisposed = false;
+
 	/**
 	 * This handler will be notified when the part's contribution has been
 	 * un/set.
@@ -73,14 +75,8 @@ public abstract class CompatibilityPart {
 			// being unset
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
-				WorkbenchPartReference reference = getReference();
-				reference.invalidate();
-
-				if (wrapped != null) {
-					wrapped.dispose();
-				}
-
-				disposeSite();
+				invalidate();
+				alreadyDisposed = true;
 			}
 		}
 	};
@@ -121,6 +117,22 @@ public abstract class CompatibilityPart {
 	@Focus
 	public void delegateSetFocus() {
 		wrapped.setFocus();
+	}
+
+	private void invalidate() {
+		WorkbenchPartReference reference = getReference();
+		reference.invalidate();
+
+		if (wrapped != null) {
+			try {
+				wrapped.dispose();
+			} catch (Exception e) {
+				// client code may have errors so we need to catch it
+				logger.error(e);
+			}
+		}
+
+		disposeSite();
 	}
 
 	private String computeLabel() {
@@ -192,6 +204,11 @@ public abstract class CompatibilityPart {
 
 	@PreDestroy
 	void destroy() {
+		if (!alreadyDisposed) {
+			invalidate();
+			alreadyDisposed = true;
+		}
+
 		eventBroker.unsubscribe(objectSetHandler);
 		eventBroker.unsubscribe(widgetSetHandler);
 	}

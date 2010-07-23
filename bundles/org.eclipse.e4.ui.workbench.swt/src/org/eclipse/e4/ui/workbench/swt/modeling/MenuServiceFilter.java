@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class MenuServiceFilter implements Listener {
-	public static final String NUL_MENU_ITEM = "(none-applicable)"; //$NON-NLS-1$
+	public static final String NUL_MENU_ITEM = "(None Applicable)"; //$NON-NLS-1$
 
 	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context";
 
