@@ -33,6 +33,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -79,6 +80,7 @@ import org.osgi.framework.BundleListener;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -185,7 +187,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private BundleListener bundleListener;
 
 	private IEclipseContext e4Context;
-        
+
+	private ServiceTracker debugTracker = null;
     
     /**
      * Create an instance of the WorkbenchPlugin. The workbench plugin is
@@ -1041,6 +1044,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     		context.removeBundleListener(bundleListener);
     		bundleListener = null;
     	}
+		if (debugTracker != null) {
+			debugTracker.close();
+			debugTracker = null;
+		}
     	// TODO normally super.stop(*) would be the last statement in this
     	// method
         super.stop(context);     
@@ -1404,5 +1411,18 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 				return editorRegistry;
 			}
 		});
+	}
+
+	/*
+	 * Return the debug options service, if available.
+	 */
+	public DebugOptions getDebugOptions() {
+		if (bundleContext == null)
+			return null;
+		if (debugTracker == null) {
+			debugTracker = new ServiceTracker(bundleContext, DebugOptions.class.getName(), null);
+			debugTracker.open();
+		}
+		return (DebugOptions) debugTracker.getService();
 	}
 }

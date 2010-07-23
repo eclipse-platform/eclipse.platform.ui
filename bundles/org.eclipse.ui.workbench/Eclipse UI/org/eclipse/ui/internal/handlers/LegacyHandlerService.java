@@ -49,7 +49,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.expressions.AndExpression;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -198,7 +198,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
-		WorkbenchPlugin.log("LegacyHandlerService.dispose: should it do something?"); //$NON-NLS-1$
+		E4Util.message("LegacyHandlerService.dispose: should it do something?"); //$NON-NLS-1$
 	}
 
 	/*

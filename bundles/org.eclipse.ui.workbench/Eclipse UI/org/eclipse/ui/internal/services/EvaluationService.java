@@ -11,18 +11,18 @@
 
 package org.eclipse.ui.internal.services;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import java.util.LinkedList;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
 
@@ -73,7 +73,7 @@ public final class EvaluationService implements IEvaluationService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
-		WorkbenchPlugin.log("LegacyEvalContext.dispose: should it do something?"); //$NON-NLS-1$
+		E4Util.message("EvaluationService.dispose: should it do something?"); //$NON-NLS-1$
 	}
 
 	/*

@@ -70,6 +70,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
+import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -196,9 +197,8 @@ public class PerspectiveSwitcher {
 	void init(IEclipseContext context) {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN), childrenHandler);
-		eventBroker.subscribe(
-				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
-				toBeRenderedHandler);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
 	}
@@ -258,11 +258,11 @@ public class PerspectiveSwitcher {
 				p = psTB.getDisplay().map(null, psTB, p);
 				ToolItem item = tb.getItem(p);
 				if (item == null)
-					System.out.println("  ToolBar menu"); //$NON-NLS-1$
+					E4Util.message("  ToolBar menu"); //$NON-NLS-1$
 				else {
 					MPerspective persp = (MPerspective) item.getData();
 					if (persp == null)
-						System.out.println("  Add button Menu"); //$NON-NLS-1$
+						E4Util.message("  Add button Menu"); //$NON-NLS-1$
 					else
 						openMenuFor(item, persp);
 				}
@@ -389,14 +389,11 @@ public class PerspectiveSwitcher {
 		if (page == null) {
 			try {
 				// don't have a page, need to open one
-				workbenchWindow.openPage(desc.getId(),
-						((Workbench) workbenchWindow.getWorkbench()).getDefaultPageInput());
+				workbenchWindow.openPage(desc.getId(), ((Workbench) workbenchWindow.getWorkbench())
+						.getDefaultPageInput());
 			} catch (WorkbenchException e) {
-				IStatus errorStatus = new Status(
-						IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH,
-						NLS.bind(WorkbenchMessages.Workbench_showPerspectiveError, desc.getLabel()),
-						e);
+				IStatus errorStatus = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS
+						.bind(WorkbenchMessages.Workbench_showPerspectiveError, desc.getLabel()), e);
 				StatusManager.getManager().handle(errorStatus, StatusManager.SHOW);
 			}
 		} else {
