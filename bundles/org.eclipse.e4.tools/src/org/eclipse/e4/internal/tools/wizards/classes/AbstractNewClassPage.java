@@ -161,6 +161,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 				public void widgetSelected(SelectionEvent e) {
 					IPackageFragmentRoot root = choosePackageRoot();
 					if( root != null ) {
+						froot = root;
 						clazz.setFragmentRoot(root);	
 					}
 					bd.updateModelToTarget(); //TODO Find out why this is needed
