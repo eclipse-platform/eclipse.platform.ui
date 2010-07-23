@@ -56,8 +56,8 @@ public class GradientBackgroundListener implements Listener {
 					.forName("java.awt.RadialGradientPaint"); //$NON-NLS-1$
 			isRadialSupported = true;
 		} catch (Exception e) {
-			System.err
-					.println("Warning - radial gradients are only supported in Java 6 and higher, using linear gradient instead"); //$NON-NLS-1$
+//			System.err
+//					.println("Warning - radial gradients are only supported in Java 6 and higher, using linear gradient instead"); //$NON-NLS-1$
 			isRadialSupported = false;
 		}
 
