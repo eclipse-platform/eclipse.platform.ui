@@ -269,7 +269,7 @@ public class ActionSet {
 		menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
 		MMenuElement sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
 		sep.setElementId(group);
-		sep.setVisible(false);
+		sep.setVisible(true);
 		menuContribution.getChildren().add(sep);
 		contributions.add(menuContribution);
 	}
