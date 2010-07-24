@@ -218,6 +218,10 @@ public class SelectionServiceImpl implements ESelectionService {
 				private boolean initial = true;
 
 				public boolean changed(IEclipseContext context) {
+					if (serviceRoot == null) {
+						// see bug 320791
+						return false;
+					}
 					Object selection = context.get(OUT_SELECTION);
 					if (initial) {
 						initial = false;
