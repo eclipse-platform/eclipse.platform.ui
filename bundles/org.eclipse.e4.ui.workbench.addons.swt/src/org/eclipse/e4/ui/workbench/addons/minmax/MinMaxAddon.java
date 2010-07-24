@@ -16,6 +16,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -30,6 +31,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabFolder2Adapter;
 import org.eclipse.e4.ui.widgets.CTabFolderEvent;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -61,6 +63,9 @@ public class MinMaxAddon {
 
 	@Inject
 	EModelService modelService;
+
+	@Inject
+	private IEclipseContext context;
 
 	private EventHandler ctfListener = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -300,6 +305,15 @@ public class MinMaxAddon {
 					bar.setToBeRendered(true);
 			}
 		} else {
+			// get the parent trim bar, see bug 320756
+			MUIElement parent = trimStack.getParent();
+			if (parent.getWidget() == null) {
+				// ask it to be rendered
+				parent.setToBeRendered(true);
+				// create the widget
+				context.get(IPresentationEngine.class).createGui(parent, winShell,
+						window.getContext());
+			}
 			trimStack.setToBeRendered(true);
 		}
 
