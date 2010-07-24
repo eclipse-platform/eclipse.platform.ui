@@ -199,7 +199,7 @@ public class ModelServiceImpl implements EModelService {
 			if (persp != null)
 				trimId = element.getElementId() + '(' + persp.getElementId() + ')';
 			MToolControl trimCtrl = (MToolControl) find(trimId, window1);
-			if (trimCtrl != null) {
+			if (trimCtrl != null && trimCtrl.getObject() != null) {
 				IEclipseContext ctxt = EclipseContextFactory.create();
 				ctxt.set("show", true); //$NON-NLS-1$
 				ContextInjectionFactory.invoke(trimCtrl.getObject(), Execute.class, ctxt);
@@ -475,8 +475,8 @@ public class ModelServiceImpl implements EModelService {
 
 			MWindow window = getTopLevelWindowFor(persp);
 			IPresentationEngine renderingEngine = persp.getContext().get(IPresentationEngine.class);
-			Object foo = renderingEngine.createGui(newWindow, window.getWidget(), persp
-					.getContext());
+			Object foo = renderingEngine.createGui(newWindow, window.getWidget(),
+					persp.getContext());
 			if (foo != null) {
 				// System.out.println(foo.toString());
 			}
