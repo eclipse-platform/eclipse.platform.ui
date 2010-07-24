@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -158,6 +159,9 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		ToolItem[] children = toolbar.getItems();
 		for (ToolItem toolItem : children) {
 			if ((toolItem.getStyle() & SWT.SEPARATOR) == 0) {
+				return false;
+			} else if (toolItem.getControl() != null
+					&& toolItem.getControl().getData(OWNING_ME) instanceof MToolControl) {
 				return false;
 			}
 		}
