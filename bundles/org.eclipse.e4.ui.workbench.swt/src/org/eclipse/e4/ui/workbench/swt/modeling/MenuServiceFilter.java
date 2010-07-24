@@ -17,9 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
@@ -78,11 +81,36 @@ public class MenuServiceFilter implements Listener {
 	private IPresentationEngine renderer;
 
 	@Inject
+	private Logger logger;
+
+	@Inject
 	EModelService modelService;
 
 	private HashMap<Menu, Runnable> pendingCleanup = new HashMap<Menu, Runnable>();
 
-	public void handleEvent(Event event) {
+	public void handleEvent(final Event event) {
+		// wrap the handling in a SafeRunner so that exceptions do not prevent
+		// the menu from being shown
+		SafeRunner.run(new ISafeRunnable() {
+			public void handleException(Throwable e) {
+				if (e instanceof Error) {
+					// errors are deadly, we shouldn't ignore these
+					throw (Error) e;
+				} else {
+					// log exceptions otherwise
+					if (logger != null) {
+						logger.error(e);
+					}
+				}
+			}
+
+			public void run() throws Exception {
+				safeHandleEvent(event);
+			}
+		});
+	}
+
+	private void safeHandleEvent(Event event) {
 		if (!(event.widget instanceof Menu)) {
 			return;
 		}

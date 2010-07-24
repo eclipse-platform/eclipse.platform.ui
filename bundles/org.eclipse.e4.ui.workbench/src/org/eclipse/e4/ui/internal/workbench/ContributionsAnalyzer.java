@@ -94,6 +94,10 @@ public final class ContributionsAnalyzer {
 		boolean menuBar = (((MUIElement) ((EObject) menuModel).eContainer()) instanceof MWindow);
 		for (MMenuContribution menuContribution : menuContributionList) {
 			String parentID = menuContribution.getParentId();
+			if (parentID == null) {
+				// it doesn't make sense for this to be null, temporary workaround for bug 320790
+				continue;
+			}
 			boolean popup = parentID.equals(POPUP_PARENT_ID) && (menuModel instanceof MPopupMenu)
 					&& includePopups;
 			boolean filtered = isFiltered(menuModel, menuContribution);

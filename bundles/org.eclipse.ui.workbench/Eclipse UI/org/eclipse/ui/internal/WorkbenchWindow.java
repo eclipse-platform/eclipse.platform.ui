@@ -2197,7 +2197,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return cm2;
 	}
 
-	MenuManager menuManager = new MenuManager();
+	MenuManager menuManager = new MenuManager("MenuBar", "org.eclipse.ui.main.menu"); //$NON-NLS-1$//$NON-NLS-2$
 
 	public MenuManager getMenuManager() {
 		return menuManager;
