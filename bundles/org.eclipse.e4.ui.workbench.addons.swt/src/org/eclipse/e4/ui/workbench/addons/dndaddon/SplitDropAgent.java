@@ -51,7 +51,7 @@ public class SplitDropAgent extends DropAgent {
 		MStackElement stackElement = part.getCurSharedRef() != null ? part.getCurSharedRef() : part;
 
 		// Don't allow the split if we're the only part in our stack
-		if (info.curElement == stackElement) {
+		if (info.curElement == part) {
 			if (stackElement.getParent().getWidget() instanceof CTabFolder) {
 				CTabFolder ctf = (CTabFolder) stackElement.getParent().getWidget();
 				return ctf.getItemCount() > 1;
