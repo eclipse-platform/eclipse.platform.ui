@@ -14,6 +14,7 @@ import org.eclipse.e4.tools.compat.parts.DIEditorPart;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource.ModelListener;
 import org.eclipse.e4.tools.emf.ui.internal.wbm.ApplicationModelEditor;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.actions.ActionFactory;
 
 @SuppressWarnings("restriction")
@@ -46,7 +47,10 @@ public class E4WorkbenchModelEditor extends
 	protected void makeActions() {
 		super.makeActions();
 		undoAction = new UndoAction(getComponent().getModelProvider());
+		undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
+		
 		redoAction = new RedoAction(getComponent().getModelProvider());
+		redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 
 		getEditorSite().getActionBars().setGlobalActionHandler(
 				ActionFactory.UNDO.getId(), undoAction);
