@@ -39,8 +39,6 @@ import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -453,12 +451,6 @@ public class TrimStack {
 		// Create one
 		hostPane = new Composite(trimStackTB.getShell(), SWT.NONE);
 		hostPane.setData(ShellActivationListener.DIALOG_IGNORE_KEY, Boolean.TRUE);
-
-		hostPane.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				restoreStack();
-			}
-		});
 
 		int xSize = 600;
 		String xSizeStr = toolControl.getPersistedState().get("XSize");
