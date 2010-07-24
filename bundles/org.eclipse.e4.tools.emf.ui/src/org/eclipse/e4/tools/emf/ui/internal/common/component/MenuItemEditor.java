@@ -194,6 +194,19 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.MenuItemEditor_Mnemonics);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+			Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ITEM__MNEMONICS).observeDetail(master));
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.MenuItemEditor_Tooltip);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 

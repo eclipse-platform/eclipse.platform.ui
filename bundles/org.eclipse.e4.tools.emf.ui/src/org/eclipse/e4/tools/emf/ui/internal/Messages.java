@@ -130,6 +130,7 @@ public class Messages extends NLS {
 	public static String MenuEditor_MainMenu;
 	public static String MenuItemEditor_Enabled;
 	public static String MenuItemEditor_Selected;
+	public static String MenuItemEditor_Mnemonics;
 
 	public static String MenuSeparatorEditor_Label;
 
