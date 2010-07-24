@@ -21,7 +21,7 @@ public class HandlerTemplate
   protected final String TEXT_5 = " {" + NL + "\t@Execute" + NL + "\tpublic void ";
   protected final String TEXT_6 = "() {" + NL + "\t\t//TODO Your code goes here" + NL + "\t}" + NL + "\t";
   protected final String TEXT_7 = NL + "\t" + NL + "\t@CanExecute" + NL + "\tpublic boolean ";
-  protected final String TEXT_8 = "() {" + NL + "\t\t//TODO Your code goes here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_8 = "() {" + NL + "\t\t//TODO Your code goes here" + NL + "\t\treturn true;" + NL + "\t}" + NL + "\t";
   protected final String TEXT_9 = "\t" + NL + "}";
 
   public String generate(Object argument)

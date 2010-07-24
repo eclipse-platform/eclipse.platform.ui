@@ -17,6 +17,7 @@ public class <%= domainClass.getName() %> {
 	@CanExecute
 	public boolean <%= domainClass.getCanExecuteMethodName() %>() {
 		//TODO Your code goes here
+		return true;
 	}
 	<% } %>	
 }
