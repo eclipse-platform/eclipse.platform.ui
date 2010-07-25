@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.ObservablesManager;
@@ -347,7 +348,6 @@ public class ModelEditor {
 		});
 
 		form.setWeights(new int[] { 1, 2 });
-		viewer.setSelection(new StructuredSelection(modelProvider.getRoot()));
 
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
@@ -376,6 +376,11 @@ public class ModelEditor {
 			}
 		});
 		viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
+	}
+
+	@PostConstruct
+	void postCreate() {
+		viewer.setSelection(new StructuredSelection(modelProvider.getRoot()));
 	}
 
 	public boolean isAutoCreateElementId() {
