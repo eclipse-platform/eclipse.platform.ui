@@ -123,6 +123,7 @@ public class Messages extends NLS {
 	public static String MenuEditor_LabelLabel;
 	public static String MenuEditor_Tooltip;
 	public static String MenuEditor_IconURI;
+	public static String MenuEditor_Children;
 
 	public static String MenuItemEditor_Type;
 	public static String MenuItemEditor_Label;
@@ -496,6 +497,10 @@ public class Messages extends NLS {
 	public static String CoreExpressionEditor_TreeLabel;
 	public static String CoreExpressionEditor_TreeLabelDescription;
 	public static String CoreExpressionEditor_ExpressionId;
+
+	public static String VMenuElementsEditor_TreeLabel;
+	public static String VMenuElementsEditor_TreeLabelDescription;
+	public static String VMenuElementsEditor_Children;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
