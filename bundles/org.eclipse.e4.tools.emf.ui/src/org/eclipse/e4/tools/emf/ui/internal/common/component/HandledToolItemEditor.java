@@ -13,40 +13,31 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandledToolItemCommandSelectionDialog;
-import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
-import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
-import org.eclipse.emf.edit.command.AddCommand;
-import org.eclipse.emf.edit.command.MoveCommand;
-import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -112,104 +103,6 @@ public class HandledToolItemEditor extends ToolItemEditor {
 				}
 			});
 		}
-
-		// ------------------------------------------------------------
-
-		Label l = new Label(parent, SWT.NONE);
-		l.setText(Messages.HandledToolItemEditor_Parameters);
-		l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
-
-		final TableViewer viewer = new TableViewer(parent);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 120;
-		viewer.getControl().setLayoutData(gd);
-
-		ObservableListContentProvider cp = new ObservableListContentProvider();
-		viewer.setContentProvider(cp);
-		viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
-
-		IEMFEditListProperty prop = EMFEditProperties.list(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
-		viewer.setInput(prop.observeDetail(getMaster()));
-
-		Composite buttonComp = new Composite(parent, SWT.NONE);
-		buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-		GridLayout gl = new GridLayout();
-		gl.marginLeft = 0;
-		gl.marginRight = 0;
-		gl.marginWidth = 0;
-		gl.marginHeight = 0;
-		buttonComp.setLayout(gl);
-
-		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Up);
-		b.setImage(getImage(b.getDisplay(), ARROW_UP));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (!viewer.getSelection().isEmpty()) {
-					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-					if (s.size() == 1) {
-						Object obj = s.getFirstElement();
-						MHandledItem container = (MHandledItem) getMaster().getValue();
-						int idx = container.getParameters().indexOf(obj) - 1;
-						if (idx >= 0) {
-							Command cmd = MoveCommand.create(getEditingDomain(), getMaster().getValue(), MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS, obj, idx);
-
-							if (cmd.canExecute()) {
-								getEditingDomain().getCommandStack().execute(cmd);
-								viewer.setSelection(new StructuredSelection(obj));
-							}
-						}
-
-					}
-				}
-			}
-		});
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Down);
-		b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_AddEllipsis);
-		b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-		b.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				MHandledItem item = (MHandledItem) master.getValue();
-				MParameter param = MCommandsFactory.INSTANCE.createParameter();
-				setElementId(param);
-
-				Command cmd = AddCommand.create(getEditingDomain(), item, MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS, param);
-				if (cmd.canExecute()) {
-					getEditingDomain().getCommandStack().execute(cmd);
-					getEditor().setSelection(param);
-				}
-			}
-		});
-
-		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-		b.setText(Messages.ModelTooling_Common_Remove);
-		b.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-				if (!s.isEmpty()) {
-					MHandledItem item = (MHandledItem) master.getValue();
-					Command cmd = RemoveCommand.create(getEditingDomain(), item, MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS, s.toList());
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-					}
-				}
-			}
-
-		});
-		b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
-		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
-
 	}
 
 	@Override
@@ -224,7 +117,15 @@ public class HandledToolItemEditor extends ToolItemEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		return HANDLED_ITEM__PARAMETERS.observe(element);
+		WritableList list = new WritableList();
+		list.add(new VirtualEntry<MParameter>(ModelEditor.VIRTUAL_PARAMETERS, HANDLED_ITEM__PARAMETERS, element, Messages.HandledToolItemEditor_Parameters) {
+			@Override
+			protected boolean accepted(MParameter o) {
+				return true;
+			}
+		});
+
+		return list;
 	}
 
 }

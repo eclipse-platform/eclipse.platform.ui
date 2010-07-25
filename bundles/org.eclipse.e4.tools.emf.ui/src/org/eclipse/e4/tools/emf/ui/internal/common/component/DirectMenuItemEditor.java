@@ -12,6 +12,10 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
@@ -21,8 +25,12 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.Contributio
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.EMFProperties;
+import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
@@ -40,6 +48,7 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 
 public class DirectMenuItemEditor extends MenuItemEditor {
+	private IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 
 	public DirectMenuItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain, editor, project);
@@ -118,5 +127,29 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 				}
 			});
 		}
+	}
+
+	@Override
+	public IObservableList getChildList(Object element) {
+		final WritableList list = new WritableList();
+
+		if (((MHandledMenuItem) element).getVisibleWhen() != null) {
+			list.add(0, ((MHandledMenuItem) element).getVisibleWhen());
+		}
+
+		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(new IValueChangeListener() {
+
+			public void handleValueChange(ValueChangeEvent event) {
+				if (event.diff.getOldValue() != null) {
+					list.remove(event.diff.getOldValue());
+				}
+
+				if (event.diff.getNewValue() != null) {
+					list.add(0, event.diff.getNewValue());
+				}
+			}
+		});
+
+		return list;
 	}
 }

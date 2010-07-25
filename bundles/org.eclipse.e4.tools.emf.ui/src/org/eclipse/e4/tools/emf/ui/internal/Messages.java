@@ -486,6 +486,14 @@ public class Messages extends NLS {
 	public static String ImageTooltip_Dimension;
 	public static String ImageTooltip_FileSize;
 
+	public static String VItemParametersEditor_TreeLabel;
+	public static String VItemParametersEditor_TreeLabelDescription;
+	public static String VItemParametersEditor_Parameters;
+
+	public static String CoreExpressionEditor_TreeLabel;
+	public static String CoreExpressionEditor_TreeLabelDescription;
+	public static String CoreExpressionEditor_ExpressionId;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}
