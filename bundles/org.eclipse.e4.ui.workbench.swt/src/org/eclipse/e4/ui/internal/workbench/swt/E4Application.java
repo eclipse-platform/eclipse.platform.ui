@@ -58,6 +58,7 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
 import org.eclipse.e4.ui.workbench.IModelResourceHandler;
 import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
+import org.eclipse.e4.ui.workbench.lifecycle.PreSave;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -96,6 +97,8 @@ public class E4Application implements IApplication {
 
 	public static final String THEME_ID = "cssTheme";
 
+	private Object lcManager;
+
 	public Display getApplicationDisplay() {
 		if (display == null) {
 			display = Display.getDefault();
@@ -124,6 +127,10 @@ public class E4Application implements IApplication {
 			workbench.createAndRunUI(workbench.getApplication());
 
 			// Save the model into the targetURI
+			if (lcManager != null) {
+				ContextInjectionFactory.invoke(lcManager, PreSave.class,
+						workbenchContext, null);
+			}
 			saveModel();
 			workbench.close();
 			return EXIT_OK;
@@ -166,13 +173,12 @@ public class E4Application implements IApplication {
 		// defined
 		String lifeCycleURI = getArgValue(E4Workbench.LIFE_CYCLE_URI_ARG,
 				applicationContext, false);
-		Object lcManager = null;
 		if (lifeCycleURI != null) {
 			lcManager = factory.create(lifeCycleURI, appContext);
 			if (lcManager != null) {
 				// Let the manager manipulate the appContext if desired
 				ContextInjectionFactory.invoke(lcManager,
-						PostContextCreate.class, appContext);
+						PostContextCreate.class, appContext, null);
 			}
 		}
 		// Create the app model and its context
@@ -195,9 +201,9 @@ public class E4Application implements IApplication {
 		// let the life cycle manager add to the model
 		if (lcManager != null) {
 			ContextInjectionFactory.invoke(lcManager, ProcessAdditions.class,
-					appContext);
+					appContext, null);
 			ContextInjectionFactory.invoke(lcManager, ProcessRemovals.class,
-					appContext);
+					appContext, null);
 		}
 
 		// Create the addons
