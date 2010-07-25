@@ -23,6 +23,7 @@ import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
@@ -40,6 +41,7 @@ import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
@@ -75,6 +77,34 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class ControlFactory {
+	public static void createXMIId(Composite parent, AbstractComponentEditor editor) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setText("XMI:ID");
+		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+		final Text t = new Text(parent, SWT.BORDER);
+		t.setEditable(false);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		t.setLayoutData(gd);
+
+		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
+
+			public void handleValueChange(ValueChangeEvent event) {
+				Object val = event.diff.getNewValue();
+				if (val != null && val instanceof EObject && !t.isDisposed()) {
+					Resource res = ((EObject) val).eResource();
+					if (res instanceof E4XMIResource) {
+						String v = ((E4XMIResource) res).getID((EObject) val);
+						if (v != null && v.trim().length() > 0) {
+							t.setText(v);
+						}
+					}
+				}
+			}
+		});
+	}
+
 	public static void createMapProperties(Composite parent, final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);

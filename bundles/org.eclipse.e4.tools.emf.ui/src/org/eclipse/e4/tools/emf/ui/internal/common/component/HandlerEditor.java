@@ -129,6 +129,10 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		if (isImport) {
 			ControlFactory.createFindImport(parent, this, context);
 			return parent;
@@ -155,7 +159,7 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			t.setEnabled(false);
+			t.setEditable(false);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.HANDLER__COMMAND).observeDetail(getMaster()), new UpdateValueStrategy(), new UpdateValueStrategy().setConverter(new CommandToStringConverter()));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);

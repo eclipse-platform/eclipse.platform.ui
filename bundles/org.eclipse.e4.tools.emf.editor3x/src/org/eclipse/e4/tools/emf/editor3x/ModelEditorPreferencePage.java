@@ -19,6 +19,8 @@ import org.osgi.service.prefs.BackingStoreException;
 public class ModelEditorPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	private boolean autoCreateElementId;
+	private boolean showXMIId;
+	
 	private IEclipsePreferences node;
 	
 	public ModelEditorPreferencePage() {
@@ -35,6 +37,7 @@ public class ModelEditorPreferencePage extends PreferencePage implements
 	public void init(IWorkbench workbench) {
 		node = new InstanceScope().getNode("org.eclipse.e4.tools.emf.ui");
 		autoCreateElementId = node.getBoolean("autoCreateElementId", false);
+		showXMIId = node.getBoolean("showXMIId", false);
 	}
 
 	@Override
@@ -42,6 +45,7 @@ public class ModelEditorPreferencePage extends PreferencePage implements
 		Composite result= new Composite(parent, SWT.NONE);
 		result.setLayout(new GridLayout(2,false));
 		
+		{
 		Label l = new Label(result, SWT.NONE);
 		l.setText("Autogenerate Element-Id");
 		final Button b = new Button(result, SWT.CHECK);
@@ -51,6 +55,19 @@ public class ModelEditorPreferencePage extends PreferencePage implements
 				autoCreateElementId = b.getSelection();
 			}
 		});
+		}
+		
+		{
+		Label l = new Label(result, SWT.NONE);
+		l.setText("Show XMI:ID");
+		final Button b = new Button(result, SWT.CHECK);
+		b.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				showXMIId = b.getSelection();
+			}
+		});
+		}
 		
 		return result;
 	}
@@ -58,6 +75,7 @@ public class ModelEditorPreferencePage extends PreferencePage implements
 	@Override
 	public boolean performOk() {
 		node.putBoolean("autoCreateElementId", autoCreateElementId);
+		node.putBoolean("showXMIId", showXMIId);
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {

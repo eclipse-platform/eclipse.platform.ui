@@ -90,6 +90,10 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 		gl.horizontalSpacing = 10;
 		parent.setLayout(gl);
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 		ControlFactory.createTextField(parent, Messages.CoreExpressionEditor_ExpressionId, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID));
 

@@ -147,6 +147,10 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		IWidgetValueProperty checkProp = WidgetProperties.selection();
 		IWidgetValueProperty enabled = WidgetProperties.enabled();
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		if (isImport) {
 			ControlFactory.createFindImport(parent, this, context);
 			return parent;

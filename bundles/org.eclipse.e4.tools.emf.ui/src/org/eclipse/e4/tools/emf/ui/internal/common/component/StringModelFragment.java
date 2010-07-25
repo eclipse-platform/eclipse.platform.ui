@@ -118,6 +118,10 @@ public class StringModelFragment extends AbstractComponentEditor {
 		gl.horizontalSpacing = 10;
 		parent.setLayout(gl);
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 		{
 			Label l = new Label(parent, SWT.NONE);

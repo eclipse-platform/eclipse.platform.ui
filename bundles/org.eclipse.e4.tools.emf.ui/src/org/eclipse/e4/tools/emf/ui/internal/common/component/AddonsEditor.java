@@ -130,6 +130,10 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		if (getEditor().isModelFragment() && isImport) {
 			ControlFactory.createFindImport(parent, this, context);
 			return parent;

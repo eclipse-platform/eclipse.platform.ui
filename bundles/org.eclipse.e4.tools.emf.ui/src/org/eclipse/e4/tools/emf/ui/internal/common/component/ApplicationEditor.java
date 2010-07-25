@@ -138,6 +138,10 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.ModelTooling_Common_Id);

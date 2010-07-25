@@ -120,6 +120,10 @@ public class ParameterEditor extends AbstractComponentEditor {
 		gl.horizontalSpacing = 10;
 		parent.setLayout(gl);
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {

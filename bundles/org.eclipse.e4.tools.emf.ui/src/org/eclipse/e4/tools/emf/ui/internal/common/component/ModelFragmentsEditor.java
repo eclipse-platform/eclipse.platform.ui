@@ -110,6 +110,10 @@ public class ModelFragmentsEditor extends AbstractComponentEditor {
 		gl.horizontalSpacing = 10;
 		parent.setLayout(gl);
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		{
 			Label l = new Label(parent, SWT.NONE);
 			l.setText(Messages.ModelFragmentsEditor_Imports);

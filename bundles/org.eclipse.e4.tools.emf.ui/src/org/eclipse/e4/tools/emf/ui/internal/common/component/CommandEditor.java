@@ -134,6 +134,10 @@ public class CommandEditor extends AbstractComponentEditor {
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		if (isImport) {
 			ControlFactory.createFindImport(parent, this, context);
 

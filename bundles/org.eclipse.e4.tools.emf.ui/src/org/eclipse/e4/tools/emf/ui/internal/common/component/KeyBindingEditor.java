@@ -147,6 +147,10 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		gl.horizontalSpacing = 10;
 		parent.setLayout(gl);
 
+		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
+			ControlFactory.createXMIId(parent, this);
+		}
+
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		if (isImport) {
@@ -218,7 +222,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			t.setEnabled(false);
+			t.setEditable(false);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__COMMAND).observeDetail(getMaster()), new UpdateValueStrategy(), new UpdateValueStrategy().setConverter(new CommandToStringConverter()));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);

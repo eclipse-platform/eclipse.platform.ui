@@ -107,7 +107,7 @@ public class HandledMenuItemEditor extends MenuItemEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			t.setEnabled(false);
+			t.setEditable(false);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__COMMAND).observeDetail(master), new UpdateValueStrategy(), new UpdateValueStrategy().setConverter(new CommandToStringConverter()));
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);

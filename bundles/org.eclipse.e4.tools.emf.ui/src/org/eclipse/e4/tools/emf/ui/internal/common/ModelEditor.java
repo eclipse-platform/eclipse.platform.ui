@@ -215,6 +215,10 @@ public class ModelEditor {
 	@Preference(nodePath = "org.eclipse.e4.tools.emf.ui", value = "autoCreateElementId")
 	private boolean autoCreateElementId;
 
+	@Inject
+	@Preference(nodePath = "org.eclipse.e4.tools.emf.ui", value = "showXMIId")
+	private boolean showXMIId;
+
 	private ObservablesManager obsManager;
 
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project) {
@@ -380,6 +384,10 @@ public class ModelEditor {
 
 	public IProject getProject() {
 		return project;
+	}
+
+	public boolean isShowXMIId() {
+		return showXMIId;
 	}
 
 	private void loadContributionCreators() {
