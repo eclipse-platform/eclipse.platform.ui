@@ -12,6 +12,8 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -36,13 +38,16 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -291,10 +296,37 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 		}
 
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.ModelTooling_UIElement_VisibleWhen);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+			ComboViewer combo = new ComboViewer(parent);
+			combo.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
+			combo.setContentProvider(new ArrayContentProvider());
+			combo.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					if (element instanceof EClass) {
+						EClass eClass = (EClass) element;
+						return eClass.getName();
+					}
+
+					return super.getText(element);
+				}
+			});
+			List<Object> list = new ArrayList<Object>();
+			list.add(Messages.MenuItemEditor_NoExpression);
+			list.add(UiPackageImpl.Literals.CORE_EXPRESSION);
+			list.addAll(getEditor().getFeatureClasses(UiPackageImpl.Literals.EXPRESSION, UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN));
+			combo.setInput(list);
+			context.bindValue(ViewerProperties.singleSelection().observe(combo), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN).observeDetail(getMaster()), new UpdateValueStrategy().setConverter(new EClass2EObject()), new UpdateValueStrategy().setConverter(new EObject2EClass()));
+		}
+
 		createFormSubTypeForm(parent, context, master);
 
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED)); //$NON-NLS-1$
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE)); //$NON-NLS-1$
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
 		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
@@ -320,5 +352,32 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL), FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+	}
+
+	static class EObject2EClass extends Converter {
+		public EObject2EClass() {
+			super(EObject.class, EClass.class);
+		}
+
+		public Object convert(Object fromObject) {
+			if (fromObject == null) {
+				return Messages.MenuItemEditor_NoExpression;
+			}
+			return ((EObject) fromObject).eClass();
+		}
+	}
+
+	static class EClass2EObject extends Converter {
+
+		public EClass2EObject() {
+			super(EClass.class, EObject.class);
+		}
+
+		public Object convert(Object fromObject) {
+			if (fromObject == null || fromObject.toString().equals(Messages.MenuItemEditor_NoExpression)) {
+				return null;
+			}
+			return EcoreUtil.create((EClass) fromObject);
+		}
 	}
 }

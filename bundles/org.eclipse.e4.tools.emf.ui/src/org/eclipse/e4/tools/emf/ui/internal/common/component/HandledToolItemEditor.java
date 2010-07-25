@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
@@ -24,10 +26,14 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.HandledTool
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
+import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
+import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -46,7 +52,9 @@ import org.eclipse.swt.widgets.Text;
 
 public class HandledToolItemEditor extends ToolItemEditor {
 	private IModelResource resource;
+
 	private IEMFEditListProperty HANDLED_ITEM__PARAMETERS = EMFEditProperties.list(getEditingDomain(), MenuPackageImpl.Literals.HANDLED_ITEM__PARAMETERS);
+	private IEMFValueProperty UI_ELEMENT__VISIBLE_WHEN = EMFProperties.value(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
 
 	public HandledToolItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project, IModelResource resource) {
 		super(editingDomain, editor, project);
@@ -117,7 +125,25 @@ public class HandledToolItemEditor extends ToolItemEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		WritableList list = new WritableList();
+		final WritableList list = new WritableList();
+
+		if (((MHandledToolItem) element).getVisibleWhen() != null) {
+			list.add(0, ((MHandledToolItem) element).getVisibleWhen());
+		}
+
+		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(new IValueChangeListener() {
+
+			public void handleValueChange(ValueChangeEvent event) {
+				if (event.diff.getOldValue() != null) {
+					list.remove(event.diff.getOldValue());
+				}
+
+				if (event.diff.getNewValue() != null) {
+					list.add(0, event.diff.getNewValue());
+				}
+			}
+		});
+
 		list.add(new VirtualEntry<MParameter>(ModelEditor.VIRTUAL_PARAMETERS, HANDLED_ITEM__PARAMETERS, element, Messages.HandledToolItemEditor_Parameters) {
 			@Override
 			protected boolean accepted(MParameter o) {

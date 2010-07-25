@@ -26,7 +26,7 @@ import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
@@ -130,8 +130,8 @@ public class DirectToolItemEditor extends ToolItemEditor {
 	public IObservableList getChildList(Object element) {
 		final WritableList list = new WritableList();
 
-		if (((MHandledMenuItem) element).getVisibleWhen() != null) {
-			list.add(0, ((MHandledMenuItem) element).getVisibleWhen());
+		if (((MDirectToolItem) element).getVisibleWhen() != null) {
+			list.add(0, ((MDirectToolItem) element).getVisibleWhen());
 		}
 
 		UI_ELEMENT__VISIBLE_WHEN.observe(element).addValueChangeListener(new IValueChangeListener() {

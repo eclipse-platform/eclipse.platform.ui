@@ -24,6 +24,7 @@ public class Messages extends NLS {
 
 	public static String ModelTooling_UIElement_ToBeRendered;
 	public static String ModelTooling_UIElement_Visible;
+	public static String ModelTooling_UIElement_VisibleWhen;
 
 	public static String ModelTooling_Context_Variables;
 	public static String ModelTooling_Context_Properties;
@@ -131,6 +132,7 @@ public class Messages extends NLS {
 	public static String MenuItemEditor_Enabled;
 	public static String MenuItemEditor_Selected;
 	public static String MenuItemEditor_Mnemonics;
+	public static String MenuItemEditor_NoExpression;
 
 	public static String MenuSeparatorEditor_Label;
 
@@ -308,6 +310,7 @@ public class Messages extends NLS {
 	public static String ToolItemEditor_IconURI;
 	public static String ToolItemEditor_Enabled;
 	public static String ToolItemEditor_Selected;
+	public static String ToolItemEditor_NoExpression;
 
 	public static String TrimBarEditor_TreeLabel;
 	public static String TrimBarEditor_TreeLabelDescription;
