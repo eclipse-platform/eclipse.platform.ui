@@ -121,7 +121,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 				b.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
-						ExpressionIdDialog dialog = new ExpressionIdDialog(t.getShell(), getEditor().getExtensionLookup(), (MCoreExpression) getMaster().getValue(), getEditingDomain());
+						ExpressionIdDialog dialog = new ExpressionIdDialog(t.getShell(), getEditor().getExtensionLookup(), (MCoreExpression) getMaster().getValue(), getEditingDomain(), getEditor().isLiveModel());
 						dialog.open();
 					}
 				});

@@ -4,4 +4,5 @@
    <service>
       <provide interface="org.eclipse.e4.tools.emf.ui.common.IExtensionLookup"/>
    </service>
+   <property name="service.ranking" type="Integer" value="1000"/>
 </scr:component>

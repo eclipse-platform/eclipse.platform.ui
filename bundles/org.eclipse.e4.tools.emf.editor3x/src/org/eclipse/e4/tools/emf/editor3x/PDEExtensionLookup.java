@@ -11,14 +11,21 @@
 package org.eclipse.e4.tools.emf.editor3x;
 
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
 
 public class PDEExtensionLookup implements IExtensionLookup {
 
-	public IExtension[] findExtensions(String extensionPointId) {
-		PDEExtensionRegistry reg = new PDEExtensionRegistry();
-		return reg.findExtensions(extensionPointId, true);
+	public IExtension[] findExtensions(String extensionPointId, boolean liveModel) {
+		if( liveModel ) {
+			IExtensionRegistry registry = RegistryFactory.getRegistry();
+			return registry.getExtensionPoint(extensionPointId).getExtensions();
+		} else {
+			PDEExtensionRegistry reg = new PDEExtensionRegistry();
+			return reg.findExtensions(extensionPointId, true);			
+		}
 	}
 
 }

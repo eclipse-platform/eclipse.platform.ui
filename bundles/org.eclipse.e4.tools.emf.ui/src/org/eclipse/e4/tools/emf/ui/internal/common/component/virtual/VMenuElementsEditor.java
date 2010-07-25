@@ -109,7 +109,7 @@ public class VMenuElementsEditor extends AbstractComponentEditor {
 		viewer.setContentProvider(cp);
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint = 120;
+		gd.heightHint = 300;
 		viewer.getControl().setLayoutData(gd);
 		viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
 

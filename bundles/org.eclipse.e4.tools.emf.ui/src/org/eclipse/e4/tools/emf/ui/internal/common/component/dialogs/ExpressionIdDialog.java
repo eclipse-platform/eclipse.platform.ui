@@ -51,12 +51,14 @@ public class ExpressionIdDialog extends TitleAreaDialog {
 	private TableViewer viewer;
 	private EditingDomain domain;
 	private MCoreExpression expression;
+	private boolean liveModel;
 
-	public ExpressionIdDialog(Shell parentShell, IExtensionLookup lookup, MCoreExpression expression, EditingDomain domain) {
+	public ExpressionIdDialog(Shell parentShell, IExtensionLookup lookup, MCoreExpression expression, EditingDomain domain, boolean liveModel) {
 		super(parentShell);
 		this.lookup = lookup;
 		this.expression = expression;
 		this.domain = domain;
+		this.liveModel = liveModel;
 	}
 
 	@Override
@@ -120,7 +122,7 @@ public class ExpressionIdDialog extends TitleAreaDialog {
 
 	private List<IConfigurationElement> getElements(IExtensionLookup lookup) {
 		List<IConfigurationElement> list = new ArrayList<IConfigurationElement>();
-		for (IExtension ext : lookup.findExtensions("org.eclipse.core.expressions.definitions")) { //$NON-NLS-1$
+		for (IExtension ext : lookup.findExtensions("org.eclipse.core.expressions.definitions", liveModel)) { //$NON-NLS-1$
 			for (IConfigurationElement el : ext.getConfigurationElements()) {
 				list.add(el);
 			}

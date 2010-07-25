@@ -13,5 +13,5 @@ package org.eclipse.e4.tools.emf.ui.common;
 import org.eclipse.core.runtime.IExtension;
 
 public interface IExtensionLookup {
-	public IExtension[] findExtensions(String extensionPointId);
+	public IExtension[] findExtensions(String extensionPointId, boolean liveModel);
 }
