@@ -17,6 +17,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ExpressionIdDialog;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -25,11 +26,17 @@ import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class CoreExpressionEditor extends AbstractComponentEditor {
 	private Composite composite;
@@ -95,7 +102,31 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 		}
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
-		ControlFactory.createTextField(parent, Messages.CoreExpressionEditor_ExpressionId, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID));
+
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.CoreExpressionEditor_ExpressionId);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+			final Text t = new Text(parent, SWT.BORDER);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			t.setLayoutData(gd);
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID).observeDetail(getMaster()));
+
+			if (getEditor().getExtensionLookup() == null) {
+				gd.horizontalSpan = 2;
+			} else {
+				Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+				b.setText(Messages.ModelTooling_Common_FindEllipsis);
+				b.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						ExpressionIdDialog dialog = new ExpressionIdDialog(t.getShell(), getEditor().getExtensionLookup(), (MCoreExpression) getMaster().getValue(), getEditingDomain());
+						dialog.open();
+					}
+				});
+			}
+		}
 
 		return parent;
 	}

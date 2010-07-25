@@ -502,6 +502,13 @@ public class Messages extends NLS {
 	public static String VMenuElementsEditor_TreeLabelDescription;
 	public static String VMenuElementsEditor_Children;
 
+	public static String ExpressionIdDialog_ShellTitle;
+	public static String ExpressionIdDialog_DialogTitle;
+	public static String ExpressionIdDialog_DialogMessage;
+	public static String ExpressionIdDialog_Id;
+
+	public static String CommandToStringConverter_None;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

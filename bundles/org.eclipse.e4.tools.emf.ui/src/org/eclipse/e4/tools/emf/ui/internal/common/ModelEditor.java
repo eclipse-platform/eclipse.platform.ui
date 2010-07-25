@@ -45,6 +45,7 @@ import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.IEditorDescriptor;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
+import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.ISelectionProviderService;
 import org.eclipse.e4.tools.emf.ui.common.MemoryTransfer;
@@ -220,6 +221,10 @@ public class ModelEditor {
 	@Preference(nodePath = "org.eclipse.e4.tools.emf.ui", value = "showXMIId")
 	private boolean showXMIId;
 
+	@Inject
+	@Optional
+	private IExtensionLookup extensionLookup;
+
 	private ObservablesManager obsManager;
 
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project) {
@@ -381,6 +386,10 @@ public class ModelEditor {
 	@PostConstruct
 	void postCreate() {
 		viewer.setSelection(new StructuredSelection(modelProvider.getRoot()));
+	}
+
+	public IExtensionLookup getExtensionLookup() {
+		return extensionLookup;
 	}
 
 	public boolean isAutoCreateElementId() {

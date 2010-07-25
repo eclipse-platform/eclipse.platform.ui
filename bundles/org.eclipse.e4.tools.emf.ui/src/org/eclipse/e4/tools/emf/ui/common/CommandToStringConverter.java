@@ -11,6 +11,7 @@
 package org.eclipse.e4.tools.emf.ui.common;
 
 import org.eclipse.core.databinding.conversion.Converter;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.emf.ecore.EObject;
@@ -29,7 +30,7 @@ public class CommandToStringConverter extends Converter {
 			elementId = cmd.getElementId();
 		}
 		if (cmd == null) {
-			return "<None>";
+			return Messages.CommandToStringConverter_None;
 		} else if (cmd.getCommandName() != null && cmd.getCommandName().trim().length() > 0) {
 			return cmd.getCommandName() + (elementId != null ? " - " + elementId : ""); //$NON-NLS-1$//$NON-NLS-2$
 		} else if (elementId != null) {
