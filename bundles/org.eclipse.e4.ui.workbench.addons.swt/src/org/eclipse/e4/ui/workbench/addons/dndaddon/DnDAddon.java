@@ -32,8 +32,6 @@ public class DnDAddon {
 	@Inject
 	IEventBroker eventBroker;
 
-	private DnDManager dndMgr = null;
-
 	private EventHandler installHook = new EventHandler() {
 		public void handleEvent(Event event) {
 			MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
@@ -41,9 +39,11 @@ public class DnDAddon {
 				return;
 
 			Widget widget = (Widget) event.getProperty(EventTags.NEW_VALUE);
-			if (widget instanceof Shell) {
-				if (dndMgr == null) {
-					dndMgr = new DnDManager((MWindow) changedElement);
+			if (widget instanceof Shell && !widget.isDisposed()) {
+				DnDManager theManager = (DnDManager) widget.getData("DnDManager"); //$NON-NLS-1$
+				if (theManager == null) {
+					theManager = new DnDManager((MWindow) changedElement);
+					widget.setData("DnDManager", theManager); //$NON-NLS-1$
 				}
 			}
 		}
