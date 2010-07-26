@@ -168,8 +168,10 @@ public class CTabFolder extends Composite {
 	int topRightAlignment = SWT.RIGHT;
 	
 	Image topRightImage;
+	boolean ignoreResize;
 	ControlAdapter topRightResize = new ControlAdapter() {
 		public void controlResized(ControlEvent e) {
+			if (ignoreResize) return;
 			if (updateItems()) redraw();
 		}
 	};
@@ -2249,7 +2251,9 @@ void setButtonBounds(GC gc) {
 				}
 			}
 		}
+		ignoreResize = true;
 		topRight.setBounds(topRightRect);
+		ignoreResize = false;
 	}
 	if (oldY != topRightRect.y || oldHeight != topRightRect.height) {	
 		updateTopRightBackground();
