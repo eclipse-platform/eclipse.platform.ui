@@ -55,7 +55,7 @@ import org.eclipse.jface.text.revisions.RevisionInformation;
  *
  * @since 3.0
  */
-public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalRulerInfo, IVerticalRulerInfoExtension, IChangeRulerColumn, IRevisionRulerColumn {
+public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRulerColumn {
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
 	 */
