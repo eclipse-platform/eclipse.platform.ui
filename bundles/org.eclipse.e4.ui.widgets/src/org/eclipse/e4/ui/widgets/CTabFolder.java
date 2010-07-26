@@ -2234,19 +2234,22 @@ void setButtonBounds(GC gc) {
 					topRightRect.y = onBottom ? size.y - borderBottom - tabHeight: borderTop + 1;
 					topRightRect.height = tabHeight - 1;
 				} else {
-					int compWidth = size.x - borderLeft - borderRight;
+					Rectangle bodyTrim = renderer.computeTrim(CTabFolderRenderer.PART_BODY, SWT.NONE, 0, 0, 0, 0);
 					Point preferredSize = topRight.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					int bodyRight = bodyTrim.width + bodyTrim.x;
+					int bodyLeft = -bodyTrim.x;
+					int compWidth = size.x - bodyLeft - bodyRight;
 					if (compWidth > preferredSize.x) {
 						topRightRect.width = preferredSize.x;
-						topRightRect.y = tabHeight + 1 + borderTop;
+						topRightRect.y = -bodyTrim.y;
 						topRightRect.height = preferredSize.y;
-						topRightRect.x = compWidth - preferredSize.x + borderLeft;
+						topRightRect.x = size.x - preferredSize.x - bodyRight;
 					} else {
 						preferredSize = topRight.computeSize(compWidth, SWT.DEFAULT);
 						topRightRect.width = compWidth;
-						topRightRect.y = tabHeight + 1 + borderTop;
+						topRightRect.y = -bodyTrim.y;
 						topRightRect.height = preferredSize.y;
-						topRightRect.x = compWidth - preferredSize.x + borderLeft;
+						topRightRect.x = size.x - preferredSize.x - bodyRight;
 					}
 				}
 			}
@@ -3458,7 +3461,7 @@ boolean updateTabHeight(boolean force){
 	gc.dispose();
 	if (fixedTabHeight == SWT.DEFAULT && topRight != null) {
 		int topHeight = topRight.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		topHeight += renderer.computeTrim(CTabFolderRenderer.PART_HEADER, SWT.NONE, 0,0,0,0).height;
+		topHeight += renderer.computeTrim(CTabFolderRenderer.PART_HEADER, SWT.NONE, 0,0,0,0).height + 1;
 		tabHeight = Math.max(topHeight, tabHeight);
 	}
 	if (!force && tabHeight == oldHeight) return false;
