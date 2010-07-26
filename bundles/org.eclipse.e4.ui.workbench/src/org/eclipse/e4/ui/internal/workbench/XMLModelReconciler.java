@@ -1296,7 +1296,10 @@ public class XMLModelReconciler extends ModelReconciler {
 							break;
 						}
 					}
-					break;
+
+					if (trimBarsChanged) {
+						break;
+					}
 				}
 			}
 
