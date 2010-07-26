@@ -2853,7 +2853,9 @@ public void setSelectionBackground (Color color) {
 	if (selectionBackground == color) return;
 	if (color == null) color = getDisplay().getSystemColor(SELECTION_BACKGROUND);
 	selectionBackground = color;
-	renderer.createAntialiasColors(); //TODO:  need better caching strategy
+	if (renderer != null) {
+		renderer.createAntialiasColors(); //TODO:  need better caching strategy
+	}
 	if (selectedIndex > -1) redraw();
 }
 /**
@@ -3005,7 +3007,9 @@ public void setSelectionBackground(Color[] colors, int[] percents, boolean verti
  * Update the cache of highlight gradient colors if required.
  */
 void setSelectionHighlightGradientColor(Color start) {
-	renderer.setSelectionHighlightGradientColor(start);  //TODO: need better caching strategy
+	if (renderer != null) {
+		renderer.setSelectionHighlightGradientColor(start);  //TODO: need better caching strategy
+	}
 }
 
 /**
