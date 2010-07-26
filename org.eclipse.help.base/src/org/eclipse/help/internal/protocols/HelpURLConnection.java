@@ -122,7 +122,7 @@ public class HelpURLConnection extends URLConnection {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
-		if (getFile() == null || "".equals(getFile())) { //$NON-NLS-1$
+		if (getFile() == null || "".equals(getFile()) || getFile().indexOf("..\\") >= 0) { //$NON-NLS-1$ //$NON-NLS-2$
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
