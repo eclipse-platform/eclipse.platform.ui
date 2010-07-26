@@ -168,7 +168,7 @@
             os="win32">
       </theme>
    <theme
-         basestylesheeturi="css/ e4_classic_win7.css"
+         basestylesheeturi="css/e4_classic_win7.css"
          id="org.eclipse.e4.ui.css.theme.e4_classic"
          label="Win 7 Classic"
          os="win32"
