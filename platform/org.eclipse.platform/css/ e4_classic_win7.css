@@ -1,0 +1,17 @@
+.MTrimmedWindow {  
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.MPartStack {
+  tab-renderer: null;
+  selected-tabs-background: #FFFFFF #F0F0F0 100%;
+  simple: false;
+}
+
+
+.MPartStack.active {
+  selected-tabs-background: #F2F5F9 #99B4D1	 100%;
+}
