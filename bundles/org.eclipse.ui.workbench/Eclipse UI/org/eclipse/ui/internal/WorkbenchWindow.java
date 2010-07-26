@@ -1357,14 +1357,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			engine.removeGui(model);
 
 			MElementContainer<MUIElement> parent = window.getParent();
-			if (parent.getSelectedElement() == window) {
-				if (!parent.getChildren().isEmpty()) {
-					parent.setSelectedElement(parent.getChildren().get(0));
-				}
-			}
-
 			if (remove) {
-				window.getParent().getChildren().remove(window);
+				parent.getChildren().remove(window);
+
+				if (parent.getSelectedElement() == window) {
+					if (!parent.getChildren().isEmpty()) {
+						parent.setSelectedElement(parent.getChildren().get(0));
+					}
+				}
 			}
 		} finally {
 
