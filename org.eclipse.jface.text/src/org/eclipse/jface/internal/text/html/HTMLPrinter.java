@@ -19,6 +19,8 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.jface.util.Util;
 
@@ -47,8 +49,8 @@ public class HTMLPrinter {
 					 * @see java.lang.Runnable#run()
 					 */
 					public void run() {
-						BG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
-						FG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB();
+						cacheColors(display);
+						installColorUpdater(display);
 					}
 				});
 			} catch (SWTError err) {
@@ -62,6 +64,19 @@ public class HTMLPrinter {
 	private HTMLPrinter() {
 	}
 
+	private static void cacheColors(Display display) {
+		BG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB();
+		FG_COLOR_RGB= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB();
+	}
+	
+	private static void installColorUpdater(final Display display) {
+		display.addListener(SWT.Settings, new Listener() {
+			public void handleEvent(Event event) {
+				cacheColors(display);
+			}
+		});
+	}
+	
 	private static String replace(String text, char c, String s) {
 
 		int previous= 0;
@@ -289,6 +304,24 @@ public class HTMLPrinter {
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-weight:\\s*)\\w+(\\;?.*\\})", "$1" + (bold ? "bold" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-style:\\s*)\\w+(\\;?.*\\})", "$1" + (italic ? "italic" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-family:\\s*).+?(;.*\\})", "$1" + family + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return styles;
+	}
+	
+	/**
+	 * Replaces <code>color: InfoText</code> style definitions in the given CSS with
+	 * the actual color values.
+	 *
+	 * @param styles CSS style definitions
+	 * @return the modified style definitions
+	 * @since 3.6.1
+	 */
+	public static String convertInfoTextColor(String styles) {
+		// workaround for https://bugs.eclipse.org/318243
+		StringBuffer buf= new StringBuffer("color: "); //$NON-NLS-1$
+		appendColor(buf, FG_COLOR_RGB);
+		String bg= buf.toString();
+		
+		styles= styles.replaceAll("color: InfoText", bg); //$NON-NLS-1$
 		return styles;
 	}
 }
