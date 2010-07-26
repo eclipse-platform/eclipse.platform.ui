@@ -299,6 +299,14 @@
                name="unselected-image-visible">
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySelectedTabsSWTHandler">
+         <property-name
+               name="selected-tabs-background">
+         </property-name>
+      </handler>
    </extension>
                
 
