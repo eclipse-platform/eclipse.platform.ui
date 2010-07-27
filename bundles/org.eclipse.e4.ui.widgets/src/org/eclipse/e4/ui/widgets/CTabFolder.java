@@ -2848,14 +2848,13 @@ void setSelection(int index, boolean notify) {
  * @since 3.0
  */
 public void setSelectionBackground (Color color) {
+	if (inDispose) return;
 	checkWidget();
 	setSelectionHighlightGradientColor(null);
 	if (selectionBackground == color) return;
 	if (color == null) color = getDisplay().getSystemColor(SELECTION_BACKGROUND);
 	selectionBackground = color;
-	if (renderer != null) {
-		renderer.createAntialiasColors(); //TODO:  need better caching strategy
-	}
+	renderer.createAntialiasColors(); //TODO:  need better caching strategy
 	if (selectedIndex > -1) redraw();
 }
 /**
@@ -3007,9 +3006,8 @@ public void setSelectionBackground(Color[] colors, int[] percents, boolean verti
  * Update the cache of highlight gradient colors if required.
  */
 void setSelectionHighlightGradientColor(Color start) {
-	if (renderer != null) {
-		renderer.setSelectionHighlightGradientColor(start);  //TODO: need better caching strategy
-	}
+	if (inDispose) return;
+	renderer.setSelectionHighlightGradientColor(start);  //TODO: need better caching strategy
 }
 
 /**
