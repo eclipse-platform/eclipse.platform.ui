@@ -21,11 +21,17 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage;
 import org.eclipse.debug.internal.ui.stringsubstitution.IArgumentSelector;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableLabelProvider;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariablePresentationManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -59,7 +65,6 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	// the argument value
 	private Text fArgumentText;
 	private String fArgumentValue;
-	private Button fEditVariablesButton;
 	private Button fShowAllButton;
 	private Label fShowAllDescription;
 
@@ -255,8 +260,8 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 			SWTFactory.createHorizontalSpacer(btnContainer, 2);
 		}
 		
-		fEditVariablesButton = SWTFactory.createPushButton(btnContainer, StringSubstitutionMessages.StringVariableSelectionDialog_0, null, GridData.HORIZONTAL_ALIGN_END);
-		fEditVariablesButton.addSelectionListener(new SelectionAdapter() {
+		Button editButton = SWTFactory.createPushButton(btnContainer, StringSubstitutionMessages.StringVariableSelectionDialog_0, null, GridData.HORIZONTAL_ALIGN_END);
+		editButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editVariables();
 			}
@@ -295,16 +300,42 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		final Display display = DebugUIPlugin.getStandardDisplay();
 		BusyIndicator.showWhile(display, new Runnable() {
 			public void run() {
-				SWTFactory.showPreferencePage("org.eclipse.debug.ui.StringVariablePreferencePage"); //$NON-NLS-1$
-				final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
-				display.asyncExec(new Runnable() {
-					public void run() {
-						setListElements(elements);
-					}
-				});
+				// show the preference page in a new dialog rather than using the utility method to re-use a
+				// preference page, in case this dialog is being opened from a preference page
+				if (showVariablesPage()) {
+					final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
+					display.asyncExec(new Runnable() {
+						public void run() {
+							setListElements(elements);
+						}
+					});
+				}
 			}
 		});		
 	}
+	
+	/**
+	 * Shows the string variables preference page and returns <code>true</code> if OK was pressed.
+	 * 
+	 * @return whether OK was pressed
+	 */
+	private boolean showVariablesPage() {
+		StringVariablePreferencePage page = new StringVariablePreferencePage();
+		page.setTitle(StringSubstitutionMessages.StringVariableSelectionDialog_1);
+		final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.StringVariablePreferencePage", page); //$NON-NLS-1$
+		PreferenceManager manager = new PreferenceManager();
+		manager.addToRoot(targetNode);
+		final PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
+		final boolean [] result = new boolean[] { false };
+		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), new Runnable() {
+			public void run() {
+				dialog.create();
+				dialog.setMessage(targetNode.getLabelText());
+				result[0]= (dialog.open() == Window.OK);
+			}
+		});	
+		return result[0];
+	}	
 
 	/**
 	 * Configures the argument for the selected variable.

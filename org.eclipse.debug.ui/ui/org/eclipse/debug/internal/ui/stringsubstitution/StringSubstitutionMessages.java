@@ -43,6 +43,7 @@ public class StringSubstitutionMessages extends NLS {
 
 	public static String StringPromptExpander_0;
 
+	public static String StringVariableSelectionDialog_1;
 	public static String StringVariableSelectionDialog_2;
 	public static String StringVariableSelectionDialog_3;
 	public static String StringVariableSelectionDialog_6;
