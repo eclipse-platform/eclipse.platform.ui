@@ -84,28 +84,30 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
                 	// Executed for every message line when in quiet mode.
                 	// See bug 238334
                 	CVSRepositoryLocation repo = (CVSRepositoryLocation)location;
-                	// Remove root directory
-                	String repoPath = line.substring(repo.getRootDirectory().length());
-    				try {
-    					String cmdRootRelativePath = commandRoot.getRepositoryRelativePath();
-    					// Remove command root path
-						String path = repoPath.substring(repoPath.indexOf(cmdRootRelativePath)	+ cmdRootRelativePath.length());
-    					// Remove filename at the end
-    					String folderPath = path.substring(0, path.indexOf(fileName));
-    					// The "raw" folderPath contains CVS's 'Attic/' segment when a file has been deleted from cvs.
-    					if (folderPath.endsWith(ATTIC)) {
-							folderPath = folderPath.substring(0, folderPath.length() - ATTIC_LENGTH);
-						}
-    					// A separator means the same as "current folder"
-						if (folderPath.equals(Session.SERVER_SEPARATOR))
-							folderPath = Session.CURRENT_LOCAL_FOLDER;
-						ICVSFolder folder = commandRoot.getFolder(folderPath);
-    					ICVSFile file = folder.getFile(fileName);
-    					if (!file.exists())
-    						atticFiles.add(file);
-    				} catch (CVSException e) {
-    					return e.getStatus();
-    				}
+                	// If exists, remove root directory
+                	if (line.startsWith(repo.getRootDirectory())) {
+                		String repoPath = line.substring(repo.getRootDirectory().length());
+                		try {
+                			String cmdRootRelativePath = commandRoot.getRepositoryRelativePath();
+                			// Remove command root path
+                			String path = repoPath.substring(repoPath.indexOf(cmdRootRelativePath)	+ cmdRootRelativePath.length());
+                			// Remove filename at the end
+                			String folderPath = path.substring(0, path.indexOf(fileName));
+                			// The "raw" folderPath contains CVS's 'Attic/' segment when a file has been deleted from cvs.
+                			if (folderPath.endsWith(ATTIC)) {
+                				folderPath = folderPath.substring(0, folderPath.length() - ATTIC_LENGTH);
+                			}
+                			// A separator means the same as "current folder"
+                			if (folderPath.equals(Session.SERVER_SEPARATOR))
+                				folderPath = Session.CURRENT_LOCAL_FOLDER;
+                			ICVSFolder folder = commandRoot.getFolder(folderPath);
+                			ICVSFile file = folder.getFile(fileName);
+                			if (!file.exists())
+                				atticFiles.add(file);
+                		} catch (CVSException e) {
+                			return e.getStatus();
+                		}
+                	}
                 }
             }
 			return OK;
