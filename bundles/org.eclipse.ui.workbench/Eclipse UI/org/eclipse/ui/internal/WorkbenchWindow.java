@@ -1489,6 +1489,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 							ite[0] = e;
 						} catch (InterruptedException e) {
 							ie[0] = e;
+						} finally {
+							manager.getProgressMonitor().done();
 						}
 					}
 				});
