@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2008, 2009 IBM Corporation and others.
+ *  Copyright (c) 2008, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -51,8 +51,8 @@ public class RestrictedTopicParameter extends TestCase {
 	public void testWorkbenchMode() {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_WORKBENCH);
 		setRestrictTopic(true);
-		assertTrue(UrlUtil.isValidTopicURL("http://www.eclipse.org"));
-		assertTrue(UrlUtil.isValidTopicURL("https://www.eclipse.org"));
+		assertFalse(UrlUtil.isValidTopicURL("http://www.eclipse.org"));
+		assertFalse(UrlUtil.isValidTopicURL("https://www.eclipse.org"));
 		setRestrictTopic(false);
 		assertTrue(UrlUtil.isValidTopicURL("http://www.eclipse.org"));
 		assertTrue(UrlUtil.isValidTopicURL("https://www.eclipse.org"));
@@ -61,8 +61,8 @@ public class RestrictedTopicParameter extends TestCase {
 	public void testStandaloneMode() {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_STANDALONE);
 		setRestrictTopic(true);
-		assertTrue(UrlUtil.isValidTopicURL("http://www.eclipse.org"));
-		assertTrue(UrlUtil.isValidTopicURL("https://www.eclipse.org"));
+		assertFalse(UrlUtil.isValidTopicURL("http://www.eclipse.org"));
+		assertFalse(UrlUtil.isValidTopicURL("https://www.eclipse.org"));
 		setRestrictTopic(false);
 		assertTrue(UrlUtil.isValidTopicURL("http://www.eclipse.org"));
 		assertTrue(UrlUtil.isValidTopicURL("https://www.eclipse.org"));
