@@ -149,8 +149,12 @@ public class UrlUtil {
 	 * @return true unless topic parameters are restricted and the path has a protocol specified
 	 */
 	public static boolean isValidTopicURL(String path) {
-		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER 
-				&& new WebappPreferences().isRestrictTopicParameter()) {
+		// Topics opened via the help display ( including cheat sheets and intro ) 
+		// are are always valid
+		if (path.equals(BaseHelpSystem.getHelpDisplay().getHrefOpenedFromHelpDisplay())) {
+			return true;
+		}
+		if (new WebappPreferences().isRestrictTopicParameter()) {
 		    if (path.indexOf("://") >= 0) {  //$NON-NLS-1$
 			    return false;
 		    }

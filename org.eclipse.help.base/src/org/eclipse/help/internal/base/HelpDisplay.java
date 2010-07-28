@@ -25,6 +25,8 @@ import org.eclipse.osgi.util.NLS;
  */
 public class HelpDisplay {
 
+	private String hrefOpenedFromHelpDisplay;
+
 	/**
 	 * Constructor.
 	 */
@@ -52,6 +54,7 @@ public class HelpDisplay {
 	 * </ul>
 	 */
 	public void displayHelpResource(String href, boolean forceExternal) {
+		setHrefOpenedFromHelpDisplay(href);
 		if (href.startsWith("/file")) { //$NON-NLS-1$
 			displayHelpResource(href.substring(1), forceExternal);
 			return;
@@ -248,6 +251,14 @@ public class HelpDisplay {
 		}
 		// can be displayed in frames
 		return null;
+	}
+
+	public String getHrefOpenedFromHelpDisplay() {
+		return hrefOpenedFromHelpDisplay;
+	}
+
+	public void setHrefOpenedFromHelpDisplay(String hrefOpenedFromHelpDisplay) {
+		this.hrefOpenedFromHelpDisplay = hrefOpenedFromHelpDisplay;
 	}
 
 }
