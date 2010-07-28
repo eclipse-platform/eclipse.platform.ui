@@ -1433,6 +1433,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			partService.setPage(page);
 		}
 	
+		perspective = descriptor;
 		page.setPerspective(perspective);
 		firePageActivated();
 
