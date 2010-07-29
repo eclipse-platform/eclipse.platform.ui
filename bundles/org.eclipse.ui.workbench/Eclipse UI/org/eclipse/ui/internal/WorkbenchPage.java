@@ -1104,15 +1104,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	public void closePerspective(IPerspectiveDescriptor desc, boolean saveParts, boolean closePage) {
 		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
 				MPerspectiveStack.class, null).get(0);
-		if (perspectiveStack.getChildren().size() == 1) {
-			closeAllPerspectives(saveParts, closePage);
-		} else {
-			// Remove from caches
-			sortedPerspectives.remove(desc);
-
-			// Clear up the model
-			MPerspective persp = (MPerspective) modelService.find(desc.getId(), window);
-			modelService.removePerspectiveModel(persp, window);
+		MPerspective persp = (MPerspective) modelService.find(desc.getId(), window);
+		// check to ensure this perspective actually exists in this window
+		if (persp != null) {
+			if (perspectiveStack.getChildren().size() == 1) {
+				closeAllPerspectives(saveParts, closePage);
+			} else {
+				// Remove from caches
+				sortedPerspectives.remove(desc);
+				modelService.removePerspectiveModel(persp, window);
+			}
 		}
 	}
 
