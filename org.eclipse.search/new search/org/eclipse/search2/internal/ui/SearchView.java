@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -499,6 +499,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ISearchHelpContextIds.New_SEARCH_VIEW);
 		restorePageFromMemento();
+
+		showLatestSearch();
 	}
 
 	private void initializePageSwitcher() {
@@ -704,6 +706,12 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			}
 		}
 		srPage.restoreState(memento);
+	}
+
+	private void showLatestSearch() {
+		ISearchQuery[] queries= InternalSearchUI.getInstance().getSearchManager().getQueries();
+		if (queries.length > 0)
+			showSearchResult(queries[0].getSearchResult());
 	}
 
 	/*
