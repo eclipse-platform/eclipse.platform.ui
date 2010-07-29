@@ -148,6 +148,7 @@ public class PageSite implements IPageSite, INestable {
 		}
 		subActionBars.dispose();
 		serviceLocator.dispose();
+		e4Context.dispose();
 	}
 
 	/**
