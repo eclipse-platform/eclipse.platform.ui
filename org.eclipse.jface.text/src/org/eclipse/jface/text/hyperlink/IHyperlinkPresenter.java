@@ -35,6 +35,7 @@ import org.eclipse.jface.text.ITextViewer;
  * </p>
  *
  * @see IHyperlinkPresenterExtension
+ * @see IHyperlinkPresenterExtension2
  * @since 3.1
  */
 public interface IHyperlinkPresenter {
