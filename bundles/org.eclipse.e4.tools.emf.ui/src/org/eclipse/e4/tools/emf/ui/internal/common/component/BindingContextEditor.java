@@ -236,7 +236,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_AddEllipsis);
-		b.setImage(getImage(b.getDisplay(), ARROW_UP));
+		b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -256,7 +256,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Remove);
-		b.setImage(getImage(b.getDisplay(), ARROW_UP));
+		b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override

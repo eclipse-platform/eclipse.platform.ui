@@ -64,8 +64,24 @@ public abstract class ImageTooltip extends ToolTip {
 			InputStream bStream = null;
 			String errorMessage = "<" + Messages.ImageTooltip_UnknownError + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 			try {
-				URL url = new URL(uri.toString());
-				stream = url.openStream();
+				URL url;
+				try {
+					url = new URL(uri.toString());
+					stream = url.openStream();
+				} catch (Exception e) {
+					// FIXME Temporary fix to show icon
+					// If not found in runtime search in workspace
+					if (stream == null) {
+						String[] segments = uri.segments();
+						URI tmpUri = URI.createPlatformResourceURI(segments[1], true);
+						for (int i = 2; i < segments.length; i++) {
+							tmpUri = tmpUri.appendSegment(segments[i]);
+						}
+
+						url = new URL(tmpUri.toString());
+						stream = url.openStream();
+					}
+				}
 
 				if (stream != null) {
 					out = new ByteArrayOutputStream();

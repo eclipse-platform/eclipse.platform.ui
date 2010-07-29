@@ -377,7 +377,7 @@ public class ControlFactory {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.CR || e.keyCode == SWT.LF) {
-					handleAddText(editor, UiPackageImpl.Literals.CONTEXT__VARIABLES, t);
+					handleAddText(editor, feature, t);
 				}
 			}
 		});
