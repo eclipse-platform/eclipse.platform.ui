@@ -3929,6 +3929,8 @@ public class TextViewer extends Viewer implements
 				return fUndoManager != null && fUndoManager.redoable();
 			case PRINT:
 				return isPrintable();
+			case HyperlinkManager.OPEN_HYPERLINK:
+				return fHyperlinkManager != null;
 		}
 
 		return false;
@@ -4012,6 +4014,12 @@ public class TextViewer extends Viewer implements
 			case PRINT:
 				print();
 				break;
+			case HyperlinkManager.OPEN_HYPERLINK:
+				boolean atleastOneLinkOpened= fHyperlinkManager.openHyperlink();
+				if (!atleastOneLinkOpened)
+					MessageDialog.openInformation(getControl().getShell(),
+							JFaceTextMessages.getString("TextViewer.open_hyperlink_error_title"), JFaceTextMessages.getString("TextViewer.open_hyperlink_error_message")); //$NON-NLS-1$ //$NON-NLS-2$
+				return;
 		}
 	}
 

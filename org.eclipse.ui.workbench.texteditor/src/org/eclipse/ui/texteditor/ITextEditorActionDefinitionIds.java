@@ -593,4 +593,12 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.6
 	 */
 	public static final String SHOW_RULER_ANNOTATION_INFORMATION_ID= "org.eclipse.ui.edit.text.showRulerAnnotationInformation"; //$NON-NLS-1$
+
+	/**
+	 * Command ID of the command to open the hyperlink at the caret location or to display a chooser
+	 * if more than one hyperlink is available.
+	 * Value: <code>"org.eclipse.ui.edit.text.open.hyperlink"</code>
+	 * @since 3.7
+	 */
+	public static final String OPEN_HYPERLINK= "org.eclipse.ui.edit.text.open.hyperlink"; //$NON-NLS-1$
 }

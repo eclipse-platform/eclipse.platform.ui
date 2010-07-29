@@ -144,6 +144,7 @@ import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.hyperlink.HyperlinkManager;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
@@ -5751,6 +5752,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.BLOCK_SELECTION_MODE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.BLOCK_SELECTION_MODE);
 		setAction(ITextEditorActionConstants.BLOCK_SELECTION_MODE, action);
+
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.OpenHyperlink.", this, HyperlinkManager.OPEN_HYPERLINK); //$NON-NLS-1$;
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.OPEN_HYPERLINK_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.OPEN_HYPERLINK);
+		setAction(ITextEditorActionConstants.OPEN_HYPERLINK, action);
 
 		PropertyDialogAction openProperties= new PropertyDialogAction(
 				new IShellProvider() {

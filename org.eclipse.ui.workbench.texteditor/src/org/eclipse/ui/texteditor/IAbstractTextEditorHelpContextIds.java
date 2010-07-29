@@ -395,4 +395,11 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 3.5
 	 */
 	String BLOCK_SELECTION_MODE_ACTION= PREFIX + "block_selection_mode" + ACTION_POSTFIX; //$NON-NLS-1$
+
+	/**
+	 * Help context id for the open hyperlink action.
+	 * Value: <code>"org.eclipse.ui.open_hyperlink_action_context"</code>
+	 * @since 3.7
+	 */
+	String OPEN_HYPERLINK_ACTION= PREFIX + "open_hyperlink" + ACTION_POSTFIX; //$NON-NLS-1$
 }

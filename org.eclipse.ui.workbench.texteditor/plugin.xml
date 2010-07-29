@@ -435,6 +435,12 @@
 	        categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.showInformation">
       </command>
+      <command
+            name="%command.openHyperlink.name"
+            description="%command.openHyperlink.description"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.edit.text.open.hyperlink">
+      </command>
 	</extension>
    
 	<extension

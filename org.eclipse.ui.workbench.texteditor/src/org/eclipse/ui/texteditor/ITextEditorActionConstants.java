@@ -688,4 +688,12 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.6
 	 */
 	public static final String SHOW_RULER_ANNOTATION_INFORMATION= "ShowRulerAnnotationInformation"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action to open the hyperlink at the caret location or to display a chooser
+	 * if more than one hyperlink is available.
+	 * Value: <code>"OpenHyperlink"</code> 
+	 * @since 3.7
+	 */
+	public static String OPEN_HYPERLINK= "OpenHyperlink"; //$NON-NLS-1$
 }

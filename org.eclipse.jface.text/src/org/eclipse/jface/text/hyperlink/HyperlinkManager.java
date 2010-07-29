@@ -33,10 +33,12 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 
@@ -50,9 +52,6 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	/**
 	 * Text operation code for requesting to open the hyperlink at the caret position.
-	 * <p>
-	 * FIXME: Not yet implemented. Will be implemented during M7.
-	 * </p>
 	 * @see #openHyperlink()
 	 * @since 3.6
 	 */
@@ -255,8 +254,18 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		if (offset == -1)
 			return null;
 
-		boolean canShowMultipleHyperlinks= fHyperlinkPresenter.canShowMultipleHyperlinks();
 		IRegion region= new Region(offset, 0);
+		return findHyperlinks(region);
+	}
+
+	/**
+	 * Returns the hyperlinks in the given region or <code>null</code> if none.
+	 * 
+	 * @param region the selection region
+	 * @return the array of hyperlinks found or <code>null</code> if none
+	 * @since 3.7
+	 */
+	private IHyperlink[] findHyperlinks(IRegion region) {
 		List allHyperlinks= new ArrayList(fHyperlinkDetectors.length * 2);
 		synchronized (fHyperlinkDetectors) {
 			for (int i= 0, length= fHyperlinkDetectors.length; i < length; i++) {
@@ -273,6 +282,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 				} else if (fActiveHyperlinkStateMask != fHyperlinkStateMask)
 					continue;
 
+				boolean canShowMultipleHyperlinks= fHyperlinkPresenter.canShowMultipleHyperlinks();
 				IHyperlink[] hyperlinks= detector.detectHyperlinks(fTextViewer, region, canShowMultipleHyperlinks);
 				if (hyperlinks == null)
 					continue;
@@ -328,9 +338,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	}
 
 	/**
-	 * Returns the current text offset.
-	 *
-	 * @return the current text offset
+	 * Returns the offset in the given viewer that corresponds to the current cursor location.
+	 * 
+	 * @return the offset in the given viewer that corresponds to the current cursor location.
 	 */
 	protected int getCurrentTextOffset() {
 		return JFaceTextUtil.getOffsetForCursorLocation(fTextViewer);
@@ -450,13 +460,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		}
 
 		fActiveHyperlinks= findHyperlinks();
-		if (fActiveHyperlinks == null || fActiveHyperlinks.length == 0) {
-			fHyperlinkPresenter.hideHyperlinks();
-			return;
-		}
-
-		fHyperlinkPresenter.showHyperlinks(fActiveHyperlinks);
-
+		showHyperlinks(false);
 	}
 
 	/**
@@ -541,17 +545,56 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	}
 
 	/**
+	 * Opens the hyperlink at the current caret location directly if there's only one link, else
+	 * opens the hyperlink control showing all the hyperlinks at that location.
+	 * 
+	 * @param takesFocusWhenVisible <code>true</code> if the control takes focus when visible,
+	 *            <code>false</code> otherwise
+	 * 
+	 * @return <code>true</code> if at least one hyperlink has been found at the caret location,
+	 *         <code>false</code> otherwise
+	 * @since 3.7
+	 */
+	private boolean showHyperlinks(boolean takesFocusWhenVisible) {
+		
+		if (fActiveHyperlinks == null || fActiveHyperlinks.length == 0) {
+			fHyperlinkPresenter.hideHyperlinks();
+			return false;
+		}
+		if (fActiveHyperlinks.length == 1 && takesFocusWhenVisible) {
+			fActiveHyperlinks[0].open();
+		} else {
+			if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension2)
+				((IHyperlinkPresenterExtension2)fHyperlinkPresenter).showHyperlinks(fActiveHyperlinks, takesFocusWhenVisible);
+			else
+				fHyperlinkPresenter.showHyperlinks(fActiveHyperlinks);
+		}
+		return true;
+
+	}
+
+	/**
 	 * Opens the hyperlink at the caret location or opens a chooser
 	 * if more than one hyperlink is available.
-	 * <p>
-	 * FIXME: Will be implemented during M7.
-	 * </p>
 	 * 
 	 * @return <code>true</code> if at least one hyperlink has been found at the caret location, <code>false</code> otherwise
 	 * @see #OPEN_HYPERLINK
 	 * @since 3.6
 	 */
 	public boolean openHyperlink() {
-		return false;
+		fActiveHyperlinkStateMask= fHyperlinkStateMask;
+
+		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
+			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
+				return false;
+		}
+		ITextSelection sel= (ITextSelection)((TextViewer)fTextViewer).getSelection();
+		int offset= sel.getOffset();
+		if (offset == -1)
+			return false;
+
+		IRegion region= new Region(offset, 0);
+		fActiveHyperlinks= findHyperlinks(region);
+		return showHyperlinks(true);
 	}
 }

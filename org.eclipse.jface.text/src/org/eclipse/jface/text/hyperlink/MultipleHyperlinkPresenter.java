@@ -11,7 +11,6 @@
 package org.eclipse.jface.text.hyperlink;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -22,6 +21,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -279,7 +280,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			});
 
 			fTable.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetDefaultSelected(SelectionEvent e) {
 					openSelectedLink();
 				}
 			});
@@ -301,10 +302,11 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 				}
 			});
 
-			fTable.addKeyListener(new KeyAdapter() {
-				public void keyPressed(KeyEvent e) {
-					if (e.keyCode == 0x0D) // return
-						openSelectedLink();
+			fTable.addTraverseListener(new TraverseListener() {
+				public void keyTraversed(TraverseEvent e) {
+					if (e.keyCode == SWT.ESC) {
+						fManager.hideInformationControl();
+					}
 				}
 			});
 		}
@@ -460,7 +462,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 				if (inKeepUpZone(mouseLoc.x, mouseLoc.y, ((IInformationControlExtension3) fControl).getBounds()))
 					return;
 
-				hideInformationControl();
+				if (!isTakingFocusWhenVisible())
+					hideInformationControl();
 			}
 
 			/**
@@ -504,7 +507,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 			 */
 			public void keyReleased(KeyEvent e) {
-				hideInformationControl();
+				if (!isTakingFocusWhenVisible())
+					hideInformationControl();
 			}
 
 			/*
@@ -593,7 +597,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			Point result= super.computeInformationControlLocation(subjectArea, controlSize);
 
 			Point cursorLocation= fTextViewer.getTextWidget().getDisplay().getCursorLocation();
-			if (cursorLocation.x <= result.x + controlSize.x)
+			if (isTakingFocusWhenVisible() || cursorLocation.x <= result.x + controlSize.x)
 				return result;
 
 			result.x= cursorLocation.x + 20 - controlSize.x;
@@ -677,7 +681,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
 		 */
 		public boolean setFocus(IWidgetTokenOwner owner) {
-			return false;
+			return isTakingFocusWhenVisible();
 		}
 
 		/**
@@ -704,9 +708,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 	private int fCursorOffset;
 
 	/**
-	 * Creates a new multiple hyperlink presenter which uses
-	 * {@link #HYPERLINK_COLOR} to read the color from the given preference store.
-	 *
+	 * Creates a new multiple hyperlink presenter which uses {@link #HYPERLINK_COLOR} to read the
+	 * color from the given preference store.
+	 * 
 	 * @param store the preference store
 	 */
 	public MultipleHyperlinkPresenter(IPreferenceStore store) {
@@ -773,20 +777,29 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#showHyperlinks(org.eclipse.jface.text.hyperlink.IHyperlink[])
 	 */
 	public void showHyperlinks(IHyperlink[] hyperlinks) {
-		super.showHyperlinks(new IHyperlink[] { hyperlinks[0] });
+		showHyperlinks(hyperlinks, false);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#showHyperlinks(org.eclipse.jface.text.hyperlink.IHyperlink[], boolean)
+	 * @since 3.7
+	 */
+	public void showHyperlinks(IHyperlink[] activeHyperlinks, boolean takesFocusWhenVisible) {
+		fManager.takesFocusWhenVisible(takesFocusWhenVisible);
+		super.showHyperlinks(new IHyperlink[] { activeHyperlinks[0] });
 
 		fSubjectRegion= null;
-		fHyperlinks= hyperlinks;
+		fHyperlinks= activeHyperlinks;
 
-		if (hyperlinks.length == 1)
+		if (activeHyperlinks.length == 1)
 			return;
 
-		int start= hyperlinks[0].getHyperlinkRegion().getOffset();
-		int end= start + hyperlinks[0].getHyperlinkRegion().getLength();
+		int start= activeHyperlinks[0].getHyperlinkRegion().getOffset();
+		int end= start + activeHyperlinks[0].getHyperlinkRegion().getLength();
 
-		for (int i= 1; i < hyperlinks.length; i++) {
-			int hstart= hyperlinks[i].getHyperlinkRegion().getOffset();
-			int hend= hstart + hyperlinks[i].getHyperlinkRegion().getLength();
+		for (int i= 1; i < activeHyperlinks.length; i++) {
+			int hstart= activeHyperlinks[i].getHyperlinkRegion().getOffset();
+			int hend= hstart + activeHyperlinks[i].getHyperlinkRegion().getLength();
 
 			start= Math.min(start, hstart);
 			end= Math.max(end, hend);

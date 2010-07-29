@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,10 @@ import org.eclipse.jface.text.ITextViewer;
  * 		adds the ability to query  whether the currently shown hyperlinks
  *		can be hidden.
  * </li>
+ * <li>{@link IHyperlinkPresenterExtension2} since version 3.7,
+ *      adds the ability distinguish between the modes in which the
+ *      control either takes focus or not when visible.
+ * </li> 
  * </ul></p>
  * <p>
  * Clients may implement this interface. A default implementation is provided

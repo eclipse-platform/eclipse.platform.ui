@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,8 @@ import org.eclipse.jface.text.TextPresentation;
  *
  * @since 3.1
  */
-public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlinkPresenterExtension, ITextPresentationListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
+public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlinkPresenterExtension, IHyperlinkPresenterExtension2, ITextPresentationListener, ITextInputListener, IDocumentListener,
+		IPropertyChangeListener {
 
 	/**
 	 * A named preference that holds the color used for hyperlinks.
@@ -142,6 +143,15 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	public void showHyperlinks(IHyperlink[] hyperlinks) {
 		Assert.isLegal(hyperlinks != null && hyperlinks.length == 1);
 		highlightRegion(hyperlinks[0].getHyperlinkRegion());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.7
+	 */
+	public void showHyperlinks(IHyperlink[] activeHyperlinks, boolean takesFocusWhenVisible) {
+		showHyperlinks(activeHyperlinks);
 	}
 
 	/**
