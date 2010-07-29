@@ -12,6 +12,8 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -20,6 +22,7 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.e4.tools.emf.ui.common.ContributionURIValidator;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
@@ -275,7 +278,8 @@ public class PartEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master));
+			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(master), new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
+			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));

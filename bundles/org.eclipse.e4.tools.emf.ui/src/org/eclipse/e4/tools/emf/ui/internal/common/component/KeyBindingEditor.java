@@ -16,8 +16,6 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -50,9 +48,6 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.fieldassist.ControlDecoration;
-import org.eclipse.jface.fieldassist.FieldDecoration;
-import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -182,36 +177,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			gd.horizontalSpan = 2;
 			t.setLayoutData(gd);
 			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE).observeDetail(getMaster()), new UpdateValueStrategy().setBeforeSetValidator(new BindingValidator()), new UpdateValueStrategy());
-
-			final ControlDecoration dec = new ControlDecoration(t, SWT.BOTTOM);
-			binding.getValidationStatus().addValueChangeListener(new IValueChangeListener() {
-
-				public void handleValueChange(ValueChangeEvent event) {
-					IStatus s = (IStatus) event.getObservableValue().getValue();
-					if (s.isOK()) {
-						dec.setDescriptionText(null);
-						dec.setImage(null);
-					} else {
-						dec.setDescriptionText(s.getMessage());
-
-						String fieldDecorationID = null;
-						switch (s.getSeverity()) {
-						case IStatus.INFO:
-							fieldDecorationID = FieldDecorationRegistry.DEC_INFORMATION;
-							break;
-						case IStatus.WARNING:
-							fieldDecorationID = FieldDecorationRegistry.DEC_WARNING;
-							break;
-						case IStatus.ERROR:
-						case IStatus.CANCEL:
-							fieldDecorationID = FieldDecorationRegistry.DEC_ERROR;
-							break;
-						}
-						FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(fieldDecorationID);
-						dec.setImage(fieldDecoration == null ? null : fieldDecoration.getImage());
-					}
-				}
-			});
+			Util.addDecoration(t, binding);
 		}
 
 		// ------------------------------------------------------------

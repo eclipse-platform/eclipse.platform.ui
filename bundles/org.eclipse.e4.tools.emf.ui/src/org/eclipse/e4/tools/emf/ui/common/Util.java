@@ -15,7 +15,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -34,6 +38,11 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 
 public class Util {
 	public static final boolean isNullOrEmpty(String element) {
@@ -160,6 +169,38 @@ public class Util {
 			}
 			return false;
 		}
+	}
+
+	public static final void addDecoration(Control control, Binding binding) {
+		final ControlDecoration dec = new ControlDecoration(control, SWT.BOTTOM);
+		binding.getValidationStatus().addValueChangeListener(new IValueChangeListener() {
+
+			public void handleValueChange(ValueChangeEvent event) {
+				IStatus s = (IStatus) event.getObservableValue().getValue();
+				if (s.isOK()) {
+					dec.setDescriptionText(null);
+					dec.setImage(null);
+				} else {
+					dec.setDescriptionText(s.getMessage());
+
+					String fieldDecorationID = null;
+					switch (s.getSeverity()) {
+					case IStatus.INFO:
+						fieldDecorationID = FieldDecorationRegistry.DEC_INFORMATION;
+						break;
+					case IStatus.WARNING:
+						fieldDecorationID = FieldDecorationRegistry.DEC_WARNING;
+						break;
+					case IStatus.ERROR:
+					case IStatus.CANCEL:
+						fieldDecorationID = FieldDecorationRegistry.DEC_ERROR;
+						break;
+					}
+					FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(fieldDecorationID);
+					dec.setImage(fieldDecoration == null ? null : fieldDecoration.getImage());
+				}
+			}
+		});
 	}
 
 	public static class InternalPackage {

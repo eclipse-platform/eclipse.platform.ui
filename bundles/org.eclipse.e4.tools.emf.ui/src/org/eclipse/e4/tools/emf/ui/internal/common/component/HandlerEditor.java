@@ -12,11 +12,13 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.CommandToStringConverter;
+import org.eclipse.e4.tools.emf.ui.common.ContributionURIValidator;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
@@ -196,7 +198,8 @@ public class HandlerEditor extends AbstractComponentEditor {
 
 			Text t = new Text(parent, SWT.BORDER);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()));
+			Binding binding = context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI).observeDetail(getMaster()), new UpdateValueStrategy().setAfterConvertValidator(new ContributionURIValidator()), new UpdateValueStrategy());
+			Util.addDecoration(t, binding);
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
