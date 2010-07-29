@@ -659,7 +659,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	/**
 	 * Name of the action displaying information for the
 	 * current caret location in a sticky hover.
-	 *
 	 * Value: <code>"ShowInformation"</code>
 	 * @see IInformationProvider
 	 * @since 3.3
@@ -675,7 +674,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 
 	/**
 	 * Name of the action displaying a sticky ruler hover for the current caret location.
-	 *
 	 * Value: <code>"ShowChangeRulerInformation"</code>
 	 * @since 3.6
 	 */
@@ -683,7 +681,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 
 	/**
 	 * Name of the action displaying a sticky ruler annotation hover for the current caret location.
-	 * 
 	 * Value: <code>"ShowRulerAnnotationInformation"</code>
 	 * @since 3.6
 	 */
