@@ -19,21 +19,19 @@ import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 
 public class ComponentLabelProvider extends StyledCellLabelProvider {
-	private Image modelComponentsImage;
-	private Image modelComonentImage;
-	private Image partsImage;
-	private Image menusImage;
-	private Image partImage;
-	private Image partDescriptorImage;
 
 	private ModelEditor editor;
 
 	private static final String NOT_RENDERED_KEY = "NOT_RENDERED_STYLER";//$NON-NLS-1$
+
+	private Font font;
 
 	private static Styler NOT_RENDERED_STYLER = new Styler() {
 		{
@@ -87,6 +85,11 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 			}
 		} else if (cell.getElement() instanceof VirtualEntry<?>) {
 			String s = cell.getElement().toString();
+			if (font == null) {
+				FontData[] data = cell.getControl().getFont().getFontData();
+				font = new Font(cell.getControl().getDisplay(), new FontData(data[0].getName(), data[0].getHeight(), SWT.ITALIC));
+			}
+			cell.setFont(font);
 			cell.setText(s);
 		} else {
 			cell.setText(cell.getElement().toString());
@@ -95,34 +98,9 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 
 	@Override
 	public void dispose() {
-		if (modelComponentsImage != null) {
-			modelComponentsImage.dispose();
-			modelComponentsImage = null;
-		}
-
-		if (modelComonentImage != null) {
-			modelComonentImage.dispose();
-			modelComonentImage = null;
-		}
-
-		if (partsImage != null) {
-			partsImage.dispose();
-			partsImage = null;
-		}
-
-		if (menusImage != null) {
-			menusImage.dispose();
-			menusImage = null;
-		}
-
-		if (partImage != null) {
-			partImage.dispose();
-			partImage = null;
-		}
-
-		if (partDescriptorImage != null) {
-			partDescriptorImage.dispose();
-			partDescriptorImage = null;
+		if (font != null) {
+			font.dispose();
+			font = null;
 		}
 		super.dispose();
 	}
