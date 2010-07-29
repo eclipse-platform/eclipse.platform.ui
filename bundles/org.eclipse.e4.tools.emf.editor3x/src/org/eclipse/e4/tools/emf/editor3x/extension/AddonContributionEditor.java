@@ -28,6 +28,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -38,10 +39,15 @@ public class AddonContributionEditor implements IContributionClassCreator {
 	public boolean isSupported(EClass element) {
 		return Util.isTypeOrSuper(ApplicationPackageImpl.Literals.ADDON, element);
 	}
-
+	
 	public void createOpen(MContribution contribution, EditingDomain domain,
 			IProject project, Shell shell) {
-		if( contribution.getContributionURI() == null || contribution.getContributionURI().trim().length() == 0 ) {
+		createOpen(contribution, domain, project, shell, false);
+	}
+
+	private void createOpen(MContribution contribution, EditingDomain domain,
+			IProject project, Shell shell, boolean forceNew) {
+		if( forceNew || contribution.getContributionURI() == null || contribution.getContributionURI().trim().length() == 0 || !contribution.getContributionURI().startsWith("platform:") ) {
 			NewAddonClassWizard wizard = new NewAddonClassWizard();
 			wizard.init( null, new StructuredSelection(project));
 			WizardDialog dialog = new WizardDialog(shell, wizard);
@@ -62,20 +68,34 @@ public class AddonContributionEditor implements IContributionClassCreator {
 			}
 		} else {
 			URI uri = URI.createURI(contribution.getContributionURI());
-			IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject(uri.segment(1));
-			//TODO If this is not a WS-Resource we need to open differently 
-			if( p != null ) {
-				IJavaProject jp = JavaCore.create(p);
-				try {
-					IType t = jp.findType(uri.segment(2));
-					JavaUI.openInEditor(t);
-				} catch (JavaModelException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (PartInitException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			if (uri.segmentCount() == 3) {
+				IProject p = ResourcesPlugin.getWorkspace().getRoot()
+						.getProject(uri.segment(1));
+				// TODO If this is not a WS-Resource we need to open differently
+				if (p != null) {
+					IJavaProject jp = JavaCore.create(p);
+					try {
+						IType t = jp.findType(uri.segment(2));
+						if( t != null ) {
+							JavaUI.openInEditor(t);
+						} else {
+							if( MessageDialog.openQuestion(shell, "Class not found", "The class '"+uri.segment(2)+"' was not found. Would you like to start the class creation wizard?") ) {
+								createOpen(contribution, domain, project, shell, true);
+							}
+						}
+					} catch (JavaModelException e) {
+						if( MessageDialog.openQuestion(shell, "Class not found", "The class '"+uri.segment(2)+"' was not found. Would you like to start the class creation wizard?") ) {
+							createOpen(contribution, domain, project, shell, true);
+						}
+					} catch (PartInitException e) {
+						MessageDialog.openError(shell, "Failed to open editor", e.getMessage());
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
+			} else {
+				MessageDialog.openError(shell, "Invalid URL",
+						"The current url is invalid");
 			}
 		}
 	}
