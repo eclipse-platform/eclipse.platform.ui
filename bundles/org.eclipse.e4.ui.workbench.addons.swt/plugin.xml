@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.e4.ui.css.swt.property.handler">
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CompositeElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcherCSSHandler">
+         <property-name
+               name="perspective-keyline-color">
+         </property-name>
+      </handler>
+   </extension>
+
+</plugin>

@@ -93,7 +93,7 @@ public class PerspectiveSwitcher {
 	private Composite comp;
 	private Image backgroundImage;
 
-	Color borderColor;
+	Color borderColor, curveColor;
 	Control toolParent;
 
 	private EventHandler selectionHandler = new EventHandler() {
@@ -197,8 +197,9 @@ public class PerspectiveSwitcher {
 	void init(IEclipseContext context) {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN), childrenHandler);
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
+		eventBroker.subscribe(
+				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
+				toBeRenderedHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
 	}
@@ -213,7 +214,6 @@ public class PerspectiveSwitcher {
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl toolControl) {
 		psME = toolControl;
-		borderColor = new Color(parent.getDisplay(), 170, 176, 191);
 		comp = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.marginLeft = layout.marginRight = 8;
@@ -231,16 +231,11 @@ public class PerspectiveSwitcher {
 		toolParent.addPaintListener(new PaintListener() {
 
 			public void paintControl(PaintEvent e) {
+				if (borderColor == null)
+					borderColor = e.display.getSystemColor(SWT.COLOR_BLACK);
 				e.gc.setForeground(borderColor);
 				Rectangle bounds = ((Control) e.widget).getBounds();
 				e.gc.drawLine(0, bounds.height - 1, bounds.width, bounds.height - 1);
-			}
-		});
-
-		toolParent.addDisposeListener(new DisposeListener() {
-
-			public void widgetDisposed(DisposeEvent e) {
-				borderColor.dispose();
 			}
 		});
 
@@ -389,11 +384,14 @@ public class PerspectiveSwitcher {
 		if (page == null) {
 			try {
 				// don't have a page, need to open one
-				workbenchWindow.openPage(desc.getId(), ((Workbench) workbenchWindow.getWorkbench())
-						.getDefaultPageInput());
+				workbenchWindow.openPage(desc.getId(),
+						((Workbench) workbenchWindow.getWorkbench()).getDefaultPageInput());
 			} catch (WorkbenchException e) {
-				IStatus errorStatus = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS
-						.bind(WorkbenchMessages.Workbench_showPerspectiveError, desc.getLabel()), e);
+				IStatus errorStatus = new Status(
+						IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH,
+						NLS.bind(WorkbenchMessages.Workbench_showPerspectiveError, desc.getLabel()),
+						e);
 				StatusManager.getManager().handle(errorStatus, StatusManager.SHOW);
 			}
 		} else {
@@ -561,11 +559,12 @@ public class PerspectiveSwitcher {
 	void paint(PaintEvent e) {
 		GC gc = e.gc;
 		Point size = comp.getSize();
-		Color border1 = borderColor;
+		if (curveColor == null)
+			curveColor = e.display.getSystemColor(SWT.COLOR_BLACK);
 		int h = size.y;
 		int[] simpleCurve = new int[] { 0, h - 1, 1, h - 1, 2, h - 2, 2, 1, 3, 0 };
 		// draw border
-		gc.setForeground(border1);
+		gc.setForeground(curveColor);
 		gc.setAntialias(SWT.ON);
 		gc.drawPolyline(simpleCurve);
 
@@ -672,5 +671,10 @@ public class PerspectiveSwitcher {
 				image.dispose();
 			}
 		}
+	}
+
+	public void setKeylineColor(Color borderColor, Color curveColor) {
+		this.borderColor = borderColor;
+		this.curveColor = curveColor;
 	}
 }
