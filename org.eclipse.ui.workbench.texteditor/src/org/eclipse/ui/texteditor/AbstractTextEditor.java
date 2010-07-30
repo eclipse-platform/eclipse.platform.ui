@@ -5753,7 +5753,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.BLOCK_SELECTION_MODE);
 		setAction(ITextEditorActionConstants.BLOCK_SELECTION_MODE, action);
 
-		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.OpenHyperlink.", this, HyperlinkManager.OPEN_HYPERLINK); //$NON-NLS-1$;
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.OpenHyperlink.", this, HyperlinkManager.OPEN_HYPERLINK, true); //$NON-NLS-1$;
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.OPEN_HYPERLINK_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.OPEN_HYPERLINK);
 		setAction(ITextEditorActionConstants.OPEN_HYPERLINK, action);
