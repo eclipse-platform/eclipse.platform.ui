@@ -385,7 +385,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * @since 3.6
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		if((event.stateMask & SWT.MOD1) > 0) {
+		if(((event.stateMask & SWT.MOD1) > 0) && (event.type != SWT.KeyDown)) {
 			ILaunchConfiguration configuration = null;
 			if(LaunchingResourceManager.isContextLaunchEnabled(getLaunchGroupIdentifier())) {
 				configuration = resolveContextConfiguration();
