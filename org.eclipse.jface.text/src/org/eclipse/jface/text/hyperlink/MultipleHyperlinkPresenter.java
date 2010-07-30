@@ -780,8 +780,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 		showHyperlinks(hyperlinks, false);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#showHyperlinks(org.eclipse.jface.text.hyperlink.IHyperlink[], boolean)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.7
 	 */
 	public void showHyperlinks(IHyperlink[] activeHyperlinks, boolean takesFocusWhenVisible) {
