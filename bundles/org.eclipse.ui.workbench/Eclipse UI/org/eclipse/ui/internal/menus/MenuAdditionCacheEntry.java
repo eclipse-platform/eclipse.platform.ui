@@ -32,6 +32,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
@@ -127,6 +129,15 @@ public class MenuAdditionCacheEntry {
 		}
 		item.setIconURI(MenuHelper
 				.getIconUrl(commandAddition, IWorkbenchRegistryConstants.ATT_ICON));
+		if (item.getIconURI() == null) {
+			ICommandImageService commandImageService = application.getContext().get(
+					ICommandImageService.class);
+			if (commandImageService != null) {
+				ImageDescriptor descriptor = commandImageService.getImageDescriptor(item
+						.getElementId());
+				item.setIconURI(MenuHelper.getImageUrl(descriptor));
+			}
+		}
 		item.setLabel(MenuHelper.getLabel(commandAddition));
 		item.setMnemonics(MenuHelper.getMnemonic(commandAddition));
 		item.setTooltip(MenuHelper.getTooltip(commandAddition));
