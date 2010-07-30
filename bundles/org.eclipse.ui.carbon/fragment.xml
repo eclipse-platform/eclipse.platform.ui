@@ -12,7 +12,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            categoryId="org.eclipse.ui.category.dialogs"
+            categoryId="org.eclipse.ui.category.window"
             description="%command.closeDialog.desc"
             id="org.eclipse.ui.carbon.closeDialog"
             name="%command.closeDialog.name">
