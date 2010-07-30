@@ -421,7 +421,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		windowContext.set(IWindowCloseHandler.class.getName(), new IWindowCloseHandler() {
 			public boolean close(MWindow window) {
 				if (restarting) {
-					return WorkbenchWindow.this.close();
+					return WorkbenchWindow.this.close(false);
 				}
 				return getWindowAdvisor().preWindowShellClose() && WorkbenchWindow.this.close();
 			}
