@@ -70,7 +70,7 @@ import org.eclipse.jface.text.Region;
  *
  * @since 3.4
  */
-public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
+public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implements IHyperlinkPresenterExtension2 {
 
 	private static final boolean IS_WIN32= "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
 

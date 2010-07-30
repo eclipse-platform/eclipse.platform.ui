@@ -49,7 +49,7 @@ import org.eclipse.jface.text.TextPresentation;
  *
  * @since 3.1
  */
-public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlinkPresenterExtension, IHyperlinkPresenterExtension2, ITextPresentationListener, ITextInputListener, IDocumentListener,
+public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlinkPresenterExtension, ITextPresentationListener, ITextInputListener, IDocumentListener,
 		IPropertyChangeListener {
 
 	/**
@@ -143,15 +143,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	public void showHyperlinks(IHyperlink[] hyperlinks) {
 		Assert.isLegal(hyperlinks != null && hyperlinks.length == 1);
 		highlightRegion(hyperlinks[0].getHyperlinkRegion());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @since 3.7
-	 */
-	public void showHyperlinks(IHyperlink[] activeHyperlinks, boolean takesFocusWhenVisible) {
-		showHyperlinks(activeHyperlinks);
 	}
 
 	/**
