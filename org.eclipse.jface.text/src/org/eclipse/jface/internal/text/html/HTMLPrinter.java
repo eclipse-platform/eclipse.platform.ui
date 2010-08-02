@@ -132,7 +132,7 @@ public class HTMLPrinter {
 
 		pageProlog.append("<html>"); //$NON-NLS-1$
 
-		appendStyleSheetURL(pageProlog, styleSheet);
+		appendStyleSheet(pageProlog, styleSheet);
 
 		appendColors(pageProlog, fgRGB, bgRGB);
 
@@ -189,9 +189,17 @@ public class HTMLPrinter {
 		}
 	}
 
-	private static void appendStyleSheetURL(StringBuffer buffer, String styleSheet) {
+	private static void appendStyleSheet(StringBuffer buffer, String styleSheet) {
 		if (styleSheet == null)
 			return;
+		
+		// workaround for https://bugs.eclipse.org/318243
+		StringBuffer fg= new StringBuffer();
+		appendColor(fg, FG_COLOR_RGB);
+		styleSheet= styleSheet.replaceAll("InfoText", fg.toString()); //$NON-NLS-1$
+		StringBuffer bg= new StringBuffer();
+		appendColor(bg, BG_COLOR_RGB);
+		styleSheet= styleSheet.replaceAll("InfoBackground", bg.toString()); //$NON-NLS-1$
 
 		buffer.append("<head><style CHARSET=\"ISO-8859-1\" TYPE=\"text/css\">"); //$NON-NLS-1$
 		buffer.append(styleSheet);
@@ -304,24 +312,6 @@ public class HTMLPrinter {
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-weight:\\s*)\\w+(\\;?.*\\})", "$1" + (bold ? "bold" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-style:\\s*)\\w+(\\;?.*\\})", "$1" + (italic ? "italic" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-family:\\s*).+?(;.*\\})", "$1" + family + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		return styles;
-	}
-	
-	/**
-	 * Replaces <code>color: InfoText</code> style definitions in the given CSS with
-	 * the actual color values.
-	 *
-	 * @param styles CSS style definitions
-	 * @return the modified style definitions
-	 * @since 3.6.1
-	 */
-	public static String convertInfoTextColor(String styles) {
-		// workaround for https://bugs.eclipse.org/318243
-		StringBuffer buf= new StringBuffer("color: "); //$NON-NLS-1$
-		appendColor(buf, FG_COLOR_RGB);
-		String bg= buf.toString();
-		
-		styles= styles.replaceAll("color: InfoText", bg); //$NON-NLS-1$
 		return styles;
 	}
 }
