@@ -36,7 +36,7 @@ public class ProjectSetImporterTests extends EclipseTest {
 
 	private final static String PSF_FILENAME = "temp.psf";
 	private final static File PSF_FILE = new File(PSF_FILENAME);
-	private static final int PROJECTS_NO = 50;
+	private static final int PROJECTS_NO = 30;
 
 	private final static String psf_header_0 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 	private final static String psf_header_1 = "<psf version=\"2.0\">";
