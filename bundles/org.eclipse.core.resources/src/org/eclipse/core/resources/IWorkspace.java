@@ -1006,10 +1006,10 @@ public interface IWorkspace extends IAdaptable {
 	 * running, the calling thread will be blocked until that change completes.
 	 * If the action attempts to make changes to the workspace that were not
 	 * specified in the scheduling rule, it will fail. If no scheduling rule is
-	 * supplied, then any attempt to change resources will fail.  If a non-<code>null</code>
-	 * scheduling rule is supplied, this operation must always support cancelation
-	 * in the case where this operation becomes blocked by a long running background
-	 * operation.
+	 * supplied, there are no scheduling restrictions for this operation. 
+	 * If a non-<code>null</code> scheduling rule is supplied, this operation 
+	 * must always support cancelation in the case where this operation becomes 
+	 * blocked by a long running background operation.
 	 * </p>
 	 * <p>
 	 * The AVOID_UPDATE flag controls whether periodic resource change
