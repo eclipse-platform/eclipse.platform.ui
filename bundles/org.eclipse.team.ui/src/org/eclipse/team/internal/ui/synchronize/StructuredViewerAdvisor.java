@@ -148,6 +148,12 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 
 		};
 
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick(viewer, event);
+			}
+		});
+
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				// Update the action bars enablement for any contributed action groups
