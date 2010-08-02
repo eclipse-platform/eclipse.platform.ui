@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,20 +147,20 @@ public abstract class ProjectSetCapability {
 	}
 
 	/**
-	 * For every String in referenceStrings, load the corresponding project into the workspace.
-	 * The opaque strings in referenceStrings are guaranteed to have been previously
+	 * For every String in <code>referenceStrings</code>, load the corresponding project into the workspace.
+	 * The opaque strings in <code>referenceStrings</code> are guaranteed to have been previously
 	 * produced by {@link #asReference(IProject[], ProjectSetSerializationContext, IProgressMonitor)}.
-	 * The confirmOverwrite method is called with an array of projects
+	 * The {@link #confirmOverwrite(ProjectSetSerializationContext, IProject[])} method is called with an array of projects
 	 * for which projects of the same name already exists in the workspace.
 	 * <p>
-	 * Callers from within a UI context should wrapper a call to this method
-	 * inside a WorkspaceModifyOperation so that events generated as a result
+	 * Callers from within a UI context should wrap a call to this method
+	 * inside a <code>WorkspaceModifyOperation</code> so that events generated as a result
 	 * of this operation are deferred until the outermost operation
 	 * has successfully completed.
 	 * <p>
 	 * This default implementation simply throws an exception
 	 * indicating that no projects can be loaded unless there 
-	 * is an IProjectSetSerializer registered for the repository
+	 * is an {@link IProjectSetSerializer} registered for the repository
 	 * provider type in which case the operation is delegated to the 
 	 * serializer.
 	 * Subclasses are expected to override.
@@ -195,7 +195,7 @@ public abstract class ProjectSetCapability {
 		}
 		throw new TeamException(Messages.ProjectSetCapability_1); 
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////////
 	//
 	// Internal utility methods for subclasses
