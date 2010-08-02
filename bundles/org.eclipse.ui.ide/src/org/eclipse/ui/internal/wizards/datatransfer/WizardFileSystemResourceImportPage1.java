@@ -830,7 +830,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
     protected boolean importResources(List fileSystemObjects) {
         ImportOperation operation;
         
-        boolean shouldImportTopLevelFoldersRecursively = allItemsAreChecked() &&
+        boolean shouldImportTopLevelFoldersRecursively = selectionGroup.isEveryItemChecked() &&
         											createOnlySelectedButton.getSelection() &&
         											(createLinksInWorkspaceButton != null && createLinksInWorkspaceButton.getSelection()) &&
         											(createVirtualFoldersButton != null && createVirtualFoldersButton.getSelection() == false);
@@ -1197,23 +1197,13 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			relativePathVariableGroup.setEnabled(createLinksInWorkspaceButton.getSelection());
 			createVirtualFoldersButton.setEnabled(createLinksInWorkspaceButton.getSelection());
 	
-			if ((!selectionGroup.getAllCheckedListItems().isEmpty() && !allItemsAreChecked()) ||
+			if (!selectionGroup.isEveryItemChecked() ||
 				(createOnlySelectedButton.getSelection() == false)) {
 	        	createVirtualFoldersButton.setSelection(true);
 			}
     	}
     }
 
-    private boolean allItemsAreChecked() {
-		List checkedItems = selectionGroup.getAllCheckedListItems();
-		if (!checkedItems.isEmpty()) {
-			List allItems = selectionGroup.getAllListItems();
-        	if (checkedItems.size() == allItems.size())
-        		return true;
-        }
-		return false;
-    }
-    
     /**
      *	Answer a boolean indicating whether self's source specification
      *	widgets currently all contain valid values.
