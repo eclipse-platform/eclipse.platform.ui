@@ -150,20 +150,35 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
 	
 	private class MakeDefaultChangeSetAction extends ChangeSetAction {
 
-        public MakeDefaultChangeSetAction(ISynchronizePageConfiguration configuration) {
-            super(TeamUIMessages.ChangeLogModelProvider_9, configuration); 
-        }
-        
-        public void run() {
-            ActiveChangeSet set = getSelectedSet();
-            if (set == null) return;
-    		getActiveChangeSetManager().makeDefault(set);
-        }
-	    
+		public MakeDefaultChangeSetAction(
+				ISynchronizePageConfiguration configuration) {
+			super(TeamUIMessages.ChangeLogModelProvider_9, configuration);
+		}
+
+		protected boolean updateSelection(IStructuredSelection selection) {
+			if (getSelectedSet() != null) {
+				setText(TeamUIMessages.ChangeLogModelProvider_9);
+				setChecked(getSelectedSet().equals(
+						getActiveChangeSetManager().getDefaultSet()));
+			} else {
+				setText(TeamUIMessages.ChangeLogModelProvider_10);
+				setChecked(false);
+			}
+			return true;
+		}
+
+		public void run() {
+			getActiveChangeSetManager().makeDefault(
+					isChecked() ? getSelectedSet() : null);
+			if (getSelectedSet() == null) {
+				setChecked(false); // keep unchecked
+			}
+		}
+
 	}
-	
+
 	private class AddToChangeSetAction extends SynchronizeModelAction {
-	 
+	
         private final ActiveChangeSet set;
 	    
         public AddToChangeSetAction(ISynchronizePageConfiguration configuration, ActiveChangeSet set, ISelection selection) {
