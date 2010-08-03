@@ -179,10 +179,6 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 		fResizable= (shellStyle & SWT.RESIZE) != 0;
 		fShell= new Shell(parentShell, shellStyle);
-		Display display= fShell.getDisplay();
-		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-		Color background= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-		setColor(fShell, foreground, background);
 
 		GridLayout layout= new GridLayout(1, false);
 		layout.marginHeight= 0;
@@ -193,9 +189,8 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fContentComposite= new Composite(fShell, SWT.NONE);
 		fContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		fContentComposite.setLayout(new FillLayout());
-		setColor(fContentComposite, foreground, background);
 
-		createStatusComposite(statusFieldText, toolBarManager, foreground, background);
+		createStatusComposite(statusFieldText, toolBarManager);
 		
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -203,9 +198,10 @@ public abstract class AbstractInformationControl implements IInformationControl,
 			}
 		});
 
+		updateColors();
 	}
 
-	private void createStatusComposite(final String statusFieldText, final ToolBarManager toolBarManager, Color foreground, Color background) {
+	private void createStatusComposite(final String statusFieldText, final ToolBarManager toolBarManager) {
 		if (toolBarManager == null && statusFieldText == null)
 			return;
 
@@ -222,13 +218,13 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		if (statusFieldText != null) {
-			createStatusLabel(statusFieldText, foreground, background);
+			createStatusLabel(statusFieldText);
 		} else {
 			createToolBar(toolBarManager);
 		}
 	}
 
-	private void createStatusLabel(final String statusFieldText, Color foreground, Color background) {
+	private void createStatusLabel(final String statusFieldText) {
 		fStatusLabel= new Label(fStatusComposite, SWT.RIGHT);
 		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		fStatusLabel.setText(statusFieldText);
@@ -239,11 +235,6 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		}
 		fStatusLabelFont= new Font(fStatusLabel.getDisplay(), fontDatas);
 		fStatusLabel.setFont(fStatusLabelFont);
-		
-		fStatusLabelForeground= new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
-		fStatusLabel.setForeground(fStatusLabelForeground);
-		fStatusLabel.setBackground(background);
-		setColor(fStatusComposite, foreground, background);
 	}
 
 	private void createToolBar(ToolBarManager toolBarManager) {
@@ -409,14 +400,40 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	}
 
 	/**
-	 * Utility to set the foreground and the background color of the given
-	 * control
-	 *
+	 * Updates the colors.
+	 * 
+	 * @since 3.7
+	 */
+	private void updateColors() {
+		if (fShell.isDisposed())
+			return;
+
+		Display display= fShell.getDisplay();
+		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		Color background= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+
+		setColors(fShell, foreground, background);
+		setColors(fContentComposite, foreground, background);
+
+		if (fStatusLabel == null)
+			return;
+
+		if (fStatusLabelForeground != null)
+			fStatusLabelForeground.dispose();
+		fStatusLabelForeground= new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
+
+		setColors(fStatusLabel, fStatusLabelForeground, background);
+		setColors(fStatusComposite, foreground, background);
+	}
+
+	/**
+	 * Utility to set the foreground and the background color of the given control
+	 * 
 	 * @param control the control to modify
 	 * @param foreground the color to use for the foreground
 	 * @param background the color to use for the background
 	 */
-	private static void setColor(Control control, Color foreground, Color background) {
+	private static void setColors(Control control, Color foreground, Color background) {
 		control.setForeground(foreground);
 		control.setBackground(background);
 	}
@@ -503,6 +520,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		if (fShell.isVisible() == visible)
 			return;
 
+		if (visible)
+			updateColors();
+
 		fShell.setVisible(visible);
 	}
 
@@ -510,7 +530,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @see IInformationControl#dispose()
 	 */
 	public void dispose() {
-		if (fShell != null && !fShell.isDisposed())
+		if (!fShell.isDisposed())
 			fShell.dispose();
 	}
 
