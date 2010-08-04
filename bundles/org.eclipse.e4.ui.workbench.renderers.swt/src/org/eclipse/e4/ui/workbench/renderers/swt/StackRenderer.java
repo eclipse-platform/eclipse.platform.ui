@@ -466,8 +466,9 @@ public class StackRenderer extends LazyStackRenderer {
 						: ((MPlaceholder) uiElement).getRef());
 
 				IEclipseContext partContext = part.getContext();
+				IEclipseContext parentContext = getContextForParent(part);
 				// a part may not have a context if it hasn't been rendered
-				IEclipseContext context = partContext == null ? StackRenderer.this.context
+				IEclipseContext context = partContext == null ? parentContext
 						: partContext;
 				// Allow closes to be 'canceled'
 				EPartService partService = (EPartService) context
