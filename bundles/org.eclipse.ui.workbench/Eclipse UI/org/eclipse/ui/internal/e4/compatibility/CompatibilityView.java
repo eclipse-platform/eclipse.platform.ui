@@ -24,11 +24,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.ViewReference;
 import org.eclipse.ui.internal.WorkbenchPartReference;
-import org.eclipse.ui.part.ViewPart;
 
 public class CompatibilityView extends CompatibilityPart {
 
@@ -66,8 +66,8 @@ public class CompatibilityView extends CompatibilityPart {
 	protected void createPartControl(IWorkbenchPart legacyPart, Composite parent) {
 		// Some views (i.e. Console) require that the actual ToolBar be
 		// instantiated before they are
-		ToolBarManager tbm = (ToolBarManager) ((ViewPart) legacyPart).getViewSite().getActionBars()
-				.getToolBarManager();
+		IActionBars actionBars = ((IViewPart) legacyPart).getViewSite().getActionBars();
+		ToolBarManager tbm = (ToolBarManager) actionBars.getToolBarManager();
 		ToolBar tb = tbm.createControl(parent);
 
 		super.createPartControl(legacyPart, parent);
@@ -75,8 +75,7 @@ public class CompatibilityView extends CompatibilityPart {
 		// dispose the tb, it will be re-created when the tab is shown
 		tb.dispose();
 
-		MenuManager mm = (MenuManager) ((ViewPart) legacyPart).getViewSite().getActionBars()
-				.getMenuManager();
+		MenuManager mm = (MenuManager) actionBars.getMenuManager();
 		MRenderedMenu menu = null;
 		for (MMenu me : part.getMenus()) {
 			if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU) && (me instanceof MRenderedMenu)) {
