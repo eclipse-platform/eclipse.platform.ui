@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Tom Schindl and others.
+ * Copyright (c) 2006, 2010 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,6 +193,18 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	 * @param provider
 	 *            the content provider used
 	 * @see StructuredViewer#setContentProvider(IContentProvider)
+	 * @since 3.7
+	 */
+	public void setContentProvider(IStructuredContentProvider provider) {
+		viewer.setContentProvider(provider);
+	}
+
+	/**
+	 * @param provider
+	 *            the content provider used
+	 * @see StructuredViewer#setContentProvider(IContentProvider)
+	 * @deprecated As of 3.7, replaced by
+	 *             {@link #setContentProvider(IStructuredContentProvider)}
 	 */
 	public void setContenProvider(IStructuredContentProvider provider) {
 		viewer.setContentProvider(provider);
