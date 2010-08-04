@@ -2615,6 +2615,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPart mpart = partService.findPart(part.getSite().getId());
 		if (mpart != null) {
 			MElementContainer<?> parent = mpart.getParent();
+			if (parent == null) {
+				// this is a shared part, check for placeholders
+				MPlaceholder placeholder = mpart.getCurSharedRef();
+				if (placeholder != null) {
+					parent = placeholder.getParent();
+				}
+			}
+
 			if (parent instanceof MPartStack) {
 				List<CompatibilityView> stack = new ArrayList<CompatibilityView>();
 
