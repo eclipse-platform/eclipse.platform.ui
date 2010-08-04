@@ -552,15 +552,13 @@ public class PartServiceImpl implements EPartService {
 					addToLastContainer(category, providedPart);
 				} else {
 					Object element = elements.get(0);
-					if (element instanceof MPartStack) {
-						MPartStack stack = (MPartStack) element;
-						if (providedPart.getCurSharedRef() instanceof MPlaceholder) {
-							stack.getChildren().add(providedPart.getCurSharedRef());
+					if (element instanceof MElementContainer<?>) {
+						MPlaceholder placeholder = providedPart.getCurSharedRef();
+						if (placeholder == null) {
+							((MElementContainer) element).getChildren().add(providedPart);
 						} else {
-							stack.getChildren().add(providedPart);
+							((MElementContainer) element).getChildren().add(placeholder);
 						}
-					} else if (element instanceof MElementContainer<?>) {
-						((MElementContainer<MPart>) element).getChildren().add(providedPart);
 					} else {
 						addToLastContainer(category, providedPart);
 					}
