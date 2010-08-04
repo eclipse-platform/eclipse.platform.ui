@@ -40,6 +40,6 @@
 
 #PerspectiveSwitcher  {
 	background-color: #F5F3ED #F0ECE0 100%;
-	/*keyline-color: #AAB0BF;*/
+	perspective-keyline-color: #7F91B5 #7F91B5;
 }
 

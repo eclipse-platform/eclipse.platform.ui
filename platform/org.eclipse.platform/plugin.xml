@@ -134,7 +134,7 @@
       <theme
             basestylesheeturi="css/e4_classic_winxp.css"
             id="org.eclipse.e4.ui.css.theme.e4_classic"
-            label="Win XP Classic">
+            label="Classic">
       </theme>
       <theme
             basestylesheeturi="css/e4_default_gtk.css"

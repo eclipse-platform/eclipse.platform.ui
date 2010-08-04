@@ -15,3 +15,7 @@
 .MPartStack.active {
   selected-tabs-background: #F2F5F9 #99B4D1	 100%;
 }
+
+#PerspectiveSwitcher  {
+	perspective-keyline-color: #ECE9D8 #FFFFFF;
+}

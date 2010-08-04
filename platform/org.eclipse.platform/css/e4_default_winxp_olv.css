@@ -32,3 +32,8 @@
     outer-keyline-color: #BFCDA4;
 	inner-keyline-color: #FFFFFF;
 }
+
+#PerspectiveSwitcher  {
+	background-color: #F5F3ED #F0ECE0 100%;
+	perspective-keyline-color: #A7B680 #A7B680;
+}
