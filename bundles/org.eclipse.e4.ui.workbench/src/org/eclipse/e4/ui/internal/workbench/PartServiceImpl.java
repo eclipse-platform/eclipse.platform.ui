@@ -572,15 +572,11 @@ public class PartServiceImpl implements EPartService {
 
 	private void addToLastContainer(String category, MPart part) {
 		MElementContainer<?> lastContainer = getLastContainer();
-		if (lastContainer instanceof MPartStack) {
-			MPartStack stack = (MPartStack) lastContainer;
-			if (part.getCurSharedRef() instanceof MPlaceholder) {
-				stack.getChildren().add(part.getCurSharedRef());
-			} else {
-				stack.getChildren().add(part);
-			}
-		} else {
+		MPlaceholder placeholder = part.getCurSharedRef();
+		if (placeholder == null) {
 			((List) lastContainer.getChildren()).add(part);
+		} else {
+			((List) lastContainer.getChildren()).add(placeholder);
 		}
 
 		if (category != null) {
