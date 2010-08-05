@@ -1516,6 +1516,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 			fTabViewer.refresh();
 			getButton(ID_LAUNCH_BUTTON).setEnabled(fTabViewer.canLaunch() & fTabViewer.canLaunchWithModes() & !fTabViewer.hasDuplicateDelegates());
+		} else {
+			fTabViewer.refresh();
 		}
 	}
 
