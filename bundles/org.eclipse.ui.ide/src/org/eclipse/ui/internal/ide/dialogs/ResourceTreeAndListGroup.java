@@ -62,7 +62,7 @@ public class ResourceTreeAndListGroup extends EventManager implements
 
     private Map checkedStateStore = new HashMap(9);
 
-    private Collection whiteCheckedTreeItems = new HashSet();
+    private HashSet whiteCheckedTreeItems = new HashSet();
 
     private ITreeContentProvider treeContentProvider;
 
@@ -389,7 +389,7 @@ public class ResourceTreeAndListGroup extends EventManager implements
     /**
      * Add all of the selected children of nextEntry to result recursively.
      * This does not set any values in the checked state.
-     * @param The treeElement being queried
+     * @param treeElement The tree elements being queried
      * @param addAll a boolean to indicate if the checked state store needs to be queried
      * @param filter IElementFilter - the filter being used on the data
      * @param monitor IProgressMonitor or null that the cancel is polled for 
@@ -484,7 +484,52 @@ public class ResourceTreeAndListGroup extends EventManager implements
         }
     }
 
-    /**
+    /** Returns whether all items in the list are checked.
+     * This method is required, because this widget will keep items grey
+     * checked even though all children are selected (see grayUpdateHierarchy()).
+     * @return true if all items in the list are checked - false if not
+     */
+    public boolean isEveryItemChecked() {
+        //Iterate through the children of the root as the root is not in the store
+    	Object[] children = treeContentProvider.getChildren(root);
+        for (int i = 0; i < children.length; ++i) {
+        	if (!whiteCheckedTreeItems.contains(children[i])) {
+                if (!treeViewer.getGrayed(children[i]))
+                	return false;
+        		if (!isEveryChildrenChecked(children[i]))
+        			return false;
+        	}
+        }
+        return true;
+    }
+
+	/**Verifies of all list items of the tree element are checked, and 
+	 * if all children are white checked.  If not, verify their children
+	 * so that if an element is not white checked, but all its children
+	 * are while checked, then, all items are considered checked.
+	 * @param treeElement the treeElement which status to verify
+	 * @return true if all items are checked, false otherwise.
+	 */
+	private boolean isEveryChildrenChecked(Object treeElement) {
+        List checked = (List) checkedStateStore.get(treeElement);
+        if (checked != null && (!checked.isEmpty())) {
+            Object[] listItems = listContentProvider.getElements(treeElement);
+        	if (listItems.length != checked.size())
+        		return false;
+		}
+    	Object[] children = treeContentProvider.getChildren(treeElement);
+        for (int i = 0; i < children.length; ++i) {
+        	if (!whiteCheckedTreeItems.contains(children[i])) {
+                if (!treeViewer.getGrayed(children[i]))
+                	return false;
+        		if (!isEveryChildrenChecked(children[i]))
+        			return false;
+        	}
+        }
+		return true;
+	}
+
+	/**
      *	Returns a flat list of all of the leaf elements which are checked.
      *
      *	@return all of the leaf elements which are checked. This API does not
