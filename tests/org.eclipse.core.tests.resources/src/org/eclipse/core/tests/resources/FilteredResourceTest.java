@@ -1753,4 +1753,71 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.6", false, file.exists());
 
 	}
+
+	/**
+	 * Regression for  Bug 317824 -  Renaming a project that contains resource filters fails, 
+	 * and copying a project that contains resource filters removes the resource filters. 
+	 */
+	public void test317824() {
+		IFolder folder = existingProject.getFolder("foo");
+		ensureExistsInWorkspace(folder, true);
+
+		IFile file = folder.getFile("bar.txt");
+		ensureExistsInWorkspace(file, "content");
+
+		try {
+			existingProject.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+
+		try {
+			FileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*");
+			existingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription, 0, getMonitor());
+		} catch (CoreException e) {
+			fail("1.2");
+		}
+
+		try {
+			assertEquals(1, existingProject.getFilters().length);
+		} catch (CoreException e) {
+			fail("1.3", e);
+		}
+
+		try {
+			existingProject.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.4", e);
+		}
+
+		IPath newPath = existingProject.getFullPath().removeLastSegments(1).append(existingProject.getName() + "_moved");
+		try {
+			existingProject.move(newPath, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.5", e);
+		}
+
+		IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(existingProject.getName() + "_moved");
+		try {
+			assertTrue(newProject.exists());
+			assertEquals(1, newProject.getFilters().length);
+		} catch (CoreException e) {
+			fail("1.6", e);
+		}
+
+		newPath = newProject.getFullPath().removeLastSegments(1).append(newProject.getName() + "_copy");
+		try {
+			newProject.copy(newPath, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.7", e);
+		}
+
+		newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newProject.getName() + "_copy");
+		try {
+			assertTrue(newProject.exists());
+			assertEquals(1, newProject.getFilters().length);
+		} catch (CoreException e) {
+			fail("1.8", e);
+		}
+	}
 }

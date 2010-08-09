@@ -630,7 +630,7 @@ public class Project extends Container implements IProject {
 				copyMetaArea(this, destination, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 
 				// copy just the project and not its children yet (tree node, properties)
-				internalCopyProjectOnly(destination, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
+				internalCopyProjectOnly(destination, destDesc, Policy.subMonitorFor(monitor, Policy.opWork * 5 / 100));
 
 				// set the description
 				destination.internalSetDescription(destDesc, false);
@@ -689,7 +689,7 @@ public class Project extends Container implements IProject {
 	/*
 	 * Copies just the project and no children. Does NOT copy the meta area.
 	 */
-	protected void internalCopyProjectOnly(IResource destination, IProgressMonitor monitor) throws CoreException {
+	protected void internalCopyProjectOnly(IResource destination, IProjectDescription destDesc, IProgressMonitor monitor) throws CoreException {
 		// close the property store so bogus values aren't copied to the destination
 		getPropertyManager().closePropertyStore(this);
 		getLocalManager().getHistoryStore().closeHistoryStore(this);
@@ -698,6 +698,13 @@ public class Project extends Container implements IProject {
 		getPropertyManager().copy(this, destination, IResource.DEPTH_ZERO);
 
 		ProjectInfo info = (ProjectInfo) ((Resource) destination).getResourceInfo(false, true);
+
+		//copy the hidden metadata that we store in the project description
+		ProjectDescription projectDesc = (ProjectDescription) destDesc;
+		ProjectDescription internalDesc = ((Project)destination.getProject()).internalGetDescription();
+		projectDesc.setLinkDescriptions(internalDesc.getLinks());
+		projectDesc.setFilterDescriptions(internalDesc.getFilters());
+		projectDesc.setVariableDescriptions(internalDesc.getVariables());
 
 		//clear properties, markers, and description for the new project, because they shouldn't be copied.
 		info.description = null;

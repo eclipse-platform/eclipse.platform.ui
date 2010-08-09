@@ -742,7 +742,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			sourceInfo = (ResourceInfo) sourceInfo.clone();
 			sourceInfo.setType(destinationType);
 		}
-		ResourceInfo newInfo = createResource(destinationResource, sourceInfo, false, false, keepSyncInfo);
+		ResourceInfo newInfo = createResource(destinationResource, sourceInfo, false, true, keepSyncInfo);
 		// get/set the node id from the source's resource info so we can later put it in the
 		// info for the destination resource. This will help us generate the proper deltas,
 		// indicating a move rather than a add/delete
