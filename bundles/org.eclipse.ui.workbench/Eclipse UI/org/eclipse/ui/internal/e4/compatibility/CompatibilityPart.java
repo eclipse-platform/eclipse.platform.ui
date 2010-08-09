@@ -115,7 +115,7 @@ public abstract class CompatibilityPart {
 	}
 
 	@Focus
-	public void delegateSetFocus() {
+	void delegateSetFocus() {
 		wrapped.setFocus();
 	}
 

@@ -757,10 +757,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
 
-		if (mode == VIEW_ACTIVATE) {
-			compatibilityView.delegateSetFocus();
-		}
-
 		if (compatibilityView != null) {
 			IWorkbenchPartReference ref = compatibilityView.getReference();
 
@@ -2076,7 +2072,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		if (activate) {
 			partService.activate(editor);
-			compatibilityEditor.delegateSetFocus();
 		}
 
 
