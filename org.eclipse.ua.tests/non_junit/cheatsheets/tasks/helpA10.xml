@@ -30,7 +30,7 @@
    </item>
    <item title="Non resizeable dialogs" dialog="false" skip="true">
       <description>
-         Open the preferences and go to the help/content page. Select the radio button to include help content from a remote infocenter and give it priority. Hit the new button which opens a small and non resizable dialog. Hit F1 in this Add new infocenter dialog. Check that help opens externally and not in a tray.xternally and not in a tray.
+         Open the preferences and go to the help/content page. Select the radio button to include help content from a remote infocenter and give it priority. Hit the new button which opens a small and non resizable dialog. Hit F1 in this Add new infocenter dialog. Check that help opens externally and not in a tray.
       </description>
    </item>
    <item title="Short dialog" dialog="false" skip="false">
