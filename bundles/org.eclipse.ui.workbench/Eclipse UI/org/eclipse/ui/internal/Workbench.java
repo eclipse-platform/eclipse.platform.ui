@@ -1002,6 +1002,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 							if (editor != null) {
 								if (editor.getEditorInput().getPersistable() == null) {
 									pages[j].closeEditor(editor, false);
+								} else {
+									((EditorReference) references[k]).persist();
 								}
 							}
 						}

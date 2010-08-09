@@ -53,7 +53,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 	private IEditorInput input;
 	private EditorDescriptor descriptor;
-	private String factoryId;
 	private EditorSite editorSite;
 	private String descriptorId;
 
@@ -62,26 +61,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		super(windowContext, page, part);
 		this.input = input;
 		this.descriptor = descriptor;
-
-		if (input != null) {
-			IPersistableElement persistable = input.getPersistable();
-			if (persistable != null) {
-				factoryId = persistable.getFactoryId();
-				XMLMemento root = XMLMemento.createWriteRoot("editor"); //$NON-NLS-1$
-				root.putString(IWorkbenchConstants.TAG_ID, descriptor.getId());
-				IMemento inputMem = root.createChild(IWorkbenchConstants.TAG_INPUT);
-				inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-				persistable.saveState(inputMem);
-				StringWriter writer = new StringWriter();
-				try {
-					root.save(writer);
-					part.getPersistedState().put(MEMENTO_KEY, writer.toString());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
 
 		if (descriptor == null) {
 			try {
@@ -105,6 +84,29 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		}
 	}
 
+	void persist() {
+		IEditorPart editor = getEditor(false);
+		IEditorInput input = editor == null ? this.input : editor.getEditorInput();
+		if (input != null) {
+			IPersistableElement persistable = input.getPersistable();
+			if (persistable != null) {
+				XMLMemento root = XMLMemento.createWriteRoot("editor"); //$NON-NLS-1$
+				root.putString(IWorkbenchConstants.TAG_ID, descriptor.getId());
+				IMemento inputMem = root.createChild(IWorkbenchConstants.TAG_INPUT);
+				inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+				persistable.saveState(inputMem);
+				StringWriter writer = new StringWriter();
+				try {
+					root.save(writer);
+					getModel().getPersistedState().put(MEMENTO_KEY, writer.toString());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	public EditorDescriptor getDescriptor() {
 		return descriptor;
 	}
@@ -118,18 +120,29 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 	public String getFactoryId() {
 		IEditorPart editor = getEditor(false);
-		if (editor != null) {
-			IPersistableElement persistable = editor.getEditorInput().getPersistable();
-			if (persistable != null) {
-				return persistable.getFactoryId();
+		if (editor == null) {
+			try {
+				IEditorInput input = getEditorInput();
+				if (input != null) {
+					IPersistableElement persistable = input.getPersistable();
+					return persistable == null ? null : persistable.getFactoryId();
+				}
+			} catch (PartInitException e) {
+				return null;
 			}
 			return null;
 		}
-		return factoryId;
+
+		IPersistableElement persistable = editor.getEditorInput().getPersistable();
+		return persistable == null ? null : persistable.getFactoryId();
 	}
 
 	public String getName() {
-		return input.getName();
+		IEditorPart editor = getEditor(false);
+		if (input == null) {
+			return editor == null ? null : editor.getEditorInput().getName();
+		}
+		return editor == null ? input.getName() : editor.getEditorInput().getName();
 	}
 
 	private IEditorInput restoreInput(IMemento editorMem) throws PartInitException {
@@ -190,6 +203,11 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	 * @see org.eclipse.ui.IEditorReference#getEditorInput()
 	 */
 	public IEditorInput getEditorInput() throws PartInitException {
+		IEditorPart editor = getEditor(false);
+		if (editor != null) {
+			return editor.getEditorInput();
+		}
+		
 		if (input == null) {
 			XMLMemento createReadRoot;
 			try {
