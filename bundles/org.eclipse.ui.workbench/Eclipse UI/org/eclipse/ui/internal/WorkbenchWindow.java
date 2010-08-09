@@ -38,6 +38,7 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -1419,15 +1420,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 
 		if (page == null) {
-			try {
-				page = new WorkbenchPage(this, input);
-			} catch (WorkbenchException e) {
-				WorkbenchPlugin.log(e);
-			}
-
+			page = new WorkbenchPage(this, input);
 			model.getContext().set(IWorkbenchPage.class.getName(), page);
 
-			ContextInjectionFactory.inject(page, model.getContext());
+			try {
+				ContextInjectionFactory.inject(page, model.getContext());
+			} catch (InjectionException e) {
+				throw new WorkbenchException(e.getMessage(), e);
+			}
+
 			firePageOpened();
 
 			partService.setPage(page);
