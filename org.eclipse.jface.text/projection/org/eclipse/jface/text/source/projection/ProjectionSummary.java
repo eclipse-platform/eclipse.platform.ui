@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -82,7 +80,6 @@ class ProjectionSummary {
 
 
 	private ProjectionViewer fProjectionViewer;
-	private IAnnotationModel fAnnotationModel;
 	private IAnnotationAccess fAnnotationAccess;
 	private List fConfiguredAnnotationTypes;
 
@@ -148,60 +145,37 @@ class ProjectionSummary {
 	}
 
 	private void internalUpdateSummaries(IProgressMonitor monitor) {
-
-		Object previousLockObject= null;
-		fAnnotationModel= fProjectionViewer.getVisualAnnotationModel();
-		if (fAnnotationModel == null)
+		IAnnotationModel visualAnnotationModel= fProjectionViewer.getVisualAnnotationModel();
+		if (visualAnnotationModel == null)
 			return;
 
-		try {
+		removeSummaries(monitor, visualAnnotationModel);
 
+		if (isCanceled(monitor))
+			return;
 
-			IDocument document= fProjectionViewer.getDocument();
-			if (document instanceof ISynchronizable && fAnnotationModel instanceof ISynchronizable) {
-				ISynchronizable sync= (ISynchronizable) fAnnotationModel;
-				previousLockObject= sync.getLockObject();
-				sync.setLockObject(((ISynchronizable) document).getLockObject());
-			}
-
-
-			removeSummaries(monitor);
-
-			if (isCanceled(monitor))
-				return;
-
-			createSummaries(monitor);
-
-		} finally {
-
-			if (fAnnotationModel instanceof ISynchronizable) {
-				ISynchronizable sync= (ISynchronizable) fAnnotationModel;
-				sync.setLockObject(previousLockObject);
-			}
-			fAnnotationModel= null;
-
-		}
+		createSummaries(monitor, visualAnnotationModel);
 	}
 
 	private boolean isCanceled(IProgressMonitor monitor) {
 		return monitor != null && monitor.isCanceled();
 	}
 
-	private void removeSummaries(IProgressMonitor monitor) {
+	private void removeSummaries(IProgressMonitor monitor, IAnnotationModel visualAnnotationModel) {
 		IAnnotationModelExtension extension= null;
 		List bags= null;
 
-		if (fAnnotationModel instanceof IAnnotationModelExtension) {
-			extension= (IAnnotationModelExtension) fAnnotationModel;
+		if (visualAnnotationModel instanceof IAnnotationModelExtension) {
+			extension= (IAnnotationModelExtension)visualAnnotationModel;
 			bags= new ArrayList();
 		}
 
-		Iterator e= fAnnotationModel.getAnnotationIterator();
+		Iterator e= visualAnnotationModel.getAnnotationIterator();
 		while (e.hasNext()) {
 			Annotation annotation= (Annotation) e.next();
 			if (annotation instanceof AnnotationBag) {
 				if (bags == null)
-					fAnnotationModel.removeAnnotation(annotation);
+					visualAnnotationModel.removeAnnotation(annotation);
 				else
 					bags.add(annotation);
 			}
@@ -218,7 +192,7 @@ class ProjectionSummary {
 		}
 	}
 
-	private void createSummaries(IProgressMonitor monitor) {
+	private void createSummaries(IProgressMonitor monitor, IAnnotationModel visualAnnotationModel) {
 		ProjectionAnnotationModel model= fProjectionViewer.getProjectionAnnotationModel();
 		if (model == null)
 			return;
@@ -245,8 +219,8 @@ class ProjectionSummary {
 		}
 
 		if (additions.size() > 0) {
-			if (fAnnotationModel instanceof IAnnotationModelExtension) {
-				IAnnotationModelExtension extension= (IAnnotationModelExtension) fAnnotationModel;
+			if (visualAnnotationModel instanceof IAnnotationModelExtension) {
+				IAnnotationModelExtension extension= (IAnnotationModelExtension)visualAnnotationModel;
 				if (!isCanceled(monitor))
 					extension.replaceAnnotations(null, additions);
 			} else {
@@ -256,7 +230,7 @@ class ProjectionSummary {
 					Position position= (Position) additions.get(bag);
 					if (isCanceled(monitor))
 						return;
-					fAnnotationModel.addAnnotation(bag, position);
+					visualAnnotationModel.addAnnotation(bag, position);
 				}
 			}
 		}

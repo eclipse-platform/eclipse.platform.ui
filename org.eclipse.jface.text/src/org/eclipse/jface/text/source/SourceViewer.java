@@ -42,6 +42,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ISlaveDocumentManager;
 import org.eclipse.jface.text.ISlaveDocumentManagerExtension;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.Position;
@@ -622,6 +623,13 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		if (annotationModel != null && document != null) {
 			fVisualAnnotationModel= createVisualAnnotationModel(annotationModel);
+
+			// Make sure the visual model uses the same lock as the underlying model
+			if (annotationModel instanceof ISynchronizable && fVisualAnnotationModel instanceof ISynchronizable) {
+				ISynchronizable sync= (ISynchronizable)fVisualAnnotationModel;
+				sync.setLockObject(((ISynchronizable)annotationModel).getLockObject());
+			}
+
 			fVisualAnnotationModel.connect(document);
 		}
 
