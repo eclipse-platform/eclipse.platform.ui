@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -602,6 +602,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	
 	public void dispose() {
 		fWindow.removePerspectiveListener(this);
+		fWindow = null;  // avoid leaking a window reference (bug 321658).
 		getDebugContextService().removeDebugContextListener(this);
 		DebugUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
 		fContextService.removeContextManagerListener(this);
@@ -715,7 +716,11 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * @return active perspective or <code>null</code>
 	 */
 	private IPerspectiveDescriptor getActivePerspective() {
-		IWorkbenchPage activePage = fWindow.getActivePage();
+        if (fWindow == null) {
+            return null;
+        }
+
+        IWorkbenchPage activePage = fWindow.getActivePage();
 		if (activePage != null) {
 			return activePage.getPerspective();
 		}
@@ -953,6 +958,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 * @param contextId
 	 */
 	private void activateChain(String contextId) {
+	    if (fWindow == null) return; // disposed
+	    
 		IWorkbenchPage page = fWindow.getActivePage();
 		if (page != null) {
 			DebugContextViewBindings bindings= (DebugContextViewBindings) fContextIdsToBindings.get(contextId);
@@ -1020,6 +1027,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	}
 	
 	private void deactivate(String contextId) {
+	    if (fWindow == null) return;  // disposed
+	    
 		IWorkbenchPage page = fWindow.getActivePage();
 		if (page != null) {
 			DebugContextViewBindings bindings = (DebugContextViewBindings) fContextIdsToBindings.get(contextId);
@@ -1097,6 +1106,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
      * @param viewId
      */
     public void showViewQuiet(String viewId) {
+        if (fWindow == null) return;  // disposed;
+        
 		IWorkbenchPage page = fWindow.getActivePage();
 		if (page != null) {
 			try {

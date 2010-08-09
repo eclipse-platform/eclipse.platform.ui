@@ -264,6 +264,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	    int getHeight() {
 	        return fCrumb.getHeight();
 	    }
+	    
+	    public void dispose() {
+	        fCrumb.dispose();
+	    }
 	}
 
 	private BreadcrumbPage fBreadcrumbPage;
@@ -977,6 +981,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         disposeCommandAction(TERMINATE_AND_RELAUNCH);
         disposeCommandAction(RESTART);
         disposeCommandAction(TERMINATE_ALL);
+        disposeCommandAction(TOGGLE_STEP_FILTERS);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -14,18 +14,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.views.ViewContextManager;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextManager;
+import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * @since 3.2
@@ -35,6 +33,38 @@ public class DebugContextManager implements IDebugContextManager {
 	private static DebugContextManager fgDefault;
 	private Map fServices = new HashMap();
 	private ListenerList fGlobalListeners = new ListenerList();
+	
+	/**
+	 * A debug context service that does nothing (used for windows that have been closed)
+	 */
+	private static IDebugContextService NULL_SERVICE = new IDebugContextService() {
+		public void removePostDebugContextListener(IDebugContextListener listener, String partId) {
+		}
+		public void removePostDebugContextListener(IDebugContextListener listener) {
+		}
+		public void removeDebugContextProvider(IDebugContextProvider provider) {
+		}
+		public void removeDebugContextListener(IDebugContextListener listener, String partId) {
+		}
+		public void removeDebugContextListener(IDebugContextListener listener) {
+		}
+		public ISelection getActiveContext(String partId) {
+			return null;
+		}
+		public ISelection getActiveContext() {
+			return null;
+		}
+		public void addPostDebugContextListener(IDebugContextListener listener, String partId) {
+		}
+		public void addPostDebugContextListener(IDebugContextListener listener) {
+		}
+		public void addDebugContextProvider(IDebugContextProvider provider) {
+		}
+		public void addDebugContextListener(IDebugContextListener listener, String partId) {
+		}
+		public void addDebugContextListener(IDebugContextListener listener) {
+		}
+	};
 	
 	private class WindowListener implements IWindowListener {
 
@@ -54,22 +84,11 @@ public class DebugContextManager implements IDebugContextManager {
 		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 		 */
 		public void windowClosed(final IWorkbenchWindow window) {
-		    // Use an async exec to dispose the debug context service for the 
-			// closed window.  This will allow other window closed listeners 
-			// to still use the context service before it is disposed.
-			new UIJob(window.getShell().getDisplay(), "DebugContextManager windowClosed() handler") { //$NON-NLS-1$
-				{
-					setSystem(true);
-				}
-				
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					DebugWindowContextService service = (DebugWindowContextService) fServices.remove(window);
-					if (service != null) {
-						service.dispose();
-					}
-					return Status.OK_STATUS;
-				}
-			}.schedule();
+            DebugWindowContextService service = (DebugWindowContextService) fServices.get(window);
+            if (service != null) {
+            	fServices.remove(window);
+                service.dispose();
+            }
 		}
 
 		/* (non-Javadoc)
@@ -95,16 +114,21 @@ public class DebugContextManager implements IDebugContextManager {
 		return fgDefault;
 	}
 	
-	protected DebugWindowContextService createService(IWorkbenchWindow window) {
+	protected IDebugContextService createService(IWorkbenchWindow window) {
 		DebugWindowContextService service = (DebugWindowContextService) fServices.get(window);
 		if (service == null) {
-			service = new DebugWindowContextService(window);
-			fServices.put(window, service);
-			// register global listeners
-			Object[] listeners = fGlobalListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				IDebugContextListener listener = (IDebugContextListener) listeners[i];
-				service.addDebugContextListener(listener);
+			if (window.getShell() == null) {
+				// the window has been closed - return a dummy service
+				return NULL_SERVICE;
+			} else {
+				service = new DebugWindowContextService(window);
+				fServices.put(window, service);
+				// register global listeners
+				Object[] listeners = fGlobalListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					IDebugContextListener listener = (IDebugContextListener) listeners[i];
+					service.addDebugContextListener(listener);
+				}
 			}
 		}
 		return service;

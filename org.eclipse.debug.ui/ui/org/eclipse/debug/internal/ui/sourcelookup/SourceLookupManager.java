@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public class SourceLookupManager implements IWindowListener {
 	public void windowClosed(IWorkbenchWindow window) {
 		SourceLookupService service = (SourceLookupService) fServices.get(window);
 		if (service != null) {
+			fServices.remove(window);
 			service.dispose();
 		}
 	}
@@ -81,8 +82,11 @@ public class SourceLookupManager implements IWindowListener {
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowOpened(IWorkbenchWindow window) {
-		SourceLookupService service = new SourceLookupService(window);
-		fServices.put(window, service);
+		SourceLookupService service = (SourceLookupService) fServices.get(window);
+		if (service == null) {
+			service = new SourceLookupService(window);
+			fServices.put(window, service);
+		}
 	}
 	
 	/* (non-Javadoc)

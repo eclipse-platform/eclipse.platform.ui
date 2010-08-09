@@ -47,8 +47,8 @@ public class PresentationContext implements IPresentationContext {
     final private String fId;
     final private ListenerList fListeners = new ListenerList();
     final private Map fProperties = new HashMap();
-    final private IWorkbenchWindow fWindow;
-    final private IWorkbenchPart fPart;
+    private IWorkbenchWindow fWindow;
+    private IWorkbenchPart fPart;
 
     /**
      * Constructs a presentation context for the given id.
@@ -143,6 +143,9 @@ public class PresentationContext implements IPresentationContext {
         fProperties.clear();
         setProperty(PROPERTY_DISPOSED, Boolean.TRUE);
 		fListeners.clear();
+		// Free the reference to fWindow (Bug 321658).
+		fWindow = null;
+		fPart = null;
 	}
 
 	/* (non-Javadoc)
