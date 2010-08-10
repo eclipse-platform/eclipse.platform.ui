@@ -80,7 +80,7 @@ public class ModelUtils {
 					
 					int tmpIndex = -1;
 					for( int i = 0; i < list.size(); i++ ) {
-						if( ((MApplicationElement)list.get(i)).getElementId().equals(elementId) ) {
+						if( elementId.equals(((MApplicationElement)list.get(i)).getElementId()) ) {
 							tmpIndex = i;
 							break;
 						}
