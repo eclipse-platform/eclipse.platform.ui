@@ -314,7 +314,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private ListenerList partListenerList = new ListenerList();
 	private ListenerList partListener2List = new ListenerList();
-	private IPerspectiveDescriptor perspective;
 
 
 	private E4PartListener e4PartListener = new E4PartListener();
@@ -2316,8 +2315,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return;
 		}
 
-		IPerspectiveDescriptor lastPerspective = this.perspective;
-		this.perspective = perspective;
+		IPerspectiveDescriptor lastPerspective = getPerspective();
+		if (lastPerspective != null && lastPerspective.getId().equals(perspective.getId())) {
+			// no change
+			return;
+		}
 
 		if (sortedPerspectives.contains(perspective)) {
 			sortedPerspectives.remove(perspective);
@@ -2327,17 +2329,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspectiveStack perspectives = getPerspectiveStack();
 		for (MPerspective mperspective : perspectives.getChildren()) {
 			if (mperspective.getElementId().equals(perspective.getId())) {
-				// // instantiate the perspective
-				// IPerspectiveFactory factory = ((PerspectiveDescriptor)
-				// perspective).createFactory();
-				// // use a new perspective since we're only interested in
-				// // shortcuts here, see bug 305918
-				// modelLayout = new ModeledPageLayout(window, modelService,
-				// partService,
-				// AdvancedFactoryImpl.eINSTANCE.createPerspective(),
-				// perspective, this, false);
-				// factory.createInitialLayout(modelLayout);
-
 				if (lastPerspective != null) {
 					legacyWindow.firePerspectiveDeactivated(this, lastPerspective);
 				}
