@@ -529,9 +529,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 				Object obj = getApplication(Platform.getCommandLineArgs());
 				if (obj instanceof E4Application) {
 					E4Application e4app = (E4Application) obj;
-					E4Workbench e4Workbench = e4app.createE4Workbench(getApplicationContext());
+					E4Workbench e4Workbench = e4app.createE4Workbench(getApplicationContext(),
+							display);
 					IEclipseContext workbenchContext = e4Workbench.getContext();
 					workbenchContext.set(Display.class, display);
+
 					// create the workbench instance
 					Workbench workbench = new Workbench(display, advisor, e4Workbench
 							.getApplication(), e4Workbench.getContext());

@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Properties;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
@@ -67,6 +68,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -109,7 +111,7 @@ public class E4Application implements IApplication {
 	public Object start(IApplicationContext applicationContext)
 			throws Exception {
 		Display display = getApplicationDisplay();
-		E4Workbench workbench = createE4Workbench(applicationContext);
+		E4Workbench workbench = createE4Workbench(applicationContext, display);
 
 		Location instanceLocation = (Location) workbench.getContext().get(
 				E4Workbench.INSTANCE_LOCATION);
@@ -151,11 +153,13 @@ public class E4Application implements IApplication {
 		}
 	}
 
-	public E4Workbench createE4Workbench(IApplicationContext applicationContext) {
+	public E4Workbench createE4Workbench(
+			IApplicationContext applicationContext, Display display) {
 		args = (String[]) applicationContext.getArguments().get(
 				IApplicationContext.APPLICATION_ARGS);
 
 		IEclipseContext appContext = createDefaultContext();
+		appContext.set(Realm.class, SWTObservables.getRealm(display));
 		appContext.set(IApplicationContext.class, applicationContext);
 
 		// Check if DS is running
