@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,6 +46,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewerExtension2;
+import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
@@ -1095,27 +1095,31 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	/**
-	 * Adds the given annotation type to the list of annotation types whose
-	 * annotations should be painted by this painter using squiggly drawing. If the annotation  type
-	 * is already in this list, this method is without effect.
-	 *
+	 * Adds the given annotation type to the list of annotation types whose annotations should be
+	 * painted by this painter using squiggly drawing. If the annotation type is already in this
+	 * list, this method is without effect.
+	 * 
 	 * @param annotationType the annotation type
+	 * @deprecated As of 3.4 replaced by
+	 *             {@link #addTextStyleStrategy(Object, AnnotationPainter.ITextStyleStrategy)} and
+	 *             {@link UnderlineStrategy}
 	 */
 	public void addAnnotationType(Object annotationType) {
 		addAnnotationType(annotationType, SQUIGGLES);
 	}
 
 	/**
-	 * Adds the given annotation type to the list of annotation types whose
-	 * annotations should be painted by this painter using the given drawing strategy.
-	 * If the annotation type is already in this list, the old drawing strategy gets replaced.
-	 *
+	 * Adds the given annotation type to the list of annotation types whose annotations should be
+	 * painted by this painter using the given strategy. If the annotation type is already in this
+	 * list, the old strategy gets replaced.
+	 * 
 	 * @param annotationType the annotation type
-	 * @param drawingStrategyID the id of the drawing strategy that should be used for this annotation type
+	 * @param strategyID the id of the drawing or text style strategy that should be used for this
+	 *            annotation type
 	 * @since 3.0
 	 */
-	public void addAnnotationType(Object annotationType, Object drawingStrategyID) {
-		fAnnotationType2PaintingStrategyId.put(annotationType, drawingStrategyID);
+	public void addAnnotationType(Object annotationType, Object strategyID) {
+		fAnnotationType2PaintingStrategyId.put(annotationType, strategyID);
 		fCachedAnnotationType2PaintingStrategy.clear();
 
 		if (fTextInputListener == null) {
@@ -1165,11 +1169,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * replaced.
 	 * <p>
 	 * The given id can be referenced when adding annotation types, see
-	 * {@link #addAnnotationType(Object, Object)}.
-	 * </p>
+	 * {@link #addAnnotationType(Object, Object)}.</p>
+	 * <p>
+	 * <strong>Note:</strong> The annotations will only be painted if this
+	 * painter has been registered as text presentation listener on the viewer.</p>
 	 *
 	 * @param id the identifier under which the strategy can be referenced, not <code>null</code>
 	 * @param strategy the new strategy
+	 * @see ITextViewerExtension4#addTextPresentationListener(ITextPresentationListener)
 	 * @since 3.4
 	 */
 	public void addTextStyleStrategy(Object id, ITextStyleStrategy strategy) {
@@ -1185,8 +1192,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Adds the given annotation type to the list of annotation types whose
 	 * annotations should be highlighted this painter. If the annotation  type
 	 * is already in this list, this method is without effect.
+	 * <p>
+	 * <strong>Note:</strong> The annotations will only be painted if this
+	 * painter has been registered as text presentation listener on the viewer.</p>
 	 *
 	 * @param annotationType the annotation type
+	 * @see ITextViewerExtension4#addTextPresentationListener(ITextPresentationListener)
 	 * @since 3.0
 	 */
 	public void addHighlightAnnotationType(Object annotationType) {
