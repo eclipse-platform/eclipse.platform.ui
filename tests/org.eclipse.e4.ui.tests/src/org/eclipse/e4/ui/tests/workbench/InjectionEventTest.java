@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.tests.workbench;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import junit.framework.TestCase;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -23,6 +24,8 @@ import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.tests.Activator;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -128,6 +131,7 @@ public class InjectionEventTest extends TestCase {
 		injector.addBinding(MyBinding.class);
 
 		IEclipseContext context = EclipseContextFactory.create();
+		context.set(Realm.class, SWTObservables.getRealm(Display.getDefault()));
 		InjectTarget target = ContextInjectionFactory.make(InjectTarget.class,
 				context);
 
@@ -203,6 +207,8 @@ public class InjectionEventTest extends TestCase {
 
 	public void testInjectWildCard() {
 		IEclipseContext context = EclipseContextFactory.create();
+		context.set(Realm.class, SWTObservables.getRealm(Display.getDefault()));
+
 		InjectStarEvent target = ContextInjectionFactory.make(
 				InjectStarEvent.class, context);
 
