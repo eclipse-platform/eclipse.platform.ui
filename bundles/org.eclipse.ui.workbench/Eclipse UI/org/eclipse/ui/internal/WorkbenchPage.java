@@ -2336,7 +2336,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				// this perspective already exists, switch to this one
 				perspectives.setSelectedElement(mperspective);
 				window.getContext().set(IContextConstants.ACTIVE_CHILD, mperspective.getContext());
-				legacyWindow.firePerspectiveDeactivated(this, perspective);
+				legacyWindow.firePerspectiveActivated(this, perspective);
 				return;
 			}
 		}
@@ -2366,7 +2366,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// activate it
 		perspectives.setSelectedElement(modelPerspective);
 		window.getContext().set(IContextConstants.ACTIVE_CHILD, modelPerspective.getContext());
-		legacyWindow.firePerspectiveDeactivated(this, perspective);
+		legacyWindow.firePerspectiveActivated(this, perspective);
 
 		// FIXME: we need to fire events
 	}
