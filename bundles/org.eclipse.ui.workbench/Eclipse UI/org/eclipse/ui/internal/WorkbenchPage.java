@@ -1091,6 +1091,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return false;
     }
 
+    /**
+     * Closes the specified perspective. This method is purely intended to
+     * manipulate the model and will not perform other actions such as the
+     * saving of parts.
+     * 
+     * @param desc the perspective to close
+     */
+	private void closePerspective(IPerspectiveDescriptor desc) {
+		MPerspective persp = (MPerspective) modelService.find(desc.getId(), window);
+		// check to ensure this perspective actually exists in this window
+		if (persp != null) {
+			// Remove from caches
+			sortedPerspectives.remove(desc);
+			modelService.removePerspectiveModel(persp, window);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1106,9 +1123,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (perspectiveStack.getChildren().size() == 1) {
 				closeAllPerspectives(saveParts, closePage);
 			} else {
-				// Remove from caches
-				sortedPerspectives.remove(desc);
-				modelService.removePerspectiveModel(persp, window);
+				closePerspective(desc);
 			}
 		}
 	}
@@ -1901,7 +1916,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				firePartVisible(visiblePart);
 			}
 
-			legacyWindow.firePerspectiveActivated(WorkbenchPage.this, perspective);
+			// might've been set to null if we were closing the perspective
+			if (newPersp != null) {
+				IPerspectiveRegistry registry = getWorkbenchWindow().getWorkbench()
+						.getPerspectiveRegistry();
+				IPerspectiveDescriptor perspective = registry.findPerspectiveWithId(newPersp
+						.getElementId());
+				legacyWindow.firePerspectiveActivated(WorkbenchPage.this, perspective);
+			}
 		}
 	};
 
@@ -2166,7 +2188,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return;
 
 		// For now just close and re-open it
-		closePerspective(desc, true, false);
+		closePerspective(desc);
 		if (persp.getParent() == null) {
 			setPerspective(desc);
 		}
