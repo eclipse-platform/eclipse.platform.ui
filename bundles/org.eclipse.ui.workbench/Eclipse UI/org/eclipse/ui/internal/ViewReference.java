@@ -65,7 +65,12 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	}
 
 	public String getSecondaryId() {
-		// TODO Auto-generated method stub
+		MPart part = getModel();
+		for (String tag : part.getTags()) {
+			if (tag.startsWith(WorkbenchPage.SECONDARY_ID_HEADER)) {
+				return tag.substring(WorkbenchPage.SECONDARY_ID_HEADER.length());
+			}
+		}
 		return null;
 	}
 
