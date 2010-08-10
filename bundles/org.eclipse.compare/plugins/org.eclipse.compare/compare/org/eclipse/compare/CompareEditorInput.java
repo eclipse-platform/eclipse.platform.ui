@@ -11,9 +11,9 @@
 package org.eclipse.compare; 
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
 import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.BinaryCompareViewer;
 import org.eclipse.compare.internal.ChangePropertyAction;
@@ -24,6 +24,7 @@ import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareStructureViewerSwitchingPane;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
+import org.eclipse.compare.internal.IFlushable2;
 import org.eclipse.compare.internal.OutlineViewerCreator;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.ViewerDescriptor;
@@ -177,7 +178,7 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	 * @since 3.3
 	 */
 	public static final String PROP_SELECTED_EDITION= ICompareUIConstants.PROP_SELECTED_EDITION;
-		
+
 	private static final String COMPARE_EDITOR_IMAGE_NAME= "eview16/compare_view.gif"; //$NON-NLS-1$
 	private static Image fgTitleImage;
 	
@@ -193,8 +194,8 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	private String fTitle;
 	private ListenerList fListenerList= new ListenerList();
 	private CompareNavigator fNavigator;
-	private boolean fDirty= false;
-	private ArrayList fDirtyViewers= new ArrayList();
+	private ContentMergeViewer fLeftDirtyViewer = null;
+	private ContentMergeViewer fRightDirtyViewer = null;
 	private IPropertyChangeListener fDirtyStateListener;
 	
 	boolean fStructureCompareOnSingleClick= true;
@@ -1016,18 +1017,38 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	}
 	
 	/**
-	 * Returns <code>true</code> if there are unsaved changes.
-	 * The value returned is the value of the <code>DIRTY_STATE</code> property of this input object.
-	 
-	 * Returns <code>true</code> if this input has unsaved changes,
-	 * that is if <code>setDirty(true)</code> has been called.
-	 * Subclasses don't have to override if the functionality provided by <code>setDirty</code>
-	 * is sufficient.
-	 *
+	 * Returns <code>true</code> if there are unsaved changes in either left or
+	 * right side. The value returned is the value of the
+	 * <code>DIRTY_STATE</code> property of this input object.
+	 * 
+	 * Returns <code>true</code> if left or right side has unsaved changes
+	 * Subclasses don't have to override if the functionality provided by
+	 * <code>setDirty</code> is sufficient.
+	 * 
 	 * @return <code>true</code> if there are changes that need to be saved
 	 */
 	public boolean isSaveNeeded() {
-		return fDirty || fDirtyViewers.size() > 0;
+		return isLeftSaveNeeded() || isRightSaveNeeded();
+	}
+
+	/**
+	 * Returns <code>true</code> if there are unsaved changes for left side.
+	 * 
+	 * @return <code>true</code> if there are changes that need to be saved
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected boolean isLeftSaveNeeded() {
+		return fLeftDirtyViewer != null;
+	}
+
+	/**
+	 * Returns <code>true</code> if there are unsaved changes for right side.
+	 * 
+	 * @return <code>true</code> if there are changes that need to be saved
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected boolean isRightSaveNeeded() {
+		return fRightDirtyViewer != null;
 	}
 	
 	/**
@@ -1044,31 +1065,70 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	}
 		
 	/**
-	 * Sets the dirty state of this input to the given
-	 * value and sends out a <code>PropertyChangeEvent</code> if the new value differs from the old value.
-	 *
-	 * @param dirty the dirty state for this compare input
+	 * Sets the dirty state of this input to the given value and sends out a
+	 * <code>PropertyChangeEvent</code> if the new value differs from the old
+	 * value. Direct calling this method with parameter dirty equal to
+	 * <code>false</code> when there are unsaved changes in viewers, results in
+	 * inconsistent state. The dirty state of compare input should be based only
+	 * on the information if there are changes in viewers for left or right
+	 * side.
+	 * 
+	 * @param dirty
+	 *            the dirty state for this compare input
 	 */
 	public void setDirty(boolean dirty) {
-		boolean oldDirty = fDirty || fDirtyViewers.size() > 0;
-		fDirty= dirty;
-		if (!fDirty)
-			fDirtyViewers.clear();
-		if (oldDirty != dirty)
-			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, Boolean.valueOf(oldDirty), Boolean.valueOf(dirty));
+		boolean oldDirty = isSaveNeeded();
+		boolean newDirty = dirty || isSaveNeeded();
+		if (!newDirty) {
+			fLeftDirtyViewer = null;
+			fRightDirtyViewer = null;
+		}
+		if (oldDirty != isSaveNeeded()) {
+			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, Boolean.valueOf(oldDirty), Boolean.valueOf(isSaveNeeded()));
+		}
 	}
 	
+	/**
+	 * Method adds or removes viewers that changed left or right side of this
+	 * compare input. Any modification of any of the list of viewers may result
+	 * in dirty state change.
+	 * 
+	 * @param source
+	 *            the object that fired <code>PropertyChangeEvent</code>
+	 *            modifying the dirty state
+	 * @param dirty
+	 *            value that describes if the changes were added or removed
+	 */
 	private void setDirty(Object source, boolean dirty) {
 		Assert.isNotNull(source);
-		boolean oldDirty= fDirty || fDirtyViewers.size() > 0;
-		if (dirty)
-			fDirtyViewers.add(source);
-		else
-			fDirtyViewers.remove(source);
-		boolean newDirty= fDirty || fDirtyViewers.size() > 0;
-		if (DEBUG) System.out.println("setDirty("+source+", "+dirty+"): " + newDirty); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (oldDirty != newDirty)
+		boolean oldDirty = isSaveNeeded();
+		ContentMergeViewer cmv = (ContentMergeViewer) source;
+		if (dirty) {
+			if (cmv.internalIsLeftDirty()) {
+				if (fLeftDirtyViewer == null) {
+					fLeftDirtyViewer = cmv;
+				}
+			}
+			if (cmv.internalIsRightDirty()) {
+				if (fRightDirtyViewer == null) {
+					fRightDirtyViewer = cmv;
+				}
+			}
+		} else {
+			if (!cmv.internalIsLeftDirty()) {
+				fLeftDirtyViewer = null;
+			}
+			if (!cmv.internalIsRightDirty()) {
+				fRightDirtyViewer = null;
+			}
+		}
+		boolean newDirty = isSaveNeeded();
+		if (DEBUG) {
+			System.out.println("setDirty(" + source + ", " + dirty + "): " + newDirty); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		if (oldDirty != newDirty) {
 			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, Boolean.valueOf(oldDirty), Boolean.valueOf(newDirty));
+		}
 	}
 	
 	/* (non Javadoc)
@@ -1129,7 +1189,31 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 		flushViewer(fStructurePane2, monitor);
 		flushViewer(fContentInputPane, monitor);
 	}
-		
+	
+	/**
+	 * @param monitor
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected void flushLeftViewers(IProgressMonitor monitor) {
+		// flush changes in left dirty viewer
+		flushViewer(fStructureInputPane, monitor);
+		flushViewer(fStructurePane1, monitor);
+		flushViewer(fStructurePane2, monitor);
+		flushLeftViewer(fContentInputPane, monitor);
+	}
+
+	/**
+	 * @param monitor
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected void flushRightViewers(IProgressMonitor monitor) {
+		// flush changes in right dirty viewer
+		flushViewer(fStructureInputPane, monitor);
+		flushViewer(fStructurePane1, monitor);
+		flushViewer(fStructurePane2, monitor);
+		flushRightViewer(fContentInputPane, monitor);
+	}
+	
 	private static void flushViewer(CompareViewerPane pane, IProgressMonitor pm) {
 		if (pane != null) {
 			IFlushable flushable = (IFlushable)Utilities.getAdapter(pane, IFlushable.class);
@@ -1138,6 +1222,22 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 		}
 	}
 	
+	private static void flushLeftViewer(CompareViewerPane pane, IProgressMonitor pm) {
+		if (pane != null) {
+			IFlushable2 flushable = (IFlushable2)Utilities.getAdapter(pane, IFlushable2.class);
+			if (flushable != null)
+				flushable.flushLeft(pm);
+		}
+	}
+
+	private static void flushRightViewer(CompareViewerPane pane, IProgressMonitor pm) {
+		if (pane != null) {
+			IFlushable2 flushable = (IFlushable2)Utilities.getAdapter(pane, IFlushable2.class);
+			if (flushable != null)
+				flushable.flushRight(pm);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ICompareContainer#addCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
 	 */

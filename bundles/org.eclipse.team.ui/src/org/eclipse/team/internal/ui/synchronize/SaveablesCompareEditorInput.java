@@ -126,10 +126,9 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 						closed = closeEditor(true);
 					}
 					if (!closed) {
-						// The editor was closed either because the compare
-						// input still has changes
-						// or because the editor input is dirty. In either case,
-						// fire the changes
+						// The editor was not closed either because the compare
+						// input still has changes or because the editor input
+						// is dirty. In either case, fire the changes
 						// to the registered listeners
 						propogateInputChange();
 					}
@@ -357,6 +356,45 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 		if (fRightSaveable != null && fRightSaveable.isDirty())
 			return true;
 		return super.isDirty();
+	}
+
+	/**
+	 * Returns <code>true</code> if the given saveable contains any unsaved
+	 * changes. If the saveable doesn't match either left nor right side of the
+	 * current editor input {@link CompareEditorInput#isSaveNeeded()} is called.
+	 * <p>
+	 * This method is preferred to {@link CompareEditorInput#isSaveNeeded()}.
+	 * 
+	 * @param the
+	 *            the saveable to check
+	 * @return <code>true</code> if there are changes that need to be saved
+	 * @since 3.7
+	 */
+	boolean isSaveNeeded(Saveable saveable) {
+		if (saveable == null) {
+			return isSaveNeeded();
+		}
+		if (saveable.equals(fLeftSaveable)) {
+			return isLeftSaveNeeded();
+		}
+		if (saveable.equals(fRightSaveable)) {
+			return isRightSaveNeeded();
+		}
+		// Fallback call returning true if there are unsaved changes in either
+		// left or right side
+		return isSaveNeeded();
+	}
+
+	void saveChanges(IProgressMonitor monitor, Saveable saveable)
+			throws CoreException {
+		if (saveable.equals(fLeftSaveable)) {
+			flushLeftViewers(monitor);
+			return;
+		} else if (saveable.equals(fRightSaveable)) {
+			flushRightViewers(monitor);
+			return;
+		}
+		Assert.isTrue(false, "invalid saveable parameter"); //$NON-NLS-1$
 	}
 
 	/**

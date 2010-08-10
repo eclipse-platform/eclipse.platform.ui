@@ -4838,15 +4838,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		return fMerger.virtualToRealPosition(contributor, v);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#flushContent(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	protected void flushContent(Object oldInput, IProgressMonitor monitor) {
-				
-		// check and handle any shared buffers
+	void flushLeftSide(Object oldInput, IProgressMonitor monitor){
 		IMergeViewerContentProvider content= getMergeContentProvider();
 		Object leftContent = content.getLeftContent(oldInput);
-		Object rightContent = content.getRightContent(oldInput);
 		
 		if (leftContent != null && getCompareConfiguration().isLeftEditable() && isLeftDirty()) {
 			if (fLeftContributor.hasSharedDocument(leftContent)) {
@@ -4855,13 +4849,36 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			}
 		}
 		
+		if (!(content instanceof MergeViewerContentProvider) || isLeftDirty()) {
+			super.flushLeftSide(oldInput, monitor);
+		}
+	}
+	
+	void flushRightSide(Object oldInput, IProgressMonitor monitor){
+		IMergeViewerContentProvider content= getMergeContentProvider();
+		Object rightContent = content.getRightContent(oldInput);
+		
 		if (rightContent != null && getCompareConfiguration().isRightEditable() && isRightDirty()) {
 			if (fRightContributor.hasSharedDocument(rightContent)) {
 				if (flush(fRightContributor))
 					setRightDirty(false);
 			}
 		}
-		
+
+		if (!(content instanceof MergeViewerContentProvider) || isRightDirty()) {
+			super.flushRightSide(oldInput, monitor);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#flushContent(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void flushContent(Object oldInput, IProgressMonitor monitor) {
+		flushLeftSide(oldInput, monitor);
+		flushRightSide(oldInput, monitor);
+
+		IMergeViewerContentProvider content = getMergeContentProvider();
+
 		if (!(content instanceof MergeViewerContentProvider) || isLeftDirty() || isRightDirty()) {
 			super.flushContent(oldInput, monitor);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.Composite;
 public class ContentMergeViewerTest extends TestCase {
 
 	private MyContentMergeViewer myContentMergeViewer;
+	/**
+	 * result[0]-event occurred or not; result[1]-new state that was set
+	 */
 	boolean[] result = new boolean[] { false, false };
 
 	public ContentMergeViewerTest() {
@@ -109,7 +112,8 @@ public class ContentMergeViewerTest extends TestCase {
 		myContentMergeViewer.rightDirty = true;
 		myContentMergeViewer.setLeftDirty(true);
 
-		Assert.assertEquals(false, result[0]);
+		Assert.assertEquals(true, result[0]);
+		Assert.assertEquals(true, result[1]);
 	}
 
 	public void testTFTX() {
@@ -160,7 +164,8 @@ public class ContentMergeViewerTest extends TestCase {
 		myContentMergeViewer.rightDirty = true;
 		myContentMergeViewer.setLeftDirty(false);
 
-		Assert.assertEquals(false, result[0]);
+		Assert.assertEquals(true, result[0]);
+		Assert.assertEquals(false, result[1]);
 	}
 
 	// set right to true
@@ -187,7 +192,8 @@ public class ContentMergeViewerTest extends TestCase {
 		myContentMergeViewer.rightDirty = false;
 		myContentMergeViewer.setRightDirty(true);
 
-		Assert.assertEquals(false, result[0]);
+		Assert.assertEquals(true, result[0]);
+		Assert.assertEquals(true, result[1]);
 	}
 
 	public void testTTXT() {
@@ -230,6 +236,7 @@ public class ContentMergeViewerTest extends TestCase {
 		myContentMergeViewer.rightDirty = true;
 		myContentMergeViewer.setRightDirty(false);
 
-		Assert.assertEquals(false, result[0]);
+		Assert.assertEquals(true, result[0]);
+		Assert.assertEquals(false, result[1]);
 	}
 }

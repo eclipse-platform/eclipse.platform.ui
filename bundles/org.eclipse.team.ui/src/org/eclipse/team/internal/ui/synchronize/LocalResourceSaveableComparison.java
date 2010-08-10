@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.internal.ISavingSaveable;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
@@ -35,7 +36,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * @see LocalResourceTypedElement
  * @since 3.3
  */
-public abstract class LocalResourceSaveableComparison extends SaveableComparison implements IPropertyChangeListener {
+public abstract class LocalResourceSaveableComparison extends SaveableComparison implements IPropertyChangeListener, ISavingSaveable {
 
 	private final ICompareInput input;
 	private final CompareEditorInput editorInput;
@@ -130,10 +131,10 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 			flushViewers(Policy.subMonitorFor(monitor, 40));
 			// Then we tell the input to commit its changes
 			// Only the left is ever saveable
-			ITypedElement left = getFileElement();
-			if (left instanceof LocalResourceTypedElement) {
-				LocalResourceTypedElement te = (LocalResourceTypedElement) left;
-				te.commit(Policy.subMonitorFor(monitor, 60));
+			ITypedElement te = getFileElement();
+			if (te instanceof LocalResourceTypedElement) {
+				LocalResourceTypedElement lrte = (LocalResourceTypedElement) te;
+				lrte.commit(Policy.subMonitorFor(monitor, 60));
 			}
 		} finally {
 			// Make sure we fire a change for the compare input to update the viewers
@@ -150,7 +151,11 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 * @throws CoreException
 	 */
 	protected void flushViewers(IProgressMonitor monitor) throws CoreException {
-		editorInput.saveChanges(monitor);
+		if (editorInput instanceof SaveablesCompareEditorInput) {
+			((SaveablesCompareEditorInput) editorInput).saveChanges(monitor, this);
+		} else {
+			editorInput.saveChanges(monitor);
+		}
 	}
 
 	/**
@@ -206,6 +211,9 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	public boolean isDirty() {
 		// We need to get the dirty state from the compare editor input
 		// since it is our only connection to the merge viewer
+		if (editorInput instanceof SaveablesCompareEditorInput) {
+			return ((SaveablesCompareEditorInput) editorInput).isSaveNeeded(this);
+		}
 		return editorInput.isSaveNeeded();
 	}
 	
@@ -232,6 +240,15 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 * @see org.eclipse.ui.Saveable#getName()
 	 */
 	public String getName() {
+		// Return the name of the file element as held in the compare input
+		if (fileElement.equals(input.getLeft())) {
+			return input.getLeft().getName();
+		}
+		if (fileElement.equals(input.getRight())) {
+			return input.getRight().getName();
+		}
+		// Fallback call returning name of the main non-null element of the input
+		// see org.eclipse.team.internal.ui.mapping.AbstractCompareInput#getMainElement()
 		return input.getName();
 	}
 
@@ -344,5 +361,9 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 			return lrte.isConnected();
 		}
 		return false;
+	}
+
+	public boolean isSaving() {
+		return isSaving;
 	}
 }

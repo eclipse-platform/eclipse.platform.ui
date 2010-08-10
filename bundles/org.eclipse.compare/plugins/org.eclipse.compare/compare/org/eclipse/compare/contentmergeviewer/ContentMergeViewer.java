@@ -25,16 +25,14 @@ import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.CompareHandlerService;
 import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.ICompareUIConstants;
+import org.eclipse.compare.internal.IFlushable2;
+import org.eclipse.compare.internal.ISavingSaveable;
 import org.eclipse.compare.internal.MergeViewerContentProvider;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.ViewerSwitchingCancelled;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IExecutionListener;
-import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,9 +69,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchCommandConstants;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.ISaveablesSource;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.Saveable;
 
 /**
  * An abstract compare and merge viewer with two side-by-side content areas
@@ -102,7 +100,7 @@ import org.eclipse.ui.commands.ICommandService;
  * @see TextMergeViewer
  */
 public abstract class ContentMergeViewer extends ContentViewer
-					implements IPropertyChangeNotifier, IFlushable {
+					implements IPropertyChangeNotifier, IFlushable, IFlushable2 {
 	
 	/* package */ static final int HORIZONTAL= 1;
 	/* package */ static final int VERTICAL= 2;
@@ -295,10 +293,6 @@ public abstract class ContentMergeViewer extends ContentViewer
 	private boolean fIsLeftDirty;
 	private boolean fIsRightDirty;
 
-	private boolean fIsSaving;
-	private ICommandService fCommandService;
-	private IExecutionListener fExecutionListener;
-	
 	private CompareHandlerService fHandlerService;
 
 	// SWT widgets
@@ -371,43 +365,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 		
 		fIsLeftDirty = false;
 		fIsRightDirty = false;
-
-		fIsSaving = false;
-		fCommandService = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
-		if (fCommandService != null) {
-			fCommandService.addExecutionListener(getExecutionListener());
-		}
 	}
 
-	private IExecutionListener getExecutionListener() {
-		if (fExecutionListener == null) {
-			fExecutionListener = new IExecutionListener() {
-				public void preExecute(String commandId, ExecutionEvent event) {
-					if (IWorkbenchCommandConstants.FILE_SAVE.equals(commandId)
-							|| IWorkbenchCommandConstants.FILE_SAVE_ALL.equals(commandId))
-						fIsSaving = true;
-				}
-
-				public void postExecuteSuccess(String commandId, Object returnValue) {
-					if (IWorkbenchCommandConstants.FILE_SAVE.equals(commandId)
-							|| IWorkbenchCommandConstants.FILE_SAVE_ALL.equals(commandId))
-						fIsSaving= false;
-				}
-
-				public void postExecuteFailure(String commandId, ExecutionException exception) {
-					if (IWorkbenchCommandConstants.FILE_SAVE.equals(commandId)
-							|| IWorkbenchCommandConstants.FILE_SAVE_ALL.equals(commandId))
-						fIsSaving= false;
-				}
-
-				public void notHandled(String commandId, NotHandledException exception) {
-					// not needed
-				}
-			};
-		}
-		return fExecutionListener;
-	}
-	
 	//---- hooks ---------------------
 	
 	/**
@@ -1037,12 +996,6 @@ public abstract class ContentMergeViewer extends ContentViewer
 			fHVSashCursor= null;
 		}
 		
-		if (fCommandService != null) {
-			fCommandService.removeExecutionListener(fExecutionListener);
-			fCommandService = null;
-			fExecutionListener = null;
-		}
-
 		super.handleDispose(event);
   	}
   	
@@ -1168,9 +1121,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	protected void setLeftDirty(boolean dirty) {
 		if (isLeftDirty() != dirty) {
 			fIsLeftDirty = dirty;
-			// Only fire the event if the combined dirty state has changed
-			if (!isRightDirty())
-				fireDirtyState(dirty);
+			// Always fire the event if the dirty state has changed
+			fireDirtyState(dirty);
 		}
 	}
 	
@@ -1186,9 +1138,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	protected void setRightDirty(boolean dirty) {
 		if (isRightDirty() != dirty) {
 			fIsRightDirty = dirty;
-			// Only fire the event if the combined dirty state has changed
-			if (!isLeftDirty())
-				fireDirtyState(dirty);
+			// Always fire the event if the dirty state has changed
+			fireDirtyState(dirty);
 		}
 	}
 	
@@ -1215,7 +1166,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	public final void flush(IProgressMonitor monitor) {
 		flushContent(getInput(), monitor);
 	}
-	
+
 	/**
 	 * Flush the modified content back to input elements via the content provider.
 	 * The provided input may be the current input of the viewer or it may be
@@ -1227,28 +1178,53 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @since 3.3
 	 */
 	protected void flushContent(Object input, IProgressMonitor monitor) {
-				
-		// write back modified contents
-		IMergeViewerContentProvider content= (IMergeViewerContentProvider) getContentProvider();
-		
-		boolean leftEmpty= content.getLeftContent(input) == null;
-		boolean rightEmpty= content.getRightContent(input) == null;
+		flushLeftSide(input, monitor);
+		flushRightSide(input, monitor);
+	}
+
+
+	void flushLeftSide(Object input, IProgressMonitor monitor) {
+		IMergeViewerContentProvider content = (IMergeViewerContentProvider) getContentProvider();
+
+		boolean rightEmpty = content.getRightContent(input) == null;
 
 		if (getCompareConfiguration().isLeftEditable() && isLeftDirty()) {
-			byte[] bytes= getContents(true);
+			byte[] bytes = getContents(true);
 			if (rightEmpty && bytes != null && bytes.length == 0)
-				bytes= null;
+				bytes = null;
 			setLeftDirty(false);
 			content.saveLeftContent(input, bytes);
 		}
-		
+	}
+
+	void flushRightSide(Object input, IProgressMonitor monitor) {
+		IMergeViewerContentProvider content = (IMergeViewerContentProvider) getContentProvider();
+
+		boolean leftEmpty = content.getLeftContent(input) == null;
+
 		if (getCompareConfiguration().isRightEditable() && isRightDirty()) {
-			byte[] bytes= getContents(false);
+			byte[] bytes = getContents(false);
 			if (leftEmpty && bytes != null && bytes.length == 0)
-				bytes= null;
+				bytes = null;
 			setRightDirty(false);
 			content.saveRightContent(input, bytes);
 		}
+	}
+
+	/**
+	 * @param monitor
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void flushLeft(IProgressMonitor monitor) {
+		flushLeftSide(getInput(), monitor);
+	}
+
+	/**
+	 * @param monitor
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void flushRight(IProgressMonitor monitor) {
+		flushRightSide(getInput(), monitor);
 	}
 
 	/**
@@ -1261,12 +1237,30 @@ public abstract class ContentMergeViewer extends ContentViewer
 	}
 
 	/**
+	 * @return the dirty state of the right side of this viewer
+	 * @since 3.7
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public boolean internalIsRightDirty() {
+		return isRightDirty();
+	}
+
+	/**
 	 * Return the dirty state of the left side of this viewer.
 	 * @return the dirty state of the left side of this viewer
 	 * @since 3.3
 	 */
 	protected boolean isLeftDirty() {
 		return fIsLeftDirty;
+	}
+
+	/**
+	 * @return the dirty state of the left side of this viewer
+	 * @since 3.7
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public boolean internalIsLeftDirty() {
+		return isLeftDirty();
 	}
 
 	/**
@@ -1279,7 +1273,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	protected void handleCompareInputChange() {
 		// before setting the new input we have to save the old
 		Object input = getInput();
-		if (!fIsSaving && (isLeftDirty() || isRightDirty())) {
+		if (!isSaving() && (isLeftDirty() || isRightDirty())) {
 			
 			if (Utilities.RUNNING_TESTS) {
 				if (Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE) {
@@ -1310,11 +1304,39 @@ public abstract class ContentMergeViewer extends ContentViewer
 					break;
 				}
 			}
+			refresh();
 		}
-		refresh();
 	}
 
 	CompareHandlerService getCompareHandlerService() {
 		return fHandlerService;
 	}
+
+	/**
+	 * @return true if any of the Saveables is being saved
+	 */
+	private boolean isSaving() {
+		ICompareContainer container = fCompareConfiguration.getContainer();
+		ISaveablesSource source = null;
+		if (container instanceof ISaveablesSource) {
+			source = (ISaveablesSource) container;
+		} else {
+			IWorkbenchPart part = container.getWorkbenchPart();
+			if (part instanceof ISaveablesSource) {
+				source = (ISaveablesSource) part;
+			}
+		}
+		if (source != null) {
+			Saveable[] saveables = source.getSaveables();
+			for (int i = 0; i < saveables.length; i++) {
+				if (saveables[i] instanceof ISavingSaveable) {
+					ISavingSaveable saveable = (ISavingSaveable) saveables[i];
+					if (saveable.isSaving())
+						return true;
+				}
+			}
+		}
+		return false;
+	} 
+
 }

@@ -12,6 +12,7 @@ package org.eclipse.compare;
 
 import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.CompareMessages;
+import org.eclipse.compare.internal.IFlushable2;
 import org.eclipse.compare.internal.NullViewer;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -350,6 +351,14 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 			Viewer v= getViewer();
 			if (v != null) {
 				IFlushable flushable = (IFlushable)Utilities.getAdapter(v, IFlushable.class);
+				if (flushable != null)
+					return flushable;
+			}
+		}
+		if (adapter == IFlushable2.class) {
+			Viewer v= getViewer();
+			if (v != null) {
+				IFlushable2 flushable = (IFlushable2)Utilities.getAdapter(v, IFlushable2.class);
 				if (flushable != null)
 					return flushable;
 			}
