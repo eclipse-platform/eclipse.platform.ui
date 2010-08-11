@@ -2429,6 +2429,177 @@ public class EPartServiceTest extends TestCase {
 		testShowPart_Bug322368_Placeholder(PartState.CREATE);
 	}
 
+	public void testShowPart_Bug322403_A() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setElementId("partId");
+		partDescriptor.setAllowMultiple(true);
+		application.getDescriptors().add(partDescriptor);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStackA);
+		perspective.setSelectedElement(partStackA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		partStackA.getChildren().add(placeholderA);
+		partStackA.setSelectedElement(placeholderA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+		partA.setCurSharedRef(placeholderA);
+		placeholderA.setRef(partA);
+
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStackB);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPlaceholder placeholderB = partService.createSharedPart("partId",
+				window, true);
+		MPart partB = (MPart) placeholderB.getRef();
+		partB.setCurSharedRef(placeholderB);
+
+		placeholderB.setToBeRendered(false);
+		partB.setToBeRendered(false);
+		partStackB.getChildren().add(placeholderB);
+
+		partStackB.setSelectedElement(null);
+
+		partService.showPart(partB, PartState.VISIBLE);
+
+		assertNotNull(partStackB.getSelectedElement());
+		assertEquals(placeholderB, partStackB.getSelectedElement());
+	}
+
+	public void testShowPart_Bug322403_B() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setElementId("partId");
+		partDescriptor.setAllowMultiple(true);
+		application.getDescriptors().add(partDescriptor);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStackA);
+		perspective.setSelectedElement(partStackA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStackA.getChildren().add(partA);
+		partStackA.setSelectedElement(partA);
+
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStackB);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		MPlaceholder placeholderB = partService.createSharedPart("partId",
+				window, true);
+		MPart partB = (MPart) placeholderB.getRef();
+		partB.setCurSharedRef(placeholderB);
+
+		placeholderB.setToBeRendered(false);
+		partB.setToBeRendered(false);
+		partStackB.getChildren().add(placeholderB);
+
+		partStackB.setSelectedElement(null);
+
+		partService.showPart(partB, PartState.VISIBLE);
+
+		assertNotNull(partStackB.getSelectedElement());
+		assertEquals(placeholderB, partStackB.getSelectedElement());
+	}
+
+	public void testShowPart_Bug322403_C() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStackA);
+		perspective.setSelectedElement(partStackA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		partStackA.getChildren().add(placeholderA);
+		partStackA.setSelectedElement(placeholderA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+		partA.setCurSharedRef(placeholderA);
+		placeholderA.setRef(partA);
+
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStackB);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setToBeRendered(false);
+		partStackB.getChildren().add(partB);
+		partStackB.setSelectedElement(null);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.showPart(partB, PartState.VISIBLE);
+
+		assertNotNull(partStackB.getSelectedElement());
+		assertEquals(partB, partStackB.getSelectedElement());
+	}
+
 	public void testHidePart_PartInAnotherWindow() {
 		MApplication application = createApplication(
 				new String[] { "partInWindow1" },

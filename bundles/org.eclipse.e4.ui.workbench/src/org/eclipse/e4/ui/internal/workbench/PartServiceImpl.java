@@ -633,6 +633,25 @@ public class PartServiceImpl implements EPartService {
 		return container;
 	}
 
+	/**
+	 * Returns the parent container of the specified element. If one cannot be found, a check will
+	 * be performed to see whether the element is being represented by a placeholder, if it is, the
+	 * placeholder's parent will be returned, if any.
+	 * 
+	 * @param element
+	 *            the element to query
+	 * @return the element's parent container, or the parent container of the specified element's
+	 *         current placeholder, if it has one
+	 */
+	private MElementContainer<MUIElement> getParent(MUIElement element) {
+		MElementContainer<MUIElement> parent = element.getParent();
+		if (parent == null) {
+			MPlaceholder placeholder = element.getCurSharedRef();
+			return placeholder == null ? null : placeholder.getParent();
+		}
+		return parent;
+	}
+
 	private MPart showPart(PartState partState, MPart providedPart, MPart localPart) {
 		MPart part = addPart(providedPart, localPart);
 		switch (partState) {
@@ -643,7 +662,7 @@ public class PartServiceImpl implements EPartService {
 			MPart activePart = getActivePart();
 			if (activePart == null) {
 				bringToTop(part);
-			} else if (activePart.getParent() == part.getParent()) {
+			} else if (getParent(activePart) == getParent(part)) {
 				// same parent as the active part, just instantiate this part then
 				part.setToBeRendered(true);
 				if (part.getCurSharedRef() != null) {

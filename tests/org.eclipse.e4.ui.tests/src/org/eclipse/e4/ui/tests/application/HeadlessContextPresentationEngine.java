@@ -29,12 +29,12 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -52,17 +52,11 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	private boolean createContributions = true;
 
-	protected IEclipseContext getParentContext(MUIElement element) {
-		MElementContainer<MUIElement> parent = element.getParent();
-		IEclipseContext context = null;
-		while (parent != null) {
-			if (parent instanceof MContext) {
-				return ((MContext) parent).getContext();
-			}
-			parent = parent.getParent();
-		}
+	@Inject
+	private EModelService modelService;
 
-		return context;
+	protected IEclipseContext getParentContext(MUIElement element) {
+		return modelService.getContainingContext(element);
 	}
 
 	private static void populateModelInterfaces(MContext contextModel,
@@ -200,7 +194,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 		if (element instanceof MPartStack) {
 			MPartStack container = (MPartStack) element;
-			MPart active = (MPart) container.getSelectedElement();
+			MStackElement active = container.getSelectedElement();
 			if (active != null) {
 				createGui(active, container, getParentContext(active));
 			} else {
