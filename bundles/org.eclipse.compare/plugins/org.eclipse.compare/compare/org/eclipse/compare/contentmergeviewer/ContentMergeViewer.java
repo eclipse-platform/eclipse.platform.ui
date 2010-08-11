@@ -1304,8 +1304,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 					break;
 				}
 			}
-			refresh();
 		}
+		refresh();
 	}
 
 	CompareHandlerService getCompareHandlerService() {
