@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -26,8 +27,8 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -42,6 +43,8 @@ public class ViewRegistry implements IViewRegistry {
 	private IExtensionRegistry extensionRegistry;
 
 	private Map<String, IViewDescriptor> descriptors = new HashMap<String, IViewDescriptor>();
+
+	private List<IStickyViewDescriptor> stickyDescriptors = new ArrayList<IStickyViewDescriptor>();
 
 	private List<ViewCategory> categories = new ArrayList<ViewCategory>();
 
@@ -64,6 +67,14 @@ public class ViewRegistry implements IViewRegistry {
 							element.getAttribute(IWorkbenchRegistryConstants.ATT_ID),
 							element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
 					categories.add(category);
+				} else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_STICKYVIEW)) {
+					try {
+						stickyDescriptors.add(new StickyViewDescriptor(element));
+					} catch (CoreException e) {
+						// log an error since its not safe to open a dialog here
+						WorkbenchPlugin.log(
+								"Unable to create sticky view descriptor.", e.getStatus());//$NON-NLS-1$
+					}
 				}
 			}
 		}
@@ -155,9 +166,7 @@ public class ViewRegistry implements IViewRegistry {
 	 * @see org.eclipse.ui.views.IViewRegistry#getStickyViews()
 	 */
 	public IStickyViewDescriptor[] getStickyViews() {
-		// FIXME: compat getStickyViews
-		E4Util.unsupported("getStickyViews"); //$NON-NLS-1$
-		return null;
+		return stickyDescriptors.toArray(new IStickyViewDescriptor[stickyDescriptors.size()]);
 	}
 
 	/**
