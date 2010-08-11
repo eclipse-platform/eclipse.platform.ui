@@ -658,11 +658,22 @@ public class PartServiceImpl implements EPartService {
 			return part;
 		case CREATE:
 			part.setToBeRendered(true);
-			if (part.getCurSharedRef() != null) {
-				part.getCurSharedRef().setToBeRendered(true);
-				engine.createGui(part.getCurSharedRef());
+			MPlaceholder placeholder = part.getCurSharedRef();
+			if (placeholder != null) {
+				placeholder.setToBeRendered(true);
+				engine.createGui(placeholder);
+
+				MElementContainer<MUIElement> parent = placeholder.getParent();
+				if (parent.getChildren().size() == 1) {
+					parent.setSelectedElement(placeholder);
+				}
 			} else {
 				engine.createGui(part);
+
+				MElementContainer<MUIElement> parent = part.getParent();
+				if (parent.getChildren().size() == 1) {
+					parent.setSelectedElement(part);
+				}
 			}
 			return part;
 		}

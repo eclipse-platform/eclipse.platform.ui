@@ -243,6 +243,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			MPlaceholder placeholder = (MPlaceholder) element;
 			MUIElement ref = placeholder.getRef();
 			if (ref != null) {
+				ref.setToBeRendered(true);
 				createGui(ref);
 				ref.setCurSharedRef(placeholder);
 			}
