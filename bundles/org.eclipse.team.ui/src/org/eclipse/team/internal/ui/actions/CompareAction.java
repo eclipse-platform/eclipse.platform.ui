@@ -53,7 +53,7 @@ public class CompareAction extends TeamAction {
 			SelectAncestorDialog dialog = new SelectAncestorDialog(getShell(),
 					selectedResources);
 			int code = dialog.open();
-			if (code == Window.CANCEL)
+			if (code != Window.OK)
 				return;
 
 			ancestor = getElementFor(dialog.ancestorResource);
