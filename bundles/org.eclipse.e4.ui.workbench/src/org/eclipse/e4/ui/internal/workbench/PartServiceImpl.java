@@ -314,12 +314,26 @@ public class PartServiceImpl implements EPartService {
 
 	public boolean isPartVisible(MPart part) {
 		if (isInContainer(part)) {
+			MUIElement element = part;
 			MElementContainer<?> parent = part.getParent();
-			if (parent instanceof MPartStack) {
-				return parent.getSelectedElement() == part;
+			if (parent == null) {
+				// might be a shared part
+				element = part.getCurSharedRef();
+				if (element == null) {
+					return false;
+				}
+				
+				parent = element.getParent();
+				if (parent == null) {
+					return false;
+				}
 			}
 
-			return part.isVisible();
+			if (parent instanceof MPartStack) {
+				return parent.getSelectedElement() == element;
+			}
+
+			return element.isVisible();
 		}
 		return false;
 	}

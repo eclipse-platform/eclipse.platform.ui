@@ -679,6 +679,51 @@ public class EPartServiceTest extends TestCase {
 		assertFalse(partServiceB.isPartVisible(partBackB));
 	}
 
+	public void testIsPartVisible_Placeholder() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setCategory("containerTag");
+		partDescriptor.setElementId("partId");
+		partDescriptor.setAllowMultiple(true);
+		application.getDescriptors().add(partDescriptor);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		partStack.getTags().add("containerTag");
+		perspective.getChildren().add(partStack);
+		perspective.setSelectedElement(partStack);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+
+		MPlaceholder placeholder = partService.createSharedPart("partId",
+				window, true);
+		MPart sharedPart = (MPart) placeholder.getRef();
+		sharedPart.setCurSharedRef(placeholder);
+		partService.showPart(sharedPart, PartState.ACTIVATE);
+
+		assertTrue(partService.isPartVisible(sharedPart));
+	}
+
 	public void testActivate_partService() {
 		MApplication application = createApplication("partId", "partId2");
 
