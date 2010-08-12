@@ -69,6 +69,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4CommandProcessor;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -2201,8 +2202,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 					WorkbenchMessages.WorkbenchPage_ErrorCreatingPerspective, perspectiveId));
 		}
 
-		MWindow window = BasicFactoryImpl.eINSTANCE.createTrimmedWindow();
-		return openWorkbenchWindow(input, descriptor, window, true);
+		try {
+			MWindow window = BasicFactoryImpl.eINSTANCE.createTrimmedWindow();
+			return openWorkbenchWindow(input, descriptor, window, true);
+		} catch (InjectionException e) {
+			throw new WorkbenchException(e.getMessage(), e);
+		}
 	}
 
 	public WorkbenchWindow openWorkbenchWindow(IAdaptable input, IPerspectiveDescriptor descriptor,
