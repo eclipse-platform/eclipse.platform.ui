@@ -24,7 +24,7 @@ public class TabItemTooltipTextProperty extends WidgetStringValueProperty {
 	}
 
 	void doSetStringValue(Object source, String value) {
-		((TabItem) source).setToolTipText(value == null ? "" : value); //$NON-NLS-1$
+		((TabItem) source).setToolTipText(value);
 	}
 
 	public String toString() {

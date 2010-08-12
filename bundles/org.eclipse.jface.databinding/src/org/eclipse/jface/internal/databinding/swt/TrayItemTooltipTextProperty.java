@@ -24,7 +24,7 @@ public class TrayItemTooltipTextProperty extends WidgetStringValueProperty {
 	}
 
 	void doSetStringValue(Object source, String value) {
-		((TrayItem) source).setToolTipText(value == null ? "" : value); //$NON-NLS-1$
+		((TrayItem) source).setToolTipText(value);
 	}
 
 	public String toString() {

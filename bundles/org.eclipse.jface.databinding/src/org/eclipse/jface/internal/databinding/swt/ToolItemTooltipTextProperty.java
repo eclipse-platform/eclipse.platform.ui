@@ -24,7 +24,7 @@ public class ToolItemTooltipTextProperty extends WidgetStringValueProperty {
 	}
 
 	void doSetStringValue(Object source, String value) {
-		((ToolItem) source).setToolTipText(value == null ? "" : value); //$NON-NLS-1$
+		((ToolItem) source).setToolTipText(value);
 	}
 
 	public String toString() {

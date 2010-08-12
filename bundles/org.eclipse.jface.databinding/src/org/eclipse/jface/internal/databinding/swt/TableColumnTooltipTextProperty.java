@@ -24,7 +24,7 @@ public class TableColumnTooltipTextProperty extends WidgetStringValueProperty {
 	}
 
 	void doSetStringValue(Object source, String value) {
-		((TableColumn) source).setToolTipText(value == null ? "" : value); //$NON-NLS-1$
+		((TableColumn) source).setToolTipText(value);
 	}
 
 	public String toString() {
