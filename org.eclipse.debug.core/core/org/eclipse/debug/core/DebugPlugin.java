@@ -1410,6 +1410,10 @@ public class DebugPlugin extends Plugin {
 				if (adapter == null && !(element instanceof PlatformObject)) {
 	                adapter = Platform.getAdapterManager().getAdapter(element, type);
 				}
+				// force load the adapter in case it really is available
+				if (adapter == null) {
+					adapter = Platform.getAdapterManager().loadAdapter(element, type.getName());
+				}
 			}
     	}
     	return adapter;		
