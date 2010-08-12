@@ -42,6 +42,7 @@ public class SaveHandler {
 			@Named(IServiceConstants.ACTIVE_SHELL) Shell shell,
 			final EPartService partService)
 			throws InvocationTargetException, InterruptedException {
+		final MPart details = partService.findPart("DetailsView");
 		final IEclipseContext pmContext = context.createChild();
 
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
@@ -53,7 +54,6 @@ public class SaveHandler {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
 				pmContext.set(IProgressMonitor.class.getName(), monitor);
-				MPart details = partService.findPart("DetailsView");
 				Object clientObject = details.getObject();
 				ContextInjectionFactory.invoke(clientObject, Persist.class,
 						pmContext, null);
