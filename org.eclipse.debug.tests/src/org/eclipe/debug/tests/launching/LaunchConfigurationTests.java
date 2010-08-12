@@ -1352,6 +1352,30 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		}
 		assertTrue("Should be an illegal argument - illegal character used in name", false);
 	}		
+	
+	/**
+	 * Test that moving and renaming a shared configuration at the same time works.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testRenameAndMoveShared() throws CoreException {
+		IProject project = getProject();
+		IFolder f1 = project.getFolder("f1");
+		IFolder f2 = project.getFolder("f2");
+		f1.create(false, true, null);
+		f2.create(false, true, null);
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(f1, "start-here");
+		ILaunchConfiguration orig = wc.doSave();
+		wc = orig.getWorkingCopy();
+		
+		wc.setContainer(f2);
+		wc.rename("end-here");
+		ILaunchConfiguration next = wc.doSave();
+		
+		assertFalse("Original should not exist", orig.exists());
+		assertTrue("Renamed and moved config should exist", next.exists());
+		
+	}
 }
 
 
