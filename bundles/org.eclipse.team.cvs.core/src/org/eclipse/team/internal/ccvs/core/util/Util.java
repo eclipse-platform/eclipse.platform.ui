@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class Util {
 	}
 	
 	/**
-	 * Return the the given path with the last segment removed
+	 * Return the given path with the last segment removed
 	 * @param path
 	 * @return String
 	 */
@@ -73,12 +73,12 @@ public class Util {
 		}
 		return path;
 	}
-	/*
-	 * *
-	 * Get the extention of the path of resource
-	 * relative to the path of root
+
+	/**
+	 * Get the extention of the path of resource relative to the path of root
 	 * 
-	 * @throws CVSException if root is not a root-folder of resource
+	 * @throws CVSException
+	 *             if root is not a root-folder of resource
 	 */
 	public static String getRelativePath(String rootName, String resourceName) 
 		throws CVSException {
@@ -354,7 +354,6 @@ public class Util {
 	 * @param tag The CVSTag as reported by CVS for the IResource.  May be null.
 	 * @return CVSTag The corrected tag for the resource.  May be null.
 	 */
-	
 	public static CVSTag getAccurateFolderTag(IResource resource, CVSTag tag) {
 
 		// Determine if the folder contains files as immediate children.
@@ -414,7 +413,6 @@ public class Util {
 	 * @param cvsResource the resource to test.  Must nut be null.
 	 * @return the correct cVSTag.  May be null.
 	 */
-	
 	public static CVSTag getAccurateFileTag(ICVSResource cvsResource) throws CVSException {
 
 		CVSTag tag = null;
