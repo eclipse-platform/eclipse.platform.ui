@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class ResourceSyncInfo {
 
 	// revision can be locked in repository using "cvs admin -l<rev>" command
 	// entry looks like [M revision 1.2.2.3	locked by: igorf;]
-	private static final String LOCKEDBY_SUFFIX = "\tlocked by"; //$NON-NLS-1$
+	public static final String LOCKEDBY_REGEX = "\\slocked by.+$"; //$NON-NLS-1$
 
 	// a sync element with a revision of '0' is considered a new file that has
 	// not been committed to the repo. Is visible so that clients can create sync infos
@@ -339,11 +339,16 @@ public class ResourceSyncInfo {
 	protected void setSyncType(int syncType) {
 		this.syncType = syncType;
 	}
+
 	/**
-	 * Sets the version and decides if the revision is for a deleted resource the revision field
-	 * will not include the deleted prefix '-'.
+	 * Sets the version and decides if the revision is for a deleted resource.
+	 * The revision field will not include the deleted prefix '-'. If the
+	 * revision has been locked the "locked by" suffix it will be removed from
+	 * the revision field.
 	 * 
-	 * @param version the version to set
+	 * @param revision
+	 *            the revision to set
+	 * @see #LOCKEDBY_REGEX
 	 */
 	protected void setRevision(String revision) {
 		if(revision==null || revision.equals(ADDED_REVISION)) {
@@ -358,6 +363,7 @@ public class ResourceSyncInfo {
 			this.revision = revision;
 			isDeleted = false;
 		}
+		this.revision = this.revision.replaceFirst(LOCKEDBY_REGEX, ""); //$NON-NLS-1$
 	}
 	
 	/**
@@ -823,8 +829,14 @@ public class ResourceSyncInfo {
 	}
 	
 	/**
-	 * Method getRevision.
+	 * Return revision for the given synchronization bytes. The revision will
+	 * not include the deleted prefix '-'. The "locked by" suffix it will not be
+	 * included either.
+	 * 
 	 * @param syncBytes
+	 *            the bytes that represent the synchronization information
+	 * @return a revision string for the given bytes
+	 * @see #LOCKEDBY_REGEX
 	 */
 	public static String getRevision(byte[] syncBytes) throws CVSException {
 		String revision = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 2, false);
@@ -834,10 +846,7 @@ public class ResourceSyncInfo {
 		if(revision.startsWith(DELETED_PREFIX)) {
 			revision = revision.substring(DELETED_PREFIX.length());
 		}
-		int lockedIdx = revision.indexOf(LOCKEDBY_SUFFIX);
-		if (lockedIdx >= 0) {
-			revision = revision.substring(0, lockedIdx);
-		}
+		revision = revision.replaceFirst(LOCKEDBY_REGEX, ""); //$NON-NLS-1$
 		return revision;
 	}
 

@@ -21,6 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -127,7 +128,9 @@ public class LogListener extends CommandOutputListener {
     			} else  if (line.startsWith("symbolic names:")) { //$NON-NLS-1$
     				state = SYMBOLIC_NAMES;
     			} else if (line.startsWith("revision ")) { //$NON-NLS-1$
-    				revision = internAndCopyString(line.substring(9));
+    				// if the revision has been locked, remove the "locked by" suffix 
+    				revision = line.substring(9).replaceFirst(ResourceSyncInfo.LOCKEDBY_REGEX, ""); //$NON-NLS-1$
+    				revision = internAndCopyString(revision);
     				state = REVISION;
     			} else if (line.startsWith("total revisions:")){ //$NON-NLS-1$
     				//if there are no current revision selected and this is a branch then we are in the 
