@@ -144,11 +144,18 @@ public class UrlUtil {
 	}
 	
 	/**
-	 * Tests to see if this path is permitted in the topic parameter passed in a help URL
+	 * Tests to see if the path specified in a topic parameter can be opened in
+	 * the content frame. See Bug 233466 for an explanation of why in general we do 
+	 * do not want to open external sites in the content frame.
+	 * 
+	 * If the preference org.eclipse.help.base/restrictTopicParameter is false any
+	 * path is permitted. Any href which was just opened from the help display is
+	 * also permitted, this is required for cheat sheets and intro. Otherwise the
+	 * path is permitted only if it does not contain a protocol. 
 	 * @param path the path passed as a ?topic parameter. May not be null.
-	 * @return true unless topic parameters are restricted and the path has a protocol specified
+	 * @return true if the conditions above are met.
 	 */
-	public static boolean isValidTopicURL(String path) {
+	public static boolean isValidTopicParamOrWasOpenedFromHelpDisplay(String path) {
 		// Topics opened via the help display ( including cheat sheets and intro ) 
 		// are are always valid
 		if (path.equals(BaseHelpSystem.getHelpDisplay().getHrefOpenedFromHelpDisplay())) {

@@ -119,7 +119,7 @@ public class LayoutData extends RequestData {
 		else {
 			TocData tocData = new TocData(context, request, response);
 			String topic = tocData.getSelectedTopic();
-			if (topic == null || !UrlUtil.isValidTopicURL(topic)) {
+			if (topic == null || !UrlUtil.isValidTopicParamOrWasOpenedFromHelpDisplay(topic)) {
 				return UrlUtil.getHelpURL(preferences.getHelpHome());
 			}
 			return  topic;
