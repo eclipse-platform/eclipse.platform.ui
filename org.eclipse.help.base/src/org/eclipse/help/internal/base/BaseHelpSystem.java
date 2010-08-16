@@ -234,8 +234,9 @@ public final class BaseHelpSystem {
 	}
 
 	private static boolean isFileProtocol(String href) {
+		// Test for file: or /file:
 		int index = href.indexOf("file:"); //$NON-NLS-1$
-		return ( index == 0 || index == 1 ); 
+		return ( index == 0 ||  (index == 1 && href.charAt(0) == '/' )); 
 	}
 	
 	public static String unresolve(URL url) {
