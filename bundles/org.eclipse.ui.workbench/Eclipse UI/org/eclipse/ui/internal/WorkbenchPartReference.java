@@ -115,6 +115,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
      * used anymore)
      */
     public static int STATE_DISPOSED = 3;
+
+	static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
   
     /**
      * Current state of the reference. Used to detect recursive creation errors, disposed

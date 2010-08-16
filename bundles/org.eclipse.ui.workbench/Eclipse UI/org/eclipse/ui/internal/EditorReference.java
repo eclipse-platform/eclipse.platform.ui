@@ -49,8 +49,6 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 
 public class EditorReference extends WorkbenchPartReference implements IEditorReference {
 
-	private static String MEMENTO_KEY = "memento"; //$NON-NLS-1$
-
 	private IEditorInput input;
 	private EditorDescriptor descriptor;
 	private EditorSite editorSite;
@@ -100,8 +98,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 					root.save(writer);
 					getModel().getPersistedState().put(MEMENTO_KEY, writer.toString());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					WorkbenchPlugin.log(e);
 				}
 			}
 		}

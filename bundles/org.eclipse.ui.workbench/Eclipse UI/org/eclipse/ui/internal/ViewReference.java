@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,17 +25,21 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 
 public class ViewReference extends WorkbenchPartReference implements IViewReference {
 
 	private ViewDescriptor descriptor;
 	private ViewSite viewSite;
+	private IMemento memento;
 
 	public ViewReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
 			ViewDescriptor descriptor) {
@@ -43,6 +50,30 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 			setImageDescriptor(ImageDescriptor.getMissingImageDescriptor());
 		} else {
 			setImageDescriptor(descriptor.getImageDescriptor());
+		}
+
+		String mementoString = getModel().getPersistedState().get(MEMENTO_KEY);
+		if (mementoString != null) {
+			try {
+				memento = XMLMemento.createReadRoot(new StringReader(mementoString));
+			} catch (WorkbenchException e) {
+				WorkbenchPlugin.log(e);
+			}
+		}
+	}
+
+	void persist() {
+		IViewPart view = getView(false);
+		if (view != null) {
+			XMLMemento root = XMLMemento.createWriteRoot("view"); //$NON-NLS-1$
+			view.saveState(root);
+			StringWriter writer = new StringWriter();
+			try {
+				root.save(writer);
+				getModel().getPersistedState().put(MEMENTO_KEY, writer.toString());
+			} catch (IOException e) {
+				WorkbenchPlugin.log(e);
+			}
 		}
 	}
 
@@ -129,7 +160,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 		viewSite = new ViewSite(getModel(), part, descriptor == null ? null
 				: descriptor.getConfigurationElement());
 		ContextInjectionFactory.inject(viewSite, getModel().getContext());
-		((IViewPart) part).init(viewSite, null);
+		((IViewPart) part).init(viewSite, memento);
 	}
 
 	@Override
