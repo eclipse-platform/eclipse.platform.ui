@@ -301,7 +301,13 @@ public class EditorMenuManager extends SubMenuManager {
 		add(mc, item);
 		addMenuContribution(mc, false);
 		application.getMenuContributions().add(mc);
-		super.appendToGroup(groupName, item);
+
+		try {
+			// FIXME: this is killing at least SSE editors, see bug 318034
+			super.appendToGroup(groupName, item);
+		} catch (RuntimeException e) {
+			WorkbenchPlugin.log(e);
+		}
 	}
 
 	/**
