@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,6 +67,11 @@ public class JettyHelpServer extends HelpServer {
 				// suppress Jetty INFO/DEBUG messages to stderr
 				Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
 
+				String hostCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("server_host"); //$NON-NLS-1$
+				if (hostCommandLineOverride != null && hostCommandLineOverride.trim().length() > 0) {
+				    d.put("http.host", hostCommandLineOverride); //$NON-NLS-1$
+				}
+				
 				JettyConfigurator.startServer(webappName, d);
 			} catch (Throwable t) {
 				setException(t);
