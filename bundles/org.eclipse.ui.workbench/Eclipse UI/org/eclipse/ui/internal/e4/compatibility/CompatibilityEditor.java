@@ -99,9 +99,11 @@ public class CompatibilityEditor extends CompatibilityPart {
 
 	@Override
 	void disposeSite() {
-		EditorActionBars bars = (EditorActionBars) ((IEditorSite) getReference().getSite())
-				.getActionBars();
-		EditorReference.disposeEditorActionBars(bars);
+		IEditorSite site = (IEditorSite) getReference().getSite();
+		if (site != null) {
+			EditorActionBars bars = (EditorActionBars) site.getActionBars();
+			EditorReference.disposeEditorActionBars(bars);
+		}
 		super.disposeSite();
 	}
 }

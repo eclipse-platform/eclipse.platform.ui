@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -458,6 +459,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
     }
     
 	public abstract IWorkbenchPart createPart() throws PartInitException;
+
+	abstract IWorkbenchPart createErrorPart();
+
+	public abstract IWorkbenchPart createErrorPart(IStatus status);
 
 	protected void doDisposeNestedParts() {
 		// To be implemented by subclasses

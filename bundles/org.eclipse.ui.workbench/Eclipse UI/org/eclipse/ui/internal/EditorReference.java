@@ -232,12 +232,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	public IWorkbenchPart createPart() throws PartInitException {
 		try {
 			if (descriptor == null) {
-				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS.bind(
-						WorkbenchMessages.EditorManager_missing_editor_descriptor, descriptorId));
-				IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
-						.getEditorRegistry();
-				descriptor = (EditorDescriptor) registry.findEditor(EditorRegistry.EMPTY_EDITOR_ID);
-				return new ErrorEditorPart(status);
+				return createErrorPart();
 			} else if (descriptor.getId().equals(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {
 				IEditorPart part = ComponentSupport.getSystemInPlaceEditor();
 				if (part == null) {
@@ -253,6 +248,20 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		}
 	}
 
+	@Override
+	IWorkbenchPart createErrorPart() {
+		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS.bind(
+				WorkbenchMessages.EditorManager_missing_editor_descriptor, descriptorId));
+		IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
+				.getEditorRegistry();
+		descriptor = (EditorDescriptor) registry.findEditor(EditorRegistry.EMPTY_EDITOR_ID);
+		return createErrorPart(status);
+	}
+
+	@Override
+	public IWorkbenchPart createErrorPart(IStatus status) {
+		return new ErrorEditorPart(status);
+	}
 
 	/*
 	 * (non-Javadoc)

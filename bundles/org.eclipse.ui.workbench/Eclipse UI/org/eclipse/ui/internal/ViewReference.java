@@ -94,9 +94,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	public IWorkbenchPart createPart() throws PartInitException {
 		try {
 			if (descriptor == null) {
-				IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS.bind(
-						WorkbenchMessages.ViewFactory_initException, getModel().getElementId()));
-				return new ErrorViewPart(status);
+				return createErrorPart();
 			}
 
 			return descriptor.createView();
@@ -105,6 +103,18 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 					status.getCode(), status.getMessage(), status.getException()));
 		}
+	}
+
+	@Override
+	IWorkbenchPart createErrorPart() {
+		IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, NLS.bind(
+				WorkbenchMessages.ViewFactory_initException, getModel().getElementId()));
+		return createErrorPart(status);
+	}
+
+	@Override
+	public IWorkbenchPart createErrorPart(IStatus status) {
+		return new ErrorViewPart(status);
 	}
 
 	/*

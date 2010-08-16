@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -38,6 +39,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -76,7 +78,6 @@ public abstract class CompatibilityPart {
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
 				invalidate();
-				alreadyDisposed = true;
 			}
 		}
 	};
@@ -133,6 +134,7 @@ public abstract class CompatibilityPart {
 		}
 
 		disposeSite();
+		alreadyDisposed = true;
 	}
 
 	private String computeLabel() {
@@ -163,7 +165,7 @@ public abstract class CompatibilityPart {
 	}
 
 	@PostConstruct
-	public void create() throws PartInitException {
+	public void create() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Contribution.TOPIC,
 				UIEvents.Contribution.OBJECT), objectSetHandler);
 
@@ -171,10 +173,36 @@ public abstract class CompatibilityPart {
 				UIEvents.UIElement.WIDGET), widgetSetHandler);
 
 		WorkbenchPartReference reference = getReference();
-		// ask our reference to instantiate the part through the registry
-		wrapped = reference.createPart();
-		// invoke init methods
-		reference.initialize(wrapped);
+
+		try {
+			// ask our reference to instantiate the part through the registry
+			wrapped = reference.createPart();
+			// invoke init methods
+			reference.initialize(wrapped);
+		} catch (PartInitException e) {
+			reference.invalidate();
+			if (wrapped instanceof IEditorPart) {
+				try {
+					wrapped.dispose();
+				} catch (Exception ex) {
+					// client code may have errors so we need to catch it
+					logger.error(ex);
+				}
+			}
+			disposeSite();
+
+			alreadyDisposed = false;
+			WorkbenchPlugin.log("Unable to create part", e.getStatus()); //$NON-NLS-1$
+
+			wrapped = reference.createErrorPart(e.getStatus());
+			try {
+				reference.initialize(wrapped);
+			} catch (PartInitException ex) {
+				WorkbenchPlugin.log("Unable to initialize error part", ex.getStatus()); //$NON-NLS-1$
+				return;
+			}
+		}
+
 		// hook reference listeners to the part
 		// reference.hookPropertyListeners();
 
@@ -206,7 +234,6 @@ public abstract class CompatibilityPart {
 	void destroy() {
 		if (!alreadyDisposed) {
 			invalidate();
-			alreadyDisposed = true;
 		}
 
 		eventBroker.unsubscribe(objectSetHandler);
