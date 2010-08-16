@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 Keith Seitz and others.
+ * Copyright (c) 2000, 2010 Keith Seitz and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,6 +75,10 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Launch configuration tab for configuring the environment passed
  * into Runtime.exec(...) when a config is launched.
+ * <p>
+ * Clients may call {@link #setHelpContextId(String)} on this tab prior to control
+ * creation to alter the default context help associated with this tab. 
+ * </p>
  * <p>
  * This class may be instantiated.
  * </p> 
@@ -176,6 +180,13 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
+	/**
+	 * Constructs a new tab with default context help.
+	 */
+	public EnvironmentTab() {
+		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -183,7 +194,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// Create main composite
 		Composite mainComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
 		setControl(mainComposite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
 		
 		createEnvironmentTable(mainComposite);
 		createTableButtons(mainComposite);

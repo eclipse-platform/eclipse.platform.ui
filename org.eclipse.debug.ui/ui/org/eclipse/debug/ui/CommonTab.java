@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,6 +83,10 @@ import com.ibm.icu.text.MessageFormat;
  * is stored in, whether it should appear in the favorites list, and perspective
  * switching behavior for an associated launch.
  * <p>
+ * Clients may call {@link #setHelpContextId(String)} on this tab prior to control
+ * creation to alter the default context help associated with this tab. 
+ * </p>
+ * <p>
  * Clients may instantiate this class.
  * </p>
  * @since 2.0
@@ -137,14 +141,22 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			scheduleUpdateJob();
 		}
 	};
-    
+	
+    /**
+	 * Constructs a new tab with default context help.
+	 */
+	public CommonTab() {
+		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
 		comp.setLayout(new GridLayout(2, true));
 		comp.setFont(parent.getFont());
 		

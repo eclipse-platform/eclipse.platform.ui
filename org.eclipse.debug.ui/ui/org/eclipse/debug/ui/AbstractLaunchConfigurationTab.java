@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,13 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * the user is typing.
 	 */
 	private Job fRereshJob;	
+	
+	/**
+	 * The set help context id
+	 * 
+	 * @since 3.7
+	 */
+	private String fHelpContextId = null;
 		
 	/**
 	 * Returns the dialog this tab is contained in, or
@@ -441,5 +448,28 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		return 200;
 	}	
 
+	/**
+	 * Sets the help context id for this tab. 
+	 * <p>
+	 * Not all tabs honor this setting, but if this method is called prior
+	 * to {@link #createControl(Composite)}, a tab implementation may use this
+	 * to set the context help associated with this tab.
+	 * </p>
+	 * @param id help context id
+	 * @since 3.7
+	 */
+	public void setHelpContextId(String id) {
+		fHelpContextId = id;
+	}
+	
+	/**
+	 * Returns the help context id for this tab or <code>null</code>.
+	 * 
+	 * @return the help context for this tab or <code>null</code> if unknown.
+	 * @since 3.7
+	 */
+	public String getHelpContextId() {
+		return fHelpContextId;
+	}
 }
 

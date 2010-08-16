@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,10 @@ import org.eclipse.ui.PlatformUI;
  * debug platform source lookup facilities - a source lookup director
  * with associated participants and source containers.
  * <p>
+ * Clients may call {@link #setHelpContextId(String)} on this tab prior to control
+ * creation to alter the default context help associated with this tab. 
+ * </p>
+ * <p>
  * This tab may be instantiated. 
  * </p>
  * @since 3.0	 
@@ -42,13 +46,20 @@ public class SourceLookupTab extends AbstractLaunchConfigurationTab {
 	//the panel displaying the containers
 	private SourceLookupPanel fSourceLookupPanel;
 		
+	/**
+	 * Constructs a new tab with default context help.
+	 */
+	public SourceLookupTab() {
+		setHelpContextId(IDebugHelpContextIds.SOURCELOOKUP_TAB);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.SOURCELOOKUP_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
 		GridLayout topLayout = new GridLayout();
 		topLayout.marginWidth = 0;
 		topLayout.marginHeight = 0;
