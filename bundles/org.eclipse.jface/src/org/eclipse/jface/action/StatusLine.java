@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,9 @@ package org.eclipse.jface.action;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -258,6 +261,12 @@ import org.eclipse.jface.util.Util;
 	 */
 	public StatusLine(Composite parent, int style) {
 		super(parent, style);
+		
+		getAccessible().addAccessibleControlListener(new AccessibleControlAdapter() {
+			public void getRole(AccessibleControlEvent e) {
+				e.detail = ACC.ROLE_STATUSBAR;
+			}
+		});
 
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
