@@ -297,8 +297,7 @@ public class ModeledPageLayout implements IPageLayout {
 				return ph;
 			}
 		}
-
-		throw new RuntimeException("Unknown id: " + id); //$NON-NLS-1$
+		return null;
 	}
 
 	public static MPartStack createStack(String id, boolean visible) {
@@ -310,7 +309,7 @@ public class ModeledPageLayout implements IPageLayout {
 		return newStack;
 	}
 
-	private MStackElement insertView(String viewId, int relationship, float ratio,
+	private void insertView(String viewId, int relationship, float ratio,
 			String refId, boolean visible, boolean withStack) {
 		MUIElement existingView = findElement(perspModel, viewId);
 		if (existingView instanceof MPlaceholder) {
@@ -324,17 +323,15 @@ public class ModeledPageLayout implements IPageLayout {
 
 		MStackElement viewModel = createViewModel(application, viewId, visible, page, partService,
 				createReferences);
-
-		if (withStack) {
-			String stackId = viewId + "MStack"; // Default id...basically unusable //$NON-NLS-1$
-			MPartStack stack = insertStack(stackId, relationship, ratio, refId,
-					visible);
-			stack.getChildren().add(viewModel);
-		} else {
-			insert(viewModel, refModel, plRelToSwt(relationship), ratio);
+		if (viewModel != null) {
+			if (withStack) {
+				String stackId = viewId + "MStack"; // Default id...basically unusable //$NON-NLS-1$
+				MPartStack stack = insertStack(stackId, relationship, ratio, refId, visible);
+				stack.getChildren().add(viewModel);
+			} else {
+				insert(viewModel, refModel, plRelToSwt(relationship), ratio);
+			}
 		}
-
-		return viewModel;
 	}
 
 	private MPartStack insertStack(String stackId, int relationship,
@@ -549,6 +546,8 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 		MStackElement viewModel = createViewModel(application, id, visible, page, partService,
 				createReferences);
-		((MPartStack) refModel).getChildren().add(viewModel);
+		if (viewModel != null) {
+			((MPartStack) refModel).getChildren().add(viewModel);
+		}
 	}
 }

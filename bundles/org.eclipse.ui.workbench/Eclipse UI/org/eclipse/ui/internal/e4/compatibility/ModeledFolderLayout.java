@@ -35,6 +35,8 @@ public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout
 				layout.page,
 				layout.partService,
 				layout.createReferences);
-		folderModel.getChildren().add(viewModel);
+		if (viewModel != null) {
+			folderModel.getChildren().add(viewModel);
+		}
 	}
 }

@@ -45,7 +45,9 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 
 		MStackElement viewModel = ModeledPageLayout.createViewModel(application, viewId, false,
 				layout.page, layout.partService, layout.createReferences);
-		folderModel.getChildren().add(viewModel);
+		if (viewModel != null) {
+			folderModel.getChildren().add(viewModel);
+		}
 	}
 
 	public String getProperty(String id) {
