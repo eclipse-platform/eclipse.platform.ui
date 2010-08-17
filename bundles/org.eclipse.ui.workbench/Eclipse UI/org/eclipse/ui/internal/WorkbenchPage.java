@@ -778,14 +778,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * Closes the perspective.
+	 * Closes this page.
      */
     public boolean close() {
         final boolean[] ret = new boolean[1];
         BusyIndicator.showWhile(null, new Runnable() {
             public void run() {
-				// ret[0] = legacyWindow.closePage(WorkbenchPage.this, true);
-				ret[0] = true;
+				ret[0] = close(true, true);
             }
         });
         return ret[0];
@@ -1133,10 +1132,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#closeAllPerspectives(boolean, boolean)
 	 */
 	public void closeAllPerspectives(boolean saveEditors, boolean closePage) {
-		if (saveEditors) {
-			if (!saveAllEditors(true, true)) {
-				return;
-			}
+		close(saveEditors, closePage);
+	}
+
+	private boolean close(boolean save, boolean unsetPage) {
+		if (save && !saveAllEditors(true, true)) {
+			return false;
 		}
 
 		sortedPerspectives.clear();
@@ -1146,7 +1147,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			hidePart(part, false, true, true);
 		}
 
-		if (closePage) {
+		if (unsetPage) {
 			legacyWindow.setActivePage(null);
 			partService.removePartListener(e4PartListener);
 			broker.unsubscribe(selectionHandler);
@@ -1162,6 +1163,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		viewReferences.clear();
 		editorReferences.clear();
+		return true;
 	}
 
 	/**
