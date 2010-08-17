@@ -87,7 +87,7 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	/**
 	 * Returns whether this target can install the given breakpoint. 
 	 * 
-	 * @param breakpoint breakpoing to consider
+	 * @param breakpoint breakpoint to consider
 	 * @return whether this target can install the given breakpoint
 	 */
 	public boolean supportsBreakpoint(IBreakpoint breakpoint);
