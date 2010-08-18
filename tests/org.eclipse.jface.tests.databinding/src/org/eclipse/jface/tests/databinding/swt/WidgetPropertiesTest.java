@@ -25,6 +25,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -68,6 +71,13 @@ public class WidgetPropertiesTest extends AbstractSWTTestCase {
 		super.tearDown();
 
 		RealmTester.setDefault(null);
+	}
+
+	protected Shell getShell() {
+		if (shell == null) {
+			shell = new Shell(SWT.V_SCROLL);
+		}
+		return shell;
 	}
 
 	public void testImage_ObserveButton() {
@@ -207,5 +217,74 @@ public class WidgetPropertiesTest extends AbstractSWTTestCase {
 
 		observable.setValue(string2);
 		assertEquals(string2, column.getToolTipText());
+	}
+
+	public void testEnabled_ObserveMenu() {
+		Menu menu = new Menu(shell, SWT.BAR);
+		IObservableValue observable = WidgetProperties.enabled().observe(menu);
+
+		assertEquals(boolean.class, observable.getValueType());
+
+		menu.setEnabled(true);
+		assertEquals(Boolean.TRUE, observable.getValue());
+
+		observable.setValue(Boolean.FALSE);
+		assertEquals(false, menu.getEnabled());
+	}
+
+	public void testEnabled_ObserveMenuItem() {
+		Menu menu = new Menu(shell, SWT.BAR);
+		MenuItem item = new MenuItem(menu, SWT.PUSH);
+		IObservableValue observable = WidgetProperties.enabled().observe(item);
+
+		assertEquals(boolean.class, observable.getValueType());
+
+		item.setEnabled(true);
+		assertEquals(Boolean.TRUE, observable.getValue());
+
+		observable.setValue(Boolean.FALSE);
+		assertEquals(false, item.getEnabled());
+	}
+
+	public void testSelection_ObserveMenuItem() {
+		Menu menu = new Menu(shell, SWT.BAR);
+		MenuItem item = new MenuItem(menu, SWT.CHECK);
+		IObservableValue observable = WidgetProperties.selection()
+				.observe(item);
+
+		assertEquals(boolean.class, observable.getValueType());
+
+		item.setSelection(true);
+		assertEquals(Boolean.TRUE, observable.getValue());
+
+		observable.setValue(Boolean.FALSE);
+		assertEquals(false, item.getSelection());
+	}
+
+	public void testEnabled_ObserveScrollBar() {
+		ScrollBar bar = shell.getVerticalBar();
+		IObservableValue observable = WidgetProperties.enabled().observe(bar);
+
+		assertEquals(boolean.class, observable.getValueType());
+
+		bar.setEnabled(true);
+		assertEquals(Boolean.TRUE, observable.getValue());
+
+		observable.setValue(Boolean.FALSE);
+		assertEquals(false, bar.getEnabled());
+	}
+
+	public void testEnabled_ObserveToolItem() {
+		ToolBar bar = new ToolBar(shell, SWT.HORIZONTAL);
+		ToolItem item = new ToolItem(bar, SWT.PUSH);
+		IObservableValue observable = WidgetProperties.enabled().observe(item);
+
+		assertEquals(boolean.class, observable.getValueType());
+
+		item.setEnabled(true);
+		assertEquals(Boolean.TRUE, observable.getValue());
+
+		observable.setValue(Boolean.FALSE);
+		assertEquals(false, item.getEnabled());
 	}
 }

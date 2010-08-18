@@ -15,7 +15,6 @@ package org.eclipse.jface.databinding.swt;
 
 import org.eclipse.jface.internal.databinding.swt.ControlBackgroundProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlBoundsProperty;
-import org.eclipse.jface.internal.databinding.swt.ControlEnabledProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlFocusedProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlFontProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlForegroundProperty;
@@ -23,6 +22,7 @@ import org.eclipse.jface.internal.databinding.swt.ControlLocationProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlSizeProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlVisibleProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetEditableProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetEnabledProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetImageProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetItemsProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetMaximumProperty;
@@ -46,7 +46,10 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabItem;
@@ -98,13 +101,15 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the enablement state of a
-	 * {@link Control}.
+	 * {@link Control}, {@link Menu} (since 1.5), {@link MenuItem} (since 1.5),
+	 * {@link ScrollBar} (since 1.5) or {@link ToolItem} (since 1.5).
 	 * 
 	 * @return a value property for observing the enablement state of a
-	 *         {@link Control}.
+	 *         {@link Control}, {@link Menu}, {@link MenuItem},
+	 *         {@link ScrollBar} or {@link ToolItem}.
 	 */
 	public static IWidgetValueProperty enabled() {
-		return new ControlEnabledProperty();
+		return new WidgetEnabledProperty();
 	}
 
 	/**
@@ -205,11 +210,12 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the selection state of a
 	 * {@link Button}, {@link CCombo}, {@link Combo}, {@link DateTime},
-	 * {@link List}, {@link Scale} or {@link Spinner}.
+	 * {@link List}, {@link MenuItem} (since 1.5), {@link Scale} or
+	 * {@link Spinner}.
 	 * 
 	 * @return a value property for observing the selection state of a
 	 *         {@link Button}, {@link CCombo}, {@link Combo}, {@link DateTime},
-	 *         {@link List}, {@link Scale} or {@link Spinner}.
+	 *         {@link List}, {@link MenuItem}, {@link Scale} or {@link Spinner}.
 	 */
 	public static IWidgetValueProperty selection() {
 		return new WidgetSelectionProperty();

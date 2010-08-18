@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Spinner;
 
@@ -32,6 +33,7 @@ public final class WidgetSelectionProperty extends
 	private IValueProperty combo;
 	private IValueProperty dateTime;
 	private IValueProperty list;
+	private IValueProperty menuItem;
 	private IValueProperty scale;
 	private IValueProperty spinner;
 
@@ -60,6 +62,11 @@ public final class WidgetSelectionProperty extends
 			if (list == null)
 				list = new ListSelectionProperty();
 			return list;
+		}
+		if (source instanceof MenuItem) {
+			if (menuItem == null)
+				menuItem = new MenuItemSelectionProperty();
+			return menuItem;
 		}
 		if (source instanceof Scale) {
 			if (scale == null)
