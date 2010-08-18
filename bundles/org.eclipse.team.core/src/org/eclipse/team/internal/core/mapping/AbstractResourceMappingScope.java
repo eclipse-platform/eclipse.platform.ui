@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.internal.core.subscribers.AbstractSynchronizationScope;
 
 /**
  * Class that contains common resource mapping scope code.
  */
-public abstract class AbstractResourceMappingScope extends AbstractSynchronizationScope implements ISynchronizationScope {
+public abstract class AbstractResourceMappingScope extends AbstractSynchronizationScope {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.IResourceMappingScope#getMapping(java.lang.Object)
