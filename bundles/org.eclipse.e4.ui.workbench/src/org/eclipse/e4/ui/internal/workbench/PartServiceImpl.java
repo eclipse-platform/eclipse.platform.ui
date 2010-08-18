@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -90,20 +89,12 @@ public class PartServiceImpl implements EPartService {
 		}
 	};
 
-	@Inject
 	private MApplication application;
 
 	/**
-	 * This is the specific implementation. TODO: generalize it
+	 * Might be null if this part service is created for the application
 	 */
-	// @Inject
-	// @Named(EPartService.PART_SERVICE_ROOT)
-	private MElementContainer<MUIElement> rootContainer;
-
-	@Inject
-	public void setRootContainer(@Named(EPartService.PART_SERVICE_ROOT) MElementContainer root) {
-		rootContainer = root;
-	}
+	private MWindow workbenchWindow;
 
 	@Inject
 	private IPresentationEngine engine;
@@ -129,8 +120,11 @@ public class PartServiceImpl implements EPartService {
 
 	private boolean constructed = false;
 
-	public PartServiceImpl() {
-		// placeholder
+	@Inject
+	public PartServiceImpl(MApplication application, @Optional MWindow window) {
+		// no need to track changes:
+		this.application = application;
+		workbenchWindow = window;
 	}
 
 	@Inject
@@ -157,23 +151,6 @@ public class PartServiceImpl implements EPartService {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
 		constructed = true;
-
-		if (rootContainer == null) {
-			// couldn't find one, we'll just track the application then, it is
-			// questionable why someone would ask the application for the part
-			// service though
-			application.getContext().runAndTrack(new RunAndTrack() {
-				public boolean changed(IEclipseContext eventsContext) {
-					IEclipseContext childContext = (IEclipseContext) eventsContext
-							.getLocal(IContextConstants.ACTIVE_CHILD);
-					if (childContext != null) {
-						rootContainer = (MElementContainer<MUIElement>) childContext
-								.get(MWindow.class.getName());
-					}
-					return true;
-				}
-			});
-		}
 	}
 
 	@PreDestroy
@@ -221,7 +198,14 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private MWindow getWindow() {
-		return ((MContext) rootContainer).getContext().get(MWindow.class);
+		if (workbenchWindow != null)
+			return workbenchWindow;
+		if (application.getSelectedElement() != null)
+			return application.getSelectedElement();
+		List<MWindow> windows = application.getChildren();
+		if (windows.size() != 0)
+			return windows.get(0);
+		return null;
 	}
 
 	private MContext getParentWithContext(MUIElement part) {
@@ -300,7 +284,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart findPart(String id) {
-		MApplicationElement element = modelService.find(id, rootContainer);
+		MApplicationElement element = modelService.find(id, getContainer());
 		if (element instanceof MPlaceholder) {
 			((MPlaceholder) element).getRef().setCurSharedRef((MPlaceholder) element);
 			element = ((MPlaceholder) element).getRef();
@@ -309,7 +293,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public Collection<MPart> getParts() {
-		return modelService.findElements(rootContainer, null, MPart.class, null);
+		return modelService.findElements(getContainer(), null, MPart.class, null);
 	}
 
 	public boolean isPartVisible(MPart part) {
@@ -322,7 +306,7 @@ public class PartServiceImpl implements EPartService {
 				if (element == null) {
 					return false;
 				}
-				
+
 				parent = element.getParent();
 				if (parent == null) {
 					return false;
@@ -339,7 +323,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInContainer(MPart part) {
-		return isInContainer(rootContainer, part);
+		return isInContainer(getContainer(), part);
 	}
 
 	private boolean isInContainer(MElementContainer<?> container, MPart part) {
@@ -545,7 +529,7 @@ public class PartServiceImpl implements EPartService {
 				} else {
 					stack.getChildren().add(providedPart);
 				}
-				rootContainer.getChildren().add(stack);
+				getContainer().getChildren().add(stack);
 			}
 		} else {
 			if (providedPart != localPart && !descriptor.isAllowMultiple()) {
@@ -560,7 +544,7 @@ public class PartServiceImpl implements EPartService {
 			if (category == null) {
 				addToLastContainer(null, providedPart);
 			} else {
-				List<Object> elements = modelService.findElements(rootContainer, null, null,
+				List<Object> elements = modelService.findElements(getContainer(), null, null,
 						Collections.singletonList(category));
 				if (elements.isEmpty()) {
 					addToLastContainer(category, providedPart);
@@ -597,7 +581,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private MElementContainer<?> getLastContainer() {
-		MElementContainer<MUIElement> searchRoot = rootContainer;
+		MElementContainer<MUIElement> searchRoot = getContainer();
 		List<MUIElement> children = searchRoot.getChildren();
 		if (children.size() == 0) {
 			MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
@@ -853,7 +837,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private Collection<MInputPart> getInputParts() {
-		return modelService.findElements(rootContainer, null, MInputPart.class, null);
+		return modelService.findElements(getContainer(), null, MInputPart.class, null);
 	}
 
 	public Collection<MInputPart> getInputParts(String inputUri) {
@@ -869,4 +853,28 @@ public class PartServiceImpl implements EPartService {
 
 		return rv;
 	}
+
+	/**
+	 * "Container" here is: 1) a selected MPerspective, or, if none available 2) the MWindow for
+	 * which this part service is created, or, if not available, 3) the MApplication.
+	 */
+	private MElementContainer<MUIElement> getContainer() {
+		MElementContainer<? extends MUIElement> outerContainer = (workbenchWindow != null) ? workbenchWindow
+				: application;
+
+		// see if we can narrow it down to the active perspective
+		for (MElementContainer<?> container = outerContainer; container != null;) {
+			if (container instanceof MPerspective)
+				return (MElementContainer<MUIElement>) container;
+			Object child = container.getSelectedElement();
+			if (child == null)
+				break;
+			if (child instanceof MElementContainer<?>)
+				container = (MElementContainer<?>) child;
+			else
+				break;
+		}
+		return (MElementContainer<MUIElement>) outerContainer;
+	}
+
 }
