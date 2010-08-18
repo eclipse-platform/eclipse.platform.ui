@@ -48,6 +48,11 @@ public class BeanPropertyHelper {
 			PropertyDescriptor propertyDescriptor, Object value) {
 		try {
 			Method writeMethod = propertyDescriptor.getWriteMethod();
+			if (null == writeMethod) {
+				throw new IllegalArgumentException(
+						"Missing public setter method for " //$NON-NLS-1$
+								+ propertyDescriptor.getName() + " property"); //$NON-NLS-1$
+			}
 			if (!writeMethod.isAccessible()) {
 				writeMethod.setAccessible(true);
 			}
