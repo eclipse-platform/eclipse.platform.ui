@@ -1,0 +1,115 @@
+/*******************************************************************************
+ * Copyright (c) 2010 Oracle Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Oracle Corporation - initial API and implementation
+ *     IBM - conversion to JUnit test with assertions
+ *******************************************************************************/
+package org.eclipse.core.tests.runtime.jobs;
+
+import org.eclipse.core.internal.jobs.JobManager;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.tests.harness.TestBarrier;
+
+/**
+ * Regression test for bug 316839.
+ */
+public class Bug_316839 extends AbstractJobManagerTest {
+
+	ILock LOCK = Job.getJobManager().newLock();
+
+	TestBarrier barrier = new TestBarrier(TestBarrier.STATUS_WAIT_FOR_START);
+
+	YieldingTestJob yieldingJob;
+	TestJob interruptingJob;
+	boolean lockGraphWasEmpty = true;
+
+	public void testBug() {
+		long start = System.currentTimeMillis();
+		// Schedule jobs
+		yieldingJob = new YieldingTestJob("job with project rule "); //$NON-NLS-1$
+		yieldingJob.setTestRule(new PathRule("/pX")); //$NON-NLS-1$
+		yieldingJob.schedule();
+
+		interruptingJob = new TestJob("job with root rule"); //$NON-NLS-1$		job.setRule(new Root());
+		interruptingJob.setRule(new PathRule("/"));
+		interruptingJob.addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				//at the moment we are done, the lock graph should be empty
+				lockGraphWasEmpty = ((JobManager) Job.getJobManager()).getLockManager().isEmpty();
+			}
+		});
+		barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+		interruptingJob.schedule();
+		//let the yielding job perform its yield
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+
+		// wait for job to complete or for max time...
+		waitForCompletion(yieldingJob);
+		waitForCompletion(interruptingJob);
+		assertTrue("1.0", ((JobManager) manager).getLockManager().isEmpty());
+		assertTrue("1.1", lockGraphWasEmpty);
+		System.out.println("All Done " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
+	}
+
+	public class TestJob extends Job {
+		public TestJob(String name) {
+			super(name);
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			return Status.OK_STATUS;
+		}
+	}
+
+	// This Job manages calls to begin/endRule()
+	public class YieldingTestJob extends Job {
+		private ISchedulingRule rule;
+
+		public YieldingTestJob(String name) {
+			super(name);
+		}
+
+		public void setTestRule(ISchedulingRule rule) {
+			this.rule = rule;
+		}
+
+		@Override
+		protected IStatus run(IProgressMonitor monitor) {
+			getJobManager().beginRule(rule, monitor);
+			try {
+				barrier.setStatus(TestBarrier.STATUS_RUNNING);
+				barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
+				// Call to some dependent code that causes a yieldRule().
+				// For example, the various routines of ModelManagerImpl
+				// that get and return a shared model. If another thread /
+				// Job is initializing the model, then the routine
+				// ModelManagerImpl$SharedObject.waitForLoadAttempt()
+				// calls Job.yieldRule().
+				// This test will simulate the scenario by just calling
+				// Job.yieldRule() in the same way.
+				doYieldRule();
+				return Status.OK_STATUS;
+			} finally {
+				getJobManager().endRule(rule);
+			}
+		}
+
+		private void doYieldRule() {
+			final Job current = Job.getJobManager().currentJob();
+			if (current != null) {
+				final long threadNum = Thread.currentThread().getId();
+				final String id = getName() + " in Thread " + threadNum; //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("Begin Job.yieldRule() " + id); //$NON-NLS-1$
+				current.yieldRule(null);
+				System.out.println("End Job.yieldRule() " + id); //$NON-NLS-1$
+			}
+		}
+	}
+}

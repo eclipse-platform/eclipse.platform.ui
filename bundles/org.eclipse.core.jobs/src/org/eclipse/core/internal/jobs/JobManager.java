@@ -10,6 +10,7 @@
  *     Stephan Wahlbrink  - Fix for bug 200997.
  *     Danail Nachev - Fix for bug 109898
  *     Mike Moreaty - Fix for bug 289790
+ *     Oracle Corporation - Fix for bug 316839
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -1336,9 +1337,13 @@ public class JobManager implements IJobManager {
 						JobManager.debug(job + " will yieldRule to " + unblocked); //$NON-NLS-1$
 				}
 
-				if (likeThreadJob != null)
+				if (likeThreadJob != null) {
 					// only null-out threads out for non-ThreadJobs
 					job.setThread(null);
+					if (likeThreadJob.getRule() != null) {
+						getLockManager().removeLockThread(currentThread, likeThreadJob.getRule());
+					}
+				}
 
 				if ((job.getRule() != null) && !(job instanceof ThreadJob))
 					getLockManager().removeLockThread(currentThread, job.getRule());
