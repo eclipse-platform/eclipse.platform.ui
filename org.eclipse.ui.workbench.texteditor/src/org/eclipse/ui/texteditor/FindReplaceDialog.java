@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -128,7 +131,7 @@ class FindReplaceDialog extends Dialog {
 					fNeedsInitialFindBeforeReplace= false;
 					findAndSelect(offset, "", isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch(), isRegExSearchAvailableAndChecked()); //$NON-NLS-1$
 				} else {
-					performSearch(false, false);
+					performSearch(false, false, isForwardSearch());
 				}
 			}
 
@@ -203,9 +206,9 @@ class FindReplaceDialog extends Dialog {
 	 * the dialog is activated, <code>false</code> otherwise.
 	 * @since 3.0
 	 */
-	private boolean fGiveFocusToFindField= true;
-
-
+	private boolean fGiveFocusToFindField= true;	
+	
+	
 	/**
 	 * Creates a new dialog with the given shell as parent.
 	 * @param parentShell the parent shell
@@ -309,20 +312,20 @@ class FindReplaceDialog extends Dialog {
 				if (isIncrementalSearch() && !isRegExSearchAvailableAndChecked())
 					initIncrementalBaseLocation();
 
-				fNeedsInitialFindBeforeReplace= false;
-				performSearch();
+				fNeedsInitialFindBeforeReplace= false;				
+				performSearch((e.stateMask == SWT.SHIFT) ^ isForwardSearch());
 				updateFindHistory();
 				fFindNextButton.setFocus();
-			}
-		});
+			}			
+		});		
 		setGridData(fFindNextButton, SWT.FILL, true, SWT.FILL, false);
 
 		fReplaceFindButton= makeButton(panel, EditorMessages.FindReplace_ReplaceFindButton_label, 103, false, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fNeedsInitialFindBeforeReplace)
-					performSearch();
+					performSearch((e.stateMask == SWT.SHIFT) ^ isForwardSearch());
 				if (performReplaceSelection())
-					performSearch();
+					performSearch((e.stateMask == SWT.SHIFT) ^ isForwardSearch());
 				updateFindAndReplaceHistory();
 				fReplaceFindButton.setFocus();
 			}
@@ -343,7 +346,7 @@ class FindReplaceDialog extends Dialog {
 		fReplaceAllButton= makeButton(panel, EditorMessages.FindReplace_ReplaceAllButton_label, 105, false, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				performReplaceAll();
-				updateFindAndReplaceHistory();
+				updateFindAndReplaceHistory();	
 				fFindNextButton.setFocus();
 			}
 		});
@@ -406,13 +409,25 @@ class FindReplaceDialog extends Dialog {
 		Composite statusBar= createStatusAndCloseButton(panel);
 		setGridData(statusBar, SWT.FILL, true, SWT.BOTTOM, false);
 
+		panel.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {				
+				if (e.detail == SWT.TRAVERSE_RETURN) {
+					Event event= new Event();
+					event.type= SWT.Selection;
+					event.stateMask= e.stateMask;
+					fFindNextButton.notifyListeners(SWT.Selection, event);
+					e.doit= false;
+				}				
+			}
+		});
+		
 		updateButtonState();
 
 		applyDialogFont(panel);
 
 		return panel;
 	}
-
+	
 	private void setContentAssistsEnablement(boolean enable) {
 		fContentAssistFindField.setEnabled(enable);
 		fContentAssistReplaceField.setEnabled(enable);
@@ -1348,7 +1363,17 @@ class FindReplaceDialog extends Dialog {
 	 * Locates the user's findString in the text of the target.
 	 */
 	private void performSearch() {
-		performSearch(isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), true);
+		performSearch(isForwardSearch());
+	}
+
+	/**
+	 * Locates the user's findString in the text of the target.
+	 * 
+	 * @param forwardSearch <code>true</code> if searching forwards, <code>false</code> otherwise
+	 * @since 3.7
+	 */
+	private void performSearch(boolean forwardSearch) {
+		performSearch(isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), true, forwardSearch);
 	}
 
 	/**
@@ -1356,9 +1381,10 @@ class FindReplaceDialog extends Dialog {
 	 * 
 	 * @param mustInitIncrementalBaseLocation <code>true</code> if base location must be initialized
 	 * @param beep if <code>true</code> beeps when search does not find a match or needs to wrap
+	 * @param forwardSearch the search direction
 	 * @since 3.0
 	 */
-	private void performSearch(boolean mustInitIncrementalBaseLocation, boolean beep) {
+	private void performSearch(boolean mustInitIncrementalBaseLocation, boolean beep, boolean forwardSearch) {
 
 		if (mustInitIncrementalBaseLocation)
 			initIncrementalBaseLocation();
@@ -1368,8 +1394,8 @@ class FindReplaceDialog extends Dialog {
 
 		if (findString != null && findString.length() > 0) {
 
-			try {
-				somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked(), beep);
+			try {				
+					somethingFound= findNext(findString, forwardSearch, isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked(), beep);				
 			} catch (PatternSyntaxException ex) {
 				statusError(ex.getLocalizedMessage());
 			} catch (IllegalStateException ex) {
