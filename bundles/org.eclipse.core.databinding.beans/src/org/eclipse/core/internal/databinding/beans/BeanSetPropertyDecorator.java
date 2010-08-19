@@ -20,7 +20,6 @@ import org.eclipse.core.databinding.beans.IBeanMapProperty;
 import org.eclipse.core.databinding.beans.IBeanSetProperty;
 import org.eclipse.core.databinding.beans.IBeanValueProperty;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -76,8 +75,8 @@ public class BeanSetPropertyDecorator extends SetProperty implements
 	}
 
 	public IBeanMapProperty values(IBeanValueProperty property) {
-		return new BeanMapPropertyDecorator(super.values(property), property
-				.getPropertyDescriptor());
+		return new BeanMapPropertyDecorator(super.values(property),
+				property.getPropertyDescriptor());
 	}
 
 	public IObservableSet observe(Object source) {
@@ -88,14 +87,6 @@ public class BeanSetPropertyDecorator extends SetProperty implements
 	public IObservableSet observe(Realm realm, Object source) {
 		return new BeanObservableSetDecorator(delegate.observe(realm, source),
 				propertyDescriptor);
-	}
-
-	public IObservableFactory setFactory() {
-		return delegate.setFactory();
-	}
-
-	public IObservableFactory setFactory(Realm realm) {
-		return delegate.setFactory(realm);
 	}
 
 	public IObservableSet observeDetail(IObservableValue master) {

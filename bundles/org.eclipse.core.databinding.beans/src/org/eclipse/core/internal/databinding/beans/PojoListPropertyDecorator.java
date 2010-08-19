@@ -21,7 +21,6 @@ import org.eclipse.core.databinding.beans.PojoProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.list.ListProperty;
@@ -71,8 +70,8 @@ public class PojoListPropertyDecorator extends ListProperty implements
 	}
 
 	public IBeanListProperty values(IBeanValueProperty property) {
-		return new PojoListPropertyDecorator(super.values(property), property
-				.getPropertyDescriptor());
+		return new PojoListPropertyDecorator(super.values(property),
+				property.getPropertyDescriptor());
 	}
 
 	public PropertyDescriptor getPropertyDescriptor() {
@@ -87,14 +86,6 @@ public class PojoListPropertyDecorator extends ListProperty implements
 	public IObservableList observe(Realm realm, Object source) {
 		return new BeanObservableListDecorator(delegate.observe(realm, source),
 				propertyDescriptor);
-	}
-
-	public IObservableFactory listFactory() {
-		return delegate.listFactory();
-	}
-
-	public IObservableFactory listFactory(Realm realm) {
-		return delegate.listFactory(realm);
 	}
 
 	public IObservableList observeDetail(IObservableValue master) {

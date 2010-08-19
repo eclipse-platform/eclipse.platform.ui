@@ -21,7 +21,6 @@ import org.eclipse.core.databinding.beans.IBeanValueProperty;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
-import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.map.IMapProperty;
 import org.eclipse.core.databinding.property.map.MapProperty;
@@ -79,8 +78,8 @@ public class BeanMapPropertyDecorator extends MapProperty implements
 	}
 
 	public IBeanMapProperty values(IBeanValueProperty property) {
-		return new BeanMapPropertyDecorator(super.values(property), property
-				.getPropertyDescriptor());
+		return new BeanMapPropertyDecorator(super.values(property),
+				property.getPropertyDescriptor());
 	}
 
 	public IObservableMap observe(Object source) {
@@ -91,14 +90,6 @@ public class BeanMapPropertyDecorator extends MapProperty implements
 	public IObservableMap observe(Realm realm, Object source) {
 		return new BeanObservableMapDecorator(delegate.observe(realm, source),
 				propertyDescriptor);
-	}
-
-	public IObservableFactory mapFactory() {
-		return delegate.mapFactory();
-	}
-
-	public IObservableFactory mapFactory(Realm realm) {
-		return delegate.mapFactory(realm);
 	}
 
 	public IObservableMap observeDetail(IObservableValue master) {
