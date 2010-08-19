@@ -117,9 +117,12 @@ public class DecoratingObservableCollection extends DecoratingObservable
 		return decorated.getElementType();
 	}
 
-	public boolean equals(Object o) {
+	public boolean equals(Object obj) {
 		getterCalled();
-		return decorated.equals(o);
+		if (this == obj) {
+			return true;
+		}
+		return decorated.equals(obj);
 	}
 
 	public int hashCode() {
