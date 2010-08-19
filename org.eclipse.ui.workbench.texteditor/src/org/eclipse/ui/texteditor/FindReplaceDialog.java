@@ -206,9 +206,9 @@ class FindReplaceDialog extends Dialog {
 	 * the dialog is activated, <code>false</code> otherwise.
 	 * @since 3.0
 	 */
-	private boolean fGiveFocusToFindField= true;	
-	
-	
+	private boolean fGiveFocusToFindField= true;
+
+
 	/**
 	 * Creates a new dialog with the given shell as parent.
 	 * @param parentShell the parent shell
@@ -312,12 +312,12 @@ class FindReplaceDialog extends Dialog {
 				if (isIncrementalSearch() && !isRegExSearchAvailableAndChecked())
 					initIncrementalBaseLocation();
 
-				fNeedsInitialFindBeforeReplace= false;				
+				fNeedsInitialFindBeforeReplace= false;
 				performSearch((e.stateMask == SWT.SHIFT) ^ isForwardSearch());
 				updateFindHistory();
 				fFindNextButton.setFocus();
-			}			
-		});		
+			}
+		});
 		setGridData(fFindNextButton, SWT.FILL, true, SWT.FILL, false);
 
 		fReplaceFindButton= makeButton(panel, EditorMessages.FindReplace_ReplaceFindButton_label, 103, false, new SelectionAdapter() {
@@ -346,7 +346,7 @@ class FindReplaceDialog extends Dialog {
 		fReplaceAllButton= makeButton(panel, EditorMessages.FindReplace_ReplaceAllButton_label, 105, false, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				performReplaceAll();
-				updateFindAndReplaceHistory();	
+				updateFindAndReplaceHistory();
 				fFindNextButton.setFocus();
 			}
 		});
@@ -410,24 +410,24 @@ class FindReplaceDialog extends Dialog {
 		setGridData(statusBar, SWT.FILL, true, SWT.BOTTOM, false);
 
 		panel.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {				
+			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
 					Event event= new Event();
 					event.type= SWT.Selection;
 					event.stateMask= e.stateMask;
 					fFindNextButton.notifyListeners(SWT.Selection, event);
 					e.doit= false;
-				}				
+				}
 			}
 		});
-		
+
 		updateButtonState();
 
 		applyDialogFont(panel);
 
 		return panel;
 	}
-	
+
 	private void setContentAssistsEnablement(boolean enable) {
 		fContentAssistFindField.setEnabled(enable);
 		fContentAssistReplaceField.setEnabled(enable);
@@ -1394,8 +1394,8 @@ class FindReplaceDialog extends Dialog {
 
 		if (findString != null && findString.length() > 0) {
 
-			try {				
-					somethingFound= findNext(findString, forwardSearch, isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked(), beep);				
+			try {
+					somethingFound= findNext(findString, forwardSearch, isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked(), beep);
 			} catch (PatternSyntaxException ex) {
 				statusError(ex.getLocalizedMessage());
 			} catch (IllegalStateException ex) {
