@@ -27,5 +27,5 @@ abstract public class RunAndTrackExt extends RunAndTrack {
 		return group;
 	}
 
-	abstract public boolean update(IEclipseContext eventsContext, int eventType, Object[] extraArguments, final IContextRecorder recorder);
+	abstract public boolean update(IEclipseContext eventsContext, int eventType, Object[] extraArguments);
 }

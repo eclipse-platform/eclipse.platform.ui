@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -19,7 +20,9 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 
 /**
  * Tests updates of injected values and calls to runnables
@@ -100,4 +103,73 @@ public class InjectionUpdateTest extends TestCase {
 		assertEquals(3, testObject.called);
 		assertEquals("x__z", testObject.in);
 	}
+	
+	public static class InjectTarget {
+		private static final String KEY = "key";
+
+		@Inject
+		private IEclipseContext context;
+
+		@PostConstruct
+		void pc() {
+			context.containsKey(KEY);
+		}
+
+		public void modify() {
+			context.set(KEY, null);
+		}
+	}
+
+	public void testNestedUpdatesPostConstruct() throws Exception {
+		IEclipseContext appContext = EclipseContextFactory.create();
+		appContext.set(InjectTarget.class.getName(), new IContextFunction() {
+			public Object compute(IEclipseContext context) {
+				return ContextInjectionFactory
+						.make(InjectTarget.class, context);
+			}
+		});
+
+		InjectTarget targetA = appContext.get(InjectTarget.class);
+		targetA.modify();
+
+		InjectTarget targetB = appContext.get(InjectTarget.class);
+		assertEquals(targetA, targetB);
+		assertSame(targetA, targetB);
+	}
+
+	public static class InjectTarget2 {
+		private static final String KEY = "key"; //$NON-NLS-1$
+
+		@Inject
+		private IEclipseContext context;
+
+		public Object key;
+
+		@Inject
+		public InjectTarget2(@Optional @Named("key") Object key) {
+			this.key = key;
+		}
+
+		public void modify() {
+			context.set(KEY, null);
+		}
+	}
+
+	public void testNestedUpdatesConstructor() throws Exception {
+		IEclipseContext appContext = EclipseContextFactory.create();
+		appContext.set(InjectTarget2.class.getName(), new IContextFunction() {
+			public Object compute(IEclipseContext context) {
+				return ContextInjectionFactory.make(InjectTarget2.class,
+						context);
+			}
+		});
+
+		InjectTarget2 targetA = appContext.get(InjectTarget2.class);
+		targetA.modify();
+
+		InjectTarget2 targetB = appContext.get(InjectTarget2.class);
+		assertEquals(targetA, targetB);
+		assertSame(targetA, targetB);
+	}
+	
 }

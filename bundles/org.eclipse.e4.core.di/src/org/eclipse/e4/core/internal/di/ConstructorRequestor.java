@@ -35,6 +35,11 @@ public class ConstructorRequestor extends Requestor {
 			constructor.setAccessible(true);
 			wasAccessible = false;
 		}
+		boolean pausedRecording = false;
+		if ((primarySupplier != null)) {
+			primarySupplier.pauseRecording();
+			pausedRecording = true;
+		}
 		try {
 			result = constructor.newInstance(actualArgs);
 		} catch (IllegalArgumentException e) {
@@ -49,6 +54,8 @@ public class ConstructorRequestor extends Requestor {
 		} finally {
 			if (!wasAccessible)
 				constructor.setAccessible(false);
+			if (pausedRecording)
+				primarySupplier.resumeRecoding();
 		}
 		return result;
 	}

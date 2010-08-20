@@ -303,8 +303,9 @@ public class InjectorImpl implements IInjector {
 
 	public void resolveArguments(IRequestor requestor) {
 		ArrayList<Requestor> list = new ArrayList<Requestor>(1);
-		list.add((Requestor) requestor);
-		resolveRequestorArgs(list, ((Requestor) requestor).getPrimarySupplier(), ((Requestor) requestor).getTempSupplier(), true, false /* no nested track */);
+		Requestor internalRequestor = ((Requestor) requestor);
+		list.add(internalRequestor);
+		resolveRequestorArgs(list, internalRequestor.getPrimarySupplier(), internalRequestor.getTempSupplier(), true, internalRequestor.shouldTrack());
 	}
 
 	public void disposed(PrimaryObjectSupplier objectSupplier) {

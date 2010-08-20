@@ -43,6 +43,11 @@ public class MethodRequestor extends Requestor {
 			method.setAccessible(true);
 			wasAccessible = false;
 		}
+		boolean pausedRecording = false;
+		if ((primarySupplier != null)) {
+			primarySupplier.pauseRecording();
+			pausedRecording = true;
+		}
 		try {
 			result = method.invoke(userObject, actualArgs);
 		} catch (IllegalArgumentException e) {
@@ -55,6 +60,8 @@ public class MethodRequestor extends Requestor {
 		} finally {
 			if (!wasAccessible)
 				method.setAccessible(false);
+			if (pausedRecording)
+				primarySupplier.resumeRecoding();
 		}
 		return result;
 	}

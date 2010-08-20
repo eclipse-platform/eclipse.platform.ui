@@ -25,12 +25,12 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
 abstract public class Requestor implements IRequestor {
 
 	final private WeakReference<Object> objectRef;
-	final private boolean track;
+	final protected boolean track;
 	final private boolean groupUpdates;
 	final private boolean isOptional;
 
 	final private IInjector injector;
-	final private PrimaryObjectSupplier primarySupplier;
+	final protected PrimaryObjectSupplier primarySupplier;
 	private PrimaryObjectSupplier tempSupplier;
 
 	protected Object[] actualArgs;

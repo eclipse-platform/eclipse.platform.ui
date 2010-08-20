@@ -15,7 +15,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.contexts.EclipseContext.Scheduled;
 
-public class TrackableComputationExt extends Computation implements IContextRecorder {
+public class TrackableComputationExt extends Computation {
 
 	final private IEclipseContext originatingContext;
 	private RunAndTrack runnable;
@@ -76,7 +76,7 @@ public class TrackableComputationExt extends Computation implements IContextReco
 		try {
 			if (cachedEvent != null) {
 				if (runnable instanceof RunAndTrackExt)
-					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments(), this);
+					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments());
 				else {
 					if (eventType == ContextChangeEvent.DISPOSE)
 						runnable.disposed(cachedEvent.getContext());
@@ -87,7 +87,7 @@ public class TrackableComputationExt extends Computation implements IContextReco
 			}
 			if (eventType != ContextChangeEvent.UPDATE) {
 				if (runnable instanceof RunAndTrackExt)
-					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments(), this);
+					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments());
 				else {
 					if (eventType == ContextChangeEvent.DISPOSE)
 						runnable.disposed(event.getContext());

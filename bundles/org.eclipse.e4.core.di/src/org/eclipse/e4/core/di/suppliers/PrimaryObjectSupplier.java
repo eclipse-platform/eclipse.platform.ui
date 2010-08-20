@@ -44,4 +44,15 @@ abstract public class PrimaryObjectSupplier {
 	 * <code>false</code> otherwise
 	 */
 	abstract public void get(IObjectDescriptor[] descriptors, Object[] actualValues, IRequestor requestor, boolean track, boolean group);
+
+	/**
+	 * Pause tracking access to the supplier's objects.
+	 */
+	abstract public void pauseRecording();
+
+	/**
+	 * Resume tracking access to the supplier's objects.
+	 */
+	abstract public void resumeRecoding();
+
 }

@@ -38,7 +38,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			this.context = context;
 		}
 
-		public boolean update(IEclipseContext eventsContext, int eventType, Object[] extraArguments, final IContextRecorder recorder) {
+		public boolean update(IEclipseContext eventsContext, int eventType, Object[] extraArguments) {
 			if (eventType == ContextChangeEvent.INITIAL) {
 				// needs to be done inside runnable to establish dependencies
 				for (int i = 0; i < keys.length; i++) {
@@ -68,14 +68,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 				if (!requestor.isValid())
 					return false; // remove this listener
 				requestor.resolveArguments();
-				if (recorder != null)
-					recorder.stopAccessRecording();
-				try {
-					requestor.execute();
-				} finally {
-					if (recorder != null)
-						recorder.startAccessRecording();
-				}
+				requestor.execute();
 			}
 			return true;
 		}
@@ -119,6 +112,9 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 
 	final private IEclipseContext context;
 
+	private Computation outerComputation;
+	private int paused = 0;
+
 	public ContextObjectSupplier(IEclipseContext context, IInjector injector) {
 		this.context = context;
 	}
@@ -139,13 +135,20 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			RunAndTrack trackable = new ContextInjectionListener(context, actualArgs, keys, requestor, group);
 			context.runAndTrack(trackable);
 		} else {
-			for (int i = 0; i < descriptors.length; i++) {
-				if (keys[i] == null)
-					continue;
-				if (ECLIPSE_CONTEXT_NAME.equals(keys[i]))
-					actualArgs[i] = context;
-				else if (context.containsKey(keys[i]))
-					actualArgs[i] = context.get(keys[i]);
+			if (descriptors.length > 0) {
+				pauseRecording();
+				try {
+					for (int i = 0; i < descriptors.length; i++) {
+						if (keys[i] == null)
+							continue;
+						if (ECLIPSE_CONTEXT_NAME.equals(keys[i]))
+							actualArgs[i] = context;
+						else if (context.containsKey(keys[i]))
+							actualArgs[i] = context.get(keys[i]);
+					}
+				} finally {
+					resumeRecoding();
+				}
 			}
 		}
 	}
@@ -159,6 +162,19 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		if (elementType instanceof Class<?>)
 			return ((Class<?>) elementType).getName();
 		return null;
+	}
+
+	synchronized public void pauseRecording() {
+		if (paused == 0)
+			outerComputation = EclipseContext.localComputation().get();
+		EclipseContext.localComputation().set(null);
+		paused++;
+	}
+
+	synchronized public void resumeRecoding() {
+		paused--;
+		if (paused == 0)
+			EclipseContext.localComputation().set(outerComputation);
 	}
 
 	static public ContextObjectSupplier getObjectSupplier(IEclipseContext context, IInjector injector) {

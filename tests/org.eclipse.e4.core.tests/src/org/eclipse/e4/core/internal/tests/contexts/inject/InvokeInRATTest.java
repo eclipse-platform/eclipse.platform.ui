@@ -40,26 +40,24 @@ public class InvokeInRATTest extends TestCase {
 	
 	public void testStaticInvoke() {
 		IEclipseContext context = EclipseContextFactory.create();
-		TestHandler handler = new TestHandler();
-		context.set("handlerA", handler);
 		final int[] count = new int[1];
 		
 		context.runAndTrack(new RunAndTrack() {
 			@Override
 			public boolean changed(IEclipseContext context) {
 				TestHandler handler = (TestHandler) context.get("handlerA");
-				ContextInjectionFactory.invoke(handler, CanExecute.class, context);
-				count[0]++;
+				if (handler != null) {
+					ContextInjectionFactory.invoke(handler, CanExecute.class, context);
+					count[0]++;
+				}
 				return true; // continue to be notified
 			}});
-		
-		// initial state
-		assertNull(handler.active);
-		assertNull(handler.selected);
 		
 		// check that updates are propagated 
 		context.set("active", new Integer(123));
 		context.set("selected", "abc");
+		TestHandler handler = new TestHandler();
+		context.set("handlerA", handler);
 		
 		assertEquals(new Integer(123), handler.active);
 		assertEquals("abc", handler.selected);
@@ -73,14 +71,13 @@ public class InvokeInRATTest extends TestCase {
 		assertEquals(new Integer(123), newHandler.active);
 		assertEquals("abc", newHandler.selected);
 		
-		// change values in the context; values should be propagated to 
-		// the new handler, but not to the old handler
+		// change values in the context; values should not be propagated to handlers 
 		context.set("active", new Integer(456));
 		context.set("selected", "xyz");
 		
 		assertEquals(new Integer(123), handler.active);
 		assertEquals("abc", handler.selected);
-		assertEquals(new Integer(456), newHandler.active);
-		assertEquals("xyz", newHandler.selected);
+		assertEquals(new Integer(123), newHandler.active);
+		assertEquals("abc", newHandler.selected);
 	}
 }
