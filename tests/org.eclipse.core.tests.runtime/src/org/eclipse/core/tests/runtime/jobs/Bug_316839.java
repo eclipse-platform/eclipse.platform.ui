@@ -30,7 +30,6 @@ public class Bug_316839 extends AbstractJobManagerTest {
 	boolean lockGraphWasEmpty = true;
 
 	public void testBug() {
-		long start = System.currentTimeMillis();
 		// Schedule jobs
 		yieldingJob = new YieldingTestJob("job with project rule "); //$NON-NLS-1$
 		yieldingJob.setTestRule(new PathRule("/pX")); //$NON-NLS-1$
@@ -52,9 +51,6 @@ public class Bug_316839 extends AbstractJobManagerTest {
 		// wait for job to complete or for max time...
 		waitForCompletion(yieldingJob);
 		waitForCompletion(interruptingJob);
-		assertTrue("1.0", ((JobManager) manager).getLockManager().isEmpty());
-		assertTrue("1.1", lockGraphWasEmpty);
-		System.out.println("All Done " + (System.currentTimeMillis() - start)); //$NON-NLS-1$
 	}
 
 	public class TestJob extends Job {
@@ -104,11 +100,7 @@ public class Bug_316839 extends AbstractJobManagerTest {
 		private void doYieldRule() {
 			final Job current = Job.getJobManager().currentJob();
 			if (current != null) {
-				final long threadNum = Thread.currentThread().getId();
-				final String id = getName() + " in Thread " + threadNum; //$NON-NLS-1$ //$NON-NLS-2$
-				System.out.println("Begin Job.yieldRule() " + id); //$NON-NLS-1$
 				current.yieldRule(null);
-				System.out.println("End Job.yieldRule() " + id); //$NON-NLS-1$
 			}
 		}
 	}
