@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.e4.ui.tests.application.Bug299755Test;
 import org.eclipse.e4.ui.tests.application.Bug308220Test;
+import org.eclipse.e4.ui.tests.application.Bug320857Test;
 import org.eclipse.e4.ui.tests.application.ModelRobustnessTest;
 import org.eclipse.e4.ui.tests.application.ResourceHandlerTest;
 import org.eclipse.e4.ui.tests.application.StartupTestSuite;
@@ -48,6 +49,7 @@ public class UIAllTests extends TestSuite {
 		addTestSuite(Bug299755Test.class);
 		addTestSuite(Bug308220Test.class);
 		addTestSuite(Bug318460Test.class);
+		addTestSuite(Bug320857Test.class);
 		addTestSuite(PartRenderingEngineTests.class);
 		addTestSuite(SashRendererTest.class);
 		addTestSuite(MMenuItemTest.class);
