@@ -78,6 +78,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			URI testLocation = project.getLocationURI();
 			if (testLocation == null)
 				continue;
+			boolean usingAnotherScheme = !inputLocation.getScheme().equals(testLocation.getScheme());
 			// if we are looking for file: locations try to get a file: location for this project
 			if (isFileLocation && !EFS.SCHEME_FILE.equals(testLocation.getScheme()))
 				testLocation = getFileURI(testLocation);
@@ -88,30 +89,61 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				IPath suffix = new Path(relative.getPath());
 				results.add(project.getFullPath().append(suffix));
 			}
-			ProjectDescription description = ((Project) project).internalGetDescription();
-			if (description == null)
-				continue;
-			HashMap links = description.getLinks();
-			if (links == null)
-				continue;
-			for (Iterator it = links.values().iterator(); it.hasNext();) {
-				LinkDescription link = (LinkDescription) it.next();
-				IResource resource = project.findMember(link.getProjectRelativePath());
-				IPathVariableManager pathMan = resource == null ? project.getPathVariableManager() : resource.getPathVariableManager();
-				testLocation = pathMan.resolveURI(link.getLocationURI());
-				// if we are looking for file: locations try to get a file: location for this link
-				if (isFileLocation && !EFS.SCHEME_FILE.equals(testLocation.getScheme()))
-					testLocation = getFileURI(testLocation);
-				if (testLocation == null)
+			if (usingAnotherScheme) {
+				// if a different scheme is used, we can't use the AliasManager, since the manager
+				// map is stored using the EFS scheme, and not necessarily the SCHEME_FILE 
+				ProjectDescription description = ((Project) project).internalGetDescription();
+				if (description == null)
 					continue;
-				relative = testLocation.relativize(location);
-				if (!relative.isAbsolute() && !relative.equals(testLocation)) {
-					IPath suffix = new Path(relative.getPath());
-					results.add(project.getFullPath().append(link.getProjectRelativePath()).append(suffix));
+				HashMap links = description.getLinks();
+				if (links == null)
+					continue;
+				for (Iterator it = links.values().iterator(); it.hasNext();) {
+					LinkDescription link = (LinkDescription) it.next();
+					IResource resource = project.findMember(link.getProjectRelativePath());
+					IPathVariableManager pathMan = resource == null ? project.getPathVariableManager() : resource.getPathVariableManager();
+					testLocation = pathMan.resolveURI(link.getLocationURI());
+					// if we are looking for file: locations try to get a file: location for this link
+					if (isFileLocation && !EFS.SCHEME_FILE.equals(testLocation.getScheme()))
+						testLocation = getFileURI(testLocation);
+					if (testLocation == null)
+						continue;
+					relative = testLocation.relativize(location);
+					if (!relative.isAbsolute() && !relative.equals(testLocation)) {
+						IPath suffix = new Path(relative.getPath());
+						results.add(project.getFullPath().append(link.getProjectRelativePath()).append(suffix));
+					}
 				}
 			}
 		}
+		try {
+			findLinkedResourcesPaths(inputLocation, results);
+		} catch (CoreException e) {
+			Policy.log(e);
+		}
 		return results;
+	}
+
+	private void findLinkedResourcesPaths(URI inputLocation, final ArrayList results) throws CoreException {
+		IPath suffix = null;
+		IFileStore fileStore = EFS.getStore(inputLocation);
+		while (fileStore != null) {
+			IResource[] resources = workspace.getAliasManager().findResources(fileStore);
+			for (int i = 0; i < resources.length; i++) {
+				if (resources[i].isLinked()) {
+					IPath path = resources[i].getFullPath();
+					if (suffix != null)
+						path = path.append(suffix);
+					if (!results.contains(path))
+						results.add(path);
+				}
+			}
+			if (suffix == null)
+				suffix = Path.fromPortableString(fileStore.getName());
+			else
+				suffix = Path.fromPortableString(fileStore.getName()).append(suffix);
+			fileStore = fileStore.getParent();
+		}
 	}
 
 	/** 

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.runtime.CoreException;
-
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.EFS;
@@ -435,6 +433,20 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			return null;
 		return (IResource[]) aliases.toArray(new IResource[size]);
 	}
+
+	/**
+	 * Returns all resources pointing to the given location, or an empty array if there are none.
+	 */
+	public IResource[] findResources(IFileStore location) {
+		final ArrayList/*<IResource>*/ resources = new ArrayList();
+		locationsMap.matchingResourcesDo(location, new Doit() {
+			public void doit(IResource resource) {
+				resources.add(resource);
+			}
+		});
+		return (IResource[]) resources.toArray(new IResource[0]);
+	}
+
 
 	/**
 	 * Returns all aliases of this resource, and any aliases of subtrees of this
