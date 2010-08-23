@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,6 +31,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.ActivityManagerEvent;
@@ -45,9 +45,11 @@ import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.ITriggerPointAdvisor;
 import org.eclipse.ui.activities.IdentifierEvent;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * An activity registry that may be altered.
@@ -57,6 +59,9 @@ import org.eclipse.ui.services.IEvaluationService;
 public final class MutableActivityManager extends AbstractActivityManager
         implements IMutableActivityManager, Cloneable {
 
+	private static final int MAX_ERRORS = 5;
+	private static int reportErrors = 0;
+	
     private Map activitiesById = new HashMap();
 
     private Map activityRequirementBindingsByActivityId = new HashMap();
@@ -134,6 +139,7 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     public IActivity getActivity(String activityId) {
+		checkThread();
         if (activityId == null) {
 			throw new NullPointerException();
 		}
@@ -150,6 +156,7 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     public ICategory getCategory(String categoryId) {
+		checkThread();
         if (categoryId == null) {
 			throw new NullPointerException();
 		}
@@ -166,18 +173,22 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     public Set getDefinedActivityIds() {
+		checkThread();
         return Collections.unmodifiableSet(definedActivityIds);
     }
 
     public Set getDefinedCategoryIds() {
+		checkThread();
         return Collections.unmodifiableSet(definedCategoryIds);
     }
 
     public Set getEnabledActivityIds() {
+		checkThread();
         return Collections.unmodifiableSet(enabledActivityIds);
     }
 
     public IIdentifier getIdentifier(String identifierId) {
+		checkThread();
         if (identifierId == null) {
 			throw new NullPointerException();
 		}
@@ -524,6 +535,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 	}
 
 	public void setEnabledActivityIds(Set enabledActivityIds) {
+		checkThread();
         enabledActivityIds = new HashSet(enabledActivityIds);
         Set requiredActivityIds = new HashSet(enabledActivityIds);
         getRequiredActivityIds(enabledActivityIds, requiredActivityIds);
@@ -907,6 +919,7 @@ public final class MutableActivityManager extends AbstractActivityManager
      * @see java.lang.Object#clone()
      */
     public Object clone() {
+		checkThread();
         MutableActivityManager clone = new MutableActivityManager(advisor, activityRegistry);
         clone.setEnabledActivityIds(getEnabledActivityIds());
         return clone;
@@ -966,4 +979,21 @@ public final class MutableActivityManager extends AbstractActivityManager
         return deferredIdentifierJob;
     }
     
+	private static final String ERR_MSG = "Invalid Thread Access to Activity Manager"; //$NON-NLS-1$
+
+	private void checkThread() {
+		if (reportErrors >= MAX_ERRORS) {
+			return;
+		}
+		if (PlatformUI.getWorkbench().isStarting()) {
+			return;
+		}
+		boolean nonUiThread = (null == Display.getCurrent());
+		if (nonUiThread) {
+			reportErrors++;
+			StatusManager.getManager().handle(
+					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, ERR_MSG, new Exception(
+							ERR_MSG)), StatusManager.LOG);
+		}
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,10 @@
 
 package org.eclipse.ui.internal.activities;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
@@ -24,6 +22,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
@@ -32,6 +31,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 final class ExtensionActivityRegistry extends AbstractActivityRegistry {
@@ -49,35 +49,33 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
     private IExtensionRegistry extensionRegistry;
 
-    ExtensionActivityRegistry(IExtensionRegistry extensionRegistry) {
-        if (extensionRegistry == null) {
+	ExtensionActivityRegistry(IExtensionRegistry extensionRegistry) {
+		if (extensionRegistry == null) {
 			throw new NullPointerException();
 		}
 
-        this.extensionRegistry = extensionRegistry;
+		this.extensionRegistry = extensionRegistry;
 
-        this.extensionRegistry
-                .addRegistryChangeListener(new IRegistryChangeListener() {
-                    public void registryChanged(
-                            IRegistryChangeEvent registryChangeEvent) {
-                        IExtensionDelta[] extensionDeltas = registryChangeEvent
-                                .getExtensionDeltas(Persistence.PACKAGE_PREFIX,
-                                        Persistence.PACKAGE_BASE);
+		this.extensionRegistry.addRegistryChangeListener(new IRegistryChangeListener() {
+			public void registryChanged(IRegistryChangeEvent registryChangeEvent) {
+				IExtensionDelta[] extensionDeltas = registryChangeEvent.getExtensionDeltas(
+						Persistence.PACKAGE_PREFIX, Persistence.PACKAGE_BASE);
 
-                        if (extensionDeltas.length != 0) {
-							try {
-                                load();
-                            } catch (IOException eIO) {
-                            }
+				if (extensionDeltas.length != 0) {
+					WorkbenchJob job = new WorkbenchJob("Reloading Activity Registry") { //$NON-NLS-1$
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							load();
+							return Status.OK_STATUS;
 						}
-                    }
-                });
+					};
+					job.setSystem(true);
+					job.schedule();
+				}
+			}
+		});
+		load();
 
-        try {
-            load();
-        } catch (IOException eIO) {
-        }
-    }
+	}
 
     private String getNamespace(IConfigurationElement configurationElement) {
         String namespace = null;
@@ -111,7 +109,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		return null;
 	}
 
-    private void load() throws IOException {
+    private void load()  {
         if (activityRequirementBindingDefinitions == null) {
 			activityRequirementBindingDefinitions = new ArrayList();
 		} else {
