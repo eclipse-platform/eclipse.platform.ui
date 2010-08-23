@@ -58,9 +58,8 @@ public class ObservableListContentProvider implements
 		}
 
 		protected void checkInput(Object input) {
-			Assert
-					.isTrue(input instanceof IObservableList,
-							"This content provider only works with input of type IObservableList"); //$NON-NLS-1$
+			Assert.isTrue(input instanceof IObservableList,
+					"This content provider only works with input of type IObservableList"); //$NON-NLS-1$
 		}
 
 		protected void addCollectionChangeListener(
@@ -175,6 +174,18 @@ public class ObservableListContentProvider implements
 		return impl.getElements(inputElement);
 	}
 
+	/**
+	 * Disposes of this content provider. This is called by the viewer when a
+	 * content provider is replaced, or when the viewer itself is disposed.
+	 * <p>
+	 * The viewer should not be updated during this call, as it is in the
+	 * process of being disposed.
+	 * </p>
+	 * <p>
+	 * <em>Note:</em> Data binding content providers become unusable on
+	 * disposal.
+	 * </p>
+	 */
 	public void dispose() {
 		impl.dispose();
 	}
