@@ -89,6 +89,13 @@ abstract public class Computation {
 	}
 
 	public void stopListening(IEclipseContext context, String name) {
+		if (context == null) {
+			Set<IEclipseContext> dependentContexts = dependencies.keySet();
+			for (IEclipseContext dependentContext : dependentContexts) {
+				((EclipseContext) dependentContext).listeners.remove(this);
+			}
+			return;
+		}
 		if (name == null) {
 			dependencies.remove(context);
 			((EclipseContext) context).listeners.remove(this);

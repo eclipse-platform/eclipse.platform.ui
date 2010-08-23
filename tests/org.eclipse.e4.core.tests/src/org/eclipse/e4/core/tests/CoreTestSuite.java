@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.e4.core.internal.tests.contexts.ContextDynamicTest;
+import org.eclipse.e4.core.internal.tests.contexts.DependenciesLeakTest;
 import org.eclipse.e4.core.internal.tests.contexts.EclipseContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.ReparentingTest;
 import org.eclipse.e4.core.internal.tests.contexts.RunAndTrackTest;
@@ -90,5 +91,6 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(InjectArraysTest.class);
 		addTestSuite(InvokeInRATTest.class);
 		addTestSuite(Bug317183Test.class);
+		addTestSuite(DependenciesLeakTest.class);
 	}
 }

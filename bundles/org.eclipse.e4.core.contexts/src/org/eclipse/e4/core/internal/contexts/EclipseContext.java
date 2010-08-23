@@ -272,7 +272,7 @@ public class EclipseContext implements IEclipseContext {
 	public void invalidate(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
 		if (DebugHelper.DEBUG_NAMES)
 			System.out.println("[context] invalidating \"" + name + "\" on " + toString()); //$NON-NLS-1$ //$NON-NLS-2$
-		removeLocalValueComputations(name);
+		removeLocalValueComputations(name, false);
 		handleInvalid(name, eventType, oldValue, scheduled);
 	}
 
@@ -305,15 +305,14 @@ public class EclipseContext implements IEclipseContext {
 
 	/**
 	 * Removes all local value computations associated with the given name.
-	 * 
-	 * @param name
-	 *            The name to remove
+	 * @param name The name to remove
+	 * @param allContexts <code>true</code> to remove from all contexts
 	 */
-	public void removeLocalValueComputations(String name) {
+	public void removeLocalValueComputations(String name, boolean allContexts) {
 		synchronized (localValueComputations) {
 			ValueComputation removed = localValueComputations.remove(name);
 			if (removed != null)
-				removed.stopListening(this, name);
+				removed.stopListening(allContexts ? null : this, name);
 		}
 	}
 
