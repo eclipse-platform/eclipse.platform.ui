@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -185,8 +184,6 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 						continue;
 					}
 					providers.add(sourceProvider);
-					processVariables(elements[i]
-							.getChildren(IWorkbenchRegistryConstants.TAG_VARIABLE));
 				} catch (CoreException e) {
 					StatusManager.getManager().handle(e.getStatus());
 				}
@@ -194,6 +191,16 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 		}
 		return (AbstractSourceProvider[]) providers
 				.toArray(new AbstractSourceProvider[providers.size()]);
+	}
+
+	public void initializeSourcePriorities() {
+		IExtensionPoint ep = getExtensionPoint();
+		IConfigurationElement[] elements = ep.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i].getName().equals(IWorkbenchRegistryConstants.TAG_SOURCE_PROVIDER)) {
+				processVariables(elements[i].getChildren(IWorkbenchRegistryConstants.TAG_VARIABLE));
+			}
+		}
 	}
 
 	private static final String[] supportedLevels = { ISources.ACTIVE_CONTEXT_NAME,

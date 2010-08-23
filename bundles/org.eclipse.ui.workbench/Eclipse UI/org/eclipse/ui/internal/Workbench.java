@@ -171,6 +171,7 @@ import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.ServiceLocatorCreator;
 import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
+import org.eclipse.ui.internal.services.WorkbenchServiceRegistry;
 import org.eclipse.ui.internal.splash.EclipseSplashHandler;
 import org.eclipse.ui.internal.splash.SplashHandlerFactory;
 import org.eclipse.ui.internal.testing.ContributionInfoMessages;
@@ -1826,7 +1827,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}});
 
 
-		// the source providers are now initialized in phase 3
+		// the source providers are now initialized in phase 3, but source
+		// priorities have to be set before handler initialization
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+			public void runWithException() {
+				initializeSourcePriorities();
+			}
+		});
 		
 		/*
 		 * Phase 2 of the initialization of commands. This handles the creation
@@ -2305,6 +2312,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 		String pref = PrefUtil.getInternalPreferenceStore().getString(
 				IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 		return Util.getArrayFromList(pref, ";"); //$NON-NLS-1$
+	}
+
+	private void initializeSourcePriorities() {
+		WorkbenchServiceRegistry.getRegistry().initializeSourcePriorities();
 	}
 
 	private void startSourceProviders() {

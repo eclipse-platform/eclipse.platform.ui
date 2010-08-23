@@ -11,7 +11,10 @@
 
 package org.eclipse.ui.tests.services;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -38,7 +41,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.handlers.HandlerPersistence;
+import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.services.SlaveEvaluationService;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
@@ -52,6 +59,10 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * 
  */
 public class EvaluationServiceTest extends UITestCase {
+	/**
+	 * 
+	 */
+	private static final String CHECK_HANDLER_ID = "org.eclipse.ui.tests.services.checkHandler";
 	private static final String CONTEXT_ID1 = "org.eclipse.ui.command.contexts.evaluationService1";
 
 	/**
@@ -362,6 +373,26 @@ public class EvaluationServiceTest extends UITestCase {
 		userProvider.setUsername("guest");
 		assertFalse(listener.currentValue);
 		assertEquals(3, listener.count);
+	}
+	
+	public void testSourceProviderPriority() throws Exception {
+		HandlerService hs = (HandlerService) getWorkbench().getService(IHandlerService.class);
+		HandlerPersistence hp = hs.getHandlerPersistence();
+		IHandlerActivation activation = null;
+		
+		Field activationsField = hp.getClass().getDeclaredField("handlerActivations");
+		activationsField.setAccessible(true);
+		Collection activations = (Collection) activationsField.get(hp);
+		Iterator i = activations.iterator();
+		while (i.hasNext()) {
+			IHandlerActivation ha = (IHandlerActivation) i.next();
+			if (CHECK_HANDLER_ID.equals(ha.getCommandId())) {
+				activation = ha;
+			}
+		}
+		assertNotNull("Could not find activation for " + CHECK_HANDLER_ID, activation);
+		
+		assertEquals(ISources.ACTIVE_CONTEXT<<1, activation.getSourcePriority());
 	}
 
 	public void testPropertyChange() throws Exception {
