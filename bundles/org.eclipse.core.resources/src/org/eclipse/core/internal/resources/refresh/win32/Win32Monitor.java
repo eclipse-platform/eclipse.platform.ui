@@ -312,7 +312,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	protected IRefreshResult refreshResult;
 
 	/*
-	 * Creates a new monitor. @param result A result that will recieve refresh
+	 * Creates a new monitor. @param result A result that will receive refresh
 	 * callbacks and error notifications
 	 */
 	public Win32Monitor(IRefreshResult result) {
@@ -373,7 +373,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	 * more than a certain number of objects, we are forced to split the array
 	 * of objects to monitor and monitor each one individually. <p> This method
 	 * splits the list of handles into arrays no larger than
-	 * Win32Natives.MAXIMUM_WAIT_OBJECTS. The arrays are balenced so that they
+	 * Win32Natives.MAXIMUM_WAIT_OBJECTS. The arrays are balanced so that they
 	 * differ in size by no more than one element.
 	 */
 	protected long[][] createHandleArrays() {
