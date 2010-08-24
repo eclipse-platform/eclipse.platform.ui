@@ -53,9 +53,13 @@ public class FindReplaceDialogTest extends TestCase {
 		suite.addTest(new FindReplaceDialogTest("testDisableWholeWordIfRegEx"));
 		suite.addTest(new FindReplaceDialogTest("testDisableWholeWordIfNotWord"));
 		suite.addTest(new FindReplaceDialogTest("testFocusNotChangedWhenEnterPressed"));
-		if (org.eclipse.jface.util.Util.isWindows() || org.eclipse.jface.util.Util.isLinux())
-			suite.addTest(new FindReplaceDialogTest("testFocusNotChangedWhenButtonMnemonicPressed"));
-		suite.addTest(new FindReplaceDialogTest("testShiftEnterReversesSearchDirection"));
+		
+
+		// Disabled for now, see bug 323476
+//		if (org.eclipse.jface.util.Util.isWindows() || org.eclipse.jface.util.Util.isLinux())
+//			suite.addTest(new FindReplaceDialogTest("testFocusNotChangedWhenButtonMnemonicPressed"));
+//		suite.addTest(new FindReplaceDialogTest("testShiftEnterReversesSearchDirection"));
+
 		return suite;
 	}
 
