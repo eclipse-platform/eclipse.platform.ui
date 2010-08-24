@@ -55,10 +55,9 @@ public class FindReplaceDialogTest extends TestCase {
 		suite.addTest(new FindReplaceDialogTest("testFocusNotChangedWhenEnterPressed"));
 		
 
-		// Disabled for now, see bug 323476
-//		if (org.eclipse.jface.util.Util.isWindows() || org.eclipse.jface.util.Util.isLinux())
+		if (org.eclipse.jface.util.Util.isWindows() /* Disabled for now, see bug 323476 || org.eclipse.jface.util.Util.isLinux() */)
 //			suite.addTest(new FindReplaceDialogTest("testFocusNotChangedWhenButtonMnemonicPressed"));
-//		suite.addTest(new FindReplaceDialogTest("testShiftEnterReversesSearchDirection"));
+		suite.addTest(new FindReplaceDialogTest("testShiftEnterReversesSearchDirection"));
 
 		return suite;
 	}
@@ -250,36 +249,37 @@ public class FindReplaceDialogTest extends TestCase {
 		Combo findField= (Combo)fFindReplaceDialog.get("fFindField");
 		findField.setText("line");
 		IFindReplaceTarget target= (IFindReplaceTarget)fFindReplaceDialog.get("fTarget");
+		runEventQueue();
 		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
-		runEventQueue();		
 		if (shell == null && Util.isGtk())
 			fail("this test does not work on GTK unless the runtime workbench has focus");
 		
 		final Event event= new Event();
 
-		event.detail= SWT.TRAVERSE_RETURN;
+		event.type= SWT.TRAVERSE_RETURN;
 		event.character= SWT.CR;
-		findField.traverse(SWT.TRAVERSE_RETURN, event);
+		shell.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
 		event.doit= true;
-		findField.traverse(SWT.TRAVERSE_RETURN, event);
+		shell.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
 		assertEquals(5, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
+		event.type= SWT.Selection;
 		event.stateMask= SWT.SHIFT;
 		event.doit= true;
-		findField.traverse(SWT.TRAVERSE_RETURN, event);
+		Button findNextButton= (Button)fFindReplaceDialog.get("fFindNextButton");
+		findNextButton.notifyListeners(SWT.Selection, event);
 		assertEquals(0, (target.getSelection()).x);
 		assertEquals(4, (target.getSelection()).y);
 
 		Button forwardRadioButton= (Button)fFindReplaceDialog.get("fForwardRadioButton");
 		forwardRadioButton.setSelection(false);
-		event.doit= true;
-		forwardRadioButton.traverse(SWT.TRAVERSE_RETURN, event);
+		findNextButton.notifyListeners(SWT.Selection, event);
 		assertEquals(5, (target.getSelection()).x);
 	}
 }
