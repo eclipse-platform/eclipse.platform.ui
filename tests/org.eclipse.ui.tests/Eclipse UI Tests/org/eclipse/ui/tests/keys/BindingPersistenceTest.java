@@ -17,6 +17,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Util;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
@@ -154,9 +155,12 @@ public final class BindingPersistenceTest extends UITestCase {
 				}
 			}
 		}
-		// assertEquals(2, numAboutBindings);
-		// temp work around for honouring carbon bindings
-		assertEquals(3, numAboutBindings);
+		if (Util.WS_CARBON.equals(SWT.getPlatform())
+				|| Util.WS_COCOA.equals(SWT.getPlatform())) {
+			assertEquals(2, numAboutBindings);
+		} else {
+			assertEquals(1, numAboutBindings);
+		}
 	}
 
 	public final void testBindingTransform() throws Exception {
