@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.team.core; singleton:=true
-Bundle-Version: 3.5.100.qualifier
+Bundle-Version: 3.6.0.qualifier
 Bundle-Activator: org.eclipse.team.internal.core.TeamPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -24,5 +24,5 @@ Export-Package: org.eclipse.team.core,
 Require-Bundle: org.eclipse.core.resources;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.1.0,2.0.0)"
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4

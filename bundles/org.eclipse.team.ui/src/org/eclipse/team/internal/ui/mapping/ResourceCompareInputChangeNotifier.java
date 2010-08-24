@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 
 /**
  * A change notifier for resource-based compare inputs.
@@ -60,7 +61,7 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 							if (author != null) {
 								return NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelAuthorExists, new String[] { revision.getContentIdentifier(), author });
 							} else if (revision.isPropertyMissing()) {
-								fetchAuthors(input);
+								fetchAuthors(rdci);
 							}
 						}
 						return NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { revision.getContentIdentifier() }); 
@@ -82,6 +83,17 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
 				String localContentId = rdci.getLocalContentId();
 				if (localContentId != null) {
+					ITypedElement element= rdci.getLeft();
+					if (element instanceof LocalResourceTypedElement) {
+						if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
+							String author= ((LocalResourceTypedElement)element).getAuthor();
+							if (author != null) {
+								return NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelAuthorExists, new String[] { localContentId, author });
+							} else { // NOTE: Must not check for revision#isPropertyMissing() as this will always return true for the workspace file revision
+								fetchAuthors(rdci);
+							}
+						}
+					}
 					return NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId }); 
 				} else {
 					return TeamUIMessages.SyncInfoCompareInput_localLabel; 
@@ -107,7 +119,7 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 							if (author != null) {
 								return NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelAuthorExists, new String[] { revision.getContentIdentifier(), author });
 							} else if (revision.isPropertyMissing()) {
-								fetchAuthors(input);
+								fetchAuthors(rdci);
 							}
 						}
 						return NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { revision.getContentIdentifier() }); 
@@ -161,6 +173,8 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 	}
 
 	private final CompareInputLabelProvider labelProvider = new CompareInputLabelProvider();
+
+	private Object fetchingInput;
 	
 	/**
 	 * Create a notifier
@@ -298,7 +312,10 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 		return labelProvider;
 	}
 
-	public void fetchAuthors(final Object input) {
+	public void fetchAuthors(final ResourceDiffCompareInput input) {
+		if (fetchingInput == input)
+			return;
+		fetchingInput= input;
 		runInBackground(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				fetchAuthors(input, monitor);
@@ -306,13 +323,9 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 		});
 	}
 
-	protected void fetchAuthors(Object input, IProgressMonitor monitor) throws CoreException {
-		if (input instanceof ResourceDiffCompareInput) {
-			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-			if (rdci.updateAuthorInfo(monitor)) {
-				fireLabelProviderChange(input);
-			}
-		}
+	protected void fetchAuthors(ResourceDiffCompareInput input, IProgressMonitor monitor) throws CoreException {
+		if (input.updateAuthorInfo(monitor))
+			fireLabelProviderChange(input);
 	}
 
 	private void fireLabelProviderChange(Object input) {

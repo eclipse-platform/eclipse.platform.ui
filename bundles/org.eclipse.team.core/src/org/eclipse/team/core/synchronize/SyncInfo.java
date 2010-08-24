@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,7 @@
 package org.eclipse.team.core.synchronize;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
@@ -184,7 +183,20 @@ public class SyncInfo implements IAdaptable {
 	public String getLocalContentIdentifier() {
 		return null;
 	}
-		
+
+	/**
+	 * Returns the author of the revision corresponding to the local resource or <code>null</code>
+	 * if it doesn't have one. For example if the local file is shared in CVS this would be the
+	 * revision author.
+	 * 
+	 * @param monitor the progress monitor
+	 * @return the author of the revision associated with the local file or <code>null</code>
+	 * @since 3.6
+	 */
+	public String getLocalAuthor(IProgressMonitor monitor) {
+		return null;
+	}
+
 	/**
 	 * Returns the remote resource handle for the base resource,
 	 * or <code>null</code> if the base resource does not exist.

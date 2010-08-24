@@ -355,30 +355,49 @@ public class Utils {
 		final IResourceVariant base = sync.getBase();
 		String baseAuthor = null;
 		String remoteAuthor = null;
+		String localAuthor = null;
 		String localContentId = sync.getLocalContentIdentifier();
+		String remoteContentId= remote != null ? remote.getContentIdentifier() : null;
+		String baseContentId= base != null ? base.getContentIdentifier() : null;
 		if (isShowAuthor()) {
 			baseAuthor = getAuthor(base, monitor);
-			remoteAuthor = getAuthor(remote, monitor);
+			if (baseContentId != null && baseContentId.equals(remoteContentId))
+				remoteAuthor= baseAuthor;
+			else
+				remoteAuthor= getAuthor(remote, monitor);
+
+			if (localContentId != null) {
+				if (localContentId.equals(baseContentId))
+					localAuthor= baseAuthor;
+				else if (localContentId.equals(remoteAuthor))
+					localAuthor= remoteAuthor;
+				else
+					localAuthor= sync.getLocalAuthor(monitor);
+			}
 		}
 		if (localContentId != null) {
-			config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId }));
+			if (localAuthor != null) {
+				config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelAuthorExists, new String[] { localContentId, localAuthor }));
+			} else {
+				config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId }));
+			}
 		} else {
 			config.setLeftLabel(TeamUIMessages.SyncInfoCompareInput_localLabel);
 		}
 		if (remote != null) {
 			if (remoteAuthor != null) {
-				config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelAuthorExists, new String[] { remote.getContentIdentifier(), remoteAuthor }));
+				config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelAuthorExists, new String[] { remoteContentId, remoteAuthor }));
 			} else {
-				config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() }));
+				config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remoteContentId }));
 			}
 		} else {
 			config.setRightLabel(TeamUIMessages.SyncInfoCompareInput_remoteLabel);
 		}
 		if (base != null) {
 			if (baseAuthor != null) {
-				config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelAuthorExists, new String[] { base.getContentIdentifier(), baseAuthor }));
+				config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelAuthorExists, new String[] { baseContentId, baseAuthor }));
 			} else {
-				config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() }));
+				config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { baseContentId }));
 			}
 		} else {
 			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel);

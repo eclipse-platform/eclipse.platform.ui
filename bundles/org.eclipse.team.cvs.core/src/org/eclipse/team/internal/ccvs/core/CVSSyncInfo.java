@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
+
 
 /**
  * CVSSyncInfo
@@ -343,25 +344,72 @@ public class CVSSyncInfo extends SyncInfo {
 		}
 		return result.toString();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.subscribers.SyncInfo#getContentIdentifier()
-	 */
+
 	public String getLocalContentIdentifier() {
-		try {
-			IResource local = getLocal();
-			if (local != null && local.getType() == IResource.FILE) {
-				// it's a file, return the revision number if we can find one
-				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile) local);
-				ResourceSyncInfo info = cvsFile.getSyncInfo();
-				if (info != null) {
-					return info.getRevision();
+		ResourceSyncInfo info= getSyncInfoForLocal(getCVSFile());
+		return info != null ? info.getRevision() : null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.synchronize.SyncInfo#getLocalAuthor(org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.6
+	 */
+	public String getLocalAuthor(IProgressMonitor monitor) {
+		final ICVSFile cvsFile= getCVSFile();
+		if (cvsFile == null)
+			return null;
+
+		final ResourceSyncInfo info= getSyncInfoForLocal(cvsFile);
+		if (info == null)
+			return null;
+
+		final String localRevision= info.getRevision();
+		if (localRevision == null)
+			return null;
+
+		final ILogEntry entries[]= getLogEntries(cvsFile, monitor);
+		if (entries == null || entries.length == 0)
+			return null;
+		
+		for (int i = 0; i < entries.length; i++) {
+			try {
+				if (localRevision.equals(entries[i].getRemoteFile().getRevision())) {
+					return entries[i].getAuthor();
 				}
+			} catch (TeamException e) {
+				CVSProviderPlugin.log(e);
 			}
+		}
+		return null;
+	}
+
+	private static ResourceSyncInfo getSyncInfoForLocal(ICVSFile cvsFile) {
+		if (cvsFile == null)
+			return null;
+
+		try {
+			return cvsFile.getSyncInfo();
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 			return null;
 		}
+	}
+
+	private static ILogEntry[] getLogEntries(ICVSFile cvsFile, IProgressMonitor monitor) {
+		try {
+			return cvsFile.getLogEntries(monitor);
+		} catch (TeamException e) {
+			CVSProviderPlugin.log(e);
+			return null;
+		}
+	}
+
+	private ICVSFile getCVSFile() {
+		IResource local = getLocal();
+		if (local != null && local.getType() == IResource.FILE) {
+			return CVSWorkspaceRoot.getCVSFileFor((IFile)local);
+		}
 		return null;
 	}
+
 }

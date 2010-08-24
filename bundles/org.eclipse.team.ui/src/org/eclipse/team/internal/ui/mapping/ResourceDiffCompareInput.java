@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -293,14 +293,22 @@ public class ResourceDiffCompareInput extends AbstractCompareInput implements IS
 		}
 	}
 
-	private boolean propogateAuthorIfSameRevision(FileRevisionTypedElement oldContributor,
-			FileRevisionTypedElement newContributor) {
+	private boolean propogateAuthorIfSameRevision(FileRevisionTypedElement oldContributor, FileRevisionTypedElement newContributor) {
 		if (oldContributor == null || newContributor == null)
 			return false;
-		String author = oldContributor.getAuthor();
-		if (newContributor.getAuthor() == null 
-				&& author != null
-				&& oldContributor.getContentIdentifier().equals(newContributor.getContentIdentifier())) {
+		String author= oldContributor.getAuthor();
+		if (newContributor.getAuthor() == null && author != null && oldContributor.getContentIdentifier().equals(newContributor.getContentIdentifier())) {
+			newContributor.setAuthor(author);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean propogateAuthorIfSameRevision(FileRevisionTypedElement oldContributor, LocalResourceTypedElement newContributor) {
+		if (oldContributor == null || newContributor == null)
+			return false;
+		String author= oldContributor.getAuthor();
+		if (newContributor.getAuthor() == null && author != null && oldContributor.getContentIdentifier().equals(getLocalContentId())) {
 			newContributor.setAuthor(author);
 			return true;
 		}
@@ -312,7 +320,7 @@ public class ResourceDiffCompareInput extends AbstractCompareInput implements IS
 	 * @return whether the diff associated with this input has changed
 	 */
 	public boolean needsUpdate() {
-		IDiff newNode = context.getDiffTree().getDiff(getResource());
+		IDiff newNode= context.getDiffTree().getDiff(getResource());
 		return newNode == null || !newNode.equals(node);
 	}
 
@@ -325,21 +333,32 @@ public class ResourceDiffCompareInput extends AbstractCompareInput implements IS
 	}
 
 	public boolean updateAuthorInfo(IProgressMonitor monitor) throws CoreException {
-		boolean authorFound = false;
-		FileRevisionTypedElement ancestor = (FileRevisionTypedElement)getAncestor();
-		FileRevisionTypedElement right = (FileRevisionTypedElement)getRight();
+		boolean fireEvent= false;
+		FileRevisionTypedElement ancestor= (FileRevisionTypedElement)getAncestor();
+		FileRevisionTypedElement right= (FileRevisionTypedElement)getRight();
+		LocalResourceTypedElement left= (LocalResourceTypedElement)getLeft();
+
 		if (ancestor != null && ancestor.getAuthor() == null) {
 			ancestor.fetchAuthor(monitor);
-			if (right != null && propogateAuthorIfSameRevision(ancestor, right)) {
-				return true;
-			}
-			authorFound = ancestor.getAuthor() != null;
+			fireEvent|= ancestor.getAuthor() != null;
 		}
+
+		fireEvent|= propogateAuthorIfSameRevision(ancestor, right);
+		fireEvent|= propogateAuthorIfSameRevision(ancestor, left);
+
 		if (right != null && right.getAuthor() == null) {
 			right.fetchAuthor(monitor);
-			authorFound |= right.getAuthor() != null;
+			fireEvent|= right.getAuthor() != null;
 		}
-		return authorFound;
+
+		fireEvent|= propogateAuthorIfSameRevision(right, left);
+
+		if (left != null && left.getAuthor() == null) {
+			left.fetchAuthor(monitor);
+			fireEvent|= fireEvent= left.getAuthor() != null;
+		}
+
+		return fireEvent;
 	}
 
 }

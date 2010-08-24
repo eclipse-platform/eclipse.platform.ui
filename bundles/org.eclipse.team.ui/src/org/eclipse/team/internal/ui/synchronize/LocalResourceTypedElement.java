@@ -17,6 +17,9 @@ import org.eclipse.compare.ResourceNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.history.IFileHistoryProvider;
+import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IEditorInput;
 
 /**
@@ -49,6 +52,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	private boolean exists;
 	private boolean useSharedDocument = true;
 	private EditableSharedDocumentAdapter.ISharedDocumentAdapterListener sharedDocumentListener;
+	private String author;
 
 	/**
 	 * Creates an element for the given resource.
@@ -341,6 +345,52 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	public void setSharedDocumentListener(
 			EditableSharedDocumentAdapter.ISharedDocumentAdapterListener sharedDocumentListener) {
 		this.sharedDocumentListener = sharedDocumentListener;
+	}
+
+	/**
+	 * Returns the author of the workspace file revision if any.
+	 * 
+	 * @return the author or <code>null</code> if the author has not been fetched or is not
+	 *         available
+	 * @since 3.7
+	 * @see #fetchAuthor(IProgressMonitor)
+	 */
+	public String getAuthor() {
+		return author;
+	}
+
+	/**
+	 * Fetches the author from the repository.
+	 * 
+	 * @param monitor the progress monitor
+	 * @throws CoreException if fetching the revision properties fails
+	 * @since 3.7
+	 */
+	public void fetchAuthor(IProgressMonitor monitor) throws CoreException {
+		author= null;
+
+		IFileHistoryProvider fileHistoryProvider= Utils.getHistoryProvider(getResource());
+		if (fileHistoryProvider == null)
+			return;
+
+		IFileRevision revision= fileHistoryProvider.getWorkspaceFileRevision(getResource());
+		if (revision == null)
+			return;
+
+		// NOTE: Must not check for revision#isPropertyMissing() as this will always return true for the workspace file revision
+		revision= revision.withAllProperties(monitor);
+
+		author= revision.getAuthor();
+	}
+
+	/**
+	 * Sets the author.
+	 * 
+	 * @param author the author
+	 * @since 3.7
+	 */
+	public void setAuthor(String author) {
+		this.author= author;
 	}
 
 }
