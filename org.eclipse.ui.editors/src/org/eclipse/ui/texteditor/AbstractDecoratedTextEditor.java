@@ -11,6 +11,7 @@
 package org.eclipse.ui.texteditor;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.IllegalCharsetNameException;
@@ -78,6 +79,7 @@ import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.ITextViewerExtension8;
 import org.eclipse.jface.text.JFaceTextUtil;
@@ -109,7 +111,9 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.OverviewRuler;
 import org.eclipse.jface.text.source.SourceViewer;
 
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -117,6 +121,8 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ContributionItemFactory;
+import org.eclipse.ui.actions.OpenWithMenu;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.FileStoreEditorInput;
@@ -1931,9 +1937,80 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SETTINGS, preferencesAction);
 
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SAVE, new Separator(ITextEditorActionConstants.GROUP_OPEN));
+
+		IEditorInput editorInput= getEditorInput();
+		if (((IResource)editorInput.getAdapter(IResource.class)) instanceof IFile) {
+			MenuManager openWithSubMenu= new MenuManager(TextEditorMessages.AbstractDecoratedTextEditor_openWith_menu);
+			final IWorkbenchPage page= getEditorSite().getPage();
+
+			// XXX: Internal reference will get fixed during 3.7, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=307026
+			openWithSubMenu.add(new OpenWithMenu(page, editorInput) {
+				protected void openEditor(IEditorDescriptor editorDescriptor, boolean openUsingDescriptor) {
+					super.openEditor(editorDescriptor, openUsingDescriptor);
+					ISelection selection= getSelectionProvider().getSelection();
+					if (selection instanceof ITextSelection) {
+						revealInEditor(page.getActiveEditor(), ((ITextSelection)selection).getOffset(), ((ITextSelection)selection).getLength());
+					}
+				}
+			});
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_OPEN, openWithSubMenu);
+		}
+
 		MenuManager showInSubMenu= new MenuManager(getShowInMenuLabel());
 		showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getEditorSite().getWorkbenchWindow()));
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_OPEN, showInSubMenu);
+	}
+
+	/**
+	 * Selects and reveals the given offset and length in the given editor part.
+	 * 
+	 * @param editor the editor part
+	 * @param offset the offset
+	 * @param length the length
+	 * @since 3.7
+	 */
+	private static void revealInEditor(IEditorPart editor, final int offset, final int length) {
+		if (editor instanceof ITextEditor) {
+			((ITextEditor)editor).selectAndReveal(offset, length);
+			return;
+		}
+
+		// Support for non-text editor - try IGotoMarker interface
+		final IGotoMarker gotoMarkerTarget;
+		if (editor instanceof IGotoMarker)
+			gotoMarkerTarget= (IGotoMarker)editor;
+		else
+			gotoMarkerTarget= editor != null ? (IGotoMarker)editor.getAdapter(IGotoMarker.class) : null;
+		if (gotoMarkerTarget != null) {
+			final IEditorInput input= editor.getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+					protected void execute(IProgressMonitor monitor) throws CoreException {
+						IMarker marker= null;
+						try {
+							marker= ((IFileEditorInput)input).getFile().createMarker(IMarker.TEXT);
+							marker.setAttribute(IMarker.CHAR_START, offset);
+							marker.setAttribute(IMarker.CHAR_END, offset + length);
+
+							gotoMarkerTarget.gotoMarker(marker);
+
+						} finally {
+							if (marker != null)
+								marker.delete();
+						}
+					}
+				};
+
+				try {
+					op.run(null);
+				} catch (InvocationTargetException ex) {
+					// reveal failed
+				} catch (InterruptedException e) {
+					Assert.isTrue(false, "this operation can not be canceled"); //$NON-NLS-1$
+				}
+			}
+			return;
+		}
 	}
 
 	/**
