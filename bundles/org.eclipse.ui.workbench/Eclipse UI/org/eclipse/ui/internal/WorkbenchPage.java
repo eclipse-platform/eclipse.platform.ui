@@ -188,23 +188,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			window.getContext().set(ISources.ACTIVE_PART_NAME, null);
 			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, null);
 			window.getContext().set(ISources.ACTIVE_SITE_NAME, null);
-
-			if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
-				application.getContext().set(ISources.ACTIVE_PART_NAME, null);
-				application.getContext().set(ISources.ACTIVE_PART_ID_NAME, null);
-				application.getContext().set(ISources.ACTIVE_SITE_NAME, null);
-			}
 		} else {
 			window.getContext().set(ISources.ACTIVE_PART_NAME, workbenchPart);
 			window.getContext().set(ISources.ACTIVE_PART_ID_NAME, workbenchPart.getSite().getId());
 			window.getContext().set(ISources.ACTIVE_SITE_NAME, workbenchPart.getSite());
-
-			if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
-				application.getContext().set(ISources.ACTIVE_PART_NAME, workbenchPart);
-				application.getContext().set(ISources.ACTIVE_PART_ID_NAME,
-						workbenchPart.getSite().getId());
-				application.getContext().set(ISources.ACTIVE_SITE_NAME, workbenchPart.getSite());
-			}
 		}
 
 	}
@@ -226,14 +213,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		window.getContext().set(ISources.ACTIVE_EDITOR_NAME, editor);
 		window.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
 				editor == null ? null : editor.getEditorInput());
-
-		if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
-			application.getContext().set(ISources.ACTIVE_EDITOR_ID_NAME,
-					editor == null ? null : editor.getSite().getId());
-			application.getContext().set(ISources.ACTIVE_EDITOR_NAME, editor);
-			application.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
-					editor == null ? null : editor.getEditorInput());
-		}
 	}
 
 	private void updateShowInSources(MPart part) {
@@ -242,11 +221,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (context != null) {
 			window.getContext().set(ISources.SHOW_IN_INPUT, context.getInput());
 			window.getContext().set(ISources.SHOW_IN_SELECTION, context.getSelection());
-
-			if (application.getContext().get(IContextConstants.ACTIVE_CHILD) == window.getContext()) {
-				application.getContext().set(ISources.SHOW_IN_INPUT, context.getInput());
-				application.getContext().set(ISources.SHOW_IN_SELECTION, context.getSelection());
-			}
 		}
 	}
 
