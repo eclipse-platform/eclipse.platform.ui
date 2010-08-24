@@ -548,7 +548,7 @@ public abstract class TeamAction extends AbstractHandler implements IObjectActio
     final public void runWithEvent(IAction action, Event event) {
         run(action);
     }
-    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
 	 */
@@ -564,12 +564,11 @@ public abstract class TeamAction extends AbstractHandler implements IObjectActio
 			}
 			IWorkbenchPart part = (IWorkbenchPart) HandlerUtil.getVariable(
 					evaluationContext, ISources.ACTIVE_PART_NAME);
-			updateSelection(activeWorkbenchWindow, part, selection);
+			updateSelection(part, selection);
 		}
 	}
-	
-	private void updateSelection(IWorkbenchWindow activeWorkbenchWindow,
-			IWorkbenchPart part, ISelection selection) {
+
+	private void updateSelection(IWorkbenchPart part, ISelection selection) {
 		// If the action is run from within an editor, try and find the
 		// file for the given editor.
 		setActivePart(null, part);
