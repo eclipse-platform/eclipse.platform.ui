@@ -967,10 +967,13 @@ public class FilteredResourcesSelectionDialog extends
 			
 			int lastPatternDot = filenamePattern.lastIndexOf('.');
 			if (lastPatternDot != -1) {
-				namePattern = new SearchPattern();
-				namePattern.setPattern(filenamePattern.substring(0, lastPatternDot));
-				extensionPattern = new SearchPattern();
-				extensionPattern.setPattern(filenamePattern.substring(lastPatternDot + 1));
+				char last = filenamePattern.charAt(filenamePattern.length() - 1);
+				if (last != ' ' && last != '<') {
+					namePattern = new SearchPattern();
+					namePattern.setPattern(filenamePattern.substring(0, lastPatternDot));
+					extensionPattern = new SearchPattern();
+					extensionPattern.setPattern(filenamePattern.substring(lastPatternDot + 1));
+				}
 			}
 
 		}
