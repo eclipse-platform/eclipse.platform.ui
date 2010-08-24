@@ -11,6 +11,7 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
@@ -208,6 +210,12 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private boolean fGiveFocusToFindField= true;
 
+	/**
+	 * Holds the mnemonic/button pairs for all buttons.
+	 * @since 3.7
+	 */
+	private HashMap fMnemonicButtonMap = new HashMap();
+
 
 	/**
 	 * Creates a new dialog with the given shell as parent.
@@ -315,7 +323,6 @@ class FindReplaceDialog extends Dialog {
 				fNeedsInitialFindBeforeReplace= false;
 				performSearch((e.stateMask == SWT.SHIFT) ^ isForwardSearch());
 				updateFindHistory();
-				fFindNextButton.setFocus();
 			}
 		});
 		setGridData(fFindNextButton, SWT.FILL, true, SWT.FILL, false);
@@ -327,7 +334,6 @@ class FindReplaceDialog extends Dialog {
 				if (performReplaceSelection())
 					performSearch((e.stateMask == SWT.SHIFT) ^ isForwardSearch());
 				updateFindAndReplaceHistory();
-				fReplaceFindButton.setFocus();
 			}
 		});
 		setGridData(fReplaceFindButton, SWT.FILL, false, SWT.FILL, false);
@@ -337,8 +343,8 @@ class FindReplaceDialog extends Dialog {
 				if (fNeedsInitialFindBeforeReplace)
 					performSearch();
 				performReplaceSelection();
+				updateButtonState();
 				updateFindAndReplaceHistory();
-				fFindNextButton.setFocus();
 			}
 		});
 		setGridData(fReplaceSelectionButton, SWT.FILL, false, SWT.FILL, false);
@@ -347,7 +353,6 @@ class FindReplaceDialog extends Dialog {
 			public void widgetSelected(SelectionEvent e) {
 				performReplaceAll();
 				updateFindAndReplaceHistory();
-				fFindNextButton.setFocus();
 			}
 		});
 		setGridData(fReplaceAllButton, SWT.FILL, true, SWT.FILL, false);
@@ -417,6 +422,18 @@ class FindReplaceDialog extends Dialog {
 					event.stateMask= e.stateMask;
 					fFindNextButton.notifyListeners(SWT.Selection, event);
 					e.doit= false;
+				}
+				else if (e.detail == SWT.TRAVERSE_MNEMONIC) {
+					Character mnemonic= new Character(Character.toLowerCase(e.character));
+					if (fMnemonicButtonMap.containsKey(mnemonic)) {
+						Button button= (Button)fMnemonicButtonMap.get(mnemonic);
+						Event event= new Event();
+						event.type= SWT.Selection;
+						event.stateMask= e.stateMask;
+						button.notifyListeners(SWT.Selection, event);
+						e.detail= SWT.TRAVERSE_NONE;
+						e.doit= true;
+					}
 				}
 			}
 		});
@@ -1201,9 +1218,13 @@ class FindReplaceDialog extends Dialog {
 	 * @return the new button
 	 */
 	private Button makeButton(Composite parent, String label, int id, boolean dfltButton, SelectionListener listener) {
-		Button b= createButton(parent, id, label, dfltButton);
-		b.addSelectionListener(listener);
-		return b;
+		Button button= createButton(parent, id, label, dfltButton);
+		button.addSelectionListener(listener);
+		char mnemonic= LegacyActionTools.extractMnemonic(button.getText());
+		if (mnemonic != LegacyActionTools.MNEMONIC_NONE) {
+			fMnemonicButtonMap.put(new Character(Character.toLowerCase(mnemonic)), button);
+		}
+		return button;
 	}
 
 	/**
@@ -1355,7 +1376,6 @@ class FindReplaceDialog extends Dialog {
 			replaced= false;
 		}
 
-		updateButtonState();
 		return replaced;
 	}
 
@@ -1368,7 +1388,7 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Locates the user's findString in the text of the target.
-	 * 
+	 *
 	 * @param forwardSearch <code>true</code> if searching forwards, <code>false</code> otherwise
 	 * @since 3.7
 	 */
