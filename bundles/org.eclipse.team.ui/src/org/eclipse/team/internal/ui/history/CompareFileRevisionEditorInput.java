@@ -159,14 +159,33 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		if (getLeftRevision() != null) {
 			String leftLabel = getFileRevisionLabel(getLeftRevision());
 			cc.setLeftLabel(leftLabel);
+		} else if (left instanceof LocalResourceTypedElement) {
+			String name= TextProcessor.process(input.getLeft().getName());
+			String leftLabel= getLocalResourceRevisionLabel((LocalResourceTypedElement)left, name);
+			cc.setLeftLabel(leftLabel);
 		} else if (getResource(input) != null) {
-			String label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ TextProcessor.process(input.getLeft().getName())});
-			cc.setLeftLabel(label);
+			String leftLabel= NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[] { TextProcessor.process(input.getLeft().getName()) });
+			cc.setLeftLabel(leftLabel);
 		}
 		if (getRightRevision() != null) {
 			String rightLabel = getFileRevisionLabel(getRightRevision());
 			cc.setRightLabel(rightLabel);
 		}
+	}
+
+	private String getLocalResourceRevisionLabel(LocalResourceTypedElement localElement, String name) {
+		String author= localElement.getAuthor();
+		if (author == null) {
+			try {
+				localElement.fetchAuthor(null);
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+			author= localElement.getAuthor();
+		}
+		if (author != null)
+			return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace_authorExists, new Object[] { name, author });
+		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[] { name });
 	}
 
 	private String getFileRevisionLabel(FileRevisionTypedElement element) {
