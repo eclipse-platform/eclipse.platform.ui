@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,14 @@ public class WordComparison {
 	// These helper methods facilitate writing the OLE apps
 	private static Variant invoke(OleAutomation auto, String command) {
 		return auto.invoke(property(auto, command), new Variant[0]);
+	}
+
+	private static Variant invoke(OleAutomation auto, OleAutomation reference, String command) {
+		return auto.invoke(property(auto, reference, command), new Variant[0]);
+	}
+
+	private static Variant invoke(OleAutomation auto, OleAutomation reference, String command, String value) {
+		return auto.invoke(property(auto, reference, command), new Variant[] { new Variant(value) });
 	}
 
 	private static Variant invoke(OleAutomation auto, String command, int value) {
@@ -104,6 +112,36 @@ public class WordComparison {
 		throw new SWTException(NLS.bind(CompareWin32Messages.WordComparison_3, command, value));
 	}
 
+
+	/**
+	 * <p>This methods workarounds the feature in doc documents. Some properties are not accessible
+	 * using names when a diff document is created. The workaround is to obtain the id of the
+	 * method from an original document and use it in the newly created one.</p>
+	 *
+	 * <p>An exception is thrown if the id cannot be retrieved</p>
+	 *
+	 * Reference information for id assignment: <a href="
+	 * http://msdn.microsoft.com/en-us/library/w7a36sdf%28VS.80%29.aspx">http://msdn.microsoft.com/en-us/library/w7a36sdf%28VS.80%29.aspx</a>
+	 *
+	 * @param auto - object from which we want to get the property, must not be <code>null</code>
+	 * @param reference - an reference object from which the property will be obtained.
+	 * @param name - the name of the property, must not be <code>null</code>
+	 */
+	private static int property(OleAutomation auto, OleAutomation reference, String name) {
+		int[] ids = auto.getIDsOfNames(new String[] { name });
+		if (ids != null) {
+			return ids[0];
+		}
+		if(reference == null) throw new SWTException(NLS.bind(CompareWin32Messages.WordComparison_4, name)) ;
+
+		// the property was not retrieved at that point, try to get it from the reference object
+		ids = reference.getIDsOfNames(new String[] { name });
+		if (ids == null) {
+			throw new SWTException(NLS.bind(CompareWin32Messages.WordComparison_4, name));
+		}
+		return ids[0];
+	}
+
 	private static int property(OleAutomation auto, String name) {
 		int[] ids = auto.getIDsOfNames(new String[] { name });
 		if (ids == null) throw new SWTException(NLS.bind(CompareWin32Messages.WordComparison_4, name));
@@ -154,13 +192,13 @@ public class WordComparison {
 				compareDocument(document, baseDocument, revisedDocument);
 				OleAutomation activeDocument = getActiveDocument(application);
 				try {
-					Variant varResult = invoke(activeDocument, "SaveAs", workingCopy); //$NON-NLS-1$
+					Variant varResult = invoke(activeDocument, document, "SaveAs", workingCopy); //$NON-NLS-1$
 					if (varResult == null)
 						throw new SWTException(NLS.bind(CompareWin32Messages.WordComparison_6, workingCopy));
 					varResult.dispose();
 				} finally {
 					try {
-						closeDocument(activeDocument);
+						closeDocument(activeDocument, document);
 					} catch (SWTException e) {
 						// We don't want to throw the exception as we may mask another exception
 						Activator.log(e);
@@ -170,7 +208,7 @@ public class WordComparison {
 				}
 			} finally {
 				try {
-					closeDocument(document);
+					closeDocument(document, null);
 				} catch (SWTException e) {
 					// We don't want to throw the exception as we may mask another exception
 					Activator.log(e);
@@ -183,9 +221,9 @@ public class WordComparison {
 		}
 	}
 	
-	private void closeDocument(OleAutomation document) {
+	private void closeDocument(OleAutomation document, OleAutomation reference) {
 		// Close the first document: destination.Close()
-		Variant varResult = invoke(document, "Close"); //$NON-NLS-1$
+		Variant varResult = invoke(document, reference, "Close"); //$NON-NLS-1$
 		if (varResult != null) {
 			varResult.dispose();
 		}
@@ -273,7 +311,7 @@ public class WordComparison {
 	private void disposeSite() {
 		if (document != null) {
 			try {
-				closeDocument(document);
+				closeDocument(document, null);
 			} catch (SWTException e) {
 				Activator.log(e);
 			}

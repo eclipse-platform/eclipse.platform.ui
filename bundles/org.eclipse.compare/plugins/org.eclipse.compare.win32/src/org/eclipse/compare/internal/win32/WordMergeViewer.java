@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -305,8 +305,16 @@ public class WordMergeViewer extends AbstractMergeViewer implements IFlushable, 
 		try {
 			if (isOneSided()) {
 				File file = getFileForSingleSide();
-				if (file != null)
-					wordArea.openDocument(file.getAbsolutePath(), inplace);
+				if (file != null) {
+					try {
+						wordArea.openDocument(file.getAbsolutePath(), inplace);
+					} catch (SWTException e) {
+						throw new CoreException(new Status(IStatus.ERROR,
+								Activator.PLUGIN_ID, NLS.bind(
+										CompareWin32Messages.WordComparison_16,
+										file.getAbsolutePath()), e));
+					}
+				}
 			} else {
 				File left = getFileForLeft();
 				File right = getFileForRight();
@@ -327,7 +335,14 @@ public class WordMergeViewer extends AbstractMergeViewer implements IFlushable, 
 							resultFileTimestamp = result.lastModified();
 							description.setText(getTextDescription());
 						}
-						wordArea.openDocument(result.getAbsolutePath(), inplace);
+						try {
+							wordArea.openDocument(result.getAbsolutePath(), inplace);
+						} catch (SWTException e) {
+							throw new CoreException(new Status(IStatus.ERROR,
+									Activator.PLUGIN_ID, NLS.bind(
+											CompareWin32Messages.WordComparison_16,
+											result.getAbsolutePath()), e));
+						}
 					}
 				}
 			}
