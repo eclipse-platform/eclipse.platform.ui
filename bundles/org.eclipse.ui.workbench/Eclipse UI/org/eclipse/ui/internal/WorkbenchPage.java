@@ -21,12 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -353,42 +353,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private IWorkingSet[] workingSets = new IWorkingSet[0];
 	private String aggregateWorkingSetId;
 
-	@Inject
 	private EPartService partService;
 
-	@Inject
 	private MApplication application;
 
-	@Inject
 	private MWindow window;
 
-	@Inject
 	private EModelService modelService;
 
-	@Inject
 	private IEventBroker broker;
-
-
-    /**
-	 * Constructs a new page with a given perspective and input.
-	 * 
-	 * @param w
-	 *            the parent window
-	 * @param layoutID
-	 *            must not be <code>null</code>
-	 * @param input
-	 *            the page input
-	 * @throws WorkbenchException
-	 *             on null layout id
-	 */
-    public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input)
-            throws WorkbenchException {
-        super();
-        if (layoutID == null) {
-			throw new WorkbenchException(WorkbenchMessages.WorkbenchPage_UndefinedPerspective);
-		}
-        init(w, layoutID, input, true);
-    }
 
     /**
      * Constructs a page. <code>restoreState(IMemento)</code> should be
@@ -1137,6 +1110,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		viewReferences.clear();
 		editorReferences.clear();
+
+		if (unsetPage) {
+			ContextInjectionFactory.uninject(this, window.getContext());
+		}
 		return true;
 	}
 
@@ -1794,7 +1771,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	@PostConstruct
-	public void setup() {
+	public void setup(MApplication application, EModelService modelService, IEventBroker broker,
+			MWindow window, EPartService partService) {
+		this.application = application;
+		this.modelService = modelService;
+		this.broker = broker;
+		this.window = window;
+		this.partService = partService;
+
 		partService.addPartListener(e4PartListener);
 
 		Collection<MPart> parts = partService.getParts();
