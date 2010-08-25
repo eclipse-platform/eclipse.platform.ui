@@ -10,14 +10,26 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import org.eclipse.compare.internal.ICompareContextIds;
-import org.eclipse.compare.internal.Utilities;
+import com.ibm.icu.text.MessageFormat;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -28,21 +40,14 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.compare.internal.ICompareContextIds;
+import org.eclipse.compare.internal.Utilities;
 
 /***
  * This page only shows up if the user is trying to apply
@@ -123,7 +128,7 @@ public class PatchTargetPage extends WizardPage {
 
 		// if selected target is file ensure that patch file
 		// contains only a patch for a single file
-		if (fPatcher.getTarget() instanceof IFile && fPatcher.getDiffs().length > 1) {
+		if (!fPatcher.isWorkspacePatch() && fPatcher.getTarget() instanceof IFile && fPatcher.getDiffs().length > 1) {
 			InputPatchPage inputPage = (InputPatchPage) getWizard().getPage(InputPatchPage.INPUTPATCHPAGE_NAME);
 			String source = ""; //$NON-NLS-1$
 			switch (inputPage.getInputMethod()) {
