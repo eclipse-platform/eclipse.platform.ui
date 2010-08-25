@@ -13,6 +13,7 @@
 <% 
 	RequestData requestData = new RequestData(application,request, response);
 	WebappPreferences prefs = requestData.getPrefs();
+	SearchData searchData = new SearchData(application,request, response);
 %>
 
 <html lang="<%=ServletResources.getString("locale", request)%>">
@@ -130,6 +131,16 @@ if (requestData.isIE()){
 
 </head>
 <body dir="<%=direction%>" onload="onloadHandler()" onunload="onunloadHandler()">
+<%
+    if (searchData.isScopeActive()) {
+%>
+<p>
+<%= searchData.getScopeActiveMessage() %>
+</p>
+<%
+    }
+%>
+
   <DIV class = "group" id = "wai_application">
     <DIV class = "root" id = "tree_root">
     </DIV>

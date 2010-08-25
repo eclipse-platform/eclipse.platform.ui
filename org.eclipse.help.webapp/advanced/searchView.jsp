@@ -122,10 +122,18 @@ setTimeout('refresh()', 2000);
 <%
 	return;
 } else if (data.getResultsCount() == 0){
-	out.write(ServletResources.getString("Nothing_found", request));
+	out.write(data.getNotFoundMessage());    
 } else {
 %>
-
+<%
+    if (data.isScopeActive()) {
+%>
+<p>
+<%= data.getScopeActiveMessage() %>
+</p>
+<%
+    }
+%>
 <table class="results" cellspacing='0'>
 
 <%

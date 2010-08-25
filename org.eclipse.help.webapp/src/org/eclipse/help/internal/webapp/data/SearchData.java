@@ -45,6 +45,7 @@ import org.eclipse.help.internal.workingset.AdaptableTopic;
 import org.eclipse.help.internal.workingset.WorkingSet;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.search.ISearchEngineResult2;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Helper class for searchView.jsp initialization
@@ -536,6 +537,24 @@ public class SearchData extends ActivitiesData {
 			return null;
 		}
 		return ServletResources.getString("searchTooComplex", request); //$NON-NLS-1$
+	}
+	
+	public boolean isScopeActive() {
+		return ! getScope().equals(ServletResources.getString("All", request)); //$NON-NLS-1$		
+	}
+
+	public String getNotFoundMessage() {
+	    String scope = getScope(); 
+	    if (scope.equals(ServletResources.getString("All", request))) { //$NON-NLS-1$
+		    return ServletResources.getString("Nothing_found", request); //$NON-NLS-1$
+		} else {
+		    return NLS.bind(ServletResources.getString("Nothing_found_in_scope", request), scope); //$NON-NLS-1$
+		}
+	}
+	
+	public String getScopeActiveMessage() {
+	    String scope = getScope(); 
+		return NLS.bind(ServletResources.getString("activeScope", request), scope); //$NON-NLS-1$
 	}
 
 	/*

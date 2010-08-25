@@ -17,12 +17,15 @@
 
 <%
     RequestData requestData = new ActivitiesData(application,request, response);
+    SearchData searchData = new SearchData(application,request, response);
 	WebappPreferences prefs = requestData.getPrefs();
 %>
 
 <html lang="<%=ServletResources.getString("locale", request)%>">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
 
 <title><%=ServletResources.getString("IndexViewTitle", request)%></title>
 
@@ -60,6 +63,18 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 
 <table id="typeinTable">
 <%if (prefs.isIndexInstruction()) {%>
+<%
+    if (searchData.isScopeActive()) {
+%>
+
+<p>
+<tr>
+		<td colspan="2">
+<%= searchData.getScopeActiveMessage() %>
+</p></td></tr>
+<%
+    }
+%>
 	<tr>
 		<td colspan="2"><p id="instruction"><%=ServletResources.getString("IndexTypeinInstructions", request)%></p></td>
 	</tr>
@@ -72,6 +87,7 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 	</tr>
 </table>
 <div id = "indexList">
+
 <DIV class = "group" id = "wai_application">
     <DIV class = "root" id = "tree_root">
     </DIV>

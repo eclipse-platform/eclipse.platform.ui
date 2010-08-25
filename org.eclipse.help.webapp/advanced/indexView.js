@@ -331,6 +331,10 @@ function handleSee(target) {
     typeinChanged();
 }
 
+function repaint() {
+    var href = "indexView.jsp";
+    location.replace(href);
+}
 
 /**
   * Select the corresponding item in the index list on typein value change.
