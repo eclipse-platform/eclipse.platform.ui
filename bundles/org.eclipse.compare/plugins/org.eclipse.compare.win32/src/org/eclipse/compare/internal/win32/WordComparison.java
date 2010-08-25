@@ -154,9 +154,13 @@ public class WordComparison {
 
 	/**
 	 * Open the file at the given path as a document in Word.
-	 * @param filePath the path of the file containing the document
-	 * @param inplace whether Word is to be opened in-place or in a separate window
-	 * @throws SWTException if the document could not be opened for some reason
+	 * 
+	 * @param filePath
+	 *            the path of the file containing the document
+	 * @param inplace
+	 *            whether Word is to be opened in-place or in a separate window
+	 * @throws SWTException
+	 *             if the document could not be opened for some reason
 	 */
 	public void openDocument(String filePath, boolean inplace) throws SWTException {
 		resetSite(inplace ? filePath : null);
@@ -175,12 +179,18 @@ public class WordComparison {
 	}
 
 	/**
-	 * Compares the base document with the revised document and saves the comparison in the
-	 * working copy which can then be opened using openDocument.
-	 * @param baseDocument the base document
-	 * @param revisedDocument the revised document
-	 * @param workingCopy the working copy (will be overwritten)
-	 * @throws SWTException if an SWT error occurs
+	 * Compares the base document with the revised document and saves the
+	 * comparison in the working copy which can then be opened using
+	 * openDocument.
+	 * 
+	 * @param baseDocument
+	 *            the base document
+	 * @param revisedDocument
+	 *            the revised document
+	 * @param workingCopy
+	 *            the working copy (will be overwritten)
+	 * @throws SWTException
+	 *             if an SWT error occurs
 	 */
 	public void createWorkingCopy(String baseDocument, String revisedDocument, String workingCopy) throws SWTException {
 		resetSite(null);
@@ -197,35 +207,42 @@ public class WordComparison {
 						throw new SWTException(NLS.bind(CompareWin32Messages.WordComparison_6, workingCopy));
 					varResult.dispose();
 				} finally {
-					try {
-						closeDocument(activeDocument, document);
-					} catch (SWTException e) {
-						// We don't want to throw the exception as we may mask another exception
-						Activator.log(e);
-					} finally {
-						activeDocument.dispose();
-					}
+					closeDocument(activeDocument, document);
 				}
 			} finally {
-				try {
-					closeDocument(document, null);
-				} catch (SWTException e) {
-					// We don't want to throw the exception as we may mask another exception
-					Activator.log(e);
-				} finally {
-					document.dispose();
-				}
+				closeDocument(document, null);
 			}
 		} finally {
-			application.dispose();
+			try {
+				//Quit application without saving any changes
+				int [] ids = application.getIDsOfNames(new String [] {"Quit", "SaveChanges"});
+				final Variant wdDoNotSaveChanges = new Variant(0);
+				Variant varResult = application.invoke(ids[0], new Variant[]{ wdDoNotSaveChanges }, new int[] {ids[1]});
+				if (varResult != null) {
+					varResult.dispose();
+				}
+			} catch (SWTException e) {
+				// We don't want to throw the exception as we may mask another exception
+				Activator.log(e);
+			} finally {
+				application.dispose();
+			}
 		}
 	}
 	
 	private void closeDocument(OleAutomation document, OleAutomation reference) {
 		// Close the first document: destination.Close()
-		Variant varResult = invoke(document, reference, "Close"); //$NON-NLS-1$
-		if (varResult != null) {
-			varResult.dispose();
+		try {
+			Variant varResult = invoke(document, reference, "Close"); //$NON-NLS-1$
+			if (varResult != null) {
+				varResult.dispose();
+			}
+		} catch (SWTException e) {
+			// We don't want to throw the exception as we may mask another
+			// exception
+			Activator.log(e);
+		} finally {
+			document.dispose();
 		}
 	}
 
@@ -310,12 +327,7 @@ public class WordComparison {
 
 	private void disposeSite() {
 		if (document != null) {
-			try {
-				closeDocument(document, null);
-			} catch (SWTException e) {
-				Activator.log(e);
-			}
-			document.dispose();
+			closeDocument(document, null);
 			document = null;
 			OleAutomation application = createApplication();
 			try {
