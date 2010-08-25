@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -224,7 +224,7 @@ public class ExternalToolsCoreUtil {
 		}
 		if (scope.startsWith("${projects:")) { //$NON-NLS-1$
 			String pathString = scope.substring(11, scope.length() - 1);
-			if (pathString.length() > 1) {
+			if (pathString.length() > 0) {
 				String[] names = pathString.split(","); //$NON-NLS-1$
 				IProject[] projects = new IProject[names.length];
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
