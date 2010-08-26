@@ -40,6 +40,7 @@ public class AllSearchTests extends TestSuite {
 		addTest(MetaKeywords.suite());
 		addTest(SearchParticipantTest.suite());
 		addTest(SearchParticipantXMLTest.suite());
+		addTest(SearchRanking.suite());
 		addTest(LuceneParticipantTest.suite());
 		addTest(LuceneXMLParticipantTest.suite());
 		addTestSuite(WorkingSetManagerTest.class);
