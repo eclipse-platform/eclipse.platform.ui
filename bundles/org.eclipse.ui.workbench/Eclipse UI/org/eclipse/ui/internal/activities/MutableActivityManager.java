@@ -46,6 +46,7 @@ import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.ITriggerPointAdvisor;
 import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
@@ -58,6 +59,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public final class MutableActivityManager extends AbstractActivityManager
         implements IMutableActivityManager, Cloneable {
+	private static final boolean DEBUG = Policy.DEBUG_UI_GLOBAL;
 
 	private static final int MAX_ERRORS = 5;
 	private static int reportErrors = 0;
@@ -982,6 +984,9 @@ public final class MutableActivityManager extends AbstractActivityManager
 	private static final String ERR_MSG = "Invalid Thread Access to Activity Manager"; //$NON-NLS-1$
 
 	private void checkThread() {
+		if (!DEBUG) {
+			return;
+		}
 		if (reportErrors >= MAX_ERRORS) {
 			return;
 		}
