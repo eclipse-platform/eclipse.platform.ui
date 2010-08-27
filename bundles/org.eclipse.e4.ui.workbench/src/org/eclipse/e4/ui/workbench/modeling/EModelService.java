@@ -194,13 +194,84 @@ public interface EModelService {
 	public void detach(MPartSashContainerElement mPartSashContainerElement, int x, int y,
 			int width, int height);
 
+	/**
+	 * Get the top-level window containing this UI element. A <code>null</code> return value
+	 * indicates that the element is not directly contained in the UI model (but may, for example,
+	 * be a model snippet hosted in a Dialog...)
+	 * 
+	 * @param element
+	 *            The element to get the window for
+	 * 
+	 * @return the top-level window containing this UI element. A <code>null</code> return value
+	 *         indicates that the element is not directly contained in the UI model (but may, for
+	 *         example, be a model snippet hosted in a Dialog...)
+	 */
 	public MWindow getTopLevelWindowFor(MUIElement element);
 
+	/**
+	 * @param element
+	 *            The element to get the perspective for
+	 * @return The MPerspective containing this element or <code>null</code> if the element is not
+	 *         in a perspective
+	 */
 	public MPerspective getPerspectiveFor(MUIElement element);
 
+	/**
+	 * Returns the window's MTrimBar for the specified side. If necessary the bar will be created.
+	 * 
+	 * @param window
+	 *            The window to get the trim bar for
+	 * @param sv
+	 *            The value for the specified side
+	 * 
+	 * @return The appropriate trim bar
+	 */
 	public MTrimBar getTrim(MTrimmedWindow window, SideValue sv);
 
+	/**
+	 * Return the active perspective for the given window. This is a convenience method that just
+	 * returns the MPerspectiveStack's selectedElement.
+	 * 
+	 * @param window
+	 *            The window to determine the active perspective for.
+	 * 
+	 * @return The active perspective or <code>null</code> if there is no MPerspectiveStack, it's
+	 *         empty or has no selected element.
+	 */
 	public MPerspective getActivePerspective(MWindow window);
 
+	/**
+	 * This is a convenience method that will clean the model of all traces of a given perspective.
+	 * There may be elements (i.e. minimized stacks...) in the window's trim that are associated
+	 * with a perspective as well as the need to properly clean up any detached windows associated
+	 * with the perspective.
+	 * 
+	 * @param persp
+	 *            the perspective to remove
+	 * @param window
+	 *            the window to remove it from
+	 */
 	public void removePerspectiveModel(MPerspective persp, MWindow window);
+
+	/**
+	 * Count the number of 'toBeRendered' children
+	 * 
+	 * @param container
+	 *            The container to check
+	 * @return The number of children whose toBeRendered flag is <code>true</code>
+	 * 
+	 */
+	public int toBeRenderedCount(MElementContainer<?> container);
+
+	/**
+	 * Get the container of the given element. This is a convenience method that will always return
+	 * the actual container for the element, even where the element's 'getParent' might return null
+	 * (trim, detached windows...)
+	 * 
+	 * @param element
+	 *            The element to get the container for
+	 * @return The element's container. This may be <code>null</code> if the element being checked
+	 *         is a snippet unattached to the UI Model itself.
+	 */
+	public MUIElement getContainer(MUIElement element);
 }

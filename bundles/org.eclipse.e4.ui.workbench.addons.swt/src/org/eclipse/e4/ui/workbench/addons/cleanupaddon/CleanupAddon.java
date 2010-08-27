@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -73,14 +74,8 @@ public class CleanupAddon {
 					Display.getCurrent().asyncExec(new Runnable() {
 						public void run() {
 							// Remove it from the display if no visible children
-							boolean hide = true;
-							for (MUIElement child : container.getChildren()) {
-								if (child.isToBeRendered()) {
-									hide = false;
-									break;
-								}
-							}
-							if (hide && !isLastEditorStack(container)) {
+							int tbrCount = modelService.toBeRenderedCount(container);
+							if (tbrCount == 0 && !isLastEditorStack(container)) {
 								container.setToBeRendered(false);
 							}
 
@@ -99,6 +94,21 @@ public class CleanupAddon {
 									} else if (eParent instanceof MWindow) {
 										((MWindow) eParent).getWindows().remove(container);
 									}
+								}
+							} else if (container.getChildren().size() == 1
+									&& container instanceof MPartSashContainer) {
+								// if a sash container has only one element then remove it and move
+								// its child up to where it used to be
+								MUIElement theChild = container.getChildren().get(0);
+								MElementContainer<MUIElement> parentContainer = container
+										.getParent();
+								if (parentContainer != null) {
+									int index = parentContainer.getChildren().indexOf(container);
+									theChild.setContainerData(container.getContainerData());
+									container.setToBeRendered(false);
+									parentContainer.getChildren().remove(container);
+									container.getChildren().remove(theChild);
+									parentContainer.getChildren().add(index, theChild);
 								}
 							}
 						}

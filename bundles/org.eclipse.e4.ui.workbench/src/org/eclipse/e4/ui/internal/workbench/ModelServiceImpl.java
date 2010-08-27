@@ -643,4 +643,34 @@ public class ModelServiceImpl implements EModelService {
 
 		return null;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#toBeRenderedCount(org.eclipse.e4.ui.model
+	 * .application.ui.MElementContainer)
+	 */
+	public int toBeRenderedCount(MElementContainer<?> container) {
+		int count = 0;
+		for (MUIElement child : container.getChildren()) {
+			if (child.isToBeRendered()) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#getContainer(org.eclipse.e4.ui.model.
+	 * application.ui.MUIElement)
+	 */
+	public MUIElement getContainer(MUIElement element) {
+		if (element == null)
+			return null;
+
+		return (MUIElement) ((EObject) element).eContainer();
+	}
 }
