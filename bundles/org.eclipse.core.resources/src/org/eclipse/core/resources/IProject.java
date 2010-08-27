@@ -189,8 +189,8 @@ public interface IProject extends IContainer, IAdaptable {
 	 * contain a project description file, a project description file is written
 	 * in the project content area with the natures, build spec, comment, and 
 	 * referenced projects as specified in the given project description.
-	 * If there is an existing project description file, it is not overwritten.  In either
-	 * case, this method does not cause natures to be configured.
+	 * If there is an existing project description file, it is not overwritten.
+	 * In either case, this method does <b>not</b> cause natures to be configured.
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
@@ -287,8 +287,8 @@ public interface IProject extends IContainer, IAdaptable {
 	 * contain a project description file, a project description file is written
 	 * in the project content area with the natures, build spec, comment, and 
 	 * referenced projects as specified in the given project description.
-	 * If there is an existing project description file, it is not overwritten.  In either
-	 * case, this method does not cause natures to be configured.
+	 * If there is an existing project description file, it is not overwritten.
+	 * In either case, this method does <b>not</b> cause natures to be configured.
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
