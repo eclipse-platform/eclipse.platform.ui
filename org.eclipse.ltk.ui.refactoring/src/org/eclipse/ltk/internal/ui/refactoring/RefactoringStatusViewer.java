@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.ltk.internal.ui.refactoring;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -46,6 +44,7 @@ import org.eclipse.compare.CompareUI;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
+import org.eclipse.ltk.internal.ui.refactoring.util.SWTUtil;
 import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 import org.eclipse.ltk.ui.refactoring.IStatusContextViewer;
 
@@ -237,11 +236,7 @@ public class RefactoringStatusViewer extends SashForm {
 		TableColumn tc= new TableColumn(tableControl, SWT.NONE);
 		tc.setResizable(false);
 
-		tableControl.getAccessible().addAccessibleListener(new AccessibleAdapter() {
-			public void getName(AccessibleEvent e) {
-				e.result= RefactoringUIMessages.RefactoringStatusViewer_Found_problems;
-			}
-		});
+		SWTUtil.setAccessibilityText(tableControl, RefactoringUIMessages.RefactoringStatusViewer_Found_problems);
 	}
 
 	//---- Feed status entry into context viewer ---------------------------------------------------------
