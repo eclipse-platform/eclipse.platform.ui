@@ -256,8 +256,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				// Reparent the existing Toolbar
 				MPart part = (MPart) ref;
 				CTabFolder ctf = (CTabFolder) ph.getParent().getWidget();
-				IPresentationEngine renderer = part.getContext().get(
-						IPresentationEngine.class);
+				IPresentationEngine renderer = modelService
+						.getContainingContext(ph)
+						.get(IPresentationEngine.class);
 
 				// Dispose the existing toolbar
 				if (ctf.getTopRight() != null) {

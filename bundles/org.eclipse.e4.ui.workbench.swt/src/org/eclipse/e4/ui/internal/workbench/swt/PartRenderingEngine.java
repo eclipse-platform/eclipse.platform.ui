@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -48,10 +49,8 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
@@ -60,6 +59,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -125,7 +125,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				Activator
 						.trace(Policy.DEBUG_RENDERER, "visible -> false", null); //$NON-NLS-1$
 
-				// Note that the 'createGui' protocol calls 'childRemoved'
+				// Note that the 'removeGui' protocol calls 'childRemoved'
 				removeGui(changedElement);
 			}
 
@@ -235,6 +235,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 	protected Logger logger;
 
 	private Shell limbo;
+
+	private List<MUIElement> renderedElements = new ArrayList<MUIElement>();
+
+	private MUIElement removeRoot = null;
 
 	@Inject
 	public PartRenderingEngine(
@@ -358,6 +362,19 @@ public class PartRenderingEngine implements IPresentationEngine {
 			IEclipseContext parentContext) {
 		if (!element.isToBeRendered())
 			return null;
+
+		if (!renderedElements.contains(element))
+			renderedElements.add(element);
+
+		// If the child to be rendered inside an element being removed ignore it
+		if (removeRoot != null) {
+			EObject container = ((EObject) element).eContainer();
+			while (container != null && container != removeRoot)
+				container = container.eContainer();
+			if (container != null) {
+				return null;
+			}
+		}
 
 		if (element.getWidget() != null) {
 			if (element.getWidget() instanceof Control
@@ -493,23 +510,20 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * @param element
 	 */
 	public void removeGui(MUIElement element) {
-		// First, ensure that widgets referenced from a placeholder don't get
-		// either their widgets or context disposed
-		final MWindow win = modelService.getTopLevelWindowFor(element);
+		// If the element hasn't been rendered then this is a NO-OP
+		if (element.getRenderer() == null)
+			return;
 
-		if (win != null) {
-			if (win != element) {
-				// make sure no shared elements get destroyed
-				unhookReferences(element, win.getContext());
-			} else {
-				// Make sure *all* sheared elements get destroyed
-				List<MUIElement> seList = win.getSharedElements();
-				for (MUIElement se : seList) {
-					if (se.getWidget() instanceof Control) {
-						Control ctrl = (Control) se.getWidget();
-						ctrl.dispose();
-					}
-				}
+		if (removeRoot == null)
+			removeRoot = element;
+
+		renderedElements.remove(element);
+		AbstractPartRenderer renderer = getRendererFor(element);
+
+		if (element instanceof MElementContainer<?>) {
+			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
+			for (MUIElement child : container.getChildren()) {
+				removeGui(child);
 			}
 		}
 
@@ -520,23 +534,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 			parentRenderer.hideChild(element.getParent(), element);
 		}
 
-		AbstractPartRenderer renderer = getRendererFor(element);
-		if (renderer != null) {
-			renderer.disposeWidget(element);
-		}
+		renderer.disposeWidget(element);
 
 		// unset the client object
 		if (element instanceof MContribution) {
-			// if this element is *not* an MContext itself then
-			// we need to explicitly un-inject it. If it *is*
-			// an MContext then the code below will un-inject
-			// when the context is disposed.
-			// if (!(element instanceof MContext)) {
-			// IEclipseContext parentContext = modelService
-			// .getContainingContext(element);
-			// ContextInjectionFactory.uninject(
-			// ((MContribution) element).getObject(), parentContext);
-			// }
+			IEclipseContext parentContext = renderer.getContext(element);
+			ContextInjectionFactory.uninject(
+					((MContribution) element).getObject(), parentContext);
 			((MContribution) element).setObject(null);
 		}
 
@@ -544,49 +548,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (element instanceof MContext) {
 			clearContext((MContext) element);
 		}
-	}
 
-	private void unhookReferences(MUIElement element, IEclipseContext newContext) {
-		List<MPlaceholder> phList = modelService.findElements(element, null,
-				MPlaceholder.class, null);
-		for (MPlaceholder ph : phList) {
-			MUIElement ref = ph.getRef();
-			if (ref.getCurSharedRef() == ph) {
-				if (ref.getWidget() instanceof Control) {
-					Control refCtrl = (Control) ref.getWidget();
-					if (!refCtrl.isDisposed())
-						refCtrl.setParent(getLimboShell());
-				}
-
-				if (ref instanceof MPart) {
-					MToolBar tbME = ((MPart) ref).getToolbar();
-					if (tbME != null && tbME.getWidget() instanceof Control) {
-						Control tbCtrl = (Control) tbME.getWidget();
-						if (!tbCtrl.isDisposed())
-							tbCtrl.setParent(getLimboShell());
-					}
-				}
-
-				List<MContext> containedContexts = modelService.findElements(
-						ref, null, MContext.class, null);
-				for (MContext ctxt : containedContexts) {
-					IEclipseContext lclContext = ctxt.getContext();
-					if (lclContext != null) {
-						IEclipseContext parentContext = lclContext.getParent();
-						Object child = parentContext
-								.get(IContextConstants.ACTIVE_CHILD);
-						if (child == lclContext) {
-							parentContext.set(IContextConstants.ACTIVE_CHILD,
-									null);
-						}
-
-						// Move the context under its window for now
-						lclContext.setParent(newContext);
-					}
-				}
-				ref.setCurSharedRef(null);
-			}
-		}
+		if (removeRoot == element)
+			removeRoot = null;
 	}
 
 	private void clearContext(MContext contextME) {

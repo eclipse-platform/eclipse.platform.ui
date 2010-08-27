@@ -63,7 +63,7 @@ public class PageBook extends Composite {
         }
 
         protected void layout(Composite composite, boolean flushCache) {
-            if (currentPage != null) {
+			if (currentPage != null && !currentPage.isDisposed()) {
                 currentPage.setBounds(composite.getClientArea());
             }
         }
