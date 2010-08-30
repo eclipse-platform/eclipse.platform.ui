@@ -11,9 +11,9 @@
 package org.eclipse.help.internal.search.federated;
 
 import java.util.ArrayList;
-
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.workingset.WorkingSet;
@@ -63,6 +63,12 @@ public class LocalHelp implements ISearchEngine2 {
 					HelpBaseResources.HelpSearch_QueryTooComplex, results.getException()));
 		}
 		SearchHit[] searchHits = results.getSearchHits();
+		if (HelpPlugin.DEBUG_SEARCH) {
+			for (int i = 0 ; i < 10 && i < searchHits.length; i++) {
+				System.out.println("Score " + searchHits[i].getScore()  //$NON-NLS-1$
+						+ ": " + searchHits[i].getLabel()); //$NON-NLS-1$
+			}
+		}
 		if (!activityFiltering) {
 			collector.accept(searchHits);
 			return;
