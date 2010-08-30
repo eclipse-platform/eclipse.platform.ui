@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,16 @@ import org.eclipse.osgi.util.NLS;
  * Launch delegate for a program.
  */
 public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
+	
+	/**
+	 * Launch configuration attribute - a boolean value indicating whether a
+	 * configuration should be launched in the background. Default value is <code>true</code>.
+	 * <p>
+	 * This constant is defined in org.eclipse.debug.ui, but has to be copied here to support
+	 * headless launching.
+	 * </p>
+	 */
+	private static final String ATTR_LAUNCH_IN_BACKGROUND = "org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND"; //$NON-NLS-1$
 
 	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration,
@@ -129,14 +139,14 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		process.setAttribute(IProcess.ATTR_CMDLINE,
 				generateCommandLine(cmdLine));
 
-//		if (launchManager.isLaunchInBackground(configuration)) {
-//			// refresh resources after process finishes
-//			if (launchManager.getRefreshScope(configuration) != null) {
-//				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(
-//						configuration, process);
-//				refresher.startBackgroundRefresh();
-//			}
-//		} else {
+		if (configuration.getAttribute(ATTR_LAUNCH_IN_BACKGROUND, true)) {
+			// refresh resources after process finishes
+			String scope = configuration.getAttribute(RefreshUtil.ATTR_REFRESH_SCOPE, (String)null);
+			if (scope != null) {
+				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process);
+				refresher.startBackgroundRefresh();
+			}
+		} else {
 			// wait for process to exit
 			while (!process.isTerminated()) {
 				try {
@@ -151,7 +161,7 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 
 			// refresh resources
 			RefreshUtil.refreshResources(configuration, monitor);
-//		}
+		}
 	}
 
 	private String generateCommandLine(String[] commandLine) {
