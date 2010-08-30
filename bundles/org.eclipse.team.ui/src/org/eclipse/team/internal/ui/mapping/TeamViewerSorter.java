@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,16 @@ import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.navigator.CommonViewerSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class TeamViewerSorter extends TreePathViewerSorter {
 
 	private CommonViewerSorter sorter;
+	private ResourceComparator resourceComparator;
 	
 	public TeamViewerSorter(CommonViewerSorter sorter) {
 		this.sorter = sorter;
+		this.resourceComparator = new ResourceComparator(ResourceComparator.NAME);
 	}
 
 	public int category(Object element) {
@@ -60,7 +63,7 @@ public class TeamViewerSorter extends TreePathViewerSorter {
 			IResource r1 = Utils.getResource(e1);
 			IResource r2 = Utils.getResource(e2);
 			if (r1 != null && r2 != null) {
-				return r1.getName().compareTo(r2.getName());
+				return resourceComparator.compare(viewer, r1, r2);
 			}
 		}
 		return sorter.compare(viewer, parentPath, e1, e2);
