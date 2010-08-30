@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,13 +25,13 @@ import org.eclipse.osgi.util.NLS;
  */
 public class NatureManager implements ILifecycleListener, IManager {
 	//maps String (nature ID) -> descriptor objects
-	protected Map descriptors;
+	private Map descriptors;
 
 	//maps IProject -> String[] of enabled natures for that project
-	protected Map natureEnablements;
+	private final Map natureEnablements = Collections.synchronizedMap(new HashMap(20));
 
 	//maps String (builder ID) -> String (nature ID)
-	protected Map buildersToNatures = null;
+	private Map buildersToNatures;
 	//colour constants used in cycle detection algorithm
 	private static final byte WHITE = 0;
 	private static final byte GREY = 1;
@@ -43,7 +43,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 
 	/**
 	 * Computes the list of natures that are enabled for the given project.
-	 * Enablement computation is subtlely different from nature set
+	 * Enablement computation is subtly different from nature set
 	 * validation, because it must find and remove all inconsistencies.
 	 */
 	protected String[] computeNatureEnablements(Project project) {
@@ -108,7 +108,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	/* (non-Javadoc)
 	 * @see IWorkspace#getNatureDescriptor(String)
 	 */
-	public IProjectNatureDescriptor getNatureDescriptor(String natureId) {
+	public synchronized IProjectNatureDescriptor getNatureDescriptor(String natureId) {
 		lazyInitialize();
 		return (IProjectNatureDescriptor) descriptors.get(natureId);
 	}
@@ -116,7 +116,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	/* (non-Javadoc)
 	 * @see IWorkspace#getNatureDescriptors()
 	 */
-	public IProjectNatureDescriptor[] getNatureDescriptors() {
+	public synchronized IProjectNatureDescriptor[] getNatureDescriptors() {
 		lazyInitialize();
 		Collection values = descriptors.values();
 		return (IProjectNatureDescriptor[]) values.toArray(new IProjectNatureDescriptor[values.size()]);
@@ -275,7 +275,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	/**
 	 * Marks all nature descriptors that are involved in cycles
 	 */
-	protected void detectCycles() {
+	private void detectCycles() {
 		Collection values = descriptors.values();
 		ProjectNatureDescriptor[] natures = (ProjectNatureDescriptor[]) values.toArray(new ProjectNatureDescriptor[values.size()]);
 		for (int i = 0; i < natures.length; i++)
@@ -294,7 +294,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * Returns the ID of the project nature that claims ownership of the
 	 * builder with the given ID.  Returns null if no nature owns that builder.
 	 */
-	public String findNatureForBuilder(String builderID) {
+	public synchronized String findNatureForBuilder(String builderID) {
 		if (buildersToNatures == null) {
 			buildersToNatures = new HashMap(10);
 			IProjectNatureDescriptor[] descs = getNatureDescriptors();
@@ -310,28 +310,20 @@ public class NatureManager implements ILifecycleListener, IManager {
 		return (String) buildersToNatures.get(builderID);
 	}
 
-	protected void flushEnablements(IProject project) {
-		if (natureEnablements != null) {
-			natureEnablements.remove(project);
-			if (natureEnablements.size() == 0) {
-				natureEnablements = null;
-			}
-		}
+	private synchronized void flushEnablements(IProject project) {
+		natureEnablements.remove(project);
 	}
 
 	/**
 	 * Returns the cached array of enabled natures for this project,
 	 * or null if there is nothing in the cache.
 	 */
-	protected String[] getEnabledNatures(Project project) {
-		String[] enabled;
-		if (natureEnablements != null) {
-			enabled = (String[]) natureEnablements.get(project);
-			if (enabled != null)
-				return enabled;
-		}
+	protected synchronized String[] getEnabledNatures(Project project) {
+		String[] enabled = (String[]) natureEnablements.get(project);
+		if (enabled != null)
+			return enabled;
 		enabled = computeNatureEnablements(project);
-		setEnabledNatures(project, enabled);
+		natureEnablements.put(project, enabled);
 		return enabled;
 	}
 
@@ -443,7 +435,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * Only initialize the descriptor cache when we know it is actually needed.
 	 * Running programs may never need to refer to this cache.
 	 */
-	protected void lazyInitialize() {
+	private void lazyInitialize() {
 		if (descriptors != null)
 			return;
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES);
@@ -462,15 +454,6 @@ public class NatureManager implements ILifecycleListener, IManager {
 		//do cycle detection now so it only has to be done once
 		//cycle detection on a graph subset is a pain
 		detectCycles();
-	}
-
-	/**
-	 * Sets the cached array of enabled natures for this project.
-	 */
-	protected void setEnabledNatures(IProject project, String[] enablements) {
-		if (natureEnablements == null)
-			natureEnablements = Collections.synchronizedMap(new HashMap(20));
-		natureEnablements.put(project, enablements);
 	}
 
 	public void shutdown(IProgressMonitor monitor) {
