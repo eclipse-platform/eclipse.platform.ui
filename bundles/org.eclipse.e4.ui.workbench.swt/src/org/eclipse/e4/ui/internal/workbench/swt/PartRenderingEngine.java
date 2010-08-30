@@ -510,28 +510,30 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * @param element
 	 */
 	public void removeGui(MUIElement element) {
-		// If the element hasn't been rendered then this is a NO-OP
-		if (element.getRenderer() == null)
-			return;
-
 		if (removeRoot == null)
 			removeRoot = element;
-
 		renderedElements.remove(element);
+
+		// We call 'hideChild' *before* checking if the actual element
+		// has been rendered in order to pick up cases of 'lazy loading'
+		MUIElement parent = element.getParent();
+		AbstractPartRenderer parentRenderer = parent != null ? getRendererFor(parent)
+				: null;
+		if (parentRenderer != null) {
+			parentRenderer.hideChild(element.getParent(), element);
+		}
+
 		AbstractPartRenderer renderer = getRendererFor(element);
+
+		// If the element hasn't been rendered then this is a NO-OP
+		if (renderer == null)
+			return;
 
 		if (element instanceof MElementContainer<?>) {
 			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
 			for (MUIElement child : container.getChildren()) {
 				removeGui(child);
 			}
-		}
-
-		MUIElement parent = element.getParent();
-		AbstractPartRenderer parentRenderer = parent != null ? getRendererFor(parent)
-				: null;
-		if (parentRenderer != null) {
-			parentRenderer.hideChild(element.getParent(), element);
 		}
 
 		renderer.disposeWidget(element);
