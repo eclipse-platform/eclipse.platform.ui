@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.workbench.addons.minmax;
 
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -213,6 +214,14 @@ public class TrimStack {
 				widgetHandler);
 	}
 
+	@PreDestroy
+	void removeListeners() {
+		eventBroker.unsubscribe(toBeRenderedHandler);
+		eventBroker.unsubscribe(childrenHandler);
+		eventBroker.unsubscribe(selectionHandler);
+		eventBroker.unsubscribe(widgetHandler);
+	}
+
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl me) {
 		if (theStack == null) {
@@ -334,11 +343,6 @@ public class TrimStack {
 		theStack.setVisible(true);
 		theStack.getTags().remove(MinMaxAddon.MINIMIZED);
 		toolControl.setToBeRendered(false);
-
-		eventBroker.unsubscribe(toBeRenderedHandler);
-		eventBroker.unsubscribe(childrenHandler);
-		eventBroker.unsubscribe(selectionHandler);
-		eventBroker.unsubscribe(widgetHandler);
 
 		if (hostPane != null && !hostPane.isDisposed())
 			hostPane.dispose();
