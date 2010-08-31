@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ public interface IMessagePatterns {
 	
 	// TODO: These patterns could be more specific but this would require non-capturing
 	// groups which currently throw off variable matching
-	public static final String TAG_PATTERN = "\\w*"; //$NON-NLS-1$
+	public static final String TAG_PATTERN = "[\\w\\-]*"; //$NON-NLS-1$
 	public static final String REVISION_PATTERN = ".*"; //$NON-NLS-1$
 	public static final String FILE_PATH_PATTERN = ".*"; //$NON-NLS-1$
 	
