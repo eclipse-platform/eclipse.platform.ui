@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -176,10 +177,10 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the maximum value of a
-	 * {@link Scale} or {@link Spinner}.
+	 * {@link Scale}, {@link Slider} (since 1.5) or {@link Spinner}.
 	 * 
 	 * @return a value property for observing the maximum value of a
-	 *         {@link Scale} or {@link Spinner}.
+	 *         {@link Scale}, {@link Slider} (since 1.5) or {@link Spinner}.
 	 */
 	public static IWidgetValueProperty maximum() {
 		return new WidgetMaximumProperty();
@@ -198,10 +199,10 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the minimum value of a
-	 * {@link Scale} or {@link Spinner}.
+	 * {@link Scale}, {@link Slider} (since 1.5) or {@link Spinner}.
 	 * 
 	 * @return a value property for observing the minimum value of a
-	 *         {@link Scale} or {@link Spinner}.
+	 *         {@link Scale}, {@link Slider} (since 1.5) or {@link Spinner}.
 	 */
 	public static IWidgetValueProperty minimum() {
 		return new WidgetMinimumProperty();
@@ -210,12 +211,13 @@ public class WidgetProperties {
 	/**
 	 * Returns a value property for observing the selection state of a
 	 * {@link Button}, {@link CCombo}, {@link Combo}, {@link DateTime},
-	 * {@link List}, {@link MenuItem} (since 1.5), {@link Scale} or
-	 * {@link Spinner}.
+	 * {@link List}, {@link MenuItem} (since 1.5), {@link Scale}, {@link Slider}
+	 * (since 1.5) or {@link Spinner}.
 	 * 
 	 * @return a value property for observing the selection state of a
 	 *         {@link Button}, {@link CCombo}, {@link Combo}, {@link DateTime},
-	 *         {@link List}, {@link MenuItem}, {@link Scale} or {@link Spinner}.
+	 *         {@link List}, {@link MenuItem}, {@link Scale}, {@link Slider} or
+	 *         {@link Spinner}.
 	 */
 	public static IWidgetValueProperty selection() {
 		return new WidgetSelectionProperty();

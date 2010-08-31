@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
+import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Spinner;
 
 /**
@@ -35,6 +36,7 @@ public final class WidgetSelectionProperty extends
 	private IValueProperty list;
 	private IValueProperty menuItem;
 	private IValueProperty scale;
+	private IValueProperty slider;
 	private IValueProperty spinner;
 
 	protected IValueProperty doGetDelegate(Object source) {
@@ -72,6 +74,11 @@ public final class WidgetSelectionProperty extends
 			if (scale == null)
 				scale = new ScaleSelectionProperty();
 			return scale;
+		}
+		if (source instanceof Slider) {
+			if (slider == null)
+				slider = new SliderSelectionProperty();
+			return slider;
 		}
 		if (source instanceof Spinner) {
 			if (spinner == null)

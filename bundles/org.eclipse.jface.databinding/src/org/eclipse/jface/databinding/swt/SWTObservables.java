@@ -207,12 +207,13 @@ public class SWTObservables {
 	 * Returns an observable observing the selection attribute of the provided
 	 * <code>control</code>. The supported types are:
 	 * <ul>
-	 * <li>org.eclipse.swt.widgets.Spinner</li>
 	 * <li>org.eclipse.swt.widgets.Button</li>
 	 * <li>org.eclipse.swt.widgets.Combo</li>
 	 * <li>org.eclipse.swt.custom.CCombo</li>
 	 * <li>org.eclipse.swt.widgets.List</li>
 	 * <li>org.eclipse.swt.widgets.Scale</li>
+	 * <li>org.eclipse.swt.widgets.Slider (since 1.5)</li>
+	 * <li>org.eclipse.swt.widgets.Spinner</li>
 	 * </ul>
 	 * 
 	 * @param control
@@ -229,6 +230,7 @@ public class SWTObservables {
 	 * <code>control</code>. The supported types are:
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Spinner</li>
+	 * <li>org.eclipse.swt.widgets.Slider (since 1.5)</li>
 	 * <li>org.eclipse.swt.widgets.Scale</li>
 	 * </ul>
 	 * 
@@ -246,6 +248,7 @@ public class SWTObservables {
 	 * <code>control</code>. The supported types are:
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Spinner</li>
+	 * <li>org.eclipse.swt.widgets.Slider (since 1.5)</li>
 	 * <li>org.eclipse.swt.widgets.Scale</li>
 	 * </ul>
 	 * 
