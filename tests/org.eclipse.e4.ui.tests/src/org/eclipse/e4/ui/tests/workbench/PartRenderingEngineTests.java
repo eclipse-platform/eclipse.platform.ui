@@ -20,6 +20,10 @@ import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -698,6 +702,47 @@ public class PartRenderingEngineTests extends TestCase {
 
 		assertNull(partA.getObject());
 		assertNull(partB.getObject());
+	}
+
+	public void testRemoveGuiBug323496() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getSharedElements().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPlaceholder placeholder = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholder.setRef(part);
+		part.setCurSharedRef(placeholder);
+		perspective.getChildren().add(placeholder);
+		perspective.setSelectedElement(placeholder);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(part.getObject());
+
+		appContext.get(IPresentationEngine.class).removeGui(perspective);
+
+		assertNull(part.getObject());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
