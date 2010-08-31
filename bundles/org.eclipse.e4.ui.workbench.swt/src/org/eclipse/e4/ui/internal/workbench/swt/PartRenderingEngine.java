@@ -59,7 +59,6 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -366,14 +365,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (!renderedElements.contains(element))
 			renderedElements.add(element);
 
-		// If the child to be rendered inside an element being removed ignore it
+		// no creates while processing a remove
 		if (removeRoot != null) {
-			EObject container = ((EObject) element).eContainer();
-			while (container != null && container != removeRoot)
-				container = container.eContainer();
-			if (container != null) {
-				return null;
-			}
+			return null;
 		}
 
 		if (element.getWidget() != null) {
@@ -526,29 +520,29 @@ public class PartRenderingEngine implements IPresentationEngine {
 		AbstractPartRenderer renderer = getRendererFor(element);
 
 		// If the element hasn't been rendered then this is a NO-OP
-		if (renderer == null)
-			return;
+		if (renderer != null) {
 
-		if (element instanceof MElementContainer<?>) {
-			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
-			for (MUIElement child : container.getChildren()) {
-				removeGui(child);
+			if (element instanceof MElementContainer<?>) {
+				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
+				for (MUIElement child : container.getChildren()) {
+					removeGui(child);
+				}
 			}
-		}
 
-		renderer.disposeWidget(element);
+			renderer.disposeWidget(element);
 
-		// unset the client object
-		if (element instanceof MContribution) {
-			IEclipseContext parentContext = renderer.getContext(element);
-			ContextInjectionFactory.uninject(
-					((MContribution) element).getObject(), parentContext);
-			((MContribution) element).setObject(null);
-		}
+			// unset the client object
+			if (element instanceof MContribution) {
+				IEclipseContext parentContext = renderer.getContext(element);
+				ContextInjectionFactory.uninject(
+						((MContribution) element).getObject(), parentContext);
+				((MContribution) element).setObject(null);
+			}
 
-		// dispose the context
-		if (element instanceof MContext) {
-			clearContext((MContext) element);
+			// dispose the context
+			if (element instanceof MContext) {
+				clearContext((MContext) element);
+			}
 		}
 
 		if (removeRoot == element)

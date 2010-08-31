@@ -655,6 +655,51 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(1, folder.getItemCount());
 	}
 
+	public void testRemoveGuiBug324033() throws Exception {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		// put two parts in it
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partStack.getChildren().add(partB);
+
+		// make a third random part that's not in the UI
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		partC.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(partA.getObject());
+		assertNull(partB.getObject());
+
+		// ask the renderer to remove the random part so that it will
+		// incorrectly record it
+		appContext.get(IPresentationEngine.class).removeGui(partC);
+		// remove the part stack
+		appContext.get(IPresentationEngine.class).removeGui(partStack);
+
+		assertNull(partA.getObject());
+		assertNull(partB.getObject());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
