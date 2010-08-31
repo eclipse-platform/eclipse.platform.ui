@@ -61,6 +61,30 @@ public class SearchRanking extends TestCase {
 		assertEquals("/org.eclipse.ua.tests/data/help/search/extraDir/ranking/ranktest1b.htm", getPath(hits[1]));
 	}
 	
+	/**
+	 * Verify that consecutive words raise the weight
+	 */
+	public void testConsecutiveWords1() {
+		SearchHit[] hits = SearchTestUtils.getSearchHits("iduhnf xaqsdab", "en");
+		Arrays.sort(hits);
+		assertEquals(2, hits.length);
+		assertEquals("/org.eclipse.ua.tests/data/help/search/extraDir/ranking/ranktest2b.htm",
+				getPath(hits[0]));
+		assertEquals("/org.eclipse.ua.tests/data/help/search/extraDir/ranking/ranktest2a.htm", 
+				getPath(hits[1]));
+	}
+	
+	public void testConsecutiveWords2() {
+		SearchHit[] hits = SearchTestUtils.getSearchHits("xaqsdab iduhnf", "en");
+		Arrays.sort(hits);
+		assertEquals(2, hits.length);
+		assertEquals("/org.eclipse.ua.tests/data/help/search/extraDir/ranking/ranktest2a.htm", 
+				getPath(hits[0]));
+		assertEquals("/org.eclipse.ua.tests/data/help/search/extraDir/ranking/ranktest2b.htm", 
+				getPath(hits[1]));
+	}
+	
+	
 	private String getPath(SearchHit hit) {
 		String href = hit.getHref();
 		int query = href.indexOf('?');
