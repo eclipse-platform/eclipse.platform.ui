@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.*;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -89,7 +89,7 @@ public class ReplaceOperation extends UpdateOperation {
         	PrepareForReplaceVisitor pfrv = new PrepareForReplaceVisitor(session, getTag());
         	pfrv.visitResources(
         		provider.getProject(), 
-        		managedResources, 
+        		resources, 
         		CVSUIMessages.ReplaceOperation_1, 
         		recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, 
         		Policy.subMonitorFor(monitor, 25));
@@ -105,7 +105,7 @@ public class ReplaceOperation extends UpdateOperation {
         	// Prune any empty folders left after the resources were purged.
         	// This is done to prune any empty folders that contained only unmanaged resources
         	if (status.isOK() && CVSProviderPlugin.getPlugin().getPruneEmptyDirectories()) {
-        		new PruneFolderVisitor().visit(session, managedResources);
+        		new PruneFolderVisitor().visit(session, resources);
         	}
         	
         	return status;
