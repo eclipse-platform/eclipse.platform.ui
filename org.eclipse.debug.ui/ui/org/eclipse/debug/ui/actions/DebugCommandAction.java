@@ -222,11 +222,14 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
     }
 
     /**
-     * Returns the context this action operates on as a selection.
+     * Returns the context (selection) this action operates on. By default
+     * the active debug context in this action's associated part or window is used,
+     * but subclasses may override as required.
      * 
      * @return the context this action operates on
+     * @since 3.7
      */
-    private ISelection getContext() {
+    protected ISelection getContext() {
 		if (fPart != null) {
 			getDebugContextService().getActiveContext(fPart.getSite().getId());
     	}
