@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -536,24 +537,37 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				openWithMenu.selectionChanged((IStructuredSelection) treeViewer.getSelection());
 			}
 		});
-		
-		treeViewer.addOpenListener(new IOpenListener() {
-			public void open(OpenEvent e) {
-				if (getSite() != null) {
-					StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
+
+		new OpenAndLinkWithEditorHelper(treeViewer) {
+			protected void open(ISelection selection, boolean activate) {
+				if (getSite() != null && selection instanceof IStructuredSelection) {
+					IStructuredSelection structuredSelection= (IStructuredSelection)selection;
 					if (compareMode){
-						StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
+						StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), structuredSelection.getFirstElement()});
 						compareAction.selectionChanged(sel);
 						compareAction.run();
 					} else {
 						//Pass in the entire structured selection to allow for multiple editor openings
-						StructuredSelection sel = tableStructuredSelection;
-						openAction.selectionChanged(sel);
+						openAction.selectionChanged(structuredSelection);
 						openAction.run();
 					}
 				}
 			}
-		});
+
+			protected void activate(ISelection selection) {
+				int currentMode= OpenStrategy.getOpenMethod();
+				try {
+					OpenStrategy.setOpenMethod(OpenStrategy.DOUBLE_CLICK);
+					open(selection, true);
+				} finally {
+					OpenStrategy.setOpenMethod(currentMode);
+				}
+			}
+
+			protected void linkToEditor(ISelection selection) {
+				// XXX: Not yet implemented, see http://bugs.eclipse.org/324185
+			}
+		};
 
 		getContentsAction = getContextMenuAction(CVSUIMessages.HistoryView_getContentsAction, true /* needs progress */, new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {

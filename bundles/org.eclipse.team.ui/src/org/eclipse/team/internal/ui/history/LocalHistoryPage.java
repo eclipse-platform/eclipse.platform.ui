@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -403,25 +404,38 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 				});
 			}
 			
-			treeViewer.addOpenListener(new IOpenListener() {
-				public void open(OpenEvent e) {
-					if (getSite() != null) {
-						StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
+			new OpenAndLinkWithEditorHelper(treeViewer) {
+				protected void open(ISelection selection, boolean activate) {
+					if (getSite() != null && selection instanceof IStructuredSelection) {
+						IStructuredSelection structuredSelection= (IStructuredSelection)selection;
 						if ((compareMode & ON) > 0){
-							StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
+							StructuredSelection sel= new StructuredSelection(new Object[] { getCurrentFileRevision(), structuredSelection.getFirstElement() });
 							compareAction.selectionChanged(sel);
 							compareAction.run();
 						} else {
 							//Pass in the entire structured selection to allow for multiple editor openings
-							StructuredSelection sel = tableStructuredSelection;
 							if (openAction != null) {
-								openAction.selectionChanged(sel);
+								openAction.selectionChanged(structuredSelection);
 								openAction.run();
 							}
 						}
 					}
 				}
-			});
+
+				protected void activate(ISelection selection) {
+					int currentMode= OpenStrategy.getOpenMethod();
+					try {
+						OpenStrategy.setOpenMethod(OpenStrategy.DOUBLE_CLICK);
+						open(selection, true);
+					} finally {
+						OpenStrategy.setOpenMethod(currentMode);
+					}
+				}
+
+				protected void linkToEditor(ISelection selection) {
+					// XXX: Not yet implemented, see http://bugs.eclipse.org/324185
+				}
+			};
 			
 			//Contribute actions to popup menu
 			MenuManager menuMgr = new MenuManager();
