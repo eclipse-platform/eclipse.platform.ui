@@ -1405,7 +1405,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	/**
-	 * <p>This method is called when the search page gets an open even from it's
+	 * <p>This method is called when the search page gets an 'open' event from its
 	 * underlying viewer (for example on double click). The default
 	 * implementation will open the first match on any element that has matches.
 	 * If the element to be opened is an inner node in the tree layout, the node
