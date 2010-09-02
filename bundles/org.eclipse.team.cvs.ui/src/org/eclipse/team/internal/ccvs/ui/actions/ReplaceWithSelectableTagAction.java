@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,15 @@ public class ReplaceWithSelectableTagAction extends ReplaceWithTagAction {
 			return null;
 		}
 		return dialog.getResult();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction#getReplaceOperation()
+	 */
+	protected ReplaceOperation createReplaceOperation() {
+		ReplaceOperation replaceOperation= super.createReplaceOperation();
+		replaceOperation.ignoreResourcesWithMissingTag();
+		return replaceOperation;
 	}
 	
 }

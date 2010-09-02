@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,11 +31,7 @@ public abstract class ReplaceWithTagAction extends WorkspaceTraversalAction {
 	 * Method declared on IActionDelegate.
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
-		
-		// Setup the holders
-		final CVSTag[] tag = new CVSTag[] {null};
-		
-		final ReplaceOperation replaceOperation = new ReplaceOperation(getTargetPart(), getCVSResourceMappings(), tag[0]);
+		final ReplaceOperation replaceOperation= createReplaceOperation();
 		if (hasOutgoingChanges(replaceOperation)) {
 			final boolean[] keepGoing = new boolean[] { true };
 			Display.getDefault().syncExec(new Runnable() {
@@ -52,11 +48,14 @@ public abstract class ReplaceWithTagAction extends WorkspaceTraversalAction {
 			if (!keepGoing[0])
 				return;
 		}
-		
+
+		// Setup the tag holder
+		final CVSTag[] tag= new CVSTag[] { null };
+
 		// Show a busy cursor while display the tag selection dialog
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-                monitor = Policy.monitorFor(monitor);
+				monitor= Policy.monitorFor(monitor);
 				tag[0] = getTag(replaceOperation);
 				
 				// finish, when tag can't be obtained
@@ -82,7 +81,16 @@ public abstract class ReplaceWithTagAction extends WorkspaceTraversalAction {
 		replaceOperation.setTag(tag[0]);
 		replaceOperation.run();
 	}
-	
+
+	/**
+	 * Creates and returns a new <code>ReplaceOperation</code>.
+	 * 
+	 * @return the created replace operation
+	 */
+	protected ReplaceOperation createReplaceOperation() {
+		return new ReplaceOperation(getTargetPart(), getCVSResourceMappings(), null);
+	}
+
 	/**
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#getErrorTitle()
 	 */

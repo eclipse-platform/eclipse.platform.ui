@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
 import org.eclipse.team.internal.ccvs.ui.*;
@@ -81,9 +81,19 @@ public class ReplaceOperation extends UpdateOperation {
 	// Files deleted by the PrepareForReplaceVisitor.
 	private Set/*<ICVSFile>*/ prepDeletedFiles;
 
+	/**
+	 * Tells whether resources for which the given tag does not exists, are ignored by the replace
+	 * operation.
+	 */
+	private boolean ignoreResourcesIfTagDoesNotExist;
+
+
     private IStatus internalExecuteCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
         monitor.beginTask(null, 100);
         ICVSResource[] managedResources = getResourcesToUpdate(resources, Policy.subMonitorFor(monitor, 5));
+		if (ignoreResourcesIfTagDoesNotExist && managedResources.length == 0)
+			return OK;
+
         try {
         	// Purge any unmanaged or added files
         	PrepareForReplaceVisitor pfrv = new PrepareForReplaceVisitor(session, getTag());
@@ -187,5 +197,12 @@ public class ReplaceOperation extends UpdateOperation {
 	 */
 	protected String getTaskName(CVSTeamProvider provider) {
 		return NLS.bind(CVSUIMessages.ReplaceOperation_0, new String[] { provider.getProject().getName() }); 
+	}
+
+	/**
+	 * Tells to ignore resources for which the given tag does not exists.
+	 */
+	public void ignoreResourcesWithMissingTag() {
+		ignoreResourcesIfTagDoesNotExist= true;
 	}
 }
