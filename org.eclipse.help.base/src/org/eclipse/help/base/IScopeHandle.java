@@ -9,27 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.help.internal.base.scope;
+package org.eclipse.help.base;
 
-import org.eclipse.help.base.AbstractHelpScope;
-import org.eclipse.help.base.IScopeHandle;
 
-public class ScopeHandle implements IScopeHandle{
-	
-	private AbstractHelpScope scope;	
-	private String id;
-	
-	public ScopeHandle( String id, AbstractHelpScope scope) {
-		this.id = id;
-		this.scope = scope;
-	}
+public interface IScopeHandle {
 
-	public AbstractHelpScope getScope() {
-		return scope;
-	}
-
-	public String getId() {
-		return id;
-	}
-
+	public AbstractHelpScope getScope();
+	public String getId();
 }

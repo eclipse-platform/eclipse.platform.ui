@@ -18,7 +18,8 @@
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="scope"/>
+            <element ref="scope" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="scopeProducer" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -69,6 +70,26 @@
                <documentation>
                   An id for this scope which must be unique among scope ids.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="scopeProducer">
+      <annotation>
+         <documentation>
+            Use a scopeProducer to dynamically generate scopes at runtime
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.help.base.IHelpScopeProducer"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

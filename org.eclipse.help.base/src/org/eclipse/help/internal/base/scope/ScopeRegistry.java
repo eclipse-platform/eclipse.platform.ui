@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.base.AbstractHelpScope;
+import org.eclipse.help.base.IHelpScopeProducer;
+import org.eclipse.help.base.IScopeHandle;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
 public class ScopeRegistry {
@@ -42,9 +44,8 @@ public class ScopeRegistry {
 	}
 	
 	public static ScopeRegistry getInstance() {
-		if (instance == null) {
+		if (instance == null)
 			instance = new ScopeRegistry();
-		}
 		return instance;
 	}
 	
@@ -53,9 +54,11 @@ public class ScopeRegistry {
 			return new UniversalScope();
 		}
 		readScopes();
+		
+		
 		// Lookup in scope registry
 		for (Iterator iter = scopes.iterator(); iter.hasNext();) {
-			ScopeHandle handle = (ScopeHandle) iter.next();
+			IScopeHandle handle = (IScopeHandle) iter.next();
 			if (id.equals(handle.getId())) {
 				return handle.getScope();
 			}
@@ -82,16 +85,22 @@ public class ScopeRegistry {
 			}
 			if (obj instanceof AbstractHelpScope) {
 				String id = elements[i].getAttribute("id"); //$NON-NLS-1$
-				ScopeHandle filter = new ScopeHandle(id, (AbstractHelpScope) obj);
+				IScopeHandle filter = new ScopeHandle(id, (AbstractHelpScope) obj);
 				scopes.add(filter);
+			}
+			else if (obj instanceof IHelpScopeProducer)
+			{
+				IScopeHandle dynamicScopes[] = ((IHelpScopeProducer)obj).getScopeHandles();
+				for (int d=0;d<dynamicScopes.length;d++)
+					scopes.add(dynamicScopes[d]);
 			}
 		}
 		initialized = true;
 	}
 	
-	public ScopeHandle[] getScopes() {
+	public IScopeHandle[] getScopes() {
 		readScopes();
-		return (ScopeHandle[]) scopes.toArray(new ScopeHandle[scopes.size()]);
+		return (IScopeHandle[]) scopes.toArray(new IScopeHandle[scopes.size()]);
 	}
 
 	/**
