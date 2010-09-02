@@ -117,7 +117,7 @@ public class TestBarrier {
 	 * value Times out after a predefined period to avoid hanging tests
 	 */
 	public static void waitForStatus(int[] location, int index, int status) {
-		doWaitForStatus(location, index, status, 100);
+		doWaitForStatus(location, index, status, 500);
 	}
 
 	/**
