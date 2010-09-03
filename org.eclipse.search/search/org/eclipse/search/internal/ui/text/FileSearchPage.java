@@ -186,6 +186,11 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			Object firstElement= ((IStructuredSelection)event.getSelection()).getFirstElement();
 			if (firstElement instanceof IFile) {
 				if (getDisplayedMatchCount(firstElement) == 0) {
+					Viewer viewer= event.getViewer();
+					if (viewer instanceof TreeViewer) {
+						TreeViewer tv = (TreeViewer) getViewer();
+						tv.setExpandedState(firstElement, !tv.getExpandedState(firstElement));
+					}
 					try {
 						open(getSite().getPage(), (IFile)firstElement, false);
 					} catch (PartInitException e) {
