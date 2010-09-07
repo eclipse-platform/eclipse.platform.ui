@@ -30,7 +30,6 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -52,7 +51,6 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -386,24 +384,6 @@ public class E4Application implements IApplication {
 				new ActiveContextsFunction());
 		appContext.set(IServiceConstants.ACTIVE_PART,
 				new ActivePartLookupFunction());
-		appContext.runAndTrack(new RunAndTrack() {
-			public boolean changed(IEclipseContext context) {
-				Object o = appContext.get(IServiceConstants.ACTIVE_PART);
-				if (o instanceof MPart) {
-					appContext.set(IServiceConstants.ACTIVE_PART_ID,
-							((MPart) o).getElementId());
-				}
-				return true;
-			}
-
-			/*
-			 * For debugging purposes only
-			 */
-			@Override
-			public String toString() {
-				return IServiceConstants.ACTIVE_PART_ID;
-			}
-		});
 		appContext.set(EPartService.PART_SERVICE_ROOT, new ContextFunction() {
 			private void log() {
 				StatusReporter statusReporter = (StatusReporter) appContext

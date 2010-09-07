@@ -19,12 +19,10 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -76,11 +74,6 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		assertNotNull(context.get(IServiceConstants.ACTIVE_PART));
 	}
 
-	public void testGet_ActivePartId() throws Exception {
-		IEclipseContext context = application.getContext();
-		assertNotNull(context.get(IServiceConstants.ACTIVE_PART_ID));
-	}
-
 	public void testGet_ActiveContexts2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 
@@ -111,12 +104,6 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		assertNull(context.get(IServiceConstants.ACTIVE_SHELL));
 	}
 
-	public void testGet_PersistedState2() throws Exception {
-		IEclipseContext context = getActiveChildContext(application);
-
-		assertNull(context.get(IServiceConstants.PERSISTED_STATE));
-	}
-
 	public void testGetFirstPart_GetContext() {
 		// need to wrap this since the renderer will try build the UI for the
 		// part if it hasn't been built
@@ -133,55 +120,6 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				UIStartupTest.super.testGetSecondPart_GetContext();
-			}
-		});
-	}
-
-	@Override
-	public void test_SwitchActivePartsInContext() throws Exception {
-		final IEclipseContext context = application.getContext();
-
-		final MPart[] parts = getTwoParts();
-
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-			public void run() {
-				context.set(IServiceConstants.ACTIVE_PART, parts[0]);
-				while (display.readAndDispatch())
-					;
-
-				assertEquals(parts[0].getElementId(),
-						context.get(IServiceConstants.ACTIVE_PART_ID));
-
-				context.set(IServiceConstants.ACTIVE_PART, parts[1]);
-				while (display.readAndDispatch())
-					;
-				assertEquals(parts[1].getElementId(),
-						context.get(IServiceConstants.ACTIVE_PART_ID));
-			}
-		});
-	}
-
-	public void test_SwitchActivePartsInContext2() throws Exception {
-		final IEclipseContext context = getActiveChildContext(application);
-
-		final MPart[] parts = getTwoParts();
-
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-			public void run() {
-				EPartService service = (EPartService) context
-						.get(EPartService.class.getName());
-				service.activate(parts[0]);
-				while (display.readAndDispatch())
-					;
-
-				assertEquals(parts[0].getElementId(),
-						context.get(IServiceConstants.ACTIVE_PART_ID));
-
-				service.activate(parts[1]);
-				while (display.readAndDispatch())
-					;
-				assertEquals(parts[1].getElementId(),
-						context.get(IServiceConstants.ACTIVE_PART_ID));
 			}
 		});
 	}

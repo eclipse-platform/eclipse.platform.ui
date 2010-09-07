@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -27,7 +26,6 @@ import org.eclipse.e4.ui.internal.workbench.ActivePartLookupFunction;
 import org.eclipse.e4.ui.internal.workbench.ExceptionHandler;
 import org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.WorkbenchLogger;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
@@ -93,22 +91,6 @@ public abstract class HeadlessStartupTest extends TestCase {
 				new ActiveContextsFunction());
 		appContext.set(IServiceConstants.ACTIVE_PART,
 				new ActivePartLookupFunction());
-		appContext.runAndTrack(new RunAndTrack() {
-			public boolean changed(IEclipseContext eventsContext) {
-				Object o = eventsContext.get(IServiceConstants.ACTIVE_PART);
-				if (o instanceof MPart) {
-					eventsContext.set(IServiceConstants.ACTIVE_PART_ID,
-							((MPart) o).getElementId());
-				}
-				return true;
-			}
-
-			@Override
-			public String toString() {
-				return "HeadlessStartupTest$RunAndTrack[" //$NON-NLS-1$
-						+ IServiceConstants.ACTIVE_PART_ID + ']';
-			}
-		});
 
 		return appContext;
 	}

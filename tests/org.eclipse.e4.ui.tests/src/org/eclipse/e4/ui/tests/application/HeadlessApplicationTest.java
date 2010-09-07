@@ -104,17 +104,6 @@ public abstract class HeadlessApplicationTest extends
 		assertNull(context.get(IServiceConstants.ACTIVE_PART));
 	}
 
-	public void testGet_PersistedState() throws Exception {
-		IEclipseContext context = application.getContext();
-
-		assertNull(context.get(IServiceConstants.PERSISTED_STATE));
-	}
-
-	public void testGet_ActivePartId() throws Exception {
-		IEclipseContext context = application.getContext();
-		assertNull(context.get(IServiceConstants.ACTIVE_PART_ID));
-	}
-
 	// public void test_SwitchActiveChildInContext() {
 	// IEclipseContext context = application.getContext();
 	//
@@ -163,20 +152,14 @@ public abstract class HeadlessApplicationTest extends
 		MPart[] parts = getTwoParts();
 
 		context.set(IServiceConstants.ACTIVE_PART, parts[0]);
-		assertEquals(parts[0].getElementId(), context
-				.get(IServiceConstants.ACTIVE_PART_ID));
 
 		// the OSGi context should not have been affected by the recursion
 		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART));
-		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART_ID));
 
 		context.set(IServiceConstants.ACTIVE_PART, parts[1]);
-		assertEquals(parts[1].getElementId(), context
-				.get(IServiceConstants.ACTIVE_PART_ID));
 
 		// the OSGi context should not have been affected by the recursion
 		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART));
-		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART_ID));
 	}
 
 	private void test_GetContext(MContext context) {

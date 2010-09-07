@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 BestSolution.at and others.
+ * Copyright (c) 2008, 2010 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
@@ -31,7 +30,6 @@ import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -169,23 +167,6 @@ public class E4Workbench implements IWorkbench {
 
 		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
 		mainContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());
-		mainContext.runAndTrack(new RunAndTrack() {
-			public boolean changed(IEclipseContext context) {
-				Object o = mainContext.get(IServiceConstants.ACTIVE_PART);
-				if (o instanceof MPart) {
-					mainContext.set(IServiceConstants.ACTIVE_PART_ID, ((MPart) o).getElementId());
-				}
-				return true;
-			}
-
-			/*
-			 * For debugging purposes only
-			 */
-			@Override
-			public String toString() {
-				return IServiceConstants.ACTIVE_PART_ID;
-			}
-		});
 		// EHandlerService comes from a ContextFunction
 		// EContextService comes from a ContextFunction
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);

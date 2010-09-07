@@ -37,20 +37,6 @@ public interface IServiceConstants {
 	public static final String ACTIVE_PART = "e4ActivePart"; //$NON-NLS-1$
 
 	/**
-	 * If a client is interested in the identifier of the currently active part,
-	 * the part could simply be injected with {@link #ACTIVE_PART} instead.
-	 */
-	@Deprecated
-	public static final String ACTIVE_PART_ID = "activePartId"; //$NON-NLS-1$
-
-	/**
-	 * Individual contributions should be persisting its state via the model
-	 * instead of through the context as the context is transient.
-	 */
-	@Deprecated
-	public static final String PERSISTED_STATE = "persistedState"; //$NON-NLS-1$
-
-	/**
 	 * 
 	 */
 	public static final String ACTIVE_SHELL = "activeShell"; //$NON-NLS-1$
