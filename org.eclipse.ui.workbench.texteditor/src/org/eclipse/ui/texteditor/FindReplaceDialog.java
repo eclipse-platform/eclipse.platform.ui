@@ -48,6 +48,7 @@ import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
@@ -417,6 +418,11 @@ class FindReplaceDialog extends Dialog {
 		panel.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
+					if (!Util.isMac()) {
+						Control controlWithFocus= getShell().getDisplay().getFocusControl();
+						if (controlWithFocus != null && (controlWithFocus.getStyle() & SWT.PUSH) == SWT.PUSH)
+							return;
+					}
 					Event event= new Event();
 					event.type= SWT.Selection;
 					event.stateMask= e.stateMask;
