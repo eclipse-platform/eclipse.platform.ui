@@ -37,6 +37,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -76,6 +77,8 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	private boolean handleOkStatuses;
 
 	private Map dialogState;
+
+	private MenuItem copyAction;
 
 	/**
 	 * @param dialogState
@@ -170,6 +173,25 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 				// no op
 			}
 		});
+		text.addSelectionListener(new SelectionListener() {
+
+			public void widgetSelected(SelectionEvent e) {
+				if (text.getSelectionText().length() == 0) {
+					if (copyAction != null && !copyAction.isDisposed()) {
+						copyAction.setEnabled(false);
+					}
+				} else {
+					if (copyAction != null && !copyAction.isDisposed()) {
+						copyAction.setEnabled(true);
+					}
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+
+		});
 		createDNDSource();
 		createCopyAction(parent);
 		Dialog.applyDialogFont(parent);
@@ -233,7 +255,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 			public void dragSetData(DragSourceEvent event) {
 				if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-					event.data = prepareCopyString();
+					event.data = text.getSelectionText();
 				}
 			}
 
@@ -244,7 +266,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 	private void createCopyAction(final Composite parent) {
 		Menu menu = new Menu(parent.getShell(), SWT.POP_UP);
-		MenuItem copyAction = new MenuItem(menu, SWT.PUSH);
+		copyAction = new MenuItem(menu, SWT.PUSH);
 		copyAction.setText(JFaceResources.getString("copy")); //$NON-NLS-1$
 		copyAction.addSelectionListener(new SelectionAdapter() {
 
@@ -262,13 +284,9 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 		});
 		text.setMenu(menu);
-	}
-
-	private String prepareCopyString() {
-		if (text == null || text.isDisposed()) {
-			return ""; //$NON-NLS-1$
+		if (text.getSelectionText().length() == 0) {
+			copyAction.setEnabled(false);
 		}
-		return text.getSelectionText();
 	}
 
 	private void populateList(StyledText text, IStatus status, int nesting,
@@ -317,7 +335,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		Clipboard clipboard = null;
 		try {
 			clipboard = new Clipboard(text.getDisplay());
-			clipboard.setContents(new Object[] { prepareCopyString() },
+			clipboard.setContents(new Object[] { text.getSelectionText() },
 					new Transfer[] { TextTransfer.getInstance() });
 		} finally {
 			if (clipboard != null) {
