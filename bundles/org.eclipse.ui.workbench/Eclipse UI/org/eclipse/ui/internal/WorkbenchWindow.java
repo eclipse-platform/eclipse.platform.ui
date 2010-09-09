@@ -1390,16 +1390,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	/**
 	 * Called when this window is about to be closed.
-	 * 
-	 * Subclasses may overide to add code that returns <code>false</code> to
-	 * prevent closing under certain conditions.
 	 */
-	public boolean okToClose() {
+	private boolean okToClose() {
 		// Save all of the editors.
 		if (!getWorkbenchImpl().isClosing()) {
-			// if (!saveAllPages(true)) {
-			// return false;
-			// }
+			IWorkbenchPage page = getActivePage();
+			if (page != null) {
+				return page.saveAllEditors(true);
+			}
 		}
 		return true;
 	}
