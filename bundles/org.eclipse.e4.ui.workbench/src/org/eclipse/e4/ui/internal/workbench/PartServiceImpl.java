@@ -719,33 +719,37 @@ public class PartServiceImpl implements EPartService {
 	public void hidePart(MPart part, boolean force) {
 		if (isInContainer(part)) {
 			MPlaceholder sharedRef = part.getCurSharedRef();
-			if (sharedRef != null)
-				sharedRef.setToBeRendered(false);
-			else
-				part.setToBeRendered(false);
-
 			if (force || part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
-				MUIElement toBeRemoved;
-				if (sharedRef != null) {
-					toBeRemoved = sharedRef;
-				} else {
-					toBeRemoved = part;
-				}
-				if (toBeRemoved != null) {
-					MElementContainer<MUIElement> parent = toBeRemoved.getParent();
-					if (parent != null) {
-						List<MUIElement> children = parent.getChildren();
-						children.remove(toBeRemoved);
+				MUIElement toBeRemoved = sharedRef == null ? part : sharedRef;
+				MElementContainer<MUIElement> parent = toBeRemoved.getParent();
+				List<MUIElement> children = parent.getChildren();
 
-						// FIXME: should be based on activation list
-						if (parent.getSelectedElement() == toBeRemoved) {
-							if (children.isEmpty()) {
-								parent.setSelectedElement(null);
-							} else {
-								parent.setSelectedElement(children.get(0));
+				// FIXME: should be based on activation list
+				if (parent.getSelectedElement() == toBeRemoved) {
+					if (children.size() == 1) {
+						parent.setSelectedElement(null);
+					} else {
+						for (MUIElement child : children) {
+							if (child != toBeRemoved) {
+								parent.setSelectedElement(child);
+								break;
 							}
 						}
 					}
+				}
+
+				if (sharedRef != null) {
+					sharedRef.setToBeRendered(false);
+				} else {
+					part.setToBeRendered(false);
+				}
+
+				children.remove(toBeRemoved);
+			} else {
+				if (sharedRef != null) {
+					sharedRef.setToBeRendered(false);
+				} else {
+					part.setToBeRendered(false);
 				}
 			}
 		}
