@@ -68,6 +68,7 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -470,9 +471,10 @@ public class PerspectiveSwitcher {
 
 	private void closePerspective(MPerspective persp) {
 		MWindow win = modelService.getTopLevelWindowFor(persp);
-		IWorkbenchPage page = win.getContext().get(IWorkbenchPage.class);
-		IPerspectiveDescriptor desc = getDescriptorFor(persp.getElementId());
-		page.closePerspective(desc, true, false);
+		WorkbenchPage page = (WorkbenchPage) win.getContext().get(IWorkbenchPage.class);
+		String perspectiveId = persp.getElementId();
+		IPerspectiveDescriptor desc = getDescriptorFor(perspectiveId);
+		page.closePerspective(desc, perspectiveId, true, false);
 
 		// removePerspectiveItem(persp);
 	}
