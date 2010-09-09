@@ -69,7 +69,6 @@ public class CocoaUIEnhancer implements IStartup {
 
 	private static final int kAboutMenuItem = 0;
 	private static final int kPreferencesMenuItem = 2;
-	private static final int kServicesMenuItem = 4;
 	private static final int kHideApplicationMenuItem = 6;
 	private static final int kQuitMenuItem = 10;
 	
@@ -378,10 +377,6 @@ public class CocoaUIEnhancer implements IStartup {
     		// enable pref menu
     		NSMenuItem prefMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] {wrapPointer(kPreferencesMenuItem)});
     		prefMenuItem.setEnabled(true);
-
-    		// disable services menu
-    		NSMenuItem servicesMenuItem = (NSMenuItem) invokeMethod(NSMenu.class, appMenu, "itemAtIndex", new Object[] {wrapPointer(kServicesMenuItem)});
-    		servicesMenuItem.setEnabled(false);
 
     		// Register as a target on the prefs and quit items.
     		prefMenuItem.setTarget(delegate);
