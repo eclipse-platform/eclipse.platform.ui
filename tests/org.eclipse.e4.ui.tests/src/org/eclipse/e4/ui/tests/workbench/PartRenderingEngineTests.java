@@ -783,6 +783,81 @@ public class PartRenderingEngineTests extends TestCase {
 		assertNotNull(partB.getObject());
 	}
 
+	public void testBug317591_NonSharedPart() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		stack.getChildren().add(partA);
+		stack.setSelectedElement(partA);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(partA.getObject());
+
+		stack.setToBeRendered(false);
+
+		assertNull(partA.getObject());
+	}
+
+	public void testBug317591_SharedPart() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MPartDescriptor descriptorA = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
+		descriptorA.setElementId("sharedA");
+		descriptorA
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		application.getDescriptors().add(descriptorA);
+		MPartDescriptor descriptorB = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
+		descriptorB.setElementId("sharedB");
+		descriptorB
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		application.getDescriptors().add(descriptorB);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+
+		MPlaceholder placeholderA = partService.createSharedPart("sharedA",
+				window);
+		stack.getChildren().add(placeholderA);
+		stack.setSelectedElement(placeholderA);
+
+		MPart partA = (MPart) placeholderA.getRef();
+
+		assertNotNull(partA.getObject());
+
+		stack.setToBeRendered(false);
+
+		assertNull(partA.getObject());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
