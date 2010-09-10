@@ -192,26 +192,28 @@ public class ResourceHandler implements IModelResourceHandler {
 	}
 
 	public void save() throws IOException {
-		if (deltaRestore && reconciler != null) {
-			try {
-				Document document = (Document) reconciler.serialize();
+		if (saveAndRestore) {
+			if (deltaRestore && reconciler != null) {
+				try {
+					Document document = (Document) reconciler.serialize();
 
-				// Use a Transformer for output
-				TransformerFactory tFactory = TransformerFactory.newInstance();
-				Transformer transformer = tFactory.newTransformer();
+					// Use a Transformer for output
+					TransformerFactory tFactory = TransformerFactory.newInstance();
+					Transformer transformer = tFactory.newTransformer();
 
-				DOMSource source = new DOMSource(document);
-				File f = new File(restoreLocation.toFileString());
-				f.getParentFile().mkdirs();
-				StreamResult result = new StreamResult(f);
-				transformer.transform(source, result);
-			} catch (Exception e) {
-				if (logger != null) {
-					logger.error(e);
+					DOMSource source = new DOMSource(document);
+					File f = new File(restoreLocation.toFileString());
+					f.getParentFile().mkdirs();
+					StreamResult result = new StreamResult(f);
+					transformer.transform(source, result);
+				} catch (Exception e) {
+					if (logger != null) {
+						logger.error(e);
+					}
 				}
+			} else {
+				resource.save(null);
 			}
-		} else {
-			resource.save(null);
 		}
 	}
 
@@ -230,20 +232,22 @@ public class ResourceHandler implements IModelResourceHandler {
 						ModelAssembler.class, context);
 				contribProcessor.processModel();
 
-				File file = new File(restoreLocation.toFileString());
-				reconciler = new XMLModelReconciler();
-				reconciler.recordChanges(appElement);
+				if (restoreLocation != null) {
+					File file = new File(restoreLocation.toFileString());
+					reconciler = new XMLModelReconciler();
+					reconciler.recordChanges(appElement);
 
-				if (file.exists()) {
-					Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-							.parse(file);
-					IModelReconcilingService modelReconcilingService = new ModelReconcilingService();
-					ModelReconciler modelReconciler = modelReconcilingService
-							.createModelReconciler();
-					document.normalizeDocument();
-					Collection<ModelDelta> deltas = modelReconciler.constructDeltas(resource
-							.getContents().get(0), document);
-					modelReconcilingService.applyDeltas(deltas);
+					if (file.exists()) {
+						Document document = DocumentBuilderFactory.newInstance()
+								.newDocumentBuilder().parse(file);
+						IModelReconcilingService modelReconcilingService = new ModelReconcilingService();
+						ModelReconciler modelReconciler = modelReconcilingService
+								.createModelReconciler();
+						document.normalizeDocument();
+						Collection<ModelDelta> deltas = modelReconciler.constructDeltas(resource
+								.getContents().get(0), document);
+						modelReconcilingService.applyDeltas(deltas);
+					}
 				}
 			} catch (Exception e) {
 				if (logger != null) {
@@ -259,7 +263,7 @@ public class ResourceHandler implements IModelResourceHandler {
 		boolean restore = restoreLastModified > lastApplicationModification;
 
 		Resource resource;
-		if (restore) {
+		if (restore && saveAndRestore) {
 			resource = loadRestoredModel();
 		} else {
 			resource = loadBaseModel();
