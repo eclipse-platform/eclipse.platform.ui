@@ -54,12 +54,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class StackRenderer extends LazyStackRenderer {
 
 	public static final String TAG_VIEW_MENU = "ViewMenu"; //$NON-NLS-1$
+	private static final String SHELL_CLOSE_EDITORS_MENU = "shell_close_editors_menu"; //$NON-NLS-1$
 	private static final String STACK_SELECTED_PART = "stack_selected_part"; //$NON-NLS-1$
 
 	Image viewMenuImage;
@@ -78,11 +80,6 @@ public class StackRenderer extends LazyStackRenderer {
 	private EventHandler dirtyUpdater;
 
 	private boolean ignoreTabSelChanges = false;
-
-	/**
-	 * Context menu for tabs in this stack, filled lazily
-	 */
-	private Menu tabMenu;
 
 	private class ActivationJob implements Runnable {
 		public MElementContainer<MUIElement> stackToActivate = null;
@@ -257,10 +254,6 @@ public class StackRenderer extends LazyStackRenderer {
 
 	@PreDestroy
 	public void contextDisposed() {
-		if (tabMenu != null) {
-			tabMenu.dispose();
-			tabMenu = null;
-		}
 		super.contextDisposed(eventBroker);
 
 		eventBroker.unsubscribe(itemUpdater);
@@ -576,15 +569,21 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private void openMenuFor(MPart part, CTabFolder folder, Point point) {
-		if (tabMenu == null)
-			tabMenu = createTabMenu(folder);
+		Menu tabMenu = createTabMenu(folder);
 		tabMenu.setData(STACK_SELECTED_PART, part);
 		tabMenu.setLocation(point.x, point.y);
 		tabMenu.setVisible(true);
 	}
 
 	private Menu createTabMenu(CTabFolder folder) {
+		Shell shell = folder.getShell();
+		Menu cachedMenu = (Menu) shell.getData(SHELL_CLOSE_EDITORS_MENU);
+		if (cachedMenu != null) {
+			return cachedMenu;
+		}
+
 		final Menu menu = new Menu(folder);
+		shell.setData(SHELL_CLOSE_EDITORS_MENU, menu);
 
 		MenuItem menuItemClose = new MenuItem(menu, SWT.NONE);
 		menuItemClose.setText(SWTRenderersMessages.menuClose);
