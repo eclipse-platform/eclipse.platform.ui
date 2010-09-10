@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -72,7 +73,27 @@ import org.eclipse.jface.text.Region;
  */
 public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implements IHyperlinkPresenterExtension2 {
 
-	private static final boolean IS_WIN32= "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
+	private static final boolean IS_OLD_WINDOWS;
+	static {
+		int majorVersion= Integer.MAX_VALUE;
+		if (Util.isWin32()) {
+			String osVersion= System.getProperty("os.version"); //$NON-NLS-1$
+			if (osVersion != null) {
+				int majorIndex = osVersion.indexOf('.');
+				if (majorIndex != -1) {
+					osVersion = osVersion.substring(0, majorIndex);
+					try {
+						majorVersion= Integer.parseInt(osVersion);
+					} catch (NumberFormatException exception) {
+						// use default
+					}
+				}
+			}
+		}
+		IS_OLD_WINDOWS= majorVersion < 6; // before Vista (6.0)
+	}
+	private static final boolean IS_MAC= Util.isMac();
+	private static final boolean IS_GTK= Util.isGtk();
 
 	/**
 	 * An information control capable of showing a list of hyperlinks. The hyperlinks can be opened.
@@ -120,8 +141,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 		private Composite fParent;
 		private Table fTable;
 
-		private Color fForegroundColor;
-		private Color fBackgroundColor;
+		private final Color fForegroundColor;
+		private final Color fBackgroundColor;
 
 
 		/**
@@ -160,12 +181,28 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 		 */
 		protected void createContent(Composite parent) {
 			fParent= parent;
-			if (IS_WIN32) {
-				GridLayout layout= new GridLayout();
+			GridLayout layout= new GridLayout();
+			
+			if (IS_OLD_WINDOWS) {
 				layout.marginWidth= 0;
+				layout.marginHeight= 4;
 				layout.marginRight= 4;
-				fParent.setLayout(layout);
+			} else if (IS_MAC) {
+				layout.marginWidth= 4;
+				layout.marginHeight= 0;
+				layout.marginTop= 4;
+				layout.marginBottom= 4 - 1;
+			} else if (IS_GTK) {
+				layout.marginWidth= 4;
+				layout.marginHeight= 0;
+				layout.marginTop= 4;
+				layout.marginBottom= 4 - 2;
+			} else {
+				layout.marginWidth= 4;
+				layout.marginHeight= 4;
 			}
+			
+			fParent.setLayout(layout);
 			fParent.setForeground(fForegroundColor);
 			fParent.setBackground(fBackgroundColor);
 		}
@@ -213,10 +250,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			fTable.setBackground(fBackgroundColor);
 			fTable.setFont(JFaceResources.getDialogFont());
 
-			if (IS_WIN32) {
-				GridData data= new GridData(SWT.BEGINNING, SWT.BEGINNING, true, true);
-				fTable.setLayoutData(data);
-			}
+			GridData data= new GridData(SWT.BEGINNING, SWT.BEGINNING, true, true);
+			fTable.setLayoutData(data);
 
 			final TableViewer viewer= new TableViewer(fTable);
 			viewer.setContentProvider(new LinkContentProvider());
@@ -545,7 +580,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 		private final MultipleHyperlinkHover fHover;
 		private final ITextViewer fTextViewer;
 		private final MultipleHyperlinkPresenter fHyperlinkPresenter;
-		private Closer fCloser;
+		private final Closer fCloser;
 		private boolean fIsControlVisible;
 
 
