@@ -262,6 +262,12 @@ public abstract class ContentViewer extends Viewer {
      * if required.
      */
     public void setInput(Object input) {
+    	Control control = getControl();
+		if (control == null || control.isDisposed()) {
+			throw new IllegalStateException(
+					"Need an underlying widget to be able to set the input." + //$NON-NLS-1$
+							"(Has the widget been disposed?)"); //$NON-NLS-1$
+		}
         Assert
                 .isTrue(getContentProvider() != null,
                         "ContentViewer must have a content provider when input is set."); //$NON-NLS-1$

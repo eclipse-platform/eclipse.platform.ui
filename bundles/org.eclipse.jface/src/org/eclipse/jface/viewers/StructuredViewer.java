@@ -1655,7 +1655,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * @see org.eclipse.jface.viewers.Viewer#setInput(java.lang.Object)
 	 */
 	public final void setInput(Object input) {
-
+		Control control = getControl();
+		if (control == null || control.isDisposed()) {
+			throw new IllegalStateException(
+					"Need an underlying widget to be able to set the input." + //$NON-NLS-1$
+							"(Has the widget been disposed?)"); //$NON-NLS-1$
+		}
 		try {
 			//		fInChange= true;
 
