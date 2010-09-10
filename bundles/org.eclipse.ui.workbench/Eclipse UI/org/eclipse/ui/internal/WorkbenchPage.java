@@ -1123,6 +1123,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			hidePart(part, false, true, true);
 		}
 
+		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
+				MPerspectiveStack.class, null).get(0);
+		MPerspective perspective = perspectiveStack.getSelectedElement();
+		while (perspective != null && !perspectiveStack.getChildren().isEmpty()) {
+			modelService.removePerspectiveModel(perspective, window);
+			perspective = perspectiveStack.getSelectedElement();
+		}
+
+		viewReferences.clear();
+		editorReferences.clear();
+
 		if (unsetPage) {
 			legacyWindow.setActivePage(null);
 			partService.removePartListener(e4PartListener);
@@ -1161,20 +1172,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			postSelectionListeners.clear();
 			targetedSelectionListeners.clear();
 			targetedPostSelectionListeners.clear();
-		}
 
-		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
-				MPerspectiveStack.class, null).get(0);
-		MPerspective perspective = perspectiveStack.getSelectedElement();
-		while (perspective != null && !perspectiveStack.getChildren().isEmpty()) {
-			modelService.removePerspectiveModel(perspective, window);
-			perspective = perspectiveStack.getSelectedElement();
-		}
-
-		viewReferences.clear();
-		editorReferences.clear();
-
-		if (unsetPage) {
 			ContextInjectionFactory.uninject(this, window.getContext());
 		}
 		return true;
