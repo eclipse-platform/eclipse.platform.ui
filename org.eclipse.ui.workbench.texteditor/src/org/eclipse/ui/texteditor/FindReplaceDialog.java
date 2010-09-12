@@ -215,7 +215,7 @@ class FindReplaceDialog extends Dialog {
 	 * Holds the mnemonic/button pairs for all buttons.
 	 * @since 3.7
 	 */
-	private HashMap fMnemonicButtonMap = new HashMap();
+	private HashMap fMnemonicButtonMap= new HashMap();
 
 
 	/**
@@ -433,12 +433,26 @@ class FindReplaceDialog extends Dialog {
 					Character mnemonic= new Character(Character.toLowerCase(e.character));
 					if (fMnemonicButtonMap.containsKey(mnemonic)) {
 						Button button= (Button)fMnemonicButtonMap.get(mnemonic);
-						Event event= new Event();
-						event.type= SWT.Selection;
-						event.stateMask= e.stateMask;
-						button.notifyListeners(SWT.Selection, event);
-						e.detail= SWT.TRAVERSE_NONE;
-						e.doit= true;
+						if ((fFindField.isFocusControl() || fReplaceField.isFocusControl() || (button.getStyle() & SWT.PUSH) != 0)
+								&& button.isEnabled()) {
+							Event event= new Event();
+							event.type= SWT.Selection;
+							event.stateMask= e.stateMask;
+							if ((button.getStyle() & SWT.RADIO) != 0) {
+								Composite buttonParent= button.getParent();
+								if (buttonParent != null) {
+									Control[] children= buttonParent.getChildren();
+									for (int i= 0; i < children.length; i++)
+										((Button)children[i]).setSelection(false);
+								}
+								button.setSelection(true);
+							} else {
+								button.setSelection(!button.getSelection());
+							}
+							button.notifyListeners(SWT.Selection, event);
+							e.detail= SWT.TRAVERSE_NONE;
+							e.doit= true;
+						}
 					}
 				}
 			}
@@ -491,11 +505,13 @@ class FindReplaceDialog extends Dialog {
 		fForwardRadioButton.setText(EditorMessages.FindReplace_ForwardRadioButton_label);
 		setGridData(fForwardRadioButton, SWT.LEFT, false, SWT.CENTER, false);
 		fForwardRadioButton.addSelectionListener(selectionListener);
+		storeButtonWithMnemonicInMap(fForwardRadioButton);
 
 		Button backwardRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
 		backwardRadioButton.setText(EditorMessages.FindReplace_BackwardRadioButton_label);
 		setGridData(backwardRadioButton, SWT.LEFT, false, SWT.CENTER, false);
 		backwardRadioButton.addSelectionListener(selectionListener);
+		storeButtonWithMnemonicInMap(backwardRadioButton);
 
 		backwardRadioButton.setSelection(!fForwardInit);
 		fForwardRadioButton.setSelection(fForwardInit);
@@ -539,6 +555,7 @@ class FindReplaceDialog extends Dialog {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		storeButtonWithMnemonicInMap(fGlobalRadioButton);
 
 		fSelectedRangeRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
 		fSelectedRangeRadioButton.setText(EditorMessages.FindReplace_SelectedRangeRadioButton_label);
@@ -556,6 +573,7 @@ class FindReplaceDialog extends Dialog {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		storeButtonWithMnemonicInMap(fSelectedRangeRadioButton);
 
 		return panel;
 	}
@@ -693,18 +711,21 @@ class FindReplaceDialog extends Dialog {
 		setGridData(fCaseCheckBox, SWT.LEFT, false, SWT.CENTER, false);
 		fCaseCheckBox.setSelection(fCaseInit);
 		fCaseCheckBox.addSelectionListener(selectionListener);
+		storeButtonWithMnemonicInMap(fCaseCheckBox);
 
 		fWrapCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fWrapCheckBox.setText(EditorMessages.FindReplace_WrapCheckBox_label);
 		setGridData(fWrapCheckBox, SWT.LEFT, false, SWT.CENTER, false);
 		fWrapCheckBox.setSelection(fWrapInit);
 		fWrapCheckBox.addSelectionListener(selectionListener);
+		storeButtonWithMnemonicInMap(fWrapCheckBox);
 
 		fWholeWordCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fWholeWordCheckBox.setText(EditorMessages.FindReplace_WholeWordCheckBox_label);
 		setGridData(fWholeWordCheckBox, SWT.LEFT, false, SWT.CENTER, false);
 		fWholeWordCheckBox.setSelection(fWholeWordInit);
 		fWholeWordCheckBox.addSelectionListener(selectionListener);
+		storeButtonWithMnemonicInMap(fWholeWordCheckBox);
 
 		fIncrementalCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fIncrementalCheckBox.setText(EditorMessages.FindReplace_IncrementalCheckBox_label);
@@ -721,6 +742,7 @@ class FindReplaceDialog extends Dialog {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
+		storeButtonWithMnemonicInMap(fIncrementalCheckBox);
 
 		fIsRegExCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fIsRegExCheckBox.setText(EditorMessages.FindReplace_RegExCheckbox_label);
@@ -739,6 +761,7 @@ class FindReplaceDialog extends Dialog {
 				setContentAssistsEnablement(newState);
 			}
 		});
+		storeButtonWithMnemonicInMap(fIsRegExCheckBox);
 		fWholeWordCheckBox.setEnabled(!isRegExSearchAvailableAndChecked());
 		fWholeWordCheckBox.addSelectionListener(new SelectionAdapter() {
 			/*
@@ -1226,11 +1249,20 @@ class FindReplaceDialog extends Dialog {
 	private Button makeButton(Composite parent, String label, int id, boolean dfltButton, SelectionListener listener) {
 		Button button= createButton(parent, id, label, dfltButton);
 		button.addSelectionListener(listener);
-		char mnemonic= LegacyActionTools.extractMnemonic(button.getText());
-		if (mnemonic != LegacyActionTools.MNEMONIC_NONE) {
-			fMnemonicButtonMap.put(new Character(Character.toLowerCase(mnemonic)), button);
-		}
+		storeButtonWithMnemonicInMap(button);
 		return button;
+	}
+
+	/**
+	 * Stores the button and its mnemonic in {@link #fMnemonicButtonMap}.
+	 * 
+	 * @param button button whose mnemonic has to be stored
+	 * @since 3.7
+	 */
+	private void storeButtonWithMnemonicInMap(Button button) {
+		char mnemonic= LegacyActionTools.extractMnemonic(button.getText());
+		if (mnemonic != LegacyActionTools.MNEMONIC_NONE)
+			fMnemonicButtonMap.put(new Character(Character.toLowerCase(mnemonic)), button);
 	}
 
 	/**
