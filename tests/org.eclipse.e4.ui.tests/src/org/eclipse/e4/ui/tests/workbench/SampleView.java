@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -32,6 +33,9 @@ import org.eclipse.swt.widgets.Composite;
  *
  */
 public class SampleView {
+
+	private boolean destroyed = false;
+
 	/**
 	 * Create the sample view.
 	 * 
@@ -129,5 +133,14 @@ public class SampleView {
 		}
 		viewer.setInput(input);
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
+	}
+
+	@PreDestroy
+	void preDestroy() {
+		destroyed = true;
+	}
+
+	public boolean isDestroyed() {
+		return destroyed;
 	}
 }

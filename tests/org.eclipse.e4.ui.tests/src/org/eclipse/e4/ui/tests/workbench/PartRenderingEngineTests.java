@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.swt.widgets.Display;
@@ -856,6 +857,238 @@ public class PartRenderingEngineTests extends TestCase {
 		stack.setToBeRendered(false);
 
 		assertNull(partA.getObject());
+	}
+
+	public void testRemoveGuiBug324228_1() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getSharedElements().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveA.setElementId("perspectiveA"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(part);
+		part.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveB.setElementId("perspectiveB"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(part);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		SampleView view = (SampleView) part.getObject();
+		assertFalse(view.isDestroyed());
+
+		perspectiveStack.setSelectedElement(perspectiveB);
+		appContext.get(EModelService.class).removePerspectiveModel(
+				perspectiveB, window);
+		assertFalse(view.isDestroyed());
+		assertNotNull(part.getContext().getParent());
+		assertEquals(perspectiveA.getContext(), part.getContext().getParent());
+	}
+
+	public void testRemoveGuiBug324228_2() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getSharedElements().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveA.setElementId("perspectiveA"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(part);
+		part.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveB.setElementId("perspectiveB"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(part);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		SampleView view = (SampleView) part.getObject();
+		assertFalse(view.isDestroyed());
+
+		perspectiveStack.setSelectedElement(perspectiveB);
+		placeholderB.setToBeRendered(false);
+		assertFalse(view.isDestroyed());
+		assertNotNull(part.getContext().getParent());
+		assertEquals(perspectiveA.getContext(), part.getContext().getParent());
+	}
+
+	public void testRemoveGuiBug324228_3() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getSharedElements().add(partStack);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partStack.getChildren().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveA.setElementId("perspectiveA"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(partStack);
+		partStack.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveB.setElementId("perspectiveB"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partStack);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		SampleView view = (SampleView) part.getObject();
+		assertFalse(view.isDestroyed());
+
+		perspectiveStack.setSelectedElement(perspectiveB);
+		placeholderB.setToBeRendered(false);
+		assertFalse(view.isDestroyed());
+		assertNotNull(part.getContext().getParent());
+		assertEquals(perspectiveA.getContext(), part.getContext().getParent());
+	}
+
+	public void testRemoveGuiBug324228_4() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getSharedElements().add(partStack);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partStack.getChildren().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveA.setElementId("perspectiveA"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(partStack);
+		partStack.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveB.setElementId("perspectiveB"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partStack);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		SampleView view = (SampleView) part.getObject();
+		assertFalse(view.isDestroyed());
+
+		perspectiveStack.setSelectedElement(perspectiveB);
+		appContext.get(EModelService.class).removePerspectiveModel(
+				perspectiveB, window);
+		assertFalse(view.isDestroyed());
+		assertNotNull(part.getContext().getParent());
+		assertEquals(perspectiveA.getContext(), part.getContext().getParent());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
