@@ -104,21 +104,35 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 		List<MPlaceholder> refs = renderedMap.get(refElement);
 		refs.remove(ph);
 
+		IEclipseContext curContext = modelService.getContainingContext(ph);
+
 		if (refs.size() == 0) {
 			renderingEngine.removeGui(refElement);
 		} else {
 			// Ensure that the dispose of the element reference doesn't cascade
-			// to
-			// dispose the 'real' part
+			// to dispose the 'real' part
 			if (refCtrl != null && !refCtrl.isDisposed()
 					&& refElement.getCurSharedRef() == ph) {
 				// Find another *rendered* ref to pass the part on to
 				for (MPlaceholder aPH : refs) {
 					Composite phComp = (Composite) aPH.getWidget();
-					if (phComp != null && !phComp.isDisposed()) {
-						refCtrl.setParent(phComp);
-						break;
+					if (phComp == null || phComp.isDisposed())
+						continue;
+
+					// Reparent the context(s) (if any)
+					IEclipseContext newParentContext = modelService
+							.getContainingContext(aPH);
+					List<MContext> allContexts = modelService.findElements(
+							refElement, null, MContext.class, null);
+					for (MContext ctxtElement : allContexts) {
+						IEclipseContext theContext = ctxtElement.getContext();
+						if (theContext.getParent() == curContext)
+							theContext.setParent(newParentContext);
 					}
+
+					// Reparent the widget
+					refCtrl.setParent(phComp);
+					break;
 				}
 			}
 		}

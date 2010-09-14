@@ -36,7 +36,6 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -118,10 +117,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 	@Override
 	public void processContents(MElementContainer<MUIElement> me) {
-		Widget parentWidget = getParentWidget(me);
-		if (parentWidget == null)
-			return;
-
 		// Lazy Loading: here we only process the contents through childAdded,
 		// we specifically do not render them
 		for (MUIElement part : me.getChildren()) {
