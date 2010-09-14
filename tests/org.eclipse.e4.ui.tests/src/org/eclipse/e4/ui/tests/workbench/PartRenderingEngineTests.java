@@ -1091,6 +1091,36 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(perspectiveA.getContext(), part.getContext().getParent());
 	}
 
+	public void testRemoveGuiBug324230() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartSashContainer sashContainer = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		window.getChildren().add(sashContainer);
+		window.setSelectedElement(sashContainer);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setToBeRendered(false);
+		// add an element into the container that's not being rendered
+		sashContainer.getChildren().add(part);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(sashContainer.getWidget());
+
+		appContext.get(IPresentationEngine.class).removeGui(sashContainer);
+
+		assertNull(sashContainer.getWidget());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);

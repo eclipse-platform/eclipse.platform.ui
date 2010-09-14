@@ -314,8 +314,6 @@ public class SashRenderer extends SWTPartRenderer {
 			MUIElement child) {
 		super.hideChild(parentElement, child);
 
-		((Control) child.getWidget()).removeControlListener(resizeListener);
-
 		// synch this sash after the dust settles
 		addModelToUpdate(parentElement);
 	}
