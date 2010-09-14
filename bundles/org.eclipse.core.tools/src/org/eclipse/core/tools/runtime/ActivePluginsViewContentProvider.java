@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.tools.runtime;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.internal.stats.BundleStats;
 import org.eclipse.core.runtime.internal.stats.StatsManager;
 import org.eclipse.core.tools.IFlattable;
@@ -38,16 +39,12 @@ public class ActivePluginsViewContentProvider implements ITreeContentProvider, I
 	public Object[] getChildren(Object element) {
 		if (flat || !(element instanceof BundleStats))
 			return new Object[0];
-		if (element == null)
-			return null;
-		ArrayList stats = ((BundleStats) element).getBundlesActivated();
+		List stats = ((BundleStats) element).getBundlesActivated();
 		return stats.toArray(new Object[stats.size()]);
 	}
 
 	public Object getParent(Object element) {
 		if (flat || !(element instanceof BundleStats))
-			return null;
-		if (element == null)
 			return null;
 		return ((BundleStats) element).getActivatedBy().getSymbolicName();
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tools.runtime;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.internal.stats.*;
@@ -77,7 +77,7 @@ public class PluginDataSheetView extends BaseTextView implements ISelectionListe
 		}
 	}
 
-	private void printResourceBundleStats(StringBuffer result, ArrayList bundles, BundleStats info) {
+	private void printResourceBundleStats(StringBuffer result, List bundles, BundleStats info) {
 		if (bundles == null || bundles.size() == 0) {
 			result.append("No resources loaded by this plug-in\n"); //$NON-NLS-1$
 			return;

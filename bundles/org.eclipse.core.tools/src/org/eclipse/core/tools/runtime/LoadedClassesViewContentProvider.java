@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,7 +44,7 @@ public class LoadedClassesViewContentProvider implements ITreeContentProvider, I
 		for (int i = 0; i < filters.length; i++)
 			if (filters[i].equals(name))
 				return true;
-		ArrayList children = element.getLoadedClasses();
+		List children = element.getLoadedClasses();
 		for (Iterator i = children.iterator(); i.hasNext();)
 			if (filterChildren((ClassStats) i.next(), filters))
 				return true;
