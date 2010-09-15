@@ -631,9 +631,61 @@ public class PartServiceImpl implements EPartService {
 		MElementContainer<MUIElement> parent = element.getParent();
 		if (parent == null) {
 			MPlaceholder placeholder = element.getCurSharedRef();
-			return placeholder == null ? null : placeholder.getParent();
+			if (placeholder == null) {
+				MElementContainer<MUIElement> container = getContainer();
+				return findContainer(container, element);
+			}
+			return placeholder.getParent();
 		}
 		return parent;
+	}
+
+	private MElementContainer<MUIElement> findContainer(MElementContainer<?> container,
+			MUIElement element) {
+		for (Object child : container.getChildren()) {
+			if (child == element) {
+				return (MElementContainer<MUIElement>) container;
+			} else if (child instanceof MPlaceholder) {
+				MPlaceholder placeholder = (MPlaceholder) child;
+				MUIElement ref = placeholder.getRef();
+				if (ref == element) {
+					return (MElementContainer<MUIElement>) container;
+				} else if (ref instanceof MElementContainer<?>) {
+					MElementContainer<MUIElement> match = findContainer((MElementContainer<?>) ref,
+							element);
+					if (match != null) {
+						return match;
+					}
+				}
+			} else if (child instanceof MElementContainer<?>) {
+				MElementContainer<MUIElement> match = findContainer((MElementContainer<?>) child,
+						element);
+				if (match != null) {
+					return match;
+				}
+			}
+		}
+		return null;
+	}
+
+	private MUIElement getRemoveTarget(MUIElement element) {
+		MPlaceholder sharedRef = element.getCurSharedRef();
+		if (sharedRef == null) {
+			return findRemoveTarget(getContainer(), element);
+		}
+		return sharedRef;
+	}
+
+	private MUIElement findRemoveTarget(MElementContainer<?> container, MUIElement element) {
+		for (Object child : container.getChildren()) {
+			if (child instanceof MPlaceholder) {
+				MPlaceholder placeholder = (MPlaceholder) child;
+				if (placeholder.getRef() == element) {
+					return placeholder;
+				}
+			}
+		}
+		return element;
 	}
 
 	private MPart showPart(PartState partState, MPart providedPart, MPart localPart) {
@@ -719,38 +771,31 @@ public class PartServiceImpl implements EPartService {
 	public void hidePart(MPart part, boolean force) {
 		if (isInContainer(part)) {
 			MPlaceholder sharedRef = part.getCurSharedRef();
-			if (force || part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
-				MUIElement toBeRemoved = sharedRef == null ? part : sharedRef;
-				MElementContainer<MUIElement> parent = toBeRemoved.getParent();
-				List<MUIElement> children = parent.getChildren();
+			MUIElement toBeRemoved = getRemoveTarget(part);
+			MElementContainer<MUIElement> parent = getParent(toBeRemoved);
+			List<MUIElement> children = parent.getChildren();
 
-				// FIXME: should be based on activation list
-				if (parent.getSelectedElement() == toBeRemoved) {
-					if (children.size() == 1) {
-						parent.setSelectedElement(null);
-					} else {
-						for (MUIElement child : children) {
-							if (child != toBeRemoved) {
-								parent.setSelectedElement(child);
-								break;
-							}
-						}
+			// FIXME: should be based on activation list
+			if (parent.getSelectedElement() == toBeRemoved) {
+				for (MUIElement child : children) {
+					if (child != toBeRemoved && child.isToBeRendered()) {
+						parent.setSelectedElement(child);
+						break;
 					}
 				}
+			}
 
-				if (sharedRef != null) {
-					sharedRef.setToBeRendered(false);
-				} else {
-					part.setToBeRendered(false);
-				}
-
-				children.remove(toBeRemoved);
+			if (sharedRef != null) {
+				sharedRef.setToBeRendered(false);
 			} else {
-				if (sharedRef != null) {
-					sharedRef.setToBeRendered(false);
-				} else {
-					part.setToBeRendered(false);
+				part.setToBeRendered(false);
+			}
+
+			if (force || part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
+				if (children.size() == 1) {
+					parent.setSelectedElement(null);
 				}
+				children.remove(toBeRemoved);
 			}
 		}
 	}

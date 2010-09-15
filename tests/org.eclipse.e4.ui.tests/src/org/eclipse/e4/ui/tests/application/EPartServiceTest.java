@@ -5232,6 +5232,99 @@ public class EPartServiceTest extends TestCase {
 		testShowPart_Bug307747(PartState.ACTIVATE);
 	}
 
+	private void testHidePart_Bug325148(boolean force) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setToBeRendered(false);
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getSharedElements().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPlaceholder placeholder = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholder.setRef(part);
+		placeholder.setToBeRendered(false);
+		perspective.getChildren().add(placeholder);
+		perspective.setSelectedElement(placeholder);
+
+		// setup the context
+		initialize(applicationContext, application);
+		// render the window
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.hidePart(part, force);
+		assertEquals(force, !perspective.getChildren().contains(placeholder));
+	}
+
+	public void testHidePart_Bug325148_True() {
+		testHidePart_Bug325148(true);
+	}
+
+	public void testHidePart_Bug325148_False() {
+		testHidePart_Bug325148(false);
+	}
+
+	private void testHidePart_Bug325148_Unrendered(boolean force) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MPartDescriptor partDescriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setElementId("partId");
+		partDescriptor.setCategory("category");
+		application.getDescriptors().add(partDescriptor);
+
+		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		// create a stack
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		stack.setElementId("category");
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		stack.getChildren().add(partA);
+		stack.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setToBeRendered(false);
+		stack.getChildren().add(partB);
+
+		// setup the context
+		initialize(applicationContext, application);
+		// render the window
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.hidePart(partB, force);
+	}
+
+	public void testHidePart_Bug325148_Unrendered_True() {
+		testHidePart_Bug325148_Unrendered(true);
+	}
+
+	public void testHidePart_Bug325148_Unrendered_False() {
+		testHidePart_Bug325148_Unrendered(false);
+	}
+
 	private MApplication createApplication(String partId) {
 		return createApplication(new String[] { partId });
 	}
