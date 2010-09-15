@@ -2220,7 +2220,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		// instantiate a dummy perspective perspective
 		MPerspective dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
-		// dummyPerspective.setVisible(false);
 
 		IPerspectiveFactory factory = ((PerspectiveDescriptor) desc).createFactory();
 		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService,
