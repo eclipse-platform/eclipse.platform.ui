@@ -321,6 +321,16 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 			});
 
 			fTable.addMouseListener(new MouseAdapter() {
+				public void mouseDown(MouseEvent e) {
+					if (IS_MAC && (e.stateMask & SWT.COMMAND) != 0) {
+						// workaround for https://bugs.eclipse.org/325223
+						TableItem item= fTable.getItem(new Point(e.x, e.y));
+						if (item != null) {
+							fTable.setSelection(item);
+						}
+					}
+				}
+				
 				public void mouseUp(MouseEvent e) {
 					if (fTable.getSelectionCount() < 1)
 						return;
