@@ -68,21 +68,6 @@ public abstract class CompatibilityPart {
 	private boolean alreadyDisposed = false;
 
 	/**
-	 * This handler will be notified when the part's contribution has been
-	 * un/set.
-	 */
-	private EventHandler objectSetHandler = new EventHandler() {
-		public void handleEvent(Event event) {
-			// check that we're looking at our own part and that the object is
-			// being unset
-			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
-					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
-				invalidate();
-			}
-		}
-	};
-
-	/**
 	 * This handler will be notified when the part's widget has been un/set.
 	 */
 	private EventHandler widgetSetHandler = new EventHandler() {
@@ -166,9 +151,6 @@ public abstract class CompatibilityPart {
 
 	@PostConstruct
 	public void create() {
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Contribution.TOPIC,
-				UIEvents.Contribution.OBJECT), objectSetHandler);
-
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
 				UIEvents.UIElement.WIDGET), widgetSetHandler);
 
@@ -236,7 +218,6 @@ public abstract class CompatibilityPart {
 			invalidate();
 		}
 
-		eventBroker.unsubscribe(objectSetHandler);
 		eventBroker.unsubscribe(widgetSetHandler);
 	}
 
