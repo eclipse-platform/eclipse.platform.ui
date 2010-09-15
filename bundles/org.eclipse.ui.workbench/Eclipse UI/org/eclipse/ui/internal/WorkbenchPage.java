@@ -42,6 +42,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -2217,10 +2218,28 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (desc == null)
 			return;
 
-		// For now just close and re-open it
-		closePerspective(desc, desc.getId());
-		if (persp.getParent() == null) {
-			setPerspective(desc);
+		// instantiate a dummy perspective perspective
+		MPerspective dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+		// dummyPerspective.setVisible(false);
+
+		IPerspectiveFactory factory = ((PerspectiveDescriptor) desc).createFactory();
+		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService,
+				dummyPerspective, desc, this, true);
+		factory.createInitialLayout(modelLayout);
+		PerspectiveTagger.tagPerspective(dummyPerspective, modelService);
+		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+		reader.extendLayout(getExtensionTracker(), desc.getId(), modelLayout);
+
+		int dCount = dummyPerspective.getChildren().size();
+		while (dummyPerspective.getChildren().size() > 0) {
+			MPartSashContainerElement dChild = dummyPerspective.getChildren().remove(0);
+			persp.getChildren().add(dChild);
+		}
+
+		while (persp.getChildren().size() > dCount) {
+			MUIElement child = persp.getChildren().get(0);
+			child.setToBeRendered(false);
+			persp.getChildren().remove(0);
 		}
 	}
 
