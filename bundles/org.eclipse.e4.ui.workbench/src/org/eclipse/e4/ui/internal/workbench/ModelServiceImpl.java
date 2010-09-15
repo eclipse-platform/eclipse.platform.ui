@@ -572,13 +572,15 @@ public class ModelServiceImpl implements EModelService {
 		}
 	}
 
-	public void removePerspectiveModel(MPerspective persp, MWindow window) {
+	public void resetPerspectiveModel(MPerspective persp, MWindow window) {
 		if (persp == null)
 			return;
 
+		// close and remove any detached windows
 		for (MWindow win : persp.getWindows()) {
 			win.setToBeRendered(false);
 		}
+		persp.getWindows().clear();
 
 		// Remove any minimized stacks for this perspective
 		List<MTrimBar> bars = findElements(window, null, MTrimBar.class, null);
@@ -606,18 +608,21 @@ public class ModelServiceImpl implements EModelService {
 			toolControl.setToBeRendered(false);
 			toolControl.getParent().getChildren().remove(toolControl);
 		}
+	}
 
-		// find the editor area
-		//		MUIElement editorArea = find("org.eclipse.ui.editorss", persp); //$NON-NLS-1$
-		// if (editorArea instanceof MPlaceholder)
-		// ((MPlaceholder) editorArea).setRef(null);
-		// editorArea.getParent().getChildren().remove(editorArea);
+	public void removePerspectiveModel(MPerspective persp, MWindow window) {
+		// Remove transient elements (minimized stacks, detached windows)
+		resetPerspectiveModel(persp, window);
+
+		// unrender the perspective...
 		persp.setToBeRendered(false);
 
+		// ...and remove it
 		MUIElement psElement = persp.getParent();
 		MPerspectiveStack ps = (MPerspectiveStack) psElement;
 		ps.getChildren().remove(persp);
 
+		// pick a new perspective to become active (if any)
 		if (ps.getSelectedElement() == persp) {
 			for (MPerspective p : ps.getChildren()) {
 				if (p != persp && p.isToBeRendered()) {

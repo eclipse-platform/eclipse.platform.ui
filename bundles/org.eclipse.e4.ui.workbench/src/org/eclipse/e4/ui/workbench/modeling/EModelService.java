@@ -251,6 +251,16 @@ public interface EModelService {
 	 * @param window
 	 *            the window to remove it from
 	 */
+	public void resetPerspectiveModel(MPerspective persp, MWindow window);
+
+	/**
+	 * Remove the given perspective completely from the model.
+	 * 
+	 * @param persp
+	 *            the perspective to remove
+	 * @param window
+	 *            the window to remove it from
+	 */
 	public void removePerspectiveModel(MPerspective persp, MWindow window);
 
 	/**

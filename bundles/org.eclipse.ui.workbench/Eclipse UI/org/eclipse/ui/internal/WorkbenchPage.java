@@ -2218,6 +2218,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (desc == null)
 			return;
 
+		modelService.resetPerspectiveModel(persp, window);
+
 		// instantiate a dummy perspective perspective
 		MPerspective dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
 
