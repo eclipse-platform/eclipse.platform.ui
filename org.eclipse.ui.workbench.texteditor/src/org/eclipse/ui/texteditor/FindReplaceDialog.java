@@ -1659,8 +1659,10 @@ class FindReplaceDialog extends Dialog {
 				history.remove(index);
 			}
 			history.add(0, findString);
+			Point selection= combo.getSelection();
 			updateCombo(combo, history);
 			combo.setText(findString);
+			combo.setSelection(selection);
 		}
 	}
 
