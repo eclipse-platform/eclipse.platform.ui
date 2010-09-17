@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
+ *     Markus Schorn <markus.schorn@windriver.com> - shift with trailing empty line - https://bugs.eclipse.org/325438
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -4298,22 +4299,19 @@ public class TextViewer extends Viewer implements
 	 *
 	 * @param selection the selection to use
 	 * @return the region describing the text block comprising the given selection
-	 * @since 2.0
+	 * @throws BadLocationException when the document does not contain the selection
 	 */
-	private IRegion getTextBlockFromSelection(ITextSelection selection) {
-
-		try {
-			IDocument document= getDocument();
-			int start= document.getLineOffset(selection.getStartLine());
-			int endLine= selection.getEndLine();
-			IRegion endLineInfo= document.getLineInformation(endLine);
-			int end= endLineInfo.getOffset() + endLineInfo.getLength();
-			return new Region(start, end - start);
-
-		} catch (BadLocationException x) {
+	private IRegion getTextBlockFromSelection(ITextSelection selection) throws BadLocationException {
+		IDocument document= getDocument();
+		int start= document.getLineOffset(selection.getStartLine());
+		int end;
+		int endLine= selection.getEndLine();
+		if (document.getNumberOfLines() > endLine+1) {
+			end= document.getLineOffset(endLine+1);
+		} else {
+			end= document.getLength();
 		}
-
-		return null;
+		return new Region(start, end - start);
 	}
 
 	/**
