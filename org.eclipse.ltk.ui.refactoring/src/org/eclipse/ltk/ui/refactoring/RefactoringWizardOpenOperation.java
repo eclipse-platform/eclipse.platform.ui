@@ -39,6 +39,7 @@ import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
 
+
 /**
  * A helper class to open a refactoring wizard dialog. The class first checks
  * the initial conditions of the refactoring and depending on its outcome
@@ -189,7 +190,7 @@ public class RefactoringWizardOpenOperation {
 				}
 			}
 		};
-		BusyIndicator.showWhile(parent.getDisplay(), r);
+		BusyIndicator.showWhile(parent != null ? parent.getDisplay() : null, r);
 		if (canceled[0] != null)
 			throw canceled[0];
 		return result[0];
