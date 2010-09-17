@@ -640,6 +640,7 @@ public class TeamUIMessages extends NLS {
 
 	public static String CompareFileRevisionEditorInput_compareResourceAndVersions;
 	public static String CompareFileRevisionEditorInput_repository;
+	public static String CompareFileRevisionEditorInput_repositoryWithoutAuthor;
 	public static String CompareFileRevisionEditorInput_workspace;
 	public static String CompareFileRevisionEditorInput_workspace_authorExists;
 	public static String CompareFileRevisionEditorInput_localRevision;

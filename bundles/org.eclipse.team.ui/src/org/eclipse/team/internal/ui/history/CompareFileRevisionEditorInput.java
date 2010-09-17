@@ -174,17 +174,19 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	}
 
 	private String getLocalResourceRevisionLabel(LocalResourceTypedElement localElement, String name) {
-		String author= localElement.getAuthor();
-		if (author == null) {
-			try {
-				localElement.fetchAuthor(null);
-			} catch (CoreException e) {
-				TeamUIPlugin.log(e);
+		if (Utils.isShowAuthor()) {
+			String author= localElement.getAuthor();
+			if (author == null) {
+				try {
+					localElement.fetchAuthor(null);
+				} catch (CoreException e) {
+					TeamUIPlugin.log(e);
+				}
+				author= localElement.getAuthor();
 			}
-			author= localElement.getAuthor();
+			if (author != null)
+				return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace_authorExists, new Object[] { name, author });
 		}
-		if (author != null)
-			return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace_authorExists, new Object[] { name, author });
 		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[] { name });
 	}
 
@@ -196,7 +198,10 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 				return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_localRevision, new Object[]{TextProcessor.process(element.getName()), element.getTimestamp()});
 			} 
 		} else {
-			return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_repository, new Object[]{ element.getName(), element.getContentIdentifier(), element.getAuthor()});
+			if (Utils.isShowAuthor())
+				return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_repository, new Object[] { element.getName(), element.getContentIdentifier(), element.getAuthor() });
+			else
+				return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_repositoryWithoutAuthor, new Object[] { element.getName(), element.getContentIdentifier() });
 		}
 		return ""; //$NON-NLS-1$
 	}

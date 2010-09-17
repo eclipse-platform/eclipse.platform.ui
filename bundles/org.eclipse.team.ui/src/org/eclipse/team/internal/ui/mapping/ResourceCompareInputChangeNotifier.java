@@ -56,7 +56,7 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 				if (element != null) {
 					final IFileRevision revision = ((FileRevisionTypedElement)element).getFileRevision();
 					if (revision != null) {
-						if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
+						if (Utils.isShowAuthor()) {
 							String author = ((FileRevisionTypedElement)element).getAuthor();
 							if (author != null) {
 								return NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelAuthorExists, new String[] { revision.getContentIdentifier(), author });
@@ -85,7 +85,7 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 				if (localContentId != null) {
 					ITypedElement element= rdci.getLeft();
 					if (element instanceof LocalResourceTypedElement) {
-						if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
+						if (Utils.isShowAuthor()) {
 							String author= ((LocalResourceTypedElement)element).getAuthor();
 							if (author != null) {
 								return NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelAuthorExists, new String[] { localContentId, author });
@@ -114,7 +114,7 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 				if (element != null) {
 					final IFileRevision revision = ((FileRevisionTypedElement)element).getFileRevision();
 					if (revision != null) {
-						if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
+						if (Utils.isShowAuthor()) {
 							String author = ((FileRevisionTypedElement)element).getAuthor();
 							if (author != null) {
 								return NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelAuthorExists, new String[] { revision.getContentIdentifier(), author });

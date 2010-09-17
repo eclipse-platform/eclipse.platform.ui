@@ -414,7 +414,7 @@ public class Utils {
 		updateLabels(sync, config, null);
 	}
 
-	private static boolean isShowAuthor() {
+	public static boolean isShowAuthor() {
 		IPreferenceStore store = TeamUIPlugin.getPlugin().getPreferenceStore();
 		return store.getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR);
 	}
