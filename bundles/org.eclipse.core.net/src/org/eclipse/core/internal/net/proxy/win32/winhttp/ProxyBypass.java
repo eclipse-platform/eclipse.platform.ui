@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 compeople AG and others.
+ * Copyright (c) 2008, 2010 compeople AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
 import java.net.URI;
 
+import org.eclipse.core.internal.net.StringMatcher;
 import org.eclipse.core.internal.net.StringUtil;
 
 /**
@@ -67,12 +68,8 @@ public class ProxyBypass {
 	private boolean isInBypassList(String host) {
 		for (int i = 0; i < proxyBypassEntries.length; i++) {
 			String entry = proxyBypassEntries[i];
-			if (entry.endsWith("*")) { //$NON-NLS-1$
-				if (host.toLowerCase().startsWith(
-						entry.substring(0, entry.length() - 1).toLowerCase())) {
-					return true;
-				}
-			} else if (host.equalsIgnoreCase(entry)) {
+			StringMatcher matcher = new StringMatcher(entry, true, false);
+			if (matcher.match(host)) {
 				return true;
 			}
 		}

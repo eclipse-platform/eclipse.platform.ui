@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,8 +195,8 @@ public class SystemProxyTest extends TestCase {
 	/**
 	 * This test needs Windows IE settings manually set. See
 	 * {@link #initializeTestProxyData()} for values. Additionally set
-	 * <code>"eclipse.*;nonexisting.com;"</code> as proxy bypass in the IE
-	 * settings.
+	 * <code>"eclipse.*;nonexisting.com;*.eclipse.org;www.*.com;*.test.*"</code>
+	 * as proxy bypass in the IE settings.
 	 * 
 	 * @throws URISyntaxException
 	 */
@@ -212,6 +212,18 @@ public class SystemProxyTest extends TestCase {
 
 		proxiesData = getProxyManager().select(
 				new URI("http://nonexisting.com"));
+		assertEquals(0, proxiesData.length);
+		
+		proxiesData = getProxyManager().select(
+				new URI("http://www.eclipse.org"));
+		assertEquals(0, proxiesData.length);
+		
+		proxiesData = getProxyManager().select(
+				new URI("http://www.myDomain.com"));
+		assertEquals(0, proxiesData.length);
+		
+		proxiesData = getProxyManager().select(
+				new URI("http://www.test.edu"));
 		assertEquals(0, proxiesData.length);
 	}
 
