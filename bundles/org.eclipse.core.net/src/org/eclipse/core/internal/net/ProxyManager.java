@@ -364,7 +364,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			try {
 				URI uri = new URI(type, "//" + host, null); //$NON-NLS-1$
 				IProxyData[] proxyDatas = nativeProxyProvider.select(uri);
-				return proxyDatas.length > 0 ? resolveType(nativeProxyProvider.select(uri)[0]) : null;
+				return proxyDatas.length > 0 ? resolveType(proxyDatas[0]) : null;
 			} catch (URISyntaxException e) {
 				return null;
 			}
