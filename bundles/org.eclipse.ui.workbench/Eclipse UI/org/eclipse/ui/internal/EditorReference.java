@@ -36,6 +36,7 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -86,13 +87,27 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		IEditorPart editor = getEditor(false);
 		IEditorInput input = editor == null ? this.input : editor.getEditorInput();
 		if (input != null) {
+			boolean shouldPersist = false;
+			XMLMemento root = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR);
+			root.putString(IWorkbenchConstants.TAG_ID, descriptor.getId());
+
 			IPersistableElement persistable = input.getPersistable();
 			if (persistable != null) {
-				XMLMemento root = XMLMemento.createWriteRoot("editor"); //$NON-NLS-1$
-				root.putString(IWorkbenchConstants.TAG_ID, descriptor.getId());
 				IMemento inputMem = root.createChild(IWorkbenchConstants.TAG_INPUT);
 				inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
 				persistable.saveState(inputMem);
+				shouldPersist = true;
+			}
+
+			if (editor instanceof IPersistableEditor) {
+				IMemento editorStateMem = root.createChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+				editorStateMem.putString(IWorkbenchConstants.TAG_FACTORY_ID,
+						persistable.getFactoryId());
+				((IPersistableEditor) editor).saveState(editorStateMem);
+				shouldPersist = true;
+			}
+
+			if (shouldPersist) {
 				StringWriter writer = new StringWriter();
 				try {
 					root.save(writer);
@@ -278,6 +293,23 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		editorSite.setActionBars(createEditorActionBars((WorkbenchPage) getPage(), descriptor,
 				editorSite));
 		((IEditorPart) part).init(editorSite, getEditorInput());
+
+		try {
+			if (part instanceof IPersistableEditor) {
+				String mementoString = getModel().getPersistedState().get(MEMENTO_KEY);
+				if (mementoString != null) {
+					IMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(
+							mementoString));
+					IMemento editorStateMemento = createReadRoot
+							.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+					if (editorStateMemento != null) {
+						((IPersistableEditor) part).restoreState(editorStateMemento);
+					}
+				}
+			}
+		} catch (WorkbenchException e) {
+			throw new PartInitException(e.getStatus());
+		}
 	}
 
 	@Override
