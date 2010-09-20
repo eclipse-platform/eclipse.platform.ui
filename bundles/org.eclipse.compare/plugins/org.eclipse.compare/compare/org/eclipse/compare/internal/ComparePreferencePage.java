@@ -20,6 +20,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
+import org.eclipse.compare.internal.core.ComparePlugin;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.jface.dialogs.Dialog;
@@ -92,6 +93,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
 	public static final String HIGHLIGHT_TOKEN_CHANGES= PREFIX + "HighlightTokenChanges"; //$NON-NLS-1$
 	//public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
+	public static final String CAPPING_DISABLED= PREFIX + "CappingDisable"; //$NON-NLS-1$
 	public static final String PATH_FILTER= PREFIX + "PathFilter"; //$NON-NLS-1$
 	public static final String ADDED_LINES_REGEX= PREFIX + "AddedLinesRegex"; //$NON-NLS-1$
 	public static final String REMOVED_LINES_REGEX= PREFIX + "RemovedLinesRegex"; //$NON-NLS-1$
@@ -122,6 +124,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, HIGHLIGHT_TOKEN_CHANGES),
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_RESOLVE_UI),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CAPPING_DISABLED),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PATH_FILTER),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICompareUIConstants.PREF_NAVIGATION_END_ACTION),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL),
@@ -143,6 +146,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(USE_SINGLE_LINE, true);
 		store.setDefault(HIGHLIGHT_TOKEN_CHANGES, true);
 		//store.setDefault(USE_RESOLVE_UI, false);
+		store.setDefault(CAPPING_DISABLED, false);
 		store.setDefault(PATH_FILTER, ""); //$NON-NLS-1$
 		store.setDefault(ICompareUIConstants.PREF_NAVIGATION_END_ACTION, ICompareUIConstants.PREF_VALUE_PROMPT);
 		store.setDefault(ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL, ICompareUIConstants.PREF_VALUE_LOOP);
@@ -183,8 +187,12 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		fOverlayStore.setValue(ADDED_LINES_REGEX, addedLinesRegex.getText());
 		fOverlayStore.setValue(REMOVED_LINES_REGEX, removedLinesRegex.getText());
 
-		editor.store();		
+		editor.store();
 		fOverlayStore.propagate();
+
+		ComparePlugin.getDefault().setCappingDisabled(
+				getPreferenceStore().getBoolean(
+						ComparePreferencePage.CAPPING_DISABLED));
 		return true;
 	}
 	
@@ -343,6 +351,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(composite, "ComparePreferencePage.useSingleLine.label", USE_SINGLE_LINE, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.highlightTokenChanges.label", HIGHLIGHT_TOKEN_CHANGES, 0);	//$NON-NLS-1$
 		//addCheckBox(composite, "ComparePreferencePage.useResolveUI.label", USE_RESOLVE_UI, 0);	//$NON-NLS-1$
+		addCheckBox(composite, "ComparePreferencePage.disableCapping.label", CAPPING_DISABLED, 0);	//$NON-NLS-1$
 		
 		Composite radioGroup = new Composite(composite, SWT.NULL);
 		radioGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));

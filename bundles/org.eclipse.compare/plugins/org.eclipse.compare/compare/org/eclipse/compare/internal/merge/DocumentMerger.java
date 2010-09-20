@@ -19,6 +19,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
 import org.eclipse.compare.internal.CompareContentViewerSwitchingPane;
 import org.eclipse.compare.internal.CompareMessages;
+import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.DocLineComparator;
 import org.eclipse.compare.internal.MergeViewerContentProvider;
@@ -430,7 +431,7 @@ public class DocumentMerger {
 				}
 			}*/
 		}
-			
+
 		final Object[] result= new Object[1];
 		final DocLineComparator sa= sancestor, sl= sleft, sr= sright;
 		IRunnableWithProgress runnable= new IRunnableWithProgress() {
@@ -558,6 +559,8 @@ public class DocumentMerger {
 
 	private boolean isCapped(DocLineComparator ancestor,
 			DocLineComparator left, DocLineComparator right) {
+		if (isCappingDisabled())
+			return false;
 		int aLength = ancestor == null? 0 : ancestor.getRangeCount();
 		int lLength = left.getRangeCount();
 		int rLength = right.getRangeCount();
@@ -674,6 +677,10 @@ public class DocumentMerger {
 		return Utilities.getBoolean(getCompareConfiguration(), CompareConfiguration.IGNORE_WHITESPACE, false);
 	}
 	
+	private boolean isCappingDisabled() {
+		return CompareUIPlugin.getDefault().getPreferenceStore().getBoolean(ComparePreferencePage.CAPPING_DISABLED);
+	}
+
 	private IDocument getDocument(char contributor) {
 		return fInput.getDocument(contributor);
 	}

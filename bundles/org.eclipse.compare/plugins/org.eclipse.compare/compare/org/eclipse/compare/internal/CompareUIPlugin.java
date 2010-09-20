@@ -32,6 +32,7 @@ import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.IStreamMerger;
 import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.internal.core.ComparePlugin;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IStructureCreator;
 import org.eclipse.compare.structuremergeviewer.StructureDiffViewer;
@@ -256,6 +257,10 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+
+		ComparePlugin.getDefault().setCappingDisabled(
+				getPreferenceStore().getBoolean(
+						ComparePreferencePage.CAPPING_DISABLED));
 	}
 			
 	public void stop(BundleContext context) throws Exception {

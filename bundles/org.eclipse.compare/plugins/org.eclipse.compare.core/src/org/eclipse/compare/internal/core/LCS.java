@@ -52,7 +52,7 @@ public abstract class LCS {
 		}
 
 		this.max_differences = (length1 + length2 + 1) / 2; // ceil((N+M)/2)
-		if ((double) length1 * (double) length2 > TOO_LONG) {
+		if (!isCappingDisabled() && (double) length1 * (double) length2 > TOO_LONG) {
 			// limit complexity to D^POW_LIMIT for long sequences
 			this.max_differences = (int) Math.pow(this.max_differences, POW_LIMIT - 1.0);
 		}
@@ -92,6 +92,10 @@ public abstract class LCS {
 						backBoundL2, new int[2][length1 + length2 + 1],
 						new int[3], subMonitor);
 
+	}
+
+	private boolean isCappingDisabled() {
+		return ComparePlugin.getDefault().isCappingDisabled();
 	}
 
 	/**

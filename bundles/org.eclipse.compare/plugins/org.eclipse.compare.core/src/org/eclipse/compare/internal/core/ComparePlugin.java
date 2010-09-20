@@ -25,7 +25,9 @@ public class ComparePlugin extends Plugin {
 
 	// The shared instance
 	private static ComparePlugin plugin;
-	
+
+	private boolean cappingDisabled;
+
 	/**
 	 * The constructor
 	 */
@@ -53,7 +55,7 @@ public class ComparePlugin extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static ComparePlugin getDefault() {
@@ -61,11 +63,19 @@ public class ComparePlugin extends Plugin {
 	}
 
 	public static void log(Throwable e) {
-		log(new Status(IStatus.ERROR, PLUGIN_ID, 0, Messages.Activator_1, e)); 
+		log(new Status(IStatus.ERROR, PLUGIN_ID, 0, Messages.Activator_1, e));
 	}
-	
+
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
+	}
+
+	public void setCappingDisabled(boolean disable) {
+		this.cappingDisabled = disable;
+	}
+
+	public boolean isCappingDisabled() {
+		return this.cappingDisabled;
 	}
 
 }
