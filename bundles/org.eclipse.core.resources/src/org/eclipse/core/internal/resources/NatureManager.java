@@ -28,7 +28,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	private Map descriptors;
 
 	//maps IProject -> String[] of enabled natures for that project
-	private final Map natureEnablements = Collections.synchronizedMap(new HashMap(20));
+	private final Map natureEnablements = new HashMap(20);
 
 	//maps String (builder ID) -> String (nature ID)
 	private Map buildersToNatures;
