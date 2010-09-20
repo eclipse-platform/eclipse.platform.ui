@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.net;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.internal.net.ProxySelector;
 import org.eclipse.core.internal.net.StringUtil;
@@ -283,12 +284,7 @@ public class NonProxyHostsComposite extends Composite {
 	public void initializeValues() {
 		String providers[] = ProxySelector.getProviders();
 		for (int i = 0; i < providers.length; i++) {
-			String[] hosts = ProxySelector.getBypassHosts(providers[i]);
-			for (int j = 0; hosts != null && j < hosts.length; j++) {
-				ProxyBypassData data = new ProxyBypassData(hosts[j],
-						providers[i]);
-				bypassHosts.add(data);
-			}
+			bypassHosts.addAll(getProxyBypassData(providers[i]));
 		}
 		hostsViewer.setInput(bypassHosts);
 		setProvider(ProxySelector.getDefaultProvider());
@@ -324,6 +320,37 @@ public class NonProxyHostsComposite extends Composite {
 		}
 		String data[] = (String[]) hosts.toArray(new String[0]);
 		ProxySelector.setBypassHosts(provider, data);
+	}
+
+	public void refresh() {
+		ArrayList natives = new ArrayList();
+		String provider = getEditableProvider();
+		Iterator it = bypassHosts.iterator();
+		while (it.hasNext()) {
+			ProxyBypassData data = (ProxyBypassData) it.next();
+			if (!data.getSource().equals(provider)) {
+				natives.add(data);
+			}
+		}		
+		bypassHosts.removeAll(natives);
+		String providers[] = ProxySelector.getProviders();
+		for (int i = 0; i < providers.length; i++) {
+			if (!providers[i].equals(provider)) {
+				bypassHosts.addAll(getProxyBypassData(providers[i]));
+			}
+		}
+		hostsViewer.refresh();
+		setProvider(currentProvider);
+	}
+	
+	private List getProxyBypassData(String provider) {
+		List bypassProxyData = new ArrayList();
+		String[] hosts = ProxySelector.getBypassHosts(provider);
+		for (int j = 0; hosts != null && j < hosts.length; j++) {
+			ProxyBypassData data = new ProxyBypassData(hosts[j], provider);
+			bypassProxyData.add(data);
+		}
+		return bypassProxyData;
 	}
 
 }

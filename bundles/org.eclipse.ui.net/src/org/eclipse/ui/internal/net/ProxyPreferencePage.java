@@ -96,6 +96,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 	}
 
 	protected void performApply() {
+		refresh();
 		int sel = providerCombo.getSelectionIndex();
 		proxyEntriesComposite.performApply();
 		nonProxyHostsComposite.performApply();
@@ -131,6 +132,12 @@ public class ProxyPreferencePage extends PreferencePage implements
 	protected void setProvider(String name) {
 		proxyEntriesComposite.setProvider(name);
 		nonProxyHostsComposite.setProvider(name);
+		refresh();
+	}
+	
+	private void refresh() {
+		proxyEntriesComposite.refresh();
+		nonProxyHostsComposite.refresh();
 	}
 
 }

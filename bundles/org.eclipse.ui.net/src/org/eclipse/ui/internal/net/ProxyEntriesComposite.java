@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.net;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.internal.net.ProxySelector;
@@ -259,11 +260,7 @@ public class ProxyEntriesComposite extends Composite {
 	public void initializeValues() {
 		String providers[] = ProxySelector.getProviders();
 		for (int i = 0; i < providers.length; i++) {
-			ProxyData[] entries = ProxySelector.getProxyData(providers[i]);
-			for (int j = 0; j < entries.length; j++) {
-				entries[j].setSource(providers[i]);
-				proxyEntries.add(entries[j]);
-			}
+			proxyEntries.addAll(getProxyData(providers[i]));
 		}
 		entriesViewer.setInput(proxyEntries);
 		setProvider(ProxySelector.getDefaultProvider());
@@ -300,4 +297,34 @@ public class ProxyEntriesComposite extends Composite {
 		ProxySelector.setProxyData(provider, data);
 	}
 
+	public void refresh() {
+		String provider = getEditableProvider();	
+		Iterator it = proxyEntries.iterator();
+		ArrayList natives = new ArrayList();
+		while (it.hasNext()) {
+			ProxyData data = (ProxyData) it.next();
+			if (!data.getSource().equals(provider)) {
+				natives.add(data);
+			}
+		}
+		proxyEntries.removeAll(natives);
+		String[] providers = ProxySelector.getProviders();
+		for (int i = 0; i < providers.length; i++) {
+			if (!providers[i].equals(provider)) {
+				proxyEntries.addAll(getProxyData(providers[i]));
+			}
+		}
+		entriesViewer.refresh();
+		setProvider(currentProvider);
+	}
+	
+	private List getProxyData(String provider) {
+		List proxyDatas = new ArrayList();
+		ProxyData[] entries = ProxySelector.getProxyData(provider);
+		for (int j = 0; j < entries.length; j++) {
+			entries[j].setSource(provider);
+			proxyDatas.add(entries[j]);
+		}
+		return proxyDatas;
+	}
 }
