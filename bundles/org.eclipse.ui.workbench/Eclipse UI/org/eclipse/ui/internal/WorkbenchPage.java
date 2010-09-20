@@ -2253,7 +2253,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return saveAllEditors(confirm, false);
     }
 
-	private boolean saveAllEditors(boolean confirm, boolean closing) {
+	boolean saveAllEditors(boolean confirm, boolean closing) {
 		if (closing) {
 			for (IEditorReference editorReference : getEditorReferences()) {
 				// save all restored editors
@@ -2279,11 +2279,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return partService.saveAll(confirm);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Saves the contents of the provided saveable and returns whether the
+	 * operation succeeded or not.
 	 * 
-	 * @see org.eclipse.ui.IWorkbenchPage#saveEditor(org.eclipse.ui.IEditorPart,
-	 * boolean)
+	 * @param saveable
+	 *            the saveable part to save
+	 * @param confirm
+	 *            whether the user should be prompted for confirmation of the
+	 *            save request
+	 * @param closing
+	 *            whether the part will be closed after the save operation has
+	 *            completed, this may determine whether whether the save
+	 *            operation will actually be invoked or not
+	 * @return <code>true</code> if the saveable's contents has been persisted,
+	 *         <code>false</code> otherwise
+	 * @see ISaveablePart#isSaveOnCloseNeeded()
 	 */
 	public boolean saveSaveable(ISaveablePart saveable, boolean confirm, boolean closing) {
 		MPart part = findPart((IWorkbenchPart) saveable);
@@ -2293,6 +2304,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					if (saveable.isSaveOnCloseNeeded()) {
 						return partService.savePart(part, confirm);
 					}
+					// mark the part as no longer being dirty so it can be
+					// closed
+					part.setDirty(false);
 				} else {
 					return partService.savePart(part, confirm);
 				}
@@ -2301,7 +2315,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 		return false;
 	}
-
 
     /**
      * Saves an editors in the workbench. If <code>confirm</code> is <code>true</code>
