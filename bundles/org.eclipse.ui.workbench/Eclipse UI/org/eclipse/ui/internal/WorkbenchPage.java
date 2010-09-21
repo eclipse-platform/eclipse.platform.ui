@@ -52,6 +52,8 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
+import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -1067,11 +1069,80 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 *            the perspective to close
 	 * @param perspectiveId
 	 *            the id of the perspective being closed
+	 * @param saveParts
+	 *            <code>true</code> if dirty parts should be prompted for its
+	 *            contents to be saved, <code>false</code> otherwise
 	 */
-	private void closePerspective(IPerspectiveDescriptor desc, String perspectiveId) {
+	private void closePerspective(IPerspectiveDescriptor desc, String perspectiveId,
+			boolean saveParts) {
 		MPerspective persp = (MPerspective) modelService.find(perspectiveId, window);
 		// check to ensure this perspective actually exists in this window
 		if (persp != null) {
+			if (saveParts) {
+				// retrieve all parts under the specified perspective
+				List<MPart> parts = modelService.findElements(persp, null, MPart.class, null);
+				if (!parts.isEmpty()) {
+					// filter out any parts that are visible in any other
+					// perspectives
+					for (MPerspective perspective : getPerspectiveStack().getChildren()) {
+						if (perspective != persp) {
+							parts.removeAll(modelService.findElements(perspective, null,
+									MPart.class, null));
+						}
+					}
+
+					if (!parts.isEmpty()) {
+						for (Iterator<MPart> it = parts.iterator(); it.hasNext();) {
+							MPart part = it.next();
+							if (part.isDirty()) {
+								Object object = part.getObject();
+								if (object instanceof CompatibilityPart) {
+									IWorkbenchPart workbenchPart = ((CompatibilityPart) object)
+											.getPart();
+									if (workbenchPart instanceof ISaveablePart) {
+										if (!((ISaveablePart) workbenchPart).isSaveOnCloseNeeded()) {
+											part.setDirty(false);
+											it.remove();
+										}
+									}
+								}
+							} else {
+								it.remove();
+							}
+						}
+
+						if (!parts.isEmpty()) {
+							ISaveHandler saveHandler = persp.getContext().get(ISaveHandler.class);
+							if (parts.size() == 1) {
+								Save responses = saveHandler.promptToSave(parts.get(0));
+								switch (responses) {
+								case CANCEL:
+									return;
+								case NO:
+									break;
+								case YES:
+									partService.savePart(parts.get(0), false);
+									break;
+								}
+							} else {
+								Save[] responses = saveHandler.promptToSave(parts);
+								for (Save response : responses) {
+									if (response == Save.CANCEL) {
+										return;
+									}
+								}
+
+								for (int i = 0; i < responses.length; i++) {
+									if (responses[i] == Save.YES) {
+										partService.savePart(parts.get(i), false);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
 			// Remove from caches
 			sortedPerspectives.remove(desc);
 			modelService.removePerspectiveModel(persp, window);
@@ -1098,7 +1169,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (perspectiveStack.getChildren().size() == 1) {
 				closeAllPerspectives(saveParts, closePage);
 			} else {
-				closePerspective(desc, perspectiveId);
+				closePerspective(desc, perspectiveId, saveParts);
 			}
 		}
 	}
