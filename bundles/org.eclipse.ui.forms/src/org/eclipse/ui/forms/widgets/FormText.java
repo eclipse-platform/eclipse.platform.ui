@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Donnelly (m2a3@eircom.net) - patch (see Bugzilla #145997) 
+ *     Ling Hao - Fix for Bug 284393
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -17,7 +18,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.ACC;
@@ -61,7 +61,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TypedListener;
-
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -364,7 +363,7 @@ public class FormText extends Canvas {
 	 *            the widget style
 	 */
 	public FormText(Composite parent, int style) {
-		super(parent, SWT.NO_BACKGROUND | SWT.WRAP | style);
+		super(parent, SWT.DOUBLE_BUFFERED | SWT.WRAP | style);
 		setLayout(new FormTextLayout());
 		model = new FormTextModel();
 		addDisposeListener(new DisposeListener() {
@@ -1575,19 +1574,7 @@ public class FormText extends Canvas {
 	}
 
 	private void repaint(GC gc, int x, int y, int width, int height) {
-		Image textBuffer = new Image(getDisplay(), width, height);
-		Color bg = getBackground();
-		Color fg = getForeground();
-		if (!getEnabled()) {
-			bg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			fg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		}
-		GC textGC = new GC(textBuffer, gc.getStyle());
-		textGC.setForeground(fg);
-		textGC.setBackground(bg);
-		textGC.setFont(getFont());
-		textGC.fillRectangle(0, 0, width, height);
-		Rectangle repaintRegion = new Rectangle(x, y, width, height);
+		Rectangle repaintRegion = new Rectangle(0, 0, getSize().x, getSize().y);
 
 		Paragraph[] paragraphs = model.getParagraphs();
 		IHyperlinkSegment selectedLink = getSelectedLink();
@@ -1596,14 +1583,11 @@ public class FormText extends Canvas {
 		for (int i = 0; i < paragraphs.length; i++) {
 			Paragraph p = paragraphs[i];
 			p
-					.paint(textGC, repaintRegion, resourceTable, selectedLink,
+					.paint(gc, repaintRegion, resourceTable, selectedLink,
 							selData);
 		}
 		if (hasFocus && !model.hasFocusSegments())
-			textGC.drawFocus(x, y, width, height);
-		textGC.dispose();
-		gc.drawImage(textBuffer, x, y);
-		textBuffer.dispose();
+			gc.drawFocus(x, y, width, height);
 	}
 
 	private int getParagraphSpacing(int lineHeight) {
