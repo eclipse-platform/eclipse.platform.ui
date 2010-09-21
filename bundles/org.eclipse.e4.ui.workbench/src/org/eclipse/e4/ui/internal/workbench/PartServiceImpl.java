@@ -322,37 +322,37 @@ public class PartServiceImpl implements EPartService {
 		return false;
 	}
 
-	private boolean isInContainer(MPart part) {
-		return isInContainer(getContainer(), part);
+	private boolean isInContainer(MUIElement element) {
+		return isInContainer(getContainer(), element);
 	}
 
-	private boolean isInContainer(MElementContainer<?> container, MPart part) {
+	private boolean isInContainer(MElementContainer<?> container, MUIElement element) {
 		for (Object object : container.getChildren()) {
-			if (object == part) {
+			if (object == element) {
 				return true;
 			} else if (object instanceof MElementContainer<?>) {
-				if (isInContainer((MElementContainer<?>) object, part)) {
+				if (isInContainer((MElementContainer<?>) object, element)) {
 					return true;
 				}
 			} else if (object instanceof MPlaceholder) {
 				MUIElement ref = ((MPlaceholder) object).getRef();
-				if (ref == part) {
+				if (ref == element) {
 					return true;
 				} else if (ref instanceof MElementContainer<?>) {
-					if (isInContainer((MElementContainer<?>) ref, part)) {
+					if (isInContainer((MElementContainer<?>) ref, element)) {
 						return true;
 					}
 				}
 			} else if (object instanceof MPerspective) {
 				MPerspective persp = (MPerspective) object;
 				for (MWindow dw : persp.getWindows()) {
-					if (isInContainer(dw, part))
+					if (isInContainer(dw, element))
 						return true;
 				}
 			} else if (object instanceof MWindow) {
 				MWindow win = (MWindow) object;
 				for (MWindow dw : win.getWindows()) {
-					if (isInContainer(dw, part))
+					if (isInContainer(dw, element))
 						return true;
 				}
 			}
@@ -361,7 +361,7 @@ public class PartServiceImpl implements EPartService {
 		if (container instanceof MWindow) {
 			MWindow win = (MWindow) container;
 			for (MWindow dw : win.getWindows()) {
-				if (isInContainer(dw, part))
+				if (isInContainer(dw, element))
 					return true;
 			}
 		}
@@ -369,7 +369,7 @@ public class PartServiceImpl implements EPartService {
 		if (container instanceof MPerspective) {
 			MPerspective persp = (MPerspective) container;
 			for (MWindow dw : persp.getWindows()) {
-				if (isInContainer(dw, part))
+				if (isInContainer(dw, element))
 					return true;
 			}
 		}
@@ -508,25 +508,32 @@ public class PartServiceImpl implements EPartService {
 			sharedWindow.getSharedElements().add(sharedPart);
 		}
 
+		return createSharedPart(sharedPart);
+	}
+
+	private MPlaceholder createSharedPart(MPart sharedPart) {
 		// Create and return a reference to the shared part
 		MPlaceholder sharedPartRef = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
 		sharedPartRef.setElementId(sharedPart.getElementId());
 		sharedPartRef.setRef(sharedPart);
-
 		return sharedPartRef;
 	}
 
 	private MPart addPart(MPart providedPart, MPart localPart) {
+		// if they're the same and it's already in the current container, no need to do anything
 		if (providedPart == localPart && isInContainer(providedPart)) {
 			return providedPart;
 		}
 
 		MPartDescriptor descriptor = findDescriptor(providedPart.getElementId());
 		if (descriptor == null) {
-			if (providedPart != localPart) {
+			if (!isInContainer(providedPart)) {
+				adjustPlaceholder(providedPart);
+
 				MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
-				if (providedPart.getCurSharedRef() instanceof MPlaceholder) {
-					stack.getChildren().add(providedPart.getCurSharedRef());
+				MPlaceholder placeholder = providedPart.getCurSharedRef();
+				if (placeholder != null) {
+					stack.getChildren().add(placeholder);
 				} else {
 					stack.getChildren().add(providedPart);
 				}
@@ -541,30 +548,47 @@ public class PartServiceImpl implements EPartService {
 				return providedPart;
 			}
 
+			adjustPlaceholder(providedPart);
+
 			String category = descriptor.getCategory();
 			if (category == null) {
 				addToLastContainer(null, providedPart);
 			} else {
-				List<Object> elements = modelService.findElements(getContainer(), null, null,
-						Collections.singletonList(category));
-				if (elements.isEmpty()) {
+				List<MElementContainer> containers = modelService.findElements(getContainer(),
+						null, MElementContainer.class, Collections.singletonList(category));
+				if (containers.isEmpty()) {
 					addToLastContainer(category, providedPart);
 				} else {
-					Object element = elements.get(0);
-					if (element instanceof MElementContainer<?>) {
-						MPlaceholder placeholder = providedPart.getCurSharedRef();
-						if (placeholder == null) {
-							((MElementContainer) element).getChildren().add(providedPart);
-						} else {
-							((MElementContainer) element).getChildren().add(placeholder);
-						}
+					MElementContainer container = containers.get(0);
+					MPlaceholder placeholder = providedPart.getCurSharedRef();
+					if (placeholder == null) {
+						container.getChildren().add(providedPart);
 					} else {
-						addToLastContainer(category, providedPart);
+						container.getChildren().add(placeholder);
 					}
 				}
 			}
 		}
 		return providedPart;
+	}
+
+	private void adjustPlaceholder(MPart part) {
+		if (isShared(part)) {
+			MPlaceholder placeholder = part.getCurSharedRef();
+			// if this part doesn't have any placeholders, we need to make one
+			if (placeholder == null
+			// alternatively, if it has one but it's not in the current container, then we
+			// need to spawn another one as we don't want to reuse the same one and end up
+			// shifting that placeholder to the current container during the add operation
+					|| (placeholder.getParent() != null && !isInContainer(placeholder))) {
+				placeholder = createSharedPart(part);
+				part.setCurSharedRef(placeholder);
+			}
+		}
+	}
+
+	private boolean isShared(MPart part) {
+		return getWindow().getSharedElements().contains(part);
 	}
 
 	private void addToLastContainer(String category, MPart part) {
