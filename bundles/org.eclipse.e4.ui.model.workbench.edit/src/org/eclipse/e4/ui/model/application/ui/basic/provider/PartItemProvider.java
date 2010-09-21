@@ -81,6 +81,7 @@ public class PartItemProvider
 			addVisiblePropertyDescriptor(object);
 			addContainerDataPropertyDescriptor(object);
 			addCurSharedRefPropertyDescriptor(object);
+			addAccessibilityPhrasePropertyDescriptor(object);
 			addLabelPropertyDescriptor(object);
 			addIconURIPropertyDescriptor(object);
 			addTooltipPropertyDescriptor(object);
@@ -241,6 +242,28 @@ public class PartItemProvider
 				 false,
 				 true,
 				 null,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Accessibility Phrase feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addAccessibilityPhrasePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UIElement_accessibilityPhrase_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_accessibilityPhrase_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
 				 null));
 	}
@@ -456,6 +479,7 @@ public class PartItemProvider
 			case BasicPackageImpl.PART__ON_TOP:
 			case BasicPackageImpl.PART__VISIBLE:
 			case BasicPackageImpl.PART__CONTAINER_DATA:
+			case BasicPackageImpl.PART__ACCESSIBILITY_PHRASE:
 			case BasicPackageImpl.PART__LABEL:
 			case BasicPackageImpl.PART__ICON_URI:
 			case BasicPackageImpl.PART__TOOLTIP:

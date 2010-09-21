@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getCurSharedRef <em>Cur Shared Ref</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getVisibleWhen <em>Visible When</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl#getAccessibilityPhrase <em>Accessibility Phrase</em>}</li>
  * </ul>
  * </p>
  *
@@ -188,6 +189,26 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 	 * @ordered
 	 */
 	protected MExpression visibleWhen;
+
+	/**
+	 * The default value of the '{@link #getAccessibilityPhrase() <em>Accessibility Phrase</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAccessibilityPhrase()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ACCESSIBILITY_PHRASE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getAccessibilityPhrase() <em>Accessibility Phrase</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAccessibilityPhrase()
+	 * @generated
+	 * @ordered
+	 */
+	protected String accessibilityPhrase = ACCESSIBILITY_PHRASE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -462,6 +483,27 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getAccessibilityPhrase() {
+		return accessibilityPhrase;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAccessibilityPhrase(String newAccessibilityPhrase) {
+		String oldAccessibilityPhrase = accessibilityPhrase;
+		accessibilityPhrase = newAccessibilityPhrase;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.TOOL_CONTROL__ACCESSIBILITY_PHRASE, oldAccessibilityPhrase, accessibilityPhrase));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -531,6 +573,8 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 				return basicGetCurSharedRef();
 			case MenuPackageImpl.TOOL_CONTROL__VISIBLE_WHEN:
 				return getVisibleWhen();
+			case MenuPackageImpl.TOOL_CONTROL__ACCESSIBILITY_PHRASE:
+				return getAccessibilityPhrase();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -571,6 +615,9 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 			case MenuPackageImpl.TOOL_CONTROL__VISIBLE_WHEN:
 				setVisibleWhen((MExpression)newValue);
 				return;
+			case MenuPackageImpl.TOOL_CONTROL__ACCESSIBILITY_PHRASE:
+				setAccessibilityPhrase((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -610,6 +657,9 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 			case MenuPackageImpl.TOOL_CONTROL__VISIBLE_WHEN:
 				setVisibleWhen((MExpression)null);
 				return;
+			case MenuPackageImpl.TOOL_CONTROL__ACCESSIBILITY_PHRASE:
+				setAccessibilityPhrase(ACCESSIBILITY_PHRASE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -640,6 +690,8 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 				return curSharedRef != null;
 			case MenuPackageImpl.TOOL_CONTROL__VISIBLE_WHEN:
 				return visibleWhen != null;
+			case MenuPackageImpl.TOOL_CONTROL__ACCESSIBILITY_PHRASE:
+				return ACCESSIBILITY_PHRASE_EDEFAULT == null ? accessibilityPhrase != null : !ACCESSIBILITY_PHRASE_EDEFAULT.equals(accessibilityPhrase);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -662,6 +714,7 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 				case MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA: return UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
 				case MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF: return UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
 				case MenuPackageImpl.TOOL_CONTROL__VISIBLE_WHEN: return UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
+				case MenuPackageImpl.TOOL_CONTROL__ACCESSIBILITY_PHRASE: return UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
 				default: return -1;
 			}
 		}
@@ -696,6 +749,7 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 				case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA: return MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA;
 				case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF: return MenuPackageImpl.TOOL_CONTROL__CUR_SHARED_REF;
 				case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN: return MenuPackageImpl.TOOL_CONTROL__VISIBLE_WHEN;
+				case UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE: return MenuPackageImpl.TOOL_CONTROL__ACCESSIBILITY_PHRASE;
 				default: return -1;
 			}
 		}
@@ -734,6 +788,8 @@ public class ToolControlImpl extends ContributionImpl implements MToolControl {
 		result.append(visible);
 		result.append(", containerData: "); //$NON-NLS-1$
 		result.append(containerData);
+		result.append(", accessibilityPhrase: "); //$NON-NLS-1$
+		result.append(accessibilityPhrase);
 		result.append(')');
 		return result.toString();
 	}

@@ -209,6 +209,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int ITEM__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ITEM__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -379,6 +388,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int HANDLED_ITEM__VISIBLE_WHEN = ITEM__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLED_ITEM__ACCESSIBILITY_PHRASE = ITEM__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -580,6 +598,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ELEMENT__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -723,6 +750,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU_ITEM__VISIBLE_WHEN = ITEM__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ITEM__ACCESSIBILITY_PHRASE = ITEM__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -906,6 +942,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_SEPARATOR__VISIBLE_WHEN = MENU_ELEMENT__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_SEPARATOR__ACCESSIBILITY_PHRASE = MENU_ELEMENT__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1049,6 +1094,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU__VISIBLE_WHEN = MENU_ELEMENT__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU__ACCESSIBILITY_PHRASE = MENU_ELEMENT__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -1223,6 +1277,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_CONTRIBUTION__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1375,6 +1438,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int POPUP_MENU__VISIBLE_WHEN = MENU__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int POPUP_MENU__ACCESSIBILITY_PHRASE = MENU__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -1574,6 +1646,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int DIRECT_MENU_ITEM__VISIBLE_WHEN = MENU_ITEM__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_MENU_ITEM__ACCESSIBILITY_PHRASE = MENU_ITEM__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -1784,6 +1865,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_MENU_ITEM__VISIBLE_WHEN = MENU_ITEM__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLED_MENU_ITEM__ACCESSIBILITY_PHRASE = MENU_ITEM__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1992,6 +2082,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_ITEM__VISIBLE_WHEN = ITEM__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_ITEM__ACCESSIBILITY_PHRASE = ITEM__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2173,6 +2272,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR__ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2307,6 +2415,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TOOL_BAR_ELEMENT__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR_ELEMENT__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The number of structural features of the '<em>Tool Bar Element</em>' class.
@@ -2454,13 +2571,22 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_CONTROL__VISIBLE_WHEN = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 8;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_CONTROL__ACCESSIBILITY_PHRASE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 9;
+
+	/**
 	 * The number of structural features of the '<em>Tool Control</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 9;
+	public static final int TOOL_CONTROL_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 10;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
@@ -2570,6 +2696,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int HANDLED_TOOL_ITEM__VISIBLE_WHEN = TOOL_ITEM__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLED_TOOL_ITEM__ACCESSIBILITY_PHRASE = TOOL_ITEM__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -2780,6 +2915,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_TOOL_ITEM__VISIBLE_WHEN = TOOL_ITEM__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_TOOL_ITEM__ACCESSIBILITY_PHRASE = TOOL_ITEM__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2988,6 +3132,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_SEPARATOR__VISIBLE_WHEN = TOOL_BAR_ELEMENT__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR_SEPARATOR__ACCESSIBILITY_PHRASE = TOOL_BAR_ELEMENT__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The number of structural features of the '<em>Tool Bar Separator</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3132,6 +3285,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int RENDERED_MENU__VISIBLE_WHEN = MENU__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int RENDERED_MENU__ACCESSIBILITY_PHRASE = MENU__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -3315,6 +3477,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int RENDERED_TOOL_BAR__VISIBLE_WHEN = TOOL_BAR__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int RENDERED_TOOL_BAR__ACCESSIBILITY_PHRASE = TOOL_BAR__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3458,6 +3629,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TOOL_BAR_CONTRIBUTION__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR_CONTRIBUTION__ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -3642,6 +3822,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TRIM_CONTRIBUTION__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTRIBUTION__ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3822,6 +4011,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int RENDERED_MENU_ITEM__VISIBLE_WHEN = MENU_ITEM__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int RENDERED_MENU_ITEM__ACCESSIBILITY_PHRASE = MENU_ITEM__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.

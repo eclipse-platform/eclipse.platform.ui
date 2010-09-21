@@ -184,6 +184,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PLACEHOLDER__VISIBLE_WHEN = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PLACEHOLDER__ACCESSIBILITY_PHRASE = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Ref</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -309,6 +318,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PERSPECTIVE__VISIBLE_WHEN = UiPackageImpl.ELEMENT_CONTAINER__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__ACCESSIBILITY_PHRASE = UiPackageImpl.ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -508,6 +526,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PERSPECTIVE_STACK__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE_STACK__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.

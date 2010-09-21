@@ -69,6 +69,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getCurSharedRef <em>Cur Shared Ref</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getVisibleWhen <em>Visible When</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getAccessibilityPhrase <em>Accessibility Phrase</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getTooltip <em>Tooltip</em>}</li>
@@ -263,6 +264,26 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @ordered
 	 */
 	protected MExpression visibleWhen;
+
+	/**
+	 * The default value of the '{@link #getAccessibilityPhrase() <em>Accessibility Phrase</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAccessibilityPhrase()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ACCESSIBILITY_PHRASE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getAccessibilityPhrase() <em>Accessibility Phrase</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAccessibilityPhrase()
+	 * @generated
+	 * @ordered
+	 */
+	protected String accessibilityPhrase = ACCESSIBILITY_PHRASE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
@@ -722,6 +743,27 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getAccessibilityPhrase() {
+		return accessibilityPhrase;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAccessibilityPhrase(String newAccessibilityPhrase) {
+		String oldAccessibilityPhrase = accessibilityPhrase;
+		accessibilityPhrase = newAccessibilityPhrase;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__ACCESSIBILITY_PHRASE, oldAccessibilityPhrase, accessibilityPhrase));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getLabel() {
 		return label;
 	}
@@ -990,6 +1032,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return basicGetCurSharedRef();
 			case BasicPackageImpl.PART__VISIBLE_WHEN:
 				return getVisibleWhen();
+			case BasicPackageImpl.PART__ACCESSIBILITY_PHRASE:
+				return getAccessibilityPhrase();
 			case BasicPackageImpl.PART__LABEL:
 				return getLabel();
 			case BasicPackageImpl.PART__ICON_URI:
@@ -1057,6 +1101,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return;
 			case BasicPackageImpl.PART__VISIBLE_WHEN:
 				setVisibleWhen((MExpression)newValue);
+				return;
+			case BasicPackageImpl.PART__ACCESSIBILITY_PHRASE:
+				setAccessibilityPhrase((String)newValue);
 				return;
 			case BasicPackageImpl.PART__LABEL:
 				setLabel((String)newValue);
@@ -1136,6 +1183,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case BasicPackageImpl.PART__VISIBLE_WHEN:
 				setVisibleWhen((MExpression)null);
 				return;
+			case BasicPackageImpl.PART__ACCESSIBILITY_PHRASE:
+				setAccessibilityPhrase(ACCESSIBILITY_PHRASE_EDEFAULT);
+				return;
 			case BasicPackageImpl.PART__LABEL:
 				setLabel(LABEL_EDEFAULT);
 				return;
@@ -1199,6 +1249,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return curSharedRef != null;
 			case BasicPackageImpl.PART__VISIBLE_WHEN:
 				return visibleWhen != null;
+			case BasicPackageImpl.PART__ACCESSIBILITY_PHRASE:
+				return ACCESSIBILITY_PHRASE_EDEFAULT == null ? accessibilityPhrase != null : !ACCESSIBILITY_PHRASE_EDEFAULT.equals(accessibilityPhrase);
 			case BasicPackageImpl.PART__LABEL:
 				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
 			case BasicPackageImpl.PART__ICON_URI:
@@ -1247,6 +1299,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 				case BasicPackageImpl.PART__CONTAINER_DATA: return UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
 				case BasicPackageImpl.PART__CUR_SHARED_REF: return UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
 				case BasicPackageImpl.PART__VISIBLE_WHEN: return UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
+				case BasicPackageImpl.PART__ACCESSIBILITY_PHRASE: return UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
 				default: return -1;
 			}
 		}
@@ -1320,6 +1373,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 				case UiPackageImpl.UI_ELEMENT__CONTAINER_DATA: return BasicPackageImpl.PART__CONTAINER_DATA;
 				case UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF: return BasicPackageImpl.PART__CUR_SHARED_REF;
 				case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN: return BasicPackageImpl.PART__VISIBLE_WHEN;
+				case UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE: return BasicPackageImpl.PART__ACCESSIBILITY_PHRASE;
 				default: return -1;
 			}
 		}
@@ -1393,6 +1447,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 		result.append(visible);
 		result.append(", containerData: "); //$NON-NLS-1$
 		result.append(containerData);
+		result.append(", accessibilityPhrase: "); //$NON-NLS-1$
+		result.append(accessibilityPhrase);
 		result.append(", label: "); //$NON-NLS-1$
 		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$

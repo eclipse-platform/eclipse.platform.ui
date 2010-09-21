@@ -298,13 +298,22 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int UI_ELEMENT__VISIBLE_WHEN = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int UI_ELEMENT__ACCESSIBILITY_PHRASE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
+
+	/**
 	 * The number of structural features of the '<em>UI Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int UI_ELEMENT_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
+	public static final int UI_ELEMENT_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl <em>UI Label</em>}' class.
@@ -462,6 +471,15 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int ELEMENT_CONTAINER__VISIBLE_WHEN = UI_ELEMENT__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE = UI_ELEMENT__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -598,6 +616,15 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_STACK__VISIBLE_WHEN = ELEMENT_CONTAINER__VISIBLE_WHEN;
 
 	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_STACK__ACCESSIBILITY_PHRASE = ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -732,6 +759,15 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int GENERIC_TILE__VISIBLE_WHEN = ELEMENT_CONTAINER__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_TILE__ACCESSIBILITY_PHRASE = ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -877,6 +913,15 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int GENERIC_TRIM_CONTAINER__VISIBLE_WHEN = ELEMENT_CONTAINER__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_TRIM_CONTAINER__ACCESSIBILITY_PHRASE = ELEMENT_CONTAINER__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1379,6 +1424,20 @@ public class UiPackageImpl extends EPackageImpl {
 
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MUIElement#getAccessibilityPhrase <em>Accessibility Phrase</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Accessibility Phrase</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MUIElement#getAccessibilityPhrase()
+	 * @see #getUIElement()
+	 * @generated
+	 */
+	public EAttribute getUIElement_AccessibilityPhrase() {
+		return (EAttribute)uiElementEClass.getEStructuralFeatures().get(9);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MUILabel <em>UI Label</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1646,6 +1705,7 @@ public class UiPackageImpl extends EPackageImpl {
 		createEAttribute(uiElementEClass, UI_ELEMENT__CONTAINER_DATA);
 		createEReference(uiElementEClass, UI_ELEMENT__CUR_SHARED_REF);
 		createEReference(uiElementEClass, UI_ELEMENT__VISIBLE_WHEN);
+		createEAttribute(uiElementEClass, UI_ELEMENT__ACCESSIBILITY_PHRASE);
 
 		uiLabelEClass = createEClass(UI_LABEL);
 		createEAttribute(uiLabelEClass, UI_LABEL__LABEL);
@@ -1766,6 +1826,7 @@ public class UiPackageImpl extends EPackageImpl {
 		initEAttribute(getUIElement_ContainerData(), ecorePackage.getEString(), "containerData", null, 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getUIElement_CurSharedRef(), theAdvancedPackage.getPlaceholder(), null, "curSharedRef", null, 0, 1, MUIElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getUIElement_VisibleWhen(), this.getExpression(), null, "visibleWhen", null, 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getUIElement_AccessibilityPhrase(), ecorePackage.getEString(), "accessibilityPhrase", null, 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(uiLabelEClass, MUILabel.class, "UILabel", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getUILabel_Label(), ecorePackage.getEString(), "label", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1964,6 +2025,14 @@ public class UiPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference UI_ELEMENT__VISIBLE_WHEN = eINSTANCE.getUIElement_VisibleWhen();
+
+		/**
+		 * The meta object literal for the '<em><b>Accessibility Phrase</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute UI_ELEMENT__ACCESSIBILITY_PHRASE = eINSTANCE.getUIElement_AccessibilityPhrase();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl <em>UI Label</em>}' class.

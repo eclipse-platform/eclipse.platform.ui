@@ -73,6 +73,7 @@ public class ToolControlItemProvider
 			addVisiblePropertyDescriptor(object);
 			addContainerDataPropertyDescriptor(object);
 			addCurSharedRefPropertyDescriptor(object);
+			addAccessibilityPhrasePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -188,6 +189,28 @@ public class ToolControlItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Accessibility Phrase feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addAccessibilityPhrasePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UIElement_accessibilityPhrase_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_accessibilityPhrase_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -260,6 +283,7 @@ public class ToolControlItemProvider
 			case MenuPackageImpl.TOOL_CONTROL__ON_TOP:
 			case MenuPackageImpl.TOOL_CONTROL__VISIBLE:
 			case MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA:
+			case MenuPackageImpl.TOOL_CONTROL__ACCESSIBILITY_PHRASE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case MenuPackageImpl.TOOL_CONTROL__VISIBLE_WHEN:
