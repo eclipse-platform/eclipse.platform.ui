@@ -692,14 +692,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		MPart part = findPart(viewId, secondaryId);
 		if (part == null) {
-			MPlaceholder ph = partService.createSharedPart(viewId, window, secondaryId != null);
-			part = (MPart) ph.getRef();
-			part.setCurSharedRef(ph);
-
+			MPlaceholder ph = partService.createSharedPart(viewId, secondaryId != null);
 			if (ph == null) {
 				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,
 						viewId));
 			}
+
+			part = (MPart) ph.getRef();
+			part.setCurSharedRef(ph);
 
 			if (secondaryId != null) {
 				part.getTags().add(secondaryId);

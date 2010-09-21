@@ -845,8 +845,7 @@ public class PartRenderingEngineTests extends TestCase {
 
 		EPartService partService = window.getContext().get(EPartService.class);
 
-		MPlaceholder placeholderA = partService.createSharedPart("sharedA",
-				window);
+		MPlaceholder placeholderA = partService.createSharedPart("sharedA");
 		stack.getChildren().add(placeholderA);
 		stack.setSelectedElement(placeholderA);
 

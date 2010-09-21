@@ -282,7 +282,7 @@ public class ModeledPageLayout implements IPageLayout {
 			WorkbenchPage page, EPartService partService, boolean createReferences) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (descriptor.getElementId().equals(id)) {
-				MPlaceholder ph = partService.createSharedPart(id, page.getWindowModel());
+				MPlaceholder ph = partService.createSharedPart(id);
 				ph.setToBeRendered(visible);
 
 				MPart part = (MPart) (ph.getRef());

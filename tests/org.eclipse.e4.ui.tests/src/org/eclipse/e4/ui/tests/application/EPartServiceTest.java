@@ -715,8 +715,7 @@ public class EPartServiceTest extends TestCase {
 
 		EPartService partService = window.getContext().get(EPartService.class);
 
-		MPlaceholder placeholder = partService.createSharedPart("partId",
-				window, true);
+		MPlaceholder placeholder = partService.createSharedPart("partId", true);
 		MPart sharedPart = (MPart) placeholder.getRef();
 		sharedPart.setCurSharedRef(placeholder);
 		partService.showPart(sharedPart, PartState.ACTIVATE);
@@ -1063,7 +1062,7 @@ public class EPartServiceTest extends TestCase {
 
 		EPartService partService = (EPartService) window.getContext().get(
 				EPartService.class.getName());
-		assertNull(partService.createSharedPart("partId", window));
+		assertNull(partService.createSharedPart("partId"));
 	}
 
 	public void testCreateSharedPart_ForceFalse() {
@@ -1080,9 +1079,9 @@ public class EPartServiceTest extends TestCase {
 		EPartService partService = (EPartService) window.getContext().get(
 				EPartService.class.getName());
 		MPlaceholder placeholderA = partService.createSharedPart("partId",
-				window, false);
+				false);
 		MPlaceholder placeholderB = partService.createSharedPart("partId",
-				window, false);
+				false);
 
 		assertEquals(1, window.getSharedElements().size());
 
@@ -1104,10 +1103,10 @@ public class EPartServiceTest extends TestCase {
 
 		EPartService partService = (EPartService) window.getContext().get(
 				EPartService.class.getName());
-		MPlaceholder placeholderA = partService.createSharedPart("partId",
-				window, true);
-		MPlaceholder placeholderB = partService.createSharedPart("partId",
-				window, true);
+		MPlaceholder placeholderA = partService
+				.createSharedPart("partId", true);
+		MPlaceholder placeholderB = partService
+				.createSharedPart("partId", true);
 
 		assertEquals(2, window.getSharedElements().size());
 
@@ -2232,14 +2231,14 @@ public class EPartServiceTest extends TestCase {
 
 		EPartService partService = window.getContext().get(EPartService.class);
 
-		MPlaceholder placeholderA = partService.createSharedPart("partId",
-				window, true);
+		MPlaceholder placeholderA = partService
+				.createSharedPart("partId", true);
 		MPart partA = (MPart) placeholderA.getRef();
 		partA.setCurSharedRef(placeholderA);
 		perspective.getChildren().add(placeholderA);
 
-		MPlaceholder placeholderB = partService.createSharedPart("partId",
-				window, true);
+		MPlaceholder placeholderB = partService
+				.createSharedPart("partId", true);
 		MPart partB = (MPart) placeholderB.getRef();
 		partB.setCurSharedRef(placeholderB);
 		perspective.getChildren().add(placeholderB);
@@ -2285,8 +2284,7 @@ public class EPartServiceTest extends TestCase {
 
 		EPartService partService = window.getContext().get(EPartService.class);
 
-		MPlaceholder placeholder = partService.createSharedPart("partId",
-				window, true);
+		MPlaceholder placeholder = partService.createSharedPart("partId", true);
 		MPart sharedPart = (MPart) placeholder.getRef();
 		sharedPart.setCurSharedRef(placeholder);
 		partService.showPart(sharedPart, PartState.ACTIVATE);
@@ -2328,8 +2326,7 @@ public class EPartServiceTest extends TestCase {
 
 		EPartService partService = window.getContext().get(EPartService.class);
 
-		MPlaceholder placeholder = partService.createSharedPart("partId",
-				window, true);
+		MPlaceholder placeholder = partService.createSharedPart("partId", true);
 		MPart sharedPart = (MPart) placeholder.getRef();
 		sharedPart.setCurSharedRef(placeholder);
 		partService.showPart(sharedPart, PartState.ACTIVATE);
@@ -2402,8 +2399,7 @@ public class EPartServiceTest extends TestCase {
 		getEngine().createGui(window);
 
 		EPartService partService = window.getContext().get(EPartService.class);
-		MPlaceholder placeholder = partService.createSharedPart("partId",
-				window, true);
+		MPlaceholder placeholder = partService.createSharedPart("partId", true);
 		MPart sharedPart = (MPart) placeholder.getRef();
 		sharedPart.setCurSharedRef(placeholder);
 
@@ -2475,8 +2471,8 @@ public class EPartServiceTest extends TestCase {
 		getEngine().createGui(window);
 
 		EPartService partService = window.getContext().get(EPartService.class);
-		MPlaceholder placeholderB = partService.createSharedPart("partId",
-				window, true);
+		MPlaceholder placeholderB = partService
+				.createSharedPart("partId", true);
 		MPart partB = (MPart) placeholderB.getRef();
 		partB.setCurSharedRef(placeholderB);
 
@@ -2532,8 +2528,8 @@ public class EPartServiceTest extends TestCase {
 		getEngine().createGui(window);
 
 		EPartService partService = window.getContext().get(EPartService.class);
-		MPlaceholder placeholderB = partService.createSharedPart("partId",
-				window, true);
+		MPlaceholder placeholderB = partService
+				.createSharedPart("partId", true);
 		MPart partB = (MPart) placeholderB.getRef();
 		partB.setCurSharedRef(placeholderB);
 

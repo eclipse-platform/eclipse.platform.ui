@@ -479,11 +479,12 @@ public class PartServiceImpl implements EPartService {
 		return createPart(descriptor);
 	}
 
-	public MPlaceholder createSharedPart(String id, MWindow sharedWindow) {
-		return createSharedPart(id, sharedWindow, false);
+	public MPlaceholder createSharedPart(String id) {
+		return createSharedPart(id, false);
 	}
 
-	public MPlaceholder createSharedPart(String id, MWindow sharedWindow, boolean force) {
+	public MPlaceholder createSharedPart(String id, boolean force) {
+		MWindow sharedWindow = getWindow();
 		// Do we already have the part to share?
 		MPart sharedPart = null;
 
