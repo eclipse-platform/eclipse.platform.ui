@@ -200,6 +200,11 @@ public class PerspectiveStackItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createMArea()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.INSTANCE.createApplication()));
 
 		newChildDescriptors.add

@@ -301,6 +301,11 @@ public class ElementContainerItemProvider
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MAdvancedFactory.INSTANCE.createMArea()));
 	}
 
 }

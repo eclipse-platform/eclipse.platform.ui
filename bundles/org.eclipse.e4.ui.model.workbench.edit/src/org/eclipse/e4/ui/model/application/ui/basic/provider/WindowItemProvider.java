@@ -606,6 +606,11 @@ public class WindowItemProvider
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
 				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MAdvancedFactory.INSTANCE.createMArea()));
 	}
 
 	/**

@@ -395,6 +395,7 @@
         </eGenericSuperTypes>
         <eGenericSuperTypes eClassifier="#//ui/basic/WindowElement"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="MArea" eSuperTypes="#//ui/basic/PartSashContainer #//ui/UILabel"/>
     </eSubpackages>
   </eSubpackages>
   <eSubpackages name="descriptor" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/descriptor"

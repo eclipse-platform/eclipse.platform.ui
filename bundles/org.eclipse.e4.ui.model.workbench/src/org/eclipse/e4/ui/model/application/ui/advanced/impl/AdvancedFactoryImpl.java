@@ -76,6 +76,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 			case AdvancedPackageImpl.PLACEHOLDER: return (EObject)createPlaceholder();
 			case AdvancedPackageImpl.PERSPECTIVE: return (EObject)createPerspective();
 			case AdvancedPackageImpl.PERSPECTIVE_STACK: return (EObject)createPerspectiveStack();
+			case AdvancedPackageImpl.MAREA: return (EObject)createMArea();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -109,6 +110,16 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	public MPerspectiveStack createPerspectiveStack() {
 		PerspectiveStackImpl perspectiveStack = new PerspectiveStackImpl();
 		return perspectiveStack;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MMArea createMArea() {
+		MAreaImpl mArea = new MAreaImpl();
+		return mArea;
 	}
 
 	/**

@@ -146,6 +146,29 @@ public class AdvancedItemProviderAdapterFactory extends AdvancedAdapterFactory i
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.advanced.MMArea} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected MAreaItemProvider mAreaItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MMArea}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createMAreaAdapter() {
+		if (mAreaItemProvider == null) {
+			mAreaItemProvider = new MAreaItemProvider(this);
+		}
+
+		return mAreaItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -247,6 +270,7 @@ public class AdvancedItemProviderAdapterFactory extends AdvancedAdapterFactory i
 		if (placeholderItemProvider != null) placeholderItemProvider.dispose();
 		if (perspectiveItemProvider != null) perspectiveItemProvider.dispose();
 		if (perspectiveStackItemProvider != null) perspectiveStackItemProvider.dispose();
+		if (mAreaItemProvider != null) mAreaItemProvider.dispose();
 	}
 
 }
