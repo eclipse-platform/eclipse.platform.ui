@@ -12,7 +12,7 @@ package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 
-import org.eclipse.e4.ui.model.application.ui.advanced.MMArea;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 
 import org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl;
 
@@ -26,20 +26,20 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>MArea</b></em>'.
+ * An implementation of the model object '<em><b>Area</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.MAreaImpl#getLabel <em>Label</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.MAreaImpl#getIconURI <em>Icon URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.MAreaImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getIconURI <em>Icon URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getTooltip <em>Tooltip</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class MAreaImpl extends PartSashContainerImpl implements MMArea {
+public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -105,7 +105,7 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected MAreaImpl() {
+	protected AreaImpl() {
 		super();
 	}
 
@@ -116,7 +116,7 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return AdvancedPackageImpl.Literals.MAREA;
+		return AdvancedPackageImpl.Literals.AREA;
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 		String oldLabel = label;
 		label = newLabel;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.MAREA__LABEL, oldLabel, label));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.AREA__LABEL, oldLabel, label));
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.MAREA__ICON_URI, oldIconURI, iconURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.AREA__ICON_URI, oldIconURI, iconURI));
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.MAREA__TOOLTIP, oldTooltip, tooltip));
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.AREA__TOOLTIP, oldTooltip, tooltip));
 	}
 
 	/**
@@ -190,11 +190,11 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case AdvancedPackageImpl.MAREA__LABEL:
+			case AdvancedPackageImpl.AREA__LABEL:
 				return getLabel();
-			case AdvancedPackageImpl.MAREA__ICON_URI:
+			case AdvancedPackageImpl.AREA__ICON_URI:
 				return getIconURI();
-			case AdvancedPackageImpl.MAREA__TOOLTIP:
+			case AdvancedPackageImpl.AREA__TOOLTIP:
 				return getTooltip();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -208,13 +208,13 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case AdvancedPackageImpl.MAREA__LABEL:
+			case AdvancedPackageImpl.AREA__LABEL:
 				setLabel((String)newValue);
 				return;
-			case AdvancedPackageImpl.MAREA__ICON_URI:
+			case AdvancedPackageImpl.AREA__ICON_URI:
 				setIconURI((String)newValue);
 				return;
-			case AdvancedPackageImpl.MAREA__TOOLTIP:
+			case AdvancedPackageImpl.AREA__TOOLTIP:
 				setTooltip((String)newValue);
 				return;
 		}
@@ -229,13 +229,13 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case AdvancedPackageImpl.MAREA__LABEL:
+			case AdvancedPackageImpl.AREA__LABEL:
 				setLabel(LABEL_EDEFAULT);
 				return;
-			case AdvancedPackageImpl.MAREA__ICON_URI:
+			case AdvancedPackageImpl.AREA__ICON_URI:
 				setIconURI(ICON_URI_EDEFAULT);
 				return;
-			case AdvancedPackageImpl.MAREA__TOOLTIP:
+			case AdvancedPackageImpl.AREA__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
 		}
@@ -250,11 +250,11 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case AdvancedPackageImpl.MAREA__LABEL:
+			case AdvancedPackageImpl.AREA__LABEL:
 				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
-			case AdvancedPackageImpl.MAREA__ICON_URI:
+			case AdvancedPackageImpl.AREA__ICON_URI:
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
-			case AdvancedPackageImpl.MAREA__TOOLTIP:
+			case AdvancedPackageImpl.AREA__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
 		}
 		return super.eIsSet(featureID);
@@ -269,9 +269,9 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
-				case AdvancedPackageImpl.MAREA__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
-				case AdvancedPackageImpl.MAREA__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
-				case AdvancedPackageImpl.MAREA__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case AdvancedPackageImpl.AREA__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
+				case AdvancedPackageImpl.AREA__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
+				case AdvancedPackageImpl.AREA__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -287,9 +287,9 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MUILabel.class) {
 			switch (baseFeatureID) {
-				case UiPackageImpl.UI_LABEL__LABEL: return AdvancedPackageImpl.MAREA__LABEL;
-				case UiPackageImpl.UI_LABEL__ICON_URI: return AdvancedPackageImpl.MAREA__ICON_URI;
-				case UiPackageImpl.UI_LABEL__TOOLTIP: return AdvancedPackageImpl.MAREA__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LABEL: return AdvancedPackageImpl.AREA__LABEL;
+				case UiPackageImpl.UI_LABEL__ICON_URI: return AdvancedPackageImpl.AREA__ICON_URI;
+				case UiPackageImpl.UI_LABEL__TOOLTIP: return AdvancedPackageImpl.AREA__TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -316,4 +316,4 @@ public class MAreaImpl extends PartSashContainerImpl implements MMArea {
 		return result.toString();
 	}
 
-} //MAreaImpl
+} //AreaImpl

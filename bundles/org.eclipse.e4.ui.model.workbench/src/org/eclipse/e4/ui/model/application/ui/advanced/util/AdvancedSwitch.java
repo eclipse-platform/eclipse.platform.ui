@@ -11,22 +11,25 @@
 package org.eclipse.e4.ui.model.application.ui.advanced.util;
 
 import java.util.List;
+
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+
 import org.eclipse.e4.ui.model.application.ui.advanced.*;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -136,17 +139,17 @@ public class AdvancedSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case AdvancedPackageImpl.MAREA: {
-				MMArea mArea = (MMArea)theEObject;
-				T1 result = caseMArea(mArea);
-				if (result == null) result = casePartSashContainer(mArea);
-				if (result == null) result = caseUILabel(mArea);
-				if (result == null) result = caseGenericTile(mArea);
-				if (result == null) result = casePartSashContainerElement(mArea);
-				if (result == null) result = caseWindowElement(mArea);
-				if (result == null) result = caseElementContainer(mArea);
-				if (result == null) result = caseUIElement(mArea);
-				if (result == null) result = caseApplicationElement(mArea);
+			case AdvancedPackageImpl.AREA: {
+				MArea area = (MArea)theEObject;
+				T1 result = caseArea(area);
+				if (result == null) result = casePartSashContainer(area);
+				if (result == null) result = caseUILabel(area);
+				if (result == null) result = caseGenericTile(area);
+				if (result == null) result = casePartSashContainerElement(area);
+				if (result == null) result = caseWindowElement(area);
+				if (result == null) result = caseElementContainer(area);
+				if (result == null) result = caseUIElement(area);
+				if (result == null) result = caseApplicationElement(area);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -200,17 +203,17 @@ public class AdvancedSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>MArea</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Area</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>MArea</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Area</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseMArea(MMArea object) {
+	public T1 caseArea(MArea object) {
 		return null;
 	}
 

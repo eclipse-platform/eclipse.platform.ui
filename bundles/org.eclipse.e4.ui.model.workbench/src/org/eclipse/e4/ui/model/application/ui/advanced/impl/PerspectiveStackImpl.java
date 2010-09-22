@@ -12,21 +12,30 @@ package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+
 import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
 import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
+
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 

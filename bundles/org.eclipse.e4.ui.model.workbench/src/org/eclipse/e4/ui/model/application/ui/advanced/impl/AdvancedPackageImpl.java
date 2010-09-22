@@ -11,20 +11,27 @@
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
+
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
-import org.eclipse.e4.ui.model.application.ui.advanced.MMArea;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
@@ -565,14 +572,14 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE_STACK_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.MAreaImpl <em>MArea</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl <em>Area</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.MAreaImpl
-	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getMArea()
+	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getArea()
 	 * @generated
 	 */
-	public static final int MAREA = 3;
+	public static final int AREA = 3;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -581,7 +588,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__ELEMENT_ID = BasicPackageImpl.PART_SASH_CONTAINER__ELEMENT_ID;
+	public static final int AREA__ELEMENT_ID = BasicPackageImpl.PART_SASH_CONTAINER__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -590,7 +597,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__TAGS = BasicPackageImpl.PART_SASH_CONTAINER__TAGS;
+	public static final int AREA__TAGS = BasicPackageImpl.PART_SASH_CONTAINER__TAGS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -599,7 +606,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__WIDGET = BasicPackageImpl.PART_SASH_CONTAINER__WIDGET;
+	public static final int AREA__WIDGET = BasicPackageImpl.PART_SASH_CONTAINER__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
@@ -608,7 +615,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__RENDERER = BasicPackageImpl.PART_SASH_CONTAINER__RENDERER;
+	public static final int AREA__RENDERER = BasicPackageImpl.PART_SASH_CONTAINER__RENDERER;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
@@ -617,7 +624,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__TO_BE_RENDERED = BasicPackageImpl.PART_SASH_CONTAINER__TO_BE_RENDERED;
+	public static final int AREA__TO_BE_RENDERED = BasicPackageImpl.PART_SASH_CONTAINER__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
@@ -626,7 +633,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__ON_TOP = BasicPackageImpl.PART_SASH_CONTAINER__ON_TOP;
+	public static final int AREA__ON_TOP = BasicPackageImpl.PART_SASH_CONTAINER__ON_TOP;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -635,7 +642,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__VISIBLE = BasicPackageImpl.PART_SASH_CONTAINER__VISIBLE;
+	public static final int AREA__VISIBLE = BasicPackageImpl.PART_SASH_CONTAINER__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -644,7 +651,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__PARENT = BasicPackageImpl.PART_SASH_CONTAINER__PARENT;
+	public static final int AREA__PARENT = BasicPackageImpl.PART_SASH_CONTAINER__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
@@ -653,7 +660,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__CONTAINER_DATA = BasicPackageImpl.PART_SASH_CONTAINER__CONTAINER_DATA;
+	public static final int AREA__CONTAINER_DATA = BasicPackageImpl.PART_SASH_CONTAINER__CONTAINER_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
@@ -662,7 +669,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__CUR_SHARED_REF = BasicPackageImpl.PART_SASH_CONTAINER__CUR_SHARED_REF;
+	public static final int AREA__CUR_SHARED_REF = BasicPackageImpl.PART_SASH_CONTAINER__CUR_SHARED_REF;
 
 	/**
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
@@ -671,7 +678,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__VISIBLE_WHEN = BasicPackageImpl.PART_SASH_CONTAINER__VISIBLE_WHEN;
+	public static final int AREA__VISIBLE_WHEN = BasicPackageImpl.PART_SASH_CONTAINER__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
@@ -680,7 +687,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__ACCESSIBILITY_PHRASE = BasicPackageImpl.PART_SASH_CONTAINER__ACCESSIBILITY_PHRASE;
+	public static final int AREA__ACCESSIBILITY_PHRASE = BasicPackageImpl.PART_SASH_CONTAINER__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -689,7 +696,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__CHILDREN = BasicPackageImpl.PART_SASH_CONTAINER__CHILDREN;
+	public static final int AREA__CHILDREN = BasicPackageImpl.PART_SASH_CONTAINER__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Selected Element</b></em>' reference.
@@ -698,7 +705,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__SELECTED_ELEMENT = BasicPackageImpl.PART_SASH_CONTAINER__SELECTED_ELEMENT;
+	public static final int AREA__SELECTED_ELEMENT = BasicPackageImpl.PART_SASH_CONTAINER__SELECTED_ELEMENT;
 
 	/**
 	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
@@ -707,7 +714,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__HORIZONTAL = BasicPackageImpl.PART_SASH_CONTAINER__HORIZONTAL;
+	public static final int AREA__HORIZONTAL = BasicPackageImpl.PART_SASH_CONTAINER__HORIZONTAL;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -716,7 +723,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__LABEL = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 0;
+	public static final int AREA__LABEL = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -725,7 +732,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__ICON_URI = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 1;
+	public static final int AREA__ICON_URI = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -734,16 +741,16 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA__TOOLTIP = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 2;
+	public static final int AREA__TOOLTIP = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
-	 * The number of structural features of the '<em>MArea</em>' class.
+	 * The number of structural features of the '<em>Area</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MAREA_FEATURE_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 3;
+	public static final int AREA_FEATURE_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 3;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -771,7 +778,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass mAreaEClass = null;
+	private EClass areaEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -918,17 +925,16 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.advanced.MMArea <em>MArea</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.advanced.MArea <em>Area</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>MArea</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MMArea
+	 * @return the meta object for class '<em>Area</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MArea
 	 * @generated
 	 */
-	public EClass getMArea() {
-		return mAreaEClass;
+	public EClass getArea() {
+		return areaEClass;
 	}
-
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -968,7 +974,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 
 		perspectiveStackEClass = createEClass(PERSPECTIVE_STACK);
 
-		mAreaEClass = createEClass(MAREA);
+		areaEClass = createEClass(AREA);
 	}
 
 	/**
@@ -1021,8 +1027,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theBasicPackage.getWindowElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
-		mAreaEClass.getESuperTypes().add(theBasicPackage.getPartSashContainer());
-		mAreaEClass.getESuperTypes().add(theUiPackage.getUILabel());
+		areaEClass.getESuperTypes().add(theBasicPackage.getPartSashContainer());
+		areaEClass.getESuperTypes().add(theUiPackage.getUILabel());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(placeholderEClass, MPlaceholder.class, "Placeholder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1033,7 +1039,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 
 		initEClass(perspectiveStackEClass, MPerspectiveStack.class, "PerspectiveStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
-		initEClass(mAreaEClass, MMArea.class, "MArea", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(areaEClass, MArea.class, "Area", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 	}
 
 	/**
@@ -1096,14 +1102,14 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		public static final EClass PERSPECTIVE_STACK = eINSTANCE.getPerspectiveStack();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.MAreaImpl <em>MArea</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl <em>Area</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.MAreaImpl
-		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getMArea()
+		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl#getArea()
 		 * @generated
 		 */
-		public static final EClass MAREA = eINSTANCE.getMArea();
+		public static final EClass AREA = eINSTANCE.getArea();
 
 	}
 

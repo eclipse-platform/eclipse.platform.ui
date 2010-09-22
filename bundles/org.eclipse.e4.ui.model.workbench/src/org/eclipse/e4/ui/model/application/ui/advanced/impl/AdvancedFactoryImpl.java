@@ -11,14 +11,13 @@
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
 import org.eclipse.e4.ui.model.application.ui.advanced.*;
-import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
+
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**
@@ -76,7 +75,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 			case AdvancedPackageImpl.PLACEHOLDER: return (EObject)createPlaceholder();
 			case AdvancedPackageImpl.PERSPECTIVE: return (EObject)createPerspective();
 			case AdvancedPackageImpl.PERSPECTIVE_STACK: return (EObject)createPerspectiveStack();
-			case AdvancedPackageImpl.MAREA: return (EObject)createMArea();
+			case AdvancedPackageImpl.AREA: return (EObject)createArea();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -117,9 +116,9 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMArea createMArea() {
-		MAreaImpl mArea = new MAreaImpl();
-		return mArea;
+	public MArea createArea() {
+		AreaImpl area = new AreaImpl();
+		return area;
 	}
 
 	/**

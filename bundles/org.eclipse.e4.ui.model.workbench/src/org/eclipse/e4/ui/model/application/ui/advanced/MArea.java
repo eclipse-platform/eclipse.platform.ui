@@ -16,12 +16,12 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>MArea</b></em>'.
+ * A representation of the model object '<em><b>Area</b></em>'.
  * <!-- end-user-doc -->
  *
  *
  * @model
  * @generated
  */
-public interface MMArea extends MPartSashContainer, MUILabel {
-} // MMArea
+public interface MArea extends MPartSashContainer, MUILabel {
+} // MArea

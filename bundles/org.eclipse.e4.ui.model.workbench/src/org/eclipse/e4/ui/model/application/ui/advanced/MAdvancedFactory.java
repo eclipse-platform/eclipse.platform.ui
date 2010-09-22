@@ -55,12 +55,12 @@ public interface MAdvancedFactory {
 	MPerspectiveStack createPerspectiveStack();
 
 	/**
-	 * Returns a new object of class '<em>MArea</em>'.
+	 * Returns a new object of class '<em>Area</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>MArea</em>'.
+	 * @return a new object of class '<em>Area</em>'.
 	 * @generated
 	 */
-	MMArea createMArea();
+	MArea createArea();
 
 } //MAdvancedFactory
