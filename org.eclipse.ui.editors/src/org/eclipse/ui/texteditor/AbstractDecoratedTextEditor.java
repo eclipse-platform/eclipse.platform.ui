@@ -1081,8 +1081,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/*
-	 * For an explanation why we override this method see:
-	 * bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=42230
+	 * For an explanation why we override this method see http://bugs.eclipse.org/42230
 	 *
 	 * @see org.eclipse.ui.texteditor.StatusTextEditor#isErrorStatus(org.eclipse.core.runtime.IStatus)
 	 */

@@ -4540,8 +4540,7 @@ public class TextViewer extends Viewer implements
 			/*
 			 * FIXME:
 			 * 	Should copy the printer data to avoid threading issues,
-			 *	but this is currently not possible, see:
-			 *  https://bugs.eclipse.org/bugs/show_bug.cgi?id=297957
+			 *	but this is currently not possible, see http://bugs.eclipse.org/297957
 			 */
 			fgPrinterData= data;
 			fgPrinterData.startPage= 1;
