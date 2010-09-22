@@ -1594,16 +1594,30 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * java.lang.String, int)
 	 */
 	public IEditorReference[] findEditors(IEditorInput input, String editorId, int matchFlags) {
+		// BEGIN FIXME: workaround for bug 325960, v1.99 diff
+		List<EditorReference> filteredReferences = new ArrayList<EditorReference>();
+		for (MPart part : partService.getParts()) {
+			Object object = part.getObject();
+			if (object instanceof CompatibilityEditor) {
+				for (EditorReference editorRef : editorReferences) {
+					if (editorRef.getPart(false) == ((CompatibilityEditor) object).getPart()) {
+						filteredReferences.add(editorRef);
+					}
+				}
+			}
+		}
+		// END FIXME: workaround for bug 325960, v1.99 diff
+
 		switch (matchFlags) {
 		case MATCH_INPUT:
 			List<IEditorReference> editorRefs = new ArrayList<IEditorReference>();
-			for (EditorReference editorRef : editorReferences) {
+			for (EditorReference editorRef : filteredReferences) {
 				checkEditor(input, editorRefs, editorRef);
 			}
 			return editorRefs.toArray(new IEditorReference[editorRefs.size()]);
 		case MATCH_ID:
 			editorRefs = new ArrayList<IEditorReference>();
-			for (IEditorReference editorRef : editorReferences) {
+			for (IEditorReference editorRef : filteredReferences) {
 				if (editorId.equals(editorRef.getId())) {
 					editorRefs.add(editorRef);
 				}
@@ -1613,7 +1627,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if ((matchFlags & IWorkbenchPage.MATCH_ID) != 0
 					&& (matchFlags & IWorkbenchPage.MATCH_INPUT) != 0) {
 				editorRefs = new ArrayList<IEditorReference>();
-				for (EditorReference editorRef : editorReferences) {
+				for (EditorReference editorRef : filteredReferences) {
 					if (editorRef.getId().equals(editorId)) {
 						checkEditor(input, editorRefs, editorRef);
 					}
