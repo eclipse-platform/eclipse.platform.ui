@@ -18,6 +18,7 @@ import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.base.scope.CriteriaHelpScope;
 import org.eclipse.help.internal.criteria.CriterionResource;
 import org.eclipse.help.internal.util.URLCoder;
@@ -162,7 +163,9 @@ public class SearchResults implements ISearchHitCollector {
 					if (toc != null) {
 						String owningTocHref = toc.getHref();
 						if (owningTocHref == tocRoot.getHref()) {
-							if (filter == null || filter.inScope(inScopeTopic)) {
+							Topic extradirTopic = new Topic();
+							extradirTopic.setHref(href);
+							if (filter == null || filter.inScope(extradirTopic)) {
 								if(!enabled || (enabled && criteriaScope.inScope(inScopeTopic))){
 									return scope;
 								}
