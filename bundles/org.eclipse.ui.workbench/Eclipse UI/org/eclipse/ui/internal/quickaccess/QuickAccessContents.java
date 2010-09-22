@@ -98,7 +98,7 @@ public abstract class QuickAccessContents {
 	/**
 	 * 
 	 */
-	private void refresh(String filter) {
+	public void refresh(String filter) {
 		int numItems = computeNumberOfItems();
 
 		// perfect match, to be selected in the table if not null

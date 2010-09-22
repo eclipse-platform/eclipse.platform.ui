@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -44,7 +44,7 @@ public class QuickAccessHandler extends AbstractHandler {
 
 		MWindow mWindow = ((WorkbenchWindow) window).getModel();
 		EModelService modelService = mWindow.getContext().get(EModelService.class);
-		MUIElement searchField = modelService.find("SearchField", mWindow); //$NON-NLS-1$
+		MToolControl searchField = (MToolControl) modelService.find("SearchField", mWindow); //$NON-NLS-1$
 		Control control = (Control) searchField.getWidget();
 		if (control == null) {
 			((WorkbenchWindow) window).toggleToolbarVisibility();
@@ -52,6 +52,8 @@ public class QuickAccessHandler extends AbstractHandler {
 		}
 		if (control != null) {
 			control.setFocus();
+			SearchField field = (SearchField) searchField.getObject();
+			field.activate();
 		}
 
 // final PopupDialog popupDialog = new QuickAccessDialog(window,

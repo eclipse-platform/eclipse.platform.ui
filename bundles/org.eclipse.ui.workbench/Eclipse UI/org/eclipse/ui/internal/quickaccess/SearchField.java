@@ -53,6 +53,8 @@ public class SearchField {
 	private static final int MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT = 3;
 
 	Shell shell;
+	private Text text;
+
 	private QuickAccessContents quickAccessContents;
 	private MWindow window;
 
@@ -70,7 +72,7 @@ public class SearchField {
 		// borderColor = new Color(parent.getDisplay(), 170, 176, 191);
 		final Composite comp = new Composite(parent, SWT.NONE);
 		comp.setLayout(new GridLayout());
-		final Text text = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
+		text = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
 		GridDataFactory.fillDefaults().hint(130, SWT.DEFAULT).applyTo(text);
 		text.setMessage(QuickAccessMessages.QuickAccess_EnterSearch);
 
@@ -142,22 +144,7 @@ public class SearchField {
 				boolean wasVisible = shell.getVisible();
 				boolean nowVisible = text.getText().length() > 0;
 				if (!wasVisible && nowVisible) {
-					Rectangle tempBounds = comp.getBounds();
-					Rectangle compBounds = e.display.map(comp, null, tempBounds);
-					Rectangle monitorBounds = comp.getMonitor().getBounds();
-					int width = Math.max(350, compBounds.width);
-					int height = 250;
-
-					if (compBounds.x + width > monitorBounds.width) {
-						compBounds.x = monitorBounds.width - width;
-					}
-					
-					if (compBounds.y + height > monitorBounds.height) {
-						compBounds.y = compBounds.y - tempBounds.height - height;
-					}
-					
-					shell.setBounds(compBounds.x, compBounds.y + compBounds.height, width, height);
-					shell.layout();
+					layoutShell();
 				}
 				shell.setVisible(nowVisible);
 			}
@@ -170,8 +157,34 @@ public class SearchField {
 				}
 			}
 		});
+	}
 
+	private void layoutShell() {
+		Composite parent = text.getParent();
+		Rectangle tempBounds = parent.getBounds();
+		Rectangle compBounds = text.getDisplay().map(parent, null, tempBounds);
+		Rectangle monitorBounds = text.getMonitor().getBounds();
+		int width = Math.max(350, compBounds.width);
+		int height = 250;
 
+		if (compBounds.x + width > monitorBounds.width) {
+			compBounds.x = monitorBounds.width - width;
+		}
+
+		if (compBounds.y + height > monitorBounds.height) {
+			compBounds.y = compBounds.y - tempBounds.height - height;
+		}
+
+		shell.setBounds(compBounds.x, compBounds.y + compBounds.height, width, height);
+		shell.layout();
+	}
+
+	public void activate() {
+		if (!shell.isVisible()) {
+			layoutShell();
+			shell.setVisible(true);
+			quickAccessContents.refresh(text.getText().toLowerCase());
+		}
 	}
 
 	/**
