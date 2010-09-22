@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,14 @@ public class InternalBrowserViewInstance extends InternalBrowserInstance {
 		if (view == null) {
             try {
 				view = (WebBrowserView)page.showView(WebBrowserView.WEB_BROWSER_VIEW_ID, getId(), IWorkbenchPage.VIEW_CREATE);
-                hookPart(page, view);
+				if (tooltip != null && tooltip.length() > 0) {
+				    view.setBrowserViewTooltip(tooltip);
+				}
+				if (name != null && name.length() > 0) {
+				    view.setBrowserViewName(name);
+				}
+				hookPart(page, view);
+                
 			} catch (Exception e) {
 				Trace.trace(Trace.SEVERE, "Error opening Web browser", e); //$NON-NLS-1$
 			}

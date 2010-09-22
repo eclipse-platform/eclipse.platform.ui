@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -179,5 +179,13 @@ public class WebBrowserView extends ViewPart implements
 
 	public void selectReveal(ISelection selection) {
 		onSelectionChange(selection);
+	}
+
+	public void setBrowserViewName(String name) {
+		setPartName(name);
+	}
+	
+	public void setBrowserViewTooltip(String tip) {
+		setTitleToolTip(tip);
 	}
 }
