@@ -1,44 +1,59 @@
 /**
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2010 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
+ *      Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.provider;
+package org.eclipse.e4.ui.model.fragment.provider;
 
 
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
+
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
+
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
+
+import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
+import org.eclipse.e4.ui.model.fragment.MModelFragments;
+
+import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
+
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+
+import org.eclipse.emf.common.util.ResourceLocator;
+
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
+
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
+import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.MElementContainer} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.fragment.MModelFragments} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ElementContainerItemProvider
-	extends UIElementItemProvider
+public class ModelFragmentsItemProvider
+	extends ItemProviderAdapter
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -51,7 +66,7 @@ public class ElementContainerItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ElementContainerItemProvider(AdapterFactory adapterFactory) {
+	public ModelFragmentsItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -66,31 +81,8 @@ public class ElementContainerItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addSelectedElementPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
-	}
-
-	/**
-	 * This adds a property descriptor for the Selected Element feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addSelectedElementPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ElementContainer_selectedElement_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ElementContainer_selectedElement_feature", "_UI_ElementContainer_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.ELEMENT_CONTAINER__SELECTED_ELEMENT,
-				 true,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
 	}
 
 	/**
@@ -105,7 +97,8 @@ public class ElementContainerItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
+			childrenFeatures.add(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS);
+			childrenFeatures.add(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS);
 		}
 		return childrenFeatures;
 	}
@@ -124,17 +117,25 @@ public class ElementContainerItemProvider
 	}
 
 	/**
+	 * This returns ModelFragments.gif.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object getImage(Object object) {
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/ModelFragments")); //$NON-NLS-1$
+	}
+
+	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = null; // ((MElementContainer<?>)object).getElementId();
-		return label == null || label.length() == 0 ?
-			getString("_UI_ElementContainer_type") : //$NON-NLS-1$
-			getString("_UI_ElementContainer_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+		return getString("_UI_ModelFragments_type"); //$NON-NLS-1$
 	}
 
 	/**
@@ -148,8 +149,9 @@ public class ElementContainerItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MElementContainer.class)) {
-			case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
+		switch (notification.getFeatureID(MModelFragments.class)) {
+			case FragmentPackageImpl.MODEL_FRAGMENTS__IMPORTS:
+			case FragmentPackageImpl.MODEL_FRAGMENTS__FRAGMENTS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -169,143 +171,209 @@ public class ElementContainerItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MApplicationFactory.INSTANCE.createApplication()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 MApplicationFactory.INSTANCE.createAddon()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createBindingContext()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createBindingTable()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createCommand()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createCommandParameter()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createHandler()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createKeyBinding()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createParameter()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 MCommandsFactory.INSTANCE.createCategory()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createMenuSeparator()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createMenu()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createMenuContribution()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createPopupMenu()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createDirectMenuItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createHandledMenuItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createToolBar()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createToolControl()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createHandledToolItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createDirectToolItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createToolBarSeparator()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createRenderedMenu()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createRenderedToolBar()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createToolBarContribution()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createTrimContribution()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MMenuFactory.INSTANCE.createRenderedMenuItem()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MBasicFactory.INSTANCE.createPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MBasicFactory.INSTANCE.createInputPart()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MBasicFactory.INSTANCE.createPartStack()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MBasicFactory.INSTANCE.createPartSashContainer()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MBasicFactory.INSTANCE.createWindow()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MBasicFactory.INSTANCE.createTrimmedWindow()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MBasicFactory.INSTANCE.createTrimBar()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MAdvancedFactory.INSTANCE.createPlaceholder()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MAdvancedFactory.INSTANCE.createPerspective()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MAdvancedFactory.INSTANCE.createPerspectiveStack()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
 				 MAdvancedFactory.INSTANCE.createArea()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__IMPORTS,
+				 org.eclipse.e4.ui.model.application.descriptor.basic.MBasicFactory.INSTANCE.createPartDescriptor()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(FragmentPackageImpl.Literals.MODEL_FRAGMENTS__FRAGMENTS,
+				 MFragmentFactory.INSTANCE.createStringModelFragment()));
+	}
+
+	/**
+	 * Return the resource locator for this item provider's resources.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public ResourceLocator getResourceLocator() {
+		return ModelFragmentEditPlugin.INSTANCE;
 	}
 
 }

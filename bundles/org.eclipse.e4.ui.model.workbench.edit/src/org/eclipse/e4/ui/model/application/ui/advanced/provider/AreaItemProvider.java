@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 
-import org.eclipse.e4.ui.model.application.ui.advanced.MMArea;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
 
@@ -40,12 +40,12 @@ import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 /**
- * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MMArea} object.
+ * This is the item provider adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MArea} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class MAreaItemProvider
+public class AreaItemProvider
 	extends PartSashContainerItemProvider
 	implements
 		IEditingDomainItemProvider,
@@ -59,7 +59,7 @@ public class MAreaItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MAreaItemProvider(AdapterFactory adapterFactory) {
+	public AreaItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -148,14 +148,14 @@ public class MAreaItemProvider
 	}
 
 	/**
-	 * This returns MArea.gif.
+	 * This returns Area.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/MArea")); //$NON-NLS-1$
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Area")); //$NON-NLS-1$
 	}
 
 	/**
@@ -166,10 +166,10 @@ public class MAreaItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MMArea)object).getElementId();
+		String label = ((MArea)object).getElementId();
 		return label == null || label.length() == 0 ?
-			getString("_UI_MArea_type") : //$NON-NLS-1$
-			getString("_UI_MArea_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
+			getString("_UI_Area_type") : //$NON-NLS-1$
+			getString("_UI_Area_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -183,10 +183,10 @@ public class MAreaItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(MMArea.class)) {
-			case AdvancedPackageImpl.MAREA__LABEL:
-			case AdvancedPackageImpl.MAREA__ICON_URI:
-			case AdvancedPackageImpl.MAREA__TOOLTIP:
+		switch (notification.getFeatureID(MArea.class)) {
+			case AdvancedPackageImpl.AREA__LABEL:
+			case AdvancedPackageImpl.AREA__ICON_URI:
+			case AdvancedPackageImpl.AREA__TOOLTIP:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

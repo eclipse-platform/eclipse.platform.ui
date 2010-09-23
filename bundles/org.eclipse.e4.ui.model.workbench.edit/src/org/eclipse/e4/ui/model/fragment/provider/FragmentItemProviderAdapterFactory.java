@@ -1,21 +1,25 @@
 /**
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2010 BestSolution.at and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
+ *      Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *      IBM Corporation - initial API and implementation
  */
-package org.eclipse.e4.ui.model.application.ui.advanced.provider;
+package org.eclipse.e4.ui.model.fragment.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.eclipse.e4.ui.model.application.ui.advanced.util.AdvancedAdapterFactory;
+
+import org.eclipse.e4.ui.model.fragment.util.FragmentAdapterFactory;
+
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
+
 import org.eclipse.emf.edit.provider.ChangeNotifier;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -37,7 +41,7 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
  * <!-- end-user-doc -->
  * @generated
  */
-public class AdvancedItemProviderAdapterFactory extends AdvancedAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
+public class FragmentItemProviderAdapterFactory extends FragmentAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable {
 	/**
 	 * This keeps track of the root adapter factory that delegates to this adapter factory.
 	 * <!-- begin-user-doc -->
@@ -68,7 +72,7 @@ public class AdvancedItemProviderAdapterFactory extends AdvancedAdapterFactory i
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AdvancedItemProviderAdapterFactory() {
+	public FragmentItemProviderAdapterFactory() {
 		supportedTypes.add(IEditingDomainItemProvider.class);
 		supportedTypes.add(IStructuredItemContentProvider.class);
 		supportedTypes.add(ITreeItemContentProvider.class);
@@ -77,95 +81,49 @@ public class AdvancedItemProviderAdapterFactory extends AdvancedAdapterFactory i
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.fragment.MModelFragments} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected PlaceholderItemProvider placeholderItemProvider;
+	protected ModelFragmentsItemProvider modelFragmentsItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.fragment.MModelFragments}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createPlaceholderAdapter() {
-		if (placeholderItemProvider == null) {
-			placeholderItemProvider = new PlaceholderItemProvider(this);
+	public Adapter createModelFragmentsAdapter() {
+		if (modelFragmentsItemProvider == null) {
+			modelFragmentsItemProvider = new ModelFragmentsItemProvider(this);
 		}
 
-		return placeholderItemProvider;
+		return modelFragmentsItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspective} instances.
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.fragment.MStringModelFragment} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected PerspectiveItemProvider perspectiveItemProvider;
+	protected StringModelFragmentItemProvider stringModelFragmentItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspective}.
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.fragment.MStringModelFragment}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createPerspectiveAdapter() {
-		if (perspectiveItemProvider == null) {
-			perspectiveItemProvider = new PerspectiveItemProvider(this);
+	public Adapter createStringModelFragmentAdapter() {
+		if (stringModelFragmentItemProvider == null) {
+			stringModelFragmentItemProvider = new StringModelFragmentItemProvider(this);
 		}
 
-		return perspectiveItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected PerspectiveStackItemProvider perspectiveStackItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createPerspectiveStackAdapter() {
-		if (perspectiveStackItemProvider == null) {
-			perspectiveStackItemProvider = new PerspectiveStackItemProvider(this);
-		}
-
-		return perspectiveStackItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.advanced.MArea} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected AreaItemProvider areaItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.advanced.MArea}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createAreaAdapter() {
-		if (areaItemProvider == null) {
-			areaItemProvider = new AreaItemProvider(this);
-		}
-
-		return areaItemProvider;
+		return stringModelFragmentItemProvider;
 	}
 
 	/**
@@ -267,10 +225,8 @@ public class AdvancedItemProviderAdapterFactory extends AdvancedAdapterFactory i
 	 * @generated
 	 */
 	public void dispose() {
-		if (placeholderItemProvider != null) placeholderItemProvider.dispose();
-		if (perspectiveItemProvider != null) perspectiveItemProvider.dispose();
-		if (perspectiveStackItemProvider != null) perspectiveStackItemProvider.dispose();
-		if (areaItemProvider != null) areaItemProvider.dispose();
+		if (modelFragmentsItemProvider != null) modelFragmentsItemProvider.dispose();
+		if (stringModelFragmentItemProvider != null) stringModelFragmentItemProvider.dispose();
 	}
 
 }

@@ -610,7 +610,7 @@ public class WindowItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
-				 MAdvancedFactory.INSTANCE.createMArea()));
+				 MAdvancedFactory.INSTANCE.createArea()));
 	}
 
 	/**
