@@ -412,25 +412,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (CompatibilityPart.COMPATIBILITY_EDITOR_URI.equals(mpart.getContributionURI())) {
 				for (MPart localPart : partService.getParts()) {
 					if (localPart == mpart) {
-						// this editor is actually in this perspective, just
-						// activate it
+						// this editor is actually in this perspective activate
+						// it
 						partService.activate(mpart);
-						return;
 					}
-				}
-
-				// we may get here when an editor's reference is found even
-				// though it does not actually exist in this perspective (that
-				// is, it has been detached from the editor area and is in
-				// another perspective's view stack), in this scenario, we want
-				// to open an editor with the same input/id in the current
-				// perspective, we use MATCH_NONE to ensure that we don't pick
-				// up the extra editor reference
-				try {
-					IEditorPart editor = (IEditorPart) part;
-					openEditor(editor.getEditorInput(), editor.getSite().getId(), true, MATCH_NONE);
-				} catch (PartInitException e) {
-					WorkbenchPlugin.log(e);
 				}
 			} else {
 				// we show the view instead of simply activating it, this is
