@@ -12,11 +12,6 @@
 
 <% 
 	SearchData data = new SearchData(application, request, response);
-	// After each search we preserve the scope (working set), if any
-	// this need to be at the beginning, otherwise cookie is not written
-	if (data.isSearchRequest())
-		data.saveScope();
-
 	WebappPreferences prefs = data.getPrefs();
 %>
 
