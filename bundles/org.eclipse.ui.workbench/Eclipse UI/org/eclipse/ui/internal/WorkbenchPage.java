@@ -412,7 +412,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (CompatibilityPart.COMPATIBILITY_EDITOR_URI.equals(mpart.getContributionURI())) {
 				for (MPart localPart : partService.getParts()) {
 					if (localPart == mpart) {
-						// this editor is actually in this perspective activate
+						// this editor is actually in this perspective, activate
 						// it
 						partService.activate(mpart);
 					}
