@@ -561,30 +561,32 @@ public class StackRenderer extends LazyStackRenderer {
 							.getData(AbstractPartRenderer.OWNING_ME);
 					MPart tabPart = (MPart) ((uiElement instanceof MPart) ? uiElement
 							: ((MPlaceholder) uiElement).getRef());
-					if (isEditor(tabPart))
-						openMenuFor(tabPart, ctf, absolutePoint);
+					openMenuFor(tabPart, ctf, absolutePoint);
 				}
 			}
 		});
 	}
 
 	private void openMenuFor(MPart part, CTabFolder folder, Point point) {
-		Menu tabMenu = createTabMenu(folder);
+		Menu tabMenu = createTabMenu(folder, part);
 		tabMenu.setData(STACK_SELECTED_PART, part);
 		tabMenu.setLocation(point.x, point.y);
 		tabMenu.setVisible(true);
 	}
 
-	private Menu createTabMenu(CTabFolder folder) {
+	private Menu createTabMenu(CTabFolder folder, MPart part) {
 		Shell shell = folder.getShell();
 		Menu cachedMenu = (Menu) shell.getData(SHELL_CLOSE_EDITORS_MENU);
-		if (cachedMenu != null) {
-			return cachedMenu;
+		if (cachedMenu == null) {
+			cachedMenu = new Menu(folder);
+			shell.setData(SHELL_CLOSE_EDITORS_MENU, cachedMenu);
+		} else {
+			for (MenuItem item : cachedMenu.getItems()) {
+				item.dispose();
+			}
 		}
 
-		final Menu menu = new Menu(folder);
-		shell.setData(SHELL_CLOSE_EDITORS_MENU, menu);
-
+		final Menu menu = cachedMenu;
 		MenuItem menuItemClose = new MenuItem(menu, SWT.NONE);
 		menuItemClose.setText(SWTRenderersMessages.menuClose);
 		menuItemClose.addSelectionListener(new SelectionAdapter() {
@@ -597,34 +599,55 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		});
 
-		MenuItem menuItemOthers = new MenuItem(menu, SWT.NONE);
-		menuItemOthers.setText(SWTRenderersMessages.menuCloseOthers);
-		menuItemOthers.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
-				closeSiblingEditors(part, true);
+		MElementContainer<MUIElement> parent = getParent(part);
+		if (parent != null) {
+			int count = 0;
+			for (MUIElement element : parent.getChildren()) {
+				if (element.isToBeRendered()) {
+					count++;
+					if (count == 2) {
+						MenuItem menuItemOthers = new MenuItem(menu, SWT.NONE);
+						menuItemOthers
+								.setText(SWTRenderersMessages.menuCloseOthers);
+						menuItemOthers
+								.addSelectionListener(new SelectionAdapter() {
+									public void widgetSelected(SelectionEvent e) {
+										MPart part = (MPart) menu
+												.getData(STACK_SELECTED_PART);
+										closeSiblingParts(part, true);
+									}
+								});
+
+						MenuItem menuItemAll = new MenuItem(menu, SWT.NONE);
+						menuItemAll.setText(SWTRenderersMessages.menuCloseAll);
+						menuItemAll
+								.addSelectionListener(new SelectionAdapter() {
+									public void widgetSelected(SelectionEvent e) {
+										MPart part = (MPart) menu
+												.getData(STACK_SELECTED_PART);
+										closeSiblingParts(part, false);
+									}
+								});
+						break;
+					}
+				}
 			}
-		});
-		MenuItem menuItemAll = new MenuItem(menu, SWT.NONE);
-		menuItemAll.setText(SWTRenderersMessages.menuCloseAll);
-		menuItemAll.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
-				closeSiblingEditors(part, false);
-			}
-		});
+		}
 
 		return menu;
 	}
 
-	private boolean isEditor(MPart part) {
-		if (part == null)
-			return false;
-		return part.getTags().contains("Editor"); //$NON-NLS-1$
+	private MElementContainer<MUIElement> getParent(MPart part) {
+		MElementContainer<MUIElement> parent = part.getParent();
+		if (parent == null) {
+			MPlaceholder placeholder = part.getCurSharedRef();
+			return placeholder == null ? null : placeholder.getParent();
+		}
+		return parent;
 	}
 
-	private void closeSiblingEditors(MPart part, boolean skipThisPart) {
-		MElementContainer<MUIElement> container = part.getParent();
+	private void closeSiblingParts(MPart part, boolean skipThisPart) {
+		MElementContainer<MUIElement> container = getParent(part);
 		if (container == null)
 			return;
 
@@ -644,8 +667,6 @@ public class StackRenderer extends LazyStackRenderer {
 
 			if (skipThisPart && part.equals(otherPart))
 				continue; // skip selected item
-			if (!isEditor(otherPart))
-				continue;
 			if (otherPart.isToBeRendered())
 				others.add(otherPart);
 		}
