@@ -334,17 +334,31 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 	}
 
+	private MUIElement getLastContainer(MUIElement element) {
+		if (element instanceof MElementContainer<?>) {
+			MElementContainer<?> container = (MElementContainer<?>) element;
+			List<?> children = container.getChildren();
+			return children.isEmpty() ? container : getLastContainer((MUIElement) children
+					.get(children.size() - 1));
+		}
+		return element.getParent();
+	}
+
+	private MElementContainer<?> getLastContainer() {
+		List<MPartSashContainerElement> children = perspModel.getChildren();
+		if (children.isEmpty()) {
+			return perspModel;
+		}
+		MUIElement element = getLastContainer(children.get(children.size() - 1));
+		return element instanceof MElementContainer ? (MElementContainer<?>) element : perspModel;
+	}
+
 	private MPartStack insertStack(String stackId, int relationship,
 			float ratio, String refId, boolean visible) {
 		MUIElement refModel = findElement(perspModel, refId);
 		if (refModel == null) {
-			// If the 'refModel' is -not- a stack then find one
-			// This covers cases where the defining layout is adding
-			// Views relative to other views and relying on the stacks
-			// being automatically created.
-
 			MPartStack stack = createStack(stackId, visible);
-			perspModel.getChildren().add(stack);
+			insert(stack, getLastContainer(), plRelToSwt(relationship), ratio);
 			return stack;
 		}
 		// If the 'refModel' is -not- a stack then find one
