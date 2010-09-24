@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -263,33 +263,41 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * @see org.eclipse.debug.core.IExpressionManager#addExpressions(org.eclipse.debug.core.model.IExpression[])
 	 */
 	public void addExpressions(IExpression[] expressions) {
-		if (fExpressions == null) {
-			fExpressions = new Vector(expressions.length);
-		}
-		boolean addedWatchExpression= false;
-		List added = new ArrayList(expressions.length);
-		for (int i = 0; i < expressions.length; i++) {
-			IExpression expression = expressions[i];
-			if (fExpressions.indexOf(expression) == -1) {
-				added.add(expression);
-				fExpressions.add(expression);
-				if (expression instanceof IWatchExpression) {
-					addedWatchExpression= true;
-				}
-			}				
-		}
+		List added = doAdd(expressions);
 		if (!added.isEmpty()) {
 			fireUpdate((IExpression[])added.toArray(new IExpression[added.size()]), ADDED);
 		}
-		if (addedWatchExpression) {
-			storeWatchExpressions();
+	}
+	
+	/**
+	 * Adds the given expressions to the list of managed expressions, and returns a list
+	 * of expressions that were actually added. Expressions that already exist in the
+	 * managed list are not added.
+	 * 
+	 * @param expressions expressions to add
+	 * @return list of expressions that were actually added.
+	 */
+	private List doAdd(IExpression[] expressions) {
+		List added = new ArrayList(expressions.length);
+		synchronized (this) {
+			if (fExpressions == null) {
+				fExpressions = new Vector(expressions.length);
+			}
+			for (int i = 0; i < expressions.length; i++) {
+				IExpression expression = expressions[i];
+				if (fExpressions.indexOf(expression) == -1) {
+					added.add(expression);
+					fExpressions.add(expression);
+				}				
+			}
 		}
+		return added;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionManager#getExpressions()
 	 */
-	public IExpression[] getExpressions() {
+	public synchronized IExpression[] getExpressions() {
 		if (fExpressions == null) {
 			return new IExpression[0];
 		}
@@ -301,7 +309,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionManager#getExpressions(java.lang.String)
 	 */
-	public IExpression[] getExpressions(String modelIdentifier) {
+	public synchronized IExpression[] getExpressions(String modelIdentifier) {
 		if (fExpressions == null) {
 			return new IExpression[0];
 		}
@@ -331,38 +339,37 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * @since 3.4
 	 */
 	public void insertExpressions(IExpression[] expressions, IExpression insertionLocation, boolean insertBefore){
-		if (fExpressions == null) {
-			addExpressions(expressions);
-			return;
-		}
-		
-		int insertionIndex = fExpressions.indexOf(insertionLocation);
-		if (insertionIndex < 0){
-			addExpressions(expressions);
-			return;
-		}
-		if (!insertBefore){
-			insertionIndex++;
-		}
-		boolean addedWatchExpression = false;
-		List added = new ArrayList(expressions.length);
-		for (int i = 0; i < expressions.length; i++) {
-			IExpression expression = expressions[i];
-			if (fExpressions.indexOf(expression) == -1) {
-				//Insert in the same order as the array is passed
-				fExpressions.add(insertionIndex+added.size(), expression);
-				added.add(expression);
-				if (expression instanceof IWatchExpression) {
-					addedWatchExpression= true;
+		List added = null;
+		List inserted = null;
+		int insertionIndex = -1;
+		synchronized (this) {
+			if (fExpressions == null || ((insertionIndex = fExpressions.indexOf(insertionLocation)) < 0)) {
+				added = doAdd(expressions);
+			} else {
+				if (!insertBefore){
+					insertionIndex++;
 				}
-			}				
+				inserted = new ArrayList(expressions.length);
+				for (int i = 0; i < expressions.length; i++) {
+					IExpression expression = expressions[i];
+					if (fExpressions.indexOf(expression) == -1) {
+						//Insert in the same order as the array is passed
+						fExpressions.add(insertionIndex+inserted.size(), expression);
+						inserted.add(expression);
+					}				
+				}
+			}
 		}
-		
-		if (!added.isEmpty()) {
-			fireUpdate((IExpression[])added.toArray(new IExpression[added.size()]), INSERTED, insertionIndex);
+		if (added != null) {
+			if (!added.isEmpty()) {
+				fireUpdate((IExpression[])added.toArray(new IExpression[added.size()]), ADDED);
+			}
+			return;
 		}
-		if (addedWatchExpression) {
-			storeWatchExpressions();
+		if (inserted != null) {
+			if (!inserted.isEmpty()) {
+				fireUpdate((IExpression[])inserted.toArray(new IExpression[inserted.size()]), INSERTED, insertionIndex);
+			}
 		}
 	}
 	
@@ -379,37 +386,40 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * @since 3.4
 	 */
 	public void moveExpressions(IExpression[] expressions, IExpression insertionLocation, boolean insertBefore){
-		if (fExpressions == null){
-			return;
-		}
-		int insertionIndex = fExpressions.indexOf(insertionLocation);
-		if (insertionIndex < 0){
-			return;
-		}
-		if (!insertBefore){
-			insertionIndex++;
-		}
-		
 		List movedExpressions = new ArrayList(expressions.length);
-		for (int i = 0; i < expressions.length; i++) {
-			int removeIndex = fExpressions.indexOf(expressions[i]);
-			if (removeIndex >= 0){
-				movedExpressions.add(expressions[i]);
-				if (removeIndex < insertionIndex){
-					insertionIndex--;
-				}
-				fExpressions.remove(removeIndex);
+		int insertionIndex = -1;
+		IExpression[] movedExpressionsArray = null;
+		synchronized (this) {
+			if (fExpressions == null){
+				return;
 			}
-		}
-		IExpression[] movedExpressionsArray = (IExpression[])movedExpressions.toArray(new IExpression[movedExpressions.size()]);
-		for (int i = 0; i < movedExpressionsArray.length; i++) {
-			// Insert the expressions in the same order as the passed array
-			fExpressions.add(insertionIndex+i,movedExpressionsArray[i]);
+			insertionIndex = fExpressions.indexOf(insertionLocation);
+			if (insertionIndex < 0){
+				return;
+			}
+			if (!insertBefore){
+				insertionIndex++;
+			}
+			
+			for (int i = 0; i < expressions.length; i++) {
+				int removeIndex = fExpressions.indexOf(expressions[i]);
+				if (removeIndex >= 0){
+					movedExpressions.add(expressions[i]);
+					if (removeIndex < insertionIndex){
+						insertionIndex--;
+					}
+					fExpressions.remove(removeIndex);
+				}
+			}
+			movedExpressionsArray = (IExpression[])movedExpressions.toArray(new IExpression[movedExpressions.size()]);
+			for (int i = 0; i < movedExpressionsArray.length; i++) {
+				// Insert the expressions in the same order as the passed array
+				fExpressions.add(insertionIndex+i,movedExpressionsArray[i]);
+			}
 		}
 				
 		if (!movedExpressions.isEmpty()) {
 			fireUpdate(movedExpressionsArray, MOVED, insertionIndex);
-			storeWatchExpressions();
 		}
 	}
 	
@@ -424,20 +434,25 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * @see org.eclipse.debug.core.IExpressionManager#removeExpressions(org.eclipse.debug.core.model.IExpression[])
 	 */
 	public void removeExpressions(IExpression[] expressions) {
-		if (fExpressions == null) {
-			return;
-		}
 		List removed = new ArrayList(expressions.length);
-		for (int i = 0; i < expressions.length; i++) {
-			IExpression expression = expressions[i];
-			if (fExpressions.remove(expression)) {
-				removed.add(expression);
-				expression.dispose();
-			}				
+		synchronized (this) {
+			if (fExpressions == null) {
+				return;
+			}
+			for (int i = 0; i < expressions.length; i++) {
+				IExpression expression = expressions[i];
+				if (fExpressions.remove(expression)) {
+					removed.add(expression);
+				}				
+			}			
+		}
+		// dispose outside of the synchronized block
+		Iterator iterator = removed.iterator();
+		while (iterator.hasNext()) {
+			((IExpression) iterator.next()).dispose();
 		}
 		if (!removed.isEmpty()) {
 			fireUpdate((IExpression[])removed.toArray(new IExpression[removed.size()]), REMOVED);
-			storeWatchExpressions();
 		}
 	}	
 	
@@ -468,11 +483,14 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * @param expression the changed expression
 	 * @param persist whether to persist the expressions
 	 */
-	protected void watchExpressionChanged(IWatchExpression expression, boolean persist) {
-		if (fExpressions != null && fExpressions.contains(expression)) {
-			if (persist) {
-				storeWatchExpressions();
+	protected void watchExpressionChanged(IWatchExpression expression) {
+		boolean notify = false;
+		synchronized (this) {
+			if (fExpressions != null && fExpressions.contains(expression)) {
+				notify = true;
 			}
+		}
+		if (notify) {
 			fireUpdate(new IExpression[]{expression}, CHANGED);
 		}
 	}
@@ -505,7 +523,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionManager#hasExpressions()
 	 */
-	public boolean hasExpressions() {
+	public synchronized boolean hasExpressions() {
 		return fExpressions != null && !fExpressions.isEmpty();
 	}
 
@@ -557,6 +575,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		public void run() throws Exception {
 			switch (fType) {
 				case ADDED:
+				case INSERTED:
 					fListener.expressionAdded(fExpression);
 					break;
 				case REMOVED:

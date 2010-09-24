@@ -641,6 +641,9 @@ public class DebugPlugin extends Plugin {
 		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(),
 				new ISaveParticipant() {
 					public void saving(ISaveContext saveContext) throws CoreException {
+						if (fExpressionManager != null) {
+							fExpressionManager.storeWatchExpressions();
+						}
 						Preferences.savePreferences(DebugPlugin.getUniqueIdentifier());
 					}				
 					public void rollback(ISaveContext saveContext) {}
