@@ -30,13 +30,16 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.IViewLayout;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 
@@ -357,6 +360,7 @@ public class ModeledPageLayout implements IPageLayout {
 			float ratio, String refId, boolean visible) {
 		MUIElement refModel = findElement(perspModel, refId);
 		if (refModel == null) {
+			WorkbenchPlugin.log(NLS.bind(WorkbenchMessages.PageLayout_missingRefPart, refId));
 			MPartStack stack = createStack(stackId, visible);
 			insert(stack, getLastContainer(), plRelToSwt(relationship), ratio);
 			return stack;
