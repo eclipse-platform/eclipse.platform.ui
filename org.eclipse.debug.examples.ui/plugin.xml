@@ -196,6 +196,16 @@
                class="org.eclipse.debug.examples.ui.pda.editor.PopFrameActionDelegate"
                id="pda.dropToFrame"
                label="Pop Frame"/>
+      </objectContribution>
+      <objectContribution
+            adaptable="false"
+            id="pda.addMemoryBlock"
+            objectClass="org.eclipse.debug.examples.core.pda.model.PDADebugTarget">
+         <action
+               class="org.eclipse.debug.examples.ui.pda.adapters.AddPDAMemoryBlockAction"
+               id="pda.addMemoryBlock"
+               label="Add Memory Block">
+         </action>
       </objectContribution> 
 <!--#endif -->       
    </extension>
@@ -454,5 +464,12 @@
                style="push">
          </command>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.memoryRenderings">
+      <renderingBindings
+            defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
+            renderingIds="org.eclipse.debug.ui.rendering.raw_memory, org.eclipse.debug.ui.rendering.ascii">
+      </renderingBindings>
    </extension>
 </plugin>

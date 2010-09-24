@@ -394,13 +394,13 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
 	 */
 	public boolean supportsStorageRetrieval() {
-		return false;
+		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
 	 */
 	public IMemoryBlock getMemoryBlock(long startAddress, long length) throws DebugException {
-		return null;
+		return new PDAMemoryBlock(this, startAddress, length);
 	}
 
 	/**
