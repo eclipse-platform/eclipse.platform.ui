@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,9 +40,20 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] {false};
 		try {
-			ImportProjectSetOperation op = new ImportProjectSetOperation(
-					mainPage.isRunInBackgroundOn() ? null : getContainer(),
-					mainPage.getFileName(), mainPage.getWorkingSets());
+			ImportProjectSetOperation op;
+			if (mainPage.getInputType() == ImportProjectSetMainPage.InputType_URL) {
+				String psfContent = mainPage.getURLContents();
+				if(psfContent==null){
+					return false;
+				}
+				op = new ImportProjectSetOperation(
+						mainPage.isRunInBackgroundOn() ? null : getContainer(),
+						psfContent, mainPage.getUrl(), mainPage.getWorkingSets());
+			} else {
+				op = new ImportProjectSetOperation(
+						mainPage.isRunInBackgroundOn() ? null : getContainer(),
+						mainPage.getFileName(), mainPage.getWorkingSets());
+			}
 			op.run();
 			result[0] = true;
 		} catch (InterruptedException e) {
@@ -71,6 +82,6 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		// The code that finds "selection" is broken (it is always empty), so we
 		// must dig for the selection in the workbench.
-		PsfFilenameStore.setDefaultFromSelection(workbench);
+		PsfFilenameStore.getInstance().setDefaultFromSelection(workbench);
 	}
 }

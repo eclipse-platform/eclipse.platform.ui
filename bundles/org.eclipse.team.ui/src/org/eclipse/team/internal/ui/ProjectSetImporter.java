@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,10 +30,47 @@ import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.ui.*;
 
 public class ProjectSetImporter {
-	
-	public static IProject[] importProjectSet(String filename, Shell shell, IProgressMonitor monitor) throws InvocationTargetException {
+
+	/**
+	 * Imports a psf file based on a file content. This may be used when psf
+	 * file is imported from any other location that local filesystem.
+	 * 
+	 * @param psfContents
+	 *            the content of the psf file.
+	 * @param filename
+	 *            the name of the source file. This is included in case the
+	 *            provider needs to deduce relative paths
+	 * @param shell
+	 * @param monitor
+	 * @return list of new projects
+	 * @throws InvocationTargetException
+	 */
+	public static IProject[] importProjectSetFromString(String psfContents,
+			String filename, Shell shell, IProgressMonitor monitor)
+			throws InvocationTargetException {
+		XMLMemento xmlMemento = stringToXMLMemento(psfContents);
+		return importProjectSet(xmlMemento, filename, shell, monitor);
+	}
+
+	/**
+	 * Imports a psf file.
+	 * 
+	 * @param filename
+	 * @param shell
+	 * @param monitor
+	 * @return list of new projects
+	 * @throws InvocationTargetException
+	 */
+	public static IProject[] importProjectSet(String filename, Shell shell,
+			IProgressMonitor monitor) throws InvocationTargetException {
+		XMLMemento xmlMemento = filenameToXMLMemento(filename);
+		return importProjectSet(xmlMemento, filename, shell, monitor);
+	}
+
+	private static IProject[] importProjectSet(XMLMemento xmlMemento,
+			String filename, Shell shell, IProgressMonitor monitor)
+			throws InvocationTargetException {
 		try {
-			XMLMemento xmlMemento = filenameToXMLMemento(filename);
 			String version = xmlMemento.getString("version"); //$NON-NLS-1$
 			
 			List newProjects = new ArrayList();
@@ -179,7 +216,28 @@ public class ProjectSetImporter {
 			}
 		}
 	}
-	
+
+	private static XMLMemento stringToXMLMemento(String stringContents)
+			throws InvocationTargetException {
+		StringReader reader = null;
+		try {
+			reader = new StringReader(stringContents);
+			return XMLMemento.createReadRoot(reader);
+		} catch (WorkbenchException e) {
+			throw new InvocationTargetException(e);
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+	}
+
+	/**
+	 * Check if given file is a valid psf file
+	 * 
+	 * @param filename
+	 * @return <code>true</code> is file is a valid psf file
+	 */
 	public static boolean isValidProjectSetFile(String filename) {
 		try {
 			return filenameToXMLMemento(filename).getString("version") != null; //$NON-NLS-1$
@@ -187,7 +245,24 @@ public class ProjectSetImporter {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * Check if given string is a valid project set
+	 * 
+	 * @param psfContent
+	 * @return <code>true</code> if psfContent is a valid project set
+	 */
+	public static boolean isValidProjectSetString(String psfContent) {
+		if (psfContent == null) {
+			return false;
+		}
+		try {
+			return stringToXMLMemento(psfContent).getString("version") != null; //$NON-NLS-1$
+		} catch (InvocationTargetException e) {
+			return false;
+		}
+	}
+
 	private static void mergeWorkingSets(IWorkingSet newWs, IWorkingSet oldWs) {
 		IAdaptable[] oldElements = oldWs.getElements();
 		IAdaptable[] newElements = newWs.getElements();

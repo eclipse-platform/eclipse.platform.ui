@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,8 +91,8 @@ public class ExportProjectSetLocationPage extends TeamWizardPage {
 		inner.setLayoutData(data);
 
 		fileCombo = createDropDownCombo(inner);
-		file = PsfFilenameStore.getSuggestedDefault();
-		fileCombo.setItems(PsfFilenameStore.getHistory());
+		file = PsfFilenameStore.getInstance().getSuggestedDefault();
+		fileCombo.setItems(PsfFilenameStore.getInstance().getHistory());
 		fileCombo.setText(file);
 		fileCombo.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {

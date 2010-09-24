@@ -21,9 +21,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.net.URLConnection;
 
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;
@@ -34,15 +32,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -264,9 +259,17 @@ public class InputPatchPage extends WizardPage {
 			} else if (inputMethod==URL) {
 				String patchFileURL = fPatchURLField.getText();
 				if (patchFileURL != null) {
-					String contents = getURLContents(patchFileURL);
-					if (contents != null)
-						reader = new StringReader(contents);
+					try {
+						String contents = Utilities.getURLContents(new URL(
+								patchFileURL), getContainer());
+						if (contents != null)
+							reader = new StringReader(contents);
+					} catch (MalformedURLException e) {
+						// ignore as we tested it with modify listener on combo
+					} catch (InvocationTargetException e) { // ignore
+					} catch (OperationCanceledException e) { // ignore
+					} catch (InterruptedException e) { // ignore
+					}
 				}
 				fPatchSource= PatchMessages.InputPatchPage_URL_title;
 			} else if (inputMethod==WORKSPACE) {
@@ -306,43 +309,6 @@ public class InputPatchPage extends WizardPage {
 				}
 			}
 		}
-	}
-	
-	private String getURLContents(String patchFileURL) {
-		final URL url;
-		try {
-			url = new URL(patchFileURL);
-			final String[] result= new String[1];
-			try {
-				getContainer().run(true, true, new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						SubMonitor progress = SubMonitor.convert(monitor, PatchMessages.InputPatchPage_URLConnecting, 100);
-						try {
-							URLConnection connection = url.openConnection();
-							progress.worked(10);
-							if (monitor.isCanceled())
-								throw new OperationCanceledException();
-							Utilities.setReadTimeout(connection, 60*1000);
-							progress.setTaskName(PatchMessages.InputPatchPage_URLFetchingContent);
-							String enc = connection.getContentEncoding();
-							if (enc == null)
-								enc = ResourcesPlugin.getEncoding();
-							result[0] = Utilities.readString(connection.getInputStream(), enc, connection.getContentLength(), progress.newChild(90));
-						} catch (SocketTimeoutException e) { // timeout
-						} catch (IOException e) { //ignore
-						}
-						monitor.done();
-					}
-				});
-				return result[0];
-			} catch (OperationCanceledException e) { //ignore
-			} catch (InvocationTargetException e) { //ignore
-			} catch (InterruptedException e) { //ignore
-			}
-		} catch (MalformedURLException e) {
-			// ignore as we tested it with modify listener on combo
-		}
-		return null;
 	}
 
 	/* (non-JavaDoc)

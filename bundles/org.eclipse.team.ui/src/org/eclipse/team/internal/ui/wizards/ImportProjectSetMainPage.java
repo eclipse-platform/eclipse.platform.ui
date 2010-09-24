@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,19 @@
 package org.eclipse.team.internal.ui.wizards;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -32,16 +39,51 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	String file = ""; //$NON-NLS-1$
 	Button browseButton;
 	
+	String urlString = ""; //$NON-NLS-1$
+	Combo urlCombo;
+
+	// input type radios
+	private Button fileInputButton;
+	private Button urlInputButton;
+
+	// input type
+	public static final int InputType_file = 0;
+	public static final int InputType_URL = 1;
+	private int inputType = InputType_file;
+
 	private boolean runInBackground = isRunInBackgroundPreferenceOn();
 	// a wizard shouldn't be in an error state until the state has been modified by the user
 	private int messageType = NONE;
 	private WorkingSetGroup workingSetGroup; 
 	
-	public ImportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
+	private PsfFilenameStore psfFilenameStore = PsfFilenameStore.getInstance();
+	private PsfUrlStore psfUrlStore = PsfUrlStore.getInstance();
+
+	public ImportProjectSetMainPage(String pageName, String title,
+			ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		setDescription(TeamUIMessages.ImportProjectSetMainPage_description); 
+		setDescription(TeamUIMessages.ImportProjectSetMainPage_description);
 	}
-	
+
+	private void setInputType(int inputTypeSelected) {
+		this.inputType = inputTypeSelected;
+		// reset the message type and give the user fresh chance to input
+		// correct data
+		messageType = NONE;
+		// update controls
+		fileInputButton.setSelection(inputType == InputType_file);
+		fileCombo.setEnabled(inputType == InputType_file);
+		browseButton.setEnabled(inputType == InputType_file);
+		urlInputButton.setSelection(inputType == InputType_URL);
+		urlCombo.setEnabled(inputType == InputType_URL);
+		// validate field
+		if (inputType == InputType_file)
+			updateFileEnablement();
+		if (inputType == InputType_URL)
+			updateUrlEnablement();
+
+	}
+
 	/*
 	 * @see IDialogPage#createControl(Composite)
 	 */
@@ -60,21 +102,52 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		layout.marginWidth = 0;
 		inner.setLayout(layout);
 		
-		createLabel(inner, TeamUIMessages.ImportProjectSetMainPage_Project_Set_File_Name__2); 
+		fileInputButton = new Button(inner, SWT.RADIO);
+		fileInputButton
+				.setText(TeamUIMessages.ImportProjectSetMainPage_Project_Set_File);
+		fileInputButton.setEnabled(true);
+		fileInputButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setInputType(InputType_file);
+			}
+		});
 
 		fileCombo = createDropDownCombo(inner);
-		file = PsfFilenameStore.getSuggestedDefault();
-		fileCombo.setItems(PsfFilenameStore.getHistory());
+		file = psfFilenameStore.getSuggestedDefault();
+		fileCombo.setItems(psfFilenameStore.getHistory());
 		fileCombo.setText(file);
 		fileCombo.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
 				file = fileCombo.getText();				
-				updateEnablement();
+				updateFileEnablement();
 			}
 		});
 
 		browseButton = new Button(inner, SWT.PUSH);
 		browseButton.setText(TeamUIMessages.ImportProjectSetMainPage_Browse_3); 
+
+		urlInputButton = new Button(inner, SWT.RADIO);
+		urlInputButton
+				.setText(TeamUIMessages.ImportProjectSetMainPage_Project_Set_Url);
+		urlInputButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setInputType(InputType_URL);
+			}
+		});
+		urlCombo = createDropDownCombo(inner);
+		urlString = psfUrlStore.getSuggestedDefault();
+		urlCombo.setItems(psfUrlStore.getHistory());
+		urlCombo.setText(urlString);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		urlCombo.setLayoutData(gd);
+		urlCombo.addListener(SWT.Modify, new Listener() {
+			public void handleEvent(Event event) {
+				urlString = urlCombo.getText();
+				updateUrlEnablement();
+			}
+		});
+
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
@@ -115,10 +188,31 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		});
 		
 		setControl(composite);
-		updateEnablement();
+		setDefaultInputType();
 		Dialog.applyDialogFont(parent);
-		// future messages will be of type error
-		messageType = ERROR;
+	}
+
+	private void setDefaultInputType() {
+		// check for clipboard contents
+		Control c = getControl();
+		if (c != null) {
+			Clipboard clipboard = new Clipboard(c.getDisplay());
+			Object o = clipboard.getContents(TextTransfer.getInstance());
+			clipboard.dispose();
+			if (o instanceof String) {
+				try {
+					URL url = new URL((String) o);
+					if (url != null) {
+						setInputType(InputType_URL);
+						urlCombo.setText((String) o);
+						return;
+					}
+				} catch (MalformedURLException e) {
+					// ignore, it's not and URL
+				}
+			}
+		}
+		setInputType(InputType_file);
 	}
 
 	private void addWorkingSetSection(Composite composite) {
@@ -129,9 +223,41 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 						"org.eclipse.jdt.ui.JavaWorkingSetPage" /* JavaWorkingSetUpdater.ID */}); //$NON-NLS-1$
 	}
 	
-	private void updateEnablement() {
+	private void updateUrlEnablement() {
 		boolean complete = false;
 		setMessage(null);
+		setErrorMessage(null);
+
+		if (urlString.length() == 0) {
+			setMessage(TeamUIMessages.ImportProjectSetMainPage_specifyURL,
+					messageType);
+			complete = false;
+		} else {
+
+			try {
+				new URL(urlString);
+				// the URL is correct, we can clear the error message
+				complete = true;
+			} catch (MalformedURLException e) {
+				messageType = ERROR;
+				setMessage(TeamUIMessages.ImportProjectSetDialog_malformed_url,
+						messageType);
+				complete = false;
+			}
+		}
+
+		if (complete) {
+			setErrorMessage(null);
+			setDescription(TeamUIMessages.ImportProjectSetMainPage_description);
+		}
+
+		setPageComplete(complete);
+	}
+
+	private void updateFileEnablement() {
+		boolean complete = false;
+		setMessage(null);
+		setErrorMessage(null);
 		
 		if (file.length() == 0) {
 			setMessage(TeamUIMessages.ImportProjectSetMainPage_specifyFile, messageType);
@@ -141,14 +267,17 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			// See if the file exists
 			File f = new File(file);
 			if (!f.exists()) {
+				messageType = ERROR;
 				setMessage(TeamUIMessages.ImportProjectSetMainPage_The_specified_file_does_not_exist_4, messageType); 
 				setPageComplete(false);
 				return;
 			} else if (f.isDirectory()) {
+				messageType = ERROR;
 				setMessage(TeamUIMessages.ImportProjectSetMainPage_You_have_specified_a_folder_5, messageType); 
 				setPageComplete(false);
 				return;
 			} else if (!ProjectSetImporter.isValidProjectSetFile(file)) {
+				messageType = ERROR;
 				setMessage(TeamUIMessages.ImportProjectSetMainPage_projectSetFileInvalid, messageType);
 				setPageComplete(false);
 				return;
@@ -166,6 +295,10 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 
 	public String getFileName() {
 		return file;
+	}
+
+	public String getUrl() {
+		return urlString;
 	}
 
 	public void setVisible(boolean visible) {
@@ -192,5 +325,38 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	
 	public boolean isRunInBackgroundOn() {
 		return runInBackground;
+	}
+
+	public int getInputType() {
+		return inputType;
+	}
+
+	public String getURLContents() {
+		try {
+			PsfUrlStore.getInstance().remember(urlString);
+			String urlContent = Utilities.getURLContents(new URL(urlString),
+					getContainer());
+			if (ProjectSetImporter.isValidProjectSetString(urlContent)) {
+				return urlContent;
+			} else {
+				messageType = ERROR;
+				setMessage(
+						TeamUIMessages.ImportProjectSetMainPage_projectSetFileInvalid,
+						messageType);
+				setPageComplete(false);
+				return null;
+			}
+		} catch (OperationCanceledException e) { // ignore
+		} catch (InterruptedException e) { // ignore
+		} catch (InvocationTargetException e) {
+			messageType = ERROR;
+			setMessage(
+					TeamUIMessages.ImportProjectSetMainPage_The_given_URL_cannot_be_loaded,
+					messageType);
+			setPageComplete(false);
+		} catch (MalformedURLException e) {
+			// ignore as we tested it with modify listener on combo
+		}
+		return null;
 	}
 }

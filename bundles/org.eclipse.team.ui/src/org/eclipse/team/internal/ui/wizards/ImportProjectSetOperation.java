@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,36 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 
 public class ImportProjectSetOperation extends TeamOperation {
-
+	
+	private String psfFileContents;
+	private String urlString;
 	private String psfFile;
 	private IWorkingSet[] workingSets;
+	
+	
+	/**
+	 * Operation for importing a Team Project Set stored in a String
+	 * 
+	 * @param context
+	 *            a runnable context,
+	 *            <code>null</null> for running in background
+	 * @param psfFileContents
+	 *            the psf file content to load
+	 * @param urlString
+	 *            url or path to file loaded into <code>psfFileContents</code>
+	 * @param workingSets
+	 *            an array of working sets where imported project should be
+	 *            added. If a working set doesn't exist it will be created. The
+	 *            array cannot be <code>null</code>, pass an empty array if you
+	 *            don't want to add projects to any working set.
+	 */
+	public ImportProjectSetOperation(IRunnableContext context,
+			String psfFileContents, String urlString, IWorkingSet[] workingSets) {
+		super(context);
+		this.psfFileContents = psfFileContents;
+		this.workingSets = workingSets;
+		this.urlString = urlString;
+	}
 
 	/**
 	 * Operation for importing a Team Project Set file
@@ -45,18 +72,32 @@ public class ImportProjectSetOperation extends TeamOperation {
 		this.psfFile = psfFile;
 		this.workingSets = workingSets;
 	}
+	
+	private void runForStringContent(IProgressMonitor monitor) throws InvocationTargetException{
+		IProject[] newProjects = ProjectSetImporter.importProjectSetFromString(
+				psfFileContents, urlString, getShell(), monitor);
+		createWorkingSet(workingSets, newProjects);
+	}
+	
+	private void runForFile(IProgressMonitor monitor) throws InvocationTargetException{
+		PsfFilenameStore.getInstance().remember(psfFile);
+		IProject[] newProjects = ProjectSetImporter.importProjectSet(psfFile,
+				getShell(), monitor);
+		createWorkingSet(workingSets, newProjects);
+	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void run(IProgressMonitor monitor) throws InvocationTargetException,
-			InterruptedException {
-		PsfFilenameStore.remember(psfFile);
-		IProject[] newProjects = ProjectSetImporter.importProjectSet(psfFile,
-				getShell(), monitor);
-		createWorkingSet(workingSets, newProjects);
+	public void run(IProgressMonitor monitor)
+			throws InvocationTargetException, InterruptedException{
+		if (psfFileContents != null) {
+			runForStringContent(monitor);
+		} else {
+			runForFile(monitor);
+		}
 	}
 
 	/*

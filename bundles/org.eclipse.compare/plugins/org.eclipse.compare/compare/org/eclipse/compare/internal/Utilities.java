@@ -18,6 +18,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +38,7 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.SharedDocumentAdapter;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
 import org.eclipse.compare.internal.core.patch.HunkResult;
+import org.eclipse.compare.internal.patch.PatchMessages;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -64,6 +67,8 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -860,5 +865,53 @@ public class Utilities {
 				}
 		}
 		return false;
+	}
+
+	/**
+	 * Load content of file under <code>url</code> displaying progress on given
+	 * context.
+	 * 
+	 * @param url
+	 * @param context
+	 * @return the content of file under given URL, or <code>null</code> if URL
+	 *         could not be loaded
+	 * @throws InvocationTargetException
+	 *             thrown on errors while URL loading
+	 * @throws OperationCanceledException
+	 * @throws InterruptedException
+	 */
+	public static String getURLContents(final URL url, IRunnableContext context)
+			throws InvocationTargetException, OperationCanceledException,
+			InterruptedException {
+		final String[] result = new String[1];
+		context.run(true, true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
+				SubMonitor progress = SubMonitor.convert(monitor,
+						PatchMessages.InputPatchPage_URLConnecting, 100);
+				try {
+					URLConnection connection = url.openConnection();
+					progress.worked(10);
+					if (monitor.isCanceled())
+						throw new OperationCanceledException();
+					setReadTimeout(connection, 60 * 1000);
+					progress.setTaskName(PatchMessages.InputPatchPage_URLFetchingContent);
+					String enc = connection.getContentEncoding();
+					if (enc == null)
+						enc = ResourcesPlugin.getEncoding();
+					result[0] = Utilities.readString(
+							connection.getInputStream(), enc,
+							connection.getContentLength(),
+							progress.newChild(90));
+				} catch (SocketTimeoutException e) {
+					throw new InvocationTargetException(e);
+				} catch (IOException e) {
+					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
+				}
+			}
+		});
+		return result[0];
 	}
 }

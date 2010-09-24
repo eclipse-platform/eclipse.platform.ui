@@ -105,6 +105,8 @@ public class TeamUIMessages extends NLS {
 	public static String HistoryPageCompareEditorInput_0;
 
 	public static String ImportProjectSetMainPage_AddToWorkingSet;
+	public static String ImportProjectSetMainPage_Project_Set_File;
+	public static String ImportProjectSetMainPage_Project_Set_Url;
 
 	public static String ImportProjectSetMainPage_Browse;
 	
@@ -114,6 +116,7 @@ public class TeamUIMessages extends NLS {
 	public static String ImportProjectSetDialog_duplicatedWorkingSet_merge;
 	public static String ImportProjectSetDialog_duplicatedWorkingSet_skip;
 	public static String ImportProjectSetDialog_duplicatedWorkingSet_applyToAll;
+	public static String ImportProjectSetDialog_malformed_url;
 
 	public static String information;
     
@@ -310,8 +313,8 @@ public class TeamUIMessages extends NLS {
 	public static String ExportProjectSetMainPage_Initial_description;
 	public static String ExportProjectSetMainPage_specifyFile;
 
-	public static String ImportProjectSetMainPage_Project_Set_File_Name__2;
 	public static String ImportProjectSetMainPage_Browse_3;
+	public static String ImportProjectSetMainPage_The_given_URL_cannot_be_loaded;
 	public static String ImportProjectSetMainPage_The_specified_file_does_not_exist_4;
 	public static String ImportProjectSetMainPage_You_have_specified_a_folder_5;
 	public static String ImportProjectSetMainPage_workingSetNameEmpty;
@@ -320,6 +323,7 @@ public class TeamUIMessages extends NLS {
 	public static String ImportProjectSetMainPage_runInBackground;
 	public static String ImportProjectSetMainPage_jobName;
 	public static String ImportProjectSetMainPage_specifyFile;
+	public static String ImportProjectSetMainPage_specifyURL;
 	public static String ImportProjectSetMainPage_selectWorkingSet;
 	public static String ImportProjectSetMainPage_projectSetFileInvalid;
 

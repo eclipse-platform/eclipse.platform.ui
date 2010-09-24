@@ -59,7 +59,7 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 					if (path.getFileExtension() == null) {
 						filename = filename + ".psf"; //$NON-NLS-1$
 					}
-					PsfFilenameStore.remember(filename);
+					PsfFilenameStore.getInstance().remember(filename);
 					File file = new File(filename);
 					File parentFile = file.getParentFile();
 					if (parentFile != null && !parentFile.exists()) {
