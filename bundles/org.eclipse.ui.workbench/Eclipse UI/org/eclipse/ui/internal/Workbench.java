@@ -969,7 +969,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		// save any open editors if they are dirty
-		isClosing = saveAllEditors(!force);
+		isClosing = saveAllEditors(!force, true);
 		if (!force && !isClosing) {
 			return false;
 		}
@@ -1071,10 +1071,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#saveAllEditors(boolean)
 	 */
 	public boolean saveAllEditors(boolean confirm) {
+		return saveAllEditors(confirm, false);
+	}
+
+	private boolean saveAllEditors(boolean confirm, boolean closing) {
 		for (IWorkbenchWindow window : getWorkbenchWindows()) {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
-				if (!page.saveAllEditors(confirm)) {
+				if (!((WorkbenchPage) page).saveAllEditors(confirm, closing)) {
 					return false;
 				}
 			}
