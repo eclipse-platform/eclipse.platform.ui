@@ -12,11 +12,13 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -33,8 +35,11 @@ public class ActionBars extends SubActionBars {
 
 	private IMenuManager menuManager;
 
+	private MPart part;
+
 	public ActionBars(final IActionBars parent, final IServiceLocator serviceLocator, MPart part) {
 		super(parent, serviceLocator);
+		this.part = part;
 	}
 
 	/*
@@ -80,9 +85,8 @@ public class ActionBars extends SubActionBars {
 					MUIElement tbModel = (MUIElement) tbCtrl
 							.getData(AbstractPartRenderer.OWNING_ME);
 					if (tbModel instanceof MRenderedToolBar) {
-						MRenderedToolBar rtb = (MRenderedToolBar) tbModel;
-						if (((EObject) rtb).eContainer() instanceof MPart) {
-							MPart part = (MPart) ((EObject) rtb).eContainer();
+						// only force a rerender if the toolbar can be seen
+						if (isSelected(part)) {
 							if (part.getContext() != null) {
 								IPresentationEngine renderer = part.getContext().get(
 										IPresentationEngine.class);
@@ -101,6 +105,22 @@ public class ActionBars extends SubActionBars {
 			}
 		}
 		super.updateActionBars();
+	}
+
+	private boolean isSelected(MPart part) {
+		MElementContainer<?> parent = part.getParent();
+		if (parent == null) {
+			MPlaceholder placeholder = part.getCurSharedRef();
+			if (placeholder == null) {
+				return false;
+			}
+
+			parent = placeholder.getParent();
+			return parent instanceof MGenericStack ? parent.getSelectedElement() == placeholder
+					: parent != null;
+		}
+		return parent instanceof MGenericStack ? parent.getSelectedElement() == part
+				: parent != null;
 	}
 
 }
