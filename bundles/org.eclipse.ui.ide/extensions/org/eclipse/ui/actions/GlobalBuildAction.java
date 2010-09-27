@@ -34,6 +34,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
+import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -196,6 +197,7 @@ public class GlobalBuildAction extends Action implements
             }
         };
         buildJob.setUser(true);
+        buildJob.setProperty(IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY, Boolean.TRUE);
         buildJob.schedule();
     }
 

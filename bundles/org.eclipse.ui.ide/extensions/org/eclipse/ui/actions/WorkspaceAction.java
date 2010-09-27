@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -38,6 +39,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
+import org.eclipse.ui.progress.IProgressConstants2;
 
 /**
  * The abstract superclass for actions which invoke commands implemented in
@@ -486,6 +488,8 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 		if (rule != null) {
 			job.setRule(rule);
 		}
+		if(job.belongsTo(ResourcesPlugin.FAMILY_MANUAL_BUILD))
+			job.setProperty(IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY, Boolean.TRUE);
 		job.setUser(true);
 		job.schedule();
 	}
