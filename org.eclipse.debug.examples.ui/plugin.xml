@@ -470,6 +470,11 @@
       <renderingBindings
             defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
             renderingIds="org.eclipse.debug.ui.rendering.raw_memory, org.eclipse.debug.ui.rendering.ascii">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.debug.examples.core.pda.model.PDAMemoryBlock">
+            </instanceof>
+         </enablement>
       </renderingBindings>
    </extension>
 </plugin>

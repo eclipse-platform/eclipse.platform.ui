@@ -21,13 +21,13 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 public class MemoryViewTreeModelContentProvider extends
 		TreeModelContentProvider {
 	
-	protected void updateNodes(IModelDelta[] nodes) {
+	protected void updateNodes(IModelDelta[] nodes, int mask) {
 		
 		if (getViewer() instanceof TreeModelViewer)
 		{
 	        for (int i = 0; i < nodes.length; i++) {
 				IModelDelta node = nodes[i];
-				int flags = node.getFlags();
+				int flags = node.getFlags() & mask;
 
 				if ((flags & IModelDelta.ADDED) != 0) {
 					if (node.getElement() instanceof IMemoryBlock) {
@@ -79,7 +79,7 @@ public class MemoryViewTreeModelContentProvider extends
 				if ((flags & IModelDelta.UNINSTALL) != 0) {
 					handleUninstall(node);
 				}
-				updateNodes(node.getChildDeltas());
+				updateNodes(node.getChildDeltas(), mask);
 	        }
 		}
 	}
