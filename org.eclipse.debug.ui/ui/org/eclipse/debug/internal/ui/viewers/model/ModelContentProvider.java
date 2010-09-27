@@ -10,6 +10,7 @@
  *     Pawel Piech - Wind River - Bug 205335: ModelContentProvider does not cancel stale updates when switching viewer input
  *     Wind River Systems - Fix for viewer state save/restore [188704] 
  *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
+ *     Dorin Ciuca - Top index fix (Bug 324100)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -116,13 +117,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Map of updates in progress: element path -> list of requests
      */
-    private Map fRequestsInProgress = new HashMap();
+    protected Map fRequestsInProgress = new HashMap();
 
     /**
      * Map of dependent requests waiting for parent requests to complete:
      * element path -> list of requests
      */
-    private Map fWaitingRequests = new HashMap();
+    protected Map fWaitingRequests = new HashMap();
 
     /**
      * Map of viewer states keyed by viewer input mementos
@@ -132,13 +133,32 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     /**
      * Pending viewer state to be restored
      */
-    private ModelDelta fPendingState = null;
+    protected ModelDelta fPendingState = null;
 
     /**
      * Flag indicating that the content provider is performing
      * state restore operations.  
      */
     private boolean fInStateRestore = false; 
+    
+    protected interface IPendingRevealDelta extends IViewerUpdateListener {
+    	/**
+    	 * 
+    	 * @return delta that should be revealed
+    	 */
+    	ModelDelta getDelta();
+    	
+    	/**
+    	 * Dispose the pending operation
+    	 */
+    	void dispose();
+    }
+    
+    /**
+     * Postpone restoring REVEAL element until the current updates are complete.
+     * See bug 324100
+     */
+    protected IPendingRevealDelta fPendingSetTopItem = null;
     
     private static class CompareRequestKey {
         CompareRequestKey(TreePath path, IModelDelta delta) {
@@ -476,7 +496,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         boolean checkChildrenRealized);
 
     public void cancelRestore(final TreePath path, final int flags) {
-        if (fPendingState == null) {
+        if (fPendingState == null && fPendingSetTopItem == null) {
         	// Nothing to do
             return;
         }
@@ -489,6 +509,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         }
         
         if ((flags & (IModelDelta.SELECT | IModelDelta.REVEAL)) != 0) {
+        	// If we're canceling reveal and this is waiting for updates to complete
+        	// then just cancel it and return
+        	if ((flags & IModelDelta.REVEAL) != 0 && fPendingSetTopItem != null) {
+        		fPendingSetTopItem.dispose();
+        		return;
+        	}
+        	
             // If we're canceling select or reveal, cancel it for all of pending deltas
             final int mask = flags & (IModelDelta.SELECT | IModelDelta.REVEAL);
             fPendingState.accept(new IModelDeltaVisitor() {
@@ -768,6 +795,39 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                 System.out.println("\tSAVE DELTA FROM VIEW:\n" + saveDeltaRoot); //$NON-NLS-1$
             }
 
+            // check if pending restore reveal
+            if (fPendingSetTopItem != null) {
+            	// set back the pending reveal flag
+            	ModelDelta revealDelta = fPendingSetTopItem.getDelta();
+            	revealDelta.setFlags(revealDelta.getFlags() | IModelDelta.REVEAL);
+            	
+            	fPendingSetTopItem.dispose();
+            	
+            	ModelDelta saveDeltaNode = findSubDeltaParent(saveDeltaRoot, revealDelta);
+            	if (saveDeltaNode != null) {
+            		clearRevealFlag(saveDeltaRoot);
+            		boolean childFounded = false;
+            		for (int i = 0; i < saveDeltaNode.getChildDeltas().length; i++) {
+            			ModelDelta child = (ModelDelta)saveDeltaNode.getChildDeltas()[i]; 
+            			if (deltasEqual(child, revealDelta)) {
+            				child.setFlags(child.getFlags() | IModelDelta.REVEAL);
+            				childFounded = true;
+            				break;
+            			}
+            		}
+            		
+            		// the node should be added if not found
+            		if (!childFounded) {
+            			saveDeltaNode.setChildCount(revealDelta.getParentDelta().getChildCount());
+                        copyIntoDelta(revealDelta, saveDeltaNode);
+            		}
+                } else {
+                    if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                        System.out.println("\tSKIPPED: " + revealDelta.getElement()); //$NON-NLS-1$
+                    }
+            	}
+            }
+            
             if (fPendingState != null) {
                 // If the restore for the current input was never completed,
                 // preserve
@@ -1755,11 +1815,17 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         CheckState state = new CheckState();
         fPendingState.accept(state);
         if (state.isComplete()) {
-            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
+            // notify restore complete if REVEAL was restored also, otherwise
+            // postpone until then. 
+            if (fPendingSetTopItem == null) {
+                if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                    System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
+                }
+
+                notifyStateUpdate(fPendingState.getElement(), STATE_RESTORE_SEQUENCE_COMPLETE, null);
             }
-            notifyStateUpdate(fPendingState.getElement(), STATE_RESTORE_SEQUENCE_COMPLETE, null);
-            fPendingState = null;
+            
+            fPendingState = null;            
         }
     }
 
@@ -2177,4 +2243,5 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
             }
         }
     }
+    
 }

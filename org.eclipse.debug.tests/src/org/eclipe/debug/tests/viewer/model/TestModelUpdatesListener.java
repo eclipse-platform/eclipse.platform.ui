@@ -470,6 +470,7 @@ public class TestModelUpdatesListener
     }
     
     public void stateRestoreUpdatesComplete(Object input) {
+    	Assert.assertFalse("RESTORE STATE already complete!", fStateRestoreComplete);
         fStateRestoreComplete = true;
     }
     

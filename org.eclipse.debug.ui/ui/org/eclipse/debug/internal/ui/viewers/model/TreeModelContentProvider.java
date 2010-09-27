@@ -9,18 +9,22 @@
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - Fix for viewer state save/restore [188704] 
  *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
+ *     Dorin Ciuca - Top index fix (Bug 324100)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Content provider for a virtual tree.
@@ -560,9 +564,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	/**
 	 * @param delta
 	 */
-	void restorePendingStateNode(ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized) {
-		TreePath treePath = getViewerTreePath(delta);
-		ITreeModelContentProviderTarget viewer = getViewer();
+	void restorePendingStateNode(final ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized) {
+		final TreePath treePath = getViewerTreePath(delta);
+		final ITreeModelContentProviderTarget viewer = getViewer();
 
         // Attempt to expand the node only if the children are known.
 		if (knowsHasChildren) {
@@ -627,15 +631,85 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
             }
             
             if (setTopItem) { 
-                TreePath parentPath = treePath.getParentPath();
-                int index = viewer.findElementIndex(parentPath, treePath.getLastSegment());
-                if (index >= 0) { 
-                    if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                        System.out.println("\tRESTORE REVEAL: " + treePath.getLastSegment()); //$NON-NLS-1$
+            	Assert.isTrue(fPendingSetTopItem == null);
+                final TreePath parentPath = treePath.getParentPath();
+                
+                // listen when current updates are complete and only 
+                // then do the REVEAL
+                fPendingSetTopItem = new IPendingRevealDelta() {
+                	// Revealing some elements can trigger expanding some of elements
+                	// that have been just revealed. Therefore, we have to check one 
+                	// more time after the new triggered updates are completed if we
+                	// have to set again the top index
+                	private int counter = 0;
+                	private Object modelInput = fPendingState.getElement();
+                	
+					public void viewerUpdatesBegin() {
+					}
+
+					public void viewerUpdatesComplete() {
+						// assume that fRequestsInProgress is empty if we got here
+						Assert.isTrue(fRequestsInProgress.isEmpty());
+                    	
+						final Display viewerDisplay = viewer.getDisplay();
+                    	if (fWaitingRequests.isEmpty() && !viewerDisplay.isDisposed()) {
+                    		viewerDisplay.asyncExec(new Runnable() {
+		                        public void run() {
+		                        	if (TreeModelContentProvider.this.isDisposed()) {
+		                        		return;
+		                        	}
+		                        	
+		                        	TreePath topPath = viewer.getTopElementPath();
+		                        	if (!treePath.equals(topPath)) {
+						                int index = viewer.findElementIndex(parentPath, treePath.getLastSegment());
+						                if (index >= 0) { 
+						                    if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+						                        System.out.println("\tRESTORE REVEAL: " + treePath.getLastSegment()); //$NON-NLS-1$
+						                    }
+						                    viewer.reveal(parentPath, index);
+						                    
+						                }
+		                        	}
+		                        }
+		                    });
+                    		
+							counter++;
+							// in case the pending state was already set to null, we assume that
+							// all others elements are restored, so we don't expect that REVEAL will
+							// trigger other updates
+							if (counter > 1 || fPendingState == null) {
+		                        dispose();		                        
+							}
+                    	}
+
+					}
+
+					public void updateStarted(IViewerUpdate update) {
+					}
+
+					public void updateComplete(IViewerUpdate update) {
+					}
+					
+					public ModelDelta getDelta() {
+						return delta;
+					}
+
+					public void dispose() {
+						// remove myself as viewer update listener
+                        viewer.removeViewerUpdateListener(this);
+                        
+                        // top item is set
+                        fPendingSetTopItem = null;
+                        
+                        if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                            System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
+                        }
+                        notifyStateUpdate(modelInput, STATE_RESTORE_SEQUENCE_COMPLETE, null);
                     }
-                    viewer.reveal(parentPath, index);
-                }
-            }
+                	
+                };
+                viewer.addViewerUpdateListener(fPendingSetTopItem);
+            }            
 		}
 
         // If we know the child count of the element, look for the reveal 

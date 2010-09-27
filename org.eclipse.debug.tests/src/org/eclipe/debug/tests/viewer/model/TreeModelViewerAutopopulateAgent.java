@@ -36,6 +36,11 @@ public class TreeModelViewerAutopopulateAgent implements IViewerUpdateListener {
         fViewer.addViewerUpdateListener(this);
     }
     
+    public void dispose() {
+        fViewer.removeViewerUpdateListener(this);
+        fViewer = null;
+    }
+    
     public void updateComplete(IViewerUpdate update) {
         if (update instanceof IChildrenCountUpdate) {
             TreePath path = update.getElementPath();
