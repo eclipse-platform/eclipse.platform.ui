@@ -127,7 +127,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	public String getId() {
 		// by default we delegate to the model part, which is not correct for
 		// editors
-		return descriptor.getId();
+		return descriptorId;
 	}
 
 	public String getFactoryId() {

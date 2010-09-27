@@ -1625,10 +1625,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private void checkEditor(IEditorInput input, List<IEditorReference> editorRefs,
 			EditorReference editorRef) {
-		IEditorMatchingStrategy strategy = editorRef.getDescriptor().getEditorMatchingStrategy();
-		if (strategy != null && strategy.matches(editorRef, input)) {
-			editorRefs.add(editorRef);
-			return;
+		EditorDescriptor descriptor = editorRef.getDescriptor();
+		if (descriptor != null) {
+			IEditorMatchingStrategy strategy = descriptor.getEditorMatchingStrategy();
+			if (strategy != null && strategy.matches(editorRef, input)) {
+				editorRefs.add(editorRef);
+				return;
+			}
 		}
 
 		IEditorPart editor = editorRef.getEditor(false);
