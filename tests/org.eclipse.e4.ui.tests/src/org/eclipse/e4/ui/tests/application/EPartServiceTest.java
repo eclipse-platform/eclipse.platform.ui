@@ -1025,6 +1025,47 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(partB, partService.getActivePart());
 	}
 
+	public void testActivate_Bug326300() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(windowA);
+		application.setSelectedElement(windowA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		windowA.getChildren().add(partA);
+		windowA.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		windowA.getChildren().add(partB);
+
+		MWindow windowB = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(windowB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		windowB.getChildren().add(partC);
+		windowB.setSelectedElement(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(windowA);
+		getEngine().createGui(windowB);
+
+		windowA.getContext().get(EPartService.class).activate(partB);
+		assertEquals(windowA, application.getSelectedElement());
+		assertEquals(partB, windowA.getContext().get(EPartService.class)
+				.getActivePart());
+
+		windowB.getContext().get(EPartService.class).activate(partC);
+		assertEquals(windowB, application.getSelectedElement());
+		assertEquals(partC, windowB.getContext().get(EPartService.class)
+				.getActivePart());
+
+		windowA.getContext().get(EPartService.class).activate(partB);
+		assertEquals(windowA, application.getSelectedElement());
+		assertEquals(partB, windowA.getContext().get(EPartService.class)
+				.getActivePart());
+	}
+
 	public void testCreatePart() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);

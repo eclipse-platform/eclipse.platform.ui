@@ -396,14 +396,20 @@ public class PartServiceImpl implements EPartService {
 	 * .MPart,boolean)
 	 */
 	public void activate(MPart part, boolean requiresFocus) {
-		if (part == activePart)
-			return;
-
+		// only activate parts that is under our control
 		if (!isInContainer(part)) {
 			return;
 		}
 
-		modelService.bringToTop(getWindow(), part);
+		MWindow window = getWindow();
+		IEclipseContext windowContext = window.getContext();
+		// check if the active part has changed or if we are no longer the active window
+		if (windowContext.getParent().get(IContextConstants.ACTIVE_CHILD) == windowContext
+				&& part == activePart) {
+			return;
+		}
+
+		modelService.bringToTop(window, part);
 		IEclipseContext context = part.getContext();
 		IEclipseContext parent = context.getParent();
 		while (parent != null) {
