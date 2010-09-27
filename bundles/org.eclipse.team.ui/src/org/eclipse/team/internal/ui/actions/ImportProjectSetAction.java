@@ -17,7 +17,6 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -28,6 +27,7 @@ import org.eclipse.team.internal.ui.wizards.ImportProjectSetOperation;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 public class ImportProjectSetAction extends ActionDelegate implements IObjectActionDelegate {
 
@@ -51,7 +51,12 @@ public class ImportProjectSetAction extends ActionDelegate implements IObjectAct
 				}
 			});
 		} catch (InvocationTargetException exception) {
-			ErrorDialog.openError(shell, null, null, new Status(IStatus.ERROR, TeamUIPlugin.PLUGIN_ID, IStatus.ERROR, TeamUIMessages.ImportProjectSetAction_0, exception.getTargetException()));
+			StatusManager.getManager().handle(
+					new Status(IStatus.ERROR, TeamUIPlugin.PLUGIN_ID,
+							IStatus.ERROR,
+							TeamUIMessages.ImportProjectSetAction_0,
+							exception.getTargetException()),
+					StatusManager.LOG | StatusManager.SHOW);
 		} catch (InterruptedException exception) {
 		}
 	}
