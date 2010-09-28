@@ -59,7 +59,6 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
-import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -91,7 +90,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	IRendererFactory curFactory = null;
 
-	MenuServiceFilter menuServiceFilter;
+	// MenuServiceFilter menuServiceFilter;
 
 	org.eclipse.swt.widgets.Listener keyListener;
 
@@ -315,6 +314,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 
 		curFactory = factory;
+		context.set(IRendererFactory.class, curFactory);
 
 		// Hook up the widget life-cycle subscriber
 		if (eventBroker != null) {
@@ -614,12 +614,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 				display.addFilter(SWT.KeyDown, keyListener);
 				display.addFilter(SWT.Traverse, keyListener);
 
-				menuServiceFilter = ContextInjectionFactory.make(
-						MenuServiceFilter.class, runContext);
-				display.addFilter(SWT.Show, menuServiceFilter);
-				display.addFilter(SWT.Hide, menuServiceFilter);
-				display.addFilter(SWT.Dispose, menuServiceFilter);
-				runContext.set(MenuServiceFilter.class, menuServiceFilter);
+				// menuServiceFilter = ContextInjectionFactory.make(
+				// MenuServiceFilter.class, runContext);
+				// display.addFilter(SWT.Show, menuServiceFilter);
+				// display.addFilter(SWT.Hide, menuServiceFilter);
+				// display.addFilter(SWT.Dispose, menuServiceFilter);
+				// runContext.set(MenuServiceFilter.class, menuServiceFilter);
 
 				// Show the initial UI
 
@@ -753,17 +753,17 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * why this is needed we should make this safe for multiple calls
 	 */
 	private void cleanUp() {
-		if (menuServiceFilter != null) {
-			Display display = Display.getDefault();
-			if (!display.isDisposed()) {
-				display.removeFilter(SWT.Show, menuServiceFilter);
-				display.removeFilter(SWT.Hide, menuServiceFilter);
-				display.removeFilter(SWT.Dispose, menuServiceFilter);
-				menuServiceFilter.dispose();
-				menuServiceFilter = null;
-				appContext.remove(MenuServiceFilter.class);
-			}
-		}
+		// if (menuServiceFilter != null) {
+		// Display display = Display.getDefault();
+		// if (!display.isDisposed()) {
+		// display.removeFilter(SWT.Show, menuServiceFilter);
+		// display.removeFilter(SWT.Hide, menuServiceFilter);
+		// display.removeFilter(SWT.Dispose, menuServiceFilter);
+		// menuServiceFilter.dispose();
+		// menuServiceFilter = null;
+		// appContext.remove(MenuServiceFilter.class);
+		// }
+		// }
 		if (keyListener != null) {
 			Display display = Display.getDefault();
 			if (!display.isDisposed()) {

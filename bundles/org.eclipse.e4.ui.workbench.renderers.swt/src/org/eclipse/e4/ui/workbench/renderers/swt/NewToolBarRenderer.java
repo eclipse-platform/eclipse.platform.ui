@@ -282,9 +282,12 @@ public class NewToolBarRenderer extends SWTPartRenderer {
 			MToolBarSeparator itemModel) {
 		AbstractGroupMarker marker = null;
 		if (itemModel.isVisible()) {
-			marker = new Separator(itemModel.getElementId());
+			marker = new Separator();
+			marker.setId(itemModel.getElementId());
 		} else {
-			marker = new GroupMarker(itemModel.getElementId());
+			if (itemModel.getElementId() != null) {
+				marker = new GroupMarker(itemModel.getElementId());
+			}
 		}
 		parentManager.add(marker);
 	}

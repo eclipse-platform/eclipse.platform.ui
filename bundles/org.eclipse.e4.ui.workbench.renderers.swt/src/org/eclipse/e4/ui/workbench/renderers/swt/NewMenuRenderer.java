@@ -196,12 +196,14 @@ public class NewMenuRenderer extends SWTPartRenderer {
 						"MainMenu", menuModel.getElementId()); //$NON-NLS-1$
 				modelToManager.put(menuModel, menuBarManager);
 				newMenu = menuBarManager.createMenuBar((Decorations) parent);
+				((Decorations) parent).setMenuBar(newMenu);
 				newMenu.setData(menuBarManager);
 			} else {
 				MenuManager popupManager = new MenuManager(
 						"PopupMenu", menuModel.getElementId()); //$NON-NLS-1$
 				modelToManager.put(menuModel, popupManager);
 				newMenu = popupManager.createContextMenu((Control) parent);
+				((Control) parent).setMenu(newMenu);
 				newMenu.setData(popupManager);
 			}
 		} else if (parent instanceof Menu) {
@@ -214,6 +216,7 @@ public class NewMenuRenderer extends SWTPartRenderer {
 					menuModel.getElementId());
 			modelToManager.put(menuModel, popupManager);
 			newMenu = popupManager.createContextMenu((Control) parent);
+			((Control) parent).setMenu(newMenu);
 			newMenu.setData(popupManager);
 		}
 		return newMenu;
@@ -300,9 +303,12 @@ public class NewMenuRenderer extends SWTPartRenderer {
 			MMenuSeparator itemModel) {
 		AbstractGroupMarker marker = null;
 		if (itemModel.isVisible()) {
-			marker = new Separator(itemModel.getElementId());
+			marker = new Separator();
+			marker.setId(itemModel.getElementId());
 		} else {
-			marker = new GroupMarker(itemModel.getElementId());
+			if (itemModel.getElementId() != null) {
+				marker = new GroupMarker(itemModel.getElementId());
+			}
 		}
 		menuManager.add(marker);
 	}

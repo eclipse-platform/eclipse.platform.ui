@@ -16,10 +16,8 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
-import org.eclipse.swt.SWT;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 
 public class MenuService implements EMenuService {
@@ -49,20 +47,21 @@ public class MenuService implements EMenuService {
 		if (mmenu.getWidget() != null) {
 			return false;
 		}
-		Menu menu = new Menu(parentControl);
-		parentControl.setMenu(menu);
-		mmenu.setWidget(menu);
-		menu.setData(AbstractPartRenderer.OWNING_ME, mmenu);
+		// we need to delegate to the renderer so that it "processes" the
+		// MenuManager correctly
+		IRendererFactory rendererFactory = myPart.getContext().get(
+				IRendererFactory.class);
+		AbstractPartRenderer renderer = rendererFactory.getRenderer(mmenu,
+				parentControl);
 		IEclipseContext popupContext = myPart.getContext().createChild(
 				"popup:" + mmenu.getElementId());
 		mmenu.setContext(popupContext);
-		menu.addListener(SWT.Dispose, new Listener() {
-			public void handleEvent(Event event) {
-				mmenu.getContext().dispose();
-				mmenu.setContext(null);
-				mmenu.setWidget(null);
-			}
-		});
+		Object widget = renderer.createWidget(mmenu, parentControl);
+		if (!(widget instanceof Menu)) {
+			return false;
+		}
+		renderer.bindWidget(mmenu, widget);
+
 		return true;
 	}
 }
