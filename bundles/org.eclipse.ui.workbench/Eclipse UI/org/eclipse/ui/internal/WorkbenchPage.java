@@ -1940,6 +1940,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				contextService.activateContext(id);
 			}
 		}
+
+		IPerspectiveRegistry registry = getWorkbenchWindow().getWorkbench()
+				.getPerspectiveRegistry();
+		MPerspectiveStack perspectiveStack = getPerspectiveStack();
+		for (MPerspective perspective : perspectiveStack.getChildren()) {
+			IPerspectiveDescriptor desc = registry
+					.findPerspectiveWithId(perspective.getElementId());
+			if (desc != null) {
+				sortedPerspectives.add(desc);
+			}
+		}
+
+		MPerspective selectedPerspective = perspectiveStack.getSelectedElement();
+		if (selectedPerspective != null) {
+			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(selectedPerspective
+					.getElementId());
+			if (desc != null) {
+				sortedPerspectives.remove(desc);
+				sortedPerspectives.add(desc);
+			}
+		}
     }
 
 	private EventHandler selectionHandler = new EventHandler() {
