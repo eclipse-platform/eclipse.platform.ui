@@ -421,6 +421,9 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	private AbstractHelpUI getHelpUI() {
 		if (!isInitialized) {
 			isInitialized = initializePluggableHelpUI();
+			if (!isInitialized)
+				WorkbenchPlugin.log("Unable to instantiate help UI");//$NON-NLS-1$
+
 		}
 		return pluggableHelpUI;
 	}
