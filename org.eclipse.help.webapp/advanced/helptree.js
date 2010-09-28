@@ -15,11 +15,11 @@
 var oldActive;
 var oldActiveClass;
 
-// WAI Roles
-var WAI_TREEITEM = "wairole:treeitem";
-var WAI_TREE = "wairole:tree";
-var WAI_GROUP = "wairole:group";
-var WAI_APPLICATION = "wairole:application";
+// WAI-ARIA Roles
+var WAI_TREEITEM = "treeitem";
+var WAI_TREE = "tree";
+var WAI_GROUP = "group";
+var WAI_APPLICATION = "application";
 
 /**
  * Returns the currently selected (highlighted) tree node anchor.
@@ -421,24 +421,46 @@ function changeExpanderImage(treeItem, isExpanded) {
 
 // Accessibility
 
-var isNamespaceSupport = typeof document.documentElement.setAttributeNS != 'undefined';
+
+// Do not write accessibility information for IE
+var setAccessibilityRoles = navigator.userAgent.indexOf('MSIE') == -1;
 
 function setAccessibilityRole(node, role) {
-    if (isNamespaceSupport) {
-        node.setAttributeNS("http://www.w3.org/TR/xhtml2", "role", role);
-        node.role = role;
+    if (setAccessibilityRoles) {
+        node.setAttribute("role", role);
+    }
+}
+
+function setAccessibilitySetsize( node, setsize )
+{
+    if (setAccessibilityRoles) {
+        node.setAttribute("aria-setsize", setsize);
+    }
+}
+
+function setAccessibilityPosition( node, posinset)
+{
+    if (setAccessibilityRoles) {
+        node.setAttribute("aria-posinset", posinset);
+    }
+}
+
+function setAccessibilityTreeLevel( node,level )
+{
+    if (setAccessibilityRoles) {
+        node.setAttribute("aria-level", level);
     }
 }
 
 function setWAIExpanded(node, value) {
-    if (isNamespaceSupport) {
+    if (setAccessibilityRoles) {
         var valueAsString = value? "true" : "false";
-        node.setAttributeNS("http://www.w3.org/2005/07/aaa", "expanded", valueAsString);
+        node.setAttribute("aria-expanded", valueAsString);
     }
 }
 
 function setRootAccessibility() {
-    if (isNamespaceSupport) {
+    if (setAccessibilityRoles) {
         var treeItem = document.getElementById("tree_root");
         if (treeItem) {
             setAccessibilityRole(treeItem, WAI_TREE);
@@ -451,7 +473,7 @@ function setRootAccessibility() {
 }
 
 function setWAIExpansionState(treeItem, isExpanded) { 
-    if (isNamespaceSupport) {
+    if (setAccessibilityRoles) {
         var anchor = findAnchor(treeItem);
         if (anchor) {
             setWAIExpanded(anchor, isExpanded);

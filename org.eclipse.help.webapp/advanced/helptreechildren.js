@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ function updateTree(xml) {
     var treeRoot = document.getElementById("tree_root");
     var nodes = tocData.childNodes;
     selectedNode = null;
-    mergeChildren(treeRoot, nodes);
+    mergeChildren(treeRoot, nodes, 0);
     if (selectedNode !== null) {
         // Focusing on the last child will increase the chance that it is visible
         if (!highlightSelectedNode) {
@@ -49,7 +49,7 @@ function updateTree(xml) {
     return errorTags.length > 0;
  }
  
-function mergeChildren(treeItem, nodes) {
+function mergeChildren(treeItem, nodes, level) {
     var childContainer;
     if (treeItem.id == "tree_root") {
         childContainer=treeItem;
@@ -59,12 +59,25 @@ function mergeChildren(treeItem, nodes) {
     var childAdded = false;
     var hasPlaceholder = childContainer !== null && childContainer.className == "unopened";
     var existingChildren = hasExistingChildren(childContainer);
+    var childCount = 0;
+    var nodeIndex = 0;
+
+    // Compute total # of nodes for accessibility attributes
+    // nodes.length cannot be used because the list may contain xml elements
+    // which are not nodes
+        
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].tagName == "node") {
+            childCount++;
+        }
+     }
     if (nodes) {  
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             // If the children of this node have already been evaluated
             // and the child XML node has no children we can safely skip it 
             if (node.tagName == "node" && (!existingChildren || node.childNodes.length > 0)) {
+                nodeIndex++;
                 if (hasPlaceholder) {
                     // Remove the loading message
                     treeItem.removeChild(childContainer);
@@ -102,11 +115,11 @@ function mergeChildren(treeItem, nodes) {
                     if (node.getAttribute("closedImage")) {
                         closedImage = "../topic" + node.getAttribute("closedImage");
                     }             
-                   childItem = addChild(childContainer, id, title, href, openImage, closedImage, imageAltText, isLeaf);           
+                   childItem = addChild(childContainer, id, title, href, openImage, closedImage, imageAltText, isLeaf, nodeIndex, childCount, level + 1);           
                 }
                
                 if (!isLeaf) {
-                    mergeChildren(childItem, node.childNodes);
+                    mergeChildren(childItem, node.childNodes, level + 1);
                 } 
                 var isSelected = node.getAttribute("is_selected");                   
                 if (isSelected) {
@@ -155,7 +168,8 @@ function findChildById(treeItem, id) {
 }
 
 // Create a child of treeItem
-function addChild(treeItem, id, name, href, image, closedImage, imageAltText, isLeaf) {        
+function addChild(treeItem, id, name, href, image, closedImage, imageAltText, 
+                  isLeaf, position, setsize, level) {        
     var childItem = document.createElement("DIV");
     // roots should have a className of "root" to prevent indentation
     if (treeItem.id == "tree_root") {
@@ -208,7 +222,11 @@ function addChild(treeItem, id, name, href, image, closedImage, imageAltText, is
         anchor.href = href;
     }
     anchor.title = name;
-    setAccessibilityRole(anchor, WAI_TREEITEM);
+    setAccessibilityRole(anchor, WAI_TREEITEM);    
+    setAccessibilitySetsize(anchor, setsize); 
+    setAccessibilityPosition(anchor, position); 
+    // Setting the tree level is not necessary since screen readers can deduce it
+    //setAccessibilityTreeLevel(anchor, level);
     
     if (topicImage) {
         anchor.appendChild(topicImage);
