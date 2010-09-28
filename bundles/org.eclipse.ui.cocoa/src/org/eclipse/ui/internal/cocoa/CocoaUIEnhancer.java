@@ -29,6 +29,8 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.internal.C;
 import org.eclipse.swt.internal.Callback;
@@ -309,7 +311,7 @@ public class CocoaUIEnhancer implements IStartup {
 	 *            the window to modify
 	 * @since 3.2
 	 */
-	protected void modifyWindowShell(IWorkbenchWindow window) {
+	protected void modifyWindowShell(final IWorkbenchWindow window) {
 		// only add the button when either the cool bar or perspective bar
 		// is initially visible. This is so that RCP applications can choose to use
 		// this fragment without fear that their explicitly invisible bars
@@ -320,34 +322,57 @@ public class CocoaUIEnhancer implements IStartup {
 				.getPerspectiveBarVisible();
 
 		if (coolBarInitiallyVsible || perspectiveBarInitiallyVsible) {
-			// Add an empty, hidden tool bar to the window.  Without this the
-			// tool bar button at the top right of the window will not appear
-			// even when setShowsToolbarButton(true) is called.
-			NSToolbar dummyBar = new NSToolbar();
-			dummyBar.alloc();
-			dummyBar.initWithIdentifier(NSString.stringWith("SWTToolbar")); //$NON-NLS-1$
-			dummyBar.setVisible(false);
-			
-			Shell shell = window.getShell();
-			NSWindow nsWindow = shell.view.window();
-			nsWindow.setToolbar(dummyBar);
-			dummyBar.release();
-			nsWindow.setShowsToolbarButton(true);
-			
-			// Override the target and action of the toolbar button so we can control it.
-			try {
-				Object fieldValue = wrapPointer(NSWindowToolbarButton);
-				NSButton toolbarButton = (NSButton) invokeMethod(NSWindow.class, nsWindow, "standardWindowButton", new Object[] {fieldValue});
-				if (toolbarButton != null) {
-					toolbarButton.setTarget(delegate);
-					invokeMethod(NSControl.class, toolbarButton, "setAction",
-							new Object[] { wrapPointer(sel_toolbarButtonClicked_) });
+			createDummyToolbar(window);
+		}else {
+			//add the dummby toolbar when its shown for the first time
+			if(!(window instanceof WorkbenchWindow))
+				return;
+			final WorkbenchWindow workbenchWindow = (WorkbenchWindow) window;
+			workbenchWindow.addPropertyChangeListener(new IPropertyChangeListener() {
+				
+				public void propertyChange(PropertyChangeEvent event) {
+					if(workbenchWindow.PROP_COOLBAR_VISIBLE.equals(event.getProperty())) {
+						createDummyToolbar(window);
+						workbenchWindow.removePropertyChangeListener(this);
+					}
 				}
-			} catch (Exception e) {
-				// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
-				// not expected to happen at all.
-				log(e);
+			});
+		}
+	}
+
+
+	/**
+	 * Add an empty, hidden tool bar to the window. Without this the tool bar
+	 * button at the top right of the window will not appear even when
+	 * setShowsToolbarButton(true) is called.
+	 * 
+	 * @param window
+	 */
+	private void createDummyToolbar(IWorkbenchWindow window) {
+		NSToolbar dummyBar = new NSToolbar();
+		dummyBar.alloc();
+		dummyBar.initWithIdentifier(NSString.stringWith("SWTToolbar")); //$NON-NLS-1$
+		dummyBar.setVisible(false);
+		
+		Shell shell = window.getShell();
+		NSWindow nsWindow = shell.view.window();
+		nsWindow.setToolbar(dummyBar);
+		dummyBar.release();
+		nsWindow.setShowsToolbarButton(true);
+		
+		// Override the target and action of the toolbar button so we can control it.
+		try {
+			Object fieldValue = wrapPointer(NSWindowToolbarButton);
+			NSButton toolbarButton = (NSButton) invokeMethod(NSWindow.class, nsWindow, "standardWindowButton", new Object[] {fieldValue});
+			if (toolbarButton != null) {
+				toolbarButton.setTarget(delegate);
+				invokeMethod(NSControl.class, toolbarButton, "setAction",
+						new Object[] { wrapPointer(sel_toolbarButtonClicked_) });
 			}
+		} catch (Exception e) {
+			// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+			// not expected to happen at all.
+			log(e);
 		}
 	}
 	
