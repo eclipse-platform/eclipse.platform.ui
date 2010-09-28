@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -358,8 +359,10 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		// Set up the container data before adding the new sash to the model
-		toInsert.setContainerData(Integer.toString(ratio));
-		relTo.setContainerData(Integer.toString(100 - ratio));
+		// To raise the granularity assume 100% == 10,000
+		int adjustedPct = ratio * 100;
+		toInsert.setContainerData(Integer.toString(adjustedPct));
+		relTo.setContainerData(Integer.toString(10000 - adjustedPct));
 
 		// add the new sash at the same location
 		curParent.getChildren().add(index, newSash);
@@ -380,9 +383,9 @@ public class ModelServiceImpl implements EModelService {
 
 		// Ensure the ratio is sane
 		if (ratio == 0)
-			ratio = 10;
-		if (ratio > 100)
-			ratio = 90;
+			ratio = 1000;
+		if (ratio > 10000)
+			ratio = 9000;
 
 		// determine insertion order
 		boolean newFirst = where == ABOVE || where == LEFT_OF;
@@ -396,7 +399,7 @@ public class ModelServiceImpl implements EModelService {
 			insertRoot = insertRoot.getParent();
 		}
 
-		if (insertRoot instanceof MWindow) {
+		if (insertRoot instanceof MWindow || insertRoot instanceof MArea) {
 			// OK, we're certainly going to need a new sash
 			MPartSashContainer newSash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
 			newSash.setHorizontal(where == LEFT_OF || where == RIGHT_OF);
@@ -475,11 +478,7 @@ public class ModelServiceImpl implements EModelService {
 
 			MWindow window = getTopLevelWindowFor(persp);
 			IPresentationEngine renderingEngine = persp.getContext().get(IPresentationEngine.class);
-			Object foo = renderingEngine.createGui(newWindow, window.getWidget(),
-					persp.getContext());
-			if (foo != null) {
-				// System.out.println(foo.toString());
-			}
+			renderingEngine.createGui(newWindow, window.getWidget(), persp.getContext());
 		} else if (curParent instanceof MWindow) {
 			((MWindow) curParent).getWindows().add(newWindow);
 		}

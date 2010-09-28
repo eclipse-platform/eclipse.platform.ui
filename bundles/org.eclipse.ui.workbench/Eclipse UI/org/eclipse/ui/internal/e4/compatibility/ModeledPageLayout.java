@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
@@ -91,34 +92,34 @@ public class ModeledPageLayout implements IPageLayout {
 
 		this.createReferences = createReferences;
 
-		MPartSashContainer esc = null;
+		MArea sharedArea = null;
 		List<MUIElement> sharedElements = window.getSharedElements();
 		for (MUIElement element : sharedElements) {
 			if (element.getElementId().equals(getEditorArea())) {
-				esc = (MPartSashContainer) element;
+				sharedArea = (MArea) element;
 				break;
 			}
 		}
 
-		if (esc == null) {
-			esc = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
+		if (sharedArea == null) {
+			sharedArea = AdvancedFactoryImpl.eINSTANCE.createArea();
+			sharedArea.setLabel("Editor Area"); //$NON-NLS-1$
+
 			editorStack = BasicFactoryImpl.eINSTANCE.createPartStack();
 			// temporary HACK for bug 303982
 			editorStack.getTags().add("newtablook"); //$NON-NLS-1$
 			editorStack.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
 			editorStack.getTags().add("EditorStack"); //$NON-NLS-1$
 			editorStack.setElementId("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
-			esc.getChildren().add(editorStack);
-			esc.setElementId(getEditorArea());
+			sharedArea.getChildren().add(editorStack);
+			sharedArea.setElementId(getEditorArea());
 
-			window.getSharedElements().add(esc);
+			window.getSharedElements().add(sharedArea);
 		}
 
 		MPlaceholder eaRef = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
 		eaRef.setElementId(getEditorArea());
-		eaRef.setRef(esc);
-
-		// editorArea.setName("Editor Area");
+		eaRef.setRef(sharedArea);
 
 		perspModel.getChildren().add(eaRef);
 
@@ -439,28 +440,28 @@ public class ModeledPageLayout implements IPageLayout {
 				psc.getChildren().add((MPartSashContainerElement) toInsert);
 				psc.getChildren().add((MPartSashContainerElement) relTo);
 				toInsert.setContainerData("" + ratio); //$NON-NLS-1$
-				relTo.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
+				relTo.setContainerData("" + (10000 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(true);
 				break;
 			case SWT.RIGHT:
 				psc.getChildren().add((MPartSashContainerElement) relTo);
 				psc.getChildren().add((MPartSashContainerElement) toInsert);
 				relTo.setContainerData("" + ratio); //$NON-NLS-1$
-				toInsert.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
+				toInsert.setContainerData("" + (10000 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(true);
 				break;
 			case SWT.TOP:
 				psc.getChildren().add((MPartSashContainerElement) toInsert);
 				psc.getChildren().add((MPartSashContainerElement) relTo);
 				toInsert.setContainerData("" + ratio); //$NON-NLS-1$
-				relTo.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
+				relTo.setContainerData("" + (10000 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(false);
 				break;
 			case SWT.BOTTOM:
 				psc.getChildren().add((MPartSashContainerElement) relTo);
 				psc.getChildren().add((MPartSashContainerElement) toInsert);
 				relTo.setContainerData("" + ratio); //$NON-NLS-1$
-				toInsert.setContainerData("" + (100 - ratio)); //$NON-NLS-1$
+				toInsert.setContainerData("" + (10000 - ratio)); //$NON-NLS-1$
 				psc.setHorizontal(false);
 				break;
 			}
@@ -510,7 +511,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 	public static void insert(MUIElement toInsert, MUIElement relTo,
 			int swtSide, float ratio) {
-		int pct = (int) (ratio * 100);
+		int pct = (int) (ratio * 10000);
 		insert(toInsert, relTo, swtSide, pct);
 	}
 

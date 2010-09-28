@@ -498,7 +498,36 @@ public class WBWRenderer extends SWTPartRenderer {
 	public Object getUIContainer(MUIElement element) {
 		Composite shellComp = (Composite) element.getParent().getWidget();
 		TrimmedPartLayout tpl = (TrimmedPartLayout) shellComp.getLayout();
+		Composite ca = tpl.clientArea;
+
+		// Apply the new SashLayout to the client area
+		if (!(ca.getLayout() instanceof SashLayout)) {
+			SashLayout sl = new SashLayout(ca, null);
+			ca.setLayout(sl);
+		}
+
 		return tpl.clientArea;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#childRendered
+	 * (org.eclipse.e4.ui.model.application.ui.MElementContainer,
+	 * org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	@Override
+	public void childRendered(MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
+		// TODO Auto-generated method stub
+		super.childRendered(parentElement, element);
+
+		// Reset the 'root' element to the new child (last one in wins)
+		Composite shellComp = (Composite) element.getParent().getWidget();
+		TrimmedPartLayout tpl = (TrimmedPartLayout) shellComp.getLayout();
+		SashLayout sl = (SashLayout) tpl.clientArea.getLayout();
+		sl.setRootElemenr(element);
 	}
 
 	/*

@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import java.util.List;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -25,6 +26,7 @@ import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 
 /**
  *
@@ -88,7 +90,30 @@ public class StackDropAgent extends DropAgent {
 		}
 
 		if (dragElement.getParent() != null) {
-			dragElement.getParent().getChildren().remove(dragElement);
+			MElementContainer<MUIElement> dragParent = dragElement.getParent();
+
+			// If this was the last child in the stack it will go away so
+			// grab back its 'weight' if it's in the same sash container
+			int curCount = dragParent.getChildren().size();
+			if ((Object) dragParent instanceof MPartStack && curCount == 1
+					&& dragParent.getParent() == dropStack.getParent()) {
+				int dpWeight = -1;
+				try {
+					dpWeight = Integer.parseInt(dragParent.getContainerData());
+				} catch (NumberFormatException e) {
+				}
+				if (dpWeight != -1) {
+					int dropWeight = 0;
+					try {
+						dropWeight = Integer.parseInt(dropStack.getContainerData());
+					} catch (NumberFormatException e) {
+					}
+					dropWeight += dpWeight;
+					dropStack.setContainerData(Integer.toString(dropWeight));
+				}
+			}
+
+			dragParent.getChildren().remove(dragElement);
 		}
 
 		if (info.itemIndex == -1) {
@@ -119,6 +144,11 @@ public class StackDropAgent extends DropAgent {
 					}
 				}
 			}
+		}
+
+		if (dragElement.getWidget() instanceof Control) {
+			Control ctrl = (Control) dragElement.getWidget();
+			ctrl.getShell().layout();
 		}
 
 		return true;

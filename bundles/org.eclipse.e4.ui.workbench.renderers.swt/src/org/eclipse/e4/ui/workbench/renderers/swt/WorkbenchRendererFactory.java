@@ -5,6 +5,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -28,6 +29,7 @@ import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 
 public class WorkbenchRendererFactory implements IRendererFactory {
 
+	private AreaRenderer areaRenderer;
 	private MenuRenderer menuRenderer;
 	private HandledMenuItemRenderer handledMenuItemRenderer;
 	private ToolBarRenderer toolbarRenderer;
@@ -50,7 +52,13 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private RenderedToolBarRenderer renderedToolbarRenderer;
 
 	public AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
-		if (uiElement instanceof MPart) {
+		if (uiElement instanceof MArea) {
+			if (areaRenderer == null) {
+				areaRenderer = new AreaRenderer();
+				initRenderer(areaRenderer);
+			}
+			return areaRenderer;
+		} else if (uiElement instanceof MPart) {
 			if (contributedPartRenderer == null) {
 				contributedPartRenderer = new ContributedPartRenderer();
 				initRenderer(contributedPartRenderer);

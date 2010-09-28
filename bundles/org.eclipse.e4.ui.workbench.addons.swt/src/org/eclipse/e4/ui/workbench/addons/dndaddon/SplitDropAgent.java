@@ -139,6 +139,13 @@ public class SplitDropAgent extends DropAgent {
 
 		modelService.insert((MPartSashContainerElement) toInsert,
 				(MPartSashContainerElement) relTo, where, 50);
+
+		MUIElement tmp = relTo;
+		while (!(tmp.getWidget() instanceof Control))
+			tmp = tmp.getParent();
+		Control theCtrl = (Control) tmp.getWidget();
+		theCtrl.getParent().layout(true, true);
+
 		return true;
 	}
 

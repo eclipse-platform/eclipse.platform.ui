@@ -20,8 +20,10 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
@@ -40,7 +42,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IPageLayout;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -70,7 +71,39 @@ public class MinMaxAddon {
 	private EventHandler ctfListener = new EventHandler() {
 		public void handleEvent(Event event) {
 			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
-			Widget widget = (Widget) event.getProperty(EventTags.NEW_VALUE);
+			Object widget = event.getProperty(EventTags.NEW_VALUE);
+			if (changedElement instanceof MArea && widget instanceof CTabFolder) {
+				final CTabFolder ctf = (CTabFolder) widget;
+				ctf.addCTabFolder2Listener(new CTabFolder2Adapter() {
+					public void maximize(CTabFolderEvent event) {
+						MWindow window = modelService.getTopLevelWindowFor(changedElement);
+						MPerspective curPersp = modelService.getActivePerspective(window);
+						curPersp.getTags().add("EAMaximized"); //$NON-NLS-1$
+					}
+
+					public void restore(CTabFolderEvent event) {
+						MWindow window = modelService.getTopLevelWindowFor(changedElement);
+						MPerspective curPersp = modelService.getActivePerspective(window);
+						curPersp.getTags().remove("EAMaximized"); //$NON-NLS-1$
+					}
+				});
+				ctf.addMouseListener(new MouseListener() {
+					public void mouseUp(MouseEvent e) {
+					}
+
+					public void mouseDown(MouseEvent e) {
+					}
+
+					public void mouseDoubleClick(MouseEvent e) {
+						MWindow window = modelService.getTopLevelWindowFor(changedElement);
+						MPerspective curPersp = modelService.getActivePerspective(window);
+						if (curPersp.getTags().contains(EA_MAXIMIZED))
+							curPersp.getTags().remove(EA_MAXIMIZED);
+						else
+							curPersp.getTags().add(EA_MAXIMIZED);
+					}
+				});
+			}
 			if (changedElement instanceof MPartStack && widget instanceof CTabFolder
 					&& changedElement.getElementId() != null) {
 				final CTabFolder folder = (CTabFolder) widget;
@@ -86,21 +119,6 @@ public class MinMaxAddon {
 						}
 					});
 				} else {
-					folder.setMaximizeVisible(true);
-					folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
-						public void maximize(CTabFolderEvent event) {
-							MWindow window = modelService.getTopLevelWindowFor(changedElement);
-							MPerspective curPersp = modelService.getActivePerspective(window);
-							curPersp.getTags().add(EA_MAXIMIZED);
-						}
-
-						public void restore(CTabFolderEvent event) {
-							MWindow window = modelService.getTopLevelWindowFor(changedElement);
-							MPerspective curPersp = modelService.getActivePerspective(window);
-							curPersp.getTags().remove(EA_MAXIMIZED);
-						}
-					});
-
 					folder.addMouseListener(new MouseListener() {
 						public void mouseUp(MouseEvent e) {
 						}
@@ -131,10 +149,11 @@ public class MinMaxAddon {
 			MPerspectiveStack ps = (MPerspectiveStack) changedElement;
 			final MPerspective curPersp = ps.getSelectedElement();
 			if (curPersp != null) {
-				MWindow win = modelService.getTopLevelWindowFor(curPersp);
-				MPartStack eStack = getEditorStack(win);
-				CTabFolder ctf = (CTabFolder) eStack.getWidget();
-				if (ctf != null) {
+				// Find the editor 'area'
+				MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(
+						IPageLayout.ID_EDITOR_AREA, curPersp);
+				if (eaPlaceholder.getRef().getWidget() instanceof CTabFolder) {
+					CTabFolder ctf = (CTabFolder) eaPlaceholder.getRef().getWidget();
 					// Set the CTF state
 					boolean isMax = curPersp.getTags().contains(EA_MAXIMIZED);
 					ctf.setMaximized(isMax);
@@ -172,7 +191,7 @@ public class MinMaxAddon {
 				} else if (EA_MAXIMIZED.equals(tag)) {
 					MPerspective persp = (MPerspective) changedElement;
 					MWindow win = modelService.getTopLevelWindowFor(persp);
-					maximizeEA(getEditorStack(win));
+					maximizeEA(getSharedAreaRef(win));
 				}
 			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				if (MINIMIZED.equals(oldVal)) {
@@ -180,7 +199,7 @@ public class MinMaxAddon {
 				} else if (EA_MAXIMIZED.equals(oldVal)) {
 					MPerspective persp = (MPerspective) changedElement;
 					MWindow win = modelService.getTopLevelWindowFor(persp);
-					unmaximizeEA(getEditorStack(win));
+					unmaximizeEA(getSharedAreaRef(win));
 				}
 			}
 		}
@@ -208,7 +227,6 @@ public class MinMaxAddon {
 			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				MUIElement removed = (MUIElement) event.getProperty(UIEvents.EventTags.OLD_VALUE);
 				String perspectiveId = removed.getElementId();
-				// System.out.println("Perspective Removed: " + removed.getElementId());
 				MWindow window = modelService.getTopLevelWindowFor(changedElement);
 				MTrimBar bar = modelService.getTrim((MTrimmedWindow) window, SideValue.TOP);
 
@@ -251,12 +269,9 @@ public class MinMaxAddon {
 	 * @param win
 	 * @return
 	 */
-	protected MPartStack getEditorStack(MWindow win) {
+	protected MPlaceholder getSharedAreaRef(MWindow win) {
 		MUIElement ea = modelService.find(IPageLayout.ID_EDITOR_AREA, win);
-		List<MPartStack> eStacks = modelService.findElements(ea, null, MPartStack.class, null);
-		if (eStacks.size() == 0)
-			return null;
-		return eStacks.get(0);
+		return (MPlaceholder) ((ea instanceof MPlaceholder) ? ea : null);
 	}
 
 	@PreDestroy
@@ -354,11 +369,10 @@ public class MinMaxAddon {
 		}
 	}
 
-	void maximizeEA(MPartStack stack) {
-		MWindow win = modelService.getTopLevelWindowFor(stack);
+	void maximizeEA(MPlaceholder sharedAreaRef) {
+		MWindow win = modelService.getTopLevelWindowFor(sharedAreaRef);
 		MPerspective persp = modelService.getActivePerspective(win);
-		MUIElement toSearch = persp != null ? persp : win;
-		List<MPartStack> stacks = modelService.findElements(toSearch, null, MPartStack.class, null);
+		List<MPartStack> stacks = modelService.findElements(persp, null, MPartStack.class, null);
 		for (MPartStack theStack : stacks) {
 			if (!theStack.getTags().contains("EditorStack") && theStack.getWidget() != null
 					&& !theStack.getTags().contains(MINIMIZED)) {
@@ -370,15 +384,19 @@ public class MinMaxAddon {
 		// Remember that the EA is max'd in this perspective
 		persp.getTags().add(EA_MAXIMIZED);
 
-		CTabFolder ctf = (CTabFolder) stack.getWidget();
-		ctf.setMaximized(true);
+		// Find the editor 'area'
+		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA,
+				persp);
+		if (eaPlaceholder.getRef().getWidget() instanceof CTabFolder) {
+			CTabFolder ctf = (CTabFolder) eaPlaceholder.getRef().getWidget();
+			ctf.setMaximized(true);
+		}
 	}
 
-	void unmaximizeEA(MPartStack stack) {
-		MWindow win = modelService.getTopLevelWindowFor(stack);
+	void unmaximizeEA(MPlaceholder sharedAreaRef) {
+		MWindow win = modelService.getTopLevelWindowFor(sharedAreaRef);
 		MPerspective persp = modelService.getActivePerspective(win);
-		MUIElement toSearch = persp != null ? persp : win;
-		List<MPartStack> stacks = modelService.findElements(toSearch, null, MPartStack.class, null);
+		List<MPartStack> stacks = modelService.findElements(persp, null, MPartStack.class, null);
 		for (MPartStack theStack : stacks) {
 			if (!theStack.getTags().contains("EditorStack") && theStack.getWidget() != null
 					&& theStack.getTags().contains(MINIMIZED)
@@ -391,8 +409,13 @@ public class MinMaxAddon {
 		// Forget that the EA is max'd in this perspective for this window
 		persp.getTags().remove(EA_MAXIMIZED);
 
-		CTabFolder ctf = (CTabFolder) stack.getWidget();
-		ctf.setMaximized(false);
+		// Find the editor 'area'
+		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA,
+				persp);
+		if (eaPlaceholder.getRef().getWidget() instanceof CTabFolder) {
+			CTabFolder ctf = (CTabFolder) eaPlaceholder.getRef().getWidget();
+			ctf.setMaximized(false);
+		}
 	}
 
 	/**
