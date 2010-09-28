@@ -8,11 +8,12 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -36,10 +37,13 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class DirectContributionItem extends ContributionItem {
-	private MDirectMenuItem model;
+	private MItem model;
 	private Widget widget;
 	private Listener menuItemListener;
 	private LocalResourceManager localResourceManager;
+
+	@Inject
+	private IContributionFactory contribFactory;
 
 	@Inject
 	private EModelService modelService;
@@ -57,7 +61,7 @@ public class DirectContributionItem extends ContributionItem {
 		}
 	};
 
-	public void setModel(MDirectMenuItem item) {
+	public void setModel(MItem item) {
 		model = item;
 		setId(model.getElementId());
 		updateVisible();
@@ -99,6 +103,7 @@ public class DirectContributionItem extends ContributionItem {
 
 		widget = item;
 		model.setWidget(widget);
+		widget.setData(AbstractPartRenderer.OWNING_ME, model);
 
 		update(null);
 		updateIcons();
@@ -140,6 +145,7 @@ public class DirectContributionItem extends ContributionItem {
 
 		widget = item;
 		model.setWidget(widget);
+		widget.setData(AbstractPartRenderer.OWNING_ME, model);
 
 		update(null);
 		updateIcons();
@@ -198,9 +204,8 @@ public class DirectContributionItem extends ContributionItem {
 			item.setText(""); //$NON-NLS-1$
 		}
 		final String tooltip = model.getTooltip();
-		if (tooltip != null) {
-			item.setToolTipText(tooltip);
-		}
+		item.setToolTipText(tooltip);
+
 		item.setSelection(model.isSelected());
 		item.setEnabled(model.isEnabled());
 	}
@@ -300,7 +305,13 @@ public class DirectContributionItem extends ContributionItem {
 		if (widget != null && !widget.isDisposed()) {
 			if (model.getType() == ItemType.CHECK
 					|| model.getType() == ItemType.RADIO) {
-				model.setSelected(((MenuItem) widget).getSelection());
+				boolean selection = false;
+				if (widget instanceof MenuItem) {
+					selection = ((MenuItem) widget).getSelection();
+				} else if (widget instanceof ToolItem) {
+					selection = ((ToolItem) widget).getSelection();
+				}
+				model.setSelected(selection);
 			}
 			if (canExecuteItem()) {
 				executeItem();
@@ -313,8 +324,9 @@ public class DirectContributionItem extends ContributionItem {
 		if (!checkContribution(lclContext)) {
 			return;
 		}
+		MContribution contrib = (MContribution) model;
 		lclContext.set(MItem.class, model);
-		ContextInjectionFactory.invoke(model.getObject(), Execute.class,
+		ContextInjectionFactory.invoke(contrib.getObject(), Execute.class,
 				lclContext);
 		lclContext.remove(MItem.class);
 	}
@@ -324,10 +336,11 @@ public class DirectContributionItem extends ContributionItem {
 		if (!checkContribution(lclContext)) {
 			return false;
 		}
+		MContribution contrib = (MContribution) model;
 		lclContext.set(MItem.class, model);
 		try {
 			Boolean result = ((Boolean) ContextInjectionFactory.invoke(
-					model.getObject(), CanExecute.class, lclContext,
+					contrib.getObject(), CanExecute.class, lclContext,
 					Boolean.TRUE));
 			return result.booleanValue();
 		} finally {
@@ -336,12 +349,15 @@ public class DirectContributionItem extends ContributionItem {
 	}
 
 	private boolean checkContribution(IEclipseContext lclContext) {
-		if (model.getObject() == null) {
-			IContributionFactory cf = (IContributionFactory) lclContext
-					.get(IContributionFactory.class.getName());
-			model.setObject(cf.create(model.getContributionURI(), lclContext));
+		if (!(model instanceof MContribution)) {
+			return false;
 		}
-		return model.getObject() != null;
+		MContribution contrib = (MContribution) model;
+		if (contrib.getObject() == null) {
+			contrib.setObject(contribFactory.create(
+					contrib.getContributionURI(), lclContext));
+		}
+		return contrib.getObject() != null;
 	}
 
 	public void setParent(IContributionManager parent) {

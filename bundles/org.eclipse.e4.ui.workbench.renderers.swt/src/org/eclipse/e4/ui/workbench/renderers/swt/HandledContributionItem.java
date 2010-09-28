@@ -10,6 +10,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -139,6 +140,7 @@ public class HandledContributionItem extends ContributionItem {
 
 		widget = item;
 		model.setWidget(widget);
+		widget.setData(AbstractPartRenderer.OWNING_ME, model);
 
 		update(null);
 		updateIcons();
@@ -180,6 +182,7 @@ public class HandledContributionItem extends ContributionItem {
 
 		widget = item;
 		model.setWidget(widget);
+		widget.setData(AbstractPartRenderer.OWNING_ME, model);
 
 		update(null);
 		updateIcons();
@@ -251,9 +254,7 @@ public class HandledContributionItem extends ContributionItem {
 			item.setText(""); //$NON-NLS-1$
 		}
 		final String tooltip = model.getTooltip();
-		if (tooltip != null) {
-			item.setToolTipText(tooltip);
-		}
+		item.setToolTipText(tooltip);
 		item.setSelection(model.isSelected());
 		item.setEnabled(model.isEnabled());
 	}
@@ -353,7 +354,13 @@ public class HandledContributionItem extends ContributionItem {
 		if (widget != null && !widget.isDisposed()) {
 			if (model.getType() == ItemType.CHECK
 					|| model.getType() == ItemType.RADIO) {
-				model.setSelected(((MenuItem) widget).getSelection());
+				boolean selection = false;
+				if (widget instanceof MenuItem) {
+					selection = ((MenuItem) widget).getSelection();
+				} else if (widget instanceof ToolItem) {
+					selection = ((ToolItem) widget).getSelection();
+				}
+				model.setSelected(selection);
 			}
 			if (canExecuteItem()) {
 				executeItem();

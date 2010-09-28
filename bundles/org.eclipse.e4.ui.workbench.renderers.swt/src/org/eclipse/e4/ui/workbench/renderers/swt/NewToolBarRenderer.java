@@ -20,56 +20,51 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.workbench.IResourceUtilities;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Decorations;
-import org.eclipse.swt.widgets.Menu;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.layout.RowLayoutFactory;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 /**
  *
  */
-public class NewMenuRenderer extends SWTPartRenderer {
-	private static final String NO_LABEL = "UnLabled"; //$NON-NLS-1$
+public class NewToolBarRenderer extends SWTPartRenderer {
 
-	private Map<MMenu, MenuManager> modelToManager = new HashMap<MMenu, MenuManager>();
+	private Map<MToolBar, ToolBarManager> modelToManager = new HashMap<MToolBar, ToolBarManager>();
+	private Map<MToolBarElement, IContributionItem> modelToContribution = new HashMap<MToolBarElement, IContributionItem>();
 
-	private Map<MMenuItem, IContributionItem> modelToContribution = new HashMap<MMenuItem, IContributionItem>();
-
-	@Inject
-	private Logger logger;
+	// @Inject
+	// private Logger logger;
 
 	@Inject
 	IEventBroker eventBroker;
 	private EventHandler itemUpdater = new EventHandler() {
 		public void handleEvent(Event event) {
 			// Ensure that this event is for a MMenuItem
-			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBarElement))
 				return;
 
-			MMenuItem itemModel = (MMenuItem) event
+			MToolBarElement itemModel = (MToolBarElement) event
 					.getProperty(UIEvents.EventTags.ELEMENT);
 
 			IContributionItem ici = modelToContribution.get(itemModel);
@@ -83,6 +78,8 @@ public class NewMenuRenderer extends SWTPartRenderer {
 				ici.update();
 			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
 				ici.update();
+			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
+				ici.update();
 			}
 		}
 	};
@@ -90,19 +87,19 @@ public class NewMenuRenderer extends SWTPartRenderer {
 	private EventHandler toBeRenderedUpdater = new EventHandler() {
 		public void handleEvent(Event event) {
 			// Ensure that this event is for a MMenuItem
-			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBarElement))
 				return;
 
-			MMenuItem itemModel = (MMenuItem) event
+			MToolBarElement itemModel = (MToolBarElement) event
 					.getProperty(UIEvents.EventTags.ELEMENT);
 			String attName = (String) event
 					.getProperty(UIEvents.EventTags.ATTNAME);
 			if (UIEvents.UIElement.TOBERENDERED.equals(attName)) {
 				Object obj = itemModel.getParent();
-				if (!(obj instanceof MMenu)) {
+				if (!(obj instanceof MToolBar)) {
 					return;
 				}
-				MenuManager parent = modelToManager.get(obj);
+				ToolBarManager parent = modelToManager.get(obj);
 				if (itemModel.isToBeRendered()) {
 					if (parent != null) {
 						modelProcessSwitch(parent, itemModel);
@@ -124,10 +121,10 @@ public class NewMenuRenderer extends SWTPartRenderer {
 	private EventHandler selectionUpdater = new EventHandler() {
 		public void handleEvent(Event event) {
 			// Ensure that this event is for a MToolItem
-			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBarElement))
 				return;
 
-			MMenuItem itemModel = (MMenuItem) event
+			MToolBarElement itemModel = (MToolBarElement) event
 					.getProperty(UIEvents.EventTags.ELEMENT);
 			IContributionItem ici = modelToContribution.get(itemModel);
 			if (ici != null) {
@@ -139,10 +136,10 @@ public class NewMenuRenderer extends SWTPartRenderer {
 	private EventHandler enabledUpdater = new EventHandler() {
 		public void handleEvent(Event event) {
 			// Ensure that this event is for a MMenuItem
-			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBarElement))
 				return;
 
-			MMenuItem itemModel = (MMenuItem) event
+			MToolBarElement itemModel = (MToolBarElement) event
 					.getProperty(UIEvents.EventTags.ELEMENT);
 			IContributionItem ici = modelToContribution.get(itemModel);
 			if (ici != null) {
@@ -181,42 +178,48 @@ public class NewMenuRenderer extends SWTPartRenderer {
 	 * (org.eclipse.e4.ui.model.application.ui.MUIElement, java.lang.Object)
 	 */
 	@Override
-	public Object createWidget(MUIElement element, Object parent) {
-		if (!(element instanceof MMenu))
+	public Object createWidget(final MUIElement element, Object parent) {
+		if (!(element instanceof MToolBar) || !(parent instanceof Composite))
 			return null;
 
-		final MMenu menuModel = (MMenu) element;
-		Menu newMenu = null;
+		// HACK!! This should be done using a separate renderer
+		Composite intermediate = new Composite((Composite) parent, SWT.NONE);
+		createToolbar(element, intermediate);
 
-		if (parent instanceof Decorations) {
-			MUIElement container = (MUIElement) ((EObject) element)
-					.eContainer();
-			if (container instanceof MWindow) {
-				MenuManager menuBarManager = new MenuManager(
-						"MainMenu", menuModel.getElementId()); //$NON-NLS-1$
-				modelToManager.put(menuModel, menuBarManager);
-				newMenu = menuBarManager.createMenuBar((Decorations) parent);
-				newMenu.setData(menuBarManager);
-			} else {
-				MenuManager popupManager = new MenuManager(
-						"PopupMenu", menuModel.getElementId()); //$NON-NLS-1$
-				modelToManager.put(menuModel, popupManager);
-				newMenu = popupManager.createContextMenu((Control) parent);
-				newMenu.setData(popupManager);
-			}
-		} else if (parent instanceof Menu) {
-			// Object data = ((Menu) parent).getData();
-			logger.debug(new Exception(), "Trying to render a sub menu " //$NON-NLS-1$
-					+ menuModel + "\n\t" + parent); //$NON-NLS-1$
+		return intermediate;
+	}
 
-		} else if (parent instanceof Control) {
-			MenuManager popupManager = new MenuManager("PopupMenu", //$NON-NLS-1$
-					menuModel.getElementId());
-			modelToManager.put(menuModel, popupManager);
-			newMenu = popupManager.createContextMenu((Control) parent);
-			newMenu.setData(popupManager);
+	ToolBar createToolbar(final MUIElement element, Composite intermediate) {
+		int orientation = getOrientation(element);
+		RowLayout layout = RowLayoutFactory.fillDefaults().wrap(false)
+				.spacing(0).type(orientation).create();
+		layout.marginLeft = 3;
+		layout.center = true;
+		intermediate.setLayout(layout);
+		// new Label(intermediate, (orientation == SWT.HORIZONTAL ? SWT.VERTICAL
+		// : SWT.HORIZONTAL) | SWT.SEPARATOR);
+
+		ToolBar separatorToolBar = new ToolBar(intermediate, orientation
+				| SWT.WRAP | SWT.FLAT | SWT.RIGHT);
+		new ToolItem(separatorToolBar, SWT.SEPARATOR);
+		ToolBarManager manager = new ToolBarManager(orientation | SWT.WRAP
+				| SWT.FLAT | SWT.RIGHT);
+		modelToManager.put((MToolBar) element, manager);
+		ToolBar bar = manager.createControl(intermediate);
+		bar.setData(manager);
+		return bar;
+	}
+
+	int getOrientation(final MUIElement element) {
+		MUIElement theParent = element.getParent();
+		if (theParent instanceof MTrimBar) {
+			MTrimBar trimContainer = (MTrimBar) theParent;
+			SideValue side = trimContainer.getSide();
+			if (side.getValue() == SideValue.LEFT_VALUE
+					|| side.getValue() == SideValue.RIGHT_VALUE)
+				return SWT.VERTICAL;
 		}
-		return newMenu;
+		return SWT.HORIZONTAL;
 	}
 
 	/*
@@ -234,7 +237,7 @@ public class NewMenuRenderer extends SWTPartRenderer {
 		if (container == null)
 			return;
 
-		MenuManager parentManager = modelToManager.get(container);
+		ToolBarManager parentManager = modelToManager.get(container);
 		if (parentManager == null) {
 			return;
 		}
@@ -244,7 +247,7 @@ public class NewMenuRenderer extends SWTPartRenderer {
 			MUIElement[] plist = parts.toArray(new MUIElement[parts.size()]);
 			for (int i = 0; i < plist.length; i++) {
 				MUIElement childME = plist[i];
-				modelProcessSwitch(parentManager, (MMenuElement) childME);
+				modelProcessSwitch(parentManager, (MToolBarElement) childME);
 			}
 		}
 		parentManager.update(false);
@@ -252,69 +255,60 @@ public class NewMenuRenderer extends SWTPartRenderer {
 
 	/**
 	 * @param parentManager
-	 * @param menuModel
-	 */
-	private void processMenu(MenuManager parentManager, MMenu menuModel) {
-		String menuText = getText(menuModel);
-		ImageDescriptor desc = getImageDescriptor(menuModel);
-		MenuManager menuManager = new MenuManager(menuText, desc,
-				menuModel.getElementId());
-		modelToManager.put(menuModel, menuManager);
-		parentManager.add(menuManager);
-		List<MMenuElement> parts = menuModel.getChildren();
-		if (parts != null) {
-			MMenuElement[] plist = parts
-					.toArray(new MMenuElement[parts.size()]);
-			for (int i = 0; i < plist.length; i++) {
-				MMenuElement childME = plist[i];
-				modelProcessSwitch(menuManager, childME);
-			}
-		}
-	}
-
-	/**
-	 * @param menuManager
 	 * @param childME
 	 */
-	void modelProcessSwitch(MenuManager menuManager, MMenuElement childME) {
-		if (childME instanceof MHandledMenuItem) {
-			MHandledMenuItem itemModel = (MHandledMenuItem) childME;
-			processHandledItem(menuManager, itemModel);
-		} else if (childME instanceof MDirectMenuItem) {
-			MDirectMenuItem itemModel = (MDirectMenuItem) childME;
-			processDirectItem(menuManager, itemModel, null);
-		} else if (childME instanceof MMenuSeparator) {
-			MMenuSeparator sep = (MMenuSeparator) childME;
-			processSeparator(menuManager, sep);
-		} else if (childME instanceof MMenu) {
-			MMenu itemModel = (MMenu) childME;
-			processMenu(menuManager, itemModel);
+	private void modelProcessSwitch(ToolBarManager parentManager,
+			MToolBarElement childME) {
+		if (childME instanceof MHandledToolItem) {
+			MHandledToolItem itemModel = (MHandledToolItem) childME;
+			processHandledItem(parentManager, itemModel);
+		} else if (childME instanceof MDirectToolItem) {
+			MDirectToolItem itemModel = (MDirectToolItem) childME;
+			processDirectItem(parentManager, itemModel);
+		} else if (childME instanceof MToolBarSeparator) {
+			MToolBarSeparator itemModel = (MToolBarSeparator) childME;
+			processSeparator(parentManager, itemModel);
+		} else if (childME instanceof MToolControl) {
+			MToolControl itemModel = (MToolControl) childME;
+			processToolControl(parentManager, itemModel);
 		}
 	}
 
 	/**
-	 * @param menuManager
+	 * @param parentManager
 	 * @param itemModel
 	 */
-	private void processSeparator(MenuManager menuManager,
-			MMenuSeparator itemModel) {
+	private void processSeparator(ToolBarManager parentManager,
+			MToolBarSeparator itemModel) {
 		AbstractGroupMarker marker = null;
 		if (itemModel.isVisible()) {
 			marker = new Separator(itemModel.getElementId());
 		} else {
 			marker = new GroupMarker(itemModel.getElementId());
 		}
-		menuManager.add(marker);
+		parentManager.add(marker);
 	}
 
 	/**
 	 * @param parentManager
 	 * @param itemModel
-	 * @param id
-	 *            TODO
 	 */
-	void processDirectItem(MenuManager parentManager,
-			MDirectMenuItem itemModel, String id) {
+	private void processToolControl(ToolBarManager parentManager,
+			MToolControl itemModel) {
+		final IEclipseContext lclContext = getContext(itemModel);
+		ToolControlContribution ci = ContextInjectionFactory.make(
+				ToolControlContribution.class, lclContext);
+		ci.setModel(itemModel);
+		parentManager.add(ci);
+		modelToContribution.put(itemModel, ci);
+	}
+
+	/**
+	 * @param parentManager
+	 * @param itemModel
+	 */
+	private void processDirectItem(ToolBarManager parentManager,
+			MDirectToolItem itemModel) {
 		final IEclipseContext lclContext = getContext(itemModel);
 		DirectContributionItem ci = ContextInjectionFactory.make(
 				DirectContributionItem.class, lclContext);
@@ -327,8 +321,8 @@ public class NewMenuRenderer extends SWTPartRenderer {
 	 * @param parentManager
 	 * @param itemModel
 	 */
-	void processHandledItem(MenuManager parentManager,
-			MHandledMenuItem itemModel) {
+	private void processHandledItem(ToolBarManager parentManager,
+			MHandledToolItem itemModel) {
 		final IEclipseContext lclContext = getContext(itemModel);
 		HandledContributionItem ci = ContextInjectionFactory.make(
 				HandledContributionItem.class, lclContext);
@@ -337,22 +331,4 @@ public class NewMenuRenderer extends SWTPartRenderer {
 		modelToContribution.put(itemModel, ci);
 	}
 
-	private String getText(MMenu menuModel) {
-		String text = menuModel.getLabel();
-		if (text == null || text.length() == 0) {
-			return NO_LABEL;
-		}
-		return text;
-	}
-
-	private ImageDescriptor getImageDescriptor(MUILabel element) {
-		IEclipseContext localContext = context;
-		String iconURI = element.getIconURI();
-		if (iconURI != null && iconURI.length() > 0) {
-			ISWTResourceUtilities resUtils = (ISWTResourceUtilities) localContext
-					.get(IResourceUtilities.class.getName());
-			return resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
-		}
-		return null;
-	}
 }
