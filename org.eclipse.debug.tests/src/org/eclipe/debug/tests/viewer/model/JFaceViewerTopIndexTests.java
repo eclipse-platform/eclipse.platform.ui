@@ -123,7 +123,8 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         while(fDisplay.readAndDispatch()) {}
         final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", originalTopPath);
-        Assert.assertEquals(elements[indexRevealElem], originalTopPath.getLastSegment());
+        // Bug 116105: On a Mac the reveal call is not reliable.  Use the viewer returned path instead.
+        // Assert.assertEquals(elements[indexRevealElem], originalTopPath.getLastSegment());
         
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset(true, false);
@@ -141,9 +142,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", topPath);
-        Assert.assertEquals(elements[indexRevealElem], topPath.getLastSegment());
         Assert.assertEquals(originalTopPath, topPath);
-        
     }
     
     /**
@@ -213,7 +212,8 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         getCTargetViewer().reveal(TreePath.EMPTY, 1);       
         while(fDisplay.readAndDispatch()) {}
         final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
-        Assert.assertNotNull("Top item should not be null!", originalTopPath);
+        // Bug 116105: On a Mac the reveal call is not reliable.  Use the viewer returned path instead.
+        // Assert.assertNotNull("Top item should not be null!", originalTopPath);
         Assert.assertEquals(elements[1], originalTopPath.getLastSegment());
         
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
@@ -231,7 +231,6 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", topPath);
-        Assert.assertEquals(elements[1], topPath.getLastSegment());
         Assert.assertEquals(originalTopPath, topPath);
         
     }
@@ -293,7 +292,6 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         while(fDisplay.readAndDispatch()) {}
         final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", originalTopPath);
-        Assert.assertEquals(elements[indexLastElem-1], originalTopPath.getLastSegment());
         
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset(true, false);
@@ -311,8 +309,6 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", topPath);
-        Assert.assertEquals(elements[indexLastElem-1], topPath.getLastSegment());
         Assert.assertEquals(originalTopPath, topPath);
-        
     }
 }
