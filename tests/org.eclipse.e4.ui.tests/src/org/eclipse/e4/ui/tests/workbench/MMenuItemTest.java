@@ -28,9 +28,12 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Widget;
 
 public class MMenuItemTest extends TestCase {
 	protected IEclipseContext appContext;
@@ -73,6 +76,8 @@ public class MMenuItemTest extends TestCase {
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
+
+		((MenuManager) ((Widget) menu.getWidget()).getData()).updateAll(true);
 
 		Object widget = menuItem.getWidget();
 		assertNotNull(widget);
@@ -149,6 +154,8 @@ public class MMenuItemTest extends TestCase {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
+		((MenuManager) ((Widget) menu.getWidget()).getData()).updateAll(true);
+
 		Object widget1 = menuItem1.getWidget();
 		assertNotNull(widget1);
 		assertTrue(widget1 instanceof MenuItem);
@@ -204,6 +211,8 @@ public class MMenuItemTest extends TestCase {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
+		((MenuManager) ((Widget) menu.getWidget()).getData()).updateAll(true);
+
 		Object widget1 = menuItem.getWidget();
 		assertNotNull(widget1);
 		assertTrue(widget1 instanceof MenuItem);
@@ -236,6 +245,10 @@ public class MMenuItemTest extends TestCase {
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
+
+		MenuManager barManager = (MenuManager) ((Menu) menu.getWidget())
+				.getData();
+		barManager.updateAll(true);
 
 		Object widget1 = menuItem.getWidget();
 		assertNotNull(widget1);

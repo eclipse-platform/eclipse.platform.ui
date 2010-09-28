@@ -13,8 +13,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
@@ -28,8 +26,7 @@ import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 
 public class WorkbenchRendererFactory implements IRendererFactory {
 
-	private MenuRenderer menuRenderer;
-	private HandledMenuItemRenderer handledMenuItemRenderer;
+	private NewMenuRenderer menuRenderer;
 	private ToolBarRenderer toolbarRenderer;
 	private ToolItemRenderer toolItemRenderer;
 	private SeparatorRenderer separatorRenderer;
@@ -44,7 +41,6 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private WBWRenderer wbwRenderer;
 
 	private IEclipseContext context;
-	private DirectMenuItemRenderer directMenuItemRenderer;
 	private RenderedMenuRenderer renderedMenuRenderer;
 	private RenderedMenuItemRenderer renderedMenuItemRenderer;
 	private RenderedToolBarRenderer renderedToolbarRenderer;
@@ -56,18 +52,6 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(contributedPartRenderer);
 			}
 			return contributedPartRenderer;
-		} else if (uiElement instanceof MHandledMenuItem) {
-			if (handledMenuItemRenderer == null) {
-				handledMenuItemRenderer = new HandledMenuItemRenderer();
-				initRenderer(handledMenuItemRenderer);
-			}
-			return handledMenuItemRenderer;
-		} else if (uiElement instanceof MDirectMenuItem) {
-			if (directMenuItemRenderer == null) {
-				directMenuItemRenderer = new DirectMenuItemRenderer();
-				initRenderer(directMenuItemRenderer);
-			}
-			return directMenuItemRenderer;
 		} else if (uiElement instanceof MRenderedMenu) {
 			if (renderedMenuRenderer == null) {
 				renderedMenuRenderer = new RenderedMenuRenderer();
@@ -82,7 +66,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 			return renderedMenuItemRenderer;
 		} else if (uiElement instanceof MMenu) {
 			if (menuRenderer == null) {
-				menuRenderer = new MenuRenderer();
+				menuRenderer = new NewMenuRenderer();
 				initRenderer(menuRenderer);
 			}
 			return menuRenderer;

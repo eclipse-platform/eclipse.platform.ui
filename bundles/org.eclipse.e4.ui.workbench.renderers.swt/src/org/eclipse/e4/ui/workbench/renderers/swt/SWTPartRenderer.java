@@ -89,9 +89,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		me.setWidget(widget);
 		((Widget) widget).setData(OWNING_ME, me);
 
-		// Remember which renderer created this widget
-		me.setRenderer(this);
-
 		// Set up the CSS Styling parameters; id & class
 		setCSSInfo(me, widget);
 
