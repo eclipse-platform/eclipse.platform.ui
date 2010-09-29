@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,15 +75,25 @@ public class BuildUtilities {
 		if (window == null) {
 			return new IProject[0];
 		}
-		ISelection selection = window.getSelectionService().getSelection();
+
+		IWorkbenchPage activePage= window.getActivePage();
+		if (activePage == null) {
+			return new IProject[0];
+		}
+
+		IWorkbenchPart activePart= activePage.getActivePart();
+		if (activePart == null) {
+			return new IProject[0];
+		}
+
+		ISelection selection= window.getSelectionService().getSelection(activePart.getSite().getId());
 		IProject[] selected = null;
 		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection) {
 			selected = extractProjects(((IStructuredSelection) selection).toArray());
 		} else {
 			//see if we can extract a selected project from the active editor
-			IWorkbenchPart part = window.getPartService().getActivePart();
-			if (part instanceof IEditorPart) {
-				IEditorPart editor = (IEditorPart) part;
+			if (activePart instanceof IEditorPart) {
+				IEditorPart editor= (IEditorPart)activePart;
 				IFile file = ResourceUtil.getFile(editor.getEditorInput());
 				if (file != null) {
 					selected = new IProject[] {file.getProject()};
