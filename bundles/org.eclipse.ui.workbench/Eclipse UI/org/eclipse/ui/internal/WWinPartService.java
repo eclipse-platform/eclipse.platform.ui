@@ -131,8 +131,8 @@ public class WWinPartService implements IPartService {
             activeRef = activePage.getActivePartReference();
         }
         
+		partService.setActivePart(activeRef);
 		selectionService.setActivePart(activePart);
-        partService.setActivePart(activeRef);
     }
 
     /*
