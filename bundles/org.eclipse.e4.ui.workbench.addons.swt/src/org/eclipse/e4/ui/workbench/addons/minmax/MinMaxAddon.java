@@ -68,12 +68,18 @@ public class MinMaxAddon {
 	@Inject
 	private IEclipseContext context;
 
-	private EventHandler ctfListener = new EventHandler() {
+	private EventHandler widgetListener = new EventHandler() {
 		public void handleEvent(Event event) {
 			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
 			Object widget = event.getProperty(EventTags.NEW_VALUE);
 			if (changedElement instanceof MArea && widget instanceof CTabFolder) {
 				final CTabFolder ctf = (CTabFolder) widget;
+
+				// Set the initial state of the maximized button
+				MPerspective persp = modelService.getPerspectiveFor(changedElement);
+				if (persp != null && persp.getTags().contains(EA_MAXIMIZED))
+					ctf.setMaximized(true);
+
 				ctf.addCTabFolder2Listener(new CTabFolder2Adapter() {
 					public void maximize(CTabFolderEvent event) {
 						MWindow window = modelService.getTopLevelWindowFor(changedElement);
@@ -162,23 +168,6 @@ public class MinMaxAddon {
 		}
 	};
 
-	private EventHandler initListener = new EventHandler() {
-		public void handleEvent(Event event) {
-			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
-			if (changedElement.getWidget() instanceof CTabFolder
-					&& changedElement.getTags().contains("EditorStack")) { //$NON-NLS-1$
-				CTabFolder ctf = (CTabFolder) changedElement.getWidget();
-				MWindow win = modelService.getTopLevelWindowFor(changedElement);
-				MPerspective curPersp = modelService.getActivePerspective(win);
-				if (curPersp.getTags().contains(EA_MAXIMIZED))
-					ctf.setMaximized(true);
-
-				// This is for startup only...
-				eventBroker.unsubscribe(initListener);
-			}
-		}
-	};
-
 	private EventHandler tagChangeListener = new EventHandler() {
 		public void handleEvent(Event event) {
 			final Object changedElement = event.getProperty(EventTags.ELEMENT);
@@ -251,7 +240,7 @@ public class MinMaxAddon {
 	@PostConstruct
 	void hookListeners() {
 		String topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET);
-		eventBroker.subscribe(topic, null, ctfListener, false);
+		eventBroker.subscribe(topic, null, widgetListener, false);
 		topic = UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN);
 		eventBroker.subscribe(topic, null, perspectiveRemovedListener, false);
@@ -261,8 +250,6 @@ public class MinMaxAddon {
 		topic = UIEvents.buildTopic(UIEvents.ApplicationElement.TOPIC,
 				UIEvents.ApplicationElement.TAGS);
 		eventBroker.subscribe(topic, null, tagChangeListener, false);
-		topic = UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET);
-		eventBroker.subscribe(topic, null, initListener, false);
 	}
 
 	/**
@@ -276,11 +263,10 @@ public class MinMaxAddon {
 
 	@PreDestroy
 	void unhookListeners() {
-		eventBroker.unsubscribe(ctfListener);
+		eventBroker.unsubscribe(widgetListener);
 		eventBroker.unsubscribe(perspectiveRemovedListener);
 		eventBroker.unsubscribe(perspectiveChangeListener);
 		eventBroker.unsubscribe(tagChangeListener);
-		eventBroker.unsubscribe(initListener);
 	}
 
 	void minimizeStack(MPartStack stack) {
