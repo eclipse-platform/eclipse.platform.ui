@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.RequestScope;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
@@ -108,7 +109,7 @@ public class NavServlet extends HttpServlet {
 		writer.write("<ul class=\"NavList\">\n"); //$NON-NLS-1$
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i=0;i<subtopics.length;++i) {
-			if (scope.inScope(subtopics[i])) {
+			if (ScopeUtils.showInTree(subtopics[i], scope)) {
 				writer.write("<li><a href=\""); //$NON-NLS-1$
 				String href = subtopics[i].getHref();
 				if (href == null) {
