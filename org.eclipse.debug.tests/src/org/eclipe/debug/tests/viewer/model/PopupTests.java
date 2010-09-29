@@ -203,7 +203,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         fViewer.setSelection(originalSelection);
 
         // Update the model
-        model.addElementChild(model.findElement("3"), 0, new TestElement(model, "3.0 - new", new TestElement[0]));
+        model.addElementChild(model.findElement("3"), null, 0, new TestElement(model, "3.0 - new", new TestElement[0]));
         
         // Create the delta for element "3" with content update.
         TreePath elementPath = model.findElement("3");

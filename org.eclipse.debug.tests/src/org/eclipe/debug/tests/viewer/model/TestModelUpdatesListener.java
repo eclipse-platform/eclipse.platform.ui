@@ -369,7 +369,7 @@ public class TestModelUpdatesListener
             } if (update instanceof IChildrenCountUpdate) {
                 fChildCountUpdatesRunning.add(update);
             } else if (update instanceof IChildrenUpdate) {
-                fChildCountUpdatesRunning.add(update);
+                fChildrenUpdatesRunning.add(update);
             } 
         }
     }

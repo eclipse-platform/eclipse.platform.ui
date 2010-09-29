@@ -184,6 +184,9 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
      *     3.1
      *       3.1.1
      * ...
+     *   (size)
+     *     (size).1
+     *       (size).1.1
      */
     private TestModel alternatingSubsreesModel(int size) {
         TestModel model = new TestModel();
@@ -410,7 +413,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fViewer.setSelection(originalSelection);
 
         // Update the model
-        model.addElementChild(model.findElement("3"), 0, new TestElement(model, "3.0 - new", new TestElement[0]));
+        model.addElementChild(model.findElement("3"), null, 0, new TestElement(model, "3.0 - new", new TestElement[0]));
         
         // Create the delta for element "3" with content update.
         TreePath elementPath = model.findElement("3");
@@ -486,7 +489,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
             
             // Update the model again
-            model.addElementChild(TreePath.EMPTY, 0, new TestElement(model, "1", new TestElement[0]));
+            model.addElementChild(TreePath.EMPTY, null, 0, new TestElement(model, "1", new TestElement[0]));
             
             // Note: Re-expanding nodes causes redundant updates.
             fListener.reset(false, false);
@@ -548,7 +551,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
         
         // Update the model again
-        model.addElementChild(TreePath.EMPTY, 0, new TestElement(model, "1", new TestElement[0]));
+        model.addElementChild(TreePath.EMPTY, null, 0, new TestElement(model, "1", new TestElement[0]));
         
         // Note: Re-expanding nodes causes redundant updates.
         fListener.reset(false, false);

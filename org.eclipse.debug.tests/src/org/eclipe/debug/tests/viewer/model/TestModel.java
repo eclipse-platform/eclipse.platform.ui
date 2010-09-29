@@ -455,14 +455,16 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         return rootDelta;
     }    
 
-    public ModelDelta addElementChild(TreePath parentPath, int index, TestElement newChild) {
-        ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
+    public ModelDelta addElementChild(TreePath parentPath, ModelDelta rootDelta, int index, TestElement newChild) {
+        if (rootDelta == null) {
+            rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
+        }
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(parentPath);
 
         // Find the parent element and generate the delta node for it.
         TestElement element = getElement(relativePath);
-        ModelDelta delta= getElementDelta(baseDelta, relativePath, false);
+        ModelDelta delta= getElementDelta(baseDelta, relativePath, true);
 
         // Add the new element
         element.fChildren = doInsertElementInArray(element.fChildren, index, newChild);

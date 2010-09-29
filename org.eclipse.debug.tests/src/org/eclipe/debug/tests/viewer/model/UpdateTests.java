@@ -173,7 +173,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
     }
     
     private void addElement(TestModel model, String label, int position, boolean validate) {
-        ModelDelta delta = model.addElementChild(TreePath.EMPTY, position, new TestElement(model, label, new TestElement[0]));
+        ModelDelta delta = model.addElementChild(TreePath.EMPTY, null, position, new TestElement(model, label, new TestElement[0]));
         
         // Remove delta should generate no new updates, but we still need to wait for the event to
         // be processed.
