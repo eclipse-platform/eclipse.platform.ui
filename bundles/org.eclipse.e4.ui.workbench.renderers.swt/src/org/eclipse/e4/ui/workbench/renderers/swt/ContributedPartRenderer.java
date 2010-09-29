@@ -15,9 +15,14 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
@@ -36,7 +41,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 
 		final Composite newComposite = new Composite((Composite) parentWidget,
 				SWT.NONE);
-		newComposite.setLayout(new FillLayout());
+		newComposite.setLayout(new FillLayout(SWT.VERTICAL));
 
 		newWidget = newComposite;
 		bindWidget(element, newWidget);
@@ -53,6 +58,56 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		part.setObject(newPart);
 
 		return newWidget;
+	}
+
+	public static void setDescription(MPart part, String description) {
+		if (!(part.getWidget() instanceof Composite))
+			return;
+
+		Composite c = (Composite) part.getWidget();
+
+		// Do we already have a label?
+		if (c.getChildren().length == 2) {
+			Label label = (Label) c.getChildren()[0];
+			if (description == null)
+				description = ""; //$NON-NLS-1$
+			label.setText(description);
+			c.layout();
+		} else if (c.getChildren().length == 1) {
+			c.setLayout(new Layout() {
+
+				@Override
+				protected Point computeSize(Composite composite, int wHint,
+						int hHint, boolean flushCache) {
+					return new Point(0, 0);
+				}
+
+				@Override
+				protected void layout(Composite composite, boolean flushCache) {
+					Rectangle bounds = composite.getBounds();
+					if (composite.getChildren().length == 1) {
+						composite.getChildren()[0].setBounds(composite
+								.getBounds());
+					} else if (composite.getChildren().length == 2) {
+						Label label = (Label) composite.getChildren()[0];
+						Control partCtrl = composite.getChildren()[1];
+
+						int labelHeight = label.computeSize(bounds.width,
+								SWT.DEFAULT).y;
+						label.setBounds(0, 0, bounds.width, labelHeight);
+
+						partCtrl.setBounds(0, labelHeight, bounds.width,
+								bounds.height - labelHeight);
+					}
+				}
+			});
+
+			Control partCtrl = c.getChildren()[0];
+			Label label = new Label(c, SWT.NONE);
+			label.setText(description);
+			label.moveAbove(partCtrl);
+			c.layout();
+		}
 	}
 
 	/*

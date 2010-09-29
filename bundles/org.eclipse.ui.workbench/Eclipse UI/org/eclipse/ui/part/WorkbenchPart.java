@@ -10,16 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import com.ibm.icu.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.workbench.renderers.swt.ContributedPartRenderer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -34,12 +35,11 @@ import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Abstract base implementation of all workbench parts.
@@ -448,6 +448,10 @@ public abstract class WorkbenchPart extends EventManager implements
 		}
         this.contentDescription = description;
 
+		if (partSite instanceof PartSite) {
+			PartSite site = (PartSite) partSite;
+			ContributedPartRenderer.setDescription(site.getModel(), description);
+		}
         firePropertyChange(IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION);
     }
 
