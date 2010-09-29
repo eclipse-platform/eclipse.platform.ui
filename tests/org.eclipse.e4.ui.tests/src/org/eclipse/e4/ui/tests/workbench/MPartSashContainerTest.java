@@ -23,8 +23,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 
 public class MPartSashContainerTest extends TestCase {
 	protected IEclipseContext appContext;
@@ -75,18 +73,5 @@ public class MPartSashContainerTest extends TestCase {
 
 		Object widget = partSashContainer.getWidget();
 		assertNotNull(widget);
-		assertTrue(widget instanceof SashForm);
-
-		SashForm sashForm = (SashForm) widget;
-		assertEquals(SWT.HORIZONTAL, sashForm.getOrientation());
-
-		partSashContainer.setHorizontal(false);
-		assertEquals(SWT.VERTICAL, sashForm.getOrientation());
-
-		partSashContainer.setHorizontal(true);
-		assertEquals(SWT.HORIZONTAL, sashForm.getOrientation());
-
-		partSashContainer.setHorizontal(true);
-		assertEquals(SWT.HORIZONTAL, sashForm.getOrientation());
 	}
 }

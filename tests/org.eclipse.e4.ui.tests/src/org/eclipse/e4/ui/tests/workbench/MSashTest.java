@@ -23,8 +23,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
@@ -122,50 +120,6 @@ public class MSashTest extends TestCase {
 		assertTrue("Part1 data is not an integer", cdVal1 != -1);
 
 		assertTrue("Values should be equal", cdVal0 == cdVal1);
-
-		testWeights(sash, 50, 50);
-	}
-
-	private void testWeights(MPartSashContainer sf, double w1, double w2) {
-		double baseRatio = w1 / w2;
-
-		MPart part0 = (MPart) sf.getChildren().get(0);
-		MPart part1 = (MPart) sf.getChildren().get(1);
-
-		int cdVal0 = -1;
-		try {
-			cdVal0 = Integer.parseInt(part0.getContainerData());
-		} catch (NumberFormatException e) {
-		}
-		assertTrue("Part0 data is not an integer", cdVal0 != -1);
-
-		int cdVal1 = -1;
-		try {
-			cdVal1 = Integer.parseInt(part1.getContainerData());
-		} catch (NumberFormatException e) {
-		}
-		assertTrue("Part1 data is not an integer", cdVal1 != -1);
-
-		// test the model
-		checkRatio("MSashForm", cdVal0, cdVal1, baseRatio);
-
-		// test the SashForm
-		SashForm sfw = (SashForm) sf.getWidget();
-		int[] sfwWghts = sfw.getWeights();
-		checkRatio("SWT SashForm", sfwWghts[0], sfwWghts[1], baseRatio);
-
-		// Test the controls (assume vertical for now)
-		Composite c1 = (Composite) sfw.getChildren()[0];
-		Composite c2 = (Composite) sfw.getChildren()[1];
-		checkRatio("Control Bounds", c1.getSize().y, c2.getSize().y, baseRatio);
-	}
-
-	private void checkRatio(String label, int num, int div, double baseRatio) {
-		double ratio = (double) num / (double) div;
-
-		double TOLERANCE = 0.1;
-		boolean withinTolerance = Math.abs(ratio - baseRatio) < TOLERANCE;
-		assertTrue("Ratio mismatch on" + label + "weights", withinTolerance);
 	}
 
 	private MWindow createSashWithNViews(int n) {

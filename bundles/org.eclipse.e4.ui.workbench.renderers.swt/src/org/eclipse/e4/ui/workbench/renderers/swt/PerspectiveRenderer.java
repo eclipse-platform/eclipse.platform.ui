@@ -18,7 +18,6 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
@@ -38,10 +37,10 @@ public class PerspectiveRenderer extends SWTPartRenderer {
 			return null;
 
 		Composite perspArea = new Composite((Composite) parent, SWT.NONE);
+		perspArea.setLayout(new SashLayout(perspArea, null));
 		IStylingEngine stylingEngine = (IStylingEngine) getContext(element)
 				.get(IStylingEngine.SERVICE_NAME);
 		stylingEngine.setClassname(perspArea, "perspectiveLayout"); //$NON-NLS-1$
-		perspArea.setLayout(new FillLayout());
 
 		return perspArea;
 	}
@@ -66,6 +65,25 @@ public class PerspectiveRenderer extends SWTPartRenderer {
 		for (MWindow dw : persp.getWindows()) {
 			renderer.createGui(dw, shell, persp.getContext());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#childRendered
+	 * (org.eclipse.e4.ui.model.application.ui.MElementContainer,
+	 * org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	@Override
+	public void childRendered(MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
+		// TODO Auto-generated method stub
+		super.childRendered(parentElement, element);
+
+		Composite comp = (Composite) parentElement.getWidget();
+		SashLayout sl = (SashLayout) comp.getLayout();
+		sl.setRootElemenr(element);
 	}
 
 	/*

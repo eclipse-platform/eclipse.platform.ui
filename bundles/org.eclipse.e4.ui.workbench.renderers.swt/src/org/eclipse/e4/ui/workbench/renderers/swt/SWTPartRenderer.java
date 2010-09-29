@@ -87,20 +87,24 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	public void bindWidget(MUIElement me, Object widget) {
 		// Create a bi-directional link between the widget and the model
 		me.setWidget(widget);
-		((Widget) widget).setData(OWNING_ME, me);
 
-		// Set up the CSS Styling parameters; id & class
-		setCSSInfo(me, widget);
+		if (widget instanceof Widget) {
+			((Widget) widget).setData(OWNING_ME, me);
 
-		// Ensure that disposed widgets are unbound form the model
-		Widget swtWidget = (Widget) widget;
-		swtWidget.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				MUIElement element = (MUIElement) e.widget.getData(OWNING_ME);
-				if (element != null)
-					unbindWidget(element);
-			}
-		});
+			// Set up the CSS Styling parameters; id & class
+			setCSSInfo(me, widget);
+
+			// Ensure that disposed widgets are unbound form the model
+			Widget swtWidget = (Widget) widget;
+			swtWidget.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					MUIElement element = (MUIElement) e.widget
+							.getData(OWNING_ME);
+					if (element != null)
+						unbindWidget(element);
+				}
+			});
+		}
 	}
 
 	public Object unbindWidget(MUIElement me) {
@@ -122,17 +126,19 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	public void disposeWidget(MUIElement element) {
-		Widget curWidget = (Widget) element.getWidget();
+		if (element.getWidget() instanceof Widget) {
+			Widget curWidget = (Widget) element.getWidget();
 
-		if (curWidget != null && !curWidget.isDisposed()) {
-			unbindWidget(element);
-			curWidget.dispose();
+			if (curWidget != null && !curWidget.isDisposed()) {
+				unbindWidget(element);
+				curWidget.dispose();
+			}
 		}
 		element.setWidget(null);
 	}
 
 	public void hookControllerLogic(final MUIElement me) {
-		Widget widget = (Widget) me.getWidget();
+		Object widget = me.getWidget();
 
 		// add an accessibility listener (not sure if this is in the wrong place
 		// (factory?)

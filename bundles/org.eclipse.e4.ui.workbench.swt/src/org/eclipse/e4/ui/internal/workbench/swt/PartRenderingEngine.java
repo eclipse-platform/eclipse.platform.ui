@@ -188,7 +188,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				boolean renderIt = !isStack || hasWidget || isSelected;
 				if (renderIt) {
 					// NOTE: createGui will call 'childAdded' if successful
-					Widget w = (Widget) createGui(added);
+					Object w = createGui(added);
 					if (w instanceof Control && !(w instanceof Shell)) {
 						fixZOrder(added);
 						((Control) w).getShell().layout(
@@ -381,6 +381,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (ctrl.getParent() != parentWidget) {
 					ctrl.setParent((Composite) parentWidget);
 				}
+			}
+
+			// Now that we have a widget let the parent (if any) know
+			if (element.getParent() instanceof MUIElement) {
+				MElementContainer<MUIElement> parentElement = element
+						.getParent();
+				AbstractPartRenderer parentRenderer = getRendererFor(parentElement);
+				if (parentRenderer != null)
+					parentRenderer.childRendered(parentElement, element);
 			}
 			return element.getWidget();
 		}
