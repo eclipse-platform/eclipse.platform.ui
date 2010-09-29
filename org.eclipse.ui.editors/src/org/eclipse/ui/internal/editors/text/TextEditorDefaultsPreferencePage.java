@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,20 +39,24 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 
@@ -81,7 +93,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 
-	public final class InitializerFactory {
+	public static final class InitializerFactory {
+
+		private final IPreferenceStore fPreferenceStore;
+
+		public InitializerFactory(IPreferenceStore preferenceStore) {
+			fPreferenceStore= preferenceStore;
+		}
+
 		private class TextInitializer extends Initializer {
 			private final Text fText;
 
@@ -90,7 +109,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				fText= control;
 			}
 			public void initialize() {
-				String value= fOverlayStore.getString(fPreference.getKey());
+				String value= fPreferenceStore.getString(fPreference.getKey());
 				fText.setText(value);
 			}
 		}
@@ -103,7 +122,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				fControl= control;
 			}
 			public void initialize() {
-				boolean value= fOverlayStore.getBoolean(fPreference.getKey());
+				boolean value= fPreferenceStore.getBoolean(fPreference.getKey());
 				fControl.setSelection(value);
 			}
 		}
@@ -118,7 +137,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				fDomain= domain;
 			}
 			public void initialize() {
-				int value= fOverlayStore.getInt(fPreference.getKey());
+				int value= fPreferenceStore.getInt(fPreference.getKey());
 				EnumValue enumValue= fDomain.getValueByInteger(value);
 				if (enumValue != null) {
 					int index= fDomain.getIndex(enumValue);
@@ -138,7 +157,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				fDomain= domain;
 			}
 			public void initialize() {
-				int value= fOverlayStore.getInt(fPreference.getKey());
+				int value= fPreferenceStore.getInt(fPreference.getKey());
 				EnumValue enumValue= fDomain.getValueByInteger(value);
 				if (enumValue != null) {
 					fControl.setSelection(value);
@@ -368,6 +387,181 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 	}
 
+	private static class WhitespaceCharacterPainterOptionsDialog extends Dialog {
+
+		private java.util.List fDialogInitializers= new ArrayList();
+
+		private OverlayPreferenceStore fDialogOverlayStore;
+
+		private final IPreferenceStore fParentPreferenceStore;
+
+		private InitializerFactory fDialogInitializerFactory;
+
+		protected WhitespaceCharacterPainterOptionsDialog(Shell parentShell, IPreferenceStore parent) {
+			super(parentShell);
+			fParentPreferenceStore= parent;
+			fDialogOverlayStore= createDialogOverlayStore();
+			fDialogInitializerFactory= new InitializerFactory(fDialogOverlayStore);
+		}
+
+		private OverlayPreferenceStore createDialogOverlayStore() {
+			ArrayList overlayKeys= new ArrayList();
+
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_SPACES));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_SPACES));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_SPACES));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_IDEOGRAPHIC_SPACES));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_IDEOGRAPHIC_SPACES));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_TABS));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_TABS));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_TABS));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_CARRIAGE_RETURN));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LINE_FEED));
+
+			OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
+			overlayKeys.toArray(keys);
+			return new OverlayPreferenceStore(fParentPreferenceStore, keys);
+		}
+
+		protected void configureShell(Shell newShell) {
+			super.configureShell(newShell);
+			newShell.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_showWhitespaceCharactersDialogTitle);
+		}
+
+		protected Control createContents(Composite parent) {
+			Control contents= super.createContents(parent);
+			Dialog.applyDialogFont(contents);
+			fDialogOverlayStore.load();
+			fDialogOverlayStore.start();
+			initializeShowWhitespaceCharactersPreferences();
+			return contents;
+		}
+
+		private void initializeShowWhitespaceCharactersPreferences() {
+			for (Iterator it= fDialogInitializers.iterator(); it.hasNext();) {
+				Initializer initializer= (Initializer)it.next();
+				initializer.initialize();
+			}
+		}
+
+		protected Control createDialogArea(Composite parent) {
+			Composite composite= (Composite)super.createDialogArea(parent);
+
+			Label description= new Label(composite, SWT.NONE);
+			description.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_configureWhitespaceCharacterPainterProperties);
+			description.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
+
+			Composite tabularComposite= new Composite(composite, SWT.NONE);
+			GridLayout layout= new GridLayout();
+			layout.numColumns= 4;
+			layout.marginHeight= 0;
+			layout.marginWidth= 0;
+			layout.makeColumnsEqualWidth= true;
+			tabularComposite.setLayout(layout);
+
+			Label label;
+			Button checkbox;
+			Preference preference;
+
+			label= new Label(tabularComposite, SWT.NONE);
+			label.setText(""); //$NON-NLS-1$
+			label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+
+			label= new Label(tabularComposite, SWT.NONE);
+			label.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_leading);
+			label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+
+			label= new Label(tabularComposite, SWT.NONE);
+			label.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_enclosed);
+			label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+
+			label= new Label(tabularComposite, SWT.NONE);
+			label.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_trailing);
+			label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+
+			label= new Label(tabularComposite, SWT.NONE);
+			label.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_space);
+			label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_SPACES, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_SPACES, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_SPACES, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+
+			label= new Label(tabularComposite, SWT.NONE);
+			label.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_ideographicSpace);
+			label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_IDEOGRAPHIC_SPACES, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_IDEOGRAPHIC_SPACES, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+
+			label= new Label(tabularComposite, SWT.NONE);
+			label.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_tab);
+			label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_TABS, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_TABS, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_TABS, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+
+			label= new Label(tabularComposite, SWT.NONE);
+			label.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_carriageReturn);
+			label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			checkbox= new Button(tabularComposite, SWT.CHECK);
+			checkbox.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+			checkbox.setEnabled(false);
+			checkbox= new Button(tabularComposite, SWT.CHECK);
+			checkbox.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+			checkbox.setEnabled(false);
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_CARRIAGE_RETURN, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+
+			label= new Label(tabularComposite, SWT.NONE);
+			label.setText(TextEditorMessages.TextEditorDefaultsPreferencePage_lineFeed);
+			label.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
+			checkbox= new Button(tabularComposite, SWT.CHECK);
+			checkbox.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+			checkbox.setEnabled(false);
+			checkbox= new Button(tabularComposite, SWT.CHECK);
+			checkbox.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
+			checkbox.setEnabled(false);
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LINE_FEED, "", null); //$NON-NLS-1$
+			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
+
+			return composite;
+		}
+
+		private Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {
+			final Button checkBox= new Button(composite, SWT.CHECK);
+			checkBox.setToolTipText(preference.getDescription());
+
+			GridData gd= new GridData(SWT.CENTER, SWT.CENTER, false, false);
+			gd.horizontalIndent= indentation;
+			checkBox.setLayoutData(gd);
+			checkBox.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					boolean value= checkBox.getSelection();
+					IStatus status= domain.validate(Boolean.valueOf(value));
+					if (!status.matches(IStatus.ERROR))
+						fDialogOverlayStore.setValue(preference.getKey(), value);
+				}
+			});
+
+			fDialogInitializers.add(fDialogInitializerFactory.create(preference, checkBox));
+			return checkBox;
+		}
+
+		protected void okPressed() {
+			super.okPressed();
+			fDialogOverlayStore.propagate();
+		}
+	}
 
 	private final String[][] fAppearanceColorListModel= new String[][] {
 		{TextEditorMessages.TextEditorPreferencePage_lineNumberForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null},
@@ -396,7 +590,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	private java.util.List fInitializers= new ArrayList();
 
-	private InitializerFactory fInitializerFactory= new InitializerFactory();
+	private InitializerFactory fInitializerFactory;
 
 	private Map fDomains= new HashMap();
 
@@ -405,6 +599,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		setPreferenceStore(EditorsPlugin.getDefault().getPreferenceStore());
 
 		fOverlayStore= createOverlayStore();
+		fInitializerFactory= new InitializerFactory(fOverlayStore);
 	}
 
 	private OverlayPreferenceStore createOverlayStore() {
@@ -451,6 +646,18 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TEXT_DRAG_AND_DROP_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HOVER_ENRICH_MODE));
+
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_SPACES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_SPACES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_SPACES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_IDEOGRAPHIC_SPACES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_IDEOGRAPHIC_SPACES));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LEADING_TABS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_ENCLOSED_TABS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_TABS));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_CARRIAGE_RETURN));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LINE_FEED));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -551,7 +758,12 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_showWhitespaceCharacters;
 		Preference showWhitespaceCharacters= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_WHITESPACE_CHARACTERS, label, null);
-		addCheckBox(appearanceComposite, showWhitespaceCharacters, new BooleanDomain(), 0);
+		addCheckBoxWithLink(appearanceComposite, showWhitespaceCharacters, new BooleanDomain(), 0, new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Dialog dialog= new WhitespaceCharacterPainterOptionsDialog(Display.getDefault().getActiveShell(), fOverlayStore);
+				dialog.open();
+			}
+		});
 
 		label= TextEditorMessages.TextEditorPreferencePage_showAffordance;
 		Preference showAffordance= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, label, null);
@@ -814,6 +1026,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		filler.setLayoutData(gd);
 	}
 
+	private void checkboxControlChanged(final Preference preference, final Domain domain, final Button checkBox) {
+		boolean value= checkBox.getSelection();
+		IStatus status= domain.validate(Boolean.valueOf(value));
+		if (!status.matches(IStatus.ERROR))
+			fOverlayStore.setValue(preference.getKey(), value);
+		updateStatus(status);
+	}
+
 	Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {
 		final Button checkBox= new Button(composite, SWT.CHECK);
 		checkBox.setText(preference.getName());
@@ -825,16 +1045,90 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		checkBox.setLayoutData(gd);
 		checkBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				boolean value= checkBox.getSelection();
-				IStatus status= domain.validate(Boolean.valueOf(value));
-				if (!status.matches(IStatus.ERROR))
-					fOverlayStore.setValue(preference.getKey(), value);
-				updateStatus(status);
+				checkboxControlChanged(preference, domain, checkBox);
 			}
 		});
 
 		fInitializers.add(fInitializerFactory.create(preference, checkBox));
 
+		return checkBox;
+	}
+
+	Button addCheckBoxWithLink(Composite parent, final Preference preference, final Domain domain, int indentation, SelectionListener listener) {
+		GridData gd= new GridData(GridData.FILL, GridData.FILL, true, false);
+		gd.horizontalSpan= 3;
+		gd.horizontalIndent= indentation;
+
+		Composite composite= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.numColumns= 2;
+		composite.setLayout(layout);
+		composite.setLayoutData(gd);
+
+		final Button checkBox= new Button(composite, SWT.CHECK);
+		checkBox.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+		checkBox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				checkboxControlChanged(preference, domain, checkBox);
+			}
+		});
+		checkBox.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result= LegacyActionTools.removeMnemonics(preference.getName().replaceAll("</?[aA][^>]*>", "")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		});
+
+		gd= new GridData(GridData.FILL, GridData.CENTER, false, false);
+		gd.horizontalIndent= -2;
+
+		Link link= new Link(composite, SWT.NONE);
+		link.setText(preference.getName());
+		link.setLayoutData(gd);
+		if (listener != null) {
+			link.addSelectionListener(listener);
+		}
+
+		// toggle checkbox when user clicks unlinked text in link:
+		final boolean[] linkSelected= { false };
+		link.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				linkSelected[0]= true;
+			}
+		});
+		//Focus listener is required when the link opens a dialog
+		link.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+				linkSelected[0]= true;
+			}
+		});
+		link.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				linkSelected[0]= false;
+			}
+			public void mouseUp(MouseEvent e) {
+				if (!linkSelected[0]) {
+					checkBox.setSelection(!checkBox.getSelection());
+					checkBox.setFocus();
+					linkSelected[0]= false;
+					checkboxControlChanged(preference, domain, checkBox);
+				}
+			}
+		});
+		link.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit == true) {
+					e.detail= SWT.TRAVERSE_NONE;
+					checkBox.setSelection(!checkBox.getSelection());
+					checkBox.setFocus();
+					linkSelected[0]= false;
+					checkboxControlChanged(preference, domain, checkBox);
+				}
+			}
+		});
+
+		fInitializers.add(fInitializerFactory.create(preference, checkBox));
 		return checkBox;
 	}
 

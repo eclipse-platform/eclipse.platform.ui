@@ -2123,10 +2123,152 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 *
+	 * 
+	 * <p>
+	 * The following preferences can be used for fine-grained configuration when enabled.
+	 * <ul>
+	 * <li>{@link #PREFERENCE_SHOW_LEADING_SPACES}</li>
+	 * <li>{@link #PREFERENCE_SHOW_ENCLOSED_SPACES}</li>
+	 * <li>{@link #PREFERENCE_SHOW_TRAILING_SPACES}</li>
+	 * <li>{@link #PREFERENCE_SHOW_LEADING_IDEOGRAPHIC_SPACES}</li>
+	 * <li>{@link #PREFERENCE_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES}</li>
+	 * <li>{@link #PREFERENCE_SHOW_TRAILING_IDEOGRAPHIC_SPACES}</li>
+	 * <li>{@link #PREFERENCE_SHOW_LEADING_TABS}</li>
+	 * <li>{@link #PREFERENCE_SHOW_ENCLOSED_TABS}</li>
+	 * <li>{@link #PREFERENCE_SHOW_TRAILING_TABS}</li>
+	 * <li>{@link #PREFERENCE_SHOW_CARRIAGE_RETURN}</li>
+	 * <li>{@link #PREFERENCE_SHOW_LINE_FEED}</li>
+	 * </ul>
+	 * </p>
+	 * 
 	 * @since 3.3
 	 */
 	public static final String PREFERENCE_SHOW_WHITESPACE_CHARACTERS= "showWhitespaceCharacters"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of leading Space characters. The value is used
+	 * only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_LEADING_SPACES= "showLeadingSpaces"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of enclosed Space characters. The value is used
+	 * only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_ENCLOSED_SPACES= "showEnclosedSpaces"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of trailing Space characters. The value is used
+	 * only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_TRAILING_SPACES= "showTrailingSpaces"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of leading Ideographic Space characters. The
+	 * value is used only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is
+	 * <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_LEADING_IDEOGRAPHIC_SPACES= "showLeadingIdeographicSpaces"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of enclosed Ideographic Space characters. The
+	 * value is used only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is
+	 * <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES= "showEnclosedIdeographicSpaces"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of trailing Ideographic Space characters. The
+	 * value is used only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is
+	 * <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_TRAILING_IDEOGRAPHIC_SPACES= "showTrailingIdeographicSpaces"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of leading Tab characters. The value is used
+	 * only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_LEADING_TABS= "showLeadingTabs"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of enclosed Tab characters. The value is used
+	 * only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_ENCLOSED_TABS= "showEnclosedTabs"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of trailing Tab characters. The value is used
+	 * only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_TRAILING_TABS= "showTrailingTabs"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of Carriage Return characters. The value is used
+	 * only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_CARRIAGE_RETURN= "showCarriageReturn"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the display of Line Feed characters. The value is used only
+	 * if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_SHOW_LINE_FEED= "showLineFeed"; //$NON-NLS-1$
+
 	/**
 	 * A named preference that controls whether text drag and drop is enabled.
 	 * <p>
@@ -4484,7 +4626,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 		}
 
-		if (PREFERENCE_SHOW_WHITESPACE_CHARACTERS.equals(property)) {
+		if (PREFERENCE_SHOW_WHITESPACE_CHARACTERS.equals(property) ||
+				PREFERENCE_SHOW_LEADING_SPACES.equals(property) ||
+				PREFERENCE_SHOW_ENCLOSED_SPACES.equals(property) ||
+				PREFERENCE_SHOW_TRAILING_SPACES.equals(property) ||
+				PREFERENCE_SHOW_LEADING_IDEOGRAPHIC_SPACES.equals(property) ||
+				PREFERENCE_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES.equals(property) ||
+				PREFERENCE_SHOW_TRAILING_IDEOGRAPHIC_SPACES.equals(property) ||
+				PREFERENCE_SHOW_LEADING_TABS.equals(property) ||
+				PREFERENCE_SHOW_ENCLOSED_TABS.equals(property) ||
+				PREFERENCE_SHOW_TRAILING_TABS.equals(property) ||
+				PREFERENCE_SHOW_CARRIAGE_RETURN.equals(property) ||
+				PREFERENCE_SHOW_LINE_FEED.equals(property)) {
 			IAction action= getAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS);
 			if (action instanceof IUpdate)
 				((IUpdate)action).update();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc., IBM Corporation and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc., IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,28 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	private IPreferenceStore fStore;
 	/** The painter. */
 	private IPainter fWhitespaceCharPainter;
+	/** @since 3.7 */
+	private boolean fShowLeadingSpaces;
+	/** @since 3.7 */
+	private boolean fShowEnclosedSpaces;
+	/** @since 3.7 */
+	private boolean fShowTrailingSpaces;
+	/** @since 3.7 */
+	private boolean fShowLeadingIdeographicSpaces;
+	/** @since 3.7 */
+	private boolean fShowEnclosedIdeographicSpaces;
+	/** @since 3.7 */
+	private boolean fShowTrailingIdeographicSpace;
+	/** @since 3.7 */
+	private boolean fShowLeadingTabs;
+	/** @since 3.7 */
+	private boolean fShowEnclosedTabs;
+	/** @since 3.7 */
+	private boolean fShowTrailingTabs;
+	/** @since 3.7 */
+	private boolean fShowCarriageReturn;
+	/** @since 3.7 */
+	private boolean fShowLineFeed;
 
 	/**
 	 * Construct the action and initialize its state.
@@ -90,7 +112,8 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 
 		ITextViewer viewer= getTextViewer();
 		if (viewer instanceof ITextViewerExtension2) {
-			fWhitespaceCharPainter= new WhitespaceCharacterPainter(viewer);
+			fWhitespaceCharPainter= new WhitespaceCharacterPainter(viewer, fShowLeadingSpaces, fShowEnclosedSpaces, fShowTrailingSpaces, fShowLeadingIdeographicSpaces, fShowEnclosedIdeographicSpaces,
+					fShowTrailingIdeographicSpace, fShowLeadingTabs, fShowEnclosedTabs, fShowTrailingTabs, fShowCarriageReturn, fShowLineFeed);
 			((ITextViewerExtension2)viewer).addPainter(fWhitespaceCharPainter);
 		}
 	}
@@ -128,12 +151,27 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	 */
 	private void synchronizeWithPreference() {
 		boolean checked= false;
-		if (fStore != null)
+		if (fStore != null) {
 			checked= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS);
+			fShowLeadingSpaces= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_LEADING_SPACES);
+			fShowEnclosedSpaces= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_ENCLOSED_SPACES);
+			fShowTrailingSpaces= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_TRAILING_SPACES);
+			fShowLeadingIdeographicSpaces= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_LEADING_IDEOGRAPHIC_SPACES);
+			fShowEnclosedIdeographicSpaces= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES);
+			fShowTrailingIdeographicSpace= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_TRAILING_IDEOGRAPHIC_SPACES);
+			fShowLeadingTabs= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_LEADING_TABS);
+			fShowEnclosedTabs= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_ENCLOSED_TABS);
+			fShowTrailingTabs= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_TRAILING_TABS);
+			fShowCarriageReturn= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_CARRIAGE_RETURN);
+			fShowLineFeed= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_LINE_FEED);
+		}
 
 		if (checked != isChecked()) {
 			setChecked(checked);
 			togglePainterState(checked);
+		} else if (checked) {
+			uninstallPainter();
+			installPainter();
 		}
 	}
 

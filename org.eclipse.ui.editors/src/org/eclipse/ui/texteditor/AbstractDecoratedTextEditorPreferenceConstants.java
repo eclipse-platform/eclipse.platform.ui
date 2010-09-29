@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -394,10 +394,152 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 *
+	 * 
+	 * <p>
+	 * The following preferences can be used for fine-grained configuration when enabled.
+	 * <ul>
+	 * <li>{@link #EDITOR_SHOW_LEADING_SPACES}</li>
+	 * <li>{@link #EDITOR_SHOW_ENCLOSED_SPACES}</li>
+	 * <li>{@link #EDITOR_SHOW_TRAILING_SPACES}</li>
+	 * <li>{@link #EDITOR_SHOW_LEADING_IDEOGRAPHIC_SPACES}</li>
+	 * <li>{@link #EDITOR_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES}</li>
+	 * <li>{@link #EDITOR_SHOW_TRAILING_IDEOGRAPHIC_SPACES}</li>
+	 * <li>{@link #EDITOR_SHOW_LEADING_TABS}</li>
+	 * <li>{@link #EDITOR_SHOW_ENCLOSED_TABS}</li>
+	 * <li>{@link #EDITOR_SHOW_TRAILING_TABS}</li>
+	 * <li>{@link #EDITOR_SHOW_CARRIAGE_RETURN}</li>
+	 * <li>{@link #EDITOR_SHOW_LINE_FEED}</li>
+	 * </ul>
+	 * </p>
+	 * 
 	 * @since 3.3
 	 */
 	public static final String EDITOR_SHOW_WHITESPACE_CHARACTERS= AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS;
+
+	/**
+	 * A named preference that controls the display of leading Space characters. The value is used
+	 * only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_LEADING_SPACES= AbstractTextEditor.PREFERENCE_SHOW_LEADING_SPACES;
+
+	/**
+	 * A named preference that controls the display of enclosed Space characters. The value is used
+	 * only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_ENCLOSED_SPACES= AbstractTextEditor.PREFERENCE_SHOW_ENCLOSED_SPACES;
+
+	/**
+	 * A named preference that controls the display of trailing Space characters. The value is used
+	 * only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_TRAILING_SPACES= AbstractTextEditor.PREFERENCE_SHOW_TRAILING_SPACES;
+
+	/**
+	 * A named preference that controls the display of leading Ideographic Space characters. The
+	 * value is used only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is
+	 * <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_LEADING_IDEOGRAPHIC_SPACES= AbstractTextEditor.PREFERENCE_SHOW_LEADING_IDEOGRAPHIC_SPACES;
+
+	/**
+	 * A named preference that controls the display of enclosed Ideographic Space characters. The
+	 * value is used only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is
+	 * <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES= AbstractTextEditor.PREFERENCE_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES;
+
+	/**
+	 * A named preference that controls the display of trailing Ideographic Space characters. The
+	 * value is used only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is
+	 * <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_TRAILING_IDEOGRAPHIC_SPACES= AbstractTextEditor.PREFERENCE_SHOW_TRAILING_IDEOGRAPHIC_SPACES;
+
+	/**
+	 * A named preference that controls the display of leading Tab characters. The value is used
+	 * only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_LEADING_TABS= AbstractTextEditor.PREFERENCE_SHOW_LEADING_TABS;
+
+	/**
+	 * A named preference that controls the display of enclosed Tab characters. The value is used
+	 * only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_ENCLOSED_TABS= AbstractTextEditor.PREFERENCE_SHOW_ENCLOSED_TABS;
+
+	/**
+	 * A named preference that controls the display of trailing Tab characters. The value is used
+	 * only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_TRAILING_TABS= AbstractTextEditor.PREFERENCE_SHOW_TRAILING_TABS;
+
+	/**
+	 * A named preference that controls the display of Carriage Return characters. The value is used
+	 * only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_CARRIAGE_RETURN= AbstractTextEditor.PREFERENCE_SHOW_CARRIAGE_RETURN;
+
+	/**
+	 * A named preference that controls the display of Line Feed characters. The value is used only
+	 * if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_SHOW_LINE_FEED= AbstractTextEditor.PREFERENCE_SHOW_LINE_FEED;
+
 
 	/**
 	 * A named preference that controls the display of the range indicator.
@@ -568,7 +710,20 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(EDITOR_WARN_IF_INPUT_DERIVED, true);
 		store.setDefault(EDITOR_SMART_HOME_END, true);
+
 		store.setDefault(EDITOR_SHOW_WHITESPACE_CHARACTERS, false);
+		store.setDefault(EDITOR_SHOW_LEADING_SPACES, true);
+		store.setDefault(EDITOR_SHOW_ENCLOSED_SPACES, true);
+		store.setDefault(EDITOR_SHOW_TRAILING_SPACES, true);
+		store.setDefault(EDITOR_SHOW_LEADING_IDEOGRAPHIC_SPACES, true);
+		store.setDefault(EDITOR_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES, true);
+		store.setDefault(EDITOR_SHOW_TRAILING_IDEOGRAPHIC_SPACES, true);
+		store.setDefault(EDITOR_SHOW_LEADING_TABS, true);
+		store.setDefault(EDITOR_SHOW_ENCLOSED_TABS, true);
+		store.setDefault(EDITOR_SHOW_TRAILING_TABS, true);
+		store.setDefault(EDITOR_SHOW_CARRIAGE_RETURN, true);
+		store.setDefault(EDITOR_SHOW_LINE_FEED, true);
+
 		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
 		store.setDefault(EDITOR_HOVER_ENRICH_MODE, 0);

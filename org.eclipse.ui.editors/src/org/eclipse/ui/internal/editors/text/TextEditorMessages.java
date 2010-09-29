@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -125,16 +125,26 @@ final class TextEditorMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorMessages.class);
 	}
 
+	public static String TextEditorDefaultsPreferencePage_carriageReturn;
+	public static String TextEditorDefaultsPreferencePage_configureWhitespaceCharacterPainterProperties;
+	public static String TextEditorDefaultsPreferencePage_enclosed;
 	public static String TextEditorDefaultsPreferencePage_enrichHoverMode;
 	public static String TextEditorDefaultsPreferencePage_enrichHover_immediately;
 	public static String TextEditorDefaultsPreferencePage_enrichHover_afterDelay;
 	public static String TextEditorDefaultsPreferencePage_enrichHover_disabled;
 	public static String TextEditorDefaultsPreferencePage_enrichHover_onClick;
+	public static String TextEditorDefaultsPreferencePage_ideographicSpace;
+	public static String TextEditorDefaultsPreferencePage_leading;
+	public static String TextEditorDefaultsPreferencePage_lineFeed;
 	public static String TextEditorDefaultsPreferencePage_range_indicator;
 	public static String TextEditorDefaultsPreferencePage_smartHomeEnd;
 	public static String TextEditorDefaultsPreferencePage_warn_if_derived;
 	public static String TextEditorDefaultsPreferencePage_showWhitespaceCharacters;
+	public static String TextEditorDefaultsPreferencePage_showWhitespaceCharactersDialogTitle;
+	public static String TextEditorDefaultsPreferencePage_space;
+	public static String TextEditorDefaultsPreferencePage_tab;
 	public static String TextEditorDefaultsPreferencePage_textDragAndDrop;
+	public static String TextEditorDefaultsPreferencePage_trailing;
 	public static String LinkedModeConfigurationBlock_annotationPresentationOptions;
 	public static String LinkedModeConfigurationBlock_SQUIGGLES;
 	public static String LinkedModeConfigurationBlock_UNDERLINE;

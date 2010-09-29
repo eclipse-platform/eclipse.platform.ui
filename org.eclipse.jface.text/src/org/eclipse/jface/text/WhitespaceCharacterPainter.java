@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 Wind River Systems, Inc., IBM Corporation and others.
+ * Copyright (c) 2006, 2010 Wind River Systems, Inc., IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,6 +46,28 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	private StyledText fTextWidget;
 	/** Tells whether the advanced graphics sub system is available. */
 	private final boolean fIsAdvancedGraphicsPresent;
+	/** @since 3.7 */
+	private boolean fShowLeadingSpaces= true;
+	/** @since 3.7 */
+	private boolean fShowEnclosedSpace= true;
+	/** @since 3.7 */
+	private boolean fShowTrailingSpaces= true;
+	/** @since 3.7 */
+	private boolean fShowLeadingIdeographicSpaces= true;
+	/** @since 3.7 */
+	private boolean fShowEnclosedIdeographicSpaces= true;
+	/** @since 3.7 */
+	private boolean fShowTrailingIdeographicSpaces= true;
+	/** @since 3.7 */
+	private boolean fShowLeadingTabs= true;
+	/** @since 3.7 */
+	private boolean fShowEnclosedTabs= true;
+	/** @since 3.7 */
+	private boolean fShowTrailingTabs= true;
+	/** @since 3.7 */
+	private boolean fShowCarriageReturn= true;
+	/** @since 3.7 */
+	private boolean fShowLineFeed= true;
 
 	/**
 	 * Creates a new painter for the given text viewer.
@@ -60,6 +82,40 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		gc.setAdvanced(true);
 		fIsAdvancedGraphicsPresent= gc.getAdvanced();
 		gc.dispose();
+	}
+
+	/**
+	 * Creates a new painter for the given text viewer and the painter options.
+	 * 
+	 * @param viewer the text viewer the painter should be attached to
+	 * @param showLeadingSpaces if <code>true</code>, show leading Spaces
+	 * @param showEnclosedSpaces if <code>true</code>, show enclosed Spaces
+	 * @param showTrailingSpaces if <code>true</code>, show trailing Spaces
+	 * @param showLeadingIdeographicSpaces if <code>true</code>, show leading Ideographic Spaces
+	 * @param showEnclosedIdeographicSpaces if <code>true</code>, show enclosed Ideographic Spaces
+	 * @param showTrailingIdeographicSpace if <code>true</code>, show trailing Ideographic Spaces
+	 * @param showLeadingTabs if <code>true</code>, show leading Tabs
+	 * @param showEnclosedTabs if <code>true</code>, show enclosed Tabs
+	 * @param showTrailingTabs if <code>true</code>, show trailing Tabs
+	 * @param showCarriageReturn if <code>true</code>, show Carriage Returns
+	 * @param showLineFeed if <code>true</code>, show Line Feeds
+	 * @since 3.7
+	 */
+	public WhitespaceCharacterPainter(ITextViewer viewer, boolean showLeadingSpaces, boolean showEnclosedSpaces, boolean showTrailingSpaces, boolean showLeadingIdeographicSpaces,
+			boolean showEnclosedIdeographicSpaces, boolean showTrailingIdeographicSpace, boolean showLeadingTabs,
+			boolean showEnclosedTabs, boolean showTrailingTabs, boolean showCarriageReturn, boolean showLineFeed) {
+		this(viewer);
+		fShowLeadingSpaces= showLeadingSpaces;
+		fShowEnclosedSpace= showEnclosedSpaces;
+		fShowTrailingSpaces= showTrailingSpaces;
+		fShowLeadingIdeographicSpaces= showLeadingIdeographicSpaces;
+		fShowEnclosedIdeographicSpaces= showEnclosedIdeographicSpaces;
+		fShowTrailingIdeographicSpaces= showTrailingIdeographicSpace;
+		fShowLeadingTabs= showLeadingTabs;
+		fShowEnclosedTabs= showEnclosedTabs;
+		fShowTrailingTabs= showTrailingTabs;
+		fShowCarriageReturn= showCarriageReturn;
+		fShowLineFeed= showLineFeed;
 	}
 
 	/*
@@ -217,9 +273,13 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		}
 	}
 
+	private boolean isWhitespaceCharacter(char c) {
+		return c == ' ' || c == '\u3000' || c == '\t' || c == '\r' || c == '\n';
+	}
+
 	/**
 	 * Draw characters of content range.
-	 *
+	 * 
 	 * @param gc the GC
 	 * @param startOffset inclusive start index
 	 * @param endOffset exclusive end index
@@ -228,6 +288,24 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		StyledTextContent content= fTextWidget.getContent();
 		int length= endOffset - startOffset;
 		String text= content.getTextRange(startOffset, length);
+		int textBegin= -1;
+		for (int i= 0; i < text.length(); ++i) {
+			if (!isWhitespaceCharacter(text.charAt(i))) {
+				textBegin= i;
+				break;
+			}
+		}
+		boolean isEmptyLine= textBegin == -1;
+		int textEnd= text.length() - 1;
+		if (!isEmptyLine) {
+			for (int i= text.length() - 1; i >= 0; --i) {
+				if (!isWhitespaceCharacter(text.charAt(i))) {
+					textEnd= i;
+					break;
+				}
+			}
+		}
+
 		StyleRange styleRange= null;
 		Color fg= null;
 		StringBuffer visibleChar= new StringBuffer(10);
@@ -238,39 +316,91 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 				delta= 1;
 				char c= text.charAt(textOffset);
 				switch (c) {
-				case ' ' :
-					visibleChar.append(SPACE_SIGN);
-					// 'continue' would improve performance but may produce drawing errors
-					// for long runs of space if width of space and dot differ
-					break;
-				case '\u3000' : // ideographic whitespace
-					visibleChar.append(IDEOGRAPHIC_SPACE_SIGN);
-					// 'continue' would improve performance but may produce drawing errors
-					// for long runs of space if width of space and dot differ
-					break;
-				case '\t' :
-					visibleChar.append(TAB_SIGN);
-					break;
-				case '\r' :
-					visibleChar.append(CARRIAGE_RETURN_SIGN);
-					if (textOffset >= length - 1 || text.charAt(textOffset + 1) != '\n') {
+					case ' ':
+						if (isEmptyLine) {
+							if (fShowLeadingSpaces || fShowEnclosedSpace || fShowTrailingSpaces) {
+								visibleChar.append(SPACE_SIGN);
+							}
+						} else if (textOffset < textBegin) {
+							if (fShowLeadingSpaces) {
+								visibleChar.append(SPACE_SIGN);
+							}
+						} else if (textOffset < textEnd) {
+							if (fShowEnclosedSpace) {
+								visibleChar.append(SPACE_SIGN);
+							}
+						} else {
+							if (fShowTrailingSpaces) {
+								visibleChar.append(SPACE_SIGN);
+							}
+						}
+						// 'continue' would improve performance but may produce drawing errors
+						// for long runs of space if width of space and dot differ
+						break;
+					case '\u3000': // ideographic whitespace
+						if (isEmptyLine) {
+							if (fShowLeadingIdeographicSpaces || fShowEnclosedIdeographicSpaces || fShowTrailingIdeographicSpaces) {
+								visibleChar.append(IDEOGRAPHIC_SPACE_SIGN);
+							}
+						} else if (textOffset < textBegin) {
+							if (fShowLeadingIdeographicSpaces) {
+								visibleChar.append(IDEOGRAPHIC_SPACE_SIGN);
+							}
+						} else if (textOffset < textEnd) {
+							if (fShowEnclosedIdeographicSpaces) {
+								visibleChar.append(IDEOGRAPHIC_SPACE_SIGN);
+							}
+						} else {
+							if (fShowTrailingIdeographicSpaces) {
+								visibleChar.append(IDEOGRAPHIC_SPACE_SIGN);
+							}
+						}
+						// 'continue' would improve performance but may produce drawing errors
+						// for long runs of space if width of space and dot differ
+						break;
+					case '\t':
+						if (isEmptyLine) {
+							if (fShowLeadingTabs || fShowEnclosedTabs || fShowTrailingTabs) {
+								visibleChar.append(TAB_SIGN);
+							}
+						} else if (textOffset < textBegin) {
+							if (fShowLeadingTabs) {
+								visibleChar.append(TAB_SIGN);
+							}
+						} else if (textOffset < textEnd) {
+							if (fShowEnclosedTabs) {
+								visibleChar.append(TAB_SIGN);
+							}
+						} else {
+							if (fShowTrailingTabs) {
+								visibleChar.append(TAB_SIGN);
+							}
+						}
+						break;
+					case '\r':
+						if (fShowCarriageReturn) {
+							visibleChar.append(CARRIAGE_RETURN_SIGN);
+						}
+						if (textOffset >= length - 1 || text.charAt(textOffset + 1) != '\n') {
+							eol= true;
+							break;
+						}
+						continue;
+					case '\n':
+						if (fShowLineFeed) {
+							visibleChar.append(LINE_FEED_SIGN);
+						}
 						eol= true;
 						break;
-					}
-					continue;
-				case '\n' :
-					visibleChar.append(LINE_FEED_SIGN);
-					eol= true;
-					break;
-				default :
-					delta= 0;
-					break;
+					default:
+						delta= 0;
+						break;
 				}
 			}
 			if (visibleChar.length() > 0) {
 				int widgetOffset= startOffset + textOffset - visibleChar.length() + delta;
 				if (!eol || !isFoldedLine(content.getLineAtOffset(widgetOffset))) {
-					/* 
+					/*
 					 * Block selection is drawn using alpha and no selection-inverting
 					 * takes place, we always draw as 'unselected' in block selection mode.
 					 */
