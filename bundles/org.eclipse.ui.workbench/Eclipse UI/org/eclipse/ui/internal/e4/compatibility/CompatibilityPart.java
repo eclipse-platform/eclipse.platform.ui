@@ -27,6 +27,8 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
@@ -188,7 +190,9 @@ public abstract class CompatibilityPart {
 		// hook reference listeners to the part
 		// reference.hookPropertyListeners();
 
-		createPartControl(wrapped, composite);
+		Composite parent = new Composite(composite, SWT.NONE);
+		parent.setLayout(new FillLayout());
+		createPartControl(wrapped, parent);
 
 		part.setLabel(computeLabel());
 		part.setTooltip(wrapped.getTitleToolTip());
