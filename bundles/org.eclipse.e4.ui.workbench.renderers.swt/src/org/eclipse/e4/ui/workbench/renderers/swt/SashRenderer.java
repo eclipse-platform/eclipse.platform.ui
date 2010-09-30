@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -129,8 +130,17 @@ public class SashRenderer extends SWTPartRenderer {
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
-		Rectangle newRect = new Rectangle(0, 0, 0, 0);
-		return newRect;
+		if (element.getParent() != null) {
+			Rectangle newRect = new Rectangle(0, 0, 0, 0);
+			return newRect;
+		}
+
+		// Special case...a null parent indicates that this is a 'shared'
+		// element
+		// This means that it *must* have a Composite so it can be reparented
+		Composite sashComposite = new Composite((Composite) parent, SWT.NONE);
+		sashComposite.setLayout(new SashLayout(sashComposite, null));
+		return sashComposite;
 	}
 
 	/*
@@ -146,8 +156,12 @@ public class SashRenderer extends SWTPartRenderer {
 			MUIElement element) {
 		super.childRendered(parentElement, element);
 
-		if (!(parentElement.getWidget() instanceof SashForm))
-			return;
+		// If this is a 'shared' sash then use its child as the 'root'
+		if (parentElement.getWidget() instanceof Composite) {
+			Composite c = (Composite) parentElement.getWidget();
+			SashLayout sl = (SashLayout) c.getLayout();
+			sl.setRootElemenr(element);
+		}
 
 		// Ensure that the element's 'containerInfo' is initialized
 		int weight = getWeight(element);
@@ -167,8 +181,12 @@ public class SashRenderer extends SWTPartRenderer {
 	public Object getUIContainer(MUIElement element) {
 		// OK, find the first parent that is *not* a sash container
 		MUIElement parentElement = element.getParent();
+		if (parentElement.getWidget() instanceof Composite)
+			return parentElement.getWidget();
+
 		MUIElement prevParent = null;
 		while (parentElement instanceof MPartSashContainer
+				&& !(parentElement.getWidget() instanceof Composite)
 				&& !(parentElement instanceof MArea)) {
 			prevParent = parentElement;
 			parentElement = parentElement.getParent();
@@ -180,21 +198,6 @@ public class SashRenderer extends SWTPartRenderer {
 			return renderer.getUIContainer(prevParent);
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#hideChild
-	 * (org.eclipse.e4.ui.model.application.MElementContainer,
-	 * org.eclipse.e4.ui.model.application.MUIElement)
-	 */
-	@Override
-	public void hideChild(MElementContainer<MUIElement> parentElement,
-			MUIElement child) {
-		super.hideChild(parentElement, child);
-
 	}
 
 	/**

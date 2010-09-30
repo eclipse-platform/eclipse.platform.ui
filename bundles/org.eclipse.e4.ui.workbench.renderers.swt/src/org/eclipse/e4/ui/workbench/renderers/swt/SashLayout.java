@@ -293,9 +293,10 @@ public class SashLayout extends Layout {
 	 * @param bounds
 	 */
 	private void setRectangle(MUIElement node, Rectangle bounds) {
-		if (node.getWidget() instanceof Control)
-			((Control) (node.getWidget())).setBounds(bounds);
-		else if (node instanceof MGenericTile<?>) {
+		if (node.getWidget() instanceof Control) {
+			Control ctrl = (Control) node.getWidget();
+			ctrl.setBounds(bounds);
+		} else if (node instanceof MGenericTile<?>) {
 			Rectangle newRect = new Rectangle(bounds.x, bounds.y, bounds.width,
 					bounds.height);
 			node.setWidget(newRect);
