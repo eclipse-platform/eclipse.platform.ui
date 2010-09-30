@@ -45,6 +45,9 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -55,6 +58,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -435,7 +439,7 @@ public class StackRenderer extends LazyStackRenderer {
 		final MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) me;
 
 		// Match the selected TabItem to its Part
-		CTabFolder ctf = (CTabFolder) me.getWidget();
+		final CTabFolder ctf = (CTabFolder) me.getWidget();
 		ctf.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
@@ -451,27 +455,22 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		});
 
+		MouseListener mouseListener = new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				if (e.button == 2) {
+					CTabItem item = ctf.getItem(new Point(e.x, e.y));
+					if (item != null) {
+						closePart(item);
+					}
+				}
+			}
+		};
+		ctf.addMouseListener(mouseListener);
+
 		CTabFolder2Adapter closeListener = new CTabFolder2Adapter() {
 			public void close(CTabFolderEvent event) {
-				MUIElement uiElement = (MUIElement) event.item
-						.getData(AbstractPartRenderer.OWNING_ME);
-				MPart part = (MPart) ((uiElement instanceof MPart) ? uiElement
-						: ((MPlaceholder) uiElement).getRef());
-
-				IEclipseContext partContext = part.getContext();
-				IEclipseContext parentContext = getContextForParent(part);
-				// a part may not have a context if it hasn't been rendered
-				IEclipseContext context = partContext == null ? parentContext
-						: partContext;
-				// Allow closes to be 'canceled'
-				EPartService partService = (EPartService) context
-						.get(EPartService.class.getName());
-				if (partService.savePart(part, true)) {
-					partService.hidePart(part);
-				} else {
-					// the user has canceled the operation
-					event.doit = false;
-				}
+				event.doit = closePart(event.item);
 			}
 		};
 		ctf.addCTabFolder2Listener(closeListener);
@@ -486,6 +485,29 @@ public class StackRenderer extends LazyStackRenderer {
 				activateStack(stack);
 			}
 		});
+	}
+
+	private boolean closePart(Widget widget) {
+		MUIElement uiElement = (MUIElement) widget
+				.getData(AbstractPartRenderer.OWNING_ME);
+		MPart part = (MPart) ((uiElement instanceof MPart) ? uiElement
+				: ((MPlaceholder) uiElement).getRef());
+
+		IEclipseContext partContext = part.getContext();
+		IEclipseContext parentContext = getContextForParent(part);
+		// a part may not have a context if it hasn't been rendered
+		IEclipseContext context = partContext == null ? parentContext
+				: partContext;
+		// Allow closes to be 'canceled'
+		EPartService partService = (EPartService) context
+				.get(EPartService.class.getName());
+		if (partService.savePart(part, true)) {
+			partService.hidePart(part);
+			return true;
+		}
+		// the user has canceled out of the save operation, so don't close the
+		// part
+		return false;
 	}
 
 	protected void showTab(MUIElement element) {
