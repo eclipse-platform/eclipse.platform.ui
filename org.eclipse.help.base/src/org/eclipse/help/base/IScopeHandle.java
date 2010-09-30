@@ -13,10 +13,23 @@ package org.eclipse.help.base;
 
 
 /**
+ * Container class for associating AbstractHelpScopes with an ID
+ * 
  * @since 3.6
  */
 public interface IScopeHandle {
 
+	/**
+	 * Get the AbstractHelpScope associated with this handle
+	 * 
+	 * @return AbstractHelpScope
+	 */
 	public AbstractHelpScope getScope();
+	
+	/**
+	 * Get the String ID associated with this handle
+	 * 
+	 * @return ID
+	 */
 	public String getId();
 }
