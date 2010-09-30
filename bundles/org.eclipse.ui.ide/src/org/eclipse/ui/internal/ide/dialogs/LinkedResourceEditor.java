@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.ide.dialogs;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,13 +29,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.layout.TreeColumnLayout;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -49,8 +54,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -138,6 +145,14 @@ public class LinkedResourceEditor {
 				convertLocation();
 			}
 		});
+		fRemoveButton = createButton(groupComponent,
+				IDEWorkbenchMessages.LinkedResourceEditor_remove);
+		fRemoveButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				removeSelection();
+			}
+		});
+		
 		updateSelection();
 	}
 
@@ -240,14 +255,21 @@ public class LinkedResourceEditor {
 		fTree.getTree().setHeaderVisible(true);
 		createButtons(pageComponent);
 
-		fTree.getTree().addMouseListener(new MouseListener() {
+		fTree.getTree().addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 		        if (getSelectedResource().length == 1)
 		        	editLocation();
 			}
-			public void mouseDown(MouseEvent e) { }
-			public void mouseUp(MouseEvent e) { }
         });
+		fTree.getTree().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.DEL) {
+					e.doit = false;
+					if (getSelectedResource().length > 0)
+						removeSelection();
+				}
+			}
+		});
 
         return pageComponent;
 	}
@@ -411,7 +433,8 @@ public class LinkedResourceEditor {
 	}
 
 	void refreshContent() {
-		if (fProjectFiles == null) {
+		IResource[] projectFiles;
+		if (!initialized) {
 			final LinkedList/* <IResource> */resources = new LinkedList/*
 																		 * <IResource
 																		 * >
@@ -430,13 +453,21 @@ public class LinkedResourceEditor {
 				});
 			} catch (CoreException e) {
 			}
-			fProjectFiles = (IResource[]) resources.toArray(new IResource[0]);
+			projectFiles = (IResource[]) resources.toArray(new IResource[0]);
+			initialized = true;
+		}
+		else {
+			ArrayList/*<IResource>*/ list = new ArrayList();
+			list.addAll(fBrokenResources.values());
+			list.addAll(fFixedResources.values());
+			list.addAll(fAbsoluteResources.values());
+			projectFiles = (IResource[]) list.toArray(new IResource[0]);
 		}
 		fBrokenResources = new TreeMap/* <String, IResource> */();
 		fFixedResources = new TreeMap/* <String, IResource> */();
 		fAbsoluteResources = new TreeMap/* <String, IResource> */();
-		for (int i = 0; i < fProjectFiles.length; i++) {
-			IResource resource = fProjectFiles[i];
+		for (int i = 0; i < projectFiles.length; i++) {
+			IResource resource = projectFiles[i];
 			String fullPath = resource.getFullPath().toPortableString();
 			try {
 				if (exists(resource)) {
@@ -479,6 +510,7 @@ public class LinkedResourceEditor {
 		fConvertAbsoluteButton.setEnabled((getSelectedResource().length > 0)
 				&& (areAbsolute(getSelectedResource())
 				|| areFixed(getSelectedResource())));
+		fRemoveButton.setEnabled(getSelectedResource().length > 0);
 	}
 
 	boolean areFixed(IResource[] res) {
@@ -517,6 +549,51 @@ public class LinkedResourceEditor {
 				convertToAbsolute(resources, selectedResources);
 			else
 				convertToRelative(resources, selectedResources);
+		}
+	}
+
+	private void removeSelection() {
+		if (MessageDialog.openConfirm(fRemoveButton.getShell(),
+				IDEWorkbenchMessages.LinkedResourceEditor_removeTitle,
+				IDEWorkbenchMessages.LinkedResourceEditor_removeMessage)) {
+			final IResource[] selectedResources = getSelectedResource();
+			final ArrayList/*<IResource>*/ removedResources = new ArrayList();
+
+			IRunnableWithProgress op = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					try {
+						monitor.beginTask(
+								IDEWorkbenchMessages.LinkedResourceEditor_removingMessage,
+								selectedResources.length);
+						for (int i = 0; i < selectedResources.length; i++) {
+							if (monitor.isCanceled())
+								break;
+							String fullPath = selectedResources[i]
+									.getFullPath().toPortableString();
+							try {
+								selectedResources[i].delete(true, new SubProgressMonitor(monitor, 1));
+								removedResources.add(selectedResources[i]);
+								fBrokenResources.remove(fullPath);
+								fFixedResources.remove(fullPath);
+								fAbsoluteResources.remove(fullPath);
+							} catch (CoreException e) {
+								e.printStackTrace();
+							}
+						}
+					} finally {
+						monitor.done();
+					}
+				}
+			};
+			try {
+				new ProgressMonitorDialog(fRemoveButton.getShell()).run(true,
+						true, op);
+			} catch (InvocationTargetException e) {
+				IDEWorkbenchPlugin.log(null, e);
+			} catch (InterruptedException e) {
+				IDEWorkbenchPlugin.log(null, e);
+			}
+			fTree.refresh();
 		}
 	}
 
@@ -927,7 +1004,7 @@ public class LinkedResourceEditor {
 			fTree.refresh();
 	}
 
-	IResource fProjectFiles[] = null;
+	boolean initialized = false;
 	TreeMap/* <String, IResource> */fBrokenResources = new TreeMap/*
 																	 * <String,
 																	 * IResource
@@ -947,6 +1024,7 @@ public class LinkedResourceEditor {
 	TreeViewer fTree;
 	Button fEditResourceButton;
 	Button fConvertAbsoluteButton;
+	Button fRemoveButton;
 
 	Image fixedImg = null;
 	Image brokenImg = null;

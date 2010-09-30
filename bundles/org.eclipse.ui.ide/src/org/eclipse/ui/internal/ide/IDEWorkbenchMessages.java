@@ -650,6 +650,7 @@ public class IDEWorkbenchMessages extends NLS {
 	// --- Linked Resource Editor ---
 	public static String LinkedResourceEditor_editLinkedLocation;
 	public static String LinkedResourceEditor_convertToVariableLocation;
+	public static String LinkedResourceEditor_remove;
 	public static String LinkedResourceEditor_resourceName;
 	public static String LinkedResourceEditor_path;
 	public static String LinkedResourceEditor_location;
@@ -667,6 +668,9 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String LinkedResourceEditor_descriptionBlock;
 	public static String LinkedResourceEditor_convertTitle;
 	public static String LinkedResourceEditor_convertMessage;
+	public static String LinkedResourceEditor_removeTitle;
+	public static String LinkedResourceEditor_removeMessage;
+	public static String LinkedResourceEditor_removingMessage;
 	
 	// ==============================================================================
 	// Editors
