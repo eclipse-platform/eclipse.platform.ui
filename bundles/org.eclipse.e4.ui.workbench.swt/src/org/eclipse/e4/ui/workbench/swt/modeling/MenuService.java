@@ -13,6 +13,8 @@ package org.eclipse.e4.ui.workbench.swt.modeling;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
@@ -61,6 +63,24 @@ public class MenuService implements EMenuService {
 			return false;
 		}
 		renderer.bindWidget(mmenu, widget);
+		renderer.hookControllerLogic(mmenu);
+
+		// Process its internal structure through the renderer that created
+		// it
+		Object castObject = mmenu;
+		renderer.processContents((MElementContainer<MUIElement>) castObject);
+
+		// Allow a final chance to set up
+		renderer.postProcess(mmenu);
+
+		// Now that we have a widget let the parent (if any) know
+		if (mmenu.getParent() instanceof MUIElement) {
+			MElementContainer<MUIElement> parentElement = mmenu.getParent();
+			AbstractPartRenderer parentRenderer = rendererFactory.getRenderer(
+					parentElement, null);
+			if (parentRenderer != null)
+				parentRenderer.childRendered(parentElement, mmenu);
+		}
 
 		return true;
 	}

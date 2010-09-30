@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -28,9 +31,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
@@ -58,8 +63,13 @@ public class NewMenuRenderer extends SWTPartRenderer {
 
 	private Map<MMenuItem, IContributionItem> modelToContribution = new HashMap<MMenuItem, IContributionItem>();
 
+	private Map<MMenu, ArrayList<MMenuElement>> modelToMenuContributions = new HashMap<MMenu, ArrayList<MMenuElement>>();
+
 	@Inject
 	private Logger logger;
+
+	@Inject
+	private MApplication application;
 
 	@Inject
 	IEventBroker eventBroker;
@@ -117,6 +127,12 @@ public class NewMenuRenderer extends SWTPartRenderer {
 						ici.dispose();
 					}
 				}
+			} else if (UIEvents.UIElement.VISIBLE.equals(attName)) {
+				IContributionItem ici = modelToContribution.get(itemModel);
+				if (ici == null) {
+					return;
+				}
+				ici.setVisible(itemModel.isVisible());
 			}
 		}
 	};
@@ -192,15 +208,15 @@ public class NewMenuRenderer extends SWTPartRenderer {
 			MUIElement container = (MUIElement) ((EObject) element)
 					.eContainer();
 			if (container instanceof MWindow) {
-				MenuManager menuBarManager = new MenuManager(
-						"MainMenu", menuModel.getElementId()); //$NON-NLS-1$
+				MenuManager menuBarManager = new MenuManager(NO_LABEL,
+						menuModel.getElementId());
 				modelToManager.put(menuModel, menuBarManager);
 				newMenu = menuBarManager.createMenuBar((Decorations) parent);
 				((Decorations) parent).setMenuBar(newMenu);
 				newMenu.setData(menuBarManager);
 			} else {
-				MenuManager popupManager = new MenuManager(
-						"PopupMenu", menuModel.getElementId()); //$NON-NLS-1$
+				MenuManager popupManager = new MenuManager(NO_LABEL,
+						menuModel.getElementId());
 				modelToManager.put(menuModel, popupManager);
 				newMenu = popupManager.createContextMenu((Control) parent);
 				((Control) parent).setMenu(newMenu);
@@ -212,14 +228,36 @@ public class NewMenuRenderer extends SWTPartRenderer {
 					+ menuModel + "\n\t" + parent); //$NON-NLS-1$
 
 		} else if (parent instanceof Control) {
-			MenuManager popupManager = new MenuManager("PopupMenu", //$NON-NLS-1$
+			MenuManager popupManager = new MenuManager(NO_LABEL,
 					menuModel.getElementId());
 			modelToManager.put(menuModel, popupManager);
 			newMenu = popupManager.createContextMenu((Control) parent);
 			((Control) parent).setMenu(newMenu);
 			newMenu.setData(popupManager);
 		}
+		processContributions(menuModel);
 		return newMenu;
+	}
+
+	/**
+	 * @param menuModel
+	 */
+	private void processContributions(MMenu menuModel) {
+		final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
+		final ArrayList<MMenuElement> menuContributionsToRemove = new ArrayList<MMenuElement>();
+		ContributionsAnalyzer.gatherMenuContributions(menuModel,
+				application.getMenuContributions(), menuModel.getElementId(),
+				toContribute, null, menuModel instanceof MPopupMenu);
+		ContributionsAnalyzer.addMenuContributions(menuModel, toContribute,
+				menuContributionsToRemove);
+		modelToMenuContributions.put(menuModel, menuContributionsToRemove);
+	}
+
+	void removeMenuContributions(final MMenu menuModel,
+			final ArrayList<MMenuElement> menuContributionsToRemove) {
+		for (MMenuElement item : menuContributionsToRemove) {
+			menuModel.getChildren().remove(item);
+		}
 	}
 
 	/*
@@ -264,6 +302,7 @@ public class NewMenuRenderer extends SWTPartRenderer {
 				menuModel.getElementId());
 		modelToManager.put(menuModel, menuManager);
 		parentManager.add(menuManager);
+		processContributions(menuModel);
 		List<MMenuElement> parts = menuModel.getChildren();
 		if (parts != null) {
 			MMenuElement[] plist = parts

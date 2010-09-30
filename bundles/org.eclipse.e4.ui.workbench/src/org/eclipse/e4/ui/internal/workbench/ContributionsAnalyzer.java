@@ -24,10 +24,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
@@ -91,7 +89,6 @@ public final class ContributionsAnalyzer {
 			final List<MMenuContribution> menuContributionList, final String id,
 			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
 			boolean includePopups) {
-		boolean menuBar = (((MUIElement) ((EObject) menuModel).eContainer()) instanceof MWindow);
 		for (MMenuContribution menuContribution : menuContributionList) {
 			String parentID = menuContribution.getParentId();
 			if (parentID == null) {
@@ -104,9 +101,7 @@ public final class ContributionsAnalyzer {
 			if (filtered || (!popup && !parentID.equals(id)) || !menuContribution.isToBeRendered()) {
 				continue;
 			}
-			if (menuBar || isVisible(menuContribution, eContext)) {
-				toContribute.add(menuContribution);
-			}
+			toContribute.add(menuContribution);
 		}
 	}
 
