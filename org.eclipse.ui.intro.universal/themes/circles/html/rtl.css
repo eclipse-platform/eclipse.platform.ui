@@ -12,10 +12,7 @@
 /* 
  * This file contains styles that are specific to right to left display
  */
- 
-body {
-    direction: rtl;
-}
+
 
 table {
     direction: rtl;
