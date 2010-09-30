@@ -503,6 +503,14 @@ public interface IWorkbenchCommandConstants {
      */
     public static final String WINDOW_SHOW_KEY_ASSIST = "org.eclipse.ui.window.showKeyAssist"; //$NON-NLS-1$
 
+	/**
+	 * Id for command "Lock Toolbar" in category "Window" (value is
+	 * <code>"org.eclipse.ui.window.lockToolbar"</code>).
+	 * 
+	 * @since 3.7
+	 */
+	public static final String WINDOW_LOCK_TOOLBAR = "org.eclipse.ui.window.lockToolBar"; //$NON-NLS-1$
+
     // Help Category:
 
     /**

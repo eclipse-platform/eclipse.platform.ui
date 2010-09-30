@@ -717,16 +717,19 @@
             name="%command.helpContents.name"
             description="%command.helpContents.description"
             categoryId="org.eclipse.ui.category.help"
+            defaultHandler="org.eclipse.ui.internal.handlers.HelpContentsHandler"
             id="org.eclipse.ui.help.helpContents" />
       <command
             name="%command.helpSearch.name"
             description="%command.helpSearch.description"
             categoryId="org.eclipse.ui.category.help"
+            defaultHandler="org.eclipse.ui.internal.handlers.HelpSearchHandler"
             id="org.eclipse.ui.help.helpSearch" />
       <command
             name="%command.dynamicHelp.name"
             description="%command.dynamicHelp.description"
             categoryId="org.eclipse.ui.category.help"
+            defaultHandler="org.eclipse.ui.internal.handlers.DynamicHelpHandler"
             id="org.eclipse.ui.help.dynamicHelp" />
       <command
             name="%command.quickStart.name"
@@ -1087,9 +1090,15 @@
             id="org.eclipse.ui.window.hideShowEditors" />
       <command
             name="%command.lockToolBar.name"
+            defaultHandler="org.eclipse.ui.internal.handlers.LockToolBarHandler"
             description="%command.lockToolBar.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.lockToolBar" />
+            id="org.eclipse.ui.window.lockToolBar" >
+         <state
+               class="org.eclipse.ui.handlers.RegistryToggleState:false"
+               id="org.eclipse.ui.commands.toggleState">
+         </state>
+      </command>
       <command
             name="%command.pinEditor.name"
             description="%command.pinEditor.description"
@@ -1319,6 +1328,14 @@
       <image
             commandId="org.eclipse.ui.perspectives.showPerspective"
             icon="$nl$/icons/full/eview16/new_persp.gif">
+      </image>
+      <image
+            commandId="org.eclipse.ui.help.helpContents"
+            icon="$nl$/icons/full/etool16/help_contents.gif">
+      </image>
+      <image
+            commandId="org.eclipse.ui.help.helpSearch"
+            icon="$nl$/icons/full/etool16/help_search.gif">
       </image>
    </extension>
    
@@ -2128,6 +2145,50 @@
                </test>
             </and>
          </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.ResetPerspectiveHandler"
+            commandId="org.eclipse.ui.window.resetPerspective">
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activeWorkbenchWindow">
+                  <test
+                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
+                  </test>
+               </with>
+               <!-- this is a workaround to evaluate the expression -->
+               <with
+                     variable="activePart">
+                  <instanceof
+                        value="org.eclipse.ui.IWorkbenchPart">
+                  </instanceof>
+               </with>
+               
+            </or>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.SavePerspectiveHandler"
+            commandId="org.eclipse.ui.window.savePerspective">
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activeWorkbenchWindow">
+                  <test
+                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
+                  </test>
+               </with>
+               <!-- this is a workaround to evaluate the expression -->
+               <with
+                     variable="activePart">
+                  <instanceof
+                        value="org.eclipse.ui.IWorkbenchPart">
+                  </instanceof>
+               </with>
+               
+            </or>
+         </enabledWhen>
       </handler>
    </extension>
    <extension

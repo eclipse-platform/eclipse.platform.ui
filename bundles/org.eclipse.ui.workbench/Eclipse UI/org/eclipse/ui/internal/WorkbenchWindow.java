@@ -20,7 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
@@ -93,6 +95,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -103,10 +106,12 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.handlers.RegistryToggleState;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
@@ -831,14 +836,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	protected boolean isClosing() {
 		return closing || getWorkbenchImpl().isClosing();
-	}
-
-	/**
-	 * Return whether or not the coolbar layout is locked.
-	 */
-	protected boolean isCoolBarLocked() {
-        ICoolBarManager cbm = getCoolBarManager2(); 
-		return cbm != null && cbm.getLockLayout();
 	}
 
 	/**
@@ -1764,17 +1761,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	}
 
 	/**
-	 * Locks/unlocks the CoolBar for the workbench.
-	 * 
-	 * @param lock
-	 *            whether the CoolBar should be locked or unlocked
-	 */
-	/* package */
-	void lockCoolBar(boolean lock) {
-        getCoolBarManager2().setLockLayout(lock);
-	}
-
-	/**
 	 * Makes the window visible and frontmost.
 	 */
 	void makeVisible() {
@@ -1968,20 +1954,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
         if (coolBarMgr != null) {
 			IMemento coolBarMem = memento
 					.getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
-			if (coolBarMem != null) {
-				// Check if the layout is locked
-				final Integer lockedInt = coolBarMem
-						.getInteger(IWorkbenchConstants.TAG_LOCKED);
-				StartupThreading.runWithoutExceptions(new StartupRunnable(){
 
-					public void runWithException() {
-						if ((lockedInt != null) && (lockedInt.intValue() == 1)) {
-							coolBarMgr.setLockLayout(true);
-						} else {
-							coolBarMgr.setLockLayout(false);
-						}
-					}});
-				
+			if (coolBarMem != null) {
+
+				restoreCoolBarLocked(coolBarMgr, coolBarMem);
+
 				// The new layout of the cool bar manager
 				ArrayList coolBarLayout = new ArrayList();
 				// Traverse through all the cool item in the memento
@@ -2313,6 +2290,42 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 		
 		return result;
+	}
+
+	/**
+	 * Restores the locked state of coolbar.
+	 * 
+	 * The state is first looked in the memento. If its not available in there,
+	 * then its taken from the command's state
+	 * 
+	 * @param coolBarMgr
+	 * @param memento
+	 */
+	private void restoreCoolBarLocked(final ICoolBarManager2 coolBarMgr, IMemento memento) {
+
+		// Check if the layout is locked
+		final boolean locked[] = new boolean[] { false };
+
+		Integer lockedInt = memento.getInteger(IWorkbenchConstants.TAG_LOCKED);
+		
+		if (lockedInt != null) {
+			// saved by 3.6 or earlier
+			locked[0] = lockedInt.intValue() == 1;
+		} else {
+			// saved by 3.7 or later, get it from command state
+			ICommandService service = (ICommandService) getService(ICommandService.class);
+			Command command = service.getCommand(IWorkbenchCommandConstants.WINDOW_LOCK_TOOLBAR);
+			State state = command.getState(RegistryToggleState.STATE_ID);
+			if (state != null && state.getValue() instanceof Boolean) {
+				locked[0] = ((Boolean) state.getValue()).booleanValue();
+			}
+		}
+		StartupThreading.runWithoutExceptions(new StartupRunnable(){
+
+			public void runWithException() {
+				coolBarMgr.setLockLayout(locked[0]);
+			}
+		});
 	}
 
 	/**
@@ -2685,11 +2698,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
         	coolBarMgr.refresh();
 			IMemento coolBarMem = memento
 					.createChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
-            if (coolBarMgr.getLockLayout() == true) {
-				coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED, 1);
-			} else {
-				coolBarMem.putInteger(IWorkbenchConstants.TAG_LOCKED, 0);
-			}
             IContributionItem[] items = coolBarMgr.getItems();
 			for (int i = 0; i < items.length; i++) {
 				IMemento coolItemMem = coolBarMem
