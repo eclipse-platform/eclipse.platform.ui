@@ -11,6 +11,9 @@
 
 package org.eclipse.help.base;
 
+/**
+ * @since 3.6
+ */
 public interface IHelpScopeProducer {
 	
 	public IScopeHandle[] getScopeHandles();

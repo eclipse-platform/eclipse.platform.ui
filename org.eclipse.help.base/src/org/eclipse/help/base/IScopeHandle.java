@@ -12,6 +12,9 @@
 package org.eclipse.help.base;
 
 
+/**
+ * @since 3.6
+ */
 public interface IScopeHandle {
 
 	public AbstractHelpScope getScope();
