@@ -20,6 +20,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
+import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -94,6 +96,8 @@ public class EclipseContext implements IEclipseContext {
 	private Set<WeakReference<EclipseContext>> children = new HashSet<WeakReference<EclipseContext>>();
 
 	private Set<IContextDisposalListener> notifyOnDisposal = new HashSet<IContextDisposalListener>();
+
+	private Stack<EclipseContext> activationHistory = new Stack<EclipseContext>();
 
 	public EclipseContext(IEclipseContext parent, ILookupStrategy strategy) {
 		this.strategy = strategy;
@@ -208,6 +212,11 @@ public class EclipseContext implements IEclipseContext {
 			((IDisposable) strategy).dispose();
 		listeners.clear();
 		localValueComputations.clear();
+
+		EclipseContext parent = getParent();
+		if (parent != null)
+			parent.notifyOnDisposal(this);
+
 		localValues.clear();
 	}
 
@@ -577,4 +586,64 @@ public class EclipseContext implements IEclipseContext {
 	static public ThreadLocal<Computation> localComputation() {
 		return currentComputation;
 	}
+
+	public IEclipseContext getActive() {
+		IEclipseContext activeContext = this;
+		EclipseContext child = (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
+		while (child != null) {
+			activeContext = child;
+			child = (EclipseContext) child.internalGet(this, IContextConstants.ACTIVE_CHILD, true);
+		}
+		return activeContext;
+	}
+
+	public void activate() {
+		EclipseContext parent = getParent();
+		if (parent == null)
+			return;
+		parent.internalActivate(this);
+	}
+
+	public EclipseContext deactivate() {
+		EclipseContext parent = getParent();
+		if (parent == null)
+			return null;
+		return parent.internalDeactivate(this);
+	}
+
+	public void internalActivate(EclipseContext child) {
+		EclipseContext oldActiveChild = (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
+		if (oldActiveChild == child)
+			return; // already set
+		if (oldActiveChild != null) {
+			synchronized (activationHistory) {
+				activationHistory.push(oldActiveChild);
+			}
+		}
+		set(IContextConstants.ACTIVE_CHILD, child);
+		EclipseContext parent = getParent();
+		if (parent != null)
+			parent.internalActivate(this);
+	}
+
+	public EclipseContext internalDeactivate(EclipseContext context) {
+		EclipseContext oldActiveChild = null;
+		synchronized (activationHistory) {
+			if (!activationHistory.isEmpty())
+				oldActiveChild = activationHistory.pop();
+		}
+		set(IContextConstants.ACTIVE_CHILD, oldActiveChild);
+		return oldActiveChild;
+	}
+
+	public void notifyOnDisposal(EclipseContext disposed) {
+		synchronized (activationHistory) {
+			while (activationHistory.contains(disposed))
+				activationHistory.remove(disposed);
+		}
+		EclipseContext activeChild = (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
+		if (activeChild == disposed)
+			internalDeactivate(disposed);
+	}
+
 }

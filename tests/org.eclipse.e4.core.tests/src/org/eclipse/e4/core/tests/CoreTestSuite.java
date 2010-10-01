@@ -14,11 +14,13 @@ package org.eclipse.e4.core.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.e4.core.internal.tests.contexts.ActivationTest;
 import org.eclipse.e4.core.internal.tests.contexts.ContextDynamicTest;
 import org.eclipse.e4.core.internal.tests.contexts.DependenciesLeakTest;
 import org.eclipse.e4.core.internal.tests.contexts.EclipseContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.ReparentingTest;
 import org.eclipse.e4.core.internal.tests.contexts.RunAndTrackTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.ActivationInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.AnnotationsInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.Bug304585Test;
 import org.eclipse.e4.core.internal.tests.contexts.inject.Bug317183Test;
@@ -75,6 +77,7 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(ComplexDisposalTest.class);
 		addTestSuite(DisposeClassLinkTest.class);
 		addTestSuite(InjectStaticContextTest.class);
+		addTestSuite(ActivationTest.class);
 
 		// Contexts injection
 		addTestSuite(AnnotationsInjectionTest.class);
@@ -92,5 +95,6 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(InvokeInRATTest.class);
 		addTestSuite(Bug317183Test.class);
 		addTestSuite(DependenciesLeakTest.class);
+		addTestSuite(ActivationInjectionTest.class);
 	}
 }

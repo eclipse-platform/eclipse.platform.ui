@@ -12,6 +12,7 @@ package org.eclipse.e4.core.internal.contexts;
 
 import java.lang.reflect.Type;
 import javax.inject.Named;
+import org.eclipse.e4.core.contexts.Active;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
@@ -27,13 +28,15 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 
 		final private Object[] result;
 		final private String[] keys;
+		final private boolean[] active;
 		final private IRequestor requestor;
 		final private IEclipseContext context;
 
-		public ContextInjectionListener(IEclipseContext context, Object[] result, String[] keys, IRequestor requestor, boolean group) {
+		public ContextInjectionListener(IEclipseContext context, Object[] result, String[] keys, boolean[] active, IRequestor requestor, boolean group) {
 			super(group);
 			this.result = result;
 			this.keys = keys;
+			this.active = active;
 			this.requestor = requestor;
 			this.context = context;
 		}
@@ -44,11 +47,12 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 				for (int i = 0; i < keys.length; i++) {
 					if (keys[i] == null)
 						continue;
+					IEclipseContext targetContext = (active[i]) ? context.getActive() : context;
 					if (ECLIPSE_CONTEXT_NAME.equals(keys[i])) {
-						result[i] = context;
-						context.getParent(); // creates pseudo-link
-					} else if (context.containsKey(keys[i]))
-						result[i] = context.get(keys[i]);
+						result[i] = targetContext;
+						targetContext.getParent(); // creates pseudo-link
+					} else if (targetContext.containsKey(keys[i]))
+						result[i] = targetContext.get(keys[i]);
 				}
 				return true;
 			}
@@ -126,13 +130,18 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 	@Override
 	public void get(IObjectDescriptor[] descriptors, Object[] actualArgs, final IRequestor requestor, boolean track, boolean group) {
 		final String[] keys = new String[descriptors.length];
+		final boolean[] active = new boolean[descriptors.length];
 
 		for (int i = 0; i < descriptors.length; i++) {
 			keys[i] = (actualArgs[i] == IInjector.NOT_A_VALUE) ? getKey(descriptors[i]) : null;
+			if (descriptors[i] == null)
+				active[i] = false;
+			else
+				active[i] = (descriptors[i].hasQualifier(Active.class));
 		}
 
 		if (requestor != null && track) { // only track if requested
-			RunAndTrack trackable = new ContextInjectionListener(context, actualArgs, keys, requestor, group);
+			RunAndTrack trackable = new ContextInjectionListener(context, actualArgs, keys, active, requestor, group);
 			context.runAndTrack(trackable);
 		} else {
 			if (descriptors.length > 0) {
@@ -141,10 +150,11 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 					for (int i = 0; i < descriptors.length; i++) {
 						if (keys[i] == null)
 							continue;
+						IEclipseContext targetContext = (active[i]) ? context.getActive() : context;
 						if (ECLIPSE_CONTEXT_NAME.equals(keys[i]))
-							actualArgs[i] = context;
+							actualArgs[i] = targetContext;
 						else if (context.containsKey(keys[i]))
-							actualArgs[i] = context.get(keys[i]);
+							actualArgs[i] = targetContext.get(keys[i]);
 					}
 				} finally {
 					resumeRecoding();
