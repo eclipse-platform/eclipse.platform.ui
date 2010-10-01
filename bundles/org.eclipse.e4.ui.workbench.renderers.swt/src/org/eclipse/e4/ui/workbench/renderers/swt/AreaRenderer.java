@@ -18,6 +18,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -84,6 +85,13 @@ public class AreaRenderer extends SWTPartRenderer {
 		CTabFolder ctf = new CTabFolder(parentComp, SWT.BORDER | SWT.SINGLE);
 		ctf.setMaximizeVisible(true);
 		ctf.setMinimizeVisible(true);
+
+		// Hack(ish)...in compatibility we base the area's state off of the
+		// perspective
+		MPerspective persp = modelService.getPerspectiveFor(element);
+		if (persp != null && persp.getTags().contains("EAMaximized")) //$NON-NLS-1$
+			ctf.setMaximized(true);
+
 		CTabItem cti = new CTabItem(ctf, SWT.NONE);
 		if (areaModel.getLabel() != null)
 			cti.setText(areaModel.getLabel());
