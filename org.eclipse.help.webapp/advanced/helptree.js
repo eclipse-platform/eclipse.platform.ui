@@ -422,8 +422,8 @@ function changeExpanderImage(treeItem, isExpanded) {
 // Accessibility
 
 
-// Do not write accessibility information for IE
-var setAccessibilityRoles = navigator.userAgent.indexOf('MSIE') == -1;
+// Accessibility roles are now set for all browsers
+var setAccessibilityRoles = true;
 
 function setAccessibilityRole(node, role) {
     if (setAccessibilityRoles) {
@@ -453,7 +453,7 @@ function setAccessibilityTreeLevel( node,level )
 }
 
 function setWAIExpanded(node, value) {
-    if (setAccessibilityRoles) {
+    if (setAccessibilityRoles && node.id != "tree_root") {
         var valueAsString = value? "true" : "false";
         node.setAttribute("aria-expanded", valueAsString);
     }
