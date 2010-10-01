@@ -24,8 +24,10 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
@@ -85,7 +87,7 @@ public final class ContributionsAnalyzer {
 		return false;
 	}
 
-	public static void gatherMenuContributions(final MMenu menuModel,
+	public static void XXXgatherMenuContributions(final MMenu menuModel,
 			final List<MMenuContribution> menuContributionList, final String id,
 			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
 			boolean includePopups) {
@@ -102,6 +104,29 @@ public final class ContributionsAnalyzer {
 				continue;
 			}
 			toContribute.add(menuContribution);
+		}
+	}
+
+	public static void gatherMenuContributions(final MMenu menuModel,
+			final List<MMenuContribution> menuContributionList, final String id,
+			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
+			boolean includePopups) {
+		boolean menuBar = (((MUIElement) ((EObject) menuModel).eContainer()) instanceof MWindow);
+		for (MMenuContribution menuContribution : menuContributionList) {
+			String parentID = menuContribution.getParentId();
+			if (parentID == null) {
+				// it doesn't make sense for this to be null, temporary workaround for bug 320790
+				continue;
+			}
+			boolean popup = parentID.equals(POPUP_PARENT_ID) && (menuModel instanceof MPopupMenu)
+					&& includePopups;
+			boolean filtered = isFiltered(menuModel, menuContribution);
+			if (filtered || (!popup && !parentID.equals(id)) || !menuContribution.isToBeRendered()) {
+				continue;
+			}
+			if (menuBar || isVisible(menuContribution, eContext)) {
+				toContribute.add(menuContribution);
+			}
 		}
 	}
 
