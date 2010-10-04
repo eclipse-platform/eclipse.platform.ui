@@ -493,6 +493,44 @@ public class EPartServiceTest extends TestCase {
 		}
 	}
 
+	public void testGetActivePart() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(windowA);
+		application.setSelectedElement(windowA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		windowA.getChildren().add(partA);
+
+		MWindow windowB = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(windowB);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		windowB.getChildren().add(partB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(windowA);
+		getEngine().createGui(windowB);
+
+		EPartService applicationPartService = application.getContext().get(
+				EPartService.class);
+		EPartService windowPartServiceA = windowA.getContext().get(
+				EPartService.class);
+		EPartService windowPartServiceB = windowB.getContext().get(
+				EPartService.class);
+
+		windowPartServiceA.activate(partA);
+		assertEquals(partA, applicationPartService.getActivePart());
+		assertEquals(partA, windowPartServiceA.getActivePart());
+		assertEquals(partB, windowPartServiceB.getActivePart());
+
+		windowPartServiceB.activate(partB);
+		assertEquals(partB, applicationPartService.getActivePart());
+		assertEquals(partA, windowPartServiceA.getActivePart());
+		assertEquals(partB, windowPartServiceB.getActivePart());
+	}
+
 	public void testIsPartVisible_NotInStack(boolean selected, boolean visible) {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();

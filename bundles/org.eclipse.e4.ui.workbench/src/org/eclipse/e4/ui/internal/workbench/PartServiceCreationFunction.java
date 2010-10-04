@@ -13,9 +13,9 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IInjector;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 
@@ -46,22 +46,12 @@ public class PartServiceCreationFunction extends ContextFunction {
 		} while (current != null);
 
 		if (window == null) {
-			// 2nd: go down the tree in case if we are called from Application scope
-			current = context;
-			do {
-				current = (IEclipseContext) context.getLocal(IContextConstants.ACTIVE_CHILD);
-				if (current == null)
-					break;
-				MContext model = current.get(MContext.class);
-				if (model instanceof MWindow) {
-					window = (MWindow) model;
-					break;
-				}
-			} while (current != null);
-		}
-
-		if (window == null)
+			if (context.get(MApplication.class) != null) {
+				// called from Application scope
+				return ContextInjectionFactory.make(ApplicationPartServiceImpl.class, context);
+			}
 			return IInjector.NOT_A_VALUE;
+		}
 
 		IEclipseContext windowContext = window.getContext();
 		PartServiceImpl service = windowContext.getLocal(PartServiceImpl.class);
