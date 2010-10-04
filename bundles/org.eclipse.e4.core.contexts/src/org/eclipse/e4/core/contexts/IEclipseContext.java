@@ -258,7 +258,7 @@ public interface IEclipseContext extends IDisposable {
 	public void activate();
 
 	/**
-	 * Marks this context as inactive and activates previously active sibling
+	 * Marks this context as inactive and returns previously active sibling
 	 * context, if any.
 	 * @return currently active sibling context, if any, or <code>null</code>
 	 * if there is no currently active sibling context

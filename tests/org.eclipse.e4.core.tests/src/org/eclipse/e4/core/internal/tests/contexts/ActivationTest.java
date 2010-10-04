@@ -81,7 +81,8 @@ public class ActivationTest extends TestCase {
 		assertEquals(child22, child2.getActive());
 		assertEquals("child22", child2.get("testRAT"));
 
-		child11.deactivate();
+		IEclipseContext previous2 = child11.deactivate();
+		previous2.activate();
 		assertEquals(child12, rootContext.getActive());
 		assertEquals("child12", rootContext.get("testRAT"));
 		assertEquals(child12, child1.getActive());
@@ -90,6 +91,7 @@ public class ActivationTest extends TestCase {
 		assertEquals("child22", child2.get("testRAT"));
 
 		child1.dispose();
+		child2.activate();
 		assertEquals(child22, rootContext.getActive());
 		assertEquals("child22", rootContext.get("testRAT"));
 		assertEquals(child22, child2.getActive());

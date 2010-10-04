@@ -632,7 +632,7 @@ public class EclipseContext implements IEclipseContext {
 			if (!activationHistory.isEmpty())
 				oldActiveChild = activationHistory.pop();
 		}
-		set(IContextConstants.ACTIVE_CHILD, oldActiveChild);
+		set(IContextConstants.ACTIVE_CHILD, null);
 		return oldActiveChild;
 	}
 

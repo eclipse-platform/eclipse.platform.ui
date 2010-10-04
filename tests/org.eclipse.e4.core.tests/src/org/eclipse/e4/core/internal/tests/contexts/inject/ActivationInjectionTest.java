@@ -82,11 +82,12 @@ public class ActivationInjectionTest extends TestCase {
 		assertEquals(child11, rootContext.getActive());
 		assertEquals("_child11_", testObject.name);
 
-		child11.deactivate();
+		child11.deactivate().activate();
 		assertEquals(child12, rootContext.getActive());
 		assertEquals("_child12_", testObject.name);
 
 		child1.dispose();
+		child2.activate();
 		assertEquals(child22, rootContext.getActive());
 		assertEquals("_child22_", testObject.name);
 	}
@@ -136,11 +137,12 @@ public class ActivationInjectionTest extends TestCase {
 		assertEquals(child11, rootContext.getActive());
 		assertEquals("_child11_", testObject.name);
 
-		child11.deactivate();
+		child11.deactivate().activate();
 		assertEquals(child12, rootContext.getActive());
 		assertEquals("_child12_", testObject.name);
 
 		child1.dispose();
+		child2.activate();
 		assertEquals(child22, rootContext.getActive());
 		assertEquals("_child22_", testObject.name);
 	}
@@ -196,12 +198,13 @@ public class ActivationInjectionTest extends TestCase {
 		assertEquals(new Integer(2), testObjectChild1.number);
 		assertEquals(new Integer(6), testObjectChild2.number);
 
-		child11.deactivate();
+		child11.deactivate().activate();
 		assertEquals(new Integer(3), testObjectRoot.number);
 		assertEquals(new Integer(3), testObjectChild1.number);
 		assertEquals(new Integer(6), testObjectChild2.number);
 
 		child1.dispose();
+		child2.activate();
 		assertEquals(new Integer(6), testObjectRoot.number);
 		assertEquals(new Integer(6), testObjectChild2.number);
 	}
