@@ -198,6 +198,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
         listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 resourceGroup.setAllSelections(true);
+                updateWidgetEnablements();
             }
         };
         selectButton.addSelectionListener(listener);
@@ -210,6 +211,7 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
         listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 resourceGroup.setAllSelections(false);
+                updateWidgetEnablements();
             }
         };
         deselectButton.addSelectionListener(listener);
