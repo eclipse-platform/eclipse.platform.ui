@@ -601,9 +601,7 @@ public class EclipseContext implements IEclipseContext {
 		EclipseContext oldActiveChild = (EclipseContext) parent.internalGet(this, IContextConstants.ACTIVE_CHILD, true);
 		if (oldActiveChild != this)
 			parent.set(IContextConstants.ACTIVE_CHILD, this);
-		if (!activateBranch)
-			return;
-		if (parent != null)
+		if (activateBranch)
 			parent.activate(activateBranch);
 	}
 
