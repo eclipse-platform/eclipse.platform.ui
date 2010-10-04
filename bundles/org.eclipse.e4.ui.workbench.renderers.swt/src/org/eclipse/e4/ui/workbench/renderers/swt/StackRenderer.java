@@ -411,22 +411,7 @@ public class StackRenderer extends LazyStackRenderer {
 						curTB.dispose();
 				}
 			}
-
-			// HACK!! we'll reset to the first element for now but really should
-			// be based on the activation chain
-			MUIElement defaultSel = getFirstVisibleElement(parentElement);
-			parentElement.setSelectedElement(defaultSel);
 		}
-	}
-
-	private MUIElement getFirstVisibleElement(
-			MElementContainer<MUIElement> stack) {
-		// Find the first -visible- part
-		for (MUIElement mPart : stack.getChildren()) {
-			if (mPart.isToBeRendered())
-				return mPart;
-		}
-		return null;
 	}
 
 	@Override

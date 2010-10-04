@@ -1157,6 +1157,48 @@ public class PartRenderingEngineTests extends TestCase {
 		assertNotNull(sashContainer.getWidget());
 	}
 
+	public void testBug326087() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartSashContainer sashContainer = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		window.getChildren().add(sashContainer);
+		window.setSelectedElement(sashContainer);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		sashContainer.getChildren().add(partStack);
+		sashContainer.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(partA.getWidget());
+		assertNull(partB.getWidget());
+
+		partStack.setSelectedElement(partB);
+		assertNotNull(partA.getWidget());
+		assertNotNull(partB.getWidget());
+
+		application.getContext().get(IPresentationEngine.class)
+				.removeGui(sashContainer);
+
+		assertEquals(partB, partStack.getSelectedElement());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
