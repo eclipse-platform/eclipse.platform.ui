@@ -326,11 +326,4 @@
       </engine>
     </extension>
     
-    <extension
-          id="blort"
-          name="test"
-          point="org.eclipse.core.resources.builders">
-    </extension>
-    
-
 </plugin>
