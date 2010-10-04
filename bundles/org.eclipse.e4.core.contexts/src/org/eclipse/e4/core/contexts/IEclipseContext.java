@@ -253,17 +253,15 @@ public interface IEclipseContext extends IDisposable {
 	public void setParent(IEclipseContext parentContext);
 
 	/**
-	 * Marks this context and its parents as active.
+	 * Marks this context as active.
+	 * @param activateBranch <code>true</code> to also activate parent contexts
 	 */
-	public void activate();
+	public void activate(boolean activateBranch);
 
 	/**
-	 * Marks this context as inactive and returns previously active sibling
-	 * context, if any.
-	 * @return currently active sibling context, if any, or <code>null</code>
-	 * if there is no currently active sibling context
+	 * Marks this context as inactive.
 	 */
-	public IEclipseContext deactivate();
+	public void deactivate();
 
 	/**
 	 * Returns leaf active child for this context. May return the context itself

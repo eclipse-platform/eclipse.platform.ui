@@ -42,14 +42,14 @@ public class ActivationTest extends TestCase {
 		assertEquals(rootContext, rootContext.getActive());
 		assertEquals("root", rootContext.get("testRAT"));
 
-		child12.activate();
+		child12.activate(true);
 		assertEquals(child12, rootContext.getActive());
 		assertEquals("child12", rootContext.get("testRAT"));
 
 		assertEquals(child2, child2.getActive());
 		assertEquals("child2", child2.get("testRAT"));
 
-		child21.activate();
+		child21.activate(true);
 		assertEquals(child21, rootContext.getActive());
 		assertEquals("child21", rootContext.get("testRAT"));
 		assertEquals(child12, child1.getActive());
@@ -65,7 +65,7 @@ public class ActivationTest extends TestCase {
 		assertEquals(child2, child2.getActive());
 		assertEquals("child2", child2.get("testRAT"));
 
-		child22.activate();
+		child22.activate(true);
 		assertEquals(child22, rootContext.getActive());
 		assertEquals("child22", rootContext.get("testRAT"));
 		assertEquals(child12, child1.getActive());
@@ -73,7 +73,7 @@ public class ActivationTest extends TestCase {
 		assertEquals(child22, child2.getActive());
 		assertEquals("child22", child2.get("testRAT"));
 
-		child11.activate();
+		child11.activate(true);
 		assertEquals(child11, rootContext.getActive());
 		assertEquals("child11", rootContext.get("testRAT"));
 		assertEquals(child11, child1.getActive());
@@ -81,17 +81,16 @@ public class ActivationTest extends TestCase {
 		assertEquals(child22, child2.getActive());
 		assertEquals("child22", child2.get("testRAT"));
 
-		IEclipseContext previous2 = child11.deactivate();
-		previous2.activate();
-		assertEquals(child12, rootContext.getActive());
-		assertEquals("child12", rootContext.get("testRAT"));
-		assertEquals(child12, child1.getActive());
-		assertEquals("child12", child1.get("testRAT"));
+		child11.deactivate();
+		assertEquals(child1, rootContext.getActive());
+		assertEquals("child1", rootContext.get("testRAT"));
+		assertEquals(child1, child1.getActive());
+		assertEquals("child1", child1.get("testRAT"));
 		assertEquals(child22, child2.getActive());
 		assertEquals("child22", child2.get("testRAT"));
 
 		child1.dispose();
-		child2.activate();
+		child2.activate(true);
 		assertEquals(child22, rootContext.getActive());
 		assertEquals("child22", rootContext.get("testRAT"));
 		assertEquals(child22, child2.getActive());
