@@ -627,13 +627,16 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public EclipseContext internalDeactivate(EclipseContext context) {
-		EclipseContext oldActiveChild = null;
+		EclipseContext currentActiveChild = (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
+		if (currentActiveChild != context)
+			return currentActiveChild; // this is not an active context; return 
+		EclipseContext previousActiveChild = null;
 		synchronized (activationHistory) {
 			if (!activationHistory.isEmpty())
-				oldActiveChild = activationHistory.pop();
+				previousActiveChild = activationHistory.pop();
 		}
 		set(IContextConstants.ACTIVE_CHILD, null);
-		return oldActiveChild;
+		return previousActiveChild;
 	}
 
 	public void notifyOnDisposal(EclipseContext disposed) {
