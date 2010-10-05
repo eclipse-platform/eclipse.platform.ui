@@ -439,6 +439,12 @@
             id="org.eclipse.ui.ide.themes"
             label="%PreferenceKeywords.Themes"/>
       <keyword
+            id="org.eclipse.ui.ide.textEditorFont"
+            label="%PreferenceKeywords.TextEditorFont"/>
+      <keyword
+            id="org.eclipse.ui.ide.EditorFont"
+            label="%PreferenceKeywords.EditorFont"/>
+      <keyword
             id="org.eclipse.ui.ide.apearancepage"
             label="%PreferenceKeywords.AppearancePage"/>
       <keyword
@@ -572,6 +578,8 @@
             id="org.eclipse.ui.preferencePages.ColorsAndFonts">
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
          <keywordReference id="org.eclipse.ui.ide.themes"/>
+         <keywordReference id="org.eclipse.ui.ide.textEditorFont"/>
+         <keywordReference id="org.eclipse.ui.ide.EditorFont"/>
       </page>
       <page
             name="%PreferencePages.Decorators"
