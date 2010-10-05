@@ -5706,6 +5706,37 @@ public class EPartServiceTest extends TestCase {
 		assertNull(stack.getSelectedElement());
 	}
 
+	private void testHidePart_Bug327044(boolean force) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		stack.getChildren().add(part);
+		stack.setSelectedElement(part);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		window.getContext().get(EPartService.class).hidePart(part, force);
+		assertNull(stack.getSelectedElement());
+	}
+
+	public void testHidePart_Bug327044_True() {
+		testHidePart_Bug327044(true);
+	}
+
+	public void testHidePart_Bug327044_False() {
+		testHidePart_Bug327044(false);
+	}
+
 	private MApplication createApplication(String partId) {
 		return createApplication(new String[] { partId });
 	}
