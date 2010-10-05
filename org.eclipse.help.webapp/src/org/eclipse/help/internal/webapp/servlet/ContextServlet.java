@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,10 @@ public class ContextServlet extends HttpServlet {
 			}
 		}
 		out.write(">\n"); //$NON-NLS-1$
-		out.write("   <description>" + context.getText() + "</description>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		String description = context.getText();
+		if (description != null) {
+			out.write("   <description>" + description + "</description>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		
 		IHelpResource[] topics = context.getRelatedTopics();
 		for (int i=0;i<topics.length;++i) {
