@@ -331,7 +331,7 @@ public class CocoaUIEnhancer implements IStartup {
 			workbenchWindow.addPropertyChangeListener(new IPropertyChangeListener() {
 				
 				public void propertyChange(PropertyChangeEvent event) {
-					if(workbenchWindow.PROP_COOLBAR_VISIBLE.equals(event.getProperty())) {
+					if(WorkbenchWindow.PROP_COOLBAR_VISIBLE.equals(event.getProperty())) {
 						createDummyToolbar(window);
 						workbenchWindow.removePropertyChangeListener(this);
 					}
