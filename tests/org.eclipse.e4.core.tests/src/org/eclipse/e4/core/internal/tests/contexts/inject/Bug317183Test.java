@@ -25,8 +25,7 @@ public class Bug317183Test extends TestCase {
 		IEclipseContext partContextA = windowContext.createChild();
 		IEclipseContext partContextB = windowContext.createChild();
 
-		appContext.set(IContextConstants.ACTIVE_CHILD, windowContext);
-		windowContext.set(IContextConstants.ACTIVE_CHILD, partContextA);
+		partContextA.activateBranch();
 
 		RunAndTrackImpl impl = new RunAndTrackImpl();
 		windowContext.runAndTrack(impl);
@@ -34,7 +33,7 @@ public class Bug317183Test extends TestCase {
 		impl.called = false;
 
 		partContextA.dispose();
-		windowContext.set(IContextConstants.ACTIVE_CHILD, partContextB);
+		partContextB.activate();
 		assertTrue(impl.called); // this fails
 	}
 
@@ -45,18 +44,17 @@ public class Bug317183Test extends TestCase {
 		IEclipseContext partContextB = windowContext.createChild();
 		IEclipseContext partContextC = windowContext.createChild();
 
-		appContext.set(IContextConstants.ACTIVE_CHILD, windowContext);
-		windowContext.set(IContextConstants.ACTIVE_CHILD, partContextA);
+		partContextA.activateBranch();
 
 		RunAndTrackImpl impl = new RunAndTrackImpl();
 		windowContext.runAndTrack(impl);
 
-		windowContext.set(IContextConstants.ACTIVE_CHILD, partContextB);
+		partContextB.activate();
 		partContextA.dispose();
 
 		impl.called = false;
 
-		windowContext.set(IContextConstants.ACTIVE_CHILD, partContextC);
+		partContextC.activate();
 		assertTrue(impl.called); // this fails
 	}
 
@@ -66,12 +64,7 @@ public class Bug317183Test extends TestCase {
 
 		@Override
 		public boolean changed(IEclipseContext context) {
-			IEclipseContext child = (IEclipseContext) context
-					.getLocal(IContextConstants.ACTIVE_CHILD);
-			while (child != null) {
-				child = (IEclipseContext) child
-						.getLocal(IContextConstants.ACTIVE_CHILD);
-			}
+			context.getActiveLeaf();
 			called = true;
 			return true;
 		}

@@ -143,8 +143,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 		IEclipseContext windowContext = appContext.createChild();
 		IEclipseContext partContext = windowContext.createChild();
 
-		appContext.set(IContextConstants.ACTIVE_CHILD, windowContext);
-		windowContext.set(IContextConstants.ACTIVE_CHILD, partContext);
+		partContext.activateBranch();
 
 		appContext.set(SELECTION, new ContextFunction() {
 			@Override
@@ -154,16 +153,7 @@ public class ContextFunctionDynamicsTest extends TestCase {
 					context = parent;
 					parent = context.getParent();
 				}
-
-				IEclipseContext leafContext = context;
-				IEclipseContext child = (IEclipseContext) leafContext
-						.getLocal(IContextConstants.ACTIVE_CHILD);
-				while (child != null) {
-					leafContext = child;
-					child = (IEclipseContext) leafContext
-							.getLocal(IContextConstants.ACTIVE_CHILD);
-				}
-				return leafContext.get("out.selection");
+				return context.getActiveLeaf().get("out.selection");
 			}
 		});
 

@@ -19,7 +19,6 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Optional;
 
 public class DisposingReferencedContextTest extends TestCase {
@@ -66,7 +65,7 @@ public class DisposingReferencedContextTest extends TestCase {
 		IEclipseContext windowContext = EclipseContextFactory.create("windowContext");
 		IEclipseContext partContext = windowContext.createChild("partContext");
 
-		windowContext.set(IContextConstants.ACTIVE_CHILD, partContext);
+		partContext.activate();
 
 		Object o = new Object();
 		windowContext.set("object", o);
@@ -75,13 +74,7 @@ public class DisposingReferencedContextTest extends TestCase {
 		ContextInjectionFactory.inject(target, windowContext);
 		assertEquals("The object should have been injected", o, target.object);
 
-		if (disposeFirst) {
-			((IDisposable) partContext).dispose();
-			windowContext.set(IContextConstants.ACTIVE_CHILD, null);
-		} else {
-			windowContext.set(IContextConstants.ACTIVE_CHILD, null);
-			((IDisposable) partContext).dispose();
-		}
+		partContext.dispose();
 
 		assertEquals("The object should not have been uninjected", o, target.object);
 	}
@@ -90,7 +83,7 @@ public class DisposingReferencedContextTest extends TestCase {
 		IEclipseContext windowContext = EclipseContextFactory.create();
 		IEclipseContext partContext = windowContext.createChild();
 
-		windowContext.set(IContextConstants.ACTIVE_CHILD, partContext);
+		partContext.activate();
 
 		Object o = new Object();
 		windowContext.set("object", o);
@@ -99,13 +92,7 @@ public class DisposingReferencedContextTest extends TestCase {
 		ContextInjectionFactory.inject(target, windowContext);
 		assertEquals("The object should have been injected", o, target.object);
 
-		if (disposeFirst) {
-			((IDisposable) partContext).dispose();
-			windowContext.set(IContextConstants.ACTIVE_CHILD, null);
-		} else {
-			windowContext.set(IContextConstants.ACTIVE_CHILD, null);
-			((IDisposable) partContext).dispose();
-		}
+		partContext.dispose();
 
 		assertEquals("The object should not have been uninjected", o, target.object);
 	}

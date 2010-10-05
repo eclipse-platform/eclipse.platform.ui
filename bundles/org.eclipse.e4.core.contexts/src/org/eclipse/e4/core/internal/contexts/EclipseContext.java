@@ -210,9 +210,12 @@ public class EclipseContext implements IEclipseContext {
 		listeners.clear();
 		localValueComputations.clear();
 
+		// if this was the parent's active child, deactivate it
 		EclipseContext parent = getParent();
-		if (parent != null)
-			parent.notifyOnDisposal(this);
+		if (parent != null) {
+			if (this == parent.getActiveChild())
+				parent.set(IContextConstants.ACTIVE_CHILD, null);
+		}
 
 		localValues.clear();
 	}
@@ -584,55 +587,42 @@ public class EclipseContext implements IEclipseContext {
 		return currentComputation;
 	}
 
-	public IEclipseContext getActive() {
+	public IEclipseContext getActiveChild() {
+		return (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
+	}
+
+	public IEclipseContext getActiveLeaf() {
 		IEclipseContext activeContext = this;
-		EclipseContext child = (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
+		IEclipseContext child = getActiveChild();
 		while (child != null) {
 			activeContext = child;
-			child = (EclipseContext) child.internalGet(this, IContextConstants.ACTIVE_CHILD, true);
+			child = child.getActiveChild();
 		}
 		return activeContext;
 	}
 
-	public void activate(boolean activateBranch) {
+	public void activate() {
 		EclipseContext parent = getParent();
 		if (parent == null)
 			return;
-		EclipseContext oldActiveChild = (EclipseContext) parent.internalGet(this, IContextConstants.ACTIVE_CHILD, true);
-		if (oldActiveChild != this)
-			parent.set(IContextConstants.ACTIVE_CHILD, this);
-		if (activateBranch)
-			parent.activate(activateBranch);
+		if (this == parent.getActiveChild())
+			return;
+		parent.set(IContextConstants.ACTIVE_CHILD, this);
+	}
+
+	public void activateBranch() {
+		for (IEclipseContext i = this; i != null; i = i.getParent()) {
+			i.activate();
+		}
 	}
 
 	public void deactivate() {
 		EclipseContext parent = getParent();
-		if (parent != null)
-			parent.internalDeactivate(this);
-	}
-
-	public void internalActivate(EclipseContext child, boolean activateBranch) {
-		EclipseContext oldActiveChild = (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
-		if (oldActiveChild != child)
-			set(IContextConstants.ACTIVE_CHILD, child);
-		if (!activateBranch)
+		if (parent == null)
 			return;
-		EclipseContext parent = getParent();
-		if (parent != null)
-			parent.internalActivate(this, activateBranch);
-	}
-
-	public void internalDeactivate(EclipseContext context) {
-		EclipseContext currentActiveChild = (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
-		if (currentActiveChild != context)
+		if (this != parent.getActiveChild())
 			return; // this is not an active context; return 
-		set(IContextConstants.ACTIVE_CHILD, null);
-	}
-
-	public void notifyOnDisposal(EclipseContext disposed) {
-		EclipseContext activeChild = (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
-		if (activeChild == disposed)
-			internalDeactivate(disposed);
+		parent.set(IContextConstants.ACTIVE_CHILD, null);
 	}
 
 }

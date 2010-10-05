@@ -47,7 +47,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 				for (int i = 0; i < keys.length; i++) {
 					if (keys[i] == null)
 						continue;
-					IEclipseContext targetContext = (active[i]) ? context.getActive() : context;
+					IEclipseContext targetContext = (active[i]) ? context.getActiveLeaf() : context;
 					if (ECLIPSE_CONTEXT_NAME.equals(keys[i])) {
 						result[i] = targetContext;
 						targetContext.getParent(); // creates pseudo-link
@@ -150,7 +150,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 					for (int i = 0; i < descriptors.length; i++) {
 						if (keys[i] == null)
 							continue;
-						IEclipseContext targetContext = (active[i]) ? context.getActive() : context;
+						IEclipseContext targetContext = (active[i]) ? context.getActiveLeaf() : context;
 						if (ECLIPSE_CONTEXT_NAME.equals(keys[i]))
 							actualArgs[i] = targetContext;
 						else if (context.containsKey(keys[i]))

@@ -27,7 +27,7 @@ public class ActivationInjectionTest extends TestCase {
 
 	static public class TestRAT extends ContextFunction {
 		public Object compute(IEclipseContext context) {
-			IEclipseContext activeContext = context.getActive();
+			IEclipseContext activeContext = context.getActiveLeaf();
 			// returns name of the context
 			return "_" + activeContext.get("debugString") + "_";
 		}
@@ -62,33 +62,33 @@ public class ActivationInjectionTest extends TestCase {
 
 		TestObject testObject = ContextInjectionFactory.make(TestObject.class, rootContext);
 
-		child12.activate(true);
-		assertEquals(child12, rootContext.getActive());
+		child12.activateBranch();
+		assertEquals(child12, rootContext.getActiveLeaf());
 		assertEquals("_child12_", testObject.name);
 
-		child21.activate(true);
-		assertEquals(child21, rootContext.getActive());
+		child21.activateBranch();
+		assertEquals(child21, rootContext.getActiveLeaf());
 		assertEquals("_child21_", testObject.name);
 
 		child21.deactivate();
-		assertEquals(child2, rootContext.getActive());
+		assertEquals(child2, rootContext.getActiveLeaf());
 		assertEquals("_child2_", testObject.name);
 
-		child22.activate(true);
-		assertEquals(child22, rootContext.getActive());
+		child22.activateBranch();
+		assertEquals(child22, rootContext.getActiveLeaf());
 		assertEquals("_child22_", testObject.name);
 
-		child11.activate(true);
-		assertEquals(child11, rootContext.getActive());
+		child11.activateBranch();
+		assertEquals(child11, rootContext.getActiveLeaf());
 		assertEquals("_child11_", testObject.name);
 
 		child11.deactivate();
-		assertEquals(child1, rootContext.getActive());
+		assertEquals(child1, rootContext.getActiveLeaf());
 		assertEquals("_child1_", testObject.name);
 
 		child1.dispose();
-		child2.activate(true);
-		assertEquals(child22, rootContext.getActive());
+		child2.activateBranch();
+		assertEquals(child22, rootContext.getActiveLeaf());
 		assertEquals("_child22_", testObject.name);
 	}
 	
@@ -117,33 +117,33 @@ public class ActivationInjectionTest extends TestCase {
 
 		TestObjectInject testObject = ContextInjectionFactory.make(TestObjectInject.class, rootContext);
 
-		child12.activate(true);
-		assertEquals(child12, rootContext.getActive());
+		child12.activateBranch();
+		assertEquals(child12, rootContext.getActiveLeaf());
 		assertEquals("_child12_", testObject.name);
 
-		child21.activate(true);
-		assertEquals(child21, rootContext.getActive());
+		child21.activateBranch();
+		assertEquals(child21, rootContext.getActiveLeaf());
 		assertEquals("_child21_", testObject.name);
 
 		child21.deactivate();
-		assertEquals(child2, rootContext.getActive());
+		assertEquals(child2, rootContext.getActiveLeaf());
 		assertEquals("_child2_", testObject.name);
 
-		child22.activate(true);
-		assertEquals(child22, rootContext.getActive());
+		child22.activateBranch();
+		assertEquals(child22, rootContext.getActiveLeaf());
 		assertEquals("_child22_", testObject.name);
 
-		child11.activate(true);
-		assertEquals(child11, rootContext.getActive());
+		child11.activateBranch();
+		assertEquals(child11, rootContext.getActiveLeaf());
 		assertEquals("_child11_", testObject.name);
 
 		child11.deactivate();
-		assertEquals(child1, rootContext.getActive());
+		assertEquals(child1, rootContext.getActiveLeaf());
 		assertEquals("_child1_", testObject.name);
 
 		child1.dispose();
-		child2.activate(true);
-		assertEquals(child22, rootContext.getActive());
+		child2.activateBranch();
+		assertEquals(child22, rootContext.getActiveLeaf());
 		assertEquals("_child22_", testObject.name);
 	}
 	
@@ -173,12 +173,12 @@ public class ActivationInjectionTest extends TestCase {
 		TestInject testObjectChild1 = ContextInjectionFactory.make(TestInject.class, child1);
 		TestInject testObjectChild2 = ContextInjectionFactory.make(TestInject.class, child2);
 
-		child12.activate(true);
+		child12.activateBranch();
 		assertEquals(new Integer(3), testObjectRoot.number);
 		assertEquals(new Integer(3), testObjectChild1.number);
 		assertEquals(new Integer(4), testObjectChild2.number);
 
-		child21.activate(true);
+		child21.activateBranch();
 		assertEquals(new Integer(5), testObjectRoot.number);
 		assertEquals(new Integer(3), testObjectChild1.number);
 		assertEquals(new Integer(5), testObjectChild2.number);
@@ -188,12 +188,12 @@ public class ActivationInjectionTest extends TestCase {
 		assertEquals(new Integer(3), testObjectChild1.number);
 		assertEquals(new Integer(4), testObjectChild2.number);
 
-		child22.activate(true);
+		child22.activateBranch();
 		assertEquals(new Integer(6), testObjectRoot.number);
 		assertEquals(new Integer(3), testObjectChild1.number);
 		assertEquals(new Integer(6), testObjectChild2.number);
 
-		child11.activate(true);
+		child11.activateBranch();
 		assertEquals(new Integer(2), testObjectRoot.number);
 		assertEquals(new Integer(2), testObjectChild1.number);
 		assertEquals(new Integer(6), testObjectChild2.number);
@@ -204,7 +204,7 @@ public class ActivationInjectionTest extends TestCase {
 		assertEquals(new Integer(6), testObjectChild2.number);
 
 		child1.dispose();
-		child2.activate(true);
+		child2.activateBranch();
 		assertEquals(new Integer(6), testObjectRoot.number);
 		assertEquals(new Integer(6), testObjectChild2.number);
 	}

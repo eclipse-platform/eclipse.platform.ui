@@ -21,7 +21,7 @@ public class ActivationTest extends TestCase {
 
 	static public class TestRAT extends ContextFunction {
 		public Object compute(IEclipseContext context) {
-			IEclipseContext activeContext = context.getActive();
+			IEclipseContext activeContext = context.getActiveLeaf();
 			// returns name of the context
 			return activeContext.get("debugString"); 
 		}
@@ -39,61 +39,69 @@ public class ActivationTest extends TestCase {
 		IEclipseContext child21 = child2.createChild("child21");
 		IEclipseContext child22 = child2.createChild("child22");
 
-		assertEquals(rootContext, rootContext.getActive());
+		assertEquals(rootContext, rootContext.getActiveLeaf());
+		assertNull(rootContext.getActiveChild());
 		assertEquals("root", rootContext.get("testRAT"));
 
-		child12.activate(true);
-		assertEquals(child12, rootContext.getActive());
+		child12.activateBranch();
+		assertEquals(child12, rootContext.getActiveLeaf());
+		assertEquals(child1, rootContext.getActiveChild());
 		assertEquals("child12", rootContext.get("testRAT"));
 
-		assertEquals(child2, child2.getActive());
+		assertEquals(child2, child2.getActiveLeaf());
+		assertNull(child2.getActiveChild());
 		assertEquals("child2", child2.get("testRAT"));
 
-		child21.activate(true);
-		assertEquals(child21, rootContext.getActive());
+		child21.activateBranch();
+		assertEquals(child21, rootContext.getActiveLeaf());
+		assertEquals(child2, rootContext.getActiveChild());
 		assertEquals("child21", rootContext.get("testRAT"));
-		assertEquals(child12, child1.getActive());
+		assertEquals(child12, child1.getActiveLeaf());
+		assertEquals(child12, child1.getActiveChild());
 		assertEquals("child12", child1.get("testRAT"));
-		assertEquals(child21, child2.getActive());
+		assertEquals(child21, child2.getActiveLeaf());
+		assertEquals(child21, child2.getActiveChild());
 		assertEquals("child21", child2.get("testRAT"));
 
 		child21.deactivate();
-		assertEquals(child2, rootContext.getActive());
+		assertEquals(child2, rootContext.getActiveLeaf());
 		assertEquals("child2", rootContext.get("testRAT"));
-		assertEquals(child12, child1.getActive());
+		assertEquals(child12, child1.getActiveLeaf());
 		assertEquals("child12", child1.get("testRAT"));
-		assertEquals(child2, child2.getActive());
+		assertEquals(child2, child2.getActiveLeaf());
+		assertNull(child2.getActiveChild());
 		assertEquals("child2", child2.get("testRAT"));
 
-		child22.activate(true);
-		assertEquals(child22, rootContext.getActive());
+		child22.activateBranch();
+		assertEquals(child22, rootContext.getActiveLeaf());
 		assertEquals("child22", rootContext.get("testRAT"));
-		assertEquals(child12, child1.getActive());
+		assertEquals(child12, child1.getActiveLeaf());
 		assertEquals("child12", child1.get("testRAT"));
-		assertEquals(child22, child2.getActive());
+		assertEquals(child22, child2.getActiveLeaf());
 		assertEquals("child22", child2.get("testRAT"));
 
-		child11.activate(true);
-		assertEquals(child11, rootContext.getActive());
+		child11.activateBranch();
+		assertEquals(child11, rootContext.getActiveLeaf());
 		assertEquals("child11", rootContext.get("testRAT"));
-		assertEquals(child11, child1.getActive());
+		assertEquals(child11, child1.getActiveLeaf());
 		assertEquals("child11", child1.get("testRAT"));
-		assertEquals(child22, child2.getActive());
+		assertEquals(child22, child2.getActiveLeaf());
 		assertEquals("child22", child2.get("testRAT"));
 
 		child11.deactivate();
-		assertEquals(child1, rootContext.getActive());
+		assertEquals(child1, rootContext.getActiveLeaf());
 		assertEquals("child1", rootContext.get("testRAT"));
-		assertEquals(child1, child1.getActive());
+		assertEquals(child1, child1.getActiveLeaf());
 		assertEquals("child1", child1.get("testRAT"));
-		assertEquals(child22, child2.getActive());
+		assertEquals(child22, child2.getActiveLeaf());
 		assertEquals("child22", child2.get("testRAT"));
 
 		child1.dispose();
-		child2.activate(true);
-		assertEquals(child22, rootContext.getActive());
+		assertNull(rootContext.getActiveChild());
+		child2.activateBranch();
+		assertEquals(child22, rootContext.getActiveLeaf());
 		assertEquals("child22", rootContext.get("testRAT"));
-		assertEquals(child22, child2.getActive());
+		assertEquals(child22, child2.getActiveLeaf());
 		assertEquals("child22", child2.get("testRAT"));
 	}
 }

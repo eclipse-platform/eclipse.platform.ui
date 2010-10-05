@@ -254,9 +254,8 @@ public interface IEclipseContext extends IDisposable {
 
 	/**
 	 * Marks this context as active.
-	 * @param activateBranch <code>true</code> to also activate parent contexts
 	 */
-	public void activate(boolean activateBranch);
+	public void activate();
 
 	/**
 	 * Marks this context as inactive.
@@ -264,9 +263,22 @@ public interface IEclipseContext extends IDisposable {
 	public void deactivate();
 
 	/**
-	 * Returns leaf active child for this context. May return the context itself
-	 * if there are no active children.
-	 * @return active context
+	 * Marks this context and its parent contexts as active.
 	 */
-	public IEclipseContext getActive();
+	public void activateBranch();
+
+	/**
+	 * Returns active child for this context. May return <code>null</code>
+	 * if there are no active children.
+	 * @return active child context or <code>null</code>
+	 */
+	public IEclipseContext getActiveChild();
+
+	/**
+	 * Follows active child chain to return the active leaf for this context. 
+	 * May return the context itself if it has no active children.
+	 * @return leaf active context
+	 */
+	public IEclipseContext getActiveLeaf();
+
 }
