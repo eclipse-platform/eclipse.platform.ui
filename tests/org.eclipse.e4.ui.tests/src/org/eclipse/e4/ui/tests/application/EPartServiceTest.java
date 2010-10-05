@@ -5677,6 +5677,35 @@ public class EPartServiceTest extends TestCase {
 		testHidePart_Bug325148_Unrendered(false);
 	}
 
+	public void testHidePart_Bug327026() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		stack.getChildren().add(partA);
+		stack.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setToBeRendered(false);
+		stack.getChildren().add(partB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		window.getContext().get(EPartService.class).hidePart(partA, true);
+		// this is perhaps questionable, as to whether it should be null or
+		// partB, but it should certainly not be partA anyway
+		assertNull(stack.getSelectedElement());
+	}
+
 	private MApplication createApplication(String partId) {
 		return createApplication(new String[] { partId });
 	}

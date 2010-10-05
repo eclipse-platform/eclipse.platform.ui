@@ -823,7 +823,7 @@ public class PartServiceImpl implements EPartService {
 			}
 
 			if (force || part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
-				if (children.size() == 1) {
+				if (children.size() == 1 || parent.getSelectedElement() == toBeRemoved) {
 					parent.setSelectedElement(null);
 				}
 				children.remove(toBeRemoved);
