@@ -138,9 +138,14 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			// Figure out want kind of build is needed
 			boolean clean = trigger == IncrementalProjectBuilder.CLEAN_BUILD;
 			currentLastBuiltTree = currentBuilder.getLastBuiltTree();
+
 			// If no tree is available we have to do a full build
-			if (!clean && currentLastBuiltTree == null)
+			if (!clean && currentLastBuiltTree == null) {
+				// Bug 306746 - Don't promote build to FULL_BUILD if builder doesn't AUTO_BUILD
+				if (trigger == IncrementalProjectBuilder.AUTO_BUILD && !builder.getCommand().isBuilding(trigger))
+					return;
 				trigger = IncrementalProjectBuilder.FULL_BUILD;
+			}
 			//don't build if this builder doesn't respond to the given trigger
 			if (!builder.getCommand().isBuilding(trigger)) {
 				if (clean)

@@ -62,25 +62,32 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		command = project.getDescription().getBuildSpec()[0];
 		setAutoBuilding(true);
 
-		//do an initial build to get the builder instance
-		waitForBuild();
+		//do an initial workspace build to get the builder instance
+		workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
 		CustomTriggerBuilder builder = CustomTriggerBuilder.getInstance();
 		assertNotNull("1.0", builder);
-		assertTrue("1.1", builder.wasFullBuild());
+		assertTrue("1.1", builder.triggerForLastBuild == 0);
 
 		//do a clean - builder should not be called
-		setAutoBuilding(false);
 		waitForBuild();
 		builder.reset();
 		workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
-		assertTrue("2.0",!builder.wasCleanBuild());
-		
-		//turn on autobuild - this should cause a FULL build
-		builder.reset();
-		setAutoBuilding(true);
-		waitForBuild();
-		assertTrue("2.0",builder.wasFullBuild());
+		assertEquals("2.0", 0, builder.triggerForLastBuild);
 
+		// Ensure that Auto-build doesn't cause a FULL_BUILD
+		waitForBuild();
+		assertEquals("2.1", 0, builder.triggerForLastBuild);
+
+		// But first requested build should causes a FULL_BUILD
+		builder.reset();
+		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		assertTrue("3.0", builder.wasFullBuild());
+
+		// But subsequent builds shouldn't
+		builder.reset();
+		builder.clearBuildTrigger();
+		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		assertTrue("3.1", builder.triggerForLastBuild == 0);
 	}
 
 	/**
@@ -412,7 +419,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 	
 	/**
 	 * Tests that a builder that responds only to the "full" trigger will be called
-	 * on the first and only first build after a clean. 
+	 * on the first and only first (non-auto) build after a clean. 
 	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=206540.
 	 */
 	public void testCleanAutoBuild_AfterCleanBuilder() throws CoreException {
@@ -440,20 +447,19 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		waitForBuild();
 		CustomTriggerBuilder builder = CustomTriggerBuilder.getInstance();
 		assertNotNull("1.0", builder);
-		assertTrue("1.1", builder.wasFullBuild());
+		assertEquals("1.1", 0, builder.triggerForLastBuild);
 
 		// do a clean - builder should not be called
 		builder.clearBuildTrigger();
 		builder.reset();
 		workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
-		assertTrue("2.0",!builder.wasCleanBuild());
-		assertTrue("2.1",!builder.wasFullBuild());
+		assertTrue("2.0", !builder.wasCleanBuild());
+		assertTrue("2.1", !builder.wasFullBuild());
 
-		
-		// add a file in the project to trigger an auto-build - FULL_BUILD should be triggered
+		// add a file in the project to trigger an auto-build - no FULL_BUILD should be triggered
 		builder.clearBuildTrigger();
 		builder.reset();
-		
+
 		IFile file = project.getFile("a.txt");
 		try {
 			file.create(getRandomContents(), IResource.NONE, getMonitor());
@@ -462,13 +468,17 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		}
 
 		waitForBuild();
-		assertTrue("4.0",!builder.wasCleanBuild());
-		assertTrue("4.1",builder.wasFullBuild());
-		
+		assertEquals("4.0", 0, builder.triggerForLastBuild);
+
+		// Build the project explicitly -- full build should be triggered
+		project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		waitForBuild();
+		assertTrue("4.1", builder.wasFullBuild());
+
 		// add another file in the project to trigger an auto-build - build should NOT be triggered
 		builder.clearBuildTrigger();
 		builder.reset();
-		
+
 		file = project.getFile("b.txt");
 		try {
 			file.create(getRandomContents(), IResource.NONE, getMonitor());
@@ -477,7 +487,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		}
 
 		waitForBuild();
-		assertTrue("6.0",!builder.wasCleanBuild());
-		assertTrue("6.1",!builder.wasFullBuild());
+		assertTrue("6.0", !builder.wasCleanBuild());
+		assertTrue("6.1", !builder.wasFullBuild());
 	}
 }
