@@ -41,5 +41,6 @@ public final class ConcurrencyTestSuite extends TestSuite {
         addTestSuite(TestBug138695.class);
         addTestSuite(TestBug98621.class);
         addTestSuite(TransferRuleTest.class);
+        addTestSuite(Bug_262032.class);
     }
 }
