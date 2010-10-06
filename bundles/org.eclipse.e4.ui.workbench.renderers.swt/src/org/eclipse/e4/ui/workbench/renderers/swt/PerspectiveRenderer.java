@@ -81,6 +81,7 @@ public class PerspectiveRenderer extends SWTPartRenderer {
 		// TODO Auto-generated method stub
 		super.childRendered(parentElement, element);
 
+		// Since we use the SashLayout we need to adjust its 'root' element
 		Composite comp = (Composite) parentElement.getWidget();
 		SashLayout sl = (SashLayout) comp.getLayout();
 		sl.setRootElemenr(element);

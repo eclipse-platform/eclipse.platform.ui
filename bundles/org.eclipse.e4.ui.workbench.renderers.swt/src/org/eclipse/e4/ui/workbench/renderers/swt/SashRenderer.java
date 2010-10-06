@@ -21,10 +21,10 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -38,7 +38,6 @@ public class SashRenderer extends SWTPartRenderer {
 
 	private EventHandler sashOrientationHandler;
 	private EventHandler sashWeightHandler;
-	private EventHandler visibilityHandler;
 
 	public SashRenderer() {
 		super();
@@ -49,20 +48,12 @@ public class SashRenderer extends SWTPartRenderer {
 		sashOrientationHandler = new EventHandler() {
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MPartSashContainer
-				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-				if (!(element instanceof MPartSashContainer)) {
+				MUIElement element = (MUIElement) event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				if (element.getRenderer() != SashRenderer.this) {
 					return;
 				}
-
-				if (UIEvents.GenericTile.HORIZONTAL.equals(event
-						.getProperty(UIEvents.EventTags.ATTNAME))) {
-					Boolean horizontal = (Boolean) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					MPartSashContainer container = (MPartSashContainer) element;
-					SashForm sashForm = (SashForm) container.getWidget();
-					sashForm.setOrientation(horizontal.booleanValue() ? SWT.HORIZONTAL
-							: SWT.VERTICAL);
-				}
+				forceLayout((MElementContainer<MUIElement>) element);
 			}
 		};
 
@@ -74,41 +65,16 @@ public class SashRenderer extends SWTPartRenderer {
 				// Ensure that this event is for a MPartSashContainer
 				MUIElement element = (MUIElement) event
 						.getProperty(UIEvents.EventTags.ELEMENT);
-				MUIElement parent = element.getParent();
-				if (!(parent instanceof MPartSashContainer)
-						|| parent.getRenderer() != SashRenderer.this)
+				MElementContainer<MUIElement> parent = element.getParent();
+				if (parent.getRenderer() != SashRenderer.this)
 					return;
 
-				MElementContainer<MUIElement> pscModel = (MElementContainer<MUIElement>) parent;
-				if (UIEvents.UIElement.CONTAINERDATA.equals(event
-						.getProperty(UIEvents.EventTags.ATTNAME))) {
-					forceLayout(pscModel);
-				}
+				forceLayout(parent);
 			}
 		};
 
-		visibilityHandler = new EventHandler() {
-			public void handleEvent(Event event) {
-				// Ensure that this event is for a MPartSashContainer
-				MUIElement element = (MUIElement) event
-						.getProperty(UIEvents.EventTags.ELEMENT);
-				MUIElement parent = element.getParent();
-				if (!(parent instanceof MPartSashContainer)
-						|| parent.getRenderer() != SashRenderer.this)
-					return;
-
-				MElementContainer<MUIElement> pscModel = (MElementContainer<MUIElement>) parent;
-				if (UIEvents.UIElement.VISIBLE.equals(event
-						.getProperty(UIEvents.EventTags.ATTNAME))) {
-					if (element.isVisible()) {
-						forceLayout(pscModel);
-					}
-				}
-			}
-		};
-
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.VISIBLE), visibilityHandler);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.GenericTile.TOPIC,
+				UIEvents.UIElement.CONTAINERDATA), sashWeightHandler);
 	}
 
 	/**
@@ -119,14 +85,16 @@ public class SashRenderer extends SWTPartRenderer {
 		while (!(pscModel.getWidget() instanceof Control))
 			pscModel = pscModel.getParent();
 		Control ctrl = (Control) pscModel.getWidget();
-		ctrl.getParent().layout(true, true);
+		if (ctrl instanceof Shell)
+			((Shell) ctrl).layout(null, SWT.ALL | SWT.CHANGED | SWT.DEFER);
+		else
+			ctrl.getParent().layout(null, SWT.ALL | SWT.CHANGED | SWT.DEFER);
 	}
 
 	@PreDestroy
 	void preDestroy() {
 		eventBroker.unsubscribe(sashOrientationHandler);
 		eventBroker.unsubscribe(sashWeightHandler);
-		eventBroker.unsubscribe(visibilityHandler);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
@@ -168,6 +136,24 @@ public class SashRenderer extends SWTPartRenderer {
 		if (weight == UNDEFINED_WEIGHT) {
 			element.setContainerData(Integer.toString(DEFAULT_WEIGHT));
 		}
+
+		forceLayout(parentElement);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer#hideChild
+	 * (org.eclipse.e4.ui.model.application.ui.MElementContainer,
+	 * org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	@Override
+	public void hideChild(MElementContainer<MUIElement> parentElement,
+			MUIElement child) {
+		super.hideChild(parentElement, child);
+
+		forceLayout(parentElement);
 	}
 
 	/*
@@ -207,7 +193,7 @@ public class SashRenderer extends SWTPartRenderer {
 	private static int getWeight(MUIElement element) {
 		String info = element.getContainerData();
 		if (info == null || info.length() == 0) {
-			element.setContainerData(Integer.toString(100));
+			element.setContainerData(Integer.toString(10000));
 			info = element.getContainerData();
 		}
 

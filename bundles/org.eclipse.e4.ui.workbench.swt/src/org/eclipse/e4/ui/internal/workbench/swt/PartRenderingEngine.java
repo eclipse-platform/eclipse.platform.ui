@@ -130,6 +130,40 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 	};
 
+	private EventHandler visibilityHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			MUIElement changedElement = (MUIElement) event
+					.getProperty(UIEvents.EventTags.ELEMENT);
+			if (!(changedElement.getWidget() instanceof Control))
+				return;
+
+			Control ctrl = (Control) changedElement.getWidget();
+			MElementContainer<MUIElement> parent = changedElement.getParent();
+			if (parent == null)
+				return;
+
+			AbstractPartRenderer renderer = (AbstractPartRenderer) parent
+					.getRenderer();
+			if (renderer == null)
+				return;
+
+			// Re-parent the control based on the visible state
+			if (changedElement.isVisible()) {
+				// Ensure that the control is under its 'real' parent if it's
+				// visible
+				Composite realComp = (Composite) renderer
+						.getUIContainer(changedElement);
+				ctrl.setParent(realComp);
+				fixZOrder(changedElement);
+				renderer.childRendered(parent, changedElement);
+			} else {
+				// Put the control under the 'limbo' shell
+				ctrl.setParent(getLimboShell());
+				renderer.hideChild(parent, changedElement);
+			}
+		}
+	};
+
 	private EventHandler trimHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -147,6 +181,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.getProperty(UIEvents.EventTags.NEW_VALUE);
 				if (added.isToBeRendered())
 					createGui(added, window.getWidget(), window.getContext());
+			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
+				MUIElement removed = (MUIElement) event
+						.getProperty(UIEvents.EventTags.OLD_VALUE);
+				if (removed.getRenderer() != null)
+					removeGui(removed);
 			}
 		}
 	};
@@ -315,6 +354,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (eventBroker != null) {
 			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
 					UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
+			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+					UIEvents.UIElement.VISIBLE), visibilityHandler);
 			eventBroker.subscribe(UIEvents.buildTopic(
 					UIEvents.ElementContainer.TOPIC,
 					UIEvents.ElementContainer.CHILDREN), childrenHandler);
@@ -329,6 +370,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (eventBroker == null)
 			return;
 		eventBroker.unsubscribe(toBeRenderedHandler);
+		eventBroker.unsubscribe(visibilityHandler);
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(trimHandler);
 	}
