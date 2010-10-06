@@ -1532,6 +1532,28 @@ public class IResourceTest extends ResourceTest {
 	}
 
 	/**
+	 * Tests that, having replaced a file, the modification stamp
+	 * has changed.
+	 */
+	public void testGetModificationStampAfterReplace() throws Exception {
+		final IFile file = getWorkspace().getRoot().getFile(new Path("/project/f"));
+
+		create(file, true);
+		long modificationStamp = file.getModificationStamp();
+		assertTrue("1.1", modificationStamp != IResource.NULL_STAMP);
+
+		// Remove and re-create the file in a workspace operation
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				file.delete(false, getMonitor());
+				create(file, true);
+			}
+		}, getMonitor());
+
+		assertTrue("1.0", modificationStamp != file.getModificationStamp());
+	}
+
+	/**
 	 * Performs black box testing of the following method: IPath
 	 * getRawLocation()
 	 */

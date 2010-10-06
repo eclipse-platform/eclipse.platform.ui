@@ -371,6 +371,10 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 */
 	public void setNodeId(long id) {
 		nodeId = id;
+		// Resource modification stamp starts from current nodeId
+		// so future generations are distinguishable (bug 160728)
+		if (modStamp == 0)
+			modStamp = nodeId;
 	}
 
 	/**
