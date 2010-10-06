@@ -308,7 +308,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		// set up context
 		IEclipseContext localContext = getContext(wbwModel);
-		localContext.activateBranch();
+		localContext.activate();
 
 		// We need to retrieve specific CSS properties for our layout.
 		CSSEngineHelper helper = new CSSEngineHelper(localContext, wbwShell);
@@ -428,11 +428,11 @@ public class WBWRenderer extends SWTPartRenderer {
 						if (app.getSelectedElement() == w)
 							return;
 						app.setSelectedElement(w);
-						w.getContext().activateBranch();
+						w.getContext().activate();
 					} else if (parentME == null) {
 						parentME = (MUIElement) ((EObjectImpl) w).eContainer();
 						if (parentME instanceof MContext) {
-							w.getContext().activateBranch();
+							w.getContext().activate();
 						}
 					}
 				}

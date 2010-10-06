@@ -117,7 +117,7 @@ public class ShellActivationListener implements Listener {
 		SafeRunner.run(new ISafeRunnable() {
 			public void run() throws Exception {
 				// activate this shell
-				shellContext.activateBranch();
+				shellContext.activate();
 			}
 
 			public void handleException(Throwable exception) {
@@ -141,10 +141,17 @@ public class ShellActivationListener implements Listener {
 		}
 		final IEclipseContext prevChild = (IEclipseContext) parent
 				.getData(ECLIPSE_CONTEXT_SHELL_CONTEXT);
+		final IEclipseContext parentContext = application.getContext();
 		SafeRunner.run(new ISafeRunnable() {
 			public void run() throws Exception {
-				if (prevChild != null)
+				if (prevChild == null) {
+					IEclipseContext activeChild = parentContext.getActiveChild();
+					if (activeChild != null) {
+						activeChild.deactivate();
+					}
+				} else {
 					prevChild.activate();
+				}
 			}
 
 			public void handleException(Throwable exception) {

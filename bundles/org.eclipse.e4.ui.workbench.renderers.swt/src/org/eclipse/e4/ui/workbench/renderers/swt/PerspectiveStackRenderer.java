@@ -110,7 +110,7 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		// Force a context switch
 		if (tabElement instanceof MPerspective) {
 			IEclipseContext context = persp.getContext();
-			context.activateBranch();
+			context.activate();
 		}
 
 		Composite psComp = ctrl.getParent();

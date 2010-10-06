@@ -72,7 +72,8 @@ public class Bug308220Test extends TestCase {
 		// set the active part as some object
 		part.set(Object.class.getName(), o1);
 		// construct the active chain
-		part.activateBranch();
+		part.activate();
+		windowA.activate();
 
 		WindowService windowServiceA = (WindowService) ContextInjectionFactory
 				.make(WindowService.class, windowA);
