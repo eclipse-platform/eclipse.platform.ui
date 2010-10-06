@@ -17,9 +17,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
 public class DisposingReferencedContextTest extends TestCase {
 	
@@ -28,7 +28,7 @@ public class DisposingReferencedContextTest extends TestCase {
 		Object object;
 
 		@Inject
-		void setActiveContext(@Named(IContextConstants.ACTIVE_CHILD) IEclipseContext partContext) {
+		void setActiveContext(@Named(EclipseContext.ACTIVE_CHILD) IEclipseContext partContext) {
 			if (partContext != null)
 				partContext.get("someVar");
 		}
@@ -39,7 +39,7 @@ public class DisposingReferencedContextTest extends TestCase {
 		Object object;
 
 		@Inject
-		void setActiveContext(@Optional @Named(IContextConstants.ACTIVE_CHILD) IEclipseContext partContext) {
+		void setActiveContext(@Optional @Named(EclipseContext.ACTIVE_CHILD) IEclipseContext partContext) {
 			if (partContext != null)
 				partContext.get("someVar");
 		}

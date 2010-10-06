@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -95,6 +94,12 @@ public class EclipseContext implements IEclipseContext {
 	private Set<WeakReference<EclipseContext>> children = new HashSet<WeakReference<EclipseContext>>();
 
 	private Set<IContextDisposalListener> notifyOnDisposal = new HashSet<IContextDisposalListener>();
+
+	/**
+	 * A context key (value "activeChildContext") that identifies another {@link IEclipseContext}
+	 * that is a child of the context. The meaning of active is up to the application.
+	 */
+	public static final String ACTIVE_CHILD = "activeChildContext"; //$NON-NLS-1$
 
 	public EclipseContext(IEclipseContext parent, ILookupStrategy strategy) {
 		this.strategy = strategy;
@@ -214,7 +219,7 @@ public class EclipseContext implements IEclipseContext {
 		EclipseContext parent = getParent();
 		if (parent != null) {
 			if (this == parent.getActiveChild())
-				parent.set(IContextConstants.ACTIVE_CHILD, null);
+				parent.set(ACTIVE_CHILD, null);
 		}
 
 		localValues.clear();
@@ -588,7 +593,7 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	public IEclipseContext getActiveChild() {
-		return (EclipseContext) internalGet(this, IContextConstants.ACTIVE_CHILD, true);
+		return (EclipseContext) internalGet(this, ACTIVE_CHILD, true);
 	}
 
 	public IEclipseContext getActiveLeaf() {
@@ -607,7 +612,7 @@ public class EclipseContext implements IEclipseContext {
 			return;
 		if (this == parent.getActiveChild())
 			return;
-		parent.set(IContextConstants.ACTIVE_CHILD, this);
+		parent.set(ACTIVE_CHILD, this);
 	}
 
 	public void activateBranch() {
@@ -622,7 +627,7 @@ public class EclipseContext implements IEclipseContext {
 			return;
 		if (this != parent.getActiveChild())
 			return; // this is not an active context; return 
-		parent.set(IContextConstants.ACTIVE_CHILD, null);
+		parent.set(ACTIVE_CHILD, null);
 	}
 
 }

@@ -12,8 +12,8 @@
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
 import junit.framework.TestCase;
+
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 
