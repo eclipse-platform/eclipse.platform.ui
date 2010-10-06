@@ -89,12 +89,16 @@ public interface IWorkbenchWindowConfigurer {
      */
     public boolean getShowMenuBar();
 
-    /**
-     * Sets whether the underlying workbench window has a menu bar.
-     * 
-     * @param show <code>true</code> for a menu bar, and <code>false</code>
-     * for no menu bar
-     */
+	/**
+	 * Sets whether the underlying workbench window has a menu bar.
+	 * 
+	 * When this method is not called, the value defaults to <code>true</code>
+	 * 
+	 * @param show
+	 *            <code>true</code> for a menu bar, and <code>false</code> for
+	 *            no menu bar
+	 * 
+	 */
     public void setShowMenuBar(boolean show);
 
     /**
@@ -108,12 +112,15 @@ public interface IWorkbenchWindowConfigurer {
      */
     public boolean getShowCoolBar();
 
-    /**
-     * Sets whether the underlying workbench window has a cool bar.
-     * 
-     * @param show <code>true</code> for a cool bar, and <code>false</code>
-     * for no cool bar
-     */
+	/**
+	 * Sets whether the underlying workbench window has a cool bar.
+	 * 
+	 * When this method is not called, the value defaults to <code>true</code>
+	 * 
+	 * @param show
+	 *            <code>true</code> for a cool bar, and <code>false</code> for
+	 *            no cool bar
+	 */
     public void setShowCoolBar(boolean show);
 
     /**
@@ -127,12 +134,15 @@ public interface IWorkbenchWindowConfigurer {
      */
     public boolean getShowStatusLine();
 
-    /**
-     * Sets whether the underlying workbench window has a status line.
-     * 
-     * @param show <code>true</code> for a status line, and <code>false</code>
-     * for no status line
-     */
+	/**
+	 * Sets whether the underlying workbench window has a status line.
+	 * 
+	 * When this method is not called, the value defaults to <code>true</code>
+	 * 
+	 * @param show
+	 *            <code>true</code> for a status line, and <code>false</code>
+	 *            for no status line
+	 */
     public void setShowStatusLine(boolean show);
 
     /**
@@ -147,13 +157,16 @@ public interface IWorkbenchWindowConfigurer {
      */
     public boolean getShowPerspectiveBar();
 
-    /**
-     * Sets whether the underlying workbench window has a perspective bar (the 
-     * perspective bar provides buttons to quickly switch between perspectives).
-     * 
-     * @param show <code>true</code> for a perspective bar, and
-     * <code>false</code> for no perspective bar
-     */
+	/**
+	 * Sets whether the underlying workbench window has a perspective bar (the
+	 * perspective bar provides buttons to quickly switch between perspectives).
+	 * 
+	 * When this method is not called, the value defaults to <code>false</code>
+	 * 
+	 * @param show
+	 *            <code>true</code> for a perspective bar, and
+	 *            <code>false</code> for no perspective bar
+	 */
     public void setShowPerspectiveBar(boolean show);
 
     /**
@@ -167,12 +180,16 @@ public interface IWorkbenchWindowConfigurer {
      */
     public boolean getShowFastViewBars();
 
-    /**
-     * Sets whether the underlying workbench window has fast view bars. 
-     * 
-     * @param enable <code>true</code> for fast view bars, and 
-     * <code>false</code> for no fast view bars
-     */
+	/**
+	 * Sets whether the underlying workbench window has fast view bars.
+	 * 
+	 * When this method is not called, the value defaults to <code>false</code>
+	 * 
+	 * 
+	 * @param enable
+	 *            <code>true</code> for fast view bars, and <code>false</code>
+	 *            for no fast view bars
+	 */
     public void setShowFastViewBars(boolean enable);
 
     /**
@@ -186,12 +203,15 @@ public interface IWorkbenchWindowConfigurer {
      */
     public boolean getShowProgressIndicator();
 
-    /**
-     * Sets whether the underlying workbench window has a progress indicator.
-     * 
-     * @param show <code>true</code> for a progress indicator, and <code>false</code>
-     * for no progress indicator
-     */
+	/**
+	 * Sets whether the underlying workbench window has a progress indicator.
+	 * 
+	 * When this method is not called, the value defaults to <code>false</code>
+	 * 
+	 * @param show
+	 *            <code>true</code> for a progress indicator, and
+	 *            <code>false</code> for no progress indicator
+	 */
     public void setShowProgressIndicator(boolean show);
 
     /**
@@ -223,14 +243,14 @@ public interface IWorkbenchWindowConfigurer {
      */
     public Point getInitialSize();
 
-    /**
+	/**
      * Sets the size to use for the window's shell when it is created.
      * This method has no effect after the shell is created.
      * That is, it must be called within the <code>preWindowOpen</code>
      * callback on <code>WorkbenchAdvisor</code>.
-     *
+	 * 
      * @param initialSize the initial size to use for the shell
-     */
+	 */
     public void setInitialSize(Point initialSize);
 
     /**
