@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -155,49 +156,49 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 		if (element instanceof MContext) {
 			MContext mcontext = (MContext) element;
-			if (mcontext.getContext() != null) {
-				return null;
-			}
+			if (mcontext.getContext() == null) {
+				String contextName = element.getClass().getInterfaces()[0]
+						.getName() + " eclipse context"; //$NON-NLS-1$
+				final IEclipseContext createdContext = (parentContext != null) ? parentContext
+						.createChild(contextName) : EclipseContextFactory
+						.create(contextName);
 
-			String contextName = element.getClass().getInterfaces()[0]
-					.getName() + " eclipse context"; //$NON-NLS-1$
-			final IEclipseContext createdContext = (parentContext != null) ? parentContext
-					.createChild(contextName) : EclipseContextFactory
-					.create(contextName);
+				populateModelInterfaces(mcontext, createdContext, element
+						.getClass().getInterfaces());
 
-			populateModelInterfaces(mcontext, createdContext, element
-					.getClass().getInterfaces());
+				for (String variable : mcontext.getVariables()) {
+					createdContext.declareModifiable(variable);
+				}
 
-			for (String variable : mcontext.getVariables()) {
-				createdContext.declareModifiable(variable);
-			}
+				mcontext.setContext(createdContext);
 
-			mcontext.setContext(createdContext);
+				if (element instanceof MContribution && createContributions) {
+					MContribution contribution = (MContribution) element;
+					String uri = contribution.getContributionURI();
+					if (uri != null) {
+						Object clientObject = contributionFactory.create(uri,
+								createdContext);
+						contribution.setObject(clientObject);
+					}
+				}
 
-			if (element instanceof MContribution && createContributions) {
-				MContribution contribution = (MContribution) element;
-				String uri = contribution.getContributionURI();
-				if (uri != null) {
-					Object clientObject = contributionFactory.create(uri,
-							createdContext);
-					contribution.setObject(clientObject);
+				if (parentContext != null && parentContext.getActiveChild() == null) {
+					createdContext.activate();
 				}
 			}
 
-			if (parentContext != null && parentContext.getActiveChild() == null) {
-				createdContext.activate();
-			}
 		}
 
-		if (element instanceof MPartStack) {
-			MPartStack container = (MPartStack) element;
-			MStackElement active = container.getSelectedElement();
+		if (element instanceof MGenericStack) {
+			MGenericStack<?> container = (MGenericStack<?>) element;
+			MUIElement active = container.getSelectedElement();
 			if (active != null) {
 				createGui(active, container, getParentContext(active));
 			} else {
-				List<MStackElement> children = container.getChildren();
+				List<?> children = container.getChildren();
 				if (!children.isEmpty()) {
-					container.setSelectedElement(children.get(0));
+					((MElementContainer) element)
+							.setSelectedElement((MUIElement) children.get(0));
 				}
 			}
 		} else if (element instanceof MElementContainer<?>) {

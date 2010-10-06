@@ -111,6 +111,8 @@ public class PartServiceImpl implements EPartService {
 	@Inject
 	private IEventBroker eventBroker;
 
+	private PartActivationHistory partActivationHistory;
+
 	private MPart activePart;
 
 	private MPart lastActivePart;
@@ -150,12 +152,14 @@ public class PartServiceImpl implements EPartService {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
 		constructed = true;
+		partActivationHistory = new PartActivationHistory(modelService);
 	}
 
 	@PreDestroy
 	void preDestroy() {
 		constructed = false;
 		eventBroker.unsubscribe(selectedHandler);
+		partActivationHistory.clear();
 	}
 
 	private void firePartActivated(MPart part) {
@@ -413,8 +417,7 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		modelService.bringToTop(window, part);
-		IEclipseContext context = part.getContext();
-		context.activateBranch();
+		partActivationHistory.activate(part);
 
 		Object object = part.getObject();
 		if (object != null && requiresFocus) {
@@ -804,12 +807,32 @@ public class PartServiceImpl implements EPartService {
 			MElementContainer<MUIElement> parent = getParent(toBeRemoved);
 			List<MUIElement> children = parent.getChildren();
 
-			// FIXME: should be based on activation list
+			IEclipseContext partContext = part.getContext();
+			// check if we're the active child
+			if (partContext != null && partContext.getParent().getActiveChild() == partContext) {
+				// deactivate ourselves
+				MPart activateTarget = partActivationHistory.deactivate(part);
+				if (activateTarget != null) {
+					// activate another part
+					activate(activateTarget);
+				}
+			}
+
 			if (parent.getSelectedElement() == toBeRemoved) {
-				for (MUIElement child : children) {
-					if (child != toBeRemoved && child.isToBeRendered()) {
-						parent.setSelectedElement(child);
-						break;
+				// if we're the selected element and we're going to be hidden, need to select
+				// something else
+				MUIElement candidate = partActivationHistory.getSiblingActivationCandidate(part);
+				candidate = candidate == null ? null
+						: candidate.getCurSharedRef() == null ? candidate : candidate
+								.getCurSharedRef();
+				if (candidate != null && children.contains(candidate)) {
+					parent.setSelectedElement(candidate);
+				} else {
+					for (MUIElement child : children) {
+						if (child != toBeRemoved && child.isToBeRendered()) {
+							parent.setSelectedElement(child);
+							break;
+						}
 					}
 				}
 			}
@@ -827,6 +850,8 @@ public class PartServiceImpl implements EPartService {
 			if (force || part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
 				children.remove(toBeRemoved);
 			}
+			// remove ourselves from the activation history also since we're being hidden
+			partActivationHistory.forget(part, toBeRemoved == part);
 		}
 	}
 
