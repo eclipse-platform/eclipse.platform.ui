@@ -258,6 +258,9 @@ class ThreadJob extends Job {
 				if (manager.getLockManager().aboutToWait(blocker))
 					// Condition #2.
 					return threadJob;
+
+				// Notify the lock manager that we're about to block waiting for the scheduling rule
+				manager.getLockManager().addLockWaitThread(currentThread, threadJob.getRule());
 				synchronized (blockingJob.jobStateLock) {
 					try {
 						// Wait until we are no longer definitely blocked (not running). 
@@ -278,6 +281,9 @@ class ThreadJob extends Job {
 						interrupted = true;
 					}
 				}
+				// Going around the loop again.  Ensure we're not marked as waiting for the thread
+				// as external code is run via the monitor (Bug 262032).
+				manager.getLockManager().removeLockWaitThread(currentThread, threadJob.getRule());
 			}
 		} finally {
 			if (interrupted)
@@ -421,12 +427,11 @@ class ThreadJob extends Job {
 
 	/**
 	 * Indicates the start of a wait on a scheduling rule. Report the
-	 * blockage to the progress manager and update the lock manager.
+	 * blockage to the progress manager.
 	 * @param monitor The monitor to report blocking to
 	 * @param blockingJob The job that is blocking this thread, or <code>null</code>
 	 */
 	static private void waitStart(ThreadJob threadJob, IProgressMonitor monitor, InternalJob blockingJob) {
-		manager.getLockManager().addLockWaitThread(Thread.currentThread(), threadJob.getRule());
 		threadJob.isBlocked = true;
 		manager.reportBlocked(monitor, blockingJob);
 	}

@@ -275,6 +275,8 @@ public class LockManager {
 
 	/**
 	 * This thread has just stopped waiting for a lock. Update graph.
+	 * If the thread has already been granted the lock (or wasn't waiting
+	 * for the lock) then the graph remains unchanged.
 	 */
 	void removeLockWaitThread(Thread thread, ISchedulingRule lock) {
 		DeadlockDetector tempLocks = locks;

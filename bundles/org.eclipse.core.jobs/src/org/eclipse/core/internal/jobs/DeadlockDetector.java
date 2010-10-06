@@ -396,10 +396,10 @@ class DeadlockDetector {
 			return null;
 		//there is a deadlock in the graph
 		Thread[] threads = getThreadsInDeadlock(client);
+		//find a thread whose locks can be suspended to resolve the deadlock
 		Thread candidate = resolutionCandidate(threads);
 		ISchedulingRule[] locksToSuspend = realLocksForThread(candidate);
 		Deadlock deadlock = new Deadlock(threads, locksToSuspend, candidate);
-		//find a thread whose locks can be suspended to resolve the deadlock
 		if (JobManager.DEBUG_LOCKS)
 			reportDeadlock(deadlock);
 		if (JobManager.DEBUG_DEADLOCK)
@@ -415,6 +415,7 @@ class DeadlockDetector {
 	/**
 	 * The given thread has stopped waiting for the given lock. 
 	 * Update the graph.
+	 * If the lock has already been granted, then it isn't removed.
 	 */
 	void lockWaitStop(Thread owner, ISchedulingRule lock) {
 		int lockIndex = indexOf(lock, false);
@@ -430,8 +431,12 @@ class DeadlockDetector {
 				System.out.println("Lock " + lock + " was already removed."); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		if (graph[threadIndex][lockIndex] != WAITING_FOR_LOCK)
-			Assert.isTrue(false, "Thread " + owner.getName() + " was not waiting for lock " + lock.toString() + " so it could not time out."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (graph[threadIndex][lockIndex] != WAITING_FOR_LOCK) {
+			// Lock has already been granted, nothing to do...
+			if (JobManager.DEBUG_LOCKS)
+				System.out.println("Lock " + lock + " already granted to depth: " + graph[threadIndex][lockIndex]); //$NON-NLS-1$ //$NON-NLS-2$
+			return;
+		}
 		graph[threadIndex][lockIndex] = NO_STATE;
 		reduceGraph(threadIndex, lock);
 	}
