@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2009 IBM Corporation and others.
+ *  Copyright (c) 2003, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -95,16 +95,19 @@ class WorkerPool {
 	 * OutOfMemoryError conditions and thus must be paranoid about allocating objects.
 	 */
 	protected void endJob(InternalJob job, IStatus result) {
-		decrementBusyThreads();
-		//need to end rule in graph before ending job so that 2 threads
-		//do not become the owners of the same rule in the graph
-		if ((job.getRule() != null) && !(job instanceof ThreadJob)) {
-			//remove any locks this thread may be owning on that rule
-			manager.getLockManager().removeLockCompletely(Thread.currentThread(), job.getRule());
+		try {
+			//need to end rule in graph before ending job so that 2 threads
+			//do not become the owners of the same rule in the graph
+			if ((job.getRule() != null) && !(job instanceof ThreadJob)) {
+				//remove any locks this thread may be owning on that rule
+				manager.getLockManager().removeLockCompletely(Thread.currentThread(), job.getRule());
+			}
+			manager.endJob(job, result, true);
+			//ensure this thread no longer owns any scheduling rules
+			manager.implicitJobs.endJob(job);
+		} finally {
+			decrementBusyThreads();
 		}
-		manager.endJob(job, result, true);
-		//ensure this thread no longer owns any scheduling rules
-		manager.implicitJobs.endJob(job);
 	}
 
 	/**
