@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -400,8 +400,7 @@ class DeadlockDetector {
 		Thread candidate = resolutionCandidate(threads);
 		ISchedulingRule[] locksToSuspend = realLocksForThread(candidate);
 		Deadlock deadlock = new Deadlock(threads, locksToSuspend, candidate);
-		if (JobManager.DEBUG_LOCKS)
-			reportDeadlock(deadlock);
+		reportDeadlock(deadlock);
 		if (JobManager.DEBUG_DEADLOCK)
 			throw new IllegalStateException("Deadlock detected. Caused by thread " + client.getName() + '.'); //$NON-NLS-1$
 		// Update the graph to indicate that the locks will now be suspended.
