@@ -156,10 +156,11 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 		if (element instanceof MContext) {
 			MContext mcontext = (MContext) element;
-			if (mcontext.getContext() == null) {
+			IEclipseContext createdContext = mcontext.getContext();
+			if (createdContext == null) {
 				String contextName = element.getClass().getInterfaces()[0]
 						.getName() + " eclipse context"; //$NON-NLS-1$
-				final IEclipseContext createdContext = (parentContext != null) ? parentContext
+				createdContext = (parentContext != null) ? parentContext
 						.createChild(contextName) : EclipseContextFactory
 						.create(contextName);
 
@@ -185,8 +186,9 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				if (parentContext != null && parentContext.getActiveChild() == null) {
 					createdContext.activate();
 				}
+			} else if (createdContext.getParent() != parentContext) {
+				createdContext.setParent(parentContext);
 			}
-
 		}
 
 		if (element instanceof MGenericStack) {
