@@ -12,7 +12,6 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
@@ -30,8 +29,7 @@ public class ActiveChildLookupFunction extends ContextFunction {
 
 	@Override
 	public Object compute(IEclipseContext context) {
-		IEclipseContext childContext = (IEclipseContext) context
-				.getLocal(IContextConstants.ACTIVE_CHILD);
+		IEclipseContext childContext = context.getActiveChild();
 		if (childContext != null) {
 			return childContext.get(var);
 		}

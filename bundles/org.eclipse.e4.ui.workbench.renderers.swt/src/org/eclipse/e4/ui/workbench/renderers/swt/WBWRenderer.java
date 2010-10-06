@@ -19,7 +19,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -292,7 +291,6 @@ public class WBWRenderer extends SWTPartRenderer {
 		Shell parentShell = parent == null ? null : ((Control) parent)
 				.getShell();
 
-		IEclipseContext parentContext = getContextForParent(element);
 		final Shell wbwShell;
 		if (parentShell == null) {
 			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
@@ -310,7 +308,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		// set up context
 		IEclipseContext localContext = getContext(wbwModel);
-		parentContext.set(IContextConstants.ACTIVE_CHILD, localContext);
+		localContext.activateBranch();
 
 		// We need to retrieve specific CSS properties for our layout.
 		CSSEngineHelper helper = new CSSEngineHelper(localContext, wbwShell);
@@ -429,18 +427,12 @@ public class WBWRenderer extends SWTPartRenderer {
 						MApplication app = (MApplication) parentME;
 						if (app.getSelectedElement() == w)
 							return;
-
 						app.setSelectedElement(w);
-						IEclipseContext appContext = app.getContext();
-						appContext.set(IContextConstants.ACTIVE_CHILD,
-								w.getContext());
+						w.getContext().activateBranch();
 					} else if (parentME == null) {
 						parentME = (MUIElement) ((EObjectImpl) w).eContainer();
 						if (parentME instanceof MContext) {
-							IEclipseContext parentContext = ((MContext) parentME)
-									.getContext();
-							parentContext.set(IContextConstants.ACTIVE_CHILD,
-									w.getContext());
+							w.getContext().activateBranch();
 						}
 					}
 				}

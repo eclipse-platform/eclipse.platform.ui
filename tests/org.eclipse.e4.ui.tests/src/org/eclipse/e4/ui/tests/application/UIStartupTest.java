@@ -12,7 +12,6 @@
 package org.eclipse.e4.ui.tests.application;
 
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.ResourceUtility;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -58,7 +57,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	public void testGet_ActiveChild() throws Exception {
 		IEclipseContext context = application.getContext();
 
-		assertNotNull(context.get(IContextConstants.ACTIVE_CHILD));
+		assertNotNull(context.getActiveChild());
 	}
 
 	public void testGet_ActiveShell() throws Exception {
@@ -89,7 +88,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	public void testGet_ActiveChild2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 
-		assertNotNull(context.get(IContextConstants.ACTIVE_CHILD));
+		assertNotNull(context.getActiveChild());
 	}
 
 	public void testGet_ActivePart2() throws Exception {

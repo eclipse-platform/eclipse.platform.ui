@@ -11,7 +11,6 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.bindings.EBindingService;
@@ -135,7 +134,7 @@ public class BindingLookupTest extends TestCase {
 				.get(ECommandService.class.getName());
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
 				.getName());
@@ -163,7 +162,7 @@ public class BindingLookupTest extends TestCase {
 		TriggerSequence seq = wBS.createSequence("CTRL+5 T");
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EContextService es = (EContextService) c1.get(EContextService.class.getName());
 		es.activateContext(ID_WINDOW);
 
@@ -197,7 +196,7 @@ public class BindingLookupTest extends TestCase {
 		TriggerSequence seq = wBS.createSequence("CTRL+5 T");
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EContextService es = (EContextService) c1.get(EContextService.class.getName());
 		es.activateContext(ID_WINDOW);
 
@@ -219,17 +218,17 @@ public class BindingLookupTest extends TestCase {
 		assertEquals(cmd2, bs2.getPerfectMatch(seq).getParameterizedCommand());
 		assertEquals(cmd1, wBS.getPerfectMatch(seq).getParameterizedCommand());
 
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c2);
+		c2.activate();
 		assertEquals(cmd1, bs1.getPerfectMatch(seq).getParameterizedCommand());
 		assertEquals(cmd2, bs2.getPerfectMatch(seq).getParameterizedCommand());
 		assertEquals(cmd2, wBS.getPerfectMatch(seq).getParameterizedCommand());
 
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		assertEquals(cmd1, bs1.getPerfectMatch(seq).getParameterizedCommand());
 		assertEquals(cmd2, bs2.getPerfectMatch(seq).getParameterizedCommand());
 		assertEquals(cmd1, wBS.getPerfectMatch(seq).getParameterizedCommand());
 
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c2);
+		c2.activate();
 		assertEquals(cmd1, bs1.getPerfectMatch(seq).getParameterizedCommand());
 		assertEquals(cmd2, bs2.getPerfectMatch(seq).getParameterizedCommand());
 		assertEquals(cmd2, wBS.getPerfectMatch(seq).getParameterizedCommand());
@@ -298,7 +297,7 @@ public class BindingLookupTest extends TestCase {
 		bs.activateBinding(db2);
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
 				.getName());
 
@@ -322,7 +321,7 @@ public class BindingLookupTest extends TestCase {
 		TriggerSequence seq = wBS.createSequence("CTRL+5 T");
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EContextService es = (EContextService) c1.get(EContextService.class.getName());
 		es.activateContext(ID_WINDOW);
 
@@ -384,7 +383,7 @@ public class BindingLookupTest extends TestCase {
 		wBS.activateBinding(db2);
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EContextService es = (EContextService) c1.get(EContextService.class.getName());
 		es.activateContext(ID_WINDOW);
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
@@ -414,7 +413,7 @@ public class BindingLookupTest extends TestCase {
 		wBS.activateBinding(db2);
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
 				.getName());
 
@@ -442,7 +441,7 @@ public class BindingLookupTest extends TestCase {
 		wBS.activateBinding(wbBind);
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
 				.getName());
 

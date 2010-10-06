@@ -12,7 +12,6 @@ package org.eclipse.ui.part;
 
 import java.util.ArrayList;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -166,7 +165,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * @since 3.2
 	 */
 	public final void activate() {
-		context.getParent().set(IContextConstants.ACTIVE_CHILD, context);
+		context.activate();
 		serviceLocator.activate();
 	}
 
@@ -178,7 +177,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	public final void deactivate() {
 		serviceLocator.deactivate();
-		context.getParent().set(IContextConstants.ACTIVE_CHILD, null);
+		context.deactivate();
 	}
 
 	/**

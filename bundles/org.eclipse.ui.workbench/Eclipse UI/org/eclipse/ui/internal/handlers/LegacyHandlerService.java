@@ -35,7 +35,6 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
@@ -389,11 +388,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 * org.eclipse.ui.handlers.IHandlerService#createContextSnapshot(boolean)
 	 */
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
-		IEclipseContext targetContext = eclipseContext;
-		while (targetContext.getLocal(IContextConstants.ACTIVE_CHILD) != null) {
-			targetContext = (IEclipseContext) targetContext
-					.getLocal(IContextConstants.ACTIVE_CHILD);
-		}
+		IEclipseContext targetContext = eclipseContext.getActiveLeaf();
 		return new LegacyEvalContext(targetContext.createChild());
 	}
 

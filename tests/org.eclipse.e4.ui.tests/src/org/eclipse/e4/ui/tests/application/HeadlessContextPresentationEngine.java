@@ -15,7 +15,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -185,10 +184,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				}
 			}
 
-			if (parentContext != null
-					&& parentContext.getLocal(IContextConstants.ACTIVE_CHILD) == null) {
-				parentContext.set(IContextConstants.ACTIVE_CHILD,
-						createdContext);
+			if (parentContext != null && parentContext.getActiveChild() == null) {
+				createdContext.activate();
 			}
 		}
 
@@ -212,9 +209,9 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 						IEclipseContext childContext = ((MContext) child)
 								.getContext();
 						IEclipseContext pContext = getParentContext((MUIElement) child);
-						if (pContext.getLocal(IContextConstants.ACTIVE_CHILD) == null) {
-							pContext.set(IContextConstants.ACTIVE_CHILD,
-									childContext);
+						if (childContext != null
+								&& pContext.getActiveChild() == null) {
+							childContext.activate();
 						}
 					}
 				}

@@ -17,9 +17,7 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -49,10 +47,7 @@ public class Bug318460Test extends TestCase {
 		if (wb != null) {
 			wb.close();
 		}
-
-		if (appContext instanceof IDisposable) {
-			((IDisposable) appContext).dispose();
-		}
+		appContext.dispose();
 	}
 
 	public void testBug318460_A() {
@@ -61,14 +56,7 @@ public class Bug318460Test extends TestCase {
 		context.set(EPartService.PART_SERVICE_ROOT, new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context) {
-				IEclipseContext child = (IEclipseContext) context
-						.getLocal(IContextConstants.ACTIVE_CHILD);
-				while (child != null) {
-					context = child;
-					child = (IEclipseContext) context
-							.getLocal(IContextConstants.ACTIVE_CHILD);
-				}
-				return context;
+				return context.getActiveLeaf();
 			}
 		});
 
@@ -79,15 +67,15 @@ public class Bug318460Test extends TestCase {
 		IEclipseContext childContextA = context.createChild();
 		IEclipseContext childContextB = context.createChild();
 
-		context.set(IContextConstants.ACTIVE_CHILD, childContextA);
+		childContextA.activate();
 		assertEquals(childContextA, consumer.root);
 
-		context.set(IContextConstants.ACTIVE_CHILD, childContextB);
+		childContextB.activate();
 		assertEquals(childContextB, consumer.root);
 
 		ContextInjectionFactory.uninject(o, context);
 
-		context.set(IContextConstants.ACTIVE_CHILD, childContextA);
+		childContextA.activate();
 		assertEquals(childContextA, consumer.root);
 	}
 
@@ -111,8 +99,8 @@ public class Bug318460Test extends TestCase {
 
 		RootContainerConsumer consumer = ContextInjectionFactory.make(
 				RootContainerConsumer.class, window.getContext());
-		Object o = ContextInjectionFactory.make(Object.class, window
-				.getContext());
+		Object o = ContextInjectionFactory.make(Object.class,
+				window.getContext());
 
 		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
 				.createPerspective();

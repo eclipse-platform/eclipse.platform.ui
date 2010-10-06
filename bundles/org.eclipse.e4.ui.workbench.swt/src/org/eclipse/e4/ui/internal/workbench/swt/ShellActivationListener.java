@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.internal.workbench.swt;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -91,13 +90,7 @@ public class ShellActivationListener implements Listener {
 			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					// reconstruct the active chain for this mwindow
-					IEclipseContext context = local;
-					IEclipseContext parent = context.getParent();
-					while (parent != null) {
-						parent.set(IContextConstants.ACTIVE_CHILD, context);
-						context = parent;
-						parent = parent.getParent();
-					}
+					local.activateBranch();
 				}
 
 				public void handleException(Throwable exception) {
@@ -124,7 +117,7 @@ public class ShellActivationListener implements Listener {
 		SafeRunner.run(new ISafeRunnable() {
 			public void run() throws Exception {
 				// activate this shell
-				parentContext.set(IContextConstants.ACTIVE_CHILD, shellContext);
+				shellContext.activateBranch();
 			}
 
 			public void handleException(Throwable exception) {
@@ -140,15 +133,18 @@ public class ShellActivationListener implements Listener {
 		if (parent == null) {
 			// no parent shell, clear the chain to reflect reality, if there are
 			// other shells, the chain will be reconstructed on activation
-			application.getContext().set(IContextConstants.ACTIVE_CHILD, null);
+			IEclipseContext currentlyActive = application.getContext()
+					.getActiveChild();
+			if (currentlyActive != null)
+				currentlyActive.deactivate();
 			return;
 		}
 		final IEclipseContext prevChild = (IEclipseContext) parent
 				.getData(ECLIPSE_CONTEXT_SHELL_CONTEXT);
-		final IEclipseContext parentContext = application.getContext();
 		SafeRunner.run(new ISafeRunnable() {
 			public void run() throws Exception {
-				parentContext.set(IContextConstants.ACTIVE_CHILD, prevChild);
+				if (prevChild != null)
+					prevChild.activate();
 			}
 
 			public void handleException(Throwable exception) {

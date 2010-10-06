@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
@@ -402,8 +401,7 @@ public class E4Application implements IApplication {
 					perceivedRoot = (MContext) context.get(MApplication.class
 							.getName());
 					if (perceivedRoot == null) {
-						IEclipseContext ctxt = (IEclipseContext) appContext
-								.getLocal(IContextConstants.ACTIVE_CHILD);
+						IEclipseContext ctxt = appContext.getActiveChild();
 						if (ctxt == null) {
 							return null;
 						}
@@ -414,8 +412,7 @@ public class E4Application implements IApplication {
 
 				IEclipseContext current = perceivedRoot.getContext();
 				if (current == null) {
-					IEclipseContext ctxt = (IEclipseContext) appContext
-							.getLocal(IContextConstants.ACTIVE_CHILD);
+					IEclipseContext ctxt = appContext.getActiveChild();
 					if (ctxt == null) {
 						return null;
 					}
@@ -423,8 +420,7 @@ public class E4Application implements IApplication {
 					return ctxt.get(MWindow.class);
 				}
 
-				IEclipseContext next = (IEclipseContext) current
-						.getLocal(IContextConstants.ACTIVE_CHILD);
+				IEclipseContext next = current.getActiveChild();
 				MPerspective candidate = null;
 				while (next != null) {
 					current = next;
@@ -432,8 +428,7 @@ public class E4Application implements IApplication {
 					if (perspective != null) {
 						candidate = perspective;
 					}
-					next = (IEclipseContext) current
-							.getLocal(IContextConstants.ACTIVE_CHILD);
+					next = current.getActiveChild();
 				}
 
 				if (candidate != null) {
@@ -444,8 +439,7 @@ public class E4Application implements IApplication {
 				MUIElement window = (MUIElement) current.get(MWindow.class
 						.getName());
 				if (window == null) {
-					IEclipseContext ctxt = (IEclipseContext) appContext
-							.getLocal(IContextConstants.ACTIVE_CHILD);
+					IEclipseContext ctxt = appContext.getActiveChild();
 					if (ctxt == null) {
 						return null;
 					}

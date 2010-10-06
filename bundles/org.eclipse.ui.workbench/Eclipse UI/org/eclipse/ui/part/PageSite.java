@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -233,7 +232,7 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void activate() {
-		e4Context.getParent().set(IContextConstants.ACTIVE_CHILD, e4Context);
+		e4Context.activate();
 		serviceLocator.activate();
 	}
 
@@ -246,6 +245,6 @@ public class PageSite implements IPageSite, INestable {
 	 */
 	public void deactivate() {
 		serviceLocator.deactivate();
-		e4Context.getParent().set(IContextConstants.ACTIVE_CHILD, null);
+		e4Context.deactivate();
 	}
 }

@@ -68,7 +68,6 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
@@ -1288,8 +1287,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		public Object compute(IEclipseContext context) {
-			IEclipseContext child = (IEclipseContext) context
-					.getLocal(IContextConstants.ACTIVE_CHILD);
+			IEclipseContext child = context.getActiveChild();
 			return child == null ? null : child.getLocal(variable);
 		}
 

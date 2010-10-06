@@ -36,7 +36,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -1350,7 +1349,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			// Null out the progress region. Bug 64024.
 			progressRegion = null;
 
-			model.getContext().set(IContextConstants.ACTIVE_CHILD, null);
+			IEclipseContext currentlyActive = model.getContext().getActiveChild();
+			if (currentlyActive != null)
+				currentlyActive.deactivate();
 			for (MWindowElement windowElement : model.getChildren()) {
 				engine.removeGui(windowElement);
 			}

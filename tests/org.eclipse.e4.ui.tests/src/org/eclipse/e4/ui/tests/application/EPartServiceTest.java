@@ -17,9 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.AssertionFailedException;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
@@ -69,9 +67,7 @@ public class EPartServiceTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		if (applicationContext instanceof IDisposable) {
-			((IDisposable) applicationContext).dispose();
-		}
+		applicationContext.dispose();
 	}
 
 	private IPresentationEngine getEngine() {
@@ -875,24 +871,13 @@ public class EPartServiceTest extends TestCase {
 		partServiceA.activate(partBackA);
 
 		assertEquals(windowA, application.getSelectedElement());
-		IEclipseContext a = application.getContext();
-		IEclipseContext c = (IEclipseContext) a
-				.getLocal(IContextConstants.ACTIVE_CHILD);
-		while (c != null) {
-			a = c;
-			c = (IEclipseContext) a.getLocal(IContextConstants.ACTIVE_CHILD);
-		}
+		IEclipseContext a = application.getContext().getActiveLeaf();
 		MPart aPart = (MPart) a.get(MPart.class.getName());
 		assertEquals(partBackA, aPart);
 
 		partServiceB.activate(partBackB);
 		assertEquals(windowB, application.getSelectedElement());
-		a = application.getContext();
-		c = (IEclipseContext) a.getLocal(IContextConstants.ACTIVE_CHILD);
-		while (c != null) {
-			a = c;
-			c = (IEclipseContext) a.getLocal(IContextConstants.ACTIVE_CHILD);
-		}
+		a = application.getContext().getActiveLeaf();
 		aPart = (MPart) a.get(MPart.class.getName());
 		assertEquals(partBackB, aPart);
 	}
@@ -2019,8 +2004,7 @@ public class EPartServiceTest extends TestCase {
 		assertNotNull(parent);
 
 		perspectiveStack.setSelectedElement(perspectiveB);
-		window.getContext().set(IContextConstants.ACTIVE_CHILD,
-				perspectiveB.getContext());
+		perspectiveB.getContext().activate();
 
 		MPart part2 = partService.showPart("partId", PartState.ACTIVATE);
 		parent = part2.getParent();
@@ -2797,8 +2781,7 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(0, placeholdersB.size());
 
 		perspectiveStack.setSelectedElement(perspectiveB);
-		window.getContext().set(IContextConstants.ACTIVE_CHILD,
-				perspectiveB.getContext());
+		perspectiveB.getContext().activate();
 		partService.showPart(part, PartState.ACTIVATE);
 
 		partsA = modelService.findElements(perspectiveA, part.getElementId(),
@@ -2881,8 +2864,7 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(0, placeholdersB.size());
 
 		perspectiveStack.setSelectedElement(perspectiveB);
-		window.getContext().set(IContextConstants.ACTIVE_CHILD,
-				perspectiveB.getContext());
+		perspectiveB.getContext().activate();
 		partService.showPart(part, PartState.ACTIVATE);
 
 		partsA = modelService.findElements(perspectiveA, part.getElementId(),

@@ -15,9 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -53,9 +51,7 @@ public class Bug308317Test extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		if (appContext instanceof IDisposable) {
-			((IDisposable) appContext).dispose();
-		}
+		appContext.dispose();
 	}
 
 	public void testBug308317() throws Exception {
@@ -95,28 +91,24 @@ public class Bug308317Test extends TestCase {
 		application.setContext(appContext);
 		appContext.set(MApplication.class.getName(), application);
 
-		PartConsumer getter = (PartConsumer) ContextInjectionFactory.make(
-				PartConsumer.class, window.getContext());
+		PartConsumer getter = ContextInjectionFactory.make(PartConsumer.class,
+				window.getContext());
 
-		window.getContext().set(IContextConstants.ACTIVE_CHILD,
-				partA.getContext());
+		partA.getContext().activate();
 		assertEquals(partA, getter.part);
 
-		window.getContext().set(IContextConstants.ACTIVE_CHILD,
-				partB.getContext());
+		partB.getContext().activate();
 		assertEquals(partB, getter.part);
 
-		window.getContext().set(IContextConstants.ACTIVE_CHILD,
-				partA.getContext());
+		partA.getContext().activate();
 		assertEquals(partA, getter.part);
 
-		window.getContext().set(IContextConstants.ACTIVE_CHILD, null);
+		partA.getContext().deactivate();
 		assertEquals(null, getter.part);
 
-		((IDisposable) partB.getContext()).dispose();
+		partB.getContext().dispose();
 
-		window.getContext().set(IContextConstants.ACTIVE_CHILD,
-				partA.getContext());
+		partA.getContext().activate();
 		assertEquals(partA, getter.part);
 	}
 

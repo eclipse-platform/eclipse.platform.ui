@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -111,7 +110,7 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		// Force a context switch
 		if (tabElement instanceof MPerspective) {
 			IEclipseContext context = persp.getContext();
-			context.getParent().set(IContextConstants.ACTIVE_CHILD, context);
+			context.activateBranch();
 		}
 
 		Composite psComp = ctrl.getParent();

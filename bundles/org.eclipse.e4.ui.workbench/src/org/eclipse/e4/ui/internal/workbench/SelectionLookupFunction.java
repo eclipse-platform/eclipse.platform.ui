@@ -12,7 +12,6 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
@@ -29,14 +28,7 @@ public class SelectionLookupFunction extends ContextFunction {
 	 */
 	@Override
 	public Object compute(IEclipseContext context) {
-		IEclipseContext leafContext = context;
-		IEclipseContext child = (IEclipseContext) leafContext
-				.getLocal(IContextConstants.ACTIVE_CHILD);
-		while (child != null) {
-			leafContext = child;
-			child = (IEclipseContext) leafContext.getLocal(IContextConstants.ACTIVE_CHILD);
-		}
-		return leafContext.get(SelectionServiceImpl.OUT_SELECTION);
+		return context.getActiveLeaf().get(SelectionServiceImpl.OUT_SELECTION);
 	}
 
 }

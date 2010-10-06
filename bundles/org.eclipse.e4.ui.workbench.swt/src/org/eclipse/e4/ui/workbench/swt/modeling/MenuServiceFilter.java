@@ -20,7 +20,6 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
@@ -205,15 +204,13 @@ public class MenuServiceFilter implements Listener {
 
 	public void hidePopup(Event event, Menu menu, MPopupMenu menuModel) {
 		final IEclipseContext popupContext = menuModel.getContext();
-		final IEclipseContext parentContext = popupContext.getParent();
 		final IEclipseContext originalChild = (IEclipseContext) popupContext
 				.get(TMP_ORIGINAL_CONTEXT);
 		popupContext.remove(TMP_ORIGINAL_CONTEXT);
 		if (!menu.isDisposed()) {
 			menu.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					parentContext.set(IContextConstants.ACTIVE_CHILD,
-							originalChild);
+					originalChild.activate();
 				}
 			});
 		}
@@ -223,9 +220,8 @@ public class MenuServiceFilter implements Listener {
 			final MPopupMenu menuModel) {
 		final IEclipseContext popupContext = menuModel.getContext();
 		final IEclipseContext parentContext = popupContext.getParent();
-		final IEclipseContext originalChild = (IEclipseContext) parentContext
-				.getLocal(IContextConstants.ACTIVE_CHILD);
-		parentContext.set(IContextConstants.ACTIVE_CHILD, popupContext);
+		final IEclipseContext originalChild = parentContext.getActiveChild();
+		popupContext.activate();
 		popupContext.set(TMP_ORIGINAL_CONTEXT, originalChild);
 
 		final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();

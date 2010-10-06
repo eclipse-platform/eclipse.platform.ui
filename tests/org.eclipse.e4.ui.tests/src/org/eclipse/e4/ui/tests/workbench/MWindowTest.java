@@ -12,7 +12,6 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -189,8 +188,7 @@ public class MWindowTest extends TestCase {
 		assertEquals("MyWindow", shell.getText());
 
 		// should get the window context
-		IEclipseContext child = (IEclipseContext) appContext
-				.getLocal(IContextConstants.ACTIVE_CHILD);
+		IEclipseContext child = appContext.getActiveChild();
 		assertNotNull(child);
 		assertEquals(window.getContext(), child);
 
@@ -204,12 +202,10 @@ public class MWindowTest extends TestCase {
 				.getRenderer();
 		factory.activate(modelPart);
 
-		IEclipseContext next = (IEclipseContext) child
-				.getLocal(IContextConstants.ACTIVE_CHILD);
+		IEclipseContext next = child.getActiveChild();
 		while (next != null) {
 			child = next;
-			next = (IEclipseContext) child
-					.getLocal(IContextConstants.ACTIVE_CHILD);
+			next = child.getActiveChild();
 			if (next == child) {
 				fail("Cycle detected in part context");
 				break;

@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
 import org.eclipse.core.commands.contexts.Context;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.services.EContextService;
@@ -49,7 +48,7 @@ public class ContextTest extends TestCase {
 		assertEquals(0, cs.getActiveContextIds().size());
 
 		IEclipseContext window = appContext.createChild("windowContext");
-		appContext.set(IContextConstants.ACTIVE_CHILD, window);
+		window.activate();
 
 		EContextService windowService = (EContextService) window
 				.get(EContextService.class.getName());
@@ -73,7 +72,7 @@ public class ContextTest extends TestCase {
 		assertEquals(0, cs.getActiveContextIds().size());
 
 		IEclipseContext window = appContext.createChild("windowContext");
-		appContext.set(IContextConstants.ACTIVE_CHILD, window);
+		window.activate();
 
 		EContextService windowService = (EContextService) window
 				.get(EContextService.class.getName());
@@ -86,7 +85,7 @@ public class ContextTest extends TestCase {
 		assertEquals(0, windowService.getActiveContextIds().size());
 		assertEquals(0, cs.getActiveContextIds().size());
 
-		appContext.set(IContextConstants.ACTIVE_CHILD, null);
+		window.deactivate();
 		cs.activateContext(DIALOG_AND_WINDOW_ID);
 		assertEquals(1, cs.getActiveContextIds().size());
 		assertEquals(1, windowService.getActiveContextIds().size());
@@ -109,7 +108,7 @@ public class ContextTest extends TestCase {
 				.get(EContextService.class.getName());
 
 		IEclipseContext dialog = appContext.createChild("dialogContext");
-		appContext.set(IContextConstants.ACTIVE_CHILD, dialog);
+		dialog.activate();
 
 		EContextService dialogService = (EContextService) dialog
 				.get(EContextService.class.getName());
@@ -141,7 +140,7 @@ public class ContextTest extends TestCase {
 		assertTrue(windowService.getActiveContextIds().contains(WINDOW_ID));
 
 		// switch to window active :-)
-		appContext.set(IContextConstants.ACTIVE_CHILD, window);
+		window.activate();
 		assertEquals(2, cs.getActiveContextIds().size());
 		assertEquals(2, dialogService.getActiveContextIds().size());
 		assertEquals(2, windowService.getActiveContextIds().size());

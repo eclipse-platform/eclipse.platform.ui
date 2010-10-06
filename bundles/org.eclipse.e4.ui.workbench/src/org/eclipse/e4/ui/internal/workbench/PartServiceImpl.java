@@ -21,7 +21,6 @@ import javax.inject.Named;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -276,10 +275,15 @@ public class PartServiceImpl implements EPartService {
 		}
 		IEclipseContext parentContext = parentPart.getContext();
 		IEclipseContext oldContext = getSubContext(oldSelectedElement);
-		Object child = parentContext.get(IContextConstants.ACTIVE_CHILD);
+		Object child = parentContext.getActiveChild();
 		if (child == null || oldContext == null || child == oldContext) {
-			parentContext.set(IContextConstants.ACTIVE_CHILD,
-					part == null ? null : part.getContext());
+			if (part == null) {
+				// TBD this should not be necessary; deactivation is missing somewhere
+				IEclipseContext currentActive = parentContext.getActiveChild();
+				if (currentActive != null)
+					currentActive.deactivate();
+			} else
+				part.getContext().activate();
 		}
 	}
 
@@ -404,19 +408,13 @@ public class PartServiceImpl implements EPartService {
 		MWindow window = getWindow();
 		IEclipseContext windowContext = window.getContext();
 		// check if the active part has changed or if we are no longer the active window
-		if (windowContext.getParent().get(IContextConstants.ACTIVE_CHILD) == windowContext
-				&& part == activePart) {
+		if (windowContext.getParent().getActiveChild() == windowContext && part == activePart) {
 			return;
 		}
 
 		modelService.bringToTop(window, part);
 		IEclipseContext context = part.getContext();
-		IEclipseContext parent = context.getParent();
-		while (parent != null) {
-			parent.set(IContextConstants.ACTIVE_CHILD, context);
-			context = parent;
-			parent = parent.getParent();
-		}
+		context.activateBranch();
 
 		Object object = part.getObject();
 		if (object != null && requiresFocus) {

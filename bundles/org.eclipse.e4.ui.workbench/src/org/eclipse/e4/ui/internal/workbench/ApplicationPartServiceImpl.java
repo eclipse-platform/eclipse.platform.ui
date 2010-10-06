@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.Collection;
 import javax.inject.Inject;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -31,8 +30,7 @@ public class ApplicationPartServiceImpl implements EPartService {
 	}
 
 	private EPartService getActiveWindowService() {
-		IEclipseContext activeWindowContext = (IEclipseContext) application.getContext().getLocal(
-				IContextConstants.ACTIVE_CHILD);
+		IEclipseContext activeWindowContext = application.getContext().getActiveChild();
 		if (activeWindowContext == null) {
 			throw new IllegalStateException("Application does not have an active window"); //$NON-NLS-1$
 		}

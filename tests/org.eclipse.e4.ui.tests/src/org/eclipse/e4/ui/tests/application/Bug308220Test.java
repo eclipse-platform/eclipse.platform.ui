@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -41,16 +40,14 @@ public class Bug308220Test extends TestCase {
 		app.set(IServiceConstants.ACTIVE_PART, new ContextFunction() {
 			@Override
 			public Object compute(IEclipseContext context) {
-				IEclipseContext childContext = (IEclipseContext) context
-						.getLocal(IContextConstants.ACTIVE_CHILD);
+				IEclipseContext childContext = context.getActiveChild();
 				if (childContext == null) {
 					return null;
 				}
 
 				while (childContext != null) {
 					context = childContext;
-					childContext = (IEclipseContext) context
-							.getLocal(IContextConstants.ACTIVE_CHILD);
+					childContext = context.getActiveChild();
 				}
 				return context.getLocal(Object.class.getName());
 			}
@@ -75,8 +72,7 @@ public class Bug308220Test extends TestCase {
 		// set the active part as some object
 		part.set(Object.class.getName(), o1);
 		// construct the active chain
-		windowA.set(IContextConstants.ACTIVE_CHILD, part);
-		app.set(IContextConstants.ACTIVE_CHILD, windowA);
+		part.activateBranch();
 
 		WindowService windowServiceA = (WindowService) ContextInjectionFactory
 				.make(WindowService.class, windowA);

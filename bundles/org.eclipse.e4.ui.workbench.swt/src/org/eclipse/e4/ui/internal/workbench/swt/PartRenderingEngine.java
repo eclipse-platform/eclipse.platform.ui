@@ -25,7 +25,6 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -563,9 +562,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 		IEclipseContext lclContext = ctxt.getContext();
 		if (lclContext != null) {
 			IEclipseContext parentContext = lclContext.getParent();
-			Object child = parentContext.get(IContextConstants.ACTIVE_CHILD);
+			IEclipseContext child = parentContext.getActiveChild();
 			if (child == lclContext) {
-				parentContext.set(IContextConstants.ACTIVE_CHILD, null);
+				child.deactivate();
 			}
 
 			ctxt.setContext(null);

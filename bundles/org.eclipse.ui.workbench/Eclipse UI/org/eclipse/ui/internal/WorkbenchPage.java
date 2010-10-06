@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -2493,7 +2492,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 				// this perspective already exists, switch to this one
 				perspectives.setSelectedElement(mperspective);
-				window.getContext().set(IContextConstants.ACTIVE_CHILD, mperspective.getContext());
+				mperspective.getContext().activate();
 				legacyWindow.firePerspectiveActivated(this, perspective);
 				return;
 			}
@@ -2523,7 +2522,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		perspectives.getChildren().add(modelPerspective);
 		// activate it
 		perspectives.setSelectedElement(modelPerspective);
-		window.getContext().set(IContextConstants.ACTIVE_CHILD, modelPerspective.getContext());
+		modelPerspective.getContext().activate();
 		legacyWindow.firePerspectiveActivated(this, perspective);
 
 		// FIXME: we need to fire events

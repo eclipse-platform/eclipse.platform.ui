@@ -1,7 +1,6 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -18,9 +17,9 @@ public class ActivePartLookupFunction extends ContextFunction {
 		/**
 		 * This is the specific implementation. TODO: generalize it
 		 */
-		MContext window = (MContext) context.get(MWindow.class.getName());
+		MContext window = context.get(MWindow.class);
 		if (window == null) {
-			window = (MContext) context.get(MApplication.class.getName());
+			window = context.get(MApplication.class);
 			if (window == null) {
 				return null;
 			}
@@ -29,11 +28,6 @@ public class ActivePartLookupFunction extends ContextFunction {
 		if (current == null) {
 			return null;
 		}
-		IEclipseContext next = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
-		while (next != null) {
-			current = next;
-			next = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
-		}
-		return current.get(MPart.class.getName());
+		return current.getActiveLeaf().get(MPart.class);
 	}
 }

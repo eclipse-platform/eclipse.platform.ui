@@ -24,7 +24,6 @@ import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -95,7 +94,7 @@ public class HandlerTest extends TestCase {
 
 	public void testActiveHandlerExecuteWorkbench() throws Exception {
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
 				.getName());
 		CallHandler handler1 = new CallHandler();
@@ -117,7 +116,7 @@ public class HandlerTest extends TestCase {
 				.get(EHandlerService.class.getName());
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
 				.getName());
 		CallHandler handler1 = new CallHandler();
@@ -146,7 +145,7 @@ public class HandlerTest extends TestCase {
 				.get(EHandlerService.class.getName());
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
 				.getName());
 		CallHandler handler1 = new CallHandler();
@@ -180,7 +179,7 @@ public class HandlerTest extends TestCase {
 				.get(EHandlerService.class.getName());
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		c1.activate();
 		EHandlerService h1 = (EHandlerService) c1.get(EHandlerService.class
 				.getName());
 		CallHandler handler1 = new CallHandler();
@@ -202,7 +201,7 @@ public class HandlerTest extends TestCase {
 
 		handler1.q1 = false;
 		handler1.q2 = false;
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c2);
+		c2.activate();
 		assertEquals(Boolean.TRUE, wHS.executeHandler(cmd));
 		assertTrue(handler2.q1);
 		assertTrue(handler2.q2);

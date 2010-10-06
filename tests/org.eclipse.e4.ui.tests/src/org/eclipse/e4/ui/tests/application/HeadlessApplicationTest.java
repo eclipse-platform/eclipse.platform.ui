@@ -18,7 +18,6 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
@@ -95,7 +94,7 @@ public abstract class HeadlessApplicationTest extends
 	public void testGet_ActiveChild() throws Exception {
 		IEclipseContext context = application.getContext();
 
-		assertNull(context.get(IContextConstants.ACTIVE_CHILD));
+		assertNull(context.getActiveChild());
 	}
 
 	public void testGet_ActivePart() throws Exception {

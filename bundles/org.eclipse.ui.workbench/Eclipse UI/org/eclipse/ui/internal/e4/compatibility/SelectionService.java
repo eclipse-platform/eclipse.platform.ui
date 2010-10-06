@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,12 +18,12 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.e4.core.contexts.IContextConstants;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -63,7 +61,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 			context.set(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
 
 			IEclipseContext applicationContext = application.getContext();
-			if (applicationContext.get(IContextConstants.ACTIVE_CHILD) == context) {
+			if (applicationContext.getActiveChild() == context) {
 				application.getContext().set(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
 			}
 
