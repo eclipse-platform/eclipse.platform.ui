@@ -19,7 +19,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -158,7 +157,6 @@ public class RefactoringStatusViewer extends SashForm {
 		fStatus= status;
 		if (fTableViewer.getInput() != fStatus) {
 			fTableViewer.setInput(fStatus);
-			fTableViewer.getTable().getColumn(0).pack();
 			ISelection selection= fTableViewer.getSelection();
 			if (selection.isEmpty()) {
 				RefactoringStatusEntry entry= getFirstEntry();
@@ -232,9 +230,6 @@ public class RefactoringStatusViewer extends SashForm {
 		tableControl.setFont(JFaceResources.getDialogFont());
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		tableControl.setLayoutData(gd);
-		// Add a column so that we can pack it in setVisible.
-		TableColumn tc= new TableColumn(tableControl, SWT.NONE);
-		tc.setResizable(false);
 
 		SWTUtil.setAccessibilityText(tableControl, RefactoringUIMessages.RefactoringStatusViewer_Found_problems);
 	}
