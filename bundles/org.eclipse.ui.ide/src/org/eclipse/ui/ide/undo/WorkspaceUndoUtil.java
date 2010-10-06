@@ -327,6 +327,9 @@ public class WorkspaceUndoUtil {
 						|| (!source.isLinked() && !existing.isLinked()
 								&& !source.isVirtual() && !existing.isVirtual())) {
 					IResource[] children = ((IContainer) source).members();
+					// copy only linked resource children (267173)
+					if (source.isLinked() && source.getLocation().equals(existing.getLocation()))
+						children = filterNonLinkedResources(children);
 					ResourceDescription[] overwritten = copy(children,
 							destinationPath, resourcesAtDestination,
 							new SubProgressMonitor(monitor, 1), uiInfo, false,
@@ -586,16 +589,19 @@ public class WorkspaceUndoUtil {
 				// The resource is a folder and it exists in the destination.
 				// Move its children to the existing destination.
 				if (source.isLinked() == existing.isLinked()) {
-					IResource[] children = ((IContainer) source).members();
-					ResourceDescription[] overwritten = move(children,
-							destinationPath, resourcesAtDestination,
-							reverseDestinations, new SubProgressMonitor(
-									monitor, 1), uiInfo, false);
-					// We don't record the moved resources since the recursive
-					// call has done so. Just record the overwrites.
-					for (int j = 0; j < overwritten.length; j++) {
-						overwrittenResources.add(overwritten[j]);
-					}
+						IResource[] children = ((IContainer) source).members();
+						// move only linked resource children (267173)
+						if (source.isLinked() && source.getLocation().equals(existing.getLocation()))
+							children = filterNonLinkedResources(children);
+						ResourceDescription[] overwritten = move(children,
+								destinationPath, resourcesAtDestination,
+								reverseDestinations, new SubProgressMonitor(
+										monitor, 1), uiInfo, false);
+						// We don't record the moved resources since the recursive
+						// call has done so. Just record the overwrites.
+						for (int j = 0; j < overwritten.length; j++) {
+							overwrittenResources.add(overwritten[j]);
+						}
 					// Delete the source. No need to record it since it
 					// will get moved back.
 					delete(source, monitor, uiInfo, false, false);
@@ -677,6 +683,20 @@ public class WorkspaceUndoUtil {
 		return (ResourceDescription[]) overwrittenResources
 				.toArray(new ResourceDescription[overwrittenResources.size()]);
 
+	}
+
+	/**
+	 * Returns only the linked resources out of an array of resources
+	 * @param resources The resources to filter
+	 * @return The linked resources
+	 */
+	private static IResource[] filterNonLinkedResources(IResource[] resources) {
+		List result = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].isLinked())
+				result.add(resources[i]);
+		}
+		return (IResource[]) result.toArray(new IResource[0]);
 	}
 
 	/**
