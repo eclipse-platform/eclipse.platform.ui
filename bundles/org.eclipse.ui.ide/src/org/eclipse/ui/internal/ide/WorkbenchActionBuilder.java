@@ -202,7 +202,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     // IDE-specific retarget actions
 	private IWorkbenchAction buildProjectAction;
-
+	
+	private CommandContributionItem minimizeItem;
+	
+	private CommandContributionItem zoomItem;
+	
     // contribution items
     // @issue should obtain from ContributionItemFactory
     private NewWizardMenu newWizardMenu;
@@ -613,6 +617,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         MenuManager menu = new MenuManager(
                 IDEWorkbenchMessages.Workbench_window, IWorkbenchActionConstants.M_WINDOW);
 
+        addMacWindowMenuItems(menu);
+        
         menu.add(newWindowAction);
 		menu.add(newEditorAction);
 		
@@ -633,7 +639,18 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         return menu;
     }
 
-    /**
+	private void addMacWindowMenuItems(MenuManager windowMenu) {
+		
+		if(!Util.isCocoa())
+			return;
+		
+		windowMenu.add(minimizeItem);
+		windowMenu.add(zoomItem);
+        windowMenu.add(new Separator());
+		
+	}
+
+	/**
      * Adds the perspective actions to the specified menu.
      */
     private void addPerspectiveActions(MenuManager menu) {
@@ -864,7 +881,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         prefListener = null;
         propPrefListener = null;
         introAction = null;
-
+        minimizeItem = null;
+        zoomItem = null;
 		super.dispose();
     }
 
@@ -1142,6 +1160,15 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             }
         };
         register(newQuickMenu);
+        
+        
+        if(Util.isCocoa()) {
+        	
+        	CommandContributionItemParameter minimizeParam = new CommandContributionItemParameter(window, null, "org.eclipse.ui.cocoa.minimizeWindow", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
+        	minimizeItem = new CommandContributionItem(minimizeParam);
+        	CommandContributionItemParameter zoomParam = new CommandContributionItemParameter(window, null, "org.eclipse.ui.cocoa.zoomWindow", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
+        	zoomItem = new CommandContributionItem(zoomParam);
+        }
 
     }
 

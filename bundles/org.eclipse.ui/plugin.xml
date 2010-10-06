@@ -291,6 +291,15 @@
             sequence="M1+M"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            platform="cocoa"
+            sequence="M1+M"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.window.maximizePart"
+            platform="cocoa"
+            sequence="M1+M4+M"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.window.nextEditor"
             sequence="M1+F6"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />

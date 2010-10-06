@@ -16,12 +16,32 @@
             id="org.eclipse.ui.cocoa.closeDialog"
             name="%command.closeDialog.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            description="%command.minimize.desc"
+            id="org.eclipse.ui.cocoa.minimizeWindow"
+            name="%command.minimize.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            description="%command.zoom.desc"
+            id="org.eclipse.ui.cocoa.zoomWindow"
+            name="%command.zoom.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.eclipse.ui.internal.cocoa.CloseDialogHandler"
             commandId="org.eclipse.ui.cocoa.closeDialog">
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.cocoa.MinimizeWindowHandler"
+            commandId="org.eclipse.ui.cocoa.minimizeWindow">
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.cocoa.ZoomWindowHandler"
+            commandId="org.eclipse.ui.cocoa.zoomWindow">
       </handler>
    </extension>
    <extension
@@ -32,6 +52,13 @@
             platform="cocoa"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+W">
+      </key>
+      <key
+            commandId="org.eclipse.ui.cocoa.minimizeWindow"
+            contextId="org.eclipse.ui.contexts.window"
+            platform="cocoa"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M">
       </key>
    </extension>
    
