@@ -18,6 +18,8 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -95,8 +97,23 @@ public class StartupPreferencePage extends PreferencePage implements
 		});
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setInput(workbench.getEarlyActivatedPlugins());
+		// Workbench plugin should not be disabled. Don't show it
+		viewer.setFilters(new ViewerFilter[] { createPlatformUIFilter() });
 		updateCheckState();
     }
+
+	private ViewerFilter createPlatformUIFilter() {
+		return new ViewerFilter() {
+
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element instanceof ContributionInfo) {
+					ContributionInfo info = (ContributionInfo) element;
+					return !PlatformUI.PLUGIN_ID.equals(info.getBundleId());
+				}
+				return true;
+			}
+		};
+	}
 
 	private void updateCheckState() {
         HashSet disabledPlugins = new HashSet(Arrays.asList(workbench.getDisabledEarlyActivatedPlugins()));
