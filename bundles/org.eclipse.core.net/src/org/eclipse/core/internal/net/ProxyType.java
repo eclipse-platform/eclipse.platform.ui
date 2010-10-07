@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -26,17 +27,16 @@ import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
 import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 
 public class ProxyType implements INodeChangeListener, IPreferenceChangeListener {
 
 	/**
 	 * Preference keys
 	 */
-	private static final String PREF_PROXY_DATA_NODE = "proxyData"; //$NON-NLS-1$
-	private static final String PREF_PROXY_HOST = "host"; //$NON-NLS-1$
-	private static final String PREF_PROXY_PORT = "port"; //$NON-NLS-1$
-	private static final String PREF_PROXY_HAS_AUTH = "hasAuth"; //$NON-NLS-1$
+	static final String PREF_PROXY_DATA_NODE = "proxyData"; //$NON-NLS-1$
+	static final String PREF_PROXY_HOST = "host"; //$NON-NLS-1$
+	static final String PREF_PROXY_PORT = "port"; //$NON-NLS-1$
+	static final String PREF_PROXY_HAS_AUTH = "hasAuth"; //$NON-NLS-1$
 
 	/**
 	 * Verification tags used when creating a proxy data
@@ -78,7 +78,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
     
 	private String name;
 	private boolean updatingPreferences;
-	private Preferences netPreferences;
+	private PreferenceManager preferenceManager;
 
 	public static String convertHostsToPropertyString(String[] value) {
 		StringBuffer buffer = new StringBuffer();
@@ -111,38 +111,28 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 
 	public ProxyType(String name) {
 		this.name = name;
-		this.netPreferences = Activator.getInstance().getPreferences();
+		this.preferenceManager = Activator.getInstance().getPreferenceManager();
 	}	
 	
-	public ProxyType(String name, Preferences netPreferences) {
+	public ProxyType(String name, PreferenceManager manager) {
 		this.name = name;
-		this.netPreferences = netPreferences;
+		this.preferenceManager = manager;
 	}
 
-	private Preferences getPreferenceNode() {
-		return getParentPreferences().node(getName());
-	}
-
-	/**
-	 * Return the preferences node whose child nodes are the know proxy types
-	 * 
-	 * @return a preferences node
-	 */
-	private Preferences getParentPreferences() {
-		return netPreferences.node(
-				PREF_PROXY_DATA_NODE);
+	private String getPreferenceNode() {
+		return PREF_PROXY_DATA_NODE + IPath.SEPARATOR + getName();
 	}
 
 	public IProxyData getProxyData(int verifyFlag) {
 		return createProxyData(name, getPreferenceNode(), verifyFlag);
 	}
 
-	private IProxyData createProxyData(String type, Preferences node, int verifyFlag) {
-		String host = node.get(PREF_PROXY_HOST, null);
+	private IProxyData createProxyData(String type, String node, int verifyFlag) {
+		String host = preferenceManager.getString(node, PREF_PROXY_HOST);
 		if (host != null && host.length() == 0)
 			host = null;
-		int port = node.getInt(PREF_PROXY_PORT, -1);
-		boolean requiresAuth = node.getBoolean(PREF_PROXY_HAS_AUTH, false);
+		int port = preferenceManager.getInt(node, PREF_PROXY_PORT);
+		boolean requiresAuth = preferenceManager.getBoolean(node, PREF_PROXY_HAS_AUTH);
 		ProxyData proxyData = new ProxyData(type, host, port, requiresAuth,
 				null);
 		loadProxyAuth(proxyData);
@@ -176,33 +166,51 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 		updatePreferences(getPreferenceNode(), proxyData);
 	}
 	
-	/* package */ void updatePreferencesIfMissing(Preferences node, IProxyData proxyData) {
-		Preferences proxyNode = node.node(PREF_PROXY_DATA_NODE).node(getName());
-		if (node.get(PREF_PROXY_HOST, null) == null)
-			updatePreferences(proxyNode, proxyData);
+	/*package*/  void updatePreferencesIfMissing(IProxyData proxyData) {
+		String node = getPreferenceNode();
+		if (preferenceManager.getString(node, PREF_PROXY_HOST) == null)
+			updatePreferences(node, proxyData);
 	}
 	
-	private void updatePreferences(Preferences node, IProxyData proxyData) {
+	private void updatePreferences(String node, IProxyData proxyData) {
+		if (!hasPreferencesChanged(node, proxyData)) {
+			return;
+		}
 		if (proxyData.getHost() == null) {
 			try {
-				Preferences parent = node.parent();
-				node.removeNode();
-				parent.flush();
+				preferenceManager.removeNode(node);
+				preferenceManager.flush();
 			} catch (BackingStoreException e) {
 				Activator.logError(NLS.bind(
 						"An error occurred removing the {0} proxy node from the preference store", proxyData.getType()), e); //$NON-NLS-1$
 			}
-		} else {
-			node.put(PREF_PROXY_HOST, proxyData.getHost());
-			node.putInt(PREF_PROXY_PORT, proxyData.getPort());
-			node.putBoolean(PREF_PROXY_HAS_AUTH, proxyData.getUserId() != null);
-			try {
-				node.flush();
-			} catch (BackingStoreException e) {
-				Activator.logError(NLS.bind(
-					"The {0} proxy node could not be written", proxyData.getType()), e); //$NON-NLS-1$
+			// Check if there is a value in default scope (e.g. set by -pluginCustomization).
+			// If it is, update preferences even if host is empty.
+			if (!hasPreferencesChanged(node, proxyData)) {
+				return;
 			}
 		}
+		preferenceManager.putString(node, PREF_PROXY_HOST, proxyData.getHost() != null ? proxyData.getHost() : ""); //$NON-NLS-1$
+		preferenceManager.putInt(node, PREF_PROXY_PORT, proxyData.getPort());
+		preferenceManager.putBoolean(node, PREF_PROXY_HAS_AUTH, proxyData.getUserId() != null);
+		try {
+			preferenceManager.flush();
+		} catch (BackingStoreException e) {
+			Activator.logError(NLS.bind(
+				"The {0} proxy node could not be written", proxyData.getType()), e); //$NON-NLS-1$
+		}
+	}
+
+	private boolean hasPreferencesChanged(String node, IProxyData proxyData) {
+		String host = preferenceManager.getString(node, PREF_PROXY_HOST);
+		if ((host != null && host.equals(proxyData.getHost())) || (host == null && proxyData.getHost() == null)) {
+			if (preferenceManager.getInt(node, PREF_PROXY_PORT) == proxyData.getPort()) {
+				if (preferenceManager.getBoolean(node, PREF_PROXY_HAS_AUTH) == proxyData.isRequiresAuthentication()) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	/* package */void updateSystemProperties(IProxyData proxyData) {
@@ -507,8 +515,8 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 
 	public void initialize() {
 		updateSystemProperties(getProxyData(VERIFY_EMPTY));
-		((IEclipsePreferences)getParentPreferences()).addNodeChangeListener(this);
-		((IEclipsePreferences)getPreferenceNode()).addPreferenceChangeListener(this);
+		preferenceManager.addNodeChangeListener(PREF_PROXY_DATA_NODE, this);
+		preferenceManager.addPreferenceChangeListener(getPreferenceNode(), this);
 	}
 	
 	private ISecurePreferences getNode() {

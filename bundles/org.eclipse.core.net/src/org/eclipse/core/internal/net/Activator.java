@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -60,6 +59,8 @@ public class Activator implements BundleActivator {
 	private ServiceRegistration proxyService;
 	
 	private boolean debug = false;
+
+	private PreferenceManager preferenceManger;
 
 	/**
 	 * Constructor for use by the Eclipse platform only.
@@ -140,8 +141,8 @@ public class Activator implements BundleActivator {
 				status.getCode(), status.getMessage(), stackCode, t, children);
 	}
 
-	public org.osgi.service.prefs.Preferences getPreferences() {
-		return new ConfigurationScope().getNode(ID);
+	public PreferenceManager getPreferenceManager() {
+		return preferenceManger;
 	}
 
 	public boolean instanceLocationAvailable() {
@@ -152,6 +153,7 @@ public class Activator implements BundleActivator {
 
 	public void start(BundleContext context) throws Exception {
 		this.bundleContext = context;
+		this.preferenceManger = PreferenceManager.createConfigurationManager(ID);
 		Filter filter = null;
 		try {
 			filter = context.createFilter(Location.INSTANCE_FILTER);

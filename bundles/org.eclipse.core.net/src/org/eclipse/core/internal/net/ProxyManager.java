@@ -14,6 +14,7 @@ import java.net.Authenticator;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -30,33 +31,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.preferences.ConfigurationScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 
 public class ProxyManager implements IProxyService, IPreferenceChangeListener {
-
-	private static final String PREF_HAS_MIGRATED = "org.eclipse.core.net.hasMigrated"; //$NON-NLS-1$
 	
-	/**
-	 * Preference constants used by Update to record the HTTP proxy
-	 */
-	private static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host"; //$NON-NLS-1$
-	private static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port"; //$NON-NLS-1$
-	private static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable"; //$NON-NLS-1$
-	
-	private static final String PREF_NON_PROXIED_HOSTS = "nonProxiedHosts"; //$NON-NLS-1$
-	private static final String PREF_ENABLED = "proxiesEnabled"; //$NON-NLS-1$
-	private static final String PREF_OS = "systemProxiesEnabled"; //$NON-NLS-1$
+	static final String PREF_NON_PROXIED_HOSTS = "nonProxiedHosts"; //$NON-NLS-1$
+	static final String PREF_ENABLED = "proxiesEnabled"; //$NON-NLS-1$
+	static final String PREF_OS = "systemProxiesEnabled"; //$NON-NLS-1$
 	
 	private static IProxyService proxyManager;
 	
 	private AbstractProxyProvider nativeProxyProvider;
+	
+	private PreferenceManager preferenceManager;
 	
 	ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 	private String[] nonProxiedHosts;
@@ -65,8 +55,6 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			new ProxyType(IProxyData.HTTPS_PROXY_TYPE),
 			new ProxyType(IProxyData.SOCKS_PROXY_TYPE)
 		};
-
-	private boolean migrated = false;
 
 	private ProxyManager() {
 		try {
@@ -77,6 +65,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		} catch (Exception e) {
 			Activator.logInfo("Problems occured during the proxy provider initialization.", e); //$NON-NLS-1$
 		}
+		preferenceManager = Activator.getInstance().getPreferenceManager();
 	}
 
 	/**
@@ -124,7 +113,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	public synchronized String[] getNonProxiedHosts() {
 		checkMigrated();
 		if (nonProxiedHosts == null) {
-			String prop = Activator.getInstance().getPreferences().get(PREF_NON_PROXIED_HOSTS, "localhost|127.0.0.1"); //$NON-NLS-1$
+			String prop = preferenceManager.getString(PreferenceManager.ROOT, PREF_NON_PROXIED_HOSTS);
 			nonProxiedHosts = ProxyType.convertPropertyStringToHosts(prop);
 		}
 		if (nonProxiedHosts.length == 0)
@@ -153,10 +142,13 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			Assert.isTrue(host.length() > 0);
 		}
 		String[] oldHosts = nonProxiedHosts;
+		if (Arrays.equals(oldHosts, hosts)) {
+			return;
+		}
 		nonProxiedHosts = hosts;
-		Activator.getInstance().getPreferences().put(PREF_NON_PROXIED_HOSTS, ProxyType.convertHostsToPropertyString(nonProxiedHosts));
+		preferenceManager.putString(PreferenceManager.ROOT, PREF_NON_PROXIED_HOSTS, ProxyType.convertHostsToPropertyString(nonProxiedHosts));
 		try {
-			Activator.getInstance().getPreferences().flush();
+			preferenceManager.flush();
 		} catch (BackingStoreException e) {
 			Activator.logError(
 					"An error occurred while writing out the non-proxied hosts list", e); //$NON-NLS-1$
@@ -232,8 +224,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	}
 
 	private boolean internalIsProxiesEnabled() {
-		return Activator.getInstance().getPreferences().getBoolean(
-				PREF_ENABLED, true);
+		return preferenceManager.getBoolean(PreferenceManager.ROOT, PREF_ENABLED);
 	}
 
 	/* (non-Javadoc)
@@ -246,7 +237,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			return;
 		// Setting the preference will trigger the system property update
 		// (see preferenceChange)
-		Activator.getInstance().getPreferences().putBoolean(PREF_ENABLED, enabled);
+		preferenceManager.putBoolean(PreferenceManager.ROOT, PREF_ENABLED, enabled);
 	}
 
 	private void internalSetEnabled(boolean enabled, boolean systemEnabled) {
@@ -255,7 +246,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		sysProps.put("systemProxySet", systemEnabled ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		updateSystemProperties();
 		try {
-			Activator.getInstance().getPreferences().flush();
+			preferenceManager.flush();
 		} catch (BackingStoreException e) {
 			Activator.logError(
 					"An error occurred while writing out the enablement state", e); //$NON-NLS-1$
@@ -275,7 +266,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 
 	public void initialize() {
 		checkMigrated();
-		((IEclipsePreferences)Activator.getInstance().getPreferences()).addPreferenceChangeListener(this);
+		preferenceManager.addPreferenceChangeListener(PreferenceManager.ROOT, this);
 		// Now initialize each proxy type
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
@@ -404,136 +395,23 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			return null;
 		}
 	}
-
 	
 	private synchronized void checkMigrated() {
-		if (migrated || !Activator.getInstance().instanceLocationAvailable())
+		if (preferenceManager.isMigrated() || !Activator.getInstance().instanceLocationAvailable()) {
 			return;
-		
-		migrated = true;
-		if (Activator.getInstance().getPreferences().getBoolean(PREF_HAS_MIGRATED, false))
-			return;
-		
-		Activator.getInstance().getPreferences().putBoolean(PREF_HAS_MIGRATED, true);
-		migrateInstanceScopePreferences(new InstanceScope().getNode(""), new ConfigurationScope().getNode(""), true);  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		preferenceManager.migrate(proxies);
 	}
 	
-	void migrateInstanceScopePreferences(Preferences instanceNode, Preferences configurationNode, boolean isInitialize) {
-		migrateUpdateHttpProxy(instanceNode, isInitialize);
-		
-		Preferences netInstancePrefs = instanceNode.node(Activator.ID);
-		Preferences netConfigurationPrefs = configurationNode.node(Activator.ID);
-		
-		// migrate enabled status
-		if (netConfigurationPrefs.get(PREF_ENABLED, null) == null) {
-			String instanceEnabled = netInstancePrefs.get(PREF_ENABLED, null);
-			if (instanceEnabled != null)
-				netConfigurationPrefs.put(PREF_ENABLED, instanceEnabled);
-		}
-		
-		// migrate enabled status
-		if (netConfigurationPrefs.get(PREF_OS, null) == null) {
-			String instanceEnabled = netInstancePrefs.get(PREF_OS, null);
-			if (instanceEnabled != null)
-				netConfigurationPrefs.put(PREF_OS, instanceEnabled);
-		}
-	
-		// migrate non proxied hosts if not already set
-		if (netConfigurationPrefs.get(PREF_NON_PROXIED_HOSTS, null) == null) {
-			String instanceNonProxiedHosts = netInstancePrefs.get(PREF_NON_PROXIED_HOSTS, null);
-			if (instanceNonProxiedHosts != null) {
-				netConfigurationPrefs.put(PREF_NON_PROXIED_HOSTS, instanceNonProxiedHosts);
-				nonProxiedHosts = null;
-			}
-		}
-		
-		// migrate proxy data
-		for (int i = 0; i < proxies.length; i++) {
-			ProxyType type = proxies[i];
-			IProxyData data = type.getProxyData(ProxyType.DO_NOT_VERIFY);
-			if (data.getHost() == null) {
-				ProxyType instanceType = new ProxyType(type.getName(),netInstancePrefs);
-				IProxyData instanceData = instanceType.getProxyData(ProxyType.DO_NOT_VERIFY);
-				if (instanceData.getHost() != null)
-					type.setProxyData(instanceData);
-			}
-		}
-		
-		// if this an import we should remove the old node
-		if (! isInitialize) {
-			try {
-				netInstancePrefs.removeNode();
-			} catch (BackingStoreException e) {
-				// ignore
-			}
-		}			
-	}
-	
-	private void migrateUpdateHttpProxy(Preferences node, boolean isInitialize) {
-		Preferences netPrefs = node.node(Activator.ID);
-		if (!netPrefs.getBoolean(PREF_HAS_MIGRATED, false)) {
-			// Only set the migration bit when initializing
-			if (isInitialize)
-				netPrefs.putBoolean(PREF_HAS_MIGRATED, true);
-			Preferences updatePrefs = node.node("org.eclipse.update.core"); //$NON-NLS-1$
-			String httpProxyHost = getHostToMigrate(updatePrefs, isInitialize /* checkSystemProperties */);
-			int port = getPortToMigrate(updatePrefs, isInitialize /* checkSystemProperties */);
-			boolean httpProxyEnable = getEnablementToMigrate(updatePrefs, isInitialize /* checkSystemProperties */);
-			if (httpProxyHost != null) {
-				ProxyData proxyData = new ProxyData(IProxyData.HTTP_PROXY_TYPE,
-						httpProxyHost, port, false, null);
-				ProxyType type = getType(proxyData);
-				type.updatePreferencesIfMissing(netPrefs, proxyData);
-				if (httpProxyEnable) {
-					netPrefs.putBoolean(ProxyManager.PREF_ENABLED, true);
-				}
-			}
-		}
-	}
-
-	private boolean getEnablementToMigrate(Preferences updatePrefs, boolean checkSystemProperties) {
-		boolean httpProxyEnable = false;
-		if (checkSystemProperties && updatePrefs.get(HTTP_PROXY_ENABLE, null) == null) {
-			httpProxyEnable = Boolean.getBoolean("http.proxySet"); //$NON-NLS-1$
-		} else {
-			httpProxyEnable = updatePrefs.getBoolean(HTTP_PROXY_ENABLE, false);
-			updatePrefs.remove(HTTP_PROXY_ENABLE);
-		}
-		return httpProxyEnable;
-	}
-
-	private int getPortToMigrate(Preferences updatePrefs, boolean checkSystemProperties) {
-		String httpProxyPort = updatePrefs.get(HTTP_PROXY_PORT, ""); //$NON-NLS-1$
-		if (checkSystemProperties && "".equals(httpProxyPort)) { //$NON-NLS-1$
-			httpProxyPort = System.getProperty("http.proxyPort", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		updatePrefs.remove(HTTP_PROXY_PORT);
-		int port = -1;
-		if (httpProxyPort != null && !"".equals(httpProxyPort)) //$NON-NLS-1$
-			try {
-				port = Integer.parseInt(httpProxyPort);
-			} catch (NumberFormatException e) {
-				// Ignore
-			}
-		return port;
-	}
-
-	private String getHostToMigrate(Preferences updatePrefs, boolean checkSystemProperties) {
-		String httpProxyHost = updatePrefs.get(HTTP_PROXY_HOST, ""); //$NON-NLS-1$
-		if (checkSystemProperties && "".equals(httpProxyHost)) { //$NON-NLS-1$
-			httpProxyHost = System.getProperty("http.proxyHost", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if ("".equals(httpProxyHost)) //$NON-NLS-1$
-			httpProxyHost = null;
-		updatePrefs.remove(HTTP_PROXY_HOST);
-		return httpProxyHost;
+	void migrateInstanceScopePreferences(boolean isInitialize) {
+		preferenceManager.migrateInstanceScopePreferences(proxies,  isInitialize);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(PREF_ENABLED) || event.getKey().equals(PREF_OS)) {
 			checkMigrated();
-			internalSetEnabled(Activator.getInstance().getPreferences().getBoolean(PREF_ENABLED, true),
-					Activator.getInstance().getPreferences().getBoolean(PREF_OS, true));
+			internalSetEnabled(preferenceManager.getBoolean(PreferenceManager.ROOT, PREF_ENABLED),
+					preferenceManager.getBoolean(PreferenceManager.ROOT, PREF_OS));
 		}
 	}
 
@@ -543,8 +421,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 
 	public boolean isSystemProxiesEnabled() {
 		checkMigrated();
-		return Activator.getInstance().getPreferences().getBoolean(PREF_OS,
-				true);
+		return preferenceManager.getBoolean(PreferenceManager.ROOT, PREF_OS);
 	}
 
 	public void setSystemProxiesEnabled(boolean enabled) {
@@ -554,7 +431,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			return;
 		// Setting the preference will trigger the system property update
 		// (see preferenceChange)
-		Activator.getInstance().getPreferences().putBoolean(PREF_OS, enabled);
+		preferenceManager.putBoolean(PreferenceManager.ROOT, PREF_OS, enabled);
 	}
 
 	public IProxyData[] select(URI uri) {
