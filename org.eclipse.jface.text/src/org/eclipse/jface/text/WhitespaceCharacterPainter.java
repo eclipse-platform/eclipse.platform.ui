@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 
 /**
@@ -194,13 +195,26 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		int startLine= fTextWidget.getLineIndex(y);
 		int endLine= fTextWidget.getLineIndex(y + h - 1);
 		if (startLine <= endLine && startLine < fTextWidget.getLineCount()) {
+			
+			// avoid painting into the margins:
+			Rectangle clipping= gc.getClipping();
+			Rectangle clientArea= fTextWidget.getClientArea();
+			int leftMargin= fTextWidget.getLeftMargin();
+			int rightMargin= fTextWidget.getRightMargin();
+			clientArea.x+= leftMargin;
+			clientArea.width-= leftMargin + rightMargin;
+			clipping.intersect(clientArea);
+			gc.setClipping(clientArea);
+			
 			if (fIsAdvancedGraphicsPresent) {
 				int alpha= gc.getAlpha();
 				gc.setAlpha(100);
 				drawLineRange(gc, startLine, endLine, x, w);
 				gc.setAlpha(alpha);
-			} else
+			} else {
 				drawLineRange(gc, startLine, endLine, x, w);
+			}
+			gc.setClipping(clipping);
 		}
 	}
 
