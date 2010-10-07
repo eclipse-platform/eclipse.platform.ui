@@ -59,6 +59,7 @@ import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -712,6 +713,19 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		appearanceComposite.setLayout(layout);
 
+		Link fontLink= new Link(appearanceComposite, SWT.NONE);
+		fontLink.setText(TextEditorMessages.TextEditorPreferencePage_Font_link);
+		fontLink.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.ColorsAndFonts", null, "selectFont:" + JFaceResources.TEXT_FONT); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		});
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		fontLink.setLayoutData(gd);
+
+		addFiller(appearanceComposite, 2);
+
 		String label= TextEditorMessages.TextEditorPreferencePage_undoHistorySize;
 		Preference undoHistorySize= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, label, null);
 		IntegerDomain undoHistorySizeDomain= new IntegerDomain(0, 99999);
@@ -790,14 +804,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference smartHomeEnd= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SMART_HOME_END, label, null);
 		addCheckBox(appearanceComposite, smartHomeEnd, new BooleanDomain(), 0);
 
+		addFiller(appearanceComposite, 2);
 
-		Label l= new Label(appearanceComposite, SWT.LEFT );
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		gd.heightHint= convertHeightInCharsToPixels(1) / 2;
-		l.setLayoutData(gd);
-
-		l= new Label(appearanceComposite, SWT.LEFT);
+		Label l= new Label(appearanceComposite, SWT.LEFT);
 		l.setText(TextEditorMessages.TextEditorPreferencePage_appearanceOptions);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
@@ -889,12 +898,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		link.setText(TextEditorMessages.TextEditorPreferencePage_colorsAndFonts_link);
 		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.ColorsAndFonts", null, null); //$NON-NLS-1$
+				PreferencesUtil.createPreferenceDialogOn(getShell(), "org.eclipse.ui.preferencePages.ColorsAndFonts", null, "selectCategory:org.eclipse.ui.workbenchMisc"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		});
-		// TODO replace by link-specific tooltips when
-		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 gets fixed
-		link.setToolTipText(TextEditorMessages.TextEditorPreferencePage_colorsAndFonts_link_tooltip);
 
 		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		gridData.widthHint= 150; // only expand further if anyone else requires it

@@ -47,7 +47,6 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorPreferencePage_findScopeColor;
 	public static String TextEditorPreferencePage_accessibility_disableCustomCarets;
 	public static String TextEditorPreferencePage_accessibility_wideCaret;
-	public static String TextEditorPreferencePage_overwriteMode;
 	public static String TextEditorPreferencePage_showAffordance;
 	public static String TextEditorPreferencePage_selectionForegroundColor;
 	public static String TextEditorPreferencePage_selectionBackgroundColor;
@@ -56,7 +55,7 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorPreferencePage_invalidRange;
 	public static String TextEditorPreferencePage_emptyInput;
 	public static String TextEditorPreferencePage_colorsAndFonts_link;
-	public static String TextEditorPreferencePage_colorsAndFonts_link_tooltip;
+	public static String TextEditorPreferencePage_Font_link;
 	public static String QuickDiffConfigurationBlock_description;
 	public static String QuickDiffConfigurationBlock_referenceProviderTitle;
 	public static String QuickDiffConfigurationBlock_referenceProviderNoteMessage;
