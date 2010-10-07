@@ -16,19 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.IEncodedStreamContentAccessor;
-import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
-import org.eclipse.compare.internal.core.ComparePlugin;
-import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -47,11 +34,27 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
+import org.eclipse.compare.internal.core.ComparePlugin;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.Differencer;
 
 
 public class ComparePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -381,7 +384,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		
 		PreferenceLinkArea area = new PreferenceLinkArea(composite, SWT.NONE,
 				"org.eclipse.ui.preferencePages.ColorsAndFonts", Utilities.getString("ComparePreferencePage.colorAndFontLink"), //$NON-NLS-1$ //$NON-NLS-2$
-				(IWorkbenchPreferenceContainer) getContainer(), null);
+				(IWorkbenchPreferenceContainer)getContainer(), "selectCategory:org.eclipse.compare.contentmergeviewer.TextMergeViewer"); //$NON-NLS-1$
 
 		GridData data= new GridData(SWT.FILL, SWT.CENTER, false, false);
 		area.getControl().setLayoutData(data);
