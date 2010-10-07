@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Oakland Software Incorporated and others
+ * Copyright (c) 2008, 2010 Oakland Software Incorporated and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.core.internal.net.AbstractProxyProvider;
 import org.eclipse.core.internal.net.Activator;
 import org.eclipse.core.internal.net.Policy;
 import org.eclipse.core.internal.net.ProxyData;
+import org.eclipse.core.internal.net.StringMatcher;
 import org.eclipse.core.internal.net.StringUtil;
 import org.eclipse.core.net.proxy.IProxyData;
 
@@ -47,18 +48,30 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 	public UnixProxyProvider() {
 		// Nothing to initialize
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.internal.net.AbstractProxyProvider#getProxyData(java.net.URI)
-	 */
-	public IProxyData[] getProxyData(URI uri) {
+	
+	public IProxyData[] select(URI uri) {
+		String[] nonProxyHosts = getNonProxiedHosts();
+		if (nonProxyHosts != null) {
+			String host = uri.getHost();
+			for (int npIndex = 0; npIndex < nonProxyHosts.length; npIndex++) {
+				if (matchesFilter(host, nonProxyHosts[npIndex])) {
+					return new IProxyData[0];
+				}
+			}
+		}
+		IProxyData[] proxies = new IProxyData[0];
 		if (uri.getScheme() != null) {
 			ProxyData pd = getSystemProxyInfo(uri.getScheme());
-			return pd != null ? new IProxyData[] { pd } : new IProxyData[0];
+			proxies = pd != null ? new IProxyData[] { pd } : new IProxyData[0];
+		} else {
+			proxies = getProxyData();
 		}
-		return getProxyData();
+		if (Policy.DEBUG) {
+			Policy.debug("UnixProxyProvider#select result for [" + uri + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			for (int i = 0; i < proxies.length; i++)
+				System.out.println("	" + proxies[i]); //$NON-NLS-1$
+		}
+		return proxies;
 	}
 
 	public IProxyData[] getProxyData() {
@@ -242,6 +255,11 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 	private void debugPrint(String[] strs) {
 		for (int i = 0; i < strs.length; i++)
 			System.out.println(i + ": " + strs[i]); //$NON-NLS-1$
+	}
+	
+	private boolean matchesFilter(String host, String filter) {
+		StringMatcher matcher = new StringMatcher(filter, true, false);
+		return matcher.match(host);
 	}
 
 	protected static native void gconfInit();

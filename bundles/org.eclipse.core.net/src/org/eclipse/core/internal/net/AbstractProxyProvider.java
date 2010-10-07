@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Oakland Software Incorporated and others
+ * Copyright (c) 2008, 2010 Oakland Software Incorporated and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,30 +28,7 @@ public abstract class AbstractProxyProvider {
 	 *            the URI that a connection is required to
 	 * @return an array of proxies for the given URI
 	 */
-	public IProxyData[] select(URI uri) {
-		String[] nonProxyHosts = getNonProxiedHosts();
-		
-		if (nonProxyHosts != null) {
-			String host = uri.getHost();
-			for (int npIndex = 0; npIndex < nonProxyHosts.length; npIndex++) {
-				if (host.equals(nonProxyHosts[npIndex])) {
-					return new IProxyData[0];
-				}
-			}
-		}
-
-		IProxyData[] proxies = getProxyData(uri);
-		
-		if (Policy.DEBUG) {
-			Policy.debug("AbstractProxyProvider#select result for [" + uri + "]"); //$NON-NLS-1$ //$NON-NLS-2$
-			for (int i = 0; i < proxies.length; i++)
-				System.out.println("	" + proxies[i]); //$NON-NLS-1$
-		}
-		
-		return proxies;
-	}
-
-	protected abstract IProxyData[] getProxyData(URI uri);
+	public abstract IProxyData[] select(URI uri);
 
 	protected abstract IProxyData[] getProxyData();
 

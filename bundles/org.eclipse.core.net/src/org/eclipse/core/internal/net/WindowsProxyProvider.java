@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 compeople AG and others.
+ * Copyright (c) 2008, 2010 compeople AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,12 +43,18 @@ public class WindowsProxyProvider extends AbstractProxyProvider {
 			winHttpProxyProvider = null;
 		}
 	}
-
-	protected IProxyData[] getProxyData(URI uri) {
+	
+	public IProxyData[] select(URI uri) {
+		IProxyData[] proxies = new IProxyData[0];
 		if (jWinHttpLoaded) {
-			return winHttpProxyProvider.getProxyData(uri);
+			proxies = winHttpProxyProvider.getProxyData(uri);
 		}
-		return new IProxyData[0];
+		if (Policy.DEBUG) {
+			Policy.debug("WindowsProxyProvider#select result for [" + uri + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+			for (int i = 0; i < proxies.length; i++)
+				System.out.println("	" + proxies[i]); //$NON-NLS-1$
+		}
+		return proxies;
 	}
 
 	protected IProxyData[] getProxyData() {
