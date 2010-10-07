@@ -210,7 +210,11 @@ public class MenuServiceFilter implements Listener {
 		if (!menu.isDisposed()) {
 			menu.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					originalChild.activate();
+					if (originalChild == null) {
+						popupContext.deactivate();
+					} else {
+						originalChild.activate();
+					}
 				}
 			});
 		}
