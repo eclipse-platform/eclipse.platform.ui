@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ObjectSuperClass;
@@ -223,5 +224,53 @@ public class ReparentingTest extends TestCase {
 
 		child.setParent(newParent);
 		assertEquals(1, object.setStringCalled);
+	}
+	
+	public void testUpdateSameParent() {
+		final Boolean[] called = new Boolean[1] ;
+		IEclipseContext parent = EclipseContextFactory.create("parent");
+		IEclipseContext newParent = EclipseContextFactory.create("newParent");
+		IEclipseContext child = parent.createChild("child");
+		parent.set("x", "1");
+		newParent.set("x", "2");
+		
+		child.runAndTrack(new RunAndTrack() {
+			public boolean changed(IEclipseContext context) {
+				called[0] = true;
+				context.get("x"); // creates a link
+				return true;
+			}
+		});
+		called[0] = false;
+		
+		// make sure setting parent to the same value does not trigger updates
+		child.setParent(parent);
+		assertFalse(called[0]);
+		
+		child.setParent(newParent);
+		assertTrue(called[0]);
+	}
+	
+	static public class TestService {
+		// empty
+	}
+
+	public void testUpdateSameParentCalculated() {
+		final int[] testServiceCount = new int[1];
+		testServiceCount[0] = 0;
+		IEclipseContext parentContext = EclipseContextFactory.create("parent");
+		parentContext.set(TestService.class.getName(), new IContextFunction() {
+			public Object compute(IEclipseContext context) {
+				testServiceCount[0]++;
+				return ContextInjectionFactory.make(TestService.class, context);
+			}
+		});
+
+		IEclipseContext childContext = parentContext.createChild("child");
+		childContext.get(TestService.class);
+		assertEquals(1, testServiceCount[0]);
+
+		childContext.setParent(childContext.getParent());
+		assertEquals(1, testServiceCount[0]);
 	}
 }

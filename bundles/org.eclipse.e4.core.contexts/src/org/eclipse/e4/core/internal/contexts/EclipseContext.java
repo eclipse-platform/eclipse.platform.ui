@@ -396,6 +396,8 @@ public class EclipseContext implements IEclipseContext {
 
 	public void setParent(IEclipseContext parent) {
 		EclipseContext parentContext = (EclipseContext) localValues.get(PARENT);
+		if (parent == parentContext)
+			return; // no-op
 		if (parentContext != null)
 			parentContext.removeChild(this);
 		List<Scheduled> scheduled = new ArrayList<Scheduled>();
