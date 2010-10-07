@@ -45,9 +45,7 @@ final class TextEditorMessages extends NLS {
 	public static String AbstractDecoratedTextEditor_show_ruler_label;
 	public static String SelectMarkerRulerAction_getMarker;
 	public static String AddMarkerAction_addMarker;
-	public static String MarkerRulerAction_addMarker;
 	public static String MarkerRulerAction_getMarker;
-	public static String MarkerRulerAction_removeMarkers;
 	public static String AbstractMarkerAnnotationModel_connected;
 	public static String AbstractMarkerAnnotationModel_createMarkerUpdater;
 	public static String AbstractMarkerAnnotationModel_removeAnnotations;
@@ -55,9 +53,6 @@ final class TextEditorMessages extends NLS {
 	public static String ChangeEncodingAction_message_noEncodingSupport;
 	public static String ChangeEncodingAction_button_apply_label;
 
-	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_title;
-	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_message;
-	public static String AbstractDecoratedTextEditor_revision_quickdiff_switch_rememberquestion;
 	public static String AbstractDecoratedTextEditor_warning_saveAs_deleted;
 	public static String AbstractDecoratedTextEditor_error_saveAs_title;
 	public static String AbstractDecoratedTextEditor_error_saveAs_message;
