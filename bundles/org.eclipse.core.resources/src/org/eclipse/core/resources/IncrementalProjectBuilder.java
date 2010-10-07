@@ -38,7 +38,12 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * Build kind constant (value 6) indicating a full build request.  A full
 	 * build discards all previously built state and builds all resources again.
 	 * Resource deltas are not applicable for this kind of build.
-	 * 
+	 * <p>
+	 * <strong>Note:</strong> If there is no previous delta, a request for {@link #INCREMENTAL_BUILD}
+	 * or {@link #AUTO_BUILD} will result in the builder being called with {@link #FULL_BUILD}
+	 * build kind.
+	 * </p>
+	 *
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 * @see IWorkspace#build(int, IProgressMonitor)
@@ -88,7 +93,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * used during the invocation of this method to obtain information about
 	 * what changes have occurred since the last invocation of this method. Any
 	 * resource delta acquired is valid only for the duration of the invocation
-	 * of this method.
+	 * of this method.  A {@link #FULL_BUILD} has no associated build delta.
 	 * </p>
 	 * <p>
 	 * After completing a build, this builder may return a list of projects for

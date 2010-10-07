@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -117,8 +117,23 @@ public interface ICommand {
 	 * </p><p>
 	 * This method has no effect if this build command does not allow its
 	 * build kinds to be configured.
-	 * </p>
-	 * 
+	 * </p><p>
+	 * <strong>Note:</strong> 
+	 * <ul>
+	 * <li>A request for INCREMENTAL_BUILD or AUTO_BUILD will result in the builder being called with the FULL_BUILD
+	 * kind, if there is no previous delta (e.g. after a clean build).
+	 * </li><li>
+	 * If INCREMENTAL_BUILD (or AUTO_BUILD) is promoted to FULL_BUILD, the builder will be called,
+	 * if the command responds to INCREMENTAL_BUILD (or AUTO_BUILD).
+	 * </li><li>
+	 * If INCREMENTAL_BUILD is promoted to FULL_BUILD, the builder will be called,
+	 * if the command responds to FULL_BUILD. 
+	 * </li><li>
+	 * If AUTO_BUILD is promoted to FULL_BUILD, the builder will be called,
+	 * <strong>only if</strong> the command responds to AUTO_BUILD.
+	 * </li>
+	 * </ul>
+	 *
 	 * @param kind One of the <tt>*_BUILD</code> constants defined
 	 * 		on <code>IncrementalProjectBuilder</code>
 	 * @param value <code>true</code> if this build command responds to the 
@@ -127,6 +142,10 @@ public interface ICommand {
 	 * @see #isConfigurable()
 	 * @see IWorkspace#build(int, IProgressMonitor)
 	 * @see IProject#build(int, IProgressMonitor)
+	 * @see IncrementalProjectBuilder#FULL_BUILD
+	 * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
+	 * @see IncrementalProjectBuilder#AUTO_BUILD
+	 * @see IncrementalProjectBuilder#CLEAN_BUILD
 	 * @since 3.1
 	 */
 	public void setBuilding(int kind, boolean value);

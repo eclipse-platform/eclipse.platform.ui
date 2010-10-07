@@ -139,19 +139,26 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			boolean clean = trigger == IncrementalProjectBuilder.CLEAN_BUILD;
 			currentLastBuiltTree = currentBuilder.getLastBuiltTree();
 
+			// Does the build command respond to this trigger?
+			boolean isBuilding = builder.getCommand().isBuilding(trigger);
+
 			// If no tree is available we have to do a full build
 			if (!clean && currentLastBuiltTree == null) {
 				// Bug 306746 - Don't promote build to FULL_BUILD if builder doesn't AUTO_BUILD
-				if (trigger == IncrementalProjectBuilder.AUTO_BUILD && !builder.getCommand().isBuilding(trigger))
+				if (trigger == IncrementalProjectBuilder.AUTO_BUILD && !isBuilding)
 					return;
+				// Without a build tree the build is promoted to FULL_BUILD
 				trigger = IncrementalProjectBuilder.FULL_BUILD;
+				isBuilding = isBuilding || builder.getCommand().isBuilding(trigger);
 			}
-			//don't build if this builder doesn't respond to the given trigger
-			if (!builder.getCommand().isBuilding(trigger)) {
+
+			//don't build if this builder doesn't respond to the trigger
+			if (!isBuilding) {
 				if (clean)
 					currentBuilder.setLastBuiltTree(null);
 				return;
 			}
+
 			// For incremental builds, grab a pointer to the current state before computing the delta
 			currentTree = ((trigger == IncrementalProjectBuilder.FULL_BUILD) || clean) ? null : workspace.getElementTree();
 			int depth = -1;
