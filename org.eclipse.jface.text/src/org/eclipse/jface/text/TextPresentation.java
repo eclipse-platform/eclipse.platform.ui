@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,10 +160,10 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Creates a new empty text presentation. <code>sizeHint</code>  tells the
-	 * expected size of this presentation.
-	 *
-	 * @param sizeHint the expected size of this presentation
+	 * Creates a new empty text presentation. <code>sizeHint</code> tells the expected size of this
+	 * presentation.
+	 * 
+	 * @param sizeHint the expected size of this presentation, must be positive
 	 */
 	public TextPresentation(int sizeHint) {
 		Assert.isTrue(sizeHint > 0);
@@ -171,11 +171,11 @@ public class TextPresentation {
 	}
 
 	/**
-	 * Creates a new empty text presentation with the given extent.
-	 * <code>sizeHint</code>  tells the expected size of this presentation.
-	 *
+	 * Creates a new empty text presentation with the given extent. <code>sizeHint</code> tells the
+	 * expected size of this presentation.
+	 * 
 	 * @param extent the extent of the created <code>TextPresentation</code>
-	 * @param sizeHint the expected size of this presentation
+	 * @param sizeHint the expected size of this presentation, must be positive
 	 * @since 3.0
 	 */
 	public TextPresentation(IRegion extent, int sizeHint) {
