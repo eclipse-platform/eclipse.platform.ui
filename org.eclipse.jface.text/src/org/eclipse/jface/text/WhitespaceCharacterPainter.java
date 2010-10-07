@@ -268,7 +268,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			}
 			// draw character range
 			if (endOffset > startOffset) {
-				drawCharRange(gc, startOffset, endOffset);
+				drawCharRange(gc, startOffset, endOffset, lineOffset, lineEndOffset);
 			}
 		}
 	}
@@ -281,26 +281,29 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * Draw characters of content range.
 	 * 
 	 * @param gc the GC
-	 * @param startOffset inclusive start index
-	 * @param endOffset exclusive end index
+	 * @param startOffset inclusive start index of the drawing range
+	 * @param endOffset exclusive end index of the drawing range
+	 * @param lineOffset inclusive start index of the line
+	 * @param lineEndOffset exclusive end index of the line
 	 */
-	private void drawCharRange(GC gc, int startOffset, int endOffset) {
+	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset) {
 		StyledTextContent content= fTextWidget.getContent();
 		int length= endOffset - startOffset;
-		String text= content.getTextRange(startOffset, length);
+		String drawingRangeText= content.getTextRange(startOffset, length);
+		String lineText= content.getTextRange(lineOffset, lineEndOffset - lineOffset);
 		int textBegin= -1;
-		for (int i= 0; i < text.length(); ++i) {
-			if (!isWhitespaceCharacter(text.charAt(i))) {
-				textBegin= i;
+		for (int i= 0; i < lineText.length(); ++i) {
+			if (!isWhitespaceCharacter(lineText.charAt(i))) {
+				textBegin= i - (startOffset - lineOffset);
 				break;
 			}
 		}
 		boolean isEmptyLine= textBegin == -1;
-		int textEnd= text.length() - 1;
+		int textEnd= lineText.length() - 1;
 		if (!isEmptyLine) {
-			for (int i= text.length() - 1; i >= 0; --i) {
-				if (!isWhitespaceCharacter(text.charAt(i))) {
-					textEnd= i;
+			for (int i= lineText.length() - 1; i >= 0; --i) {
+				if (!isWhitespaceCharacter(lineText.charAt(i))) {
+					textEnd= i - (startOffset - lineOffset);
 					break;
 				}
 			}
@@ -314,7 +317,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			boolean eol= false;
 			if (textOffset < length) {
 				delta= 1;
-				char c= text.charAt(textOffset);
+				char c= drawingRangeText.charAt(textOffset);
 				switch (c) {
 					case ' ':
 						if (isEmptyLine) {
@@ -381,7 +384,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 						if (fShowCarriageReturn) {
 							visibleChar.append(CARRIAGE_RETURN_SIGN);
 						}
-						if (textOffset >= length - 1 || text.charAt(textOffset + 1) != '\n') {
+						if (textOffset >= length - 1 || drawingRangeText.charAt(textOffset + 1) != '\n') {
 							eol= true;
 							break;
 						}
