@@ -640,14 +640,14 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     }
 
 	private void addMacWindowMenuItems(MenuManager windowMenu) {
-		
-		if(!Util.isCocoa())
+
+		if (!Util.isCocoa())
 			return;
-		
+
 		windowMenu.add(minimizeItem);
 		windowMenu.add(zoomItem);
-        windowMenu.add(new Separator());
-		
+		windowMenu.add(new Separator());
+
 	}
 
 	/**
@@ -1162,13 +1162,15 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         register(newQuickMenu);
         
         
-        if(Util.isCocoa()) {
-        	
-        	CommandContributionItemParameter minimizeParam = new CommandContributionItemParameter(window, null, "org.eclipse.ui.cocoa.minimizeWindow", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
-        	minimizeItem = new CommandContributionItem(minimizeParam);
-        	CommandContributionItemParameter zoomParam = new CommandContributionItemParameter(window, null, "org.eclipse.ui.cocoa.zoomWindow", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
-        	zoomItem = new CommandContributionItem(zoomParam);
-        }
+		if (Util.isCocoa()) {
+
+			CommandContributionItemParameter minimizeParam = new CommandContributionItemParameter(window, null,
+					"org.eclipse.ui.cocoa.minimizeWindow", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
+			minimizeItem = new CommandContributionItem(minimizeParam);
+			CommandContributionItemParameter zoomParam = new CommandContributionItemParameter(window, null,
+					"org.eclipse.ui.cocoa.zoomWindow", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
+			zoomItem = new CommandContributionItem(zoomParam);
+		}
 
     }
 

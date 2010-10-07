@@ -20,20 +20,19 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * 
- * @author Prakash G.R. (grprakash@gmail.com)
- * @since 3.6 
- *
+ * @since 3.6
+ * 
  */
 public class CloseDialogHandler extends AbstractHandler implements IHandler {
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
+
 		Shell activeShell = Display.getDefault().getActiveShell();
 		// perform only if close is enabled
-		if((activeShell.getStyle() & SWT.CLOSE) != 0) {
+		if ((activeShell.getStyle() & SWT.CLOSE) != 0) {
 			activeShell.close();
 		}
-		
+
 		activeShell.close();
 		return null;
 	}

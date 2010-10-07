@@ -290,6 +290,7 @@
             commandId="org.eclipse.ui.window.maximizePart"
             sequence="M1+M"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <!-- Cmd+M is used for Minimize Window in cocoa -->
       <key
             platform="cocoa"
             sequence="M1+M"
@@ -297,7 +298,7 @@
       <key
             commandId="org.eclipse.ui.window.maximizePart"
             platform="cocoa"
-            sequence="M1+M4+M"
+            sequence="M4+M"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.window.nextEditor"
