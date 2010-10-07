@@ -645,7 +645,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
 	/**
-	 * Applies the given data to this page.
+	 * {@inheritDoc}
 	 * <p>
 	 * Everything else except the following string patterns is ignored:
 	 * <ul>

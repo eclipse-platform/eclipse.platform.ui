@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -614,8 +614,19 @@ public abstract class PreferencePage extends DialogPage implements
     }
 
 	/**
-	 * Apply the data to the receiver. By default do nothing.
-	 * @param data
+	 * Applies the given data to this page.
+	 * <p>
+	 * It is up to the subclasses to specify the contract and the data format. The contract is not
+	 * guaranteed if the subclass is in an internal package.
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> The implementation must silently ignore all unknown data.
+	 * </p>
+	 * <p>
+	 * The default implementation does nothing.
+	 * </p>
+	 * 
+	 * @param data the data as specified by the subclass
 	 * @since 3.1
 	 */
 	public void applyData(Object data) {
