@@ -225,8 +225,7 @@ function addChild(treeItem, id, name, href, image, closedImage, imageAltText,
     setAccessibilityRole(anchor, WAI_TREEITEM);    
     setAccessibilitySetsize(anchor, setsize); 
     setAccessibilityPosition(anchor, position); 
-    // Setting the tree level is not necessary since screen readers can deduce it
-    //setAccessibilityTreeLevel(anchor, level);
+    setAccessibilityTreeLevel(anchor, level);
     
     if (topicImage) {
         anchor.appendChild(topicImage);
