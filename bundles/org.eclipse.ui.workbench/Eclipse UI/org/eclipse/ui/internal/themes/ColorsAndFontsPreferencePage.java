@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -88,8 +88,6 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.themes.IThemePreview;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Preference page for management of system colors, gradients and fonts.
@@ -645,6 +643,68 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         themeRegistry = WorkbenchPlugin.getDefault().getThemeRegistry();
         //no-op
     }
+
+	/**
+	 * Applies the given data to this page.
+	 * <p>
+	 * Everything else except the following string patterns is ignored:
+	 * <ul>
+	 * <li><strong>selectCategory:</strong>ID - selects and expands the category
+	 * with the given ID</li>
+	 * <li><strong>selectFont:</strong>ID - selects the font with the given ID</li>
+	 * <li><strong>selectColor:</strong>ID - selects the color with the given ID
+	 * </li>
+	 * </p>
+	 * 
+	 * @param data
+	 *            the data to be applied
+	 */
+	public void applyData(Object data) {
+		if (tree == null || !(data instanceof String))
+			return;
+
+		ThemeRegistry themeRegistry = (ThemeRegistry) tree.getViewer().getInput();
+		String command = (String) data;
+		if (command.startsWith("selectCategory:")) { //$NON-NLS-1$
+			// Expand the node
+			String categoryId = command.substring(15);
+			select(categoryId, null);
+		} else if (command.startsWith("selectFont:")) { //$NON-NLS-1$
+			// Select element
+			String id = command.substring(11);
+			FontDefinition fontDef = themeRegistry.findFont(id);
+			if (fontDef != null) {
+				select(fontDef.getCategoryId(), fontDef);
+			}
+		} else if (command.startsWith("selectColor:")) { //$NON-NLS-1$
+			// Select element
+			String id = command.substring(12);
+			ColorDefinition colorDef = themeRegistry.findColor(id);
+			if (colorDef != null) {
+				select(colorDef.getCategoryId(), colorDef);
+			}
+		}
+	}
+
+	/**
+	 * Selects the given element.
+	 * 
+	 * @param categoryId
+	 *            the ID of the category to expand
+	 * @param selection
+	 *            the object to select, or <code>null</code> to select the given
+	 *            category
+	 * @since 3.7
+	 */
+	private void select(String categoryId, Object selection) {
+		TreeViewer viewer = tree.getViewer();
+		ThemeElementCategory category = themeRegistry.findCategory(categoryId);
+		viewer.expandToLevel(category, 1);
+		if (selection == null)
+			selection = category;
+		viewer.setSelection(new StructuredSelection(selection), true);
+		viewer.getTree().setFocus();
+	}
 
     private static boolean equals(String string, String string2) {
         if ((string == null && string2 == null))
