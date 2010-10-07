@@ -3228,12 +3228,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 				if (part instanceof ISaveablesSource) {
 					Saveable[] saveables = ((ISaveablesSource) part).getSaveables();
 					for (Saveable saveable : saveables) {
-						Set<IWorkbenchPart> parts = map.get(saveable);
-						if (parts == null) {
-							parts = new HashSet<IWorkbenchPart>();
-							map.put(saveable, parts);
+						if (saveable.isDirty()) {
+							Set<IWorkbenchPart> parts = map.get(saveable);
+							if (parts == null) {
+								parts = new HashSet<IWorkbenchPart>();
+								map.put(saveable, parts);
+							}
+							parts.add(part);
 						}
-						parts.add(part);
 					}
 				}
 			}
@@ -3244,12 +3246,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 				if (part instanceof ISaveablesSource) {
 					Saveable[] saveables = ((ISaveablesSource) part).getSaveables();
 					for (Saveable saveable : saveables) {
-						Set<IWorkbenchPart> parts = map.get(saveable);
-						if (parts == null) {
-							parts = new HashSet<IWorkbenchPart>();
-							map.put(saveable, parts);
+						if (saveable.isDirty()) {
+							Set<IWorkbenchPart> parts = map.get(saveable);
+							if (parts == null) {
+								parts = new HashSet<IWorkbenchPart>();
+								map.put(saveable, parts);
+							}
+							parts.add(part);
 						}
-						parts.add(part);
 					}
 				}
 			}
