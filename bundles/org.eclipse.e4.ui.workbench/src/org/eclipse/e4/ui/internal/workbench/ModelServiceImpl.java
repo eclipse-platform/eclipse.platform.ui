@@ -187,19 +187,19 @@ public class ModelServiceImpl implements EModelService {
 	 * 
 	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#bringToTop(org.eclipse.e4.ui.model.application
-	 * .ui.basic.MWindow, org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 * .ui.MUIElement)
 	 */
-	public void bringToTop(MWindow window, MUIElement element) {
+	public void bringToTop(MUIElement element) {
 		if (element instanceof MApplication)
 			return;
 
+		MWindow window = getTopLevelWindowFor(element);
 		if (element instanceof MPartStack && !element.isVisible()) {
-			MWindow window1 = getTopLevelWindowFor(element);
 			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$
 			MPerspective persp = getPerspectiveFor(element);
 			if (persp != null)
 				trimId = element.getElementId() + '(' + persp.getElementId() + ')';
-			MToolControl trimCtrl = (MToolControl) find(trimId, window1);
+			MToolControl trimCtrl = (MToolControl) find(trimId, window);
 			if (trimCtrl != null && trimCtrl.getObject() != null) {
 				IEclipseContext ctxt = EclipseContextFactory.create();
 				ctxt.set("show", true); //$NON-NLS-1$
@@ -222,8 +222,19 @@ public class ModelServiceImpl implements EModelService {
 				element.setToBeRendered(true);
 
 			((MElementContainer<MUIElement>) parent).setSelectedElement(element);
-			bringToTop(window, parent);
+			bringToTop(parent);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#bringToTop(org.eclipse.e4.ui.model.application
+	 * .ui.basic.MWindow, org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	public void bringToTop(MWindow window, MUIElement element) {
+		bringToTop(element);
 	}
 
 	/*

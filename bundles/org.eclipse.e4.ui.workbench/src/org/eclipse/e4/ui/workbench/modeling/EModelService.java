@@ -85,13 +85,27 @@ public interface EModelService {
 	public IEclipseContext getContainingContext(MUIElement element);
 
 	/**
+	 * Brings the specified element to the top of its containment structure. If the specified
+	 * element is a top-level window, then it will be selected as the application's currently active
+	 * window. Otherwise, the element may merely be brought up to be seen by the user but not
+	 * necessarily have its containing window become the application's active window.
+	 * 
+	 * @param element
+	 *            The element to bring to the top
+	 */
+	public void bringToTop(MUIElement element);
+
+	/**
 	 * Ensures that the given element is visible in the UI
 	 * 
 	 * @param window
 	 *            The containing MWindow
 	 * @param element
 	 *            The element to bring to the top
+	 * @deprecated Use {@link #bringToTop(MUIElement)} instead. This method will be removed in
+	 *             1.1M4.
 	 */
+	@Deprecated
 	public void bringToTop(MWindow window, MUIElement element);
 
 	/**

@@ -244,7 +244,7 @@ public class PartServiceImpl implements EPartService {
 
 			MUIElement oldSelectedElement = parent.getSelectedElement();
 
-			modelService.bringToTop(getWindow(), part);
+			modelService.bringToTop(part);
 
 			if (oldSelectedElement != part && parent.getChildren().contains(part)
 					&& parent instanceof MGenericStack<?>) {
@@ -416,7 +416,7 @@ public class PartServiceImpl implements EPartService {
 			return;
 		}
 
-		modelService.bringToTop(window, part);
+		modelService.bringToTop(part);
 		partActivationHistory.activate(part);
 
 		Object object = part.getObject();
