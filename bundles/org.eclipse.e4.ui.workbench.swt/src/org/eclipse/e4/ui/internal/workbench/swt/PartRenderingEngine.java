@@ -50,6 +50,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
@@ -107,8 +108,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.eContainer();
 			}
 
+			boolean menuChild = parent instanceof MMenu;
+
 			// If the parent isn't displayed who cares?
-			if (parent == null || parent.getWidget() == null)
+			if (parent == null || parent.getWidget() == null || menuChild)
 				return;
 
 			if (changedElement.isToBeRendered()) {
@@ -200,9 +203,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 			MElementContainer<MUIElement> changedElement = (MElementContainer<MUIElement>) changedObj;
 			boolean isApplication = changedObj instanceof MApplication;
 
+			boolean menuChild = changedObj instanceof MMenu;
 			// If the parent isn't in the UI then who cares?
 			AbstractPartRenderer renderer = getRendererFor(changedElement);
-			if (!isApplication && renderer == null)
+			if ((!isApplication && renderer == null) || menuChild)
 				return;
 
 			String eventType = (String) event
@@ -349,6 +353,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 
 		curFactory = factory;
+		context.set(IRendererFactory.class, curFactory);
 
 		// Hook up the widget life-cycle subscriber
 		if (eventBroker != null) {
@@ -464,8 +469,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 		Object newWidget = createWidget(element, parentWidget);
 
 		// Remember that we've created the control
-		if (newWidget != null) {
-			AbstractPartRenderer renderer = getRendererFor(element);
+		AbstractPartRenderer renderer = getRendererFor(element);
+		if (renderer != null) {
+			// AbstractPartRenderer renderer = getRendererFor(element);
 
 			// Have the renderer hook up any widget specific listeners
 			renderer.hookControllerLogic(element);
@@ -619,6 +625,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 	protected Object createWidget(MUIElement element, Object parent) {
 		AbstractPartRenderer renderer = getRenderer(element, parent);
 		if (renderer != null) {
+			// Remember which renderer is responsible for this widget
+			element.setRenderer(renderer);
 			Object newWidget = renderer.createWidget(element, parent);
 			if (newWidget != null) {
 				renderer.bindWidget(element, newWidget);

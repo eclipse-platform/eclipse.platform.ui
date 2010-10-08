@@ -88,9 +88,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		// Create a bi-directional link between the widget and the model
 		me.setWidget(widget);
 
-		// Remember which renderer created this widget
-		me.setRenderer(this);
-
 		if (widget instanceof Widget) {
 			((Widget) widget).setData(OWNING_ME, me);
 

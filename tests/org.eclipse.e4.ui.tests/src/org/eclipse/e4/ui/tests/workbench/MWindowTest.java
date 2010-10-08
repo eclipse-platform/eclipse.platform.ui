@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -230,6 +231,8 @@ public class MWindowTest extends TestCase {
 
 		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
+		((MenuManager) ((Widget) window.getMainMenu().getWidget()).getData())
+				.updateAll(true);
 
 		Widget topWidget = (Widget) window.getWidget();
 		assertNotNull(topWidget);

@@ -15,22 +15,34 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuRenderer;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Widget;
 
 public class MMenuItemTest extends TestCase {
 	protected IEclipseContext appContext;
@@ -73,6 +85,8 @@ public class MMenuItemTest extends TestCase {
 
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
+
+		((MenuManager) ((Widget) menu.getWidget()).getData()).updateAll(true);
 
 		Object widget = menuItem.getWidget();
 		assertNotNull(widget);
@@ -149,6 +163,8 @@ public class MMenuItemTest extends TestCase {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
+		((MenuManager) ((Widget) menu.getWidget()).getData()).updateAll(true);
+
 		Object widget1 = menuItem1.getWidget();
 		assertNotNull(widget1);
 		assertTrue(widget1 instanceof MenuItem);
@@ -204,6 +220,8 @@ public class MMenuItemTest extends TestCase {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
+		((MenuManager) ((Widget) menu.getWidget()).getData()).updateAll(true);
+
 		Object widget1 = menuItem.getWidget();
 		assertNotNull(widget1);
 		assertTrue(widget1 instanceof MenuItem);
@@ -237,11 +255,424 @@ public class MMenuItemTest extends TestCase {
 		wb = new E4Workbench(window, appContext);
 		wb.createAndRunUI(window);
 
+		MenuManager barManager = (MenuManager) ((Menu) menu.getWidget())
+				.getData();
+		barManager.updateAll(true);
+
 		Object widget1 = menuItem.getWidget();
 		assertNotNull(widget1);
 		assertTrue(widget1 instanceof MenuItem);
 
 		MenuItem menuItemWidget = (MenuItem) widget1;
 		assertTrue(menuItemWidget.getSelection());
+	}
+
+	public void testSubMenuCreation() throws Exception {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuBar.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(menuBar);
+
+		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		fileMenu.setElementId("file");
+		fileMenu.setLabel("File");
+		menuBar.getChildren().add(fileMenu);
+
+		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item1.setElementId("item1");
+		item1.setLabel("item1");
+		fileMenu.getChildren().add(item1);
+
+		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		sep.setElementId("group1");
+		fileMenu.getChildren().add(sep);
+
+		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item2.setElementId("item2");
+		item2.setLabel("item2");
+		fileMenu.getChildren().add(item2);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		MenuRenderer renderer = getRenderer(appContext, menuBar);
+		MenuManager manager = renderer.getManager(menuBar);
+		assertNotNull("failed to create menu bar manager", manager);
+
+		assertEquals(1, manager.getSize());
+
+		MenuManager fileManager = (MenuManager) manager.getItems()[0];
+		MenuManager fileR = renderer.getManager(fileMenu);
+		assertEquals(fileManager, fileR);
+
+		assertEquals(3, fileManager.getSize());
+	}
+
+	public void testTbrItem() throws Exception {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuBar.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(menuBar);
+
+		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		fileMenu.setElementId("file");
+		fileMenu.setLabel("File");
+		menuBar.getChildren().add(fileMenu);
+
+		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item1.setElementId("item1");
+		item1.setLabel("item1");
+		fileMenu.getChildren().add(item1);
+
+		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		sep.setElementId("group1");
+		fileMenu.getChildren().add(sep);
+
+		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item2.setElementId("item2");
+		item2.setLabel("item2");
+		fileMenu.getChildren().add(item2);
+		item2.setToBeRendered(false);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		MenuRenderer renderer = getRenderer(appContext, menuBar);
+		MenuManager manager = renderer.getManager(menuBar);
+		assertNotNull("failed to create menu bar manager", manager);
+
+		assertEquals(1, manager.getSize());
+
+		MenuManager fileManager = (MenuManager) manager.getItems()[0];
+		MenuManager fileR = renderer.getManager(fileMenu);
+		assertEquals(fileManager, fileR);
+
+		assertEquals(2, fileManager.getSize());
+	}
+
+	public void testInvisibleItem() throws Exception {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuBar.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(menuBar);
+
+		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		fileMenu.setElementId("file");
+		fileMenu.setLabel("File");
+		menuBar.getChildren().add(fileMenu);
+
+		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item1.setElementId("item1");
+		item1.setLabel("item1");
+		fileMenu.getChildren().add(item1);
+
+		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		sep.setElementId("group1");
+		fileMenu.getChildren().add(sep);
+
+		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item2.setElementId("item2");
+		item2.setLabel("item2");
+		fileMenu.getChildren().add(item2);
+		item2.setVisible(false);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		MenuRenderer renderer = getRenderer(appContext, menuBar);
+		MenuManager manager = renderer.getManager(menuBar);
+		assertNotNull("failed to create menu bar manager", manager);
+
+		assertEquals(1, manager.getSize());
+
+		MenuManager fileManager = (MenuManager) manager.getItems()[0];
+		MenuManager fileR = renderer.getManager(fileMenu);
+		assertEquals(fileManager, fileR);
+
+		assertEquals(3, fileManager.getSize());
+
+		assertEquals(false, fileManager.getItems()[2].isVisible());
+	}
+
+	public void testMenuContribution() throws Exception {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuBar.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(menuBar);
+
+		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		fileMenu.setElementId("file");
+		fileMenu.setLabel("File");
+		menuBar.getChildren().add(fileMenu);
+
+		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item1.setElementId("item1");
+		item1.setLabel("item1");
+		fileMenu.getChildren().add(item1);
+
+		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		sep.setElementId("group1");
+		fileMenu.getChildren().add(sep);
+
+		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item2.setElementId("item2");
+		item2.setLabel("item2");
+		fileMenu.getChildren().add(item2);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+		application.getMenuContributions().add(createContribution(false));
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		MenuRenderer renderer = getRenderer(appContext, menuBar);
+
+		MenuManager fileManager = renderer.getManager(fileMenu);
+		assertNotNull("No file menu?", fileManager);
+
+		assertEquals(4, fileManager.getSize());
+
+		assertEquals("mmc.item1", fileManager.getItems()[3].getId());
+	}
+
+	public void testWithVisible() throws Exception {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuBar.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(menuBar);
+
+		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		fileMenu.setElementId("file");
+		fileMenu.setLabel("File");
+		menuBar.getChildren().add(fileMenu);
+
+		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item1.setElementId("item1");
+		item1.setLabel("item1");
+		fileMenu.getChildren().add(item1);
+
+		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		sep.setElementId("group1");
+		fileMenu.getChildren().add(sep);
+
+		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item2.setElementId("item2");
+		item2.setLabel("item2");
+		fileMenu.getChildren().add(item2);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+		application.getMenuContributions().add(createContribution(true));
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		MenuRenderer renderer = getRenderer(appContext, menuBar);
+
+		MenuManager fileManager = renderer.getManager(fileMenu);
+		assertNotNull("No file menu?", fileManager);
+
+		assertEquals(4, fileManager.getSize());
+
+		IContributionItem mmcItem = fileManager.getItems()[3];
+		assertEquals("mmc.item1", mmcItem.getId());
+		assertEquals("before the first show, we have no context to evaluate",
+				true, mmcItem.isVisible());
+
+		MenuManager manager = renderer.getManager(menuBar);
+		manager.updateAll(true);
+		Menu fileWidget = fileManager.getMenu();
+		assertNotNull(fileWidget);
+
+		Event show = new Event();
+		show.widget = fileWidget;
+		show.type = SWT.Show;
+
+		Event hide = new Event();
+		hide.widget = fileWidget;
+		hide.type = SWT.Hide;
+
+		fileWidget.notifyListeners(SWT.Show, show);
+
+		assertEquals("after the first show, it should not be visible", false,
+				mmcItem.isVisible());
+
+		fileWidget.notifyListeners(SWT.Hide, hide);
+
+		appContext.set("mmc1", Boolean.TRUE);
+
+		assertEquals("Change should not show up until next show", false,
+				mmcItem.isVisible());
+
+		fileWidget.notifyListeners(SWT.Show, show);
+
+		assertEquals(true, mmcItem.isVisible());
+
+		fileWidget.notifyListeners(SWT.Hide, hide);
+
+		appContext.remove("mmc1");
+
+		fileWidget.notifyListeners(SWT.Show, show);
+
+		assertEquals(false, mmcItem.isVisible());
+
+		fileWidget.notifyListeners(SWT.Hide, hide);
+	}
+
+	public void testMenuBarVisibility() throws Exception {
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
+		menuBar.setElementId("org.eclipse.ui.main.menu");
+		window.setMainMenu(menuBar);
+
+		MMenu fileMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		fileMenu.setElementId("file");
+		fileMenu.setLabel("File");
+		menuBar.getChildren().add(fileMenu);
+
+		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item1.setElementId("item1");
+		item1.setLabel("item1");
+		fileMenu.getChildren().add(item1);
+
+		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		sep.setElementId("group1");
+		fileMenu.getChildren().add(sep);
+
+		MMenuItem item2 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item2.setElementId("item2");
+		item2.setLabel("item2");
+		fileMenu.getChildren().add(item2);
+
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+		createMenuContribution(application);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		MenuRenderer renderer = getRenderer(appContext, menuBar);
+		MenuManager manager = renderer.getManager(menuBar);
+		manager.updateAll(true);
+
+		assertEquals(2, manager.getSize());
+
+		MenuManager vanishManager = (MenuManager) manager.getItems()[1];
+		assertEquals("vanish", vanishManager.getId());
+
+		assertFalse(vanishManager.isVisible());
+		assertNull(vanishManager.getMenu());
+
+		appContext.set("mmc1", Boolean.TRUE);
+
+		assertTrue(vanishManager.isVisible());
+		assertNotNull(vanishManager.getMenu());
+
+		appContext.remove("mmc1");
+
+		assertFalse(vanishManager.isVisible());
+		Menu vanishMenu = vanishManager.getMenu();
+		if (vanishMenu != null) {
+			assertTrue(vanishMenu.isDisposed());
+		}
+
+		appContext.set("mmc1", Boolean.TRUE);
+
+		assertTrue(vanishManager.isVisible());
+		assertNotNull(vanishManager.getMenu());
+		assertFalse(vanishManager.getMenu().isDisposed());
+	}
+
+	private MMenuContribution createContribution(boolean withVisibleWhen) {
+		MMenuContribution mmc = MenuFactoryImpl.eINSTANCE
+				.createMenuContribution();
+		mmc.setElementId("test.contrib1");
+		mmc.setParentId("file");
+		mmc.setPositionInParent("after=additions");
+
+		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item1.setElementId("mmc.item1");
+		item1.setLabel("mmc.item1");
+		mmc.getChildren().add(item1);
+
+		if (withVisibleWhen) {
+			MCoreExpression exp = UiFactoryImpl.eINSTANCE
+					.createCoreExpression();
+			exp.setCoreExpressionId("org.eclipse.e4.ui.tests.withMmc1");
+			mmc.setVisibleWhen(exp);
+		}
+
+		return mmc;
+	}
+
+	private void createMenuContribution(MApplication application) {
+		MMenuContribution mmc = MenuFactoryImpl.eINSTANCE
+				.createMenuContribution();
+		mmc.setElementId("test.contrib2");
+		mmc.setParentId("org.eclipse.ui.main.menu");
+		mmc.setPositionInParent("after=additions");
+
+		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
+		menu.setElementId("vanish");
+		menu.setLabel("Vanish");
+		mmc.getChildren().add(menu);
+
+		MCoreExpression exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
+		exp.setCoreExpressionId("org.eclipse.e4.ui.tests.withMmc1");
+		mmc.setVisibleWhen(exp);
+
+		application.getMenuContributions().add(mmc);
+
+		mmc = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		mmc.setElementId("test.contrib3");
+		mmc.setParentId("vanish");
+		mmc.setPositionInParent("after=additions");
+
+		MMenuItem item1 = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
+		item1.setElementId("mmc.item2");
+		item1.setLabel("mmc.item2");
+		mmc.getChildren().add(item1);
+
+		// exp = UiFactoryImpl.eINSTANCE.createCoreExpression();
+		// exp.setCoreExpressionId("org.eclipse.e4.ui.tests.withMmc1");
+		// mmc.setVisibleWhen(exp);
+
+		application.getMenuContributions().add(mmc);
+	}
+
+	private MenuRenderer getRenderer(IEclipseContext context, MUIElement element) {
+		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
+		AbstractPartRenderer renderer = rendererFactory.getRenderer(element,
+				null);
+		assertEquals(MenuRenderer.class, renderer.getClass());
+		return (MenuRenderer) renderer;
 	}
 }

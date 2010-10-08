@@ -87,6 +87,26 @@ public final class ContributionsAnalyzer {
 		return false;
 	}
 
+	public static void XXXgatherMenuContributions(final MMenu menuModel,
+			final List<MMenuContribution> menuContributionList, final String id,
+			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
+			boolean includePopups) {
+		for (MMenuContribution menuContribution : menuContributionList) {
+			String parentID = menuContribution.getParentId();
+			if (parentID == null) {
+				// it doesn't make sense for this to be null, temporary workaround for bug 320790
+				continue;
+			}
+			boolean popup = parentID.equals(POPUP_PARENT_ID) && (menuModel instanceof MPopupMenu)
+					&& includePopups;
+			boolean filtered = isFiltered(menuModel, menuContribution);
+			if (filtered || (!popup && !parentID.equals(id)) || !menuContribution.isToBeRendered()) {
+				continue;
+			}
+			toContribute.add(menuContribution);
+		}
+	}
+
 	public static void gatherMenuContributions(final MMenu menuModel,
 			final List<MMenuContribution> menuContributionList, final String id,
 			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
