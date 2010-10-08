@@ -210,14 +210,10 @@ public class NonProxyHostsComposite extends Composite {
 		String selectedHosts = getStringList(selection.iterator());
 		String hosts[] = promptForHost(selectedHosts);
 		if (hosts != null) {
-			Iterator it = selection.iterator();
-			while (it.hasNext()) {
-				ProxyBypassData data = (ProxyBypassData) it.next();
-				bypassHosts.remove(data);
-			}
-			for (int i = 0; i < hosts.length; i++) {
-				bypassHosts.add(0, new ProxyBypassData(hosts[i],
-						getEditableProvider()));
+			Object[] selectedItems = selection.toArray();
+			for (int i = 0; i < selectedItems.length; i++) {
+				ProxyBypassData data = (ProxyBypassData) selectedItems[i];
+				data.setHost(hosts[i]);
 			}
 			hostsViewer.refresh();
 		}
