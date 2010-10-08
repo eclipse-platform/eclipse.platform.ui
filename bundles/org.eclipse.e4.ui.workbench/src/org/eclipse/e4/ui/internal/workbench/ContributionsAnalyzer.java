@@ -72,7 +72,7 @@ public final class ContributionsAnalyzer {
 
 	public static void gatherToolBarContributions(final MToolBar toolbarModel,
 			final List<MToolBarContribution> toolbarContributionList, final String id,
-			final ArrayList<MToolBarContribution> toContribute, final ExpressionContext eContext) {
+			final ArrayList<MToolBarContribution> toContribute) {
 		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
 			String parentID = toolBarContribution.getParentId();
 			boolean filtered = isFiltered(toolbarModel, toolBarContribution);

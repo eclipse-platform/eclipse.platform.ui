@@ -384,9 +384,9 @@ public class MenuRenderer extends SWTPartRenderer {
 			}
 		}
 		if (menuBar) {
-			final IEclipseContext parentContext = modelService
-					.getContainingContext(menuModel);
 			if (menuContribution.getVisibleWhen() != null) {
+				final IEclipseContext parentContext = modelService
+						.getContainingContext(menuModel);
 				parentContext.runAndTrack(new RunAndTrack() {
 					@Override
 					public boolean changed(IEclipseContext context) {

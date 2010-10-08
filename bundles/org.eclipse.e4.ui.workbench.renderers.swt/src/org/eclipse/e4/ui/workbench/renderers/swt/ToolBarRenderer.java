@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -18,7 +20,10 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -26,10 +31,15 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -58,6 +68,11 @@ public class ToolBarRenderer extends SWTPartRenderer {
 
 	// @Inject
 	// private Logger logger;
+
+	@Inject
+	private MApplication application;
+	@Inject
+	private EModelService modelService;
 
 	@Inject
 	IEventBroker eventBroker;
@@ -207,8 +222,151 @@ public class ToolBarRenderer extends SWTPartRenderer {
 	/**
 	 * @param element
 	 */
-	private void processContribution(MToolBar element) {
-		// TODO Auto-generated method stub
+	private void processContribution(MToolBar toolbarModel) {
+		final ArrayList<MToolBarContribution> toContribute = new ArrayList<MToolBarContribution>();
+		ContributionsAnalyzer.gatherToolBarContributions(toolbarModel,
+				application.getToolBarContributions(),
+				toolbarModel.getElementId(), toContribute);
+		generateContributions(toolbarModel, toContribute);
+	}
+
+	/**
+	 * @param toolbarModel
+	 * @param toContribute
+	 */
+	private void generateContributions(MToolBar toolbarModel,
+			ArrayList<MToolBarContribution> toContribute) {
+		HashSet<String> existingSeparatorNames = new HashSet<String>();
+		for (MToolBarElement child : toolbarModel.getChildren()) {
+			String elementId = child.getElementId();
+			if (child instanceof MToolBarSeparator && elementId != null) {
+				existingSeparatorNames.add(elementId);
+			}
+		}
+
+		ToolBarManager manager = getManager(toolbarModel);
+		boolean done = toContribute.size() == 0;
+		while (!done) {
+			ArrayList<MToolBarContribution> curList = new ArrayList<MToolBarContribution>(
+					toContribute);
+			int retryCount = toContribute.size();
+			toContribute.clear();
+
+			for (final MToolBarContribution contribution : curList) {
+				if (!processAddition(toolbarModel, manager, contribution,
+						existingSeparatorNames)) {
+					toContribute.add(contribution);
+				}
+			}
+			// We're done if the retryList is now empty (everything done) or
+			// if the list hasn't changed at all (no hope)
+			done = (toContribute.size() == 0)
+					|| (toContribute.size() == retryCount);
+		}
+	}
+
+	static class ContributionRecord {
+		public ContributionRecord(MToolBar toolbarModel,
+				MToolBarContribution contribution, ToolBarManager manager) {
+			this.toolbarModel = toolbarModel;
+			this.contribution = contribution;
+			this.manager = manager;
+		}
+
+		MToolBar toolbarModel;
+		MToolBarContribution contribution;
+		ToolBarManager manager;
+		ArrayList<MToolBarElement> generatedElements = new ArrayList<MToolBarElement>();
+
+		public void generate() {
+			for (MToolBarElement element : contribution.getChildren()) {
+				MToolBarElement copy = (MToolBarElement) EcoreUtil
+						.copy((EObject) element);
+				generatedElements.add(copy);
+			}
+		}
+
+		public void updateVisibility(IEclipseContext context) {
+			ExpressionContext exprContext = new ExpressionContext(context);
+			boolean isVisible = ContributionsAnalyzer.isVisible(contribution,
+					exprContext);
+			for (MToolBarElement item : generatedElements) {
+				item.setVisible(isVisible);
+			}
+			manager.markDirty();
+		}
+	}
+
+	/**
+	 * @param toolbarModel
+	 * @param manager
+	 * @param contribution
+	 * @param existingSeparatorNames
+	 * @return <code>true</code> if the contribution was successfuly processed
+	 */
+	private boolean processAddition(MToolBar toolbarModel,
+			final ToolBarManager manager, MToolBarContribution contribution,
+			HashSet<String> existingSeparatorNames) {
+		int idx = getIndex(toolbarModel, contribution.getPositionInParent());
+		if (idx == -1) {
+			return false;
+		}
+		final ContributionRecord record = new ContributionRecord(toolbarModel,
+				contribution, manager);
+		record.generate();
+		for (MToolBarElement copy : record.generatedElements) {
+			if (copy instanceof MToolBarSeparator
+					&& existingSeparatorNames.contains(copy.getElementId())) {
+				// skip this, it's already there
+				continue;
+			}
+			toolbarModel.getChildren().add(idx++, copy);
+			if (copy instanceof MToolBarSeparator
+					&& copy.getElementId() != null) {
+				existingSeparatorNames.add(copy.getElementId());
+			}
+		}
+		if (contribution.getVisibleWhen() != null) {
+			final IEclipseContext parentContext = modelService
+					.getContainingContext(toolbarModel);
+			parentContext.runAndTrack(new RunAndTrack() {
+				@Override
+				public boolean changed(IEclipseContext context) {
+					record.updateVisibility(parentContext);
+					manager.update(true);
+					return true;
+				}
+			});
+		}
+
+		return true;
+	}
+
+	private static int getIndex(MElementContainer<?> menuModel,
+			String positionInParent) {
+		String id = null;
+		String modifier = null;
+		if (positionInParent != null && positionInParent.length() > 0) {
+			String[] array = positionInParent.split("="); //$NON-NLS-1$
+			modifier = array[0];
+			id = array[1];
+		}
+		if (id == null) {
+			return menuModel.getChildren().size();
+		}
+
+		int idx = 0;
+		int size = menuModel.getChildren().size();
+		while (idx < size) {
+			if (id.equals(menuModel.getChildren().get(idx).getElementId())) {
+				if ("after".equals(modifier)) { //$NON-NLS-1$
+					idx++;
+				}
+				return idx;
+			}
+			idx++;
+		}
+		return id.equals("additions") ? menuModel.getChildren().size() : -1; //$NON-NLS-1$
 	}
 
 	ToolBar createToolbar(final MUIElement element, Composite intermediate) {
