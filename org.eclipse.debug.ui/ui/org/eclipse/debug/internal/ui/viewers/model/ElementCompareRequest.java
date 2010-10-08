@@ -23,7 +23,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * @since 3.3
  */
-class ElementCompareRequest extends MementoUpdate implements IElementCompareRequest {
+public class ElementCompareRequest extends MementoUpdate implements IElementCompareRequest {
 
 	private boolean fEqual;
     private final int fModelIndex;
@@ -74,7 +74,7 @@ class ElementCompareRequest extends MementoUpdate implements IElementCompareRequ
 		job.schedule();
 	}
 	
-	boolean isEqual() {
+	public boolean isEqual() {
 		return fEqual;
 	}
 	

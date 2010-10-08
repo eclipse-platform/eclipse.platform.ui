@@ -744,10 +744,11 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fViewer.saveElementState(TreePath.EMPTY, originalState, IModelDelta.EXPAND | IModelDelta.SELECT);
 
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
-        fListener.reset(true, false);
-        fListener.addStateUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement());
+        fListener.reset(false, false);
+        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
                 
         // Set the viewer input back to the model.  When view updates are complete
         // the viewer 
@@ -794,10 +795,11 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset(true, false);
-        fListener.addStateUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement());
+        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 
         // Set the viewer input back to the model.  When view updates are complete
         // the viewer 
@@ -837,12 +839,17 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fViewer.setSelection(originalSelection);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
 
+        // Extract the original state from viewer
+        ModelDelta originalState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, originalState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset();
-        fListener.addStateUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement());
+        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 
         // Set the viewer input back to the model.  When view updates are complete
         // the viewer 
@@ -889,12 +896,17 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fViewer.setSelection(originalSelection);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
 
+        // Extract the original state from viewer
+        ModelDelta originalState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, originalState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset();
-        fListener.addStateUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement());
+        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 
         
         TestElement[] elements = model.getRootElement().getChildren();

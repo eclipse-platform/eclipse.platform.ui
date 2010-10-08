@@ -466,6 +466,10 @@ public class SubTreeModelViewer extends TreeModelViewer {
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             fBaseProvider.inputChanged(fDelegatingViewer, oldInput, newInput);
         }
+        
+        public void inputAboutToChange(ITreeModelContentProviderTarget viewer, Object oldInput, Object newInput) {
+            fBaseProvider.inputAboutToChange(viewer, oldInput, newInput);
+        }
     }
 
     /**

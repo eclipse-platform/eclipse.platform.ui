@@ -125,13 +125,18 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         Assert.assertNotNull("Top item should not be null!", originalTopPath);
         // Bug 116105: On a Mac the reveal call is not reliable.  Use the viewer returned path instead.
         // Assert.assertEquals(elements[indexRevealElem], originalTopPath.getLastSegment());
-        
+ 
+        // Extract the original state from viewer
+        ModelDelta originalState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, originalState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset(true, false);
-        fListener.addStateUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement());
+        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 
         // Set the viewer input back to the model to trigger RESTORE operation. 
         fListener.reset(false, false);
@@ -212,13 +217,17 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         getCTargetViewer().reveal(TreePath.EMPTY, 1);       
         while(fDisplay.readAndDispatch()) {}
         final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
+        Assert.assertNotNull("Top item should not be null!", originalTopPath);
         // Bug 116105: On a Mac the reveal call is not reliable.  Use the viewer returned path instead.
-        // Assert.assertNotNull("Top item should not be null!", originalTopPath);
-        Assert.assertEquals(elements[1], originalTopPath.getLastSegment());
-        
+        //Assert.assertEquals(elements[1], originalTopPath.getLastSegment());
+
+        // Extract the original state from viewer
+        ModelDelta originalState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, originalState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset(true, false);
-        fListener.addStateUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement());
+        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
         fViewer.setInput(null);
         while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 
@@ -292,13 +301,18 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         while(fDisplay.readAndDispatch()) {}
         final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", originalTopPath);
-        
+
+        // Extract the original state from viewer
+        ModelDelta originalState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, originalState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
         // Set the viewer input to null.  This will trigger the view to save the viewer state.
         fListener.reset(true, false);
-        fListener.addStateUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement());
+        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
 
         // Set the viewer input back to the model.
         fListener.reset(false, false);
@@ -311,4 +325,182 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         Assert.assertNotNull("Top item should not be null!", topPath);
         Assert.assertEquals(originalTopPath, topPath);
     }
+    
+    /**
+     * Test for bug 326965.<br>
+     * This test verifies that canceling a reveal pending state delta is 
+     * properly handled when a new reveal delta is received from the model.
+     */
+    public void testRestoreRevealAfterRevealCancel() {
+        TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        TestModel model = TestModel.simpleMultiLevel();
+
+        // Expand all
+        fViewer.setAutoExpandLevel(-1);
+        
+        // Create the listener.
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY, true);
+        
+        // Stop autopopulating the view.
+        autopopulateAgent.dispose();
+        
+        // Set top index of view to element "3" and wait for view to repaint.
+        getCTargetViewer().reveal(TreePath.EMPTY, 2);
+        while(fDisplay.readAndDispatch()) {}
+
+        // Trigger save of state.
+        fListener.reset();
+        fViewer.setInput(null);
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) fDisplay.sleep ();
+
+        // Set input back to root element.
+        // Note: Wait only for the processing of the delta and the start of state restore, not for all updates
+        fListener.reset();
+        TreePath elementPath = model.findElement("3");
+        fListener.addUpdates(fViewer, elementPath, model.getElement(elementPath), 1, STATE_UPDATES);
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | STATE_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Update the viewer with new selection delta to something new in the view
+        ModelDelta revealDelta = model.makeElementDelta(model.findElement("2.1"), IModelDelta.REVEAL);
+
+        // Wait for the second model delta to process
+        fListener.reset();
+        model.postDelta(revealDelta);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        
+        // Clear view then reset it again.
+        fListener.reset();
+        fViewer.setInput(null);
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) fDisplay.sleep ();
+
+        autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished(STATE_RESTORE_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        autopopulateAgent.dispose();
+    }
+
+    /**
+     * Test for bug 326965.<br>
+     * This test verifies that canceling a reveal pending state delta is 
+     * properly handled when a new reveal delta is received from the model.
+     */
+    public void testRestoreRevealAfterRevealCancel2() {
+        TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        TestModel model = TestModel.simpleMultiLevel();
+
+        // Expand all
+        fViewer.setAutoExpandLevel(-1);
+        
+        // Create the listener.
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY, true);
+        
+        // Stop autopopulating the view.
+        autopopulateAgent.dispose();
+        
+        // Set top index of view to element "3" and wait for view to repaint.
+        getCTargetViewer().reveal(TreePath.EMPTY, 2);
+        while(fDisplay.readAndDispatch()) {}
+
+        // Trigger save of state.
+        fListener.reset();
+        fViewer.setInput(null);
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) fDisplay.sleep ();
+
+        // Set input back to root element.
+        // Note: Wait only for the processing of the delta and the start of state restore, not for all updates
+        fListener.reset();
+        final TreePath elementPath = model.findElement("3");
+        fListener.addUpdates(fViewer, elementPath, model.getElement(elementPath), 0, STATE_UPDATES);
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished(STATE_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Update the viewer with new selection delta to something new in the view
+        TreePath pathToBeRevealed = model.findElement("2.1");
+        ModelDelta revealDelta = model.makeElementDelta(pathToBeRevealed, IModelDelta.REVEAL);
+
+        // Wait for the second model delta to process
+        fListener.reset();
+        model.postDelta(revealDelta);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        
+        while (fDisplay.readAndDispatch ()) {}
+        // check if REVEAL was restored OK
+        TreePath topPath = getCTargetViewer().getTopElementPath();
+        Assert.assertNotNull("Top item should not be null!", topPath);
+        Assert.assertEquals(pathToBeRevealed, topPath);
+                
+    }
+
+    
+    /**
+     * Restore REVEAL when having also to restore an expanded element 
+     * that is just above the REVEAL element.
+     * 
+     * See bug 324100
+     */
+    public void testRestoreDeepTreeAndReveal() {
+        TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        
+        TestModel model = TestModel.simpleDeepMultiLevel();
+        fViewer.setAutoExpandLevel(-1);
+        
+        // Create the listener, only check the first level
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
+
+        
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY, true);
+
+        // Stop forcing view updates. 
+        autopopulateAgent.dispose();
+        
+        // Scroll down to the last part of the tree.
+        getCTargetViewer().reveal(model.findElement("3.6.3.16.16.16.16.16"), 1);       
+        while(fDisplay.readAndDispatch()) {}
+        final TreePath originalTopPath = getCTargetViewer().getTopElementPath();
+        Assert.assertNotNull("Top item should not be null!", originalTopPath);
+
+        // Extract the original state from viewer
+        ModelDelta originalState = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        fViewer.saveElementState(TreePath.EMPTY, originalState, IModelDelta.EXPAND | IModelDelta.SELECT);
+
+        // Set the viewer input to null.  This will trigger the view to save the viewer state.
+        fListener.reset(true, false);
+        fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);        
+        fViewer.setInput(null);
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Set the viewer input back to the model
+        fListener.reset(false, false);
+        fListener.addUpdates(getCTargetViewer(), originalTopPath, (TestElement)originalTopPath.getLastSegment(), 0, STATE_UPDATES);
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished(STATE_UPDATES | CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        while (fDisplay.readAndDispatch ()) {}
+        // check if REVEAL was restored OK
+        final TreePath topPath = getCTargetViewer().getTopElementPath();
+        Assert.assertNotNull("Top item should not be null!", topPath);
+        Assert.assertEquals(originalTopPath, topPath);
+        
+    }
+    
 }

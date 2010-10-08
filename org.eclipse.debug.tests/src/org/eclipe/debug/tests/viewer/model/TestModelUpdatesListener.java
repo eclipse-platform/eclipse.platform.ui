@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipe.debug.tests.viewer.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +22,11 @@ import java.util.TreeSet;
 import junit.framework.Assert;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.internal.ui.viewers.model.ElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.ILabelUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
@@ -38,9 +44,11 @@ import org.eclipse.jface.viewers.TreePath;
 
 public class TestModelUpdatesListener 
     implements IViewerUpdateListener, ILabelUpdateListener, IModelChangedListener, ITestModelUpdatesListenerConstants,
-        IStateUpdateListener
+        IStateUpdateListener, IJobChangeListener 
 {
     private final ITreeModelViewer fViewer;
+    
+    private IStatus fJobError;
     
     private boolean fFailOnRedundantUpdates;
     private Set fRedundantUpdates = new HashSet();
@@ -87,6 +95,7 @@ public class TestModelUpdatesListener
 
 	public TestModelUpdatesListener(ITreeModelViewer viewer) {
 	    fViewer = viewer;
+        Job.getJobManager().addJobChangeListener(this);
         fViewer.addLabelUpdateListener(this);
         fViewer.addModelChangedListener(this);
         fViewer.addStateUpdateListener(this);
@@ -94,13 +103,25 @@ public class TestModelUpdatesListener
     }
 
 	public void dispose() {
+        Job.getJobManager().removeJobChangeListener(this);
         fViewer.removeLabelUpdateListener(this);
         fViewer.removeModelChangedListener(this);
         fViewer.removeStateUpdateListener(this);
         fViewer.removeViewerUpdateListener(this);
 	}
 	
-	
+    public void aboutToRun(IJobChangeEvent event) {}
+    public void awake(IJobChangeEvent event) {}
+    public void running(IJobChangeEvent event) {}
+    public void scheduled(IJobChangeEvent event) {}
+    public void sleeping(IJobChangeEvent event) {}
+    public void done(IJobChangeEvent event) {
+        IStatus result = event.getJob().getResult(); 
+        if (result != null && result.getSeverity() == IStatus.ERROR) {
+            fJobError = result;   
+        }
+    }
+    
     public void setFailOnRedundantUpdates(boolean failOnRedundantUpdates) {
         fFailOnRedundantUpdates = failOnRedundantUpdates;
     }
@@ -138,6 +159,7 @@ public class TestModelUpdatesListener
     }
 
     public void reset() {
+        fJobError = null;
         fRedundantUpdates.clear();
         fMultipleLabelUpdateSequencesObserved = false;
         fMultipleModelUpdateSequencesObserved = false;
@@ -158,6 +180,7 @@ public class TestModelUpdatesListener
         fViewerUpdatesComplete = false;
         fLabelUpdatesStarted = false;
         fLabelUpdatesComplete = false;
+        fStateUpdates.clear();
         fStateSaveStarted = false;
         fStateSaveComplete = false;
         fStateRestoreStarted = false;
@@ -221,11 +244,40 @@ public class TestModelUpdatesListener
         addUpdates(viewer, path, element, -1, STATE_UPDATES);
     }
     
+    public void addStateUpdates(ITreeModelContentProviderTarget viewer, IModelDelta pendingDelta, int deltaFlags) {
+    	TreePath treePath = getViewerTreePath(pendingDelta);
+    	if ( !TreePath.EMPTY.equals(treePath) && (pendingDelta.getFlags() & deltaFlags) != 0 ) {
+    		addUpdates(viewer, treePath, (TestElement)treePath.getLastSegment(), 0, STATE_UPDATES);
+    	}
+    	IModelDelta[] childDeltas = pendingDelta.getChildDeltas();
+        for (int i = 0; i < childDeltas.length; i++) {
+            addStateUpdates(viewer, childDeltas[i], deltaFlags);
+        }  
+    }
+    
+    /**
+     * Returns a tree path for the node, *not* including the root element.
+     * 
+     * @param node
+     *            model delta
+     * @return corresponding tree path
+     */
+    private TreePath getViewerTreePath(IModelDelta node) {
+        ArrayList list = new ArrayList();
+        IModelDelta parentDelta = node.getParentDelta();
+        while (parentDelta != null) {
+            list.add(0, node.getElement());
+            node = parentDelta;
+            parentDelta = node.getParentDelta();
+        }
+        return new TreePath(list.toArray());
+    }
+
     public void addUpdates(TreePath path, TestElement element, int levels, int flags) {
         addUpdates(null, path, element, levels, flags);
     }
 
-    public void addUpdates(ITreeModelContentProviderTarget viewer, TreePath path, TestElement element, int levels, int flags) {
+    public void addUpdates(ITreeModelContentProviderTarget viewer, TreePath path, TestElement element, int levels, int flags) {    
         if (!path.equals(TreePath.EMPTY)) {
             if ((flags & LABEL_UPDATES) != 0) {
                 fLabelUpdates.add(path);
@@ -233,10 +285,14 @@ public class TestModelUpdatesListener
             if ((flags & HAS_CHILDREN_UPDATES) != 0) {
                 fHasChildrenUpdatesScheduled.add(path);
             }
+            
+            if ((flags & STATE_UPDATES) != 0 && viewer != null) {
+                    fStateUpdates.add(path);
+            }
         }
 
         if (levels-- != 0) {
-            TestElement[] children = element.getChildren();
+        	TestElement[] children = element.getChildren();
             if (children.length > 0 && (viewer == null || path.getSegmentCount() == 0 || viewer.getExpandedState(path))) {
                 if ((flags & CHILD_COUNT_UPDATES) != 0) {
                     fChildCountUpdatesScheduled.add(path);
@@ -247,10 +303,6 @@ public class TestModelUpdatesListener
                         childrenIndexes.add(new Integer(i));
                     }
                     fChildrenUpdatesScheduled.put(path, childrenIndexes);
-                }
-
-                if ((flags & STATE_UPDATES) != 0 && viewer != null) {
-                    fStateUpdates.add(path);
                 }
 
                 for (int i = 0; i < children.length; i++) {
@@ -277,12 +329,16 @@ public class TestModelUpdatesListener
     }
     
     public boolean isTimedOut() {
-        return fTimeoutInterval > 0 && fTimeoutTime < System.currentTimeMillis();
+        return false && fTimeoutInterval > 0 && fTimeoutTime < System.currentTimeMillis();
     }
     
     public boolean isFinished(int flags) {
         if (isTimedOut()) {
             throw new RuntimeException("Timed Out: " + toString(flags));
+        }
+        
+        if (fJobError != null) {
+            throw new RuntimeException("Job Error: " + fJobError);
         }
         
         if (fFailOnRedundantUpdates && !fRedundantUpdates.isEmpty()) {
@@ -342,6 +398,11 @@ public class TestModelUpdatesListener
         }
         if ( (flags & STATE_RESTORE_STARTED) != 0) {
             if (!fStateRestoreStarted) return false;
+        }
+        if ( (flags & STATE_UPDATES) != 0) {
+            if (!fStateUpdates.isEmpty()) {
+                return false;
+            }
         }
         if ( (flags & MODEL_PROXIES_INSTALLED) != 0) {
             if (fProxyModels.size() != 0) return false;
@@ -484,6 +545,9 @@ public class TestModelUpdatesListener
     }
     
     public void stateUpdateComplete(Object input, IViewerUpdate update) {
+        if ( !(update instanceof ElementCompareRequest) || ((ElementCompareRequest)update).isEqual()) {
+            fStateUpdates.remove(update.getElementPath());
+        } 
     }
     
     public void stateUpdateStarted(Object input, IViewerUpdate update) {
@@ -492,6 +556,18 @@ public class TestModelUpdatesListener
     private String toString(int flags) {
         StringBuffer buf = new StringBuffer("Viewer Update Listener");
 
+        if (fJobError != null) {
+            buf.append("\n\t");
+            buf.append("fJobError = " + fJobError);
+            if (fJobError.getException() != null) {
+                StackTraceElement[] trace = fJobError.getException().getStackTrace();
+                for (int i = 0; i < trace.length; i++) {
+                    buf.append("\n\t\t");    
+                    buf.append(trace[i]);
+                }
+            }
+        }
+       
         if (fFailOnRedundantUpdates) {
             buf.append("\n\t");
             buf.append("fRedundantUpdates = " + fRedundantUpdates);
@@ -588,6 +664,10 @@ public class TestModelUpdatesListener
             buf.append("\n\t");
             buf.append("fProxyModels = " + fProxyModels);
         }
+        if ( (flags & STATE_UPDATES) != 0) {
+        	buf.append("\n\t");
+        	buf.append("fStateUpdates = " + toString(fStateUpdates));
+        }
         if (fTimeoutInterval > 0) {
             buf.append("\n\t");
             buf.append("fTimeoutInterval = " + fTimeoutInterval);
@@ -636,7 +716,7 @@ public class TestModelUpdatesListener
     }
     
     public String toString() {
-        return toString(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE | STATE_RESTORE_COMPLETE | VIEWER_UPDATES_STARTED | LABEL_UPDATES_STARTED);
+        return toString(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE | STATE_RESTORE_COMPLETE | VIEWER_UPDATES_STARTED | LABEL_UPDATES_STARTED | STATE_UPDATES);
     }
 }
 

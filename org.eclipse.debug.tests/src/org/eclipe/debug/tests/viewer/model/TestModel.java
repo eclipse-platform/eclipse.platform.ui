@@ -624,7 +624,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         }) );
         return model;
     }
-
+    
     public static TestModel compositeMultiLevel() {
         TestModel m2 = new TestModel();
         m2.setRoot( new TestElement(m2, "m2.root", new TestElement[] {
@@ -670,5 +670,145 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         return m1;
     }
 
-    
+    public static TestModel simpleDeepMultiLevel() {
+        TestModel model = new TestModel();
+        model.setRoot( new TestElement(model, "root", new TestElement[] {
+            new TestElement(model, "1", new TestElement[0]),
+            new TestElement(model, "2", true, false, new TestElement[] {
+                new TestElement(model, "2.1", true, true, new TestElement[0]),
+                new TestElement(model, "2.2", false, true, new TestElement[0]),
+                new TestElement(model, "2.3", true, false, new TestElement[0]),
+            }),
+            new TestElement(model, "3", new TestElement[] {
+                new TestElement(model, "3.1", new TestElement[] {
+                    new TestElement(model, "3.1.1", new TestElement[0]),
+                    new TestElement(model, "3.1.2", new TestElement[0]),
+                    new TestElement(model, "3.1.3", new TestElement[0]),
+                }),
+                new TestElement(model, "3.2", new TestElement[] {
+                    new TestElement(model, "3.2.1", new TestElement[0]),
+                    new TestElement(model, "3.2.2", new TestElement[0]),
+                    new TestElement(model, "3.2.3", new TestElement[0]),
+                }),
+                new TestElement(model, "3.3", new TestElement[] {
+                    new TestElement(model, "3.3.1", new TestElement[0]),
+                    new TestElement(model, "3.3.2", new TestElement[0]),
+                    new TestElement(model, "3.3.3", new TestElement[0]),
+                }),
+                new TestElement(model, "3.4", new TestElement[] {
+                    new TestElement(model, "3.4.1", new TestElement[0]),
+                    new TestElement(model, "3.4.2", new TestElement[0]),
+                    new TestElement(model, "3.4.3", new TestElement[0]),
+                }),
+                new TestElement(model, "3.5", new TestElement[] {
+                    new TestElement(model, "3.5.1", new TestElement[0]),
+                    new TestElement(model, "3.5.2", new TestElement[0]),
+                    new TestElement(model, "3.5.3", new TestElement[0]),
+                }),
+                new TestElement(model, "3.6", new TestElement[] {
+                    new TestElement(model, "3.6.1", new TestElement[0]),
+                    new TestElement(model, "3.6.2", new TestElement[0]),
+                    new TestElement(model, "3.6.3", new TestElement[] {
+                        new TestElement(model, "3.6.3.1", new TestElement[0]),
+                        new TestElement(model, "3.6.3.2", new TestElement[0]),
+                        new TestElement(model, "3.6.3.4", new TestElement[0]),
+                        new TestElement(model, "3.6.3.5", new TestElement[0]),
+                        new TestElement(model, "3.6.3.6", new TestElement[0]),
+                        new TestElement(model, "3.6.3.7", new TestElement[0]),
+                        new TestElement(model, "3.6.3.8", new TestElement[0]),
+                        new TestElement(model, "3.6.3.9", new TestElement[0]),
+                        new TestElement(model, "3.6.3.10", new TestElement[0]),
+                        new TestElement(model, "3.6.3.11", new TestElement[0]),
+                        new TestElement(model, "3.6.3.12", new TestElement[0]),
+                        new TestElement(model, "3.6.3.13", new TestElement[0]),
+                        new TestElement(model, "3.6.3.14", new TestElement[0]),
+                        new TestElement(model, "3.6.3.15", new TestElement[0]),
+                        new TestElement(model, "3.6.3.16", new TestElement[] {
+                            new TestElement(model, "3.6.3.16.1", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.2", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.4", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.5", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.6", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.7", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.8", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.9", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.10", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.11", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.12", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.13", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.14", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.15", new TestElement[0]),
+                            new TestElement(model, "3.6.3.16.16", new TestElement[] {
+                                new TestElement(model, "3.6.3.16.16.1", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.2", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.4", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.5", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.6", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.7", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.8", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.9", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.10", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.11", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.12", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.13", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.14", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.15", new TestElement[0]),
+                                new TestElement(model, "3.6.3.16.16.16", new TestElement[] {
+                                    new TestElement(model, "3.6.3.16.16.16.1", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.2", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.4", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.5", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.6", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.7", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.8", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.9", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.10", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.11", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.12", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.13", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.14", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.15", new TestElement[0]),
+                                    new TestElement(model, "3.6.3.16.16.16.16", new TestElement[] {
+                                        new TestElement(model, "3.6.3.16.16.16.16.1", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.2", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.4", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.5", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.6", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.7", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.8", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.9", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.10", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.11", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.12", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.13", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.14", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.15", new TestElement[0]),
+                                        new TestElement(model, "3.6.3.16.16.16.16.16", new TestElement[] {
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.1", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.2", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.4", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.5", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.6", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.7", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.8", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.9", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.10", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.11", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.12", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.13", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.14", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.15", new TestElement[0]),
+                                            new TestElement(model, "3.6.3.16.16.16.16.16.16", new TestElement[0]),
+                                        }),
+                                    }),
+                                }),
+                            }),
+                        }),
+                    }),
+                }),
+            })
+        }) );
+        return model;
+    }
+
 }

@@ -17,6 +17,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateList
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.Viewer;
 
 /** 
  * {@link TreeModelViewer} content provider interface.
@@ -192,4 +193,16 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @param flags Flags indicating the changes to cancel.
      */
     public void cancelRestore(TreePath path, int flags);
+    
+    /**
+     * Notifies the content provider that a client called {@link Viewer#setInput(Object)}, 
+     * and the viewer input is about to change.  
+     *  
+     * @param viewer The viewer that uses this content provider.
+     * @param oldInput Old input object.
+     * @param newInput New input object.
+     * 
+     * @since 3.7
+     */
+    public void inputAboutToChange(ITreeModelContentProviderTarget viewer, Object oldInput, Object newInput);
 }

@@ -25,8 +25,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -316,6 +316,16 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         return fViewer == null;
     }
 
+    public synchronized void inputAboutToChange(ITreeModelContentProviderTarget viewer, Object oldInput, Object newInput) {
+        if (newInput != oldInput && oldInput != null) {
+            for (Iterator itr = fCompareRequestsInProgress.values().iterator(); itr.hasNext();) {
+                ((ElementCompareRequest) itr.next()).cancel();
+                itr.remove();
+            }
+            saveViewerState(oldInput);
+        }
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -325,13 +335,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      */
     public synchronized void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
         fViewer = (ITreeModelContentProviderTarget) viewer;
-        if (oldInput != null) {
-            for (Iterator itr = fCompareRequestsInProgress.values().iterator(); itr.hasNext();) {
-                ((ElementCompareRequest) itr.next()).cancel();
-                itr.remove();
-            }
-            saveViewerState(oldInput);
-        }
         if (newInput != oldInput) {
             cancelSubtreeUpdates(TreePath.EMPTY);
             disposeAllModelProxies();
@@ -2243,5 +2246,4 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
             }
         }
     }
-    
 }

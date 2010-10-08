@@ -443,24 +443,22 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		
 		// Add memento for top item if it is mapped to an element.  The reveal memento
 		// is in its own path to avoid requesting unnecessary data when restoring it.
-		if (viewer.getInput() != null) {
-    		TreePath topElementPath = viewer.getTopElementPath();
-    		if (topElementPath != null) {
-    			ModelDelta parentDelta = delta;
-    			TreePath parentPath = EMPTY_TREE_PATH;
-    			for (int i = 0; i < topElementPath.getSegmentCount(); i++) {
-    			    Object element = topElementPath.getSegment(i);
-    			    int index = viewer.findElementIndex(parentPath, element);
-                    ModelDelta childDelta = parentDelta.getChildDelta(element);
-                    if (childDelta == null) {
-                        parentDelta = parentDelta.addNode(element, index, IModelDelta.NO_CHANGE);
-                    } else {
-                        parentDelta = childDelta;
-                    }
-                    parentPath = parentPath.createChildPath(element);
-    			}
-                parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.REVEAL);
-    		}
+		TreePath topElementPath = viewer.getTopElementPath();
+		if (topElementPath != null) {
+			ModelDelta parentDelta = delta;
+			TreePath parentPath = EMPTY_TREE_PATH;
+			for (int i = 0; i < topElementPath.getSegmentCount(); i++) {
+			    Object element = topElementPath.getSegment(i);
+			    int index = viewer.findElementIndex(parentPath, element);
+                ModelDelta childDelta = parentDelta.getChildDelta(element);
+                if (childDelta == null) {
+                    parentDelta = parentDelta.addNode(element, index, IModelDelta.NO_CHANGE);
+                } else {
+                    parentDelta = childDelta;
+                }
+                parentPath = parentPath.createChildPath(element);
+			}
+            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.REVEAL);
 		}
 	}
 
