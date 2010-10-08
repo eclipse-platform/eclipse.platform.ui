@@ -377,13 +377,7 @@ public class LocationValidator {
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int j = 0; j < projects.length; j++) {
 			IProject project = projects[j];
-			// since we are iterating over the project in the workspace, we
-			// know that they have been created before and must have a description
-			IProjectDescription desc = ((Project) project).internalGetDescription();
-			URI testLocation = desc.getLocationURI();
-			// if the project uses the default location then continue
-			if (testLocation == null)
-				continue;
+			URI testLocation = project.getLocationURI();
 			if (context != null && project.equals(context)) {
 				//tolerate locations being the same if this is the project being tested
 				if (URIUtil.equals(testLocation, location))

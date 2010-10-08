@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,7 +158,7 @@ public class IProjectTest extends ResourceTest {
 			return;
 		}
 		assertEquals("6.0", project, nature.getProject());
-		
+
 		//ensure nature is preserved on copy
 		IProject project2 = getWorkspace().getRoot().getProject("testGetNature.Destination");
 		IProjectNature nature2 = null;
@@ -641,7 +641,7 @@ public class IProjectTest extends ResourceTest {
 		} catch (CoreException e) {
 			//expected
 		}
-		
+
 		//same with one argument constructor
 		try {
 			target.create(getMonitor());
@@ -650,7 +650,7 @@ public class IProjectTest extends ResourceTest {
 			//expected
 		}
 	}
-	
+
 	/**
 	 * Tests creating a project whose location already exists with different case
 	 */
@@ -2532,6 +2532,66 @@ public class IProjectTest extends ResourceTest {
 		}
 	}
 
+	public void testProjectMoveVariations_bug307140() {
+		// Test moving project to its subfolder 
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		IProjectDescription description;
+		try {
+			project.create(getMonitor());
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		IPath originalLocation = project.getLocation();
+		IFolder subFolder = project.getFolder(getUniqueString());
+
+		try {
+			description = project.getDescription();
+			description.setLocation(subFolder.getLocation());
+			project.move(description, true, getMonitor());
+			fail("2.0");
+		} catch (CoreException e) {
+			//should be thrown
+		}
+
+		assertEquals("3.0", originalLocation, project.getLocation());
+
+		//cleanup
+		try {
+			getWorkspace().getRoot().delete(false, getMonitor());
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+
+		// Test moving project to its subfolder - project at non-default location
+		project = getWorkspace().getRoot().getProject(getUniqueString());
+
+		//location outside the workspace
+		description = getWorkspace().newProjectDescription(project.getName());
+		description.setLocation(getRandomLocation());
+		try {
+			project.create(description, getMonitor());
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("5.0", e);
+		}
+
+		originalLocation = project.getLocation();
+		subFolder = project.getFolder(getUniqueString());
+
+		try {
+			description = project.getDescription();
+			description.setLocation(subFolder.getLocation());
+			project.move(description, true, getMonitor());
+			fail("6.0");
+		} catch (CoreException e) {
+			//should be thrown
+		}
+
+		assertEquals("7.0", originalLocation, project.getLocation());
+	}
+
 	/**
 	 * Tests renaming a project using the move(IProjectDescription) API
 	 * where the project contents are stored outside the workspace location.
@@ -2753,7 +2813,7 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("1.7", !project.exists());
 		getWorkspace().removeResourceChangeListener(listener);
 	}
-	
+
 	public void testCreateHiddenProject() {
 		IProject hiddenProject = getWorkspace().getRoot().getProject(getUniqueString());
 		ensureDoesNotExistInWorkspace(hiddenProject);
@@ -2763,9 +2823,9 @@ public class IProjectTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-		
+
 		assertTrue("2.0", hiddenProject.isHidden());
-		
+
 		// try to delete and recreate the project
 		try {
 			hiddenProject.delete(false, getMonitor());
@@ -2773,7 +2833,7 @@ public class IProjectTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("3.0", e);
 		}
-		
+
 		// it should not be hidden
 		assertTrue("4.0", !hiddenProject.isHidden());
 	}
