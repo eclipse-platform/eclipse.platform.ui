@@ -829,66 +829,89 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         return advancedComposite;
     }
 
-    /**
-     * Create the <code>ListViewer</code> that will contain all color
-     * definitions as defined in the extension point.
-     * 
-     * @param parent the parent <code>Composite</code>.
-     */
-    private void createTree(Composite parent) {
-        labelProvider = new PresentationLabelProvider();
-        // create a new tree with a custom pattern matcher that will allow
-        // non-category elements to be returned in the event that their children
-        // do not
-        tree = new FilteredTree(parent, SWT.SINGLE | SWT.H_SCROLL
-                | SWT.V_SCROLL | SWT.BORDER, new PatternFilter() {
-            
-            protected boolean isParentMatch(Viewer viewer, Object element) {
-                Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
-                        .getContentProvider()).getChildren(element);
-                if (children.length > 0 && element instanceof ThemeElementCategory)
-					return filter(viewer, element, children).length > 0;
-                return false;
-            }
-		}, true);
+	/**
+	 * Create the <code>ListViewer</code> that will contain all color
+	 * definitions as defined in the extension point.
+	 * 
+	 * @param parent
+	 *            the parent <code>Composite</code>.
+	 */
+	private void createTree(Composite parent) {
+		labelProvider = new PresentationLabelProvider();
 
-        GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL);
+		// Create a custom pattern matcher that will allow
+		// non-category elements to be returned in the event that their children
+		// do not and also search the descriptions.
+		PatternFilter filter = new PatternFilter() {
+			/*
+			 * (non-Javadoc)
+			 * @see org.eclipse.ui.dialogs.PatternFilter#isLeafMatch(org.eclipse.jface.viewers.Viewer, java.lang.Object)
+			 * @since 3.7
+			 */
+			protected boolean isLeafMatch(Viewer viewer, Object element) {
+				if (super.isLeafMatch(viewer, element))
+					return true;
+
+				String text = null;
+				if (element instanceof ICategorizedThemeElementDefinition)
+					text = ((ICategorizedThemeElementDefinition) element).getDescription();
+
+				return text != null ? wordMatches(text) : false;
+			}
+			/*
+			 * (non-Javadoc)
+			 * @see org.eclipse.ui.dialogs.PatternFilter#isParentMatch(org.eclipse.jface.viewers.Viewer, java.lang.Object)
+			 */
+			protected boolean isParentMatch(Viewer viewer, Object element) {
+				Object[] children = ((ITreeContentProvider) ((AbstractTreeViewer) viewer)
+						.getContentProvider()).getChildren(element);
+				if (children.length > 0 && element instanceof ThemeElementCategory)
+					return filter(viewer, element, children).length > 0;
+				return false;
+			}
+		};
+		filter.setIncludeLeadingWildcard(true);
+
+		tree = new FilteredTree(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
+				filter, true);
+		GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL);
 		data.widthHint = Math.max(285, convertWidthInCharsToPixels(30));
-        data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));
-        tree.setLayoutData(data);
-        myApplyDialogFont(tree.getViewer().getControl());
-        Text filterText = tree.getFilterControl();
-        if (filterText != null)
+		data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));
+		tree.setLayoutData(data);
+		myApplyDialogFont(tree.getViewer().getControl());
+		Text filterText = tree.getFilterControl();
+		if (filterText != null)
 			myApplyDialogFont(filterText);
 
-        tree.getViewer().setLabelProvider(labelProvider);
-        tree.getViewer().setContentProvider(new ThemeContentProvider());
-        tree.getViewer().setComparator(new ViewerComparator() {
-            public int category(Object element) {
-                if (element instanceof ThemeElementCategory)
+		tree.getViewer().setLabelProvider(labelProvider);
+		tree.getViewer().setContentProvider(new ThemeContentProvider());
+		tree.getViewer().setComparator(new ViewerComparator() {
+			public int category(Object element) {
+				if (element instanceof ThemeElementCategory)
 					return 0;
-                return 1;
-            }
-        });
-        tree.getViewer().setInput(WorkbenchPlugin.getDefault().getThemeRegistry());
-        tree.getViewer().addDoubleClickListener(new IDoubleClickListener() {
-            public void doubleClick(DoubleClickEvent event) {
-                IStructuredSelection s = (IStructuredSelection) event.getSelection();
-                Object element = s.getFirstElement();
-                if (tree.getViewer().isExpandable(element))
-                    tree.getViewer().setExpandedState(element, !tree.getViewer().getExpandedState(element));
-                
-                if (element instanceof FontDefinition)
-                	editFont(tree.getDisplay());
-                else if (element instanceof ColorDefinition)
-                	editColor(tree.getDisplay());
-                updateControls();
-            }
-        });
+				return 1;
+			}
+		});
+		tree.getViewer().setInput(WorkbenchPlugin.getDefault().getThemeRegistry());
+		tree.getViewer().addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection s = (IStructuredSelection) event.getSelection();
+				Object element = s.getFirstElement();
+				if (tree.getViewer().isExpandable(element))
+					tree.getViewer().setExpandedState(element,
+							!tree.getViewer().getExpandedState(element));
 
-        restoreTreeExpansion();
-        restoreTreeSelection();
-    }
+				if (element instanceof FontDefinition)
+					editFont(tree.getDisplay());
+				else if (element instanceof ColorDefinition)
+					editColor(tree.getDisplay());
+				updateControls();
+			}
+		});
+
+		restoreTreeExpansion();
+		restoreTreeSelection();
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
