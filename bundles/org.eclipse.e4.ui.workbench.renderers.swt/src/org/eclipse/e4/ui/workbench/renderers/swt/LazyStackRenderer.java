@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -233,8 +233,16 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 	private void showElementRecursive(MUIElement element,
 			List<MUIElement> becomingVisible) {
-		if (!element.isToBeRendered())
+		if (!element.isToBeRendered()) {
+			for (MPlaceholder placeholder : modelService.findElements(element,
+					null, MPlaceholder.class, null)) {
+				MUIElement reference = placeholder.getRef();
+				if (reference != null) {
+					reference.setCurSharedRef(placeholder);
+				}
+			}
 			return;
+		}
 
 		if (element instanceof MPlaceholder && element.getWidget() != null) {
 			MPlaceholder ph = (MPlaceholder) element;
