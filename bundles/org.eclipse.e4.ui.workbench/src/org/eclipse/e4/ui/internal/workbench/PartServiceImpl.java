@@ -417,6 +417,7 @@ public class PartServiceImpl implements EPartService {
 		}
 
 		modelService.bringToTop(part);
+		window.getParent().setSelectedElement(window);
 		partActivationHistory.activate(part);
 
 		Object object = part.getObject();

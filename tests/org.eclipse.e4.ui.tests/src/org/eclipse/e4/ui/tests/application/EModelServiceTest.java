@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -179,5 +180,61 @@ public class EModelServiceTest extends TestCase {
 				.getPerspectiveFor(partStack);
 		assertNotNull(foundPerspective);
 		assertEquals(perspective, foundPerspective);
+	}
+
+	public void testBringToTop01() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.setContext(applicationContext);
+
+		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(windowA);
+		application.setSelectedElement(windowA);
+
+		MWindow windowB = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(windowB);
+
+		getEngine().createGui(windowA);
+		getEngine().createGui(windowB);
+
+		assertEquals(windowA, application.getSelectedElement());
+
+		EModelService modelService = applicationContext
+				.get(EModelService.class);
+		modelService.bringToTop(windowA);
+		assertEquals(windowA, application.getSelectedElement());
+
+		modelService.bringToTop(windowB);
+		assertEquals(windowB, application.getSelectedElement());
+	}
+
+	public void testBringToTop02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.setContext(applicationContext);
+
+		MWindow windowA = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(windowA);
+		application.setSelectedElement(windowA);
+
+		MWindow windowB = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(windowB);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		windowB.getChildren().add(partB);
+		windowB.setSelectedElement(partB);
+
+		getEngine().createGui(windowA);
+		getEngine().createGui(windowB);
+
+		assertEquals(windowA, application.getSelectedElement());
+
+		EModelService modelService = applicationContext
+				.get(EModelService.class);
+		modelService.bringToTop(windowA);
+		assertEquals(windowA, application.getSelectedElement());
+
+		modelService.bringToTop(partB);
+		assertEquals(windowA, application.getSelectedElement());
 	}
 }

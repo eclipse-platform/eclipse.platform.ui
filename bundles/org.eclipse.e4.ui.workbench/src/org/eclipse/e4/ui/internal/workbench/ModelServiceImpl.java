@@ -194,6 +194,18 @@ public class ModelServiceImpl implements EModelService {
 			return;
 
 		MWindow window = getTopLevelWindowFor(element);
+		if (window == element) {
+			if (!element.isToBeRendered()) {
+				element.setToBeRendered(true);
+			}
+
+			window.getParent().setSelectedElement(window);
+		} else {
+			showElementInWindow(window, element);
+		}
+	}
+
+	private void showElementInWindow(MWindow window, MUIElement element) {
 		if (element instanceof MPartStack && !element.isVisible()) {
 			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$
 			MPerspective persp = getPerspectiveFor(element);
@@ -222,7 +234,9 @@ public class ModelServiceImpl implements EModelService {
 				element.setToBeRendered(true);
 
 			((MElementContainer<MUIElement>) parent).setSelectedElement(element);
-			bringToTop(parent);
+			if (window != parent) {
+				showElementInWindow(window, parent);
+			}
 		}
 	}
 
