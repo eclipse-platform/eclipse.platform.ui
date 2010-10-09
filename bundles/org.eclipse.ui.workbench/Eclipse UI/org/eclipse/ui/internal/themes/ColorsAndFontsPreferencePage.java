@@ -733,7 +733,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	 */
 	private void selectAndReveal(Object selection) {
 		TreeViewer viewer = tree.getViewer();
-		viewer.setSelection(new StructuredSelection(selection), true);
+		viewer.setSelection(new StructuredSelection(selection), false);
 		viewer.reveal(selection);
 		viewer.getTree().setFocus();
 	}
