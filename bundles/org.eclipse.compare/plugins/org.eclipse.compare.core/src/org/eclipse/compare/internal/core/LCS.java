@@ -130,7 +130,7 @@ public abstract class LCS {
 			return 0;
 		}
 
-		int d = find_middle_snake(bottoml1, topl1, bottoml2, topl2, V, snake);
+		int d = find_middle_snake(bottoml1, topl1, bottoml2, topl2, V, snake, subMonitor);
 		// System.out.println(snake[0] + " " + snake[1] + " " + snake[2]);
 
 		// need to store these so we don't lose them when they're overwritten by
@@ -188,6 +188,7 @@ public abstract class LCS {
 	 *            to store furthest reaching D-paths
 	 * @param snake should be allocated as int[3], used to store the beginning
 	 *            x, y coordinates and the length of the middle snake
+	 * @subMonitor subMonitor
 	 * 
 	 * @return The number of differences (SES) between l1[bottoml1..topl1] and
 	 *         l2[bottoml2..topl2]
@@ -195,7 +196,8 @@ public abstract class LCS {
 	private int find_middle_snake(
 			int bottoml1, int topl1,
 			int bottoml2, int topl2, 
-			int[][] V, int[] snake) {
+			int[][] V, int[] snake,
+			SubMonitor subMonitor) {
 		int N = topl1 - bottoml1 + 1;
 		int M = topl2 - bottoml2 + 1;
 		// System.out.println("N: " + N + " M: " + M + " bottom: " + bottoml1 +
@@ -324,6 +326,7 @@ public abstract class LCS {
 					end_backward = k - 1;
 				}
 			}
+			worked(subMonitor, 1);
 		}
 
 		/*
