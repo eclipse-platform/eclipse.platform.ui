@@ -170,6 +170,8 @@ public class CommandContributionItem extends ContributionItem {
 
 	private ImageDescriptor contributedHoverIcon;
 
+	private IServiceLocator serviceLocator;
+
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
@@ -196,14 +198,15 @@ public class CommandContributionItem extends ContributionItem {
 		this.helpContextId = contributionParameters.helpContextId;
 		this.visibleEnabled = contributionParameters.visibleEnabled;
 		this.mode = contributionParameters.mode;
+		this.serviceLocator = contributionParameters.serviceLocator;
 
-		menuService = (IMenuService) contributionParameters.serviceLocator
+		menuService = (IMenuService) serviceLocator
 				.getService(IMenuService.class);
-		commandService = (ICommandService) contributionParameters.serviceLocator
+		commandService = (ICommandService) serviceLocator
 				.getService(ICommandService.class);
-		handlerService = (IHandlerService) contributionParameters.serviceLocator
+		handlerService = (IHandlerService) serviceLocator
 				.getService(IHandlerService.class);
-		bindingService = (IBindingService) contributionParameters.serviceLocator
+		bindingService = (IBindingService) serviceLocator
 				.getService(IBindingService.class);
 		IWorkbenchLocationService workbenchLocationService = (IWorkbenchLocationService) contributionParameters.serviceLocator.getService(IWorkbenchLocationService.class);
 		display = workbenchLocationService.getWorkbench().getDisplay();
@@ -258,7 +261,7 @@ public class CommandContributionItem extends ContributionItem {
 						// it's OK to not have a helpContextId
 					}
 				}
-				IWorkbenchLocationService wls = (IWorkbenchLocationService) contributionParameters.serviceLocator
+				IWorkbenchLocationService wls = (IWorkbenchLocationService) serviceLocator
 						.getService(IWorkbenchLocationService.class);
 				final IWorkbench workbench = wls.getWorkbench();
 				if (workbench != null && helpContextId != null) {
@@ -992,4 +995,27 @@ public class CommandContributionItem extends ContributionItem {
 		}
 
 	};
+
+	/**
+	 * Provide info on the rendering data contained in this item.
+	 * 
+	 * @return a {@link CommandContributionItemParameter}. Valid fields are
+	 *         serviceLocator, id, style, icon, disabledIcon, hoverIcon, label,
+	 *         helpContextId, mnemonic, tooltip. The Object will never be
+	 *         <code>null</code>, although any of the fields may be
+	 *         <code>null</code>.
+	 * @since 3.7
+	 */
+	public CommandContributionItemParameter getData() {
+		CommandContributionItemParameter data = new CommandContributionItemParameter(
+				serviceLocator, getId(), null, style);
+		data.icon = contributedIcon;
+		data.disabledIcon = contributedDisabledIcon;
+		data.hoverIcon = contributedHoverIcon;
+		data.label = contributedLabel;
+		data.helpContextId = helpContextId;
+		data.mnemonic = mnemonic;
+		data.tooltip = tooltip;
+		return data;
+	}
 }
