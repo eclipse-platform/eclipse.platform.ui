@@ -57,6 +57,7 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 <script language="JavaScript" src="helptreechildren.js"></script>
 <script language="JavaScript" src="xmlajax.js"></script>
 <script language="JavaScript" src="utils.js"></script>
+<script language="JavaScript" src="view.js"></script>
 </head>
 
 <body dir="<%=direction%>" onload="onloadHandler()" onresize = "sizeList()">
@@ -71,6 +72,7 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 <tr>
 		<td colspan="2">
 <%= searchData.getScopeActiveMessage() %>
+<a class="showall" onclick="showAll();" ><%=ServletResources.getString("showAllLink", request)%></a>
 </p></td></tr>
 <%
     }

@@ -206,17 +206,14 @@ function doSearch(query, noRefocus)
 {
 	var workingSet = document.getElementById("scope").firstChild.nodeValue;
 
-	if (!query || query == "")
-	{
-		var form = document.forms["searchForm"];
-		var searchWord = form.searchWord.value;
-		var maxHits = form.maxHits.value;
-		if (!searchWord || searchWord == "")
-			return;
-		query ="searchWord="+encodeURIComponent(searchWord)+"&maxHits="+maxHits;
-		if (workingSet != '<%=UrlUtil.JavaScriptEncode(ServletResources.getString("All", request))%>')
-			query = query +"&scope="+encodeURIComponent(workingSet);
-	}
+	var form = document.forms["searchForm"];
+	var searchWord = form.searchWord.value;
+	var maxHits = form.maxHits.value;
+	if (!searchWord || searchWord == "")
+		return;
+	query ="searchWord="+encodeURIComponent(searchWord)+"&maxHits="+maxHits;
+	if (workingSet != '<%=UrlUtil.JavaScriptEncode(ServletResources.getString("All", request))%>')
+		query = query +"&scope="+encodeURIComponent(workingSet);
 		
 	/******** HARD CODED VIEW NAME *********/
 	// do some tests to ensure the results are available
@@ -233,6 +230,15 @@ function doSearch(query, noRefocus)
 		var searchView = parent.parent.HelpFrame.NavFrame.ViewsFrame.search.searchViewFrame;
 		searchView.location.replace("searchView.jsp?"+query);
 	}
+}
+
+function getSearchWord() {
+    var form = document.forms["searchForm"];
+    var searchWord = form.searchWord.value;
+    if (searchWord ) {
+        return searchWord;
+    }
+    return "";
 }
 
 function rescope() {

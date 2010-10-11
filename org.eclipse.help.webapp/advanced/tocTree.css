@@ -70,6 +70,12 @@ A {
 	white-space: nowrap;
 }
 
+.showall {
+    text-decoration:underline; 
+    color:#0066FF; 
+	cursor:pointer;
+}
+
 A:hover{
 	text-decoration:underline; 
 }

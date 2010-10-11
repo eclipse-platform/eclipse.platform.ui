@@ -32,6 +32,7 @@
 <script language="JavaScript" src="xmlajax.js"></script>
 <script language="JavaScript" src="utils.js"></script>
 <script language="JavaScript" src="tocTree.js"></script>
+<script language="JavaScript" src="view.js"></script>
 
 <script language="JavaScript">
 
@@ -136,6 +137,7 @@ if (requestData.isIE()){
 %>
 <p>
 <%= searchData.getScopeActiveMessage() %>
+<a class="showall" onclick="showAll();" ><%=ServletResources.getString("showAllLink", request)%></a>
 </p>
 <%
     }

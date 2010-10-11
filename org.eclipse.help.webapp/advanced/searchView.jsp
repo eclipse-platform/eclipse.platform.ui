@@ -31,6 +31,7 @@
 <base target="ContentViewFrame">
 <script language="JavaScript" src="utils.js"></script>
 <script language="JavaScript" src="list.js"></script>
+<script language="JavaScript" src="view.js"></script>
 <script language="JavaScript">	
 
 var cookiesRequired = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("cookiesRequired", request))%>";	
@@ -117,7 +118,12 @@ setTimeout('refresh()', 2000);
 <%
 	return;
 } else if (data.getResultsCount() == 0){
-	out.write(data.getNotFoundMessage());    
+	out.write(data.getNotFoundMessage());   
+    if (data.isScopeActive()) {
+%>
+<a class="showall" onclick="showAll();" ><%=ServletResources.getString("showAllLink", request)%></a>
+<%
+    }
 } else {
 %>
 <%
@@ -125,6 +131,7 @@ setTimeout('refresh()', 2000);
 %>
 <p>
 <%= data.getScopeActiveMessage() %>
+<a class="showall" onclick="showAll();" ><%=ServletResources.getString("showAllLink", request)%></a>
 </p>
 <%
     }
