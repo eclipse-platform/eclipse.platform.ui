@@ -21,10 +21,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.TaskItem;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -48,6 +51,10 @@ public class TaskBarProgressManager {
 	private Map jobInfoMap = Collections.synchronizedMap(new HashMap());
 
 	private final TaskItem taskItem;
+
+	private ImageDescriptor overlayDescriptor;
+
+	private Image overlayImage;
 
 	public TaskBarProgressManager(TaskItem taskItem) {
 		Assert.isNotNull(taskItem);
@@ -73,6 +80,7 @@ public class TaskBarProgressManager {
 	public void dispose() {
 		ProgressManager.getInstance().removeListener(listener);
 		setAnimated(false);
+		disposeOverlay();
 	}
 
 	private WorkbenchJob getAnimationUpdateJob() {
@@ -86,6 +94,7 @@ public class TaskBarProgressManager {
 			 * runtime .IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
+
 				if (isAnimated) {
 					if (!taskItem.isDisposed() && !jobs.isEmpty()) {
 						Job job = (Job) jobs.get(0);
@@ -104,9 +113,13 @@ public class TaskBarProgressManager {
 						} else {
 							setProgressState(SWT.DEFAULT);
 						}
+						updateImage(job);
+					} else {
+						updateImage(null);
 					}
 				} else {
 					setProgressState(SWT.DEFAULT);
+					updateImage(null);
 				}
 
 				if (isAnimated && taskItem != null && !taskItem.isDisposed()) {
@@ -140,6 +153,53 @@ public class TaskBarProgressManager {
 				return 0;
 			}
 		};
+	}
+
+	private void updateImage(Job job) {
+
+		if (taskItem == null || taskItem.isDisposed())
+			return;
+
+		if (job == null) {
+			disposeOverlay();
+			taskItem.setOverlayImage(null);
+			return;
+		}
+
+		// first check whether the job specifies image property
+		// if not check with progress manager for its family
+		ImageDescriptor descriptor = (ImageDescriptor) job
+				.getProperty(IProgressConstants.ICON_PROPERTY);
+		if (descriptor != null) {
+
+			// if the description is same, do nothing.
+			// Else dispose old one and store this
+			if (!descriptor.equals(overlayDescriptor)) {
+				disposeOverlay();
+				setOverlay(descriptor);
+			}
+		} else if (ProgressManager.getInstance().getIconFor(job) != null) {
+			disposeOverlay();
+			Image newImage = ProgressManager.getInstance().getIconFor(job);
+			taskItem.setOverlayImage(newImage);
+		} else {
+			disposeOverlay();
+			taskItem.setOverlayImage(null);
+		}
+	}
+
+	private void setOverlay(ImageDescriptor descriptor) {
+		overlayDescriptor = descriptor;
+		overlayImage = descriptor.createImage();
+		taskItem.setOverlayImage(overlayImage);
+	}
+
+	private void disposeOverlay() {
+		overlayDescriptor = null;
+		if (overlayImage != null) {
+			overlayImage.dispose();
+			overlayImage = null;
+		}
 	}
 
 	private IJobProgressManagerListener getProgressListener() {
