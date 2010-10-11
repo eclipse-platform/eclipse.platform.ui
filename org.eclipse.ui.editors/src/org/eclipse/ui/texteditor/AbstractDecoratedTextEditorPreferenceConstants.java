@@ -690,14 +690,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 			store.setDefault(descriptors[i].getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX, stateMask);
 		}
 
-		/*
-		 * As of 3.3 we enabled spell checking per default
-		 * but do not want this to impact our performance tests. For this
-		 * reason we disable it when running the UI test application.
-		 */
-		boolean isInTestMode= System.getProperty("eclipse.perf.dbloc") != null; //$NON-NLS-1$
 		boolean isInstalled= EditorsUI.getSpellingService().getSpellingEngineDescriptors().length > 0;
-		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, !isInTestMode && isInstalled);
+		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, isInstalled);
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENGINE, ""); //$NON-NLS-1$
 
 		store.setDefault(SHOW_RANGE_INDICATOR, true);
