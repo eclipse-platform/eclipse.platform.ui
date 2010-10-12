@@ -17,6 +17,7 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.core.internal.contexts.TestHelper;
 
 public class EclipseContextTest extends TestCase {
@@ -93,6 +94,7 @@ public class EclipseContextTest extends TestCase {
 		assertEquals("bar", context.get("foo"));
 		((IDisposable) context).dispose();
 		assertNull(context.get("foo"));
+		assertNull(((EclipseContext)parentContext).getChildren());
 	}
 
 	/**

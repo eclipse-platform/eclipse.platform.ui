@@ -108,6 +108,23 @@ public class EclipseContext implements IEclipseContext {
 			waiting = new ArrayList<Computation>();
 	}
 
+	public Set<EclipseContext> getChildren() {
+		if (children.size() == 0)
+			return null;
+		Set<EclipseContext> result = new HashSet<EclipseContext>(children.size());
+		synchronized (children) {
+			for (Iterator<WeakReference<EclipseContext>> i = children.iterator(); i.hasNext();) {
+				EclipseContext referredContext = i.next().get();
+				if (referredContext == null) {
+					i.remove();
+					continue;
+				}
+				result.add(referredContext);
+			}
+		}
+		return result;
+	}
+
 	public boolean containsKey(String name) {
 		return containsKey(name, false);
 	}
@@ -223,6 +240,9 @@ public class EclipseContext implements IEclipseContext {
 		}
 
 		localValues.clear();
+
+		if (parent != null)
+			parent.removeChild(this);
 	}
 
 	public Object get(String name) {
