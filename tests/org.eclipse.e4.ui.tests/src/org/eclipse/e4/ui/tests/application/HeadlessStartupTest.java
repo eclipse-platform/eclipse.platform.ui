@@ -69,8 +69,6 @@ public abstract class HeadlessStartupTest extends TestCase {
 		final IEclipseContext appContext = osgiContext
 				.createChild("Application Context");
 
-		appContext.set(IEclipseContext.class.getName(), appContext);
-
 		appContext.set(
 				IContributionFactory.class.getName(),
 				new ReflectionContributionFactory(

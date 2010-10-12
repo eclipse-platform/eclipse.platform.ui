@@ -108,7 +108,6 @@ public class RenderingTestCase extends TestCase {
 		appContext.set(MApplication.class.getName(), app);
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
-		appContext.set(IEclipseContext.class.getName(), appContext);
 
 		app.setContext(appContext);
 	}

@@ -516,7 +516,6 @@ public class E4Application implements IApplication {
 		appContext.set(IExtensionRegistry.class.getName(), registry);
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
-		appContext.set(IEclipseContext.class.getName(), appContext);
 		appContext.set(IShellProvider.class.getName(), new IShellProvider() {
 			public Shell getShell() {
 				return null;
