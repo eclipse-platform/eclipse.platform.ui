@@ -79,10 +79,13 @@ public class InjectStaticContextTest extends TestCase {
 		public String aString;
 		public String bString;
 		
+		public IEclipseContext context;
+
 		@Execute
-		public String testMethod(@Named("a") String aString, @Named("b") String bString) {
+		public String testMethod(@Named("a") String aString, @Named("b") String bString, IEclipseContext context) {
 			this.aString = aString;
 			this.bString = bString;
+			this.context = context;
 			return aString + bString;
 		}
 	}
@@ -100,7 +103,7 @@ public class InjectStaticContextTest extends TestCase {
 		
 		TestClass testObject = ContextInjectionFactory.make(TestClass.class, parentContext, localContext);
 
-		assertEquals(localContext, testObject.injectedContext);
+		assertEquals(parentContext, testObject.injectedContext);
 		assertEquals("abcConstructor", testObject.aConstructorString);
 		assertEquals("123Constructor", testObject.bConstructorString);
 		assertEquals("abc", testObject.aString);
@@ -159,10 +162,10 @@ public class InjectStaticContextTest extends TestCase {
 	}
 	
 	public void testStaticInvoke() {
-		IEclipseContext parentContext = EclipseContextFactory.create();
+		IEclipseContext parentContext = EclipseContextFactory.create("main");
 		parentContext.set("a", "abc");
 		
-		IEclipseContext localContext = EclipseContextFactory.create();
+		IEclipseContext localContext = EclipseContextFactory.create("local");
 		localContext.set("b", "123");
 		
 		TestInvokeClass testObject = new TestInvokeClass();
@@ -175,5 +178,7 @@ public class InjectStaticContextTest extends TestCase {
 
 		assertEquals("abc", testObject.aString);
 		assertEquals("123", testObject.bString);
+
+		assertEquals(parentContext, testObject.context);
 	}
 }

@@ -133,7 +133,13 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		final boolean[] active = new boolean[descriptors.length];
 
 		for (int i = 0; i < descriptors.length; i++) {
-			keys[i] = (actualArgs[i] == IInjector.NOT_A_VALUE) ? getKey(descriptors[i]) : null;
+			String key = getKey(descriptors[i]);
+			if ((actualArgs[i] == IInjector.NOT_A_VALUE))
+				keys[i] = key;
+			else if (ECLIPSE_CONTEXT_NAME.equals(key)) // allow provider to override IEclipseContext
+				keys[i] = ECLIPSE_CONTEXT_NAME;
+			else
+				keys[i] = null;
 			if (descriptors[i] == null)
 				active[i] = false;
 			else
