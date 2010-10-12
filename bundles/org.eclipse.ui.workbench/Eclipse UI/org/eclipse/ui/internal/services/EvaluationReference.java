@@ -11,15 +11,15 @@
 
 package org.eclipse.ui.internal.services;
 
-import org.eclipse.e4.ui.internal.workbench.Activator;
-import org.eclipse.e4.ui.internal.workbench.Policy;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.services.IEvaluationReference;
@@ -127,7 +127,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 
 	public void evaluate() {
 		boolean value = cache;
-		evaluate(new LegacyEvalContext(context));
+		evaluate(new ExpressionContext(context));
 		if (!postingChanges) {
 			return;
 		}

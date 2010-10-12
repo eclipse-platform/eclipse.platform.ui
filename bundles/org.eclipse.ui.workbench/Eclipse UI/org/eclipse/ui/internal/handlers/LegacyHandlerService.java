@@ -38,21 +38,16 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
-import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
-import org.eclipse.e4.ui.model.application.ui.MContext;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.expressions.AndExpression;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.services.LegacyEvalContext;
 
 /**
  * @since 3.5
@@ -84,7 +79,7 @@ public class LegacyHandlerService implements IHandlerService {
 
 			HandlerActivation bestActivation = null;
 
-			LegacyEvalContext legacyEvalContext = new LegacyEvalContext(context);
+			ExpressionContext legacyEvalContext = new ExpressionContext(context);
 
 			for (HandlerActivation handlerActivation : handlerActivations) {
 				if (!handlerActivation.participating)
@@ -159,7 +154,7 @@ public class LegacyHandlerService implements IHandlerService {
 
 	public LegacyHandlerService(IEclipseContext context) {
 		eclipseContext = context;
-		evalContext = new LegacyEvalContext(eclipseContext);
+		evalContext = new ExpressionContext(eclipseContext);
 		IWorkbenchWindow window = (IWorkbenchWindow) eclipseContext.get(IWorkbenchWindow.class
 				.getName());
 		if (window != null) {
@@ -278,8 +273,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .core.commands.Command, org.eclipse.swt.widgets.Event)
 	 */
 	public ExecutionEvent createExecutionEvent(Command command, Event event) {
-		LegacyEvalContext legacy = new LegacyEvalContext(getFocusContext(PlatformUI.getWorkbench()
-				.getDisplay()));
+		ExpressionContext legacy = new ExpressionContext(eclipseContext);
 		ExecutionEvent e = new ExecutionEvent(command, Collections.EMPTY_MAP, event, legacy);
 		return e;
 	}
@@ -292,8 +286,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .core.commands.ParameterizedCommand, org.eclipse.swt.widgets.Event)
 	 */
 	public ExecutionEvent createExecutionEvent(ParameterizedCommand command, Event event) {
-		LegacyEvalContext legacy = new LegacyEvalContext(getFocusContext(PlatformUI.getWorkbench()
-				.getDisplay()));
+		ExpressionContext legacy = new ExpressionContext(eclipseContext);
 		ExecutionEvent e = new ExecutionEvent(command.getCommand(), command.getParameterMap(),
 				event, legacy);
 		return e;
@@ -341,8 +334,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public Object executeCommand(String commandId, Event event) throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
-		ECommandService cs = (ECommandService) getFocusContext(
-				PlatformUI.getWorkbench().getDisplay()).get(ECommandService.class.getName());
+		ECommandService cs = eclipseContext.get(ECommandService.class);
 		final Command command = cs.getCommand(commandId);
 		return executeCommand(ParameterizedCommand.generateCommand(command, null), event);
 	}
@@ -357,8 +349,7 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommand(ParameterizedCommand command, Event event)
 			throws ExecutionException, NotDefinedException, NotEnabledException,
 			NotHandledException {
-		EHandlerService hs = (EHandlerService) getFocusContext(
-				PlatformUI.getWorkbench().getDisplay()).get(EHandlerService.class.getName());
+		EHandlerService hs = eclipseContext.get(EHandlerService.class);
 		return hs.executeHandler(command);
 	}
 
@@ -373,8 +364,8 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommandInContext(ParameterizedCommand command, Event event,
 			IEvaluationContext context) throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
-		if (context instanceof LegacyEvalContext) {
-			EHandlerService hs = (EHandlerService) ((LegacyEvalContext) context).eclipseContext
+		if (context instanceof ExpressionContext) {
+			EHandlerService hs = (EHandlerService) ((ExpressionContext) context).eclipseContext
 					.get(EHandlerService.class.getName());
 			return hs.executeHandler(command);
 		}
@@ -389,7 +380,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
 		IEclipseContext targetContext = eclipseContext.getActiveLeaf();
-		return new LegacyEvalContext(targetContext.createChild());
+		return new ExpressionContext(targetContext.createChild());
 	}
 
 	/*
@@ -489,18 +480,4 @@ public class LegacyHandlerService implements IHandlerService {
 		// TODO Auto-generated method stub
 
 	}
-
-	private IEclipseContext getFocusContext(Display display) {
-		// find the first useful part in the model
-		Control control = display.getFocusControl();
-		Object modelObj = null;
-		while (control != null) {
-			modelObj = control.getData(AbstractPartRenderer.OWNING_ME);
-			if (modelObj instanceof MContext)
-				return ((MContext) modelObj).getContext();
-			control = control.getParent();
-		}
-		return eclipseContext;
-	}
-
 }

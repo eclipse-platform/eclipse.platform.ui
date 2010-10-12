@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISourceProvider;
@@ -31,7 +32,7 @@ import org.eclipse.ui.services.IEvaluationService;
  * 
  */
 public final class EvaluationService implements IEvaluationService {
-	private LegacyEvalContext legacyContext;
+	private ExpressionContext legacyContext;
 	private int notifying = 0;
 
 	private ListenerList serviceListeners = new ListenerList(ListenerList.IDENTITY);
@@ -40,7 +41,7 @@ public final class EvaluationService implements IEvaluationService {
 
 	public EvaluationService(IEclipseContext c) {
 		context = c;
-		legacyContext = new LegacyEvalContext(c);
+		legacyContext = new ExpressionContext(c);
 	}
 
 	/*

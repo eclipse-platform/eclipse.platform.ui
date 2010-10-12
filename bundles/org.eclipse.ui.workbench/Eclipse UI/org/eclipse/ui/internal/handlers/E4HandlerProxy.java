@@ -11,10 +11,8 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import org.eclipse.e4.ui.internal.workbench.Activator;
-import org.eclipse.e4.ui.internal.workbench.Policy;
-
 import java.util.Map;
+import javax.inject.Named;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -23,8 +21,11 @@ import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.services.LegacyEvalContext;
 
 /**
  * @since 3.5
@@ -42,16 +43,17 @@ public class E4HandlerProxy {
 
 	@CanExecute
 	public boolean canExecute(IEclipseContext context) {
+		// TODO we can do more here.
 		return handler.isEnabled();
 	}
 
 	@Execute
-	public void execute(IEclipseContext context) {
+	public void execute(IEclipseContext context,
+			@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms) {
 		Activator.trace(Policy.DEBUG_CMDS, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
 				+ handler + " with: " + context, null); //$NON-NLS-1$
-		LegacyEvalContext legacy = new LegacyEvalContext(context);
-		ExecutionEvent event = new ExecutionEvent(command, (Map) context
-				.get(HandlerServiceImpl.PARM_MAP), null, legacy);
+		ExpressionContext legacy = new ExpressionContext(context);
+		ExecutionEvent event = new ExecutionEvent(command, parms, null, legacy);
 		try {
 			handler.execute(event);
 		} catch (ExecutionException e) {

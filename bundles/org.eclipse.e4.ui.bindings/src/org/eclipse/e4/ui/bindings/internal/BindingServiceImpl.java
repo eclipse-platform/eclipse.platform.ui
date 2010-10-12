@@ -34,12 +34,6 @@ import org.eclipse.jface.bindings.keys.ParseException;
 public class BindingServiceImpl implements EBindingService {
 	static final String ACTIVE_CONTEXTS = "activeContexts"; //$NON-NLS-1$
 
-	static final String LOOKUP_BINDING = "binding"; //$NON-NLS-1$
-	static final String LOOKUP_CMD = "cmd"; //$NON-NLS-1$
-	static final String B_ID = "binding::"; //$NON-NLS-1$
-	static final String B_SEQ = "bindSeq::"; //$NON-NLS-1$
-	static final String P_ID = "parmCmd::"; //$NON-NLS-1$
-
 	@Inject
 	private IEclipseContext context;
 

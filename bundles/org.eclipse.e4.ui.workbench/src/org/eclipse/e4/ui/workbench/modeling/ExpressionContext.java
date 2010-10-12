@@ -11,9 +11,11 @@
 
 package org.eclipse.e4.ui.workbench.modeling;
 
+import java.util.Collections;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.services.IServiceConstants;
 
 /**
  *
@@ -21,7 +23,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 public class ExpressionContext implements IEvaluationContext {
 
 	private boolean allowActivation = false;
-	private IEclipseContext eclipseContext;
+	public IEclipseContext eclipseContext;
 
 	public ExpressionContext(IEclipseContext eclipseContext) {
 		this.eclipseContext = eclipseContext;
@@ -33,7 +35,8 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#getParent()
 	 */
 	public IEvaluationContext getParent() {
-		return null;
+		IEclipseContext parent = eclipseContext.getParent();
+		return parent == null ? null : new ExpressionContext(parent);
 	}
 
 	/*
@@ -42,7 +45,16 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#getRoot()
 	 */
 	public IEvaluationContext getRoot() {
-		return this;
+		IEclipseContext current = eclipseContext;
+		IEclipseContext parent = current.getParent();
+		while (parent != null) {
+			current = parent;
+			parent = current.getParent();
+		}
+		if (current == eclipseContext) {
+			return this;
+		}
+		return new ExpressionContext(current);
 	}
 
 	/*
@@ -69,7 +81,8 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#getDefaultVariable()
 	 */
 	public Object getDefaultVariable() {
-		return IEvaluationContext.UNDEFINED_VARIABLE;
+		Object sel = eclipseContext.getActiveLeaf().get(IServiceConstants.ACTIVE_SELECTION);
+		return sel == null ? Collections.EMPTY_LIST : sel;
 	}
 
 	/*
@@ -99,7 +112,7 @@ public class ExpressionContext implements IEvaluationContext {
 	 * @see org.eclipse.core.expressions.IEvaluationContext#getVariable(java.lang.String)
 	 */
 	public Object getVariable(String name) {
-		Object obj = eclipseContext.get(name);
+		Object obj = eclipseContext.getActiveLeaf().get(name);
 		return obj == null ? IEvaluationContext.UNDEFINED_VARIABLE : obj;
 	}
 

@@ -94,11 +94,7 @@ public class ContextContextService implements EContextService {
 	 * org.eclipse.e4.ui.services.EContextService#getContext(java.lang.String)
 	 */
 	public Context getContext(String id) {
-		Context ctx = (Context) eclipseContext.get(CONTEXT_PREFIX + id);
-		if (ctx == null) {
-			ctx = contextManager.getContext(id);
-			eclipseContext.set(CONTEXT_PREFIX + id, ctx);
-		}
+		Context ctx = contextManager.getContext(id);
 		return ctx;
 	}
 

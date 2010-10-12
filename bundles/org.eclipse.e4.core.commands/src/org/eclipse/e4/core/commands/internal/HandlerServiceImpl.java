@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -27,8 +28,13 @@ import org.eclipse.e4.core.di.annotations.Execute;
 public class HandlerServiceImpl implements EHandlerService {
 	public final static String H_ID = "handler::"; //$NON-NLS-1$
 	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
-	final static String LOOKUP_HANDLER = "handler"; //$NON-NLS-1$
 
+	/**
+	 * @param context
+	 *            the context to start the lookup process
+	 * @param commandId
+	 * @return a handler, or <code>null</code>
+	 */
 	public static Object lookUpHandler(IEclipseContext context, String commandId) {
 		return context.getActiveLeaf().get(H_ID + commandId);
 	}
@@ -47,29 +53,21 @@ public class HandlerServiceImpl implements EHandlerService {
 	}
 
 	/**
+	 * Create a temporary static context, to be used for the execution.
+	 * 
 	 * @param command
+	 * @return a context not part of the normal hierarchy
 	 */
-	private void addParmsToContext(ParameterizedCommand command) {
+	private IEclipseContext createContextWithParms(ParameterizedCommand command) {
+		IEclipseContext tmpContext = EclipseContextFactory.create(PARM_MAP);
 		final Map parms = command.getParameterMap();
 		Iterator i = parms.entrySet().iterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
-			context.set((String) entry.getKey(), entry.getValue());
+			tmpContext.set((String) entry.getKey(), entry.getValue());
 		}
-		context.set(PARM_MAP, parms);
-	}
-
-	private void removeParmsFromContext(ParameterizedCommand command) {
-		if (context == null) {
-			return;
-		}
-		final Map<?, ?> parms = command.getParameterMap();
-		Iterator<?> i = parms.entrySet().iterator();
-		while (i.hasNext()) {
-			Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
-			context.set((String) entry.getKey(), null);
-		}
-		context.set(PARM_MAP, null);
+		tmpContext.set(PARM_MAP, parms);
+		return tmpContext;
 	}
 
 	/*
@@ -85,14 +83,11 @@ public class HandlerServiceImpl implements EHandlerService {
 			return false;
 		}
 
-		try {
-			addParmsToContext(command);
-			Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
-					context, Boolean.TRUE));
-			return result.booleanValue();
-		} finally {
-			removeParmsFromContext(command);
-		}
+		final IEclipseContext executionContext = getExecutionContext();
+		IEclipseContext staticContext = createContextWithParms(command);
+		Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
+				executionContext, staticContext, Boolean.TRUE));
+		return result.booleanValue();
 	}
 
 	/*
@@ -118,17 +113,14 @@ public class HandlerServiceImpl implements EHandlerService {
 			return null;
 		}
 
-		try {
-			addParmsToContext(command);
-
-			Object rc = ContextInjectionFactory.invoke(handler, CanExecute.class, context,
-					Boolean.TRUE);
-			if (Boolean.FALSE.equals(rc))
-				return null;
-			return ContextInjectionFactory.invoke(handler, Execute.class, context, null);
-		} finally {
-			removeParmsFromContext(command);
-		}
+		final IEclipseContext executionContext = getExecutionContext();
+		IEclipseContext staticContext = createContextWithParms(command);
+		Object rc = ContextInjectionFactory.invoke(handler, CanExecute.class, executionContext,
+				staticContext, Boolean.TRUE);
+		if (Boolean.FALSE.equals(rc))
+			return null;
+		return ContextInjectionFactory.invoke(handler, Execute.class, executionContext,
+				staticContext, null);
 	}
 
 	@Inject
@@ -138,5 +130,9 @@ public class HandlerServiceImpl implements EHandlerService {
 
 	public IEclipseContext getContext() {
 		return context;
+	}
+
+	public IEclipseContext getExecutionContext() {
+		return context.getActiveLeaf();
 	}
 }
