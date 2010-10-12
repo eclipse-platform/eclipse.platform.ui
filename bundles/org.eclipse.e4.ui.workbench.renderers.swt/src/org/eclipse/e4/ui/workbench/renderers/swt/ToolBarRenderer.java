@@ -23,18 +23,22 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
@@ -44,15 +48,28 @@ import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -66,9 +83,13 @@ public class ToolBarRenderer extends SWTPartRenderer {
 
 	private Map<MToolBarElement, IContributionItem> modelToContribution = new HashMap<MToolBarElement, IContributionItem>();
 
+	private ArrayList<ContributionRecord> contributionRecords = new ArrayList<ContributionRecord>();
+
 	// @Inject
 	// private Logger logger;
 
+	@Inject
+	IPresentationEngine renderer;
 	@Inject
 	private MApplication application;
 	@Inject
@@ -121,6 +142,12 @@ public class ToolBarRenderer extends SWTPartRenderer {
 				if (itemModel.isToBeRendered()) {
 					if (parent != null) {
 						modelProcessSwitch(parent, itemModel);
+						parent.update(true);
+						ToolBar tb = parent.getControl();
+						if (tb != null && !tb.isDisposed()) {
+							tb.getShell().layout(new Control[] { tb },
+									SWT.DEFER);
+						}
 					}
 				} else {
 					IContributionItem ici = modelToContribution
@@ -138,10 +165,14 @@ public class ToolBarRenderer extends SWTPartRenderer {
 					return;
 				}
 				ici.setVisible(itemModel.isVisible());
-				IContributionManager parent = ((ContributionItem) ici)
+				ToolBarManager parent = (ToolBarManager) ((ContributionItem) ici)
 						.getParent();
 				if (parent != null) {
 					parent.markDirty();
+					ToolBar tb = parent.getControl();
+					if (tb != null && !tb.isDisposed()) {
+						tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
+					}
 				}
 			}
 		}
@@ -176,6 +207,7 @@ public class ToolBarRenderer extends SWTPartRenderer {
 			}
 		}
 	};
+	private Image viewMenuImage;
 
 	@PostConstruct
 	public void init() {
@@ -295,6 +327,12 @@ public class ToolBarRenderer extends SWTPartRenderer {
 			}
 			manager.markDirty();
 		}
+
+		public void dispose() {
+			for (MToolBarElement copy : generatedElements) {
+				toolbarModel.getChildren().remove(copy);
+			}
+		}
 	}
 
 	/**
@@ -313,6 +351,7 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		}
 		final ContributionRecord record = new ContributionRecord(toolbarModel,
 				contribution, manager);
+		contributionRecords.add(record);
 		record.generate();
 		for (MToolBarElement copy : record.generatedElements) {
 			if (copy instanceof MToolBarSeparator
@@ -332,8 +371,8 @@ public class ToolBarRenderer extends SWTPartRenderer {
 			parentContext.runAndTrack(new RunAndTrack() {
 				@Override
 				public boolean changed(IEclipseContext context) {
-					record.updateVisibility(parentContext);
-					manager.update(true);
+					record.updateVisibility(parentContext.getActiveLeaf());
+					manager.update(false);
 					return true;
 				}
 			});
@@ -369,7 +408,8 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		return id.equals("additions") ? menuModel.getChildren().size() : -1; //$NON-NLS-1$
 	}
 
-	ToolBar createToolbar(final MUIElement element, Composite intermediate) {
+	private ToolBar createToolbar(final MUIElement element,
+			Composite intermediate) {
 		int orientation = getOrientation(element);
 		RowLayout layout = RowLayoutFactory.fillDefaults().wrap(false)
 				.spacing(0).type(orientation).create();
@@ -382,12 +422,41 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		ToolBar separatorToolBar = new ToolBar(intermediate, orientation
 				| SWT.WRAP | SWT.FLAT | SWT.RIGHT);
 		new ToolItem(separatorToolBar, SWT.SEPARATOR);
-		ToolBarManager manager = new ToolBarManager(orientation | SWT.WRAP
-				| SWT.FLAT | SWT.RIGHT);
-		modelToManager.put((MToolBar) element, manager);
+		ToolBarManager manager = getManager((MToolBar) element);
+		if (manager == null) {
+			manager = new ToolBarManager(orientation | SWT.WRAP | SWT.FLAT
+					| SWT.RIGHT);
+			linkModelToManager((MToolBar) element, manager);
+		}
 		ToolBar bar = manager.createControl(intermediate);
 		bar.setData(manager);
+		bar.getShell().layout(new Control[] { bar }, SWT.DEFER);
+		bar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cleanUp((MToolBar) element);
+			}
+		});
 		return bar;
+	}
+
+	/**
+	 * @param element
+	 */
+	protected void cleanUp(MToolBar toolbarModel) {
+		for (ContributionRecord record : contributionRecords
+				.toArray(new ContributionRecord[contributionRecords.size()])) {
+			if (record.toolbarModel == toolbarModel) {
+				record.dispose();
+				contributionRecords.remove(record);
+				for (MToolBarElement copy : record.generatedElements) {
+					IContributionItem ici = modelToContribution.remove(copy);
+					if (ici != null) {
+						record.manager.remove(ici);
+					}
+				}
+				record.generatedElements.clear();
+			}
+		}
 	}
 
 	int getOrientation(final MUIElement element) {
@@ -417,7 +486,8 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		if (container == null)
 			return;
 
-		ToolBarManager parentManager = modelToManager.get(container);
+		Object obj = container;
+		ToolBarManager parentManager = getManager((MToolBar) obj);
 		if (parentManager == null) {
 			return;
 		}
@@ -431,6 +501,224 @@ public class ToolBarRenderer extends SWTPartRenderer {
 			}
 		}
 		parentManager.update(false);
+
+		ToolBar tb = getToolbarFrom(container.getWidget());
+		if (tb != null && ((EObject) container).eContainer() instanceof MPart) {
+			MPart part = (MPart) ((EObject) container).eContainer();
+			MMenu viewMenu = getViewMenu(part);
+
+			// View menu (if any)
+			if (viewMenu != null) {
+				addMenuButton(part, tb, viewMenu);
+			}
+			tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
+		}
+	}
+
+	/**
+	 * @param widget
+	 * @return
+	 */
+	private ToolBar getToolbarFrom(Object widget) {
+		if (widget instanceof ToolBar) {
+			return (ToolBar) widget;
+		}
+		if (widget instanceof Composite) {
+			Composite intermediate = (Composite) widget;
+			if (!intermediate.isDisposed()) {
+				Control[] children = intermediate.getChildren();
+				int length = children.length;
+				if (length > 0 && children[length - 1] instanceof ToolBar) {
+					return (ToolBar) children[length - 1];
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @param tb
+	 */
+	private void addMenuButton(MPart part, ToolBar tb, MMenu menu) {
+		ToolItem ti = new ToolItem(tb, SWT.PUSH);
+		ti.setImage(getViewMenuImage());
+		ti.setHotImage(null);
+		ti.setToolTipText("View Menu"); //$NON-NLS-1$
+		ti.setData("theMenu", menu); //$NON-NLS-1$
+		ti.setData("thePart", part); //$NON-NLS-1$
+
+		ti.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				showMenu((ToolItem) e.widget);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				showMenu((ToolItem) e.widget);
+			}
+		});
+	}
+
+	/**
+	 * @param item
+	 */
+	protected void showMenu(ToolItem item) {
+		// Create the UI for the menu
+		final MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
+		MPart part = (MPart) item.getData("thePart"); //$NON-NLS-1$
+		Control ctrl = (Control) part.getWidget();
+		Menu menu = (Menu) renderer.createGui(menuModel, ctrl.getShell(),
+				part.getContext());
+
+		// ...and Show it...
+		Rectangle ib = item.getBounds();
+		Point displayAt = item.getParent().toDisplay(ib.x, ib.y + ib.height);
+		menu.setLocation(displayAt);
+		menu.setVisible(true);
+
+		Display display = Display.getCurrent();
+		while (!menu.isDisposed() && menu.isVisible()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+		menu.dispose();
+	}
+
+	private Image getViewMenuImage() {
+		if (viewMenuImage == null) {
+			Display d = Display.getCurrent();
+
+			Image viewMenu = new Image(d, 16, 16);
+			Image viewMenuMask = new Image(d, 16, 16);
+
+			Display display = Display.getCurrent();
+			GC gc = new GC(viewMenu);
+			GC maskgc = new GC(viewMenuMask);
+			gc.setForeground(display
+					.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+			gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+			int[] shapeArray = new int[] { 6, 1, 15, 1, 11, 5, 10, 5 };
+			gc.fillPolygon(shapeArray);
+			gc.drawPolygon(shapeArray);
+
+			Color black = display.getSystemColor(SWT.COLOR_BLACK);
+			Color white = display.getSystemColor(SWT.COLOR_WHITE);
+
+			maskgc.setBackground(black);
+			maskgc.fillRectangle(0, 0, 16, 16);
+
+			maskgc.setBackground(white);
+			maskgc.setForeground(white);
+			maskgc.fillPolygon(shapeArray);
+			maskgc.drawPolygon(shapeArray);
+			gc.dispose();
+			maskgc.dispose();
+
+			ImageData data = viewMenu.getImageData();
+			data.transparentPixel = data.getPixel(0, 0);
+
+			viewMenuImage = new Image(d, viewMenu.getImageData(),
+					viewMenuMask.getImageData());
+			viewMenu.dispose();
+			viewMenuMask.dispose();
+		}
+		return viewMenuImage;
+	}
+
+	private MMenu getViewMenu(MPart part) {
+		if (part.getMenus() == null) {
+			return null;
+		}
+		for (MMenu menu : part.getMenus()) {
+			if (menu.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
+				return menu;
+			}
+		}
+		return null;
+	}
+
+	boolean hasOnlySeparators(ToolBar toolbar) {
+		ToolItem[] children = toolbar.getItems();
+		for (ToolItem toolItem : children) {
+			if ((toolItem.getStyle() & SWT.SEPARATOR) == 0) {
+				return false;
+			} else if (toolItem.getControl() != null
+					&& toolItem.getControl().getData(OWNING_ME) instanceof MToolControl) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void postProcess(MUIElement element) {
+		super.postProcess(element);
+		// disposeToolbarIfNecessary(element);
+		ToolBar tb = getToolbarFrom(element.getWidget());
+		if (tb != null && !tb.isDisposed()) {
+			tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
+			tb.setVisible(true);
+		}
+	}
+
+	public Object getUIContainer(MUIElement childElement) {
+		if (childElement.getWidget() instanceof ToolBar) {
+			return childElement.getWidget();
+		}
+
+		Object obj = super.getUIContainer(childElement);
+		if (obj instanceof ToolBar) {
+			return obj;
+		}
+
+		if (obj instanceof Composite) {
+			Composite intermediate = (Composite) obj;
+			if (intermediate == null || intermediate.isDisposed()) {
+				return null;
+			}
+			ToolBar toolbar = getToolbarFrom(intermediate);
+			if (toolbar == null) {
+				toolbar = createToolbar(childElement.getParent(), intermediate);
+			}
+			return toolbar;
+		}
+		return null;
+	}
+
+	@Override
+	public void disposeWidget(MUIElement element) {
+		ToolBar tb = getToolbarFrom(element.getWidget());
+		tb.setVisible(false);
+		unbindWidget(element);
+		tb.setData(AbstractPartRenderer.OWNING_ME, element);
+	}
+
+	@Override
+	public void hideChild(MElementContainer<MUIElement> parentElement,
+			MUIElement child) {
+		super.hideChild(parentElement, child);
+
+		// Since there's no place to 'store' a child that's not in a menu
+		// we'll blow it away and re-create on an add
+		Widget widget = (Widget) child.getWidget();
+		if (widget != null && !widget.isDisposed()) {
+			widget.dispose();
+		}
+		ToolBar toolbar = (ToolBar) getUIContainer(child);
+		if (toolbar != null && !toolbar.isDisposed()) {
+			toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
+		}
+		// disposeToolbarIfNecessary(parentElement);
+	}
+
+	@Override
+	public void childRendered(MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
+		super.childRendered(parentElement, element);
+		ToolBar toolbar = (ToolBar) getUIContainer(element);
+		if (toolbar != null && !toolbar.isDisposed()) {
+			toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
+		}
 	}
 
 	/**

@@ -27,7 +27,6 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.widgets.CTabFolder;
@@ -169,7 +168,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					if (!curTB.isDisposed()) {
 						MUIElement tbME = (MUIElement) curTB
 								.getData(AbstractPartRenderer.OWNING_ME);
-						if (tbME instanceof MRenderedToolBar)
+						if (tbME instanceof MToolBar)
 							renderer.removeGui(tbME);
 						else
 							curTB.dispose();
@@ -262,7 +261,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					if (!curTB.isDisposed()) {
 						MUIElement tbME = (MUIElement) curTB
 								.getData(AbstractPartRenderer.OWNING_ME);
-						if (tbME instanceof MRenderedToolBar)
+						if (tbME instanceof MToolBar)
 							renderer.removeGui(tbME);
 						else
 							curTB.dispose();

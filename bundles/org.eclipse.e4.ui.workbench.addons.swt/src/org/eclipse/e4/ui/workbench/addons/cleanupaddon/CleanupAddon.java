@@ -29,7 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
@@ -61,7 +61,7 @@ public class CleanupAddon {
 				// Determine the elements that should *not* ever be auto-destroyed
 				if (container instanceof MApplication || container instanceof MPerspectiveStack
 						|| container instanceof MMenuElement || container instanceof MTrimBar
-						|| container instanceof MRenderedToolBar) {
+						|| container instanceof MToolBar) {
 					return;
 				}
 

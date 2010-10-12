@@ -30,7 +30,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -41,7 +40,6 @@ import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
@@ -405,7 +403,7 @@ public class StackRenderer extends LazyStackRenderer {
 				if (!curTB.isDisposed()) {
 					MUIElement tbME = (MUIElement) curTB
 							.getData(AbstractPartRenderer.OWNING_ME);
-					if (tbME instanceof MRenderedToolBar)
+					if (tbME instanceof MToolBar)
 						renderer.removeGui(tbME);
 					else
 						curTB.dispose();
@@ -524,7 +522,7 @@ public class StackRenderer extends LazyStackRenderer {
 			if (!curTB.isDisposed()) {
 				MUIElement tbME = (MUIElement) curTB
 						.getData(AbstractPartRenderer.OWNING_ME);
-				if (tbME instanceof MRenderedToolBar)
+				if (tbME instanceof MToolBar)
 					renderer.removeGui(tbME);
 				else
 					curTB.dispose();
@@ -538,15 +536,9 @@ public class StackRenderer extends LazyStackRenderer {
 		MToolBar toolbar = part.getToolbar();
 		if (toolbar == null) {
 			if (viewMenu != null) {
-				MRenderedToolBar rtb = MenuFactoryImpl.eINSTANCE
-						.createRenderedToolBar();
-				rtb.setContributionManager(new ToolBarManager());
-				part.setToolbar(rtb);
-			}
-		} else if (toolbar instanceof MRenderedToolBar) {
-			MRenderedToolBar rtb = (MRenderedToolBar) toolbar;
-			if (rtb.getContributionManager() == null) {
-				rtb.setContributionManager(new ToolBarManager());
+				toolbar = MenuFactoryImpl.eINSTANCE.createToolBar();
+				toolbar.setElementId(part.getElementId());
+				part.setToolbar(toolbar);
 			}
 		}
 

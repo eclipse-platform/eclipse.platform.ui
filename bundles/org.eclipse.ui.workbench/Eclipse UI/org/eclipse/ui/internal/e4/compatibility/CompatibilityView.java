@@ -12,14 +12,17 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarRenderer;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Composite;
@@ -75,16 +78,19 @@ public class CompatibilityView extends CompatibilityPart {
 		// dispose the tb, it will be re-created when the tab is shown
 		tb.dispose();
 
+		IEclipseContext context = getModel().getContext();
+		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
+
 		MenuManager mm = (MenuManager) actionBars.getMenuManager();
-		MRenderedMenu menu = null;
+		MMenu menu = null;
 		for (MMenu me : part.getMenus()) {
-			if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU) && (me instanceof MRenderedMenu)) {
-				menu = (MRenderedMenu) me;
+			if (me.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
+				menu = me;
 				break;
 			}
 		}
 		if (menu == null) {
-			menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
+			menu = MenuFactoryImpl.eINSTANCE.createMenu();
 			menu.setElementId(part.getElementId());
 
 			menu.getTags().add(StackRenderer.TAG_VIEW_MENU);
@@ -92,17 +98,21 @@ public class CompatibilityView extends CompatibilityPart {
 			part.getMenus().add(menu);
 
 		}
-		menu.setContributionManager(mm);
+		AbstractPartRenderer apr = rendererFactory.getRenderer(menu, parent);
+		if (apr instanceof MenuRenderer) {
+			((MenuRenderer) apr).linkModelToManager(menu, mm);
+		}
 
 		// Construct the toolbar (if necessary)
 		MToolBar toolbar = part.getToolbar();
 		if (toolbar == null) {
-			toolbar = MenuFactoryImpl.eINSTANCE.createRenderedToolBar();
+			toolbar = MenuFactoryImpl.eINSTANCE.createToolBar();
 			toolbar.setElementId(part.getElementId());
 			part.setToolbar(toolbar);
 		}
-		if (toolbar instanceof MRenderedToolBar) {
-			((MRenderedToolBar) toolbar).setContributionManager(tbm);
+		apr = rendererFactory.getRenderer(toolbar, parent);
+		if (apr instanceof ToolBarRenderer) {
+			((ToolBarRenderer) apr).linkModelToManager(toolbar, tbm);
 		}
 	}
 }

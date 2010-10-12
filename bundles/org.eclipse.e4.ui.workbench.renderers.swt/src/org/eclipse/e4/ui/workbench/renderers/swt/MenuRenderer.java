@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,6 +55,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Menu;
@@ -264,17 +267,23 @@ public class MenuRenderer extends SWTPartRenderer {
 			MUIElement container = (MUIElement) ((EObject) element)
 					.eContainer();
 			if (container instanceof MWindow) {
-				MenuManager menuBarManager = new MenuManager(NO_LABEL,
-						menuModel.getElementId());
-				linkModelToManager(menuModel, menuBarManager);
+				MenuManager menuBarManager = getManager(menuModel);
+				if (menuBarManager == null) {
+					menuBarManager = new MenuManager(NO_LABEL,
+							menuModel.getElementId());
+					linkModelToManager(menuModel, menuBarManager);
+				}
 				newMenu = menuBarManager.createMenuBar((Decorations) parent);
 				((Decorations) parent).setMenuBar(newMenu);
 				newMenu.setData(menuBarManager);
 				menuBar = true;
 			} else {
-				MenuManager popupManager = new MenuManager(NO_LABEL,
-						menuModel.getElementId());
-				linkModelToManager(menuModel, popupManager);
+				MenuManager popupManager = getManager(menuModel);
+				if (popupManager == null) {
+					popupManager = new MenuManager(NO_LABEL,
+							menuModel.getElementId());
+					linkModelToManager(menuModel, popupManager);
+				}
 				newMenu = popupManager.createContextMenu((Control) parent);
 				((Control) parent).setMenu(newMenu);
 				newMenu.setData(popupManager);
@@ -285,15 +294,58 @@ public class MenuRenderer extends SWTPartRenderer {
 					+ menuModel + "\n\t" + parent); //$NON-NLS-1$
 
 		} else if (parent instanceof Control) {
-			MenuManager popupManager = new MenuManager(NO_LABEL,
-					menuModel.getElementId());
-			linkModelToManager(menuModel, popupManager);
+			MenuManager popupManager = getManager(menuModel);
+			if (popupManager == null) {
+				popupManager = new MenuManager(NO_LABEL,
+						menuModel.getElementId());
+				linkModelToManager(menuModel, popupManager);
+			}
 			newMenu = popupManager.createContextMenu((Control) parent);
 			((Control) parent).setMenu(newMenu);
 			newMenu.setData(popupManager);
 		}
 		processContributions(menuModel, menuBar);
+		if (newMenu != null) {
+			newMenu.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					cleanUp(menuModel);
+				}
+			});
+		}
 		return newMenu;
+	}
+
+	/**
+	 * @param menuModel
+	 */
+	protected void cleanUp(MMenu menuModel) {
+		Collection<ContributionRecord> vals = modelContributionToRecord
+				.values();
+		for (ContributionRecord record : vals
+				.toArray(new ContributionRecord[vals.size()])) {
+			if (record.menuModel == menuModel) {
+				record.dispose();
+				for (MMenuElement copy : record.generatedElements) {
+					modelContributionToRecord.remove(copy);
+					if (copy instanceof MMenu) {
+						MMenu menuCopy = (MMenu) copy;
+						cleanUp(menuCopy);
+						MenuManager copyManager = getManager(menuCopy);
+						clearModelToManager(menuCopy, copyManager);
+						if (copyManager != null) {
+							copyManager.dispose();
+						}
+					} else {
+						IContributionItem ici = modelToContribution
+								.remove(copy);
+						if (ici != null) {
+							record.manager.remove(ici);
+						}
+					}
+				}
+				record.generatedElements.clear();
+			}
+		}
 	}
 
 	/**
@@ -390,7 +442,7 @@ public class MenuRenderer extends SWTPartRenderer {
 				parentContext.runAndTrack(new RunAndTrack() {
 					@Override
 					public boolean changed(IEclipseContext context) {
-						record.updateVisibility(parentContext);
+						record.updateVisibility(parentContext.getActiveLeaf());
 						manager.update(true);
 						return true;
 					}
@@ -458,6 +510,12 @@ public class MenuRenderer extends SWTPartRenderer {
 				MMenuElement copy = (MMenuElement) EcoreUtil
 						.copy((EObject) item);
 				generatedElements.add(copy);
+			}
+		}
+
+		public void dispose() {
+			for (MMenuElement copy : generatedElements) {
+				menuModel.getChildren().remove(copy);
 			}
 		}
 	}
