@@ -1426,9 +1426,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			TreeViewer tv = (TreeViewer) getViewer();
 			Object element = selection.getFirstElement();
 			if (element != null) {
-				tv.setExpandedState(element, !tv.getExpandedState(element));
 				if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0)
 					gotoNextMatch(OpenStrategy.activateOnOpen());
+				else
+					tv.setExpandedState(element, !tv.getExpandedState(element));
 			}
 			return;
 		} else if (!hasCurrentMatch) {
