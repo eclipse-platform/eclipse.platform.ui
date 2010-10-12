@@ -809,14 +809,11 @@ public class PartServiceImpl implements EPartService {
 			List<MUIElement> children = parent.getChildren();
 
 			IEclipseContext partContext = part.getContext();
+			MPart activationCandidate = null;
 			// check if we're the active child
 			if (partContext != null && partContext.getParent().getActiveChild() == partContext) {
-				// deactivate ourselves
-				MPart activateTarget = partActivationHistory.deactivate(part);
-				if (activateTarget != null) {
-					// activate another part
-					activate(activateTarget);
-				}
+				// get the activation candidate if we are
+				activationCandidate = partActivationHistory.getNextActivationCandidate(part);
 			}
 
 			if (parent.getSelectedElement() == toBeRemoved) {
@@ -842,6 +839,11 @@ public class PartServiceImpl implements EPartService {
 				sharedRef.setToBeRendered(false);
 			} else {
 				part.setToBeRendered(false);
+			}
+
+			if (activationCandidate != null) {
+				// activate our candidate
+				activate(activationCandidate);
 			}
 
 			if (parent.getSelectedElement() == toBeRemoved) {

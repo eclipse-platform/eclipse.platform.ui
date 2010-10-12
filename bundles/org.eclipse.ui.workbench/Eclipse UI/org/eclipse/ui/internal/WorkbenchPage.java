@@ -3071,6 +3071,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	public void firePartClosed(CompatibilityPart compatibilityPart) {
 		IWorkbenchPart part = compatibilityPart.getPart();
 		WorkbenchPartReference partReference = compatibilityPart.getReference();
+		MPart model = partReference.getModel();
 
 		for (Object listener : partListenerList.getListeners()) {
 			((IPartListener) listener).partClosed(part);
@@ -3087,14 +3088,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		for (int i = 0; i < activationList.size(); i++) {
-			if (partReference.getModel() == activationList.get(i)) {
+			if (model == activationList.get(i)) {
 				activationList.remove(i);
 				break;
 			}
 		}
 
-		updateActivePartSources(null);
-		updateActiveEditorSources(null);
+		if (model == partService.getActivePart()) {
+			updateActivePartSources(null);
+			updateActiveEditorSources(null);
+		}
 	}
 
 	private void firePartBroughtToTop(MPart part) {

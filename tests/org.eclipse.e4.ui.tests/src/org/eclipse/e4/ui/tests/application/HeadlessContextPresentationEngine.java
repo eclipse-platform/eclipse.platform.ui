@@ -16,7 +16,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.Activator;
@@ -183,7 +182,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 					}
 				}
 
-				if (parentContext != null && parentContext.getActiveChild() == null) {
+				if (parentContext != null
+						&& parentContext.getActiveChild() == null) {
 					createdContext.activate();
 				}
 			} else if (createdContext.getParent() != parentContext) {
@@ -265,13 +265,24 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			}
 		}
 
+		if (element instanceof MPlaceholder) {
+			removeGui(((MPlaceholder) element).getRef());
+		}
+
 		if (element instanceof MContext) {
 			MContext mcontext = (MContext) element;
 			IEclipseContext context = mcontext.getContext();
+			if (context != null) {
+				IEclipseContext parentContext = context.getParent();
+				if (parentContext != null
+						&& parentContext.getActiveChild() == context) {
+					context.deactivate();
+				}
+			}
 
 			mcontext.setContext(null);
-			if (context instanceof IDisposable) {
-				((IDisposable) context).dispose();
+			if (context != null) {
+				context.dispose();
 			}
 		}
 	}

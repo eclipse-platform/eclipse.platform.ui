@@ -168,8 +168,7 @@ class PartActivationHistory {
 		return getActivationCandidate(part);
 	}
 
-	public MPart deactivate(MPart part) {
-		part.getContext().deactivate();
+	public MPart getNextActivationCandidate(MPart part) {
 		LinkedList<MPart> activationHistory = getPerspectiveActivationHistory(part);
 		return getActivationCandidate(activationHistory == null ? generalActivationHistory
 				: activationHistory, part);
