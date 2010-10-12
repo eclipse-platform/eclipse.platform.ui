@@ -479,7 +479,14 @@
             <instanceof value="org.eclipse.team.core.mapping.ISynchronizationContext"/>
            </or>
          </enablement>
-         <actionProvider class="org.eclipse.team.internal.ui.mapping.ResourceModelActionProvider"/>
+         <actionProvider
+               class="org.eclipse.team.internal.ui.mapping.ResourceModelActionProvider">
+            <enablement>
+               <adapt
+                     type="org.eclipse.core.resources.IResource">
+               </adapt>
+            </enablement>
+         </actionProvider>
          <commonSorter
             class="org.eclipse.team.internal.ui.mapping.ResourceModelSorter"
             id="org.eclipse.team.ui.resourceSorter"/>

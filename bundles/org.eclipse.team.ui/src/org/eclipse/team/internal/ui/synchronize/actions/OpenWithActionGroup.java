@@ -124,14 +124,16 @@ public class OpenWithActionGroup extends ActionGroup {
 			if (openInCompareAction != null) {
 				menu.appendToGroup(groupId, openInCompareAction);
 			}
+		}
 
-			for (int i = 0; i < resources.length; i++) {
-				if (!resources[i].exists()) {
-					// Only support non-compare actions if all files exist.
-					return;
-				}
+		for (int i = 0; i < resources.length; i++) {
+			if (!resources[i].exists()) {
+				// Only support non-compare actions if all resources exist.
+				return;
 			}
+		}
 
+		if (allFiles) {	
 			if (openFileAction != null) {
 				openFileAction.selectionChanged(selection);
 				menu.appendToGroup(groupId, openFileAction);
@@ -149,19 +151,16 @@ public class OpenWithActionGroup extends ActionGroup {
 			}
 		}
 
-		// Add "Show In" submenu, available for projects and folders, but only if one is selected.
-        if (resources.length == 1) {
-        	IWorkbenchSite ws = getSite().getWorkbenchSite();
-        	if (ws != null) {
-				MenuManager showInSubmenu = new MenuManager(
-						getShowInMenuLabel(),
-						IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
-				IContributionItem showInMenu = ContributionItemFactory.VIEWS_SHOW_IN
-						.create(ws.getWorkbenchWindow());
-				showInSubmenu.add(showInMenu);
-				menu.appendToGroup(groupId, showInSubmenu);
-        	}
-        }
+		// Add "Show In" submenu, available for any number of resources
+		IWorkbenchSite ws = getSite().getWorkbenchSite();
+		if (ws != null) {
+			MenuManager showInSubmenu = new MenuManager(getShowInMenuLabel(),
+					IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
+			IContributionItem showInMenu = ContributionItemFactory.VIEWS_SHOW_IN
+					.create(ws.getWorkbenchWindow());
+			showInSubmenu.add(showInMenu);
+			menu.appendToGroup(groupId, showInSubmenu);
+		}
     }
 
 	/**
