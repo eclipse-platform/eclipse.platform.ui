@@ -233,16 +233,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 	private void showElementRecursive(MUIElement element,
 			List<MUIElement> becomingVisible) {
-		if (!element.isToBeRendered()) {
-			for (MPlaceholder placeholder : modelService.findElements(element,
-					null, MPlaceholder.class, null)) {
-				MUIElement reference = placeholder.getRef();
-				if (reference != null) {
-					reference.setCurSharedRef(placeholder);
-				}
-			}
+		if (!element.isToBeRendered())
 			return;
-		}
 
 		if (element instanceof MPlaceholder && element.getWidget() != null) {
 			MPlaceholder ph = (MPlaceholder) element;
