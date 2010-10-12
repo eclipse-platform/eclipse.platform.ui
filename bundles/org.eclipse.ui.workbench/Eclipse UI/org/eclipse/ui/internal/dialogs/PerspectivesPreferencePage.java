@@ -48,6 +48,7 @@ import org.eclipse.ui.internal.FastViewBar;
 import org.eclipse.ui.internal.FastViewManager;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -600,12 +601,18 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		if (isFVBConfigured) {
 			store.setValue(IPreferenceConstants.FVB_HIDE, fvbHideButton
 					.getSelection());
-			WorkbenchPage page = (WorkbenchPage) workbench
-					.getActiveWorkbenchWindow().getActivePage();
-			FastViewManager fvm = page.getActivePerspective()
-					.getFastViewManager();
-			if (fvm != null)
-				fvm.updateTrim(FastViewBar.FASTVIEWBAR_ID);
+			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+			if (activeWindow != null) {
+				WorkbenchPage page = (WorkbenchPage) activeWindow.getActivePage();
+				if (page != null) {
+					Perspective activePerspective = page.getActivePerspective();
+					if (activePerspective != null) {
+						FastViewManager fvm = activePerspective.getFastViewManager();
+						if (fvm != null)
+							fvm.updateTrim(FastViewBar.FASTVIEWBAR_ID);
+					}
+				}
+			}
 		}
 
 		// store the open perspective mode setting
