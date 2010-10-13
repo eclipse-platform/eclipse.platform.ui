@@ -2153,7 +2153,7 @@
                   </test>
                </iterate>
                <count
-                     value="?">
+                     value="+">
                </count>
             </and>
          </enabledWhen>

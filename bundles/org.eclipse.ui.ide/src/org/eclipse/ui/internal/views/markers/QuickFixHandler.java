@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.views.markers;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -71,9 +72,9 @@ public class QuickFixHandler extends MarkerViewHandler {
 		if (view == null)
 			return this;
 
-		final Map resolutions = new LinkedHashMap();
-		final IMarker[] selectedMarkers= view.getSelectedMarkers();
-		final IMarker selected= selectedMarkers[0];
+		final Map resolutionsMap = new LinkedHashMap();
+		final IMarker[] selectedMarkers = view.getSelectedMarkers();
+		final IMarker firstSelectedMarker = selectedMarkers[0];
 
 		IRunnableWithProgress resolutionsRunnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -84,26 +85,24 @@ public class QuickFixHandler extends MarkerViewHandler {
 
 				IMarker[] allMarkers = view.getAllMarkers();
 				monitor.worked(20);
-				IMarkerResolution[] found = IDE.getMarkerHelpRegistry()
-						.getResolutions(selected);
+				IMarkerResolution[] resolutions = IDE.getMarkerHelpRegistry().getResolutions(firstSelectedMarker);
 				int progressCount = 80;
-				if (found.length > 1)
-					progressCount = progressCount / found.length;
-				for (int i = 0; i < found.length; i++) {
-					IMarkerResolution markerResolution = found[i];
+				if (resolutions.length > 1)
+					progressCount= progressCount / resolutions.length;
+				for (int i = 0; i < resolutions.length; i++) {
+					IMarkerResolution markerResolution= resolutions[i];
 					if (markerResolution instanceof WorkbenchMarkerResolution) {
-						IMarker[] other = ((WorkbenchMarkerResolution) markerResolution)
-								.findOtherMarkers(allMarkers);
-						Collection markers = new ArrayList();
-						markers.add(selected);
-						for (int j = 0; j < other.length; j++) {
-							markers.add(other[j]);
+						IMarker[] other = ((WorkbenchMarkerResolution)markerResolution).findOtherMarkers(allMarkers);
+						if (containsAllButFirst(other, selectedMarkers)) {
+							Collection markers = new ArrayList(other.length + 1);
+							markers.add(firstSelectedMarker);
+							markers.addAll(Arrays.asList(other));
+							resolutionsMap.put(markerResolution, markers);
 						}
-						resolutions.put(markerResolution, markers);
-					} else {
-						Collection markers = new ArrayList();
-						markers.add(selected);
-						resolutions.put(markerResolution, markers);
+					} else if (selectedMarkers.length == 1) {
+						Collection markers = new ArrayList(1);
+						markers.add(firstSelectedMarker);
+						resolutionsMap.put(markerResolution, markers);
 					}
 					monitor.worked(progressCount);
 				}
@@ -134,22 +133,31 @@ public class QuickFixHandler extends MarkerViewHandler {
 					exception);
 		}
 
-		String markerDescription = selected.getAttribute(IMarker.MESSAGE,
+		String markerDescription= firstSelectedMarker.getAttribute(IMarker.MESSAGE,
 				MarkerSupportInternalUtilities.EMPTY_STRING);
-		if (resolutions.isEmpty()) {
-			MessageDialog
-					.openInformation(
-							view.getSite().getShell(),
-							MarkerMessages.resolveMarkerAction_dialogTitle,
-							NLS	.bind(MarkerMessages.MarkerResolutionDialog_NoResolutionsFound,
-									  new Object[] { markerDescription }));
+		if (resolutionsMap.isEmpty()) {
+			if (selectedMarkers.length == 1) {
+				MessageDialog
+				.openInformation(
+						view.getSite().getShell(),
+						MarkerMessages.resolveMarkerAction_dialogTitle,
+						NLS	.bind(MarkerMessages.MarkerResolutionDialog_NoResolutionsFound,
+								new Object[] { markerDescription }));
+			} else {
+				MessageDialog
+				.openInformation(
+						view.getSite().getShell(),
+						MarkerMessages.resolveMarkerAction_dialogTitle,
+						MarkerMessages.MarkerResolutionDialog_NoResolutionsFoundForMultiSelection);
+				
+			}
 		} else {
 
 			String description = NLS.bind(
 					MarkerMessages.MarkerResolutionDialog_Description,
 					markerDescription);
 
-			Wizard wizard= new QuickFixWizard(description, selectedMarkers, resolutions, view
+			Wizard wizard= new QuickFixWizard(description, selectedMarkers, resolutionsMap, view
 					.getSite());
 			wizard.setWindowTitle(MarkerMessages.resolveMarkerAction_dialogTitle);
 			WizardDialog dialog = new QuickFixWizardDialog(view.getSite()
@@ -157,5 +165,24 @@ public class QuickFixHandler extends MarkerViewHandler {
 			dialog.open();
 		}
 		return this;
+	}
+
+	/**
+	 * Checks whether the given extent contains all all but the first element from the given array.
+	 * 
+	 * @param extent the array which should contain the elements
+	 * @param members the elements to check
+	 * @return <code>true</code> if all but the first element are inside the extent
+	 * @since 3.7
+	 */
+	private static boolean containsAllButFirst(Object[] extent, Object[] members) {
+		outer: for (int i= 1; i < members.length; i++) {
+			for (int j= 0; j < extent.length; j++) {
+				if (members[i] == extent[j])
+					continue outer;
+			}
+			return false;
+		}
+		return true;
 	}
 }
