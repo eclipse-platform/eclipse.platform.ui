@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -79,7 +80,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
     }
     
     protected ITreeModelContentProviderTarget getCTargetViewer() {
-        return (ITreeModelContentProviderTarget)fViewer;
+        return fViewer;
     }
 
     protected TreeModelViewer createViewer(Display display, Shell shell) {
@@ -394,6 +395,10 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
      * properly handled when a new reveal delta is received from the model.
      */
     public void testRestoreRevealAfterRevealCancel2() {
+    	if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+    		// skip this test on Mac - see bug 327557
+    		return;
+    	}
         TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
