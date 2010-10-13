@@ -56,9 +56,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -169,6 +167,8 @@ public class QuickFixPage extends WizardPage {
 				.getElementAt(0)));
 
 		markersTable.setCheckedElements(selectedMarkers);
+		
+		setPageComplete(markersTable.getCheckedElements().length > 0);
 	}
 
 	/**
@@ -304,19 +304,9 @@ public class QuickFixPage extends WizardPage {
 					 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 					 */
 					public void selectionChanged(SelectionChangedEvent event) {
-
 						markersTable.refresh();
-
-						IWorkbenchWindow window = PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow();
-						if (window == null)
-							return;
-						IWorkbenchPage page = window.getActivePage();
-						if (page == null)
-							return;
-
+						setPageComplete(markersTable.getCheckedElements().length > 0);
 					}
-
 				});
 	}
 
@@ -536,15 +526,6 @@ public class QuickFixPage extends WizardPage {
 				return (IMarker) struct.getFirstElement();
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
-	public boolean isPageComplete() {
-		return markersTable.getCheckedElements().length > 0;
 	}
 
 	/**
