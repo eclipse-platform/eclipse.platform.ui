@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 class QuickFixWizard extends Wizard {
 
+	private IMarker[] selectedMarkers;
 	private Map resolutionMap;
 	private String description;
 	private IWorkbenchPartSite partSite;
@@ -44,12 +45,12 @@ class QuickFixWizard extends Wizard {
 	 * Create the wizard with the map of resolutions.
 	 * 
 	 * @param description the description of the problem
-	 * @param resolutions
-	 *            Map key {@link IMarkerResolution} value {@link IMarker} []
+	 * @param selectedMarkers the markers that were selected
+	 * @param resolutions Map key {@link IMarkerResolution} value {@link IMarker} []
 	 * @param site the {@link IWorkbenchPartSite} to open the markers in
 	 */
-	public QuickFixWizard(String description,Map resolutions, IWorkbenchPartSite site) {
-		super();
+	public QuickFixWizard(String description, IMarker[] selectedMarkers, Map resolutions, IWorkbenchPartSite site) {
+		this.selectedMarkers= selectedMarkers;
 		this.resolutionMap = resolutions;
 		this.description = description;
 		partSite = site;
@@ -66,7 +67,7 @@ class QuickFixWizard extends Wizard {
 	 */
 	public void addPages() {
 		super.addPages();
-		addPage(new QuickFixPage(description,resolutionMap,partSite));
+		addPage(new QuickFixPage(description, selectedMarkers, resolutionMap, partSite));
 	}
 
 	/*

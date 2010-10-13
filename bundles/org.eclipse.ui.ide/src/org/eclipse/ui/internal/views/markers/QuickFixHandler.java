@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,8 @@ public class QuickFixHandler extends MarkerViewHandler {
 			return this;
 
 		final Map resolutions = new LinkedHashMap();
-		final IMarker selected = view.getSelectedMarkers()[0];
+		final IMarker[] selectedMarkers= view.getSelectedMarkers();
+		final IMarker selected= selectedMarkers[0];
 
 		IRunnableWithProgress resolutionsRunnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -148,7 +149,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 					MarkerMessages.MarkerResolutionDialog_Description,
 					markerDescription);
 
-			Wizard wizard = new QuickFixWizard(description, resolutions, view
+			Wizard wizard= new QuickFixWizard(description, selectedMarkers, resolutions, view
 					.getSite());
 			wizard.setWindowTitle(MarkerMessages.resolveMarkerAction_dialogTitle);
 			WizardDialog dialog = new QuickFixWizardDialog(view.getSite()

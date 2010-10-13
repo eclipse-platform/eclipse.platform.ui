@@ -82,22 +82,22 @@ public class QuickFixPage extends WizardPage {
 	private TableViewer resolutionsList;
 	private CheckboxTableViewer markersTable;
 	private IWorkbenchPartSite site;
+	private final IMarker[] selectedMarkers;
 
 
 	/**
 	 * Create a new instance of the receiver.
 	 * 
-	 * @param problemDescription
-	 *            the description of the problem being fixed
-	 * @param resolutions
-	 *            {@link Map} with key of {@link IMarkerResolution} and value of
+	 * @param problemDescription the description of the problem being fixed
+	 * @param selectedMarkers the selected markers
+	 * @param resolutions {@link Map} with key of {@link IMarkerResolution} and value of
 	 *            {@link Collection} of {@link IMarker}
-	 * @param site
-	 *            The IWorkbenchPartSite to show markers
+	 * @param site The IWorkbenchPartSite to show markers
 	 */
-	public QuickFixPage(String problemDescription, Map resolutions,
+	public QuickFixPage(String problemDescription, IMarker[] selectedMarkers, Map resolutions,
 			IWorkbenchPartSite site) {
 		super(problemDescription);
+		this.selectedMarkers= selectedMarkers;
 		this.resolutions = resolutions;
 		this.site = site;
 		setTitle(MarkerMessages.resolveMarkerAction_dialogTitle);
@@ -168,7 +168,7 @@ public class QuickFixPage extends WizardPage {
 		resolutionsList.setSelection(new StructuredSelection(resolutionsList
 				.getElementAt(0)));
 
-		markersTable.setAllChecked(true);
+		markersTable.setCheckedElements(selectedMarkers);
 	}
 
 	/**
@@ -227,7 +227,7 @@ public class QuickFixPage extends WizardPage {
 	 * @param control
 	 */
 	private void createResolutionsList(Composite control) {
-		resolutionsList = new TableViewer(control, SWT.BORDER | SWT.SINGLE
+		resolutionsList= new TableViewer(control, SWT.BORDER | SWT.SINGLE
 				| SWT.V_SCROLL);
 		resolutionsList.setContentProvider(new IStructuredContentProvider() {
 			/*
