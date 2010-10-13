@@ -25,7 +25,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.eclipse.core.commands.AbstractHandler;
@@ -2208,7 +2208,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private static final int MAX_HISTORY_SIZE = 60;
 
-		private final List historyList;
+		private final Set historyList;
 
 		private final String rootNodeName;
 
@@ -2216,7 +2216,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private SelectionHistory(String rootNodeName, String infoNodeName) {
 
-			historyList = Collections.synchronizedList(new LinkedList() {
+			historyList = Collections.synchronizedSet(new LinkedHashSet() {
 
 				private static final long serialVersionUID = 0L;
 
@@ -2226,11 +2226,12 @@ public abstract class FilteredItemsSelectionDialog extends
 				 * @see java.util.LinkedList#add(java.lang.Object)
 				 */
 				public boolean add(Object arg0) {
-					if (this.size() >= MAX_HISTORY_SIZE)
-						this.removeFirst();
-					if (!this.contains(arg0))
-						return super.add(arg0);
-					return false;
+					if (this.size() >= MAX_HISTORY_SIZE) {
+						Iterator iterator = this.iterator();
+						iterator.next();
+						iterator.remove();
+					}
+					return super.add(arg0);
 				}
 
 			});
@@ -2253,6 +2254,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            the item to be added to the history
 		 */
 		public synchronized void accessed(Object object) {
+			historyList.remove(object);
 			historyList.add(object);
 		}
 
@@ -3277,13 +3279,14 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Object o1, Object o2) {
-			if ((isHistoryElement(o1) && isHistoryElement(o2))
-					|| (!isHistoryElement(o1) && !isHistoryElement(o2)))
+			boolean h1 = isHistoryElement(o1);
+			boolean h2 = isHistoryElement(o2);
+			if (h1 == h2)
 				return getItemsComparator().compare(o1, o2);
 
-			if (isHistoryElement(o1))
+			if (h1)
 				return -2;
-			if (isHistoryElement(o2))
+			if (h2)
 				return +2;
 
 			return 0;
