@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
@@ -34,6 +35,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -105,10 +107,18 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				Object element = event
 						.getProperty(UIEvents.EventTags.NEW_VALUE);
 				if (element instanceof MUIElement) {
+					MUIElement uiElement = (MUIElement) element;
+					IEclipseContext parentContext = getParentContext(uiElement);
 					Object parent = event
 							.getProperty(UIEvents.EventTags.ELEMENT);
-					createGui((MUIElement) element, parent,
-							getParentContext((MUIElement) element));
+					createGui(uiElement, parent, parentContext);
+
+					if (parent instanceof MPerspectiveStack) {
+						MPerspective perspective = (MPerspective) uiElement;
+						adjustPlaceholders(perspective);
+						parentContext.get(EPartService.class)
+								.switchPerspective(perspective);
+					}
 				}
 			}
 		};
@@ -134,6 +144,26 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
 				UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
+	}
+
+	private void adjustPlaceholders(MUIElement element) {
+		if (element.isToBeRendered()) {
+			if (element instanceof MPlaceholder) {
+				MPlaceholder placeholder = (MPlaceholder) element;
+				MUIElement ref = placeholder.getRef();
+				if (ref != null) {
+					ref.setCurSharedRef(placeholder);
+					element = ref;
+				}
+			}
+
+			if (element instanceof MElementContainer<?>) {
+				for (Object child : ((MElementContainer<?>) element)
+						.getChildren()) {
+					adjustPlaceholders((MUIElement) child);
+				}
+			}
+		}
 	}
 
 	public void setCreateContributions(boolean createContributions) {
@@ -237,9 +267,9 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			MPlaceholder placeholder = (MPlaceholder) element;
 			MUIElement ref = placeholder.getRef();
 			if (ref != null) {
+				ref.setCurSharedRef(placeholder);
 				ref.setToBeRendered(true);
 				createGui(ref);
-				ref.setCurSharedRef(placeholder);
 			}
 		}
 		return null;

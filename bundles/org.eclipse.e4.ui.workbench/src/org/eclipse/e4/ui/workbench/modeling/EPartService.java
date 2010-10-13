@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.workbench.modeling;
 
 import java.util.Collection;
 import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -302,4 +303,16 @@ public interface EPartService {
 	 *             if null passed as argument
 	 */
 	public Collection<MInputPart> getInputParts(String inputUri);
+
+	/**
+	 * Switch to the specified perspective. It will be selected and brought to top (if necessary).
+	 * It may not necessarily be granted focus if there is another active window present.
+	 * 
+	 * @param perspective
+	 *            the perspective to switch to, must not be <code>null</code> and it must be a
+	 *            perspective that's being managed by this service
+	 * @noreference This method is not intended to be referenced by clients as it may be removed or
+	 *              moved to another interface.
+	 */
+	public void switchPerspective(MPerspective perspective);
 }

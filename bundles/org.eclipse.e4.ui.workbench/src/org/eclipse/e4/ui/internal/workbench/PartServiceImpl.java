@@ -385,6 +385,48 @@ public class PartServiceImpl implements EPartService {
 		return false;
 	}
 
+	public void switchPerspective(MPerspective perspective) {
+		Assert.isNotNull(perspective);
+		MWindow window = getWindow();
+		if (window != null && isInContainer(window, perspective)) {
+			perspective.getParent().setSelectedElement(perspective);
+			List<MPart> newPerspectiveParts = modelService.findElements(perspective, null,
+					MPart.class, null);
+			// if possible, keep the same active part across perspective switches
+			if (newPerspectiveParts.contains(activePart)
+					&& partActivationHistory.isValid(perspective, activePart)) {
+				MPart target = activePart;
+				IEclipseContext activeChild = activePart.getContext().getParent().getActiveChild();
+				if (activeChild != null) {
+					activeChild.deactivate();
+					perspective.getContext().activate();
+				}
+				modelService.bringToTop(target);
+				partActivationHistory.activate(target, false);
+				return;
+			}
+
+			MPart newActivePart = perspective.getContext().getActiveLeaf().get(MPart.class);
+			if (newActivePart == null) {
+				// whatever part was previously active can no longer be found, find another one
+				MPart candidate = partActivationHistory.getActivationCandidate(perspective);
+				if (candidate != null) {
+					modelService.bringToTop(candidate);
+					partActivationHistory.activate(candidate, false);
+					return;
+				}
+			}
+
+			// there seems to be no parts in this perspective, just activate it as is then
+			if (newActivePart == null) {
+				modelService.bringToTop(perspective);
+				perspective.getContext().activate();
+			} else {
+				activate(newActivePart, true, false);
+			}
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -404,6 +446,10 @@ public class PartServiceImpl implements EPartService {
 	 * .MPart,boolean)
 	 */
 	public void activate(MPart part, boolean requiresFocus) {
+		activate(part, requiresFocus, true);
+	}
+
+	private void activate(MPart part, boolean requiresFocus, boolean activateBranch) {
 		// only activate parts that is under our control
 		if (!isInContainer(part)) {
 			return;
@@ -418,7 +464,7 @@ public class PartServiceImpl implements EPartService {
 
 		modelService.bringToTop(part);
 		window.getParent().setSelectedElement(window);
-		partActivationHistory.activate(part);
+		partActivationHistory.activate(part, activateBranch);
 
 		Object object = part.getObject();
 		if (object != null && requiresFocus) {

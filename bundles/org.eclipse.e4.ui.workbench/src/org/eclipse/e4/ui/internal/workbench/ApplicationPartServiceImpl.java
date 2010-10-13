@@ -14,6 +14,7 @@ import java.util.Collection;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -49,6 +50,10 @@ public class ApplicationPartServiceImpl implements EPartService {
 	public void removePartListener(IPartListener listener) {
 		throw new UnsupportedOperationException(
 				"Listeners should only be attached/removed from a window's part service"); //$NON-NLS-1$
+	}
+
+	public void switchPerspective(MPerspective perspective) {
+		getActiveWindowService().switchPerspective(perspective);
 	}
 
 	public void activate(MPart part) {

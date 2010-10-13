@@ -23,7 +23,7 @@ public class ClientEditor {
 
 	private boolean saveCalled = false;
 
-	private boolean focusCalled = false;
+	boolean focusCalled = false;
 
 	private boolean throwException = false;
 

@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -110,7 +111,7 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		// Force a context switch
 		if (tabElement instanceof MPerspective) {
 			IEclipseContext context = persp.getContext();
-			context.activate();
+			context.get(EPartService.class).switchPerspective(persp);
 		}
 
 		Composite psComp = ctrl.getParent();
