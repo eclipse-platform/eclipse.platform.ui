@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,8 +124,11 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 							refElement, null, MContext.class, null);
 					for (MContext ctxtElement : allContexts) {
 						IEclipseContext theContext = ctxtElement.getContext();
-						if (theContext.getParent() == curContext)
-							theContext.setParent(newParentContext);
+						// this may be null if it hasn't been rendered yet
+						if (theContext != null) {
+							if (theContext.getParent() == curContext)
+								theContext.setParent(newParentContext);
+						}
 					}
 
 					// Reparent the widget

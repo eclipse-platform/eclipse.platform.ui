@@ -1199,6 +1199,68 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(partB, partStack.getSelectedElement());
 	}
 
+	public void testBug322701() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getSharedElements().add(partStack);
+
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(part1);
+
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(part2);
+		partStack.setSelectedElement(part2);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(partStack);
+		partStack.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partStack);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		// select and activate the other perspective so that it is rendered and
+		// appropriate references are generated and instantiated
+		perspectiveStack.setSelectedElement(perspectiveB);
+		perspectiveB.getContext().activate();
+
+		// unrender the perspective
+		perspectiveB.setToBeRendered(false);
+		// we expect the part to have been reparented to another valid context,
+		// that being perspectiveA's
+		assertEquals(perspectiveA.getContext(), part2.getContext().getParent());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
