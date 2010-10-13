@@ -699,10 +699,14 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
                         // top item is set
                         fPendingSetTopItem = null;
                         
-                        if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-                            System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
+                        if (fPendingState == null) {
+                            if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                                System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
+                            }
+                            notifyStateUpdate(modelInput, STATE_RESTORE_SEQUENCE_COMPLETE, null);
+                        } else {
+                            checkIfRestoreComplete();
                         }
-                        notifyStateUpdate(modelInput, STATE_RESTORE_SEQUENCE_COMPLETE, null);
                     }
                 	
                 };

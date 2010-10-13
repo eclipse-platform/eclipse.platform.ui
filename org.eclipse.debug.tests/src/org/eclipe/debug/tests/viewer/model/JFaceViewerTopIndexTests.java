@@ -19,6 +19,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
@@ -80,7 +81,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
     }
     
     protected ITreeModelContentProviderTarget getCTargetViewer() {
-        return fViewer;
+        return (ITreeModelContentProviderTarget)fViewer;
     }
 
     protected TreeModelViewer createViewer(Display display, Shell shell) {
@@ -148,7 +149,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", topPath);
-        Assert.assertEquals(originalTopPath, topPath);
+        TreePathWrapper.assertEqual(originalTopPath, topPath);
     }
     
     /**
@@ -241,8 +242,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", topPath);
-        Assert.assertEquals(originalTopPath, topPath);
-        
+        TreePathWrapper.assertEqual(originalTopPath, topPath);
     }
     
     /**
@@ -324,7 +324,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", topPath);
-        Assert.assertEquals(originalTopPath, topPath);
+        TreePathWrapper.assertEqual(originalTopPath, topPath);
     }
     
     /**
@@ -413,7 +413,8 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY, true);
         
-        // Stop autopopulating the view.
+        // Stop auto-populating and auto-expanding the view.
+        fViewer.setAutoExpandLevel(0);
         autopopulateAgent.dispose();
         
         // Set top index of view to element "3" and wait for view to repaint.
@@ -428,7 +429,9 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // Set input back to root element.
         // Note: Wait only for the processing of the delta and the start of state restore, not for all updates
         fListener.reset();
-        final TreePath elementPath = model.findElement("3");
+        TreePath elementPath = model.findElement("2");
+        fListener.addUpdates(fViewer, elementPath, model.getElement(elementPath), 1, STATE_UPDATES | CHILDREN_UPDATES | LABEL_UPDATES);
+        elementPath = model.findElement("3");
         fListener.addUpdates(fViewer, elementPath, model.getElement(elementPath), 0, STATE_UPDATES);
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished(STATE_UPDATES)) 
@@ -437,21 +440,27 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // Update the viewer with new selection delta to something new in the view
         TreePath pathToBeRevealed = model.findElement("2.1");
         ModelDelta revealDelta = model.makeElementDelta(pathToBeRevealed, IModelDelta.REVEAL);
-
-        // Wait for the second model delta to process
-        fListener.reset();
-        model.postDelta(revealDelta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        revealDelta.accept(new IModelDeltaVisitor() {
+            
+            public boolean visit(IModelDelta delta, int depth) {
+                ((ModelDelta)delta).setFlags(delta.getFlags() | IModelDelta.EXPAND);
+                return true;
+            }
+        });
         
-        while (fDisplay.readAndDispatch ()) {}
-        // check if REVEAL was restored OK
+        // Wait for the second model delta to process
+        model.postDelta(revealDelta);
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILDREN_UPDATES | LABEL_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // check if REVEAL was triggered by the delta and not by the 
+        // state restore operation
         TreePath topPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", topPath);
-        Assert.assertEquals(pathToBeRevealed, topPath);
-                
+        TreePathWrapper.assertEqual(pathToBeRevealed, topPath);
     }
 
+    
     
     /**
      * Restore REVEAL when having also to restore an expanded element 
@@ -504,8 +513,10 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // check if REVEAL was restored OK
         final TreePath topPath = getCTargetViewer().getTopElementPath();
         Assert.assertNotNull("Top item should not be null!", topPath);
-        Assert.assertEquals(originalTopPath, topPath);
+        TreePathWrapper.assertEqual(originalTopPath, topPath);
         
     }
+
+    
     
 }

@@ -286,8 +286,8 @@ public class TestModelUpdatesListener
                 fHasChildrenUpdatesScheduled.add(path);
             }
             
-            if ((flags & STATE_UPDATES) != 0 && viewer != null) {
-                    fStateUpdates.add(path);
+            if ((flags & STATE_UPDATES) != 0) {
+                fStateUpdates.add(path);
             }
         }
 
