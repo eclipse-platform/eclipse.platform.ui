@@ -786,7 +786,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// Check if we're being asked to close any parts that are already closed
 		// or cannot
 		// be closed at this time
-		ArrayList toClose = new ArrayList();
+		ArrayList<IEditorReference> editorRefs = new ArrayList<IEditorReference>();
 		for (int i = 0; i < refArray.length; i++) {
 			IEditorReference reference = refArray[i];
 
@@ -818,11 +818,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 }
             }
 
-			toClose.add(reference);
+			editorRefs.add(reference);
         }
-        
-		IEditorReference[] editorRefs = (IEditorReference[]) toClose
-				.toArray(new IEditorReference[toClose.size()]);
 
 		// if active navigation position belongs to an editor being closed,
 		// update it
@@ -830,10 +827,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// 1
 		// was activated. As a result, all but the last editor have up-to-date
 		// navigation positions.)
-		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorReference ref = editorRefs[i];
-			if (ref == null)
-				continue;
+		for (IEditorReference ref : editorRefs) {
 			IEditorPart oldPart = ref.getEditor(false);
 			if (oldPart == null)
 				continue;
@@ -843,8 +837,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		// notify the model manager before the close
 		List partsToClose = new ArrayList();
-		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorPart refPart = editorRefs[i].getEditor(false);
+		for (IEditorReference ref : editorRefs) {
+			IEditorPart refPart = ref.getEditor(false);
 			if (refPart != null) {
 				partsToClose.add(refPart);
             }
@@ -865,9 +859,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 
 		// Fire pre-removal changes
-		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorReference ref = editorRefs[i];
-
+		for (IEditorReference ref : editorRefs) {
 			// Notify interested listeners before the close
 			legacyWindow.firePerspectiveChanged(this, getPerspective(), ref, CHANGE_EDITOR_CLOSE);
 
@@ -880,6 +872,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 
 			// Close all editors.
+			for (Iterator<IEditorReference> it = editorRefs.iterator(); it.hasNext();) {
+				IEditorReference ref = it.next();
+				// hide editors that haven't been instantiated first
+				if (ref.getPart(false) == null) {
+					if (!(hidePart(((EditorReference) ref).getModel(), false, confirm, false))) {
+						return false;
+					}
+					// hidden successfully, remove it from the list
+					it.remove();
+				}
+			}
+
+			// now hide all instantiated editors
 			for (IEditorReference editorRef : editorRefs) {
 				MPart model = ((EditorReference) editorRef).getModel();
 				// saving should've been handled earlier above
