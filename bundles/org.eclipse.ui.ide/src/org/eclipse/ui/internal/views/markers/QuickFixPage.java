@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,10 +32,10 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
@@ -55,6 +55,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMarkerResolution;
+import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -77,9 +78,11 @@ import org.eclipse.ui.views.markers.internal.Util;
 public class QuickFixPage extends WizardPage {
 
 	private Map resolutions;
-	private ListViewer resolutionsList;
+
+	private TableViewer resolutionsList;
 	private CheckboxTableViewer markersTable;
 	private IWorkbenchPartSite site;
+
 
 	/**
 	 * Create a new instance of the receiver.
@@ -224,7 +227,7 @@ public class QuickFixPage extends WizardPage {
 	 * @param control
 	 */
 	private void createResolutionsList(Composite control) {
-		resolutionsList = new ListViewer(control, SWT.BORDER | SWT.SINGLE
+		resolutionsList = new TableViewer(control, SWT.BORDER | SWT.SINGLE
 				| SWT.V_SCROLL);
 		resolutionsList.setContentProvider(new IStructuredContentProvider() {
 			/*
@@ -265,6 +268,16 @@ public class QuickFixPage extends WizardPage {
 			 */
 			public String getText(Object element) {
 				return ((IMarkerResolution) element).getLabel();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
+			 * @since 3.7
+			 */
+			public Image getImage(Object element) {
+				return element instanceof IMarkerResolution2 ? ((IMarkerResolution2)element).getImage() : null;
 			}
 		});
 
