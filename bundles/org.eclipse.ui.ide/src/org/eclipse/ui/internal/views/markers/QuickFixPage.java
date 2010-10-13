@@ -544,7 +544,7 @@ public class QuickFixPage extends WizardPage {
 	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
 	 */
 	public boolean isPageComplete() {
-		return true;
+		return markersTable.getCheckedElements().length > 0;
 	}
 
 	/**
