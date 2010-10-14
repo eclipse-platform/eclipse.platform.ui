@@ -445,7 +445,7 @@ public class PartServiceImpl implements EPartService {
 				}
 				perspective.getContext().activate();
 				modelService.bringToTop(target);
-				partActivationHistory.activate(target, false);
+				activate(target, true, false);
 				return;
 			}
 
