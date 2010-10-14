@@ -234,13 +234,13 @@ class PartBackend {
 	@Focus
 	public void setFocus() {
 		// can test if called by checking if text1.isFocusControl()
-		System.out.println(part.getLabel() + ": setFocus to text1");
+		// System.out.println(part.getLabel() + ": setFocus to text1");
 		text1.setFocus();
 	}
 
 	@PreDestroy
 	public void dispose() {
-		System.out.println(part.getLabel() + ": destroyed");
+		// System.out.println(part.getLabel() + ": destroyed");
 	}
 
 }
@@ -261,13 +261,13 @@ class TextField {
 
 	@PostConstruct
 	public void init() {
-		System.out.println("TextField created");
+		// System.out.println("TextField created");
 		text = new Text(parent, SWT.SINGLE);
 		text.setText(element.getLabel() + " text");
 	}
 
 	@PreDestroy
 	public void dispose() {
-		System.out.println("TextField destroyed");
+		// System.out.println("TextField destroyed");
 	}
 }

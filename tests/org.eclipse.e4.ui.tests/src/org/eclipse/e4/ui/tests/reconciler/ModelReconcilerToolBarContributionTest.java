@@ -38,7 +38,6 @@ public abstract class ModelReconcilerToolBarContributionTest extends
 		contribution.setPositionInParent(after);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 		contribution = application.getToolBarContributions().get(0);

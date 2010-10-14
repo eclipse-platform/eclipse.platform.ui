@@ -1,12 +1,17 @@
-<?xml version="1.0" encoding="ASCII"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_nsrxgUjNEd-CobQCdWYgrA" elementId="org.eclipse.e4.ide.application">
   <children xsi:type="basic:Window" xmi:id="_Ry7agUjOEd-0rvoi3OqNpA" elementId="_Ry7agUjOEd-0rvoi3OqNpA" x="20" y="20" width="800" height="600">
-    <children xsi:type="advanced:PerspectiveStack" xmi:id="_4yzIcUjOEd-XR9_8rlW1bQ" elementId="DefaultPerspectiveStack">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_4yzIcUjOEd-XR9_8rlW1bQ" elementId="DefaultPerspectiveStack" selectedElement="_5aL0YUjVEd-Cd_8pRZhbHA">
       <children xsi:type="advanced:Perspective" xmi:id="_5aL0YUjVEd-Cd_8pRZhbHA" elementId="Default">
         <children xsi:type="basic:PartSashContainer" xmi:id="_8wp4IEldEd-TVO58rzJVgA" elementId="_8wp4IEldEd-TVO58rzJVgA" containerData="" horizontal="true">
           <children xsi:type="basic:PartSashContainer" xmi:id="_Ec_RsEleEd-TVO58rzJVgA" elementId="_Ec_RsEleEd-TVO58rzJVgA" containerData="30">
             <children xsi:type="basic:PartStack" xmi:id="_H868QEleEd-TVO58rzJVgA" elementId="_H868QEleEd-TVO58rzJVgA" containerData="70">
-              <children xsi:type="basic:Part" xmi:id="_LYVTMEleEd-TVO58rzJVgA" elementId="_LYVTMEleEd-TVO58rzJVgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library"/>
+              <children xsi:type="basic:Part" xmi:id="_LYVTMEleEd-TVO58rzJVgA" elementId="_LYVTMEleEd-TVO58rzJVgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library">
+                <menus xmi:id="_E5HnwEjUEd-v7fhjaiz65w" elementId="org.eclipse.e4.demo.e4photo.Library.viewMenu" label="File">
+                  <tags>ViewMenu</tags>
+                  <children xsi:type="menu:HandledMenuItem" xmi:id="_IHQXsEjUEd-v7fhjaiz65w" elementId="_IHQXsEjUEd-v7fhjaiz65w" label="Create Album" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>
+                </menus>
+              </children>
             </children>
             <children xsi:type="basic:PartStack" xmi:id="_XpMn4EleEd-TVO58rzJVgA" elementId="_XpMn4EleEd-TVO58rzJVgA" containerData="30">
               <children xsi:type="basic:Part" xmi:id="_YuUc4EleEd-TVO58rzJVgA" elementId="_YuUc4EleEd-TVO58rzJVgA" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" label="Location"/>
@@ -21,12 +26,7 @@
           </children>
         </children>
       </children>
-      <children xsi:type="advanced:Perspective" xmi:id="_Aua3AEjWEd-Cd_8pRZhbHA" elementId="Simple">
-        <children xsi:type="advanced:Placeholder" xmi:id="_A3JFAElhEd-gnfb0CEj9-g" elementId="_A3JFAElhEd-gnfb0CEj9-g" ref="_hKibQEleEd-TVO58rzJVgA"/>
-      </children>
     </children>
-    <variables>selection</variables>
-    <variables>input</variables>
     <mainMenu xmi:id="_9rNPkUjTEd-v7fhjaiz65w" elementId="_9rNPkUjTEd-v7fhjaiz65w">
       <children xsi:type="menu:Menu" xmi:id="_E5HnwEjUEd-v7fhjaiz65w" elementId="org.eclipse.e4.ide.app.menu.file" label="File">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_IHQXsEjUEd-v7fhjaiz65w" elementId="_IHQXsEjUEd-v7fhjaiz65w" label="Create Album" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>

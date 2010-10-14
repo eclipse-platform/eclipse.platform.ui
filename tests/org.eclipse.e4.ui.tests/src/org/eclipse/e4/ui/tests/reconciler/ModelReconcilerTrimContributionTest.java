@@ -38,7 +38,6 @@ public abstract class ModelReconcilerTrimContributionTest extends
 		contribution.setPositionInParent(after);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 		contribution = application.getTrimContributions().get(0);
