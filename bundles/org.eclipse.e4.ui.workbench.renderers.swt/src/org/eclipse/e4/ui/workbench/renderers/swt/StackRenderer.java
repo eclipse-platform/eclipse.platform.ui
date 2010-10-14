@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -403,7 +404,7 @@ public class StackRenderer extends LazyStackRenderer {
 				if (!curTB.isDisposed()) {
 					MUIElement tbME = (MUIElement) curTB
 							.getData(AbstractPartRenderer.OWNING_ME);
-					if (tbME instanceof MToolBar)
+					if (tbME instanceof MRenderedToolBar)
 						renderer.removeGui(tbME);
 					else
 						curTB.dispose();
@@ -522,7 +523,7 @@ public class StackRenderer extends LazyStackRenderer {
 			if (!curTB.isDisposed()) {
 				MUIElement tbME = (MUIElement) curTB
 						.getData(AbstractPartRenderer.OWNING_ME);
-				if (tbME instanceof MToolBar)
+				if (tbME instanceof MRenderedToolBar)
 					renderer.removeGui(tbME);
 				else
 					curTB.dispose();

@@ -70,9 +70,22 @@ public final class ContributionsAnalyzer {
 		return false;
 	}
 
-	public static void gatherToolBarContributions(final MToolBar toolbarModel,
+	public static void XXXgatherToolBarContributions(final MToolBar toolbarModel,
 			final List<MToolBarContribution> toolbarContributionList, final String id,
 			final ArrayList<MToolBarContribution> toContribute) {
+		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
+			String parentID = toolBarContribution.getParentId();
+			boolean filtered = isFiltered(toolbarModel, toolBarContribution);
+			if (filtered || !parentID.equals(id) || !toolBarContribution.isToBeRendered()) {
+				continue;
+			}
+			toContribute.add(toolBarContribution);
+		}
+	}
+
+	public static void gatherToolBarContributions(final MToolBar toolbarModel,
+			final List<MToolBarContribution> toolbarContributionList, final String id,
+			final ArrayList<MToolBarContribution> toContribute, final ExpressionContext eContext) {
 		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
 			String parentID = toolBarContribution.getParentId();
 			boolean filtered = isFiltered(toolbarModel, toolBarContribution);

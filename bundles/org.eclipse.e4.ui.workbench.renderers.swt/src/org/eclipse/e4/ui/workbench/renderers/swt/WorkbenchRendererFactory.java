@@ -14,16 +14,27 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 
 public class WorkbenchRendererFactory implements IRendererFactory {
 
 	private AreaRenderer areaRenderer;
 	private MenuRenderer menuRenderer;
+	private HandledMenuItemRenderer handledMenuItemRenderer;
 	private ToolBarRenderer toolbarRenderer;
+	private ToolItemRenderer toolItemRenderer;
+	private SeparatorRenderer separatorRenderer;
 	private ContributedPartRenderer contributedPartRenderer;
 	private ElementReferenceRenderer elementRefRenderer;
 	private PerspectiveStackRenderer perspStackRenderer;
@@ -35,6 +46,10 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private WBWRenderer wbwRenderer;
 
 	private IEclipseContext context;
+	private DirectMenuItemRenderer directMenuItemRenderer;
+	private RenderedMenuRenderer renderedMenuRenderer;
+	private RenderedMenuItemRenderer renderedMenuItemRenderer;
+	private RenderedToolBarRenderer renderedToolbarRenderer;
 
 	public AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
 		if (uiElement instanceof MArea) {
@@ -49,18 +64,61 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(contributedPartRenderer);
 			}
 			return contributedPartRenderer;
+		} else if (uiElement instanceof MHandledMenuItem) {
+			if (handledMenuItemRenderer == null) {
+				handledMenuItemRenderer = new HandledMenuItemRenderer();
+				initRenderer(handledMenuItemRenderer);
+			}
+			return handledMenuItemRenderer;
+		} else if (uiElement instanceof MDirectMenuItem) {
+			if (directMenuItemRenderer == null) {
+				directMenuItemRenderer = new DirectMenuItemRenderer();
+				initRenderer(directMenuItemRenderer);
+			}
+			return directMenuItemRenderer;
+		} else if (uiElement instanceof MRenderedMenu) {
+			if (renderedMenuRenderer == null) {
+				renderedMenuRenderer = new RenderedMenuRenderer();
+				initRenderer(renderedMenuRenderer);
+			}
+			return renderedMenuRenderer;
+		} else if (uiElement instanceof MRenderedMenuItem) {
+			if (renderedMenuItemRenderer == null) {
+				renderedMenuItemRenderer = new RenderedMenuItemRenderer();
+				initRenderer(renderedMenuItemRenderer);
+			}
+			return renderedMenuItemRenderer;
 		} else if (uiElement instanceof MMenu) {
 			if (menuRenderer == null) {
 				menuRenderer = new MenuRenderer();
 				initRenderer(menuRenderer);
 			}
 			return menuRenderer;
+		} else if (uiElement instanceof MRenderedToolBar) {
+			if (renderedToolbarRenderer == null) {
+				renderedToolbarRenderer = new RenderedToolBarRenderer();
+				initRenderer(renderedToolbarRenderer);
+			}
+			return renderedToolbarRenderer;
 		} else if (uiElement instanceof MToolBar) {
 			if (toolbarRenderer == null) {
 				toolbarRenderer = new ToolBarRenderer();
 				initRenderer(toolbarRenderer);
 			}
 			return toolbarRenderer;
+		} else if (uiElement instanceof MToolItem) {
+			if (toolItemRenderer == null) {
+				toolItemRenderer = new ToolItemRenderer();
+				initRenderer(toolItemRenderer);
+			}
+			return toolItemRenderer;
+		} else if (uiElement instanceof MMenuSeparator
+				|| uiElement instanceof MToolBarSeparator) {
+			if (separatorRenderer == null) {
+				separatorRenderer = new SeparatorRenderer();
+				initRenderer(separatorRenderer);
+			}
+			return separatorRenderer;
 		} else if (uiElement instanceof MPlaceholder) {
 			if (elementRefRenderer == null) {
 				elementRefRenderer = new ElementReferenceRenderer();

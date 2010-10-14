@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.widgets.CTabFolder;
@@ -168,7 +169,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					if (!curTB.isDisposed()) {
 						MUIElement tbME = (MUIElement) curTB
 								.getData(AbstractPartRenderer.OWNING_ME);
-						if (tbME instanceof MToolBar)
+						if (tbME instanceof MRenderedToolBar)
 							renderer.removeGui(tbME);
 						else
 							curTB.dispose();
@@ -261,7 +262,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					if (!curTB.isDisposed()) {
 						MUIElement tbME = (MUIElement) curTB
 								.getData(AbstractPartRenderer.OWNING_ME);
-						if (tbME instanceof MToolBar)
+						if (tbME instanceof MRenderedToolBar)
 							renderer.removeGui(tbME);
 						else
 							curTB.dispose();
@@ -286,6 +287,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				IEclipseContext newParentContext = modelService
 						.getContainingContext(element);
 				if (context.getParent() != newParentContext) {
+					//					System.out.println("Update Context: " + context.toString() //$NON-NLS-1$
+					//							+ " new parent: " + newParentContext.toString()); //$NON-NLS-1$
 					context.setParent(newParentContext);
 				}
 			}

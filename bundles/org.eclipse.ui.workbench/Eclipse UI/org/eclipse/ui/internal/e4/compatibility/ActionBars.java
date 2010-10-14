@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -84,18 +84,17 @@ public class ActionBars extends SubActionBars {
 				if (tbCtrl != null && !tbCtrl.isDisposed()) {
 					MUIElement tbModel = (MUIElement) tbCtrl
 							.getData(AbstractPartRenderer.OWNING_ME);
-					if (tbModel instanceof MToolBar) {
+					if (tbModel instanceof MRenderedToolBar) {
 						// only force a rerender if the toolbar can be seen
 						if (isSelected(part)) {
-							Object tbParent = tbCtrl.getParent();
 							if (part.getContext() != null) {
 								IPresentationEngine renderer = part.getContext().get(
 										IPresentationEngine.class);
 								if (renderer != null) {
 									renderer.removeGui(tbModel);
-									renderer.createGui(tbModel, tbParent,
+									renderer.createGui(tbModel, tbCtrl.getParent(),
 											part.getContext());
-									((Control) tbModel.getWidget()).getParent().layout();
+									tbCtrl.getParent().layout();
 								}
 							}
 						}
