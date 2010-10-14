@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.ui.examples.javaeditor"
-   name="%pluginName"
-   version="3.1.100.qualifier"
-   provider-name="%providerName"
-   class="org.eclipse.ui.examples.javaeditor.JavaEditorExamplePlugin">
-
-   <runtime>
-      <library name="javaeditorexample.jar">
-         <export name="*"/>
-      </library>
-      <library name="templateeditorexample.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.views"/>
-   </requires>
-
+<plugin>
 
 <!-- =========================================================================== -->
 <!-- Java Editor Example                                                         -->
