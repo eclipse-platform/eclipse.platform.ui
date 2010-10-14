@@ -760,7 +760,10 @@ public class ExtendedMarkersView extends ViewPart {
 			 * IWorkbenchPartReference)
 			 */
 			public void partHidden(IWorkbenchPartReference partRef) {
-				// Do nothing by default
+				if (partRef.getId().equals(getSite().getId())) {
+					setTitleToolTip(getStatusMessage());
+				}
+
 			}
 
 			/*
@@ -791,11 +794,11 @@ public class ExtendedMarkersView extends ViewPart {
 			 * IWorkbenchPartReference)
 			 */
 			public void partVisible(IWorkbenchPartReference partRef) {
-				if (partRef.getId().equals(
-						ExtendedMarkersView.this.getSite().getId())) {
+				if (partRef.getId().equals(getSite().getId())) {
 					pageSelectionListener.selectionChanged(getSite().getPage()
 							.getActivePart(), getSite().getPage()
 							.getSelection());
+					setTitleToolTip(null);
 				}
 
 			}
@@ -1369,7 +1372,11 @@ public class ExtendedMarkersView extends ViewPart {
 	 * Update the title of the view.
 	 */
 	void updateTitle() {
-		setContentDescription(getStatusMessage());
+		String statusMessage= getStatusMessage();
+		setContentDescription(statusMessage);
+		if (!"".equals(getTitleToolTip())) { //$NON-NLS-1$
+			setTitleToolTip(statusMessage);
+		}
 	}
 
 	/**
