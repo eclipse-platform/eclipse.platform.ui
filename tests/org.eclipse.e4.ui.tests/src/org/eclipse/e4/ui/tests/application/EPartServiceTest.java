@@ -5721,6 +5721,67 @@ public class EPartServiceTest extends TestCase {
 		testHidePart_Bug327044(false);
 	}
 
+	private void testHidePart_Bug327765(boolean force) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(part);
+		part.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setToBeRendered(false);
+		placeholderB.setRef(part);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(part);
+		assertNotNull(part.getContext());
+
+		partService.switchPerspective(perspectiveB);
+		assertNotNull(part.getContext());
+
+		partService.hidePart(part, force);
+		assertNotNull(part.getContext());
+	}
+
+	public void testHidePart_Bug327765_True() {
+		testHidePart_Bug327765(true);
+	}
+
+	public void testHidePart_Bug327765_False() {
+		testHidePart_Bug327765(false);
+	}
+
 	public void testHidePart_ActivationHistory01() {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();

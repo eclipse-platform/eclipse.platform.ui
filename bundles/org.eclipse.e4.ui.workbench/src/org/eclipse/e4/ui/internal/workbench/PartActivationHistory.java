@@ -73,6 +73,10 @@ class PartActivationHistory {
 	 * Checks to see if this element and its parents are actually being rendered.
 	 */
 	private boolean isValid(MUIElement element) {
+		if (element == null) {
+			return false;
+		}
+
 		if (element instanceof MApplication) {
 			return true;
 		}
@@ -251,25 +255,34 @@ class PartActivationHistory {
 		if (candidates != null) {
 			for (Iterator<MPart> it = candidates.iterator(); it.hasNext();) {
 				MPart part = it.next();
-				if (part.getParent() == null) {
-					MPlaceholder placeholder = part.getCurSharedRef();
-					if (placeholder == null || placeholder.getParent() == null) {
-						it.remove();
+				if (!part.isToBeRendered()) {
+					// this part isn't being rendered, remove this as a candidate
+					it.remove();
+					continue;
+				}
+
+				if (part.isVisible()) {
+					MElementContainer<MUIElement> parent = part.getParent();
+					if (parent == null) {
+						MPlaceholder placeholder = part.getCurSharedRef();
+						if (placeholder == null || !placeholder.isToBeRendered()
+								|| !isValid(placeholder.getParent())) {
+							it.remove();
+							continue;
+						} else if (!placeholder.isVisible()) {
+							continue;
+						}
+						return part;
+					} else if (isValid(parent)) {
+						return part;
 					}
 				}
-				return part;
 			}
 		}
 
 		candidates = perspective.getContext().get(EPartService.class).getParts();
 		for (MPart candidate : candidates) {
-			if (candidate.isToBeRendered() && candidate.isVisible()) {
-				MPlaceholder placeholder = candidate.getCurSharedRef();
-				if (placeholder != null) {
-					if (!placeholder.isToBeRendered() || !placeholder.isVisible()) {
-						continue;
-					}
-				}
+			if (isValid(perspective, candidate)) {
 				return candidate;
 			}
 		}

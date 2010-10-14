@@ -385,6 +385,49 @@ public class PartServiceImpl implements EPartService {
 		return false;
 	}
 
+	private MPlaceholder getLocalPlaceholder(MPart part) {
+		return getLocalPlaceholder(getContainer(), part);
+	}
+
+	private MPlaceholder getLocalPlaceholder(MElementContainer<?> container, MPart part) {
+		for (Object object : container.getChildren()) {
+			if (object instanceof MElementContainer<?>) {
+				MPlaceholder placeholder = getLocalPlaceholder((MElementContainer<?>) object, part);
+				if (placeholder != null) {
+					return placeholder;
+				}
+			} else if (object instanceof MPlaceholder) {
+				MPlaceholder placeholder = (MPlaceholder) object;
+				MUIElement ref = placeholder.getRef();
+				if (ref == part) {
+					return placeholder;
+				}
+			}
+		}
+
+		if (container instanceof MWindow) {
+			MWindow win = (MWindow) container;
+			for (MWindow dw : win.getWindows()) {
+				MPlaceholder placeholder = getLocalPlaceholder(dw, part);
+				if (placeholder != null) {
+					return placeholder;
+				}
+			}
+		}
+
+		if (container instanceof MPerspective) {
+			MPerspective persp = (MPerspective) container;
+			for (MWindow dw : persp.getWindows()) {
+				MPlaceholder placeholder = getLocalPlaceholder(dw, part);
+				if (placeholder != null) {
+					return placeholder;
+				}
+			}
+		}
+
+		return null;
+	}
+
 	public void switchPerspective(MPerspective perspective) {
 		Assert.isNotNull(perspective);
 		MWindow window = getWindow();
@@ -747,24 +790,9 @@ public class PartServiceImpl implements EPartService {
 		return null;
 	}
 
-	private MUIElement getRemoveTarget(MUIElement element) {
-		MPlaceholder sharedRef = element.getCurSharedRef();
-		if (sharedRef == null) {
-			return findRemoveTarget(getContainer(), element);
-		}
-		return sharedRef;
-	}
-
-	private MUIElement findRemoveTarget(MElementContainer<?> container, MUIElement element) {
-		for (Object child : container.getChildren()) {
-			if (child instanceof MPlaceholder) {
-				MPlaceholder placeholder = (MPlaceholder) child;
-				if (placeholder.getRef() == element) {
-					return placeholder;
-				}
-			}
-		}
-		return element;
+	private MUIElement getRemoveTarget(MPart part) {
+		MPlaceholder placeholder = getLocalPlaceholder(part);
+		return placeholder == null ? part : placeholder;
 	}
 
 	private MPart showPart(PartState partState, MPart providedPart, MPart localPart) {
@@ -853,6 +881,16 @@ public class PartServiceImpl implements EPartService {
 			MUIElement toBeRemoved = getRemoveTarget(part);
 			MElementContainer<MUIElement> parent = getParent(toBeRemoved);
 			List<MUIElement> children = parent.getChildren();
+
+			// check if we're a placeholder but not actually the shared ref of the part
+			if (toBeRemoved != part && toBeRemoved instanceof MPlaceholder
+					&& sharedRef != toBeRemoved) {
+				// if so, not much to do, remove ourselves if necessary but that's it
+				if (force || part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
+					parent.getChildren().remove(toBeRemoved);
+				}
+				return;
+			}
 
 			IEclipseContext partContext = part.getContext();
 			MPart activationCandidate = null;
