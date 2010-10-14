@@ -442,8 +442,8 @@ public class PartServiceImpl implements EPartService {
 				IEclipseContext activeChild = activePart.getContext().getParent().getActiveChild();
 				if (activeChild != null) {
 					activeChild.deactivate();
-					perspective.getContext().activate();
 				}
+				perspective.getContext().activate();
 				modelService.bringToTop(target);
 				partActivationHistory.activate(target, false);
 				return;
