@@ -23,6 +23,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -554,7 +556,29 @@ public class PartRenderingEngine implements IPresentationEngine {
 	/**
 	 * @param element
 	 */
-	public void removeGui(MUIElement element) {
+	public void removeGui(final MUIElement element) {
+		// wrap the handling in a SafeRunner so that exceptions do not prevent
+		// the menu from being shown
+		SafeRunner.run(new ISafeRunnable() {
+			public void handleException(Throwable e) {
+				if (e instanceof Error) {
+					// errors are deadly, we shouldn't ignore these
+					throw (Error) e;
+				} else {
+					// log exceptions otherwise
+					if (logger != null) {
+						logger.error(e);
+					}
+				}
+			}
+
+			public void run() throws Exception {
+				safeRemoveGui(element);
+			}
+		});
+	}
+
+	private void safeRemoveGui(MUIElement element) {
 		if (removeRoot == null)
 			removeRoot = element;
 		renderedElements.remove(element);
