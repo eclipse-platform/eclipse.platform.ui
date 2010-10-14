@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextContent;
@@ -47,6 +48,11 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	private StyledText fTextWidget;
 	/** Tells whether the advanced graphics sub system is available. */
 	private final boolean fIsAdvancedGraphicsPresent;
+	/**
+	 * Tells whether the text widget was created with the full selection style bit or not.
+	 * @since 3.7
+	 */
+	private final boolean fIsFullSelectionStyle;
 	/** @since 3.7 */
 	private boolean fShowLeadingSpaces= true;
 	/** @since 3.7 */
@@ -83,6 +89,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		gc.setAdvanced(true);
 		fIsAdvancedGraphicsPresent= gc.getAdvanced();
 		gc.dispose();
+		fIsFullSelectionStyle= (fTextWidget.getStyle() & SWT.FULL_SELECTION) != SWT.NONE;
 	}
 
 	/**
@@ -421,7 +428,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 					 * Block selection is drawn using alpha and no selection-inverting
 					 * takes place, we always draw as 'unselected' in block selection mode.
 					 */
-					if (!fTextWidget.getBlockSelection() && isOffsetSelected(fTextWidget, widgetOffset)) {
+					if (!fTextWidget.getBlockSelection() && fIsFullSelectionStyle && isOffsetSelected(fTextWidget, widgetOffset)) {
 						fg= fTextWidget.getSelectionForeground();
 					} else if (styleRange == null || styleRange.start + styleRange.length <= widgetOffset) {
 						styleRange= fTextWidget.getStyleRangeAtOffset(widgetOffset);
