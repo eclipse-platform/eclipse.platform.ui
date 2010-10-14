@@ -16,6 +16,8 @@ import junit.framework.TestCase;
 import junit.framework.TestResult;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 
@@ -29,6 +31,8 @@ import org.eclipse.core.runtime.Platform;
  */
 public class TweakletCheckTest extends TestCase {
 
+	String[] allowedTweaklets = {"org.eclipse.ui.cocoa.titlePathUpdaterTweaklet"};
+	
 	/**
 	 * 
 	 */
@@ -46,10 +50,20 @@ public class TweakletCheckTest extends TestCase {
 		result.startTest(this);
 		try {
 			IExtensionPoint point = Platform.getExtensionRegistry()
-
 			.getExtensionPoint("org.eclipse.ui.internalTweaklets");
-			boolean abort = point.getExtensions().length > 0;
-
+			IExtension[] extensions = point.getExtensions();
+			boolean abort = false;
+			outer:
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+				for (int j = 0; j < elements.length; j++) {
+					String id = elements[j].getAttribute("id");
+					if(!isAllowedTweaklet(id)) {
+						abort = true;
+						break outer;
+					}
+				}
+			}
 			if (abort) {
 				Error error = new Error(
 						"Tweaklets present in test setup - all test results are now suspect.  Please restart the tests with the tweaklet extensions removed.");
@@ -60,6 +74,17 @@ public class TweakletCheckTest extends TestCase {
 			result.endTest(this);
 		}
 
+	}
+
+	private boolean isAllowedTweaklet(String id) {
+		boolean allowed = false;
+		for (int j = 0; j < allowedTweaklets.length; j++) {
+			if(allowedTweaklets[j].equals(id)) {
+				allowed = true;
+				break;
+			}
+		}
+		return allowed;
 	}
 
 	public static Test suite() {

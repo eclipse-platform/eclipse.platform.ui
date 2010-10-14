@@ -17,7 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -41,8 +43,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -63,6 +67,7 @@ import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.EditorAreaDropAdapter;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -70,6 +75,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.WorkbenchActionBuilder;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
+import org.eclipse.ui.internal.tweaklets.TitlePathUpdater;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -114,6 +121,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	 */
 	private IPropertyChangeListener propertyChangeListener;
 
+	private TitlePathUpdater titlePathUpdater;
 
 	/**
 	 * Crates a new IDE workbench window advisor.
@@ -127,6 +135,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			IWorkbenchWindowConfigurer configurer) {
 		super(configurer);
 		this.wbAdvisor = wbAdvisor;
+		titlePathUpdater = (TitlePathUpdater) Tweaklets.get(TitlePathUpdater.KEY);
 	}
 
 	/*
@@ -414,6 +423,34 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		if (!newTitle.equals(oldTitle)) {
 			configurer.setTitle(newTitle);
 		}
+		setTitlePath();
+	}
+
+	private void setTitlePath() {
+
+		String titlePath = null;
+		if (lastActiveEditor != null) {
+			IEditorInput editorInput = lastActiveEditor.getEditorInput();
+			if (editorInput instanceof IFileEditorInput) {
+				titlePath = computeTitlePath((IFileEditorInput) editorInput);
+			} else if (editorInput instanceof FileStoreEditorInput) {
+				titlePath = computeTitlePath((FileStoreEditorInput) editorInput);
+			}
+		}
+		titlePathUpdater.updateTitlePath(getWindowConfigurer().getWindow().getShell(), titlePath);
+	}
+
+	private String computeTitlePath(FileStoreEditorInput editorInput) {
+		return editorInput.getURI().getPath().toString();
+	}
+
+	private String computeTitlePath(IFileEditorInput editorInput) {
+		IFile file = editorInput.getFile();
+		IPath location = file.getLocation();
+		if (location != null) {
+			return location.toFile().toString();
+		}
+		return null;
 	}
 
 	/**

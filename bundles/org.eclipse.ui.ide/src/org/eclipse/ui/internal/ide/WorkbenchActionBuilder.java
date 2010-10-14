@@ -206,6 +206,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 	private CommandContributionItem minimizeItem;
 	
 	private CommandContributionItem zoomItem;
+
+	private CommandContributionItem arrangeWindowsItem;
 	
     // contribution items
     // @issue should obtain from ContributionItemFactory
@@ -629,6 +631,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         Separator sep = new Separator(IWorkbenchActionConstants.MB_ADDITIONS);
 		sep.setVisible(!Util.isMac());
 		menu.add(sep);
+		
+		if(Util.isCocoa())
+			menu.add(arrangeWindowsItem);
         
         // See the comment for quit in createFileMenu
         ActionContributionItem openPreferencesItem = new ActionContributionItem(openPreferencesAction);
@@ -883,6 +888,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         introAction = null;
         minimizeItem = null;
         zoomItem = null;
+        arrangeWindowsItem = null;
 		super.dispose();
     }
 
@@ -1170,6 +1176,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 			CommandContributionItemParameter zoomParam = new CommandContributionItemParameter(window, null,
 					"org.eclipse.ui.cocoa.zoomWindow", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
 			zoomItem = new CommandContributionItem(zoomParam);
+			CommandContributionItemParameter arrangeWindowsParam = new CommandContributionItemParameter(window, null,
+					"org.eclipse.ui.cocoa.arrangeWindowsInFront", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
+			arrangeWindowsItem = new CommandContributionItem(arrangeWindowsParam);
 		}
 
     }

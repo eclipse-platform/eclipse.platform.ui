@@ -12,37 +12,32 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.cocoa.CloseDialogHandler"
             description="%command.closeDialog.desc"
             id="org.eclipse.ui.cocoa.closeDialog"
             name="%command.closeDialog.name">
       </command>
       <command
             categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.cocoa.MinimizeWindowHandler"
             description="%command.minimize.desc"
             id="org.eclipse.ui.cocoa.minimizeWindow"
             name="%command.minimize.name">
       </command>
       <command
             categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.cocoa.ZoomWindowHandler"
             description="%command.zoom.desc"
             id="org.eclipse.ui.cocoa.zoomWindow"
             name="%command.zoom.name">
       </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.handlers">
-      <handler
-            class="org.eclipse.ui.internal.cocoa.CloseDialogHandler"
-            commandId="org.eclipse.ui.cocoa.closeDialog">
-      </handler>
-      <handler
-            class="org.eclipse.ui.internal.cocoa.MinimizeWindowHandler"
-            commandId="org.eclipse.ui.cocoa.minimizeWindow">
-      </handler>
-      <handler
-            class="org.eclipse.ui.internal.cocoa.ZoomWindowHandler"
-            commandId="org.eclipse.ui.cocoa.zoomWindow">
-      </handler>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.cocoa.ArrangeWindowsHandler"
+            description="%command.arrangeWindows.desc"
+            id="org.eclipse.ui.cocoa.arrangeWindowsInFront"
+            name="%command.arrangeWindows.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -60,6 +55,15 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M">
       </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.internalTweaklets">
+      <tweaklet
+            definition="org.eclipse.ui.internal.tweaklets.TitlePathUpdater"
+            id="org.eclipse.ui.cocoa.titlePathUpdaterTweaklet"
+            implementation="org.eclipse.ui.internal.cocoa.CocoaTitlePathUpdater"
+            name="Cocoa Title Path Updater">
+      </tweaklet>
    </extension>
    
 </fragment>
