@@ -157,7 +157,13 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				}
 			}
 
-			if (element instanceof MElementContainer<?>) {
+			if (element instanceof MGenericStack<?>) {
+				MGenericStack<?> stack = (MGenericStack<?>) element;
+				Object selectedElement = stack.getSelectedElement();
+				if (selectedElement != null) {
+					adjustPlaceholders((MUIElement) selectedElement);
+				}
+			} else if (element instanceof MElementContainer<?>) {
 				for (Object child : ((MElementContainer<?>) element)
 						.getChildren()) {
 					adjustPlaceholders((MUIElement) child);

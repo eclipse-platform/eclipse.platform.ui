@@ -885,6 +885,8 @@ public class PartServiceImpl implements EPartService {
 			// check if we're a placeholder but not actually the shared ref of the part
 			if (toBeRemoved != part && toBeRemoved instanceof MPlaceholder
 					&& sharedRef != toBeRemoved) {
+				toBeRemoved.setToBeRendered(false);
+
 				// if so, not much to do, remove ourselves if necessary but that's it
 				if (force || part.getTags().contains(REMOVE_ON_HIDE_TAG)) {
 					parent.getChildren().remove(toBeRemoved);
