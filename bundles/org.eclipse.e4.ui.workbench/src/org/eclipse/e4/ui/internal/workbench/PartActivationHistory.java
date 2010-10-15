@@ -363,43 +363,11 @@ class PartActivationHistory {
 		return null;
 	}
 
-	Object getSiblingActivationCandidate2() {
-		Object history = perspectiveActivationHistories.get(null);
-		if (history == null) {
-			return null;
-		}
-		return history == null ? null : null;
-	}
-
 	private MPart getSiblingActivationCandidate(MPart part, MUIElement element) {
-		MUIElement parent = element.getParent();
-		while (parent != null) {
-			if (parent instanceof MPerspective) {
-				LinkedList<MPart> history = perspectiveActivationHistories.get(parent);
-				return history == null ? null : getSiblingActivationCandidate(part, element,
-						history);
-			} else if (parent instanceof MWindow) {
-				MUIElement windowParent = parent.getParent();
-				if (windowParent instanceof MApplication) {
-					return getSiblingActivationCandidate(part, element, generalActivationHistory);
-				}
-				parent = windowParent;
-			} else {
-				MUIElement parentCandidate = parent.getParent();
-				if (parentCandidate == null) {
-					MPlaceholder placeholder = parent.getCurSharedRef();
-					if (placeholder == null) {
-						return null;
-					}
-					parentCandidate = placeholder.getParent();
-					if (parentCandidate == null) {
-						return null;
-					}
-				}
-				parent = parentCandidate;
-			}
-		}
-		return null;
+		LinkedList<MPart> perspectiveActivationHistory = getPerspectiveActivationHistory(part);
+		return getSiblingActivationCandidate(part, element,
+				perspectiveActivationHistory == null ? generalActivationHistory
+						: perspectiveActivationHistory);
 	}
 
 	public MPart getSiblingActivationCandidate(MPart part) {

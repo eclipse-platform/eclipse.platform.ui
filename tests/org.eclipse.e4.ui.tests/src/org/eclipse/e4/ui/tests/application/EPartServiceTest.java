@@ -7216,6 +7216,94 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(partA, partService.getActivePart());
 	}
 
+	public void testHidePart_ActivationHistory_Bug327952_03() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspective.getWindows().add(detachedWindow);
+
+		MArea area = AdvancedFactoryImpl.eINSTANCE.createArea();
+		detachedWindow.getChildren().add(area);
+		detachedWindow.setSelectedElement(area);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		area.getChildren().add(partB);
+		area.setSelectedElement(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		area.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		partService.activate(partB);
+		partService.activate(partC);
+		partService.activate(partA);
+		partService.activate(partB);
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug327952_04() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.getWindows().add(detachedWindow);
+
+		MArea area = AdvancedFactoryImpl.eINSTANCE.createArea();
+		detachedWindow.getChildren().add(area);
+		detachedWindow.setSelectedElement(area);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		area.getChildren().add(partB);
+		area.setSelectedElement(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		area.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		partService.activate(partB);
+		partService.activate(partC);
+		partService.activate(partA);
+		partService.activate(partB);
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
 	/**
 	 * Test to ensure that the active part remains constant between perspective
 	 * switches.
