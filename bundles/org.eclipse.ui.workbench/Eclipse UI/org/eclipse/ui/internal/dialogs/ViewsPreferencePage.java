@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -78,7 +79,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	public void init(IWorkbench workbench) {
-		IEclipseContext context = (IEclipseContext) workbench.getService(IEclipseContext.class);
+		MApplication application = (MApplication) workbench.getService(MApplication.class);
+		IEclipseContext context = application.getContext();
 		defaultTheme = (String) context.get(E4Application.THEME_ID);
 		engine = context.get(IThemeEngine.class);
 	}
