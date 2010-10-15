@@ -8,21 +8,35 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
+
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.swt.widgets.ToolBar;
 
-class CursorInfo {
-	Point cursorPos;
-	Control curCtrl;
-	MUIElement curElement;
-	MPlaceholder curElementRef;
-	MUIElement itemElement;
-	MPlaceholder itemElementRef;
-	int itemIndex;
-	Rectangle itemRect;
+/**
+ *
+ */
+public class ToolbarDragAgent extends DragAgent {
+
+	@Override
+	public MUIElement getElementToDrag(CursorInfo info) {
+		if (info.curElement instanceof MToolBar) {
+			if (info.curCtrl instanceof ToolBar) {
+				if (info.curCtrl == info.curCtrl.getParent().getChildren()[0]) {
+					dragElement = info.curElement;
+					return info.curElement;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void dragStart(MUIElement element) {
+		super.dragStart(element);
+
+		element.setVisible(false);
+	}
 }

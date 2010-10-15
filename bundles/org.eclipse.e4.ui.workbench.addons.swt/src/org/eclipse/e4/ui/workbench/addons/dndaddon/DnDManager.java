@@ -124,7 +124,9 @@ class DnDManager {
 		baseWindow = window;
 
 		dragAgents.add(new PartDragAgent());
+		dragAgents.add(new ToolbarDragAgent());
 		dropAgents.add(new StackDropAgent(window));
+		dropAgents.add(new ToolbarDropAgent());
 
 		modelService = (EModelService) window.getContext().get(EModelService.class.getName());
 		dropAgents.add(new SplitDropAgent(modelService));
@@ -189,6 +191,8 @@ class DnDManager {
 		baseShell.setCapture(true);
 
 		try {
+			dragAgent.dragStart(dragAgent.dragElement);
+
 			// Run tracker until mouse up occurs or escape key pressed.
 			boolean performDrop = tracker.open();
 

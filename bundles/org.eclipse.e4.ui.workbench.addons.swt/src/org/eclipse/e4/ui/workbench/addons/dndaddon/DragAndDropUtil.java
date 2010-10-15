@@ -29,12 +29,12 @@ class DragAndDropUtil {
 	public CursorInfo getCursorInfo() {
 		CursorInfo info = new CursorInfo();
 		info.cursorPos = display.getCursorLocation();
-		Control curControl = display.getCursorControl();
-		if (curControl == null) {
+		info.curCtrl = display.getCursorControl();
+		if (info.curCtrl == null) {
 			return info;
 		}
 
-		MUIElement curElement = getModelElement(curControl);
+		MUIElement curElement = getModelElement(info.curCtrl);
 		if (curElement instanceof MPlaceholder) {
 			info.curElement = ((MPlaceholder) curElement).getRef();
 			info.curElementRef = (MPlaceholder) curElement;

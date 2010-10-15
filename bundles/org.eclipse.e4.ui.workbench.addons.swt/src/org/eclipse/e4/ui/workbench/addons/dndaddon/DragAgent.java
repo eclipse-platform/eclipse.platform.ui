@@ -109,7 +109,6 @@ abstract class DragAgent {
 	 * semi-transparent window that will track with the cursor.
 	 */
 	public void createDragFeedback() {
-		dragHost = new DragHost(dragElement);
 	}
 
 	/**

@@ -43,6 +43,9 @@ public class StackDropAgent extends DropAgent {
 
 	@Override
 	public boolean canDrop(MUIElement dragElement, CursorInfo info) {
+		if (!(dragElement instanceof MPart))
+			return false;
+
 		if (info.curElement == dragElement.getParent()) {
 			if (info.curElement != null && info.curElement == dragElement.getParent()) {
 				CTabFolder ctf = (CTabFolder) dragElement.getParent().getWidget();
