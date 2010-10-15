@@ -51,6 +51,12 @@ public final class IDEInternalWorkbenchImages {
 
     public final static String IMG_ETOOL_PROBLEM_CATEGORY = "IMG_ETOOL_PROBLEM_CATEGORY"; //$NON-NLS-1$
 
+	public final static String IMG_ETOOL_PROBLEMS_VIEW= "IMG_ETOOL_PROBLEMS_VIEW"; //$NON-NLS-1$
+
+	public final static String IMG_ETOOL_PROBLEMS_VIEW_ERROR= "IMG_ETOOL_PROBLEMS_VIEW_ERROR"; //$NON-NLS-1$
+
+	public final static String IMG_ETOOL_PROBLEMS_VIEW_WARNING= "IMG_ETOOL_PROBLEMS_VIEW_WARNING"; //$NON-NLS-1$
+
     public final static String IMG_LCL_FLAT_LAYOUT = "IMG_LCL_FLAT_LAYOUT"; //$NON-NLS-1$
     
     public final static String IMG_LCL_HIERARCHICAL_LAYOUT = "IMG_LCL_HIERARCHICAL_LAYOUT"; //$NON-NLS-1$
@@ -101,7 +107,7 @@ public final class IDEInternalWorkbenchImages {
 	public static final String IMG_ELCL_QUICK_FIX_ENABLED = "IMG_ELCL_QUICK_FIX_ENABLED"; //$NON-NLS-1$
 	public static final String IMG_OBJS_FIXABLE_WARNING= "IMG_OBJS_FIXABLE_WARNING"; //$NON-NLS-1$
 	public static final String IMG_OBJS_FIXABLE_ERROR= "IMG_OBJS_FIXABLE_ERROR"; //$NON-NLS-1$
-
+	
 
     /**
      * Returns the image descriptor for the workbench image with the given

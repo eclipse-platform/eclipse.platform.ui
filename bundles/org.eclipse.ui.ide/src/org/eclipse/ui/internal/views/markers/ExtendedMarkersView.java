@@ -761,7 +761,9 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void partHidden(IWorkbenchPartReference partRef) {
 				if (partRef.getId().equals(getSite().getId())) {
-					setTitleToolTip(getStatusMessage());
+					Markers markers = getActiveViewerInputClone();
+					Integer[] counts = markers.getMarkerCounts();
+					setTitleToolTip(getStatusMessage(markers, counts));
 				}
 
 			}
@@ -844,10 +846,12 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Get the status message for the title and status line.
 	 * 
+	 * @param markers the markers for which to get the status message
+	 * @param counts an array of {@link Integer} where index indicates
+	 *            [errors,warnings,infos,others]
 	 * @return String
 	 */
-	private String getStatusMessage() {
-		Markers markers=getActiveViewerInputClone();
+	private String getStatusMessage(Markers markers, Integer[] counts) {
 		String status = MarkerSupportInternalUtilities.EMPTY_STRING;
 		int totalCount = builder.getTotalMarkerCount(markers);
 		int filteredCount = 0;
@@ -864,8 +868,6 @@ public class ExtendedMarkersView extends ViewPart {
 		} else {
 			filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
 		}
-
-		Integer[] counts = markers.getMarkerCounts();
 
 		// Any errors or warnings? If not then send the filtering message
 		if (counts[0].intValue() == 0 && counts[1].intValue() == 0) {
@@ -1369,14 +1371,30 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Update the title of the view.
+	 * Update the title and description of the view.
 	 */
 	void updateTitle() {
-		String statusMessage= getStatusMessage();
+		Markers markers = getActiveViewerInputClone();
+		Integer[] counts = markers.getMarkerCounts();
+		String statusMessage = getStatusMessage(markers, counts);
+
 		setContentDescription(statusMessage);
+
 		if (!"".equals(getTitleToolTip())) { //$NON-NLS-1$
 			setTitleToolTip(statusMessage);
 		}
+
+		updateTitleImage(counts);
+	}
+
+	/**
+	 * Updates this view's title image.
+	 * 
+	 * @param counts an array of {@link Integer} where index indicates
+	 *            [errors,warnings,infos,others]
+	 * @since 3.7
+	 */
+	void updateTitleImage(Integer[] counts) {
 	}
 
 	/**

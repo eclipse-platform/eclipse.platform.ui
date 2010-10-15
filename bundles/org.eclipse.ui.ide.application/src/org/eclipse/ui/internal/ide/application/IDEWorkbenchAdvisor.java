@@ -665,6 +665,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		// //$NON-NLS-1$
 		// icons
 
+		// View icons
+		final String PATH_EVIEW= ICONS_PATH + "eview16/"; //$NON-NLS-1$
+
+
 		Bundle ideBundle = Platform.getBundle(IDEWorkbenchPlugin.IDE_WORKBENCH);
 
 		declareWorkbenchImage(ideBundle,
@@ -801,7 +805,17 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY,
 				PATH_ETOOL + "problem_category.gif", true); //$NON-NLS-1$
-	
+
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW,
+				PATH_EVIEW + "problems_view.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW_ERROR,
+				PATH_EVIEW + "problems_view_error.gif", true); //$NON-NLS-1$
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW_WARNING,
+				PATH_EVIEW + "problems_view_warning.gif", true); //$NON-NLS-1$
+
 		// synchronization indicator objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT,
 		// PATH_OVERLAY+"wbet_stat.gif");
