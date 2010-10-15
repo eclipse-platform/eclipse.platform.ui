@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser.browsers;
 
-import java.io.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.ui.browser.AbstractWebBrowser;
 import org.eclipse.ui.internal.browser.WebBrowserUIPlugin;
 import org.eclipse.ui.internal.browser.WebBrowserUtil;
@@ -63,15 +65,10 @@ public class MozillaBrowser extends AbstractWebBrowser {
 	public void openURL(URL url2) {
 		String url = null;
 		if (url2 != null) {
-			url = url2.toExternalForm();
-			// change spaces to "%20"
-			if (url != null & WebBrowserUtil.isWindows()) {
-				int index = url.indexOf(" "); //$NON-NLS-1$
-				while (index >= 0) {
-					url = url.substring(0, index) + "%20" //$NON-NLS-1$
-							+ url.substring(index + 1);
-					index = url.indexOf(" "); //$NON-NLS-1$
-				}
+			try {
+				url = URIUtil.toURI(url2).toASCIIString();
+			} catch (URISyntaxException e) {
+				url = url2.toExternalForm();
 			}
 		}
 		else {
