@@ -1261,6 +1261,73 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(perspectiveA.getContext(), part2.getContext().getParent());
 	}
 
+	public void testBug326699() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getSharedElements().add(partStack);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder partStackPlaceholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		partStack.setCurSharedRef(partStackPlaceholderA);
+		partStackPlaceholderA.setRef(partStack);
+		perspectiveA.getChildren().add(partStackPlaceholderA);
+		perspectiveA.setSelectedElement(partStackPlaceholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder partStackPlaceholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		partStackPlaceholderB.setRef(partStack);
+		perspectiveB.getChildren().add(partStackPlaceholderB);
+		perspectiveB.setSelectedElement(partStackPlaceholderB);
+
+		MPart part1 = BasicFactoryImpl.eINSTANCE.createPart();
+		part1.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partStack.getChildren().add(part1);
+		partStack.setSelectedElement(part1);
+
+		MPart part2 = BasicFactoryImpl.eINSTANCE.createPart();
+		part2.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		partStack.getChildren().add(part2);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(part1);
+		partService.activate(part2);
+		partService.activate(part1);
+		partService.switchPerspective(perspectiveB);
+		partService.switchPerspective(perspectiveA);
+
+		SampleView view1 = (SampleView) part1.getObject();
+		SampleView view2 = (SampleView) part2.getObject();
+
+		appContext.get(IPresentationEngine.class).removeGui(window);
+		assertFalse(view1.nullParentContext);
+		assertFalse(view2.nullParentContext);
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);

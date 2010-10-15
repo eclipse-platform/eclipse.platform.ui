@@ -34,7 +34,11 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class SampleView {
 
+	private IEclipseContext context;
+
 	private boolean destroyed = false;
+
+	boolean nullParentContext = false;
 
 	/**
 	 * Create the sample view.
@@ -45,6 +49,8 @@ public class SampleView {
 	@Inject
 	public SampleView(Composite parent, final IEclipseContext outputContext,
 			final IExtensionRegistry registry) {
+		context = outputContext;
+
 		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		viewer.getTree().setData("class", "navigator"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -138,6 +144,7 @@ public class SampleView {
 	@PreDestroy
 	void preDestroy() {
 		destroyed = true;
+		nullParentContext = context.getParent() == null;
 	}
 
 	public boolean isDestroyed() {

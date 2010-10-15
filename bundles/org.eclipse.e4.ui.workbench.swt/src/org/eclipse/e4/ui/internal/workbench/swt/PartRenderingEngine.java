@@ -599,8 +599,17 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			if (element instanceof MElementContainer<?>) {
 				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
+				MUIElement selectedElement = container.getSelectedElement();
 				for (MUIElement child : container.getChildren()) {
-					removeGui(child);
+					// remove stuff in the "back" first
+					if (child != selectedElement) {
+						removeGui(child);
+					}
+				}
+
+				if (selectedElement != null) {
+					// now remove the selected element
+					removeGui(selectedElement);
 				}
 			}
 
