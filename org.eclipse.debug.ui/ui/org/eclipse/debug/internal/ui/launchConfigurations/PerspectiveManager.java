@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [325557] Perspective "none" is not persisted
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -877,21 +878,28 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		Element element = null;
 		Set modes = null;
 		String id = null;
+		ILaunchConfigurationType type = null;
 		ILaunchDelegate delegate = null;
 		for(Iterator iter = fPerspectiveContexts.iterator(); iter.hasNext();) {
 			context = (PerspectiveContext) iter.next();
 			modesets = context.getPersepctiveMap();
+			type = context.getLaunchConfigurationType();
+			delegate = context.getLaunchDelegate();
 			for(Iterator iter2 = modesets.keySet().iterator(); iter2.hasNext();) {
 				modes = (Set) iter2.next();
 				id = context.getPerspective(modes);
-				if(id != null) {
+				String defaultId = getDefaultLaunchPerspective(type, delegate, modes);
+				if(id == null && defaultId != null) {
+					//bug 325557: Override of a default perspective
+					id = IDebugUIConstants.PERSPECTIVE_NONE;
+				}
+				if(id != null && !id.equals(defaultId)) {
 					element = doc.createElement(IConfigurationElementConstants.LAUNCH_PERSPECTIVE);
 					element.setAttribute(IConfigurationElementConstants.MODE, createModesetString(modes));
-					delegate = context.getLaunchDelegate();
 					if(delegate != null) {
 						element.setAttribute(ATTR_DELEGATE_ID, delegate.getId());
 					}
-					element.setAttribute(IConfigurationElementConstants.CONFIGURATION_TYPES, context.getLaunchConfigurationType().getIdentifier());
+					element.setAttribute(IConfigurationElementConstants.CONFIGURATION_TYPES, type.getIdentifier());
 					element.setAttribute(IConfigurationElementConstants.PERSPECTIVE, id);
 					root.appendChild(element);
 				}
