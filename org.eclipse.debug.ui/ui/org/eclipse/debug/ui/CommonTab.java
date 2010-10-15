@@ -11,6 +11,8 @@
 package org.eclipse.debug.ui;
 
  
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,6 +55,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -384,7 +388,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_3);  
 	    fAltEncodingButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 	    
-	    fEncodingCombo = new Combo(group, SWT.READ_ONLY);
+	    fEncodingCombo = new Combo(group, SWT.NONE);
 	    fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    fEncodingCombo.setFont(parent.getFont());
 	    List allEncodings = IDEEncoding.getIDEEncodings();
@@ -415,6 +419,33 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    fAltEncodingButton.addSelectionListener(listener);
 	    fDefaultEncodingButton.addSelectionListener(listener);
 	    fEncodingCombo.addSelectionListener(listener);
+	    fEncodingCombo.addKeyListener(new KeyAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
+			 */
+			public void keyReleased(KeyEvent e) {
+				scheduleUpdateJob();
+			}
+		});
+	}
+    
+	/**
+	 * Returns whether or not the given encoding is valid.
+	 * 
+	 * @param enc
+	 *            the encoding to validate
+	 * @return <code>true</code> if the encoding is valid, <code>false</code>
+	 *         otherwise
+	 */
+	private boolean isValidEncoding(String enc) {
+		try {
+			return Charset.isSupported(enc);
+		} catch (IllegalCharsetNameException e) {
+			// This is a valid exception
+			return false;
+		}
 	}
 
 	/**
@@ -751,8 +782,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     private boolean validateEncoding() {
         if (fAltEncodingButton.getSelection()) {
             if (fEncodingCombo.getSelectionIndex() == -1) {
-                setErrorMessage(LaunchConfigurationsMessages.CommonTab_No_Encoding_Selected);
-                return false;
+            	if (!isValidEncoding(fEncodingCombo.getText().trim())) {
+                	setErrorMessage(LaunchConfigurationsMessages.CommonTab_15);
+                	return false;
+                }
             }
         }
         return true;
@@ -809,7 +842,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, configuration, fLaunchInBackgroundButton.getSelection(), true);
 		String encoding = null;
 		if(fAltEncodingButton.getSelection()) {
-		    encoding = fEncodingCombo.getText();
+		    encoding = fEncodingCombo.getText().trim();
 		}
 		configuration.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, encoding);
 		boolean captureOutput = false;
