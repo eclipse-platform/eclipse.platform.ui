@@ -402,8 +402,6 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		window.getSharedElements().add(part);
 
-		System.out.println(part.getParent());
-
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
