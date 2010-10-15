@@ -5866,7 +5866,7 @@ public class EPartServiceTest extends TestCase {
 		partService.switchPerspective(perspectiveA);
 		assertEquals(partA, partService.getActivePart());
 
-		partService.hidePart(partB);
+		partService.hidePart(partB, force);
 		assertFalse(placeholderB1.isToBeRendered());
 	}
 
