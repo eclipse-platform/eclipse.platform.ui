@@ -103,11 +103,12 @@ public interface EPartService {
 	public void activate(MPart part, boolean requiresFocus);
 
 	/**
-	 * This method may be removed before 1.0 is released.
-	 * 
 	 * @noreference This method is not intended to be referenced by clients.
+	 * @deprecated Parts will be deactivated automatically when hidden. This method will be removed
+	 *             in 1.1M4.
 	 */
-	public void deactivate(MPart part); // FIXME: remove this for 1.0
+	@Deprecated
+	public void deactivate(MPart part);
 
 	/**
 	 * Brings this part to the top so that it will become visible to the end user. This does not

@@ -524,14 +524,9 @@ public class PartServiceImpl implements EPartService {
 		return activePart;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.modeling.EPartService#deactivate(org.eclipse.e4.ui.model.application
-	 * .MPart)
-	 */
 	public void deactivate(MPart part) {
+		logger.warn("EPartService's deactivate(MPart) method will be removed in 1.1M4.", //$NON-NLS-1$ 
+				new Throwable());
 		MElementContainer<MUIElement> parent = part.getParent();
 		MPart oldSelectedElement = (MPart) parent.getSelectedElement();
 		if (oldSelectedElement == part) {

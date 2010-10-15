@@ -5474,9 +5474,7 @@ public class EPartServiceTest extends TestCase {
 				windowService2.getActivePart());
 
 		// now move the part over from the first window to the second window
-		windowService1.deactivate(part);
 		window2.getChildren().add(part);
-		part.getContext().setParent(window2.getContext());
 		// activate the part
 		windowService2.activate(part);
 

@@ -83,8 +83,16 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 					if (element instanceof MUIElement) {
 						Object parent = event
 								.getProperty(UIEvents.EventTags.ELEMENT);
-						createGui((MUIElement) element, parent,
-								getParentContext((MUIElement) element));
+						IEclipseContext parentContext = getParentContext((MUIElement) element);
+						if (element instanceof MContext) {
+							IEclipseContext context = ((MContext) element)
+									.getContext();
+							if (context != null
+									&& context.getParent() != parentContext) {
+								context.deactivate();
+							}
+						}
+						createGui((MUIElement) element, parent, parentContext);
 
 						if (parent instanceof MPartStack) {
 							MPartStack stack = (MPartStack) parent;
