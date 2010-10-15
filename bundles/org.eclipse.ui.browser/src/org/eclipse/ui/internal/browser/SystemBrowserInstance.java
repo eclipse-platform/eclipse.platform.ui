@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.PartInitException;
@@ -26,18 +28,12 @@ public class SystemBrowserInstance extends AbstractWebBrowser {
 	}
 
 	public void openURL(URL url) throws PartInitException {
-		String urlText = null;
-
-		if (url != null)
-			urlText = url.toExternalForm();
-
-		// change spaces to "%20"
-		if (urlText != null && !WebBrowserUtil.isWindows()) {
-			int index = urlText.indexOf(" "); //$NON-NLS-1$
-			while (index >= 0) {
-				urlText = urlText.substring(0, index) + "%20" //$NON-NLS-1$
-						+ urlText.substring(index + 1);
-				index = urlText.indexOf(" "); //$NON-NLS-1$
+		String urlText= null;
+		if (url != null) {
+			try {
+				urlText = URIUtil.toURI(url).toASCIIString();
+			} catch (URISyntaxException e) {
+				urlText = url.toExternalForm();
 			}
 		}
 		Trace.trace(Trace.FINEST, "Launching system Web browser: " + urlText); //$NON-NLS-1$
