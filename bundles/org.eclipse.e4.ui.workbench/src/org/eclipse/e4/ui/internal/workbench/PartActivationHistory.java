@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.emf.ecore.EObject;
 
 class PartActivationHistory {
 
@@ -134,7 +135,21 @@ class PartActivationHistory {
 	 */
 	private MArea isInArea(MUIElement element) {
 		MPlaceholder placeholder = element.getCurSharedRef();
-		MUIElement parent = placeholder == null ? element.getParent() : placeholder.getParent();
+		if (placeholder == null) {
+			MUIElement parent = element.getParent();
+			if (parent == null) {
+				// may be null for detached windows
+				parent = (MUIElement) ((EObject) element).eContainer();
+			}
+			return parent instanceof MApplication ? null : parent instanceof MArea ? (MArea) parent
+					: isInArea(parent);
+		}
+
+		MUIElement parent = placeholder.getParent();
+		if (parent == null) {
+			// may be null for detached windows
+			parent = (MUIElement) ((EObject) placeholder).eContainer();
+		}
 		return parent instanceof MApplication ? null : parent instanceof MArea ? (MArea) parent
 				: isInArea(parent);
 	}
@@ -324,7 +339,12 @@ class PartActivationHistory {
 				if (windowParent instanceof MApplication) {
 					return null;
 				}
-				parent = windowParent;
+
+				if (windowParent == null) {
+					parent = (MUIElement) ((EObject) parent).eContainer();
+				} else {
+					parent = windowParent;
+				}
 			} else {
 				MUIElement parentCandidate = parent.getParent();
 				if (parentCandidate == null) {
