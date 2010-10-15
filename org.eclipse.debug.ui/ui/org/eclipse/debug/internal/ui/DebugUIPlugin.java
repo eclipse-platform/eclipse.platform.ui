@@ -93,6 +93,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.framework.Bundle;
@@ -1154,6 +1155,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		IProgressService progressService = workbench.getProgressService();
 
 		job.setPriority(Job.INTERACTIVE);
+		job.setProperty(IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY, Boolean.TRUE);
 		job.setName(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}));
 		
 		if (wait) {
