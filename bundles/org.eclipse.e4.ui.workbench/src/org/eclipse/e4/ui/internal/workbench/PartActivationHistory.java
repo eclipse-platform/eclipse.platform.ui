@@ -12,11 +12,8 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -33,18 +30,19 @@ import org.eclipse.emf.ecore.EObject;
 
 class PartActivationHistory {
 
+	private PartServiceImpl partService;
+
 	private EModelService modelService;
 
 	private LinkedList<MPart> generalActivationHistory = new LinkedList<MPart>();
-	private Map<MUIElement, LinkedList<MPart>> perspectiveActivationHistories = new WeakHashMap<MUIElement, LinkedList<MPart>>();
 
-	PartActivationHistory(EModelService modelService) {
+	PartActivationHistory(PartServiceImpl partService, EModelService modelService) {
+		this.partService = partService;
 		this.modelService = modelService;
 	}
 
 	public void clear() {
 		generalActivationHistory.clear();
-		perspectiveActivationHistories.clear();
 	}
 
 	void activate(MPart part, boolean activateBranch) {
@@ -58,12 +56,6 @@ class PartActivationHistory {
 				context = parent;
 				parent = parent.getParent();
 			} while (parent.get(MWindow.class) != null);
-		}
-
-		LinkedList<MPart> perspectiveActivationHistory = getPerspectiveActivationHistory(part);
-		if (perspectiveActivationHistory != null) {
-			perspectiveActivationHistory.remove(part);
-			perspectiveActivationHistory.addFirst(part);
 		}
 
 		generalActivationHistory.remove(part);
@@ -114,16 +106,21 @@ class PartActivationHistory {
 					MPlaceholder.class, null)) {
 				if (placeholder.getRef() == element) {
 					parent = placeholder.getParent();
-					if (!placeholder.isToBeRendered() || !placeholder.isVisible()) {
+					if (!placeholder.isToBeRendered() || !placeholder.isVisible() || parent == null) {
+						return false;
+					}
+
+					// if in a stack, then only valid if we're the selected element
+					if (parent instanceof MGenericStack
+							&& parent.getSelectedElement() != placeholder) {
 						return false;
 					}
 					break;
 				}
 			}
-
-			if (parent == null) {
-				return false;
-			}
+		} else if (parent instanceof MGenericStack && parent.getSelectedElement() != element) {
+			// if in a stack, then only valid if we're the selected element
+			return false;
 		}
 
 		return isValid(perspective, parent);
@@ -204,7 +201,38 @@ class PartActivationHistory {
 		return null;
 	}
 
-	private MPart getActivationCandidate(LinkedList<MPart> activationHistory, MPart part) {
+	private MPart findActivationCandidate(Collection<MPart> candidates, MPart currentlyActivePart) {
+		for (MPart candidate : candidates) {
+			if (candidate != currentlyActivePart && candidate.isToBeRendered()
+					&& candidate.isVisible()) {
+				MPlaceholder placeholder = partService.getLocalPlaceholder(candidate);
+				if (placeholder == null) {
+					MElementContainer<MUIElement> parent = candidate.getParent();
+					// if stack, then must be the selected element to be valid
+					if (parent instanceof MGenericStack) {
+						if (parent.getSelectedElement() == candidate) {
+							return candidate;
+						}
+					} else {
+						return candidate;
+					}
+				} else if (placeholder.isToBeRendered() && placeholder.isVisible()) {
+					MElementContainer<MUIElement> parent = placeholder.getParent();
+					// if stack, then must be the selected element to be valid
+					if (parent instanceof MGenericStack) {
+						if (parent.getSelectedElement() == placeholder) {
+							return candidate;
+						}
+					} else {
+						return candidate;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	MPart getNextActivationCandidate(MPart part) {
 		MArea area = isInArea(part);
 		if (area != null) {
 			// focus should stay in the area if possible
@@ -214,88 +242,43 @@ class PartActivationHistory {
 			}
 
 			// no sibling candidate, find another part in the area to activate
-			for (MPart element : modelService.findElements(area, null, MPart.class, null)) {
-				if (element != part) {
-					if (element.isToBeRendered() && element.isVisible()) {
-						MPlaceholder placeholder = element.getCurSharedRef();
-						if (placeholder == null
-								|| (placeholder.isToBeRendered() && placeholder.isVisible())) {
-							return element;
-						}
-					}
-				}
+			candidate = findActivationCandidate(
+					modelService.findElements(area, null, MPart.class, null), part);
+			if (candidate != null) {
+				return candidate;
 			}
 		}
 
-		for (Iterator<MPart> it = activationHistory.iterator(); it.hasNext();) {
-			if (it.next() == part) {
-				if (part == activationHistory.getFirst() && it.hasNext()) {
-					MPart candidate = it.next();
-					if (candidate.isToBeRendered() && candidate.isVisible()) {
-						MPlaceholder placeholder = candidate.getCurSharedRef();
-						if (placeholder == null
-								|| (placeholder.isToBeRendered() && placeholder.isVisible())) {
-							return candidate;
-						}
-					}
-				}
-				return getActivationCandidate(part);
-			}
-		}
-		return getActivationCandidate(part);
+		// check activation history
+		MPart candidate = findActivationCandidate(generalActivationHistory, part);
+		return candidate == null ? getActivationCandidate(part) : candidate;
 	}
 
-	public MPart getNextActivationCandidate(MPart part) {
-		LinkedList<MPart> activationHistory = getPerspectiveActivationHistory(part);
-		return getActivationCandidate(activationHistory == null ? generalActivationHistory
-				: activationHistory, part);
-	}
-
-	public void forget(MPart part, boolean full) {
-		generalActivationHistory.remove(part);
+	void forget(MWindow window, MPart part, boolean full) {
 		if (full) {
-			for (LinkedList<MPart> history : perspectiveActivationHistories.values()) {
-				history.remove(part);
-			}
+			generalActivationHistory.remove(part);
 		} else {
-			LinkedList<MPart> history = getPerspectiveActivationHistory(part);
-			if (history != null) {
-				history.remove(part);
+			for (MPlaceholder placeholder : modelService.findElements(window, null,
+					MPlaceholder.class, null)) {
+				// if there is at least one placeholder around, we should keep this
+				if (placeholder.getRef() == part && placeholder.isToBeRendered()) {
+					return;
+				}
 			}
+
+			generalActivationHistory.remove(part);
 		}
 	}
 
 	MPart getActivationCandidate(MPerspective perspective) {
-		Collection<MPart> candidates = perspectiveActivationHistories.get(perspective);
-		if (candidates != null) {
-			for (Iterator<MPart> it = candidates.iterator(); it.hasNext();) {
-				MPart part = it.next();
-				if (!part.isToBeRendered()) {
-					// this part isn't being rendered, remove this as a candidate
-					it.remove();
-					continue;
-				}
-
-				if (part.isVisible()) {
-					MElementContainer<MUIElement> parent = part.getParent();
-					if (parent == null) {
-						MPlaceholder placeholder = part.getCurSharedRef();
-						if (placeholder == null || !placeholder.isToBeRendered()
-								|| !isValid(placeholder.getParent())) {
-							it.remove();
-							continue;
-						} else if (!placeholder.isVisible()) {
-							continue;
-						}
-						return part;
-					} else if (isValid(parent)) {
-						return part;
-					}
-				}
+		for (MPart candidate : generalActivationHistory) {
+			if (partService.isInContainer(perspective, candidate)
+					&& isValid(perspective, candidate)) {
+				return candidate;
 			}
 		}
 
-		candidates = perspective.getContext().get(EPartService.class).getParts();
+		Collection<MPart> candidates = perspective.getContext().get(EPartService.class).getParts();
 		for (MPart candidate : candidates) {
 			if (isValid(perspective, candidate)) {
 				return candidate;
@@ -304,74 +287,34 @@ class PartActivationHistory {
 		return null;
 	}
 
-	private MPart getSiblingActivationCandidate(MPart part, MUIElement element,
-			Collection<MPart> activationHistory) {
+	private MPart getSiblingActivationCandidate(MPart part) {
+		MPlaceholder placeholder = part.getCurSharedRef();
+		MUIElement candidate = getSiblingSelectionCandidate(part, placeholder == null ? part
+				: placeholder);
+		return (MPart) (candidate instanceof MPlaceholder ? ((MPlaceholder) candidate).getRef()
+				: candidate);
+	}
+
+	private MUIElement getSiblingSelectionCandidate(MPart part, MUIElement element) {
 		List<MUIElement> siblings = element.getParent().getChildren();
-		for (MPart previouslyActivatedPart : activationHistory) {
+		for (MPart previouslyActivatedPart : generalActivationHistory) {
 			if (previouslyActivatedPart != part && previouslyActivatedPart.isToBeRendered()) {
 				if (siblings.contains(previouslyActivatedPart)) {
 					return previouslyActivatedPart;
 				}
 
-				MPlaceholder placeholder = previouslyActivatedPart.getCurSharedRef();
+				MPlaceholder placeholder = partService.getLocalPlaceholder(previouslyActivatedPart);
 				if (placeholder != null && placeholder.isToBeRendered()
 						&& siblings.contains(placeholder)) {
-					return previouslyActivatedPart;
+					return placeholder;
 				}
 			}
 		}
 		return null;
 	}
 
-	private LinkedList<MPart> getPerspectiveActivationHistory(MPart part) {
+	MUIElement getSiblingSelectionCandidate(MPart part) {
 		MPlaceholder placeholder = part.getCurSharedRef();
-		MUIElement parent = placeholder == null ? part.getParent() : placeholder.getParent();
-		while (parent != null) {
-			if (parent instanceof MPerspective) {
-				LinkedList<MPart> history = perspectiveActivationHistories.get(parent);
-				if (history == null) {
-					history = new LinkedList<MPart>();
-					perspectiveActivationHistories.put(parent, history);
-				}
-				return history;
-			} else if (parent instanceof MWindow) {
-				MUIElement windowParent = parent.getParent();
-				if (windowParent instanceof MApplication) {
-					return null;
-				}
-
-				if (windowParent == null) {
-					parent = (MUIElement) ((EObject) parent).eContainer();
-				} else {
-					parent = windowParent;
-				}
-			} else {
-				MUIElement parentCandidate = parent.getParent();
-				if (parentCandidate == null) {
-					placeholder = parent.getCurSharedRef();
-					if (placeholder == null) {
-						return null;
-					}
-					parentCandidate = placeholder.getParent();
-					if (parentCandidate == null) {
-						return null;
-					}
-				}
-				parent = parentCandidate;
-			}
-		}
-		return null;
-	}
-
-	private MPart getSiblingActivationCandidate(MPart part, MUIElement element) {
-		LinkedList<MPart> perspectiveActivationHistory = getPerspectiveActivationHistory(part);
-		return getSiblingActivationCandidate(part, element,
-				perspectiveActivationHistory == null ? generalActivationHistory
-						: perspectiveActivationHistory);
-	}
-
-	public MPart getSiblingActivationCandidate(MPart part) {
-		MPlaceholder placeholder = part.getCurSharedRef();
-		return getSiblingActivationCandidate(part, placeholder == null ? part : placeholder);
+		return getSiblingSelectionCandidate(part, placeholder == null ? part : placeholder);
 	}
 }

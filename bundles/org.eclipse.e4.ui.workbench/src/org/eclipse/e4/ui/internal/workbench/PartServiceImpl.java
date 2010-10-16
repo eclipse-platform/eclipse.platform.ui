@@ -152,7 +152,7 @@ public class PartServiceImpl implements EPartService {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
 		constructed = true;
-		partActivationHistory = new PartActivationHistory(modelService);
+		partActivationHistory = new PartActivationHistory(this, modelService);
 	}
 
 	@PreDestroy
@@ -334,7 +334,7 @@ public class PartServiceImpl implements EPartService {
 		return isInContainer(getContainer(), element);
 	}
 
-	private boolean isInContainer(MElementContainer<?> container, MUIElement element) {
+	boolean isInContainer(MElementContainer<?> container, MUIElement element) {
 		for (Object object : container.getChildren()) {
 			if (object == element) {
 				return true;
@@ -861,7 +861,7 @@ public class PartServiceImpl implements EPartService {
 			if (parent.getSelectedElement() == toBeRemoved) {
 				// if we're the selected element and we're going to be hidden, need to select
 				// something else
-				MUIElement candidate = partActivationHistory.getSiblingActivationCandidate(part);
+				MUIElement candidate = partActivationHistory.getSiblingSelectionCandidate(part);
 				candidate = candidate == null ? null
 						: candidate.getCurSharedRef() == null ? candidate : candidate
 								.getCurSharedRef();
@@ -896,7 +896,7 @@ public class PartServiceImpl implements EPartService {
 				children.remove(toBeRemoved);
 			}
 			// remove ourselves from the activation history also since we're being hidden
-			partActivationHistory.forget(part, toBeRemoved == part);
+			partActivationHistory.forget(getWindow(), part, toBeRemoved == part);
 		}
 	}
 
