@@ -385,47 +385,8 @@ public class PartServiceImpl implements EPartService {
 		return false;
 	}
 
-	private MPlaceholder getLocalPlaceholder(MPart part) {
-		return getLocalPlaceholder(getContainer(), part);
-	}
-
-	private MPlaceholder getLocalPlaceholder(MElementContainer<?> container, MPart part) {
-		for (Object object : container.getChildren()) {
-			if (object instanceof MElementContainer<?>) {
-				MPlaceholder placeholder = getLocalPlaceholder((MElementContainer<?>) object, part);
-				if (placeholder != null) {
-					return placeholder;
-				}
-			} else if (object instanceof MPlaceholder) {
-				MPlaceholder placeholder = (MPlaceholder) object;
-				MUIElement ref = placeholder.getRef();
-				if (ref == part) {
-					return placeholder;
-				}
-			}
-		}
-
-		if (container instanceof MWindow) {
-			MWindow win = (MWindow) container;
-			for (MWindow dw : win.getWindows()) {
-				MPlaceholder placeholder = getLocalPlaceholder(dw, part);
-				if (placeholder != null) {
-					return placeholder;
-				}
-			}
-		}
-
-		if (container instanceof MPerspective) {
-			MPerspective persp = (MPerspective) container;
-			for (MWindow dw : persp.getWindows()) {
-				MPlaceholder placeholder = getLocalPlaceholder(dw, part);
-				if (placeholder != null) {
-					return placeholder;
-				}
-			}
-		}
-
-		return null;
+	MPlaceholder getLocalPlaceholder(MPart part) {
+		return modelService.findPlaceholderFor(getWindow(), part);
 	}
 
 	public void switchPerspective(MPerspective perspective) {
@@ -916,8 +877,8 @@ public class PartServiceImpl implements EPartService {
 				}
 			}
 
-			if (sharedRef != null) {
-				sharedRef.setToBeRendered(false);
+			if (toBeRemoved != null) {
+				toBeRemoved.setToBeRendered(false);
 			} else {
 				part.setToBeRendered(false);
 			}

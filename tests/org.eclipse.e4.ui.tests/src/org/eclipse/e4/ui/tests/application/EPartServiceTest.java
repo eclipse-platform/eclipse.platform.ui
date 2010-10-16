@@ -5878,6 +5878,61 @@ public class EPartServiceTest extends TestCase {
 		testHidePart_Bug327917(false);
 	}
 
+	private void testHidePart_Bug327964(boolean force) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MArea area = AdvancedFactoryImpl.eINSTANCE.createArea();
+		window.getSharedElements().add(area);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPlaceholder areaPlaceholder = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		areaPlaceholder.setRef(area);
+		part.setCurSharedRef(areaPlaceholder);
+		perspective.getChildren().add(areaPlaceholder);
+		perspective.setSelectedElement(areaPlaceholder);
+
+		MPlaceholder partPlaceholder = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		partPlaceholder.setRef(part);
+		part.setCurSharedRef(partPlaceholder);
+		area.getChildren().add(partPlaceholder);
+		area.setSelectedElement(partPlaceholder);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.hidePart(part, force);
+		assertFalse(partPlaceholder.isToBeRendered());
+		assertEquals(!force, area.getChildren().contains(partPlaceholder));
+	}
+
+	public void testHidePart_Bug327964_True() {
+		testHidePart_Bug327964(true);
+	}
+
+	public void testHidePart_Bug327964_False() {
+		testHidePart_Bug327964(false);
+	}
+
 	public void testHidePart_ActivationHistory01() {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
