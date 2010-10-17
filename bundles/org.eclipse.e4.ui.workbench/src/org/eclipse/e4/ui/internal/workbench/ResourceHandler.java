@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,10 +90,10 @@ public class ResourceHandler implements IModelResourceHandler {
 	@Inject
 	public ResourceHandler(@Named(E4Workbench.PERSIST_STATE) boolean saveAndRestore,
 			@Named(E4Workbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState,
-			@Named(E4Workbench.DELTA_RESTORE) boolean deltaRestore) {
+			@Named(E4Workbench.DELTA_IGNORE) boolean deltaIgnore) {
 		this.saveAndRestore = saveAndRestore;
 		this.clearPersistedState = clearPersistedState;
-		this.deltaRestore = deltaRestore;
+		this.deltaRestore = !deltaIgnore;
 	}
 
 	@PostConstruct

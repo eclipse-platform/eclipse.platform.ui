@@ -53,7 +53,7 @@ public class E4Workbench implements IWorkbench {
 	public static final String RENDERER_FACTORY_URI = "rendererFactoryUri"; //$NON-NLS-1$
 
 	public static final String CLEAR_PERSISTED_STATE = "clearPersistedState"; //$NON-NLS-1$
-	public static final String DELTA_RESTORE = "deltaRestore"; //$NON-NLS-1$
+	public static final String DELTA_IGNORE = "deltaIgnore"; //$NON-NLS-1$
 
 	IEclipseContext appContext;
 	IPresentationEngine renderer;
