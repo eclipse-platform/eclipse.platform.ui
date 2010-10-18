@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -488,7 +489,12 @@ public class PerspectiveSwitcher {
 				if (persp == null)
 					return;
 				IWorkbenchPage page = persp.getContext().get(IWorkbenchPage.class);
-				page.resetPerspective();
+				String message = NLS.bind(WorkbenchMessages.ResetPerspective_message,
+						persp.getLabel());
+				if (MessageDialog.openConfirm(page.getWorkbenchWindow().getShell(),
+						WorkbenchMessages.ResetPerspective_title, message)) {
+					page.resetPerspective();
+				}
 			}
 		});
 	}
