@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,23 +97,23 @@ public final class FileBuffers {
 	}
 
 	/**
-	 * Returns the workspace file at the given location or <code>null</code> if
-	 * the location is not a valid location in the workspace.
-	 *
+	 * Returns the workspace file at the given location if such a file exists.
+	 * 
 	 * @param location the location
-	 * @return the workspace file at the location or <code>null</code>
+	 * @return the workspace file at the location or <code>null</code> if no such file exists or if
+	 *         the location is not a valid location
 	 */
 	public static IFile getWorkspaceFileAtLocation(IPath location) {
 		return getWorkspaceFileAtLocation(location, false);
 	}
 
 	/**
-	 * Returns the workspace file at the given location or <code>null</code> if
-	 * the location is not a valid location in the workspace.
-	 *
+	 * Returns the workspace file at the given location if such a file exists.
+	 * 
 	 * @param location the location
 	 * @param isNormalized <code>true</code> if the given location is already normalized
-	 * @return the workspace file at the location or <code>null</code>
+	 * @return the workspace file at the location or <code>null</code> if no such file exists or if
+	 *         the location is not a valid location
 	 * @since 3.3
 	 */
 	public static IFile getWorkspaceFileAtLocation(IPath location, boolean isNormalized) {
