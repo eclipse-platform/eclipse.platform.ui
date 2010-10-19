@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 
 		int offsetInLine= offset - lineInfo.getOffset();
 
-		boolean startDoubleQuote= false;
+		char quote= 0;
 		int urlOffsetInLine= 0;
 		int urlLength= 0;
 
@@ -88,7 +88,8 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 				ch= ' ';
 				if (urlOffsetInLine > -1)
 					ch= line.charAt(urlOffsetInLine);
-				startDoubleQuote= ch == '"';
+				if (ch == '"' || ch == '\'')
+					quote= ch;
 			} while (Character.isUnicodeIdentifierStart(ch));
 			urlOffsetInLine++;
 
@@ -107,14 +108,14 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 		if (urlSeparatorOffset < 0)
 			return null;
 
-		if (startDoubleQuote) {
+		if (quote != 0) {
 			int endOffset= -1;
-			int nextDoubleQuote= line.indexOf('"', urlOffsetInLine);
+			int nextQuote= line.indexOf(quote, urlOffsetInLine);
 			int nextWhitespace= line.indexOf(' ', urlOffsetInLine);
-			if (nextDoubleQuote != -1 && nextWhitespace != -1)
-				endOffset= Math.min(nextDoubleQuote, nextWhitespace);
-			else if (nextDoubleQuote != -1)
-				endOffset= nextDoubleQuote;
+			if (nextQuote != -1 && nextWhitespace != -1)
+				endOffset= Math.min(nextQuote, nextWhitespace);
+			else if (nextQuote != -1)
+				endOffset= nextQuote;
 			else if (nextWhitespace != -1)
 				endOffset= nextWhitespace;
 			if (endOffset != -1)
