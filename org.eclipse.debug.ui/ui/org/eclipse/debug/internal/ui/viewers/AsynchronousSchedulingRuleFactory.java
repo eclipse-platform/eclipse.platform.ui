@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.viewers;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
- * Scheduling rule factory for asycn operations.
+ * Scheduling rule factory for asynchronous operations.
  * 
  * @since 3.2
  */
@@ -76,7 +76,7 @@ public class AsynchronousSchedulingRuleFactory {
 	}
 	
 	/**
-	 * Returns a scheulding rule that allows all jobs with an instance
+	 * Returns a scheduling rule that allows all jobs with an instance
 	 * of the rule to run one at a time.
 	 *  
 	 * @return scheduling rule
