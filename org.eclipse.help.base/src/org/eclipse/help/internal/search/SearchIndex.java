@@ -52,6 +52,7 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.HelpProperties;
@@ -606,6 +607,9 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 			QueryBuilder queryBuilder = new QueryBuilder(searchQuery.getSearchWord(), analyzerDescriptor);
 			Query luceneQuery = queryBuilder.getLuceneQuery(searchQuery.getFieldNames(), searchQuery
 					.isFieldSearch());
+			if (HelpPlugin.DEBUG_SEARCH) {
+				System.out.println("Search Query: " + luceneQuery.toString()); //$NON-NLS-1$
+			}
 			String highlightTerms = queryBuilder.gethighlightTerms();
 			if (luceneQuery != null) {
 				if (searcher == null) {
