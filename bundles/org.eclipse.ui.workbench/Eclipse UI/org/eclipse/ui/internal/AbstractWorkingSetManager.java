@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -504,16 +503,25 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * 
      * @param memento the persistence store
      */
-    protected void restoreWorkingSetState(IMemento memento) {
-        IMemento[] children = memento
-                .getChildren(IWorkbenchConstants.TAG_WORKING_SET);
-        for (int i = 0; i < children.length; i++) {
-            IWorkingSet workingSet = restoreWorkingSet(children[i]);
-            if (workingSet != null) {
-            	internalAddWorkingSet(workingSet);
-            }
-        }
-    }
+	protected void restoreWorkingSetState(IMemento memento) {
+		IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
+		for (int i = 0; i < children.length; i++) {
+			IWorkingSet workingSet = restoreWorkingSet(children[i]);
+			if (workingSet != null) {
+				workingSets.add(workingSet);
+			}
+		}
+		IWorkingSet[] sets = getAllWorkingSets();
+		for (int i = 0; i < sets.length; i++) {
+			((AbstractWorkingSet) sets[i]).connect(this);
+		}
+		for (int i = 0; i < sets.length; i++) {
+			addToUpdater(sets[i]);
+		}
+		for (int i = 0; i < sets.length; i++) {
+			firePropertyChange(CHANGE_WORKING_SET_ADD, null, sets[i]);
+		}
+	}
     
     /**
      * Recreates a working set from the persistence store.
