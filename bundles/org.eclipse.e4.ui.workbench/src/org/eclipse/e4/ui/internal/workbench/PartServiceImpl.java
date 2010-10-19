@@ -246,7 +246,8 @@ public class PartServiceImpl implements EPartService {
 
 			modelService.bringToTop(part);
 
-			if (oldSelectedElement != part && parent.getChildren().contains(part)
+			// check to make sure that the currently selected element is actually valid
+			if (oldSelectedElement != part && parent.getChildren().contains(oldSelectedElement)
 					&& parent instanceof MGenericStack<?>) {
 				internalFixContext(part, oldSelectedElement);
 			}

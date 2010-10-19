@@ -304,7 +304,11 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(partStackB.getSelectedElement(), partBackB);
 	}
 
-	public void testBringToTop_ActivationChanges() {
+	/**
+	 * Test to ensure that calling bringToTop(MPart) will change the active part
+	 * if the active part is obscured by the part that's being brought to top.
+	 */
+	public void testBringToTop_ActivationChanges01() {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 
@@ -354,6 +358,60 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(partService.isPartVisible(partBackA));
 		assertFalse(partService.isPartVisible(partFrontB));
 		assertTrue(partService.isPartVisible(partBackB));
+	}
+
+	/**
+	 * Test to ensure that calling bringToTop(MPart) will change the active part
+	 * if the active part is obscured by the part that's being brought to top.
+	 * The part that is being passed to bringToTop(MPart) is a part that's being
+	 * represented by a placeholder in this case.
+	 */
+	public void testBringToTop_ActivationChanges02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStack);
+		perspective.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		partB.setCurSharedRef(placeholderB);
+		placeholderB.setRef(partB);
+		partStack.getChildren().add(placeholderB);
+
+		initialize(applicationContext, application);
+
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.bringToTop(partB);
+		assertEquals(partB, partService.getActivePart());
 	}
 
 	public void testBringToTop_Unrendered() {
@@ -5564,6 +5622,53 @@ public class EPartServiceTest extends TestCase {
 
 	public void testShowPart_Bug307747_ACTIVATE() {
 		testShowPart_Bug307747(PartState.ACTIVATE);
+	}
+
+	/**
+	 * Test to ensure that we can handle the showing of a part that's under a
+	 * container with a selected element that's invalid.
+	 */
+	private void testShowPart_Bug328078(PartState partState) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		// remove the part to replicate the problem in bug 328078
+		partStack.getChildren().remove(partA);
+		// try to show another part in the stack
+		partService.showPart(partB, partState);
+		assertEquals(partB, partStack.getSelectedElement());
+	}
+
+	public void testShowPart_Bug328078_CREATE() {
+		testShowPart_Bug328078(PartState.CREATE);
+	}
+
+	public void testShowPart_Bug328078_VISIBLE() {
+		testShowPart_Bug328078(PartState.VISIBLE);
+	}
+
+	public void testShowPart_Bug328078_ACTIVATE() {
+		testShowPart_Bug328078(PartState.ACTIVATE);
 	}
 
 	private void testHidePart_Bug325148(boolean force) {
