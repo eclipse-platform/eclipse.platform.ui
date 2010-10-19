@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2010 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH,
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials
@@ -555,10 +555,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			}
 		};
 		AntModelCore.getDefault().addAntModelListener(fAntModelListener);
-
-		if (isFoldingEnabled()) {
-			fFoldingStructureProvider= new AntFoldingStructureProvider(this);
-		}
     }
    
 	/* (non-Javadoc)

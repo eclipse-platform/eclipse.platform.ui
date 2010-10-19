@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -41,7 +42,6 @@ public class AntFoldingStructureProvider {
 	private Map fPositionToElement= new HashMap();
 	
 	public AntFoldingStructureProvider(AntEditor editor) {
-		super();
 		fEditor = editor;
 	}
 	
@@ -85,14 +85,13 @@ public class AntFoldingStructureProvider {
 			}
 	
 			Set currentRegions= new HashSet();
+			List root= new ArrayList();
 			AntProjectNode node= antModel.getProjectNode();
-			if (node == null || node.getOffset() == -1 || node.getLength() == -1) {
-				return;
+			if (node != null && node.getOffset() != -1) {
+				root.add(node);
+				List nodes= antModel.getNonStructuralNodes();
+				root.addAll(nodes);
 			}
-			List root= new ArrayList(2);
-			root.add(node);
-			List nodes= antModel.getNonStructuralNodes();
-			root.addAll(nodes);
 			addFoldingRegions(currentRegions, root);
 			updateFoldingRegions(model, currentRegions);
 		} catch (BadLocationException be) {
@@ -118,9 +117,9 @@ public class AntFoldingStructureProvider {
 				fPositionToElement.put(position, element);
 			}
 			
-			children= element.getChildNodes();
-			if (children != null) {
-				addFoldingRegions(regions, children);
+			List childNodes= element.getChildNodes();
+			if (childNodes != null) {
+				addFoldingRegions(regions, childNodes);
 			}
 		}
 	}

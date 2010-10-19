@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2009 IBM Corporation and others.
+ *  Copyright (c) 2004, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,14 +12,19 @@
 package org.eclipse.ant.internal.ui.editor.templates;
 
 import org.eclipse.ant.internal.ui.model.IAntModel;
+
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateBuffer;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
+import org.eclipse.jface.text.templates.TemplateTranslator;
 
 public class AntContext extends DocumentTemplateContext {
 	
@@ -34,12 +39,15 @@ public class AntContext extends DocumentTemplateContext {
 	 * @see org.eclipse.jface.text.templates.TemplateContext#evaluate(org.eclipse.jface.text.templates.Template)
 	 */
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
+		if (!canEvaluate(template))
+			return null;
 
-		TemplateBuffer templateBuffer= super.evaluate(template);
-		
+		TemplateBuffer templateBuffer= createTemplateBuffer(template);
+
 		if (templateBuffer == null) {
 			return null;
 		}
+
 		//TODO Not enabled see bug 55356
 //		if (false && AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER)) {
 //			FormattingPreferences prefs = new FormattingPreferences();
@@ -47,7 +55,30 @@ public class AntContext extends DocumentTemplateContext {
 //		}
 		return templateBuffer;
 	}
-	
+
+	private TemplateBuffer createTemplateBuffer(Template template) throws BadLocationException, TemplateException {
+		String lineDelimiter= TextUtilities.getDefaultLineDelimiter(getDocument());
+		IDocument document= new Document(template.getPattern());
+		convertLineDelimiters(document, lineDelimiter);
+
+		TemplateTranslator translator= new TemplateTranslator();
+		TemplateBuffer buffer= translator.translate(document.get());
+
+		getContextType().resolve(buffer, this);
+
+		return buffer;
+	}
+
+	private static void convertLineDelimiters(IDocument document, String defaultLineDelimiter) throws BadLocationException {
+		int lines= document.getNumberOfLines();
+		for (int line= 0; line < lines; line++) {
+			IRegion region= document.getLineInformation(line);
+			String lineDelimiter= document.getLineDelimiter(line);
+			if (lineDelimiter != null)
+				document.replace(region.getOffset() + region.getLength(), lineDelimiter.length(), defaultLineDelimiter);
+		}
+	}
+
 	/**
 	 * @return Returns the AntModel.
 	 */
@@ -59,12 +90,24 @@ public class AntContext extends DocumentTemplateContext {
 	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#getEnd()
 	 */
 	public int getEnd() {
-		int replacementOffset = getCompletionOffset();
-		int replacementLength = getCompletionLength();
-		if (replacementOffset > 0 && getDocument().get().charAt(replacementOffset - 1) == '<' && getDocument().getLength() > 1) {
-			replacementLength++;
+		int start= getCompletionOffset();
+		int length= getCompletionLength();
+
+		IDocument document= getDocument();
+		if (start > 0 && document.get().charAt(start - 1) == '<' && document.getLength() > 1) {
+			length++;
 		}
-		return replacementLength + replacementOffset;
+
+		int end= getCompletionOffset() + length;
+
+		try {
+			while (start != end && Character.isWhitespace(document.getChar(end - 1)))
+				end--;
+		} catch (BadLocationException e) {
+			// Return latest valid end
+		}
+
+		return end;
 	}
 	
 	/* (non-Javadoc)
