@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -477,7 +477,7 @@ public class ProjectionMapping implements IDocumentInformationMapping , IDocumen
 
 		int endLine= fSlaveDocument.getLineOfOffset(imageRegion.getOffset() + imageRegion.getLength());
 		if (endLine != startLine)
-			throw new IllegalStateException();
+			throw new IllegalStateException("startLine (" + startLine + ") does not match endLine (" + endLine + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		return startLine;
 	}
