@@ -1322,7 +1322,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	/**
 	 * Returns an iterator over the elements connected via this document provider.
 	 *
-	 * @return an iterator over the list of elements (element type: {@link java.lang.Object}
+	 * @return an iterator over the list of elements (element type: {@link java.lang.Object})
 	 */
 	protected Iterator getConnectedElementsIterator()  {
 		return new HashSet(fFileInfoMap.keySet()).iterator();
@@ -1331,7 +1331,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	/**
 	 * Returns an iterator over this document provider's file info objects.
 	 *
-	 * @return the iterator over list of file info objects (element type: {@link TextFileDocumentProvider.FileInfo}
+	 * @return the iterator over list of file info objects (element type: {@link TextFileDocumentProvider.FileInfo})
 	 */
 	protected Iterator getFileInfosIterator()  {
 		return new ArrayList(fFileInfoMap.values()).iterator();
