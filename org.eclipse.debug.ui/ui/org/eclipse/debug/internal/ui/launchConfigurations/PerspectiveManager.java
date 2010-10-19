@@ -12,20 +12,23 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -39,6 +42,7 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
 import org.eclipse.debug.internal.ui.views.ViewContextManager;
 import org.eclipse.debug.internal.ui.views.ViewContextService;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -56,6 +60,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.progress.UIJob;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -83,42 +88,7 @@ import com.ibm.icu.text.MessageFormat;
  * @see DebugUIPlugin
  */
 public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListener, ISaveParticipant {
-		
-	/**
-	 * Lock used to synchronize perspective switching with view activation.
-	 * Clients wanting to perform an action after a perspective switch should
-	 * schedule jobs with the perspective manager via #schedulePostSwitch(..)
-	 */
-	public class PerspectiveSwitchLock {
 
-		private int fSwitch = 0;
-		private List fJobs = new ArrayList();
-		
-		public synchronized void startSwitch() {
-			fSwitch++;
-		}
-		
-		public synchronized void endSwitch() {
-			fSwitch--;
-			if (fSwitch == 0) {
-				Iterator jobs = fJobs.iterator();
-				while (jobs.hasNext()) {
-					((Job)jobs.next()).schedule();
-				}
-				fJobs.clear();
-			}
-		}
-				
-		public synchronized void schedulePostSwitch(Job job) {
-			if (fSwitch > 0) {
-				fJobs.add(job);	
-			} 
-			else {
-				job.schedule();
-			}
-		}
-	}
-	
 	/**
 	 * Describes exactly one perspective context, which is composed of an <code>ILaunchCOnfigurationType</code>, and set of modes
 	 * and an <code>ILaunchDelegate</code>. Perspective ids are then cached for a context based on mode set.
@@ -231,11 +201,6 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	private boolean fPrompting;
 	
-	/**
-	 * Lock to sync other jobs on the perspective switch
-	 */
-	private PerspectiveSwitchLock fPerspectiveSwitchLock = new PerspectiveSwitchLock();
-    
     /**
      * Maps each launch to its perspective context activation. These
      * are disabled when a launch terminates.
@@ -305,7 +270,6 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
         if (trigger != null) {
             trigger.addSuspendTriggerListener(this);
         }
-	    fPerspectiveSwitchLock.startSwitch();
 		String perspectiveId = null;
 		// check event filters
 		try {
@@ -324,19 +288,19 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		}
 		final String id = perspectiveId;
 		// switch
-		async(new Runnable() {
-			public void run() {
-				try {
-					IWorkbenchWindow window = getWindowForPerspective(id);
-					if (id != null && window != null && shouldSwitchPerspective(window, id, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE)) {
-						switchToPerspective(window, id);
-					}
+		Job switchJob = new UIJob(DebugUIPlugin.getStandardDisplay(), "Perspective Switch Job") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				IWorkbenchWindow window = getWindowForPerspective(id);
+				if (id != null && window != null && shouldSwitchPerspective(window, id, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE)) {
+					switchToPerspective(window, id);
 				}
-				finally {
-					fPerspectiveSwitchLock.endSwitch();
-				}
+				return Status.OK_STATUS;
 			}
-		});
+		};
+		switchJob.setSystem(true);
+		switchJob.setPriority(Job.INTERACTIVE);
+		switchJob.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(this));
+		switchJob.schedule();
 	}
 
 
@@ -405,14 +369,6 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	private void handleBreakpointHit(final ILaunch launch) {
 		
-		// Must be called here to indicate that the perspective
-		// may be switching.
-		// Putting this in the async UI call will cause the Perspective
-		// Manager to turn on the lock too late.  Consequently, LaunchViewContextListener
-		// may not know that the perspective will switch and will open view before
-		// the perspective switch.
-		fPerspectiveSwitchLock.startSwitch();
-		
 		String perspectiveId = null;
 		try {
 			perspectiveId = getPerspectiveId(launch);
@@ -424,86 +380,85 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		// this has to be done in an async, such that the workbench
 		// window can be accessed
 		final String targetId = perspectiveId;
-		Runnable r = new Runnable() {
-			public void run() {
+		Job switchJob = new UIJob(DebugUIPlugin.getStandardDisplay(), "Perspective Switch Job") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				IWorkbenchWindow window = null;
-				try{
-					if (targetId != null) {
-						// get the window to open the perspective in
+				if (targetId != null) {
+					// get the window to open the perspective in
+					window = getWindowForPerspective(targetId);
+					if (window == null) {
+						return Status.OK_STATUS;
+					}
+					
+					// switch the perspective if user preference is set
+					if (shouldSwitchPerspective(window, targetId, IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND)) {
+						switchToPerspective(window, targetId);
 						window = getWindowForPerspective(targetId);
 						if (window == null) {
-							return;
+							return Status.OK_STATUS;
 						}
-						
-						// switch the perspective if user preference is set
-						if (shouldSwitchPerspective(window, targetId, IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND)) {
-							switchToPerspective(window, targetId);
-							window = getWindowForPerspective(targetId);
-							if (window == null) {
-								return;
-							}
-						}
-						
-						// make sure the shell is active
-						Shell shell= window.getShell();
-						if (shell != null) {
-							if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
-								Shell dialog = getModalDialogOpen(shell);
-								if (shell.getMinimized()) {
-									shell.setMinimized(false);
-									if (dialog != null) {
-										dialog.setFocus();
-									}
-								}
-								// If a model dialog is open on the shell, don't activate it
-								if (dialog == null) {
-									shell.forceActive();
+					}
+					
+					// make sure the shell is active
+					Shell shell= window.getShell();
+					if (shell != null) {
+						if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
+							Shell dialog = getModalDialogOpen(shell);
+							if (shell.getMinimized()) {
+								shell.setMinimized(false);
+								if (dialog != null) {
+									dialog.setFocus();
 								}
 							}
-						}
-	
-						// Activate a context for the launch
-						Object ca = fLaunchToContextActivations.get(launch);
-						if (ca == null) {
-							ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
-							if (launchConfiguration != null) {
-								try {
-									String type = launchConfiguration.getType().getIdentifier();
-									ViewContextService service = ViewContextManager.getDefault().getService(window);
-									if (service != null) {
-										IContextService contextServce = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
-										String[] ids = service.getEnabledPerspectives();
-										IContextActivation[] activations = new IContextActivation[ids.length];
-										for (int i = 0; i < ids.length; i++) {
-											// Include the word '.internal.' so the context is filtered from the key binding pref page (Bug 144019) also see ViewContextService.contextActivated()
-											Context context = contextServce.getContext(type + ".internal." + ids[i]); //$NON-NLS-1$
-											if (!context.isDefined()) {
-												context.define(context.getId(), null, null);
-											}
-											IContextActivation activation = contextServce.activateContext(context.getId());
-											activations[i] = activation;
-										}
-										fLaunchToContextActivations.put(launch, activations);
-									}
-								} catch (CoreException e) {
-									DebugUIPlugin.log(e);
-								}
+							// If a model dialog is open on the shell, don't activate it
+							if (dialog == null) {
+								shell.forceActive();
 							}
 						}
+					}
 
+					// Activate a context for the launch
+					Object ca = fLaunchToContextActivations.get(launch);
+					if (ca == null) {
+						ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
+						if (launchConfiguration != null) {
+							try {
+								String type = launchConfiguration.getType().getIdentifier();
+								ViewContextService service = ViewContextManager.getDefault().getService(window);
+								if (service != null) {
+									IContextService contextServce = (IContextService) PlatformUI.getWorkbench().getAdapter(IContextService.class);
+									String[] ids = service.getEnabledPerspectives();
+									IContextActivation[] activations = new IContextActivation[ids.length];
+									for (int i = 0; i < ids.length; i++) {
+										// Include the word '.internal.' so the context is filtered from the key binding pref page (Bug 144019) also see ViewContextService.contextActivated()
+										Context context = contextServce.getContext(type + ".internal." + ids[i]); //$NON-NLS-1$
+										if (!context.isDefined()) {
+											context.define(context.getId(), null, null);
+										}
+										IContextActivation activation = contextServce.activateContext(context.getId());
+										activations[i] = activation;
+									}
+									fLaunchToContextActivations.put(launch, activations);
+								}
+							} catch (CoreException e) {
+								DebugUIPlugin.log(e);
+							}
+						}
 					}
-					if (window != null && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
-						ViewContextService service = ViewContextManager.getDefault().getService(window);
-						service.showViewQuiet(IDebugUIConstants.ID_DEBUG_VIEW);
-					}
+
 				}
-				finally
-				{
-					fPerspectiveSwitchLock.endSwitch();
+				if (window != null && DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW)) {
+					ViewContextService service = ViewContextManager.getDefault().getService(window);
+					service.showViewQuiet(IDebugUIConstants.ID_DEBUG_VIEW);
 				}
+				return Status.OK_STATUS;
 			}
 		};
-		async(r);
+		
+		switchJob.setSystem(true);
+		switchJob.setPriority(Job.INTERACTIVE);
+		switchJob.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(this));
+		switchJob.schedule();
 	}
 	
 	/**
@@ -1064,7 +1019,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @param job job to run after perspective switching
 	 */
 	public void schedulePostSwitch(Job job) {
-		fPerspectiveSwitchLock.schedulePostSwitch(job);
+		job.setRule(AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(this));
+		job.schedule();
 	}
 
 	/* (non-Javadoc)
