@@ -114,7 +114,7 @@ public class TrackableComputationExt extends Computation {
 	}
 
 	public String toString() {
-		return "TrackableComputationExt(" + runnable + ')'; //$NON-NLS-1$
+		return runnable.toString();
 	}
 
 	public void startAccessRecording() {

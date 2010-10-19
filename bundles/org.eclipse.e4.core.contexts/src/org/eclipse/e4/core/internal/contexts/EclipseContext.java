@@ -24,6 +24,7 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
+import org.eclipse.e4.core.internal.contexts.osgi.ContextDebugHelper;
 
 /**
  * This implementation assumes that all contexts are of the class EclipseContext. The external
@@ -101,11 +102,15 @@ public class EclipseContext implements IEclipseContext {
 	 */
 	public static final String ACTIVE_CHILD = "activeChildContext"; //$NON-NLS-1$
 
+	static private final IEclipseContextDebugger debugAddOn = ContextDebugHelper.getDebugger();
+
 	public EclipseContext(IEclipseContext parent, ILookupStrategy strategy) {
 		this.strategy = strategy;
 		setParent(parent);
 		if (parent == null)
 			waiting = new ArrayList<Computation>();
+		if (debugAddOn != null)
+			debugAddOn.notify(this, IEclipseContextDebugger.EventType.CONSTRUCTED, null);
 	}
 
 	public Set<EclipseContext> getChildren() {
@@ -243,6 +248,9 @@ public class EclipseContext implements IEclipseContext {
 
 		if (parent != null)
 			parent.removeChild(this);
+
+		if (debugAddOn != null)
+			debugAddOn.notify(this, IEclipseContextDebugger.EventType.DISPOSED, null);
 	}
 
 	public Object get(String name) {
@@ -650,6 +658,43 @@ public class EclipseContext implements IEclipseContext {
 		if (this != parent.getActiveChild())
 			return; // this is not an active context; return 
 		parent.set(ACTIVE_CHILD, null);
+	}
+
+	// This method is for debug only, do not use externally
+	public Map<String, Object> localData() {
+		Map<String, Object> result = new HashMap<String, Object>(localValues.size());
+		for (String string : localValues.keySet()) {
+			Object value = localValues.get(string);
+			if (value instanceof IContextFunction)
+				continue;
+			result.put(string, value);
+		}
+		return result;
+	}
+
+	// This method is for debug only, do not use externally
+	public Map<String, Object> localContextFunction() {
+		Map<String, Object> result = new HashMap<String, Object>(localValues.size());
+		for (String string : localValues.keySet()) {
+			Object value = localValues.get(string);
+			if (value instanceof IContextFunction)
+				result.put(string, value);
+		}
+		return result;
+	}
+
+	// This method is for debug only, do not use externally
+	public Map<String, Object> cachedCachedContextFunctions() {
+		Map<String, Object> result = new HashMap<String, Object>(localValueComputations.size());
+		for (String string : localValueComputations.keySet()) {
+			result.put(string, localValueComputations.get(string).get());
+		}
+		return result;
+	}
+
+	// This method is for debug only, do not use externally
+	public Set<Computation> getListeners() {
+		return listeners.keySet();
 	}
 
 }

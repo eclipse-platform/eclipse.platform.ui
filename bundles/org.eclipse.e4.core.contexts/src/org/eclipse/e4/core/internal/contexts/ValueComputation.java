@@ -132,14 +132,8 @@ public class ValueComputation extends Computation {
 	}
 
 	public String toString() {
-		StringBuffer result = new StringBuffer();
-		result.append("ValueComputation("); //$NON-NLS-1$
-		result.append(context);
-		result.append('/');
-		result.append(originatingContext);
-		result.append(',');
-		result.append(name);
-		result.append(')');
-		return result.toString();
+		if (function == null)
+			return super.toString();
+		return function.toString();
 	}
 }

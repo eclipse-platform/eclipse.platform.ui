@@ -112,6 +112,11 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			return true;
 		}
 
+		@Override
+		public String toString() {
+			return requestor.toString();
+		}
+
 	}
 
 	final private IEclipseContext context;

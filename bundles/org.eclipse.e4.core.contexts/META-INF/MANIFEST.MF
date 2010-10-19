@@ -22,6 +22,7 @@ Export-Package: org.eclipse.e4.core.contexts;
    org.eclipse.e4.ui.css.swt,
    org.eclipse.e4.ui.workbench.addons.swt,
    org.eclipse.ui.workbench,
-   org.eclipse.e4.ui.workbench.renderers.swt",
- org.eclipse.e4.core.internal.contexts;x-friends:="org.eclipse.e4.core.tests",
+   org.eclipse.e4.ui.workbench.renderers.swt,
+   org.eclipse.e4.core.contexts.debug",
+ org.eclipse.e4.core.internal.contexts;x-friends:="org.eclipse.e4.core.tests,org.eclipse.e4.core.contexts.debug",
  org.eclipse.e4.core.internal.contexts.osgi;x-internal:=true
