@@ -72,6 +72,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 			if (description == null)
 				description = ""; //$NON-NLS-1$
 			label.setText(description);
+			label.setToolTipText(description);
 			c.layout();
 		} else if (c.getChildren().length == 1) {
 			c.setLayout(new Layout() {
@@ -105,6 +106,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 			Control partCtrl = c.getChildren()[0];
 			Label label = new Label(c, SWT.NONE);
 			label.setText(description);
+			label.setToolTipText(description);
 			label.moveAbove(partCtrl);
 			c.layout();
 		}
