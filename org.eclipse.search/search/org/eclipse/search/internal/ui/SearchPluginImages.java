@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 
+
 /**
  * Bundle of all images used by the Search UI plugin.
  */
@@ -46,7 +47,7 @@ public class SearchPluginImages {
 	// Define image names
 	public static final String IMG_TOOL_SEARCH= NAME_PREFIX + "search.gif"; //$NON-NLS-1$
 
-	public static final String IMG_LCL_SEARCH_AGAIN= NAME_PREFIX + "search_again.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_REFRESH= NAME_PREFIX + "refresh.gif"; //$NON-NLS-1$
 	public static final String IMG_LCL_PIN_VIEW= NAME_PREFIX + "pin_view.gif"; //$NON-NLS-1$
 
 	public static final String IMG_LCL_SEARCH_REM= NAME_PREFIX + "search_rem.gif"; //$NON-NLS-1$
