@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,14 @@ public class MetaKeywords extends TestCase {
 		SearchHit[] hits = getResultDescriptions("olfrgkjrifjd", "en");
 		assertEquals(hits.length, 1);
 		assertEquals("XHTML Meta description", hits[0].getDescription());
+	}
+	
+	public void testSearchDescriptionInHtml() {
+		SearchTestUtils.searchAllLocales("basbanba", new String[] { "/org.eclipse.ua.tests/data/help/search/extraDir/testMeta2.htm" });
+	}
+	
+	public void testSearchDescriptionInXhtml() {
+		SearchTestUtils.searchAllLocales("mfjrudjesm", new String[] { "/org.eclipse.ua.tests/data/help/search/extraDir/testMeta2.xhtml" });
 	}
 	
 	private SearchHit[] getResultDescriptions(String searchWord, String nl) {	

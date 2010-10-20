@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *     Copyright (c) 2003, 2009 IBM Corp.
+ *     Copyright (c) 2003, 2010 IBM Corp.
  *     All rights reserved.
  *
  * Contributors:
@@ -140,7 +140,8 @@ InterruptedException {
 
   void addMetaTag() throws IOException {
       metaTags.setProperty(currentMetaTag, currentMetaContent);
-      if (currentMetaTag.equalsIgnoreCase("keywords")) { //$NON-NLS-1$
+      if (currentMetaTag.equalsIgnoreCase("keywords") ||  //$NON-NLS-1$
+    	  currentMetaTag.equalsIgnoreCase("description")) { //$NON-NLS-1$
     	  writer.write(' '); 
           writer.write(currentMetaContent);
     	  writer.write(' '); 

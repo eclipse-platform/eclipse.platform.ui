@@ -51,6 +51,9 @@ public class XHTMLSearchParticipant extends SearchParticipantXML {
 	    		if (descriptionAttribute != null) {
 	    			hasDescriptionMetaTag = true;
 		    		data.addToSummary(descriptionAttribute);
+	    			data.addText(" "); //$NON-NLS-1$
+		    		data.addText(descriptionAttribute);
+	    			data.addText(" "); //$NON-NLS-1$
 	    		}
 	    	} else if (KEYWORDS.equalsIgnoreCase(nameAttribute)) {
 	    		String keywordsAttribute = attributes.getValue(CONTENT_ATTRIBUTE);
