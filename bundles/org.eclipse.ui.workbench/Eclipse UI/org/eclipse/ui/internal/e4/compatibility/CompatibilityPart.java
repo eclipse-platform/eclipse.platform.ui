@@ -202,6 +202,7 @@ public abstract class CompatibilityPart {
 				switch (propId) {
 				case IWorkbenchPartConstants.PROP_TITLE:
 					part.setLabel(computeLabel());
+					part.setTooltip(wrapped.getTitleToolTip());
 					break;
 				case IWorkbenchPartConstants.PROP_DIRTY:
 					if (wrapped instanceof ISaveablePart) {
