@@ -125,6 +125,7 @@ final class TextEditorMessages extends NLS {
 	}
 
 	public static String TextEditorDefaultsPreferencePage_carriageReturn;
+	public static String TextEditorDefaultsPreferencePage_transparencyLevel;
 	public static String TextEditorDefaultsPreferencePage_configureWhitespaceCharacterPainterProperties;
 	public static String TextEditorDefaultsPreferencePage_enclosed;
 	public static String TextEditorDefaultsPreferencePage_enrichHoverMode;
@@ -139,6 +140,7 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorDefaultsPreferencePage_smartHomeEnd;
 	public static String TextEditorDefaultsPreferencePage_warn_if_derived;
 	public static String TextEditorDefaultsPreferencePage_showWhitespaceCharacters;
+	public static String TextEditorDefaultsPreferencePage_showWhitespaceCharactersDialogInvalidInput;
 	public static String TextEditorDefaultsPreferencePage_showWhitespaceCharactersDialogTitle;
 	public static String TextEditorDefaultsPreferencePage_space;
 	public static String TextEditorDefaultsPreferencePage_tab;

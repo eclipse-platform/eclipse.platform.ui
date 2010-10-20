@@ -2118,6 +2118,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	public static final String PREFERENCE_RULER_CONTRIBUTIONS= "rulerContributions"; //$NON-NLS-1$
+	
 	/**
 	 * A named preference that controls the display of whitespace characters.
 	 * <p>
@@ -2138,6 +2139,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <li>{@link #PREFERENCE_SHOW_TRAILING_TABS}</li>
 	 * <li>{@link #PREFERENCE_SHOW_CARRIAGE_RETURN}</li>
 	 * <li>{@link #PREFERENCE_SHOW_LINE_FEED}</li>
+	 * <li>{@link #PREFERENCE_WHITESPACE_CHARACTER_ALPHA_VALUE}</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -2268,6 +2270,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.7
 	 */
 	public static final String PREFERENCE_SHOW_LINE_FEED= "showLineFeed"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that controls the alpha value of whitespace characters. The value is used
+	 * only if the value of {@link #PREFERENCE_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREFERENCE_WHITESPACE_CHARACTER_ALPHA_VALUE= "whitespaceCharacterAlphaValue"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that controls whether text drag and drop is enabled.
@@ -4637,7 +4650,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				PREFERENCE_SHOW_ENCLOSED_TABS.equals(property) ||
 				PREFERENCE_SHOW_TRAILING_TABS.equals(property) ||
 				PREFERENCE_SHOW_CARRIAGE_RETURN.equals(property) ||
-				PREFERENCE_SHOW_LINE_FEED.equals(property)) {
+				PREFERENCE_SHOW_LINE_FEED.equals(property) ||
+				PREFERENCE_WHITESPACE_CHARACTER_ALPHA_VALUE.equals(property)) {
 			IAction action= getAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS);
 			if (action instanceof IUpdate)
 				((IUpdate)action).update();

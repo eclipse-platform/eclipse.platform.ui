@@ -53,6 +53,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ColorSelector;
@@ -60,6 +61,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -398,6 +400,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		private InitializerFactory fDialogInitializerFactory;
 
+		private Text errorMessageText;
+
 		protected WhitespaceCharacterPainterOptionsDialog(Shell parentShell, IPreferenceStore parent) {
 			super(parentShell);
 			fParentPreferenceStore= parent;
@@ -419,6 +423,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_TABS));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_CARRIAGE_RETURN));
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LINE_FEED));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE));
 
 			OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 			overlayKeys.toArray(keys);
@@ -535,7 +540,44 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LINE_FEED, "", null); //$NON-NLS-1$
 			addCheckBox(tabularComposite, preference, new BooleanDomain(), 0);
 
+			Composite alphaComposite= new Composite(composite, SWT.NONE);
+			layout= new GridLayout();
+			layout.numColumns= 2;
+			layout.marginHeight= 10;
+			layout.marginWidth= 0;
+			layout.makeColumnsEqualWidth= false;
+			alphaComposite.setLayout(layout);
+			preference= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE, TextEditorMessages.TextEditorDefaultsPreferencePage_transparencyLevel, null);
+			addTextField(alphaComposite, preference, new IntegerDomain(0, 255), 5, 0);
+
+			errorMessageText= new Text(composite, SWT.READ_ONLY | SWT.WRAP);
+			errorMessageText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+			errorMessageText.setBackground(errorMessageText.getDisplay()
+						.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+			setErrorMessage(null);
+
 			return composite;
+		}
+
+		/**
+		 * Sets or clears the error message. If not <code>null</code>, the OK button is disabled.
+		 * 
+		 * @param errorMessage the error message, or <code>null</code> to clear
+		 * @since 3.0
+		 */
+		public void setErrorMessage(String errorMessage) {
+			if (errorMessageText != null && !errorMessageText.isDisposed()) {
+				errorMessageText.setText(errorMessage == null ? "  " : errorMessage); //$NON-NLS-1$
+				boolean hasError= errorMessage != null && (StringConverter.removeWhiteSpaces(errorMessage)).length() > 0;
+				errorMessageText.setEnabled(hasError);
+				errorMessageText.setVisible(hasError);
+				errorMessageText.getParent().update();
+				Control button= getButton(IDialogConstants.OK_ID);
+				if (button != null) {
+					button.setEnabled(errorMessage == null);
+				}
+			}
 		}
 
 		private Button addCheckBox(Composite composite, final Preference preference, final Domain domain, int indentation) {
@@ -556,6 +598,41 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 			fDialogInitializers.add(fDialogInitializerFactory.create(preference, checkBox));
 			return checkBox;
+		}
+
+		private Control[] addTextField(Composite composite, final Preference preference, final Domain domain, int textLimit, int indentation) {
+			Label labelControl= new Label(composite, SWT.NONE);
+			labelControl.setText(preference.getName());
+			GridData gd= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+			gd.horizontalIndent= indentation;
+			labelControl.setLayoutData(gd);
+
+			final Text textControl= new Text(composite, SWT.BORDER | SWT.SINGLE);
+			gd= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
+			gd.widthHint= convertWidthInCharsToPixels(textLimit + 1);
+			textControl.setLayoutData(gd);
+			textControl.setTextLimit(textLimit);
+			textControl.setToolTipText(preference.getDescription());
+
+			if (domain != null) {
+				textControl.addModifyListener(new ModifyListener() {
+					public void modifyText(ModifyEvent e) {
+						String value= textControl.getText();
+						IStatus status= domain.validate(value);
+						if (!status.matches(IStatus.ERROR)) {
+							fDialogOverlayStore.setValue(preference.getKey(), value);
+							setErrorMessage(null);
+						}
+						else {
+							setErrorMessage(NLSUtility.format(TextEditorMessages.TextEditorDefaultsPreferencePage_showWhitespaceCharactersDialogInvalidInput, value));
+						}
+					}
+				});
+			}
+
+			fDialogInitializers.add(fDialogInitializerFactory.create(preference, textControl));
+
+			return new Control[] { labelControl, textControl };
 		}
 
 		protected void okPressed() {
@@ -659,6 +736,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TRAILING_TABS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_CARRIAGE_RETURN));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_LINE_FEED));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);

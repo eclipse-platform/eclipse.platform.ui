@@ -62,6 +62,8 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 	private boolean fShowCarriageReturn;
 	/** @since 3.7 */
 	private boolean fShowLineFeed;
+	/** @since 3.7 */
+	private int fAlpha;
 
 	/**
 	 * Construct the action and initialize its state.
@@ -112,8 +114,12 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 
 		ITextViewer viewer= getTextViewer();
 		if (viewer instanceof ITextViewerExtension2) {
-			fWhitespaceCharPainter= new WhitespaceCharacterPainter(viewer, fShowLeadingSpaces, fShowEnclosedSpaces, fShowTrailingSpaces, fShowLeadingIdeographicSpaces, fShowEnclosedIdeographicSpaces,
-					fShowTrailingIdeographicSpace, fShowLeadingTabs, fShowEnclosedTabs, fShowTrailingTabs, fShowCarriageReturn, fShowLineFeed);
+			if (fStore != null) {
+				fWhitespaceCharPainter= new WhitespaceCharacterPainter(viewer, fShowLeadingSpaces, fShowEnclosedSpaces, fShowTrailingSpaces, fShowLeadingIdeographicSpaces,
+						fShowEnclosedIdeographicSpaces, fShowTrailingIdeographicSpace, fShowLeadingTabs, fShowEnclosedTabs, fShowTrailingTabs, fShowCarriageReturn, fShowLineFeed, fAlpha);
+			} else {
+				fWhitespaceCharPainter= new WhitespaceCharacterPainter(viewer);
+			}
 			((ITextViewerExtension2)viewer).addPainter(fWhitespaceCharPainter);
 		}
 	}
@@ -164,6 +170,7 @@ public class ShowWhitespaceCharactersAction extends TextEditorAction {
 			fShowTrailingTabs= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_TRAILING_TABS);
 			fShowCarriageReturn= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_CARRIAGE_RETURN);
 			fShowLineFeed= fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_LINE_FEED);
+			fAlpha= fStore.getInt(AbstractTextEditor.PREFERENCE_WHITESPACE_CHARACTER_ALPHA_VALUE);
 		}
 
 		if (checked != isChecked()) {

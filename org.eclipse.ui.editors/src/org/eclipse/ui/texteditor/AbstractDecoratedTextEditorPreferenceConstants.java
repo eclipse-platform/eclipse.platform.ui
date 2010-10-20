@@ -409,6 +409,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <li>{@link #EDITOR_SHOW_TRAILING_TABS}</li>
 	 * <li>{@link #EDITOR_SHOW_CARRIAGE_RETURN}</li>
 	 * <li>{@link #EDITOR_SHOW_LINE_FEED}</li>
+	 * <li>{@link #EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE}</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -540,6 +541,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 */
 	public static final String EDITOR_SHOW_LINE_FEED= AbstractTextEditor.PREFERENCE_SHOW_LINE_FEED;
 
+	/**
+	 * A named preference that controls the alpha value of whitespace characters. The value is used
+	 * only if the value of {@link #EDITOR_SHOW_WHITESPACE_CHARACTERS} is <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Integer</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE= AbstractTextEditor.PREFERENCE_WHITESPACE_CHARACTER_ALPHA_VALUE;
 
 	/**
 	 * A named preference that controls the display of the range indicator.
@@ -717,6 +728,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_SHOW_TRAILING_TABS, true);
 		store.setDefault(EDITOR_SHOW_CARRIAGE_RETURN, true);
 		store.setDefault(EDITOR_SHOW_LINE_FEED, true);
+		store.setDefault(EDITOR_WHITESPACE_CHARACTER_ALPHA_VALUE, 80);
 
 		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
