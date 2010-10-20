@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.WhitespaceCharacterPainter;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -49,6 +50,8 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 	private boolean fShowLineFeed;
 	/** @since 3.7 */
 	private IPreferenceStore fStore = EditorsUI.getPreferenceStore();
+	/** @since 3.7 */
+	private int fAlpha;
 
 	public ShowWhitespaceAction(MergeSourceViewer[] viewers, boolean[] needsPainters) {
 		super(CompareMessages.ShowWhitespaceAction_0, viewers, AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS);
@@ -75,6 +78,7 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 			fShowTrailingTabs = fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_TRAILING_TABS);
 			fShowCarriageReturn = fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_CARRIAGE_RETURN);
 			fShowLineFeed = fStore.getBoolean(AbstractTextEditor.PREFERENCE_SHOW_LINE_FEED);
+			fAlpha = fStore.getInt(AbstractTextEditor.PREFERENCE_WHITESPACE_CHARACTER_ALPHA_VALUE);
 		}
 		if (checked != isChecked()) {
 			if (toggleState(checked))
@@ -96,7 +100,7 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 				|| AbstractTextEditor.PREFERENCE_SHOW_ENCLOSED_IDEOGRAPHIC_SPACES.equals(property) || AbstractTextEditor.PREFERENCE_SHOW_TRAILING_IDEOGRAPHIC_SPACES.equals(property)
 				|| AbstractTextEditor.PREFERENCE_SHOW_LEADING_TABS.equals(property) || AbstractTextEditor.PREFERENCE_SHOW_ENCLOSED_TABS.equals(property)
 				|| AbstractTextEditor.PREFERENCE_SHOW_TRAILING_TABS.equals(property) || AbstractTextEditor.PREFERENCE_SHOW_CARRIAGE_RETURN.equals(property)
-				|| AbstractTextEditor.PREFERENCE_SHOW_LINE_FEED.equals(property)) {
+				|| AbstractTextEditor.PREFERENCE_SHOW_LINE_FEED.equals(property) || AbstractTextEditor.PREFERENCE_WHITESPACE_CHARACTER_ALPHA_VALUE.equals(property)) {
 			synchronizeWithPreference();
 		}
 	}
@@ -127,10 +131,15 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 			for (int i = 0; i < viewers.length; i++) {
 				if (fNeedsPainters[i]) {
 					MergeSourceViewer viewer = viewers[i];
-					WhitespaceCharacterPainter painter = new WhitespaceCharacterPainter(viewer.getSourceViewer(), fShowLeadingSpaces, fShowEnclosedSpaces, fShowTrailingSpaces,
-							fShowLeadingIdeographicSpaces, fShowEnclosedIdeographicSpaces, fShowTrailingIdeographicSpace, fShowLeadingTabs, fShowEnclosedTabs, fShowTrailingTabs, fShowCarriageReturn,
-							fShowLineFeed);
-					viewer.getSourceViewer().addPainter(painter);
+					SourceViewer sourceViewer = viewer.getSourceViewer();
+					WhitespaceCharacterPainter painter;
+					if (fStore != null) {
+						painter = new WhitespaceCharacterPainter(sourceViewer, fShowLeadingSpaces, fShowEnclosedSpaces, fShowTrailingSpaces, fShowLeadingIdeographicSpaces,
+								fShowEnclosedIdeographicSpaces, fShowTrailingIdeographicSpace, fShowLeadingTabs, fShowEnclosedTabs, fShowTrailingTabs, fShowCarriageReturn, fShowLineFeed, fAlpha);
+					} else {
+						painter = new WhitespaceCharacterPainter(sourceViewer);
+					}
+					sourceViewer.addPainter(painter);
 					painters.put(viewer, painter);
 				}
 			}
