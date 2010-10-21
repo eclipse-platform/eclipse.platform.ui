@@ -680,9 +680,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		IMenuManager menuManager= site.getActionBars().getMenuManager();
 		createViewMenuGroups(menuManager);
 		fPageState= memento;
-		IWorkbenchSiteProgressService progressService= getProgressService();
-		if (progressService != null)
-			progressService.showBusyForFamily(InternalSearchUI.FAMILY_SEARCH);
 	}
 
 
@@ -742,10 +739,11 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		return service;
 	}
 
-    public void showBusy(boolean busy) {
-        super.showBusy(busy);
-        getProgressService().warnOfContentChange();
-    }
+	public void showBusy(boolean busy) {
+		super.showBusy(busy);
+		if (!busy)
+			getProgressService().warnOfContentChange();
+	}
 
 	public Object getAdapter(Class adapter) {
 		Object superAdapter= super.getAdapter(adapter);
