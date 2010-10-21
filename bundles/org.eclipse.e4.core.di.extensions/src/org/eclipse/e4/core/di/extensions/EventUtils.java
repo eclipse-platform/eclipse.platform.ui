@@ -42,12 +42,13 @@ final public class EventUtils {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	static public Event constructEvent(String topic, Object data) {
 		Event event;
 		if (data instanceof Dictionary<?, ?>) {
-			event = new Event(topic, (Dictionary<?, ?>) data);
+			event = new Event(topic, (Dictionary<String, ?>) data);
 		} else if (data instanceof Map<?, ?>) {
-			event = new Event(topic, (Map<?, ?>) data);
+			event = new Event(topic, (Map<String, ?>) data);
 		} else {
 			Dictionary<String, Object> d = new Hashtable<String, Object>(2);
 			d.put(EventConstants.EVENT_TOPIC, topic);
