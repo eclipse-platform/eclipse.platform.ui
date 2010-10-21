@@ -3102,6 +3102,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (model == partService.getActivePart()) {
 			updateActivePartSources(null);
 			updateActiveEditorSources(null);
+		} else if (part instanceof IEditorPart) {
+			updateActiveEditorSources(findPart(getActiveEditor()));
 		}
 	}
 
