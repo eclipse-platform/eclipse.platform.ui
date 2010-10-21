@@ -10,6 +10,7 @@
     Contributors:
          IBM Corporation - initial API and implementation
           Martin Oberhuber (Wind River) - [292882] Default Browser on Solaris
+          Martin Oberhuber (Wind River) - [293175] Default external web browser not found when running 32-bit Eclipse on 64-bit Ubuntu 9.04
  -->
 
 <plugin>
@@ -109,6 +110,9 @@
          os="linux,aix,hpux,solaris"
          executable="firefox"
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
+         <location>
+            usr/bin/firefox
+         </location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.konqueror"
