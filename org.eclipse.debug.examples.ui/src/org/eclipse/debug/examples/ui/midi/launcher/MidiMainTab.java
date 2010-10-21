@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
@@ -48,6 +49,10 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 	
 	private Text fFileText;
 	private Button fFileButton;
+	
+	private Button fExceptions;
+	private Button fHandled;
+	private Button fUnhandled;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -87,6 +92,40 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 				browseMidiFiles();
 			}
 		});
+		
+		new Label(comp, SWT.NONE);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		
+		Group test = new Group(comp, SWT.NONE);
+		test.setText("Exceptions");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		test.setLayoutData(gd);
+		test.setLayout(new GridLayout());
+		fExceptions = new Button(test, SWT.CHECK);
+		fExceptions.setText("&Throw an exception during launch for testing purposes");
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		fExceptions.setLayoutData(gd);
+		fExceptions.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fHandled.setEnabled(fExceptions.getSelection());
+				fUnhandled.setEnabled(fExceptions.getSelection());
+				updateLaunchConfigurationDialog();
+			}
+		});
+		fHandled = new Button(test, SWT.RADIO);
+		fHandled.setText("Throw a handled e&xception during launch to re-open launch dialog");
+		SelectionAdapter sa = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		};
+		fHandled.addSelectionListener(sa);
+		fUnhandled = new Button(test, SWT.RADIO);
+		fUnhandled.setText("Throw an &unhandled exception during launch to open error dialog");
+		fUnhandled.addSelectionListener(sa);
 	}
 	
 	/**
@@ -118,6 +157,16 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 			if (file != null) {
 				fFileText.setText(file);
 			}
+			String excep = configuration.getAttribute(MidiLaunchDelegate.ATTR_THROW_EXCEPTION, (String)null);
+			fExceptions.setSelection(excep != null);
+			fHandled.setEnabled(excep != null);
+			fUnhandled.setEnabled(excep != null);
+			if (excep != null) {
+				fHandled.setSelection(excep.equals(MidiLaunchDelegate.HANDLED));
+				fUnhandled.setSelection(excep.equals(MidiLaunchDelegate.UNHANDLED));
+			} else {
+				fHandled.setSelection(true);
+			}
 		} catch (CoreException e) {
 			setErrorMessage(e.getMessage());
 		}
@@ -140,6 +189,17 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		}
 		configuration.setAttribute(MidiLaunchDelegate.ATTR_MIDI_FILE, file);
 		configuration.setMappedResources(resources);
+		
+		// exception handling
+		if (fExceptions.getSelection()) {
+			if (fHandled.getSelection()) {
+				configuration.setAttribute(MidiLaunchDelegate.ATTR_THROW_EXCEPTION, MidiLaunchDelegate.HANDLED);
+			} else {
+				configuration.setAttribute(MidiLaunchDelegate.ATTR_THROW_EXCEPTION, MidiLaunchDelegate.UNHANDLED);
+			}
+		} else {
+			configuration.removeAttribute(MidiLaunchDelegate.ATTR_THROW_EXCEPTION);
+		}
 	}
 	
 	/* (non-Javadoc)

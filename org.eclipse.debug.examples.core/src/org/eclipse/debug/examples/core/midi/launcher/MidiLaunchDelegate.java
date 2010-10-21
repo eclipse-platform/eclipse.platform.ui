@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,10 +52,30 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 	 */
 	public static final String ATTR_MIDI_FILE = "midi.file";
 	
+	/**
+	 * Launch configuration attribute for the MIDI launcher. Specifies whether to throw
+	 * an exception when present. Value is one of <code>HANDLED</code> or <code>UNHANDLED</code>.
+	 */
+	public static final String ATTR_THROW_EXCEPTION = "throw.exception";
+	
+	/**
+	 * Possible values for the <code>ATTR_THROW_EXCEPTION</code>.
+	 */
+	public static final String HANDLED = "HANDLED";
+	public static final String UNHANDLED = "UNHANDLED";
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.debug.core.ILaunch, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
+		String excep = configuration.getAttribute(ATTR_THROW_EXCEPTION, (String)null);
+		if (excep != null) {
+			if (HANDLED.equals(excep)) {
+				throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, 303, "Test handled exception during launch", null));
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, "Test unhandled exception during launch", new Error("Test unhandled exception during launch")));
+			}
+		}
 		String fileName = configuration.getAttribute(ATTR_MIDI_FILE, (String)null);
 		if (fileName == null) {
 			abort("MIDI file not specified.", null);
