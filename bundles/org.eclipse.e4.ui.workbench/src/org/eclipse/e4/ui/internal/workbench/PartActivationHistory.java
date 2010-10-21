@@ -202,6 +202,7 @@ class PartActivationHistory {
 	}
 
 	private MPart findActivationCandidate(Collection<MPart> candidates, MPart currentlyActivePart) {
+		MPlaceholder activePlaceholder = partService.getLocalPlaceholder(currentlyActivePart);
 		for (MPart candidate : candidates) {
 			if (candidate != currentlyActivePart && candidate.isToBeRendered()
 					&& candidate.isVisible()) {
@@ -210,7 +211,9 @@ class PartActivationHistory {
 					MElementContainer<MUIElement> parent = candidate.getParent();
 					// if stack, then must be the selected element to be valid
 					if (parent instanceof MGenericStack) {
-						if (parent.getSelectedElement() == candidate) {
+						MUIElement selection = parent.getSelectedElement();
+						if (selection == candidate || selection == activePlaceholder
+								|| selection == currentlyActivePart) {
 							return candidate;
 						}
 					} else {
@@ -220,7 +223,9 @@ class PartActivationHistory {
 					MElementContainer<MUIElement> parent = placeholder.getParent();
 					// if stack, then must be the selected element to be valid
 					if (parent instanceof MGenericStack) {
-						if (parent.getSelectedElement() == placeholder) {
+						MUIElement selection = parent.getSelectedElement();
+						if (selection == placeholder || selection == activePlaceholder
+								|| selection == currentlyActivePart) {
 							return candidate;
 						}
 					} else {
