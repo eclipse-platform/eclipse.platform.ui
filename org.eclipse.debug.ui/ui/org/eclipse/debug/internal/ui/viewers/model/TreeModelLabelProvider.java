@@ -28,6 +28,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -44,7 +48,9 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * @since 3.3
  */
-public class TreeModelLabelProvider extends ColumnLabelProvider implements ITreeModelLabelProvider {
+public class TreeModelLabelProvider extends ColumnLabelProvider 
+    implements ITreeModelLabelProvider, IModelChangedListener 
+{
 	
 	private ITreeModelLabelProviderTarget fViewer;
 	private List fComplete;
@@ -101,11 +107,37 @@ public class TreeModelLabelProvider extends ColumnLabelProvider implements ITree
 	 */
 	private List fUpdatesInProgress = new ArrayList();
 	
+    /**
+     * Delta visitor actively cancels the outstanding label updates for 
+     * elements that are changed and are about to be updated.
+     */
+    class Visitor implements IModelDeltaVisitor {
+        /* (non-Javadoc)
+         * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor#visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta, int)
+         */
+        public boolean visit(IModelDelta delta, int depth) {
+            if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
+                cancelElementUpdates(delta.getElement(), true);
+                return false;
+            } else if ((delta.getFlags() & IModelDelta.STATE) > 0) {
+                cancelElementUpdates(delta.getElement(), false);
+                return true;
+            } 
+            return true;
+        }
+    }
+
+    /**
+     * Delta visitor
+     */
+    private Visitor fVisitor = new Visitor();
+	
 	/**
 	 * Constructs a new label provider on the given display
 	 */
 	public TreeModelLabelProvider(ITreeModelLabelProviderTarget viewer) {
 		fViewer = viewer;
+		fViewer.addModelChangedListener(this);
 	}
 	
 	/**
@@ -178,6 +210,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider implements ITree
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
 	public void dispose() {
+	    fViewer.removeModelChangedListener(this);
 		synchronized (fUpdatesInProgress) {
 			Iterator updatesInProgress = fUpdatesInProgress.iterator();
 			while (updatesInProgress.hasNext()) {
@@ -220,6 +253,8 @@ public class TreeModelLabelProvider extends ColumnLabelProvider implements ITree
 	}	
 	
 	public synchronized boolean update(TreePath elementPath) {
+	    cancelPathUpdates(elementPath);
+	    
 		String[] visibleColumns = fViewer.getVisibleColumns();
 		Object element = elementPath.getLastSegment();
 		IElementLabelProvider presentation = ViewerAdapterService.getLabelProvider(element);
@@ -247,6 +282,21 @@ public class TreeModelLabelProvider extends ColumnLabelProvider implements ITree
 		}
 	}
 	
+	/**
+     * Cancel any outstanding updates that are running for this element. 
+     */
+    protected void cancelPathUpdates(TreePath elementPath) {
+       synchronized (fUpdatesInProgress) {
+            Iterator updatesInProgress = fUpdatesInProgress.iterator();
+            while (updatesInProgress.hasNext()) {
+                ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
+                if (elementPath.equals(currentUpdate.getElementPath())) {
+                    currentUpdate.cancel();
+                }
+            }
+        }
+    }
+
 	private void startRequests(UIJob updateJob) {
 	    // Avoid calling providers inside a synchronized section.  Instead 
 	    // copy the updates map into a new variable. 
@@ -270,6 +320,56 @@ public class TreeModelLabelProvider extends ColumnLabelProvider implements ITree
             }
 	    }
 	}
+	
+    /**
+    * Cancels all running updates for the given element.  If seachFullPath is true,
+    * all updtes will be canceled which have the given element anywhere in their 
+    * patch.   
+    * @param element element to search for.
+    * @param searchFullPath flag whether to look for the element in the full path
+    * of the update
+    */
+   protected void cancelElementUpdates(Object element, boolean searchFullPath) {
+       synchronized (fUpdatesInProgress) {
+           Iterator updatesInProgress = fUpdatesInProgress.iterator();
+             while (updatesInProgress.hasNext()) {
+                ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
+                
+                if (searchFullPath) {
+                    if (element.equals(fViewer.getInput())) {
+                        currentUpdate.cancel();
+                    } else {
+                        TreePath updatePath = currentUpdate.getElementPath();
+                        for (int i = 0; i < updatePath.getSegmentCount(); i++) {
+                            if (element.equals(updatePath.getSegment(i))) {
+                                currentUpdate.cancel();
+                                break; // Exit the for loop, stay in the while loop
+                            }                         
+                        }
+                    }
+                } else {
+                    if (element.equals(currentUpdate.getElement())) {
+                        currentUpdate.cancel();
+                    }
+                }
+            }
+        }
+    }
+
+   /**
+     * Cancels updates that have paths under the given path.
+     */
+    protected void cancelSubtreeUpdates(TreePath path) {
+        synchronized (fUpdatesInProgress) {
+            Iterator iterator = fUpdatesInProgress.iterator();
+            while (iterator.hasNext()) {
+                ILabelUpdate currentUpdate = (ILabelUpdate) iterator.next();
+                if (currentUpdate.getElementPath().startsWith(path, null)) {
+                    currentUpdate.cancel();
+                }
+            }
+        }
+    }   
 	
 	/**
 	 * Returns the presentation context for this label provider.
@@ -298,7 +398,6 @@ public class TreeModelLabelProvider extends ColumnLabelProvider implements ITree
 							updates = (LabelUpdate[]) fComplete.toArray(new LabelUpdate[fComplete.size()]);
 							fComplete = null;
 						}
-						//System.out.println("Changed Labels: " + updates.length);
 						for (int i = 0; i < updates.length; i++) {
 							updates[i].update();
 						}
@@ -396,4 +495,9 @@ public class TreeModelLabelProvider extends ColumnLabelProvider implements ITree
 		}
 	}
 
+ 
+	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+	    delta.accept(fVisitor);
+    }
+	
 }

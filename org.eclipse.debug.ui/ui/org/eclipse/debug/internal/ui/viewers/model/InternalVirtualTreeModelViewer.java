@@ -1308,8 +1308,9 @@ public class InternalVirtualTreeModelViewer extends Viewer
             childCount = items[0].getItemCount();
             // Mimic the jface viewer behavior which returns 1 for child count
             // for an item that has children but is not yet expanded.
-            if (childCount == -1 && items[0].hasItems()) {
-                childCount = 1;
+            // Return 0, if we do not know if the item has children.
+            if (childCount == -1) {
+                childCount = items[0].hasItems() ? 1 : 0;
             } 
         }   
         return childCount;
