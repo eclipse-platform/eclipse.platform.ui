@@ -167,12 +167,16 @@ public class StackRenderer extends LazyStackRenderer {
 				// that's changed?
 				List<MPlaceholder> refs = ElementReferenceRenderer
 						.getRenderedPlaceholders(element);
-				for (MPlaceholder ref : refs) {
-					MElementContainer<MUIElement> refParent = ref.getParent();
-					if (refParent.getRenderer() instanceof StackRenderer) {
-						CTabItem cti = findItemForPart(ref, refParent);
-						if (cti != null) {
-							updateTab(cti, part, attName, newValue);
+				if (refs != null) {
+					for (MPlaceholder ref : refs) {
+						MElementContainer<MUIElement> refParent = ref
+								.getParent();
+						// can be null, see bug 328296
+						if (refParent != null && refParent.getRenderer() instanceof StackRenderer) {
+							CTabItem cti = findItemForPart(ref, refParent);
+							if (cti != null) {
+								updateTab(cti, part, attName, newValue);
+							}
 						}
 					}
 				}
