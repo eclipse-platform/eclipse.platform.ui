@@ -140,16 +140,25 @@ function highlightWordInText(aWord, textNode){
 			replacementNode.appendChild(newBefore);
 			spanNode=document.createElement("span");
 			spanNode.setAttribute("name","resultofMatch");
-
-			if ((defaultHighlight == false) && !document.styleSheets) {
-				if (isIE) spanNode.setAttribute("className",null);
-				else spanNode.setAttribute("class",null);
-			} else {
-				if (isIE) {
-				    spanNode.className ="resultofText";
+			if(isSafari){
+				if (defaultHighlight == true) {
+					spanNode.style.color="#000000";
+					spanNode.style.background="#FFFF66";
 				} else {
-				    spanNode.setAttribute("class","resultofText");
+					spanNode.style.color=null;
+					spanNode.style.background=null;
 				}
+			}else{
+			    if ((defaultHighlight == false) && !document.styleSheets) {
+				    if (isIE) spanNode.setAttribute("className",null);
+				    else spanNode.setAttribute("class",null);
+			    } else {
+				    if (isIE) {
+				        spanNode.className ="resultofText";
+				    } else {
+				        spanNode.setAttribute("class","resultofText");
+				    }
+			    }
 			}
 
 			replacementNode.appendChild(spanNode);
@@ -255,7 +264,24 @@ function toggleHighlight() {
 
 function setHighlight(current) {
 	currentHighlight = (current==true);
-    if (document.styleSheets){
+	if (isSafari) {
+		var color;
+		var backgnd;
+		if (currentHighlight) {
+			color = "#000000";
+			backgnd = "#FFFF66";
+		}
+		else {
+			color = null;
+			backgnd = null;
+		}
+		var elements = document.getElementsByName("resultofMatch");
+		for (var i = 0; i<elements.length; i++){
+			elements[i].style.color=color;
+			elements[i].style.backgroundColor= backgnd;
+		}
+	}
+	else if (document.styleSheets){
 		var text;
 		if (currentHighlight) {
 			text = "COLOR: #000000; BACKGROUND-COLOR: #FFFF66;";
