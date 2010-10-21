@@ -10,20 +10,17 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base.remote;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.base.util.TestConnectionUtility;
 
 public class RemoteStatusData {
 
 
-	private static final String INDEXJSP = "/index.jsp"; //$NON-NLS-1$
-	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
-	
 	/*
 	 * Convience method to see if any remote help
 	 * is down
@@ -56,25 +53,11 @@ public class RemoteStatusData {
 		for (int i=0;i<sites.size();i++)
 		{
 			URL baseURL = (URL)sites.get(i);
-			try{
-				URL indexURL = new URL(baseURL.toExternalForm()+INDEXJSP);
-				InputStream in;
-				if(indexURL.getProtocol().equalsIgnoreCase(PROTOCOL_HTTP))
-				{
-					in = indexURL.openStream();
-					in.close();
-				}
-				else
-				{
-					in = HttpsUtility.getHttpsStream(indexURL);
-					in.close();
-				}
-				
+			boolean isConnected = TestConnectionUtility.testConnection(baseURL.getHost(), 
+					"" + baseURL.getPort(), baseURL.getPath(), baseURL.getProtocol()); //$NON-NLS-1$
 			
-			}catch(Exception ex)
-			{
+			if (!isConnected)
 				badSites.add(baseURL);
-			}
 		}
 		return badSites;
 	}

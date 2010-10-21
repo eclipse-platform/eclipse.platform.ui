@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.preferences;
 
+import org.eclipse.help.internal.base.util.TestConnectionUtility;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
@@ -237,7 +238,8 @@ public class ViewICPropsDialog extends StatusDialog implements IShellProvider {
 		StatusInfo status = new StatusInfo(); 
 		
 		// Check to see if connection is valid
-		boolean isConnection=TestConnectionUtility.testConnection(selectedHost,selectedPort, selectedPath,selectedProtocol);
+		boolean isConnection = TestConnectionUtility.testConnection(selectedHost, 
+				selectedPort, selectedPath, selectedProtocol);
 		
 		if(isConnection)
 			status.setInfo(Messages.ViewICPropsDialog_23);

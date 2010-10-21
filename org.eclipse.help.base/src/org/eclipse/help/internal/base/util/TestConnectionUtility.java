@@ -9,9 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
  
- package org.eclipse.help.ui.internal.preferences;
+ package org.eclipse.help.internal.base.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,6 +25,8 @@ public class TestConnectionUtility {
 
 	//This class provides a utility for testing if a connection
 	//can be made to a given URL
+	private static final String PATH_TOC = "/toc"; //$NON-NLS-1$
+	private static final String PROTOCOL = "http"; //$NON-NLS-1$
 	private static final String PROTOCOL_HTTPS = "https"; //$NON-NLS-1$
 	
 	private final static int SOCKET_TIMEOUT = 5000; //milliseconds
@@ -29,27 +34,23 @@ public class TestConnectionUtility {
 	public static boolean testConnection(String thisHost, String thisPort,
 			String thisPath, String thisProtocol) {
 
-		URL testURL;
 		boolean validConnection = true;
 		String urlConnection = ""; //$NON-NLS-1$
 
 		// Build connection string
 		if (thisPort.equals("80")) //$NON-NLS-1$
-			urlConnection = thisProtocol+"://" + thisHost + thisPath; //$NON-NLS-1$
+			urlConnection = thisProtocol + "://" + thisHost + thisPath; //$NON-NLS-1$
 		else
-			urlConnection = thisProtocol+"://" + thisHost + ":" + thisPort //$NON-NLS-1$ //$NON-NLS-2$
-					+ thisPath;
+			urlConnection = thisProtocol + "://" + thisHost + ":" + thisPort + thisPath; //$NON-NLS-1$ //$NON-NLS-2$
 
-		if(thisProtocol.equalsIgnoreCase("http")) //$NON-NLS-1$
+		if(thisProtocol.equalsIgnoreCase(PROTOCOL))
 		{
 			// Test Connection. If exception thrown, invalid connection
 			try {
-				testURL = new URL(urlConnection);
-	
-				URLConnection testConnect = testURL.openConnection();
-				setTimeout(testConnect,SOCKET_TIMEOUT);
-				testConnect.connect();
-	
+				// Validate Toc connection...
+				URL testTocURL = new URL(urlConnection + PATH_TOC);
+				validConnection = isValidToc(testTocURL);
+				
 			} catch (MalformedURLException e) {
 				validConnection = false;
 			} catch (IOException e) {
@@ -58,9 +59,37 @@ public class TestConnectionUtility {
 		}
 		else if(thisProtocol.equalsIgnoreCase(PROTOCOL_HTTPS))
 		{
-			validConnection = HttpsUtility.canConnectToHttpsURL(urlConnection);
+			// Validate Toc connection...
+			validConnection = HttpsUtility.canConnectToHttpsURL(urlConnection + PATH_TOC);
 		}
 		return validConnection;
+	}
+	
+	private static boolean isValidToc(URL url)
+	{
+		InputStream in = null;
+		try{
+			URLConnection connection = url.openConnection();
+			setTimeout(connection, SOCKET_TIMEOUT);
+			connection.connect();
+			in = connection.getInputStream();
+			if (in!=null)
+			{
+				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+				String line;
+				while (( line = reader.readLine())!=null){
+					if (line.contains("<tocContributions>")) //$NON-NLS-1$
+						return true;
+				}
+			}
+		}catch (Exception ex){}
+		finally{
+			try {
+				if (in!=null)
+					in.close();
+			} catch (IOException e) {}
+		}
+		return false;
 	}
 
 	private static void setTimeout(URLConnection conn, int milliseconds) {

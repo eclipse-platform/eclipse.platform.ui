@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.preferences;
 import java.util.Vector;
 
 import org.eclipse.help.internal.base.remote.RemoteIC;
+import org.eclipse.help.internal.base.util.TestConnectionUtility;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
