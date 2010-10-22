@@ -71,15 +71,7 @@ public class EclipseContext implements IEclipseContext {
 		}
 	}
 
-	static class DebugSnap {
-		Set<Computation> listeners = new HashSet<Computation>();
-		Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
-		Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
-	}
-
 	static ThreadLocal<Computation> currentComputation = new ThreadLocal<Computation>();
-
-	private DebugSnap snapshot;
 
 	final Map<Computation, Computation> listeners = Collections.synchronizedMap(new LinkedHashMap<Computation, Computation>());
 
@@ -147,45 +139,6 @@ public class EclipseContext implements IEclipseContext {
 				return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Remember a snapshot of this context state for debugging purposes.
-	 */
-	public void debugSnap() {
-		snapshot = new DebugSnap();
-		snapshot.listeners = new HashSet<Computation>(listeners.keySet());
-		snapshot.localValueComputations = new HashMap<String, ValueComputation>(localValueComputations);
-		snapshot.localValues = new HashMap<String, Object>(localValues);
-	}
-
-	/**
-	 * Print a diff between the current context state and the last snapshot state
-	 */
-	public void debugDiff() {
-		if (snapshot == null)
-			return;
-		Set<Computation> listenerDiff = new HashSet<Computation>(listeners.keySet());
-		listenerDiff.removeAll(snapshot.listeners);
-		listenerDiff = new HashSet<Computation>(listenerDiff);// shrink the set
-		System.out.println("Listener diff (" + listenerDiff.size() + " leaked): "); //$NON-NLS-1$ //$NON-NLS-2$
-		for (Iterator<Computation> it = listenerDiff.iterator(); it.hasNext();) {
-			System.out.println("\t" + it.next()); //$NON-NLS-1$
-		}
-
-		Set<ValueComputation> computationDiff = new HashSet<ValueComputation>(localValueComputations.values());
-		computationDiff.removeAll(snapshot.localValueComputations.values());
-		System.out.println("localValueComputations diff (" + computationDiff.size() + " leaked): "); //$NON-NLS-1$ //$NON-NLS-2$
-		for (Iterator<ValueComputation> it = computationDiff.iterator(); it.hasNext();) {
-			System.out.println("\t" + it.next()); //$NON-NLS-1$
-		}
-
-		Set<Object> valuesDiff = new HashSet<Object>(localValues.values());
-		valuesDiff.removeAll(snapshot.localValues.values());
-		System.out.println("localValues diff (" + valuesDiff.size() + " leaked): "); //$NON-NLS-1$ //$NON-NLS-2$
-		for (Iterator<Object> it = valuesDiff.iterator(); it.hasNext();) {
-			System.out.println("\t" + it.next()); //$NON-NLS-1$
-		}
 	}
 
 	/*
