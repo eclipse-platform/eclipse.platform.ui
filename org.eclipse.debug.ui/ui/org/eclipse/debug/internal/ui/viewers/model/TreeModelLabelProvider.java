@@ -356,21 +356,6 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
         }
     }
 
-   /**
-     * Cancels updates that have paths under the given path.
-     */
-    protected void cancelSubtreeUpdates(TreePath path) {
-        synchronized (fUpdatesInProgress) {
-            Iterator iterator = fUpdatesInProgress.iterator();
-            while (iterator.hasNext()) {
-                ILabelUpdate currentUpdate = (ILabelUpdate) iterator.next();
-                if (currentUpdate.getElementPath().startsWith(path, null)) {
-                    currentUpdate.cancel();
-                }
-            }
-        }
-    }   
-	
 	/**
 	 * Returns the presentation context for this label provider.
 	 * 
