@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.jface.util.Util;
 
+import org.eclipse.jface.text.DefaultInformationControl;
+
 /**
  * Provides a set of convenience methods for creating HTML pages.
  * <p>
@@ -97,6 +99,17 @@ public class HTMLPrinter {
 		return buffer.toString();
 	}
 
+	/**
+	 * Escapes reserved HTML characters in the given string.
+	 * <p>
+	 * <b>Warning:</b> Does not preserve whitespace.
+	 * 
+	 * @param content the input string
+	 * @return the string with escaped characters
+	 * 
+	 * @see #convertToHTMLContentWithWhitespace(String) for use in browsers
+	 * @see #addPreFormatted(StringBuffer, String) for rendering with an {@link HTML2TextReader}
+	 */
 	public static String convertToHTMLContent(String content) {
 		content= replace(content, '&', "&amp;"); //$NON-NLS-1$
 		content= replace(content, '"', "&quot;"); //$NON-NLS-1$
@@ -104,6 +117,28 @@ public class HTMLPrinter {
 		return replace(content, '>', "&gt;"); //$NON-NLS-1$
 	}
 
+	/**
+	 * Escapes reserved HTML characters in the given string
+	 * and returns them in a way that preserves whitespace in a browser.
+	 * <p>
+	 * <b>Warning:</b> Whitespace will not be preserved when rendered with an {@link HTML2TextReader}
+	 * (e.g. in a {@link DefaultInformationControl} that renders simple HTML).
+
+	 * @param content the input string
+	 * @return the processed string
+	 * 
+	 * @see #addPreFormatted(StringBuffer, String)
+	 * @see #convertToHTMLContent(String)
+	 * @since 3.7
+	 */
+	public static String convertToHTMLContentWithWhitespace(String content) {
+		content= replace(content, '&', "&amp;"); //$NON-NLS-1$
+		content= replace(content, '"', "&quot;"); //$NON-NLS-1$
+		content= replace(content, '<', "&lt;"); //$NON-NLS-1$
+		content= replace(content, '>', "&gt;"); //$NON-NLS-1$
+		return "<span style='white-space:pre'>" + content + "</span>"; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
 	public static String read(Reader rd) {
 
 		StringBuffer buffer= new StringBuffer();
@@ -274,6 +309,28 @@ public class HTMLPrinter {
 		if (paragraph != null) {
 			buffer.append("<p>"); //$NON-NLS-1$
 			buffer.append(paragraph);
+		}
+	}
+
+	/**
+	 * Appends a string and keeps its whitespace and newlines.
+	 * <p>
+	 * <b>Warning:</b> This starts a new paragraph when rendered in a browser, but
+	 * it doesn't starts a new paragraph when rendered with a {@link HTML2TextReader}
+	 * (e.g. in a {@link DefaultInformationControl} that renders simple HTML).
+	 * 
+	 * @param buffer the output buffer
+	 * @param preFormatted the string that should be rendered with whitespace preserved
+	 * 
+	 * @see #convertToHTMLContent(String)
+	 * @see #convertToHTMLContentWithWhitespace(String)
+	 * @since 3.7
+	 */
+	public static void addPreFormatted(StringBuffer buffer, String preFormatted) {
+		if (preFormatted != null) {
+			buffer.append("<pre>"); //$NON-NLS-1$
+			buffer.append(preFormatted);
+			buffer.append("</pre>"); //$NON-NLS-1$
 		}
 	}
 
