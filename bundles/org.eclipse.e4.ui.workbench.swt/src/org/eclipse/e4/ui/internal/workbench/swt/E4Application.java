@@ -290,7 +290,7 @@ public class E4Application implements IApplication {
 		// Persisted state
 		boolean clearPersistedState;
 		value = getArgValue(E4Workbench.CLEAR_PERSISTED_STATE, appContext, true);
-		clearPersistedState = value != null && Boolean.parseBoolean(value);
+		clearPersistedState = value == null || Boolean.parseBoolean(value);
 		eclipseContext.set(E4Workbench.CLEAR_PERSISTED_STATE,
 				Boolean.valueOf(clearPersistedState));
 
