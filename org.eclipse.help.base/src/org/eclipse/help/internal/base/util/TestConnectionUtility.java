@@ -50,10 +50,7 @@ public class TestConnectionUtility {
 				// Validate Toc connection...
 				URL testTocURL = new URL(urlConnection + PATH_TOC);
 				validConnection = isValidToc(testTocURL);
-				
 			} catch (MalformedURLException e) {
-				validConnection = false;
-			} catch (IOException e) {
 				validConnection = false;
 			}
 		}
