@@ -297,7 +297,7 @@ public class E4Application implements IApplication {
 		// Delta save and restore
 		boolean deltaRestore;
 		value = getArgValue(E4Workbench.DELTA_RESTORE, appContext, false);
-		deltaRestore = value != null && Boolean.parseBoolean(value);
+		deltaRestore = value == null || Boolean.parseBoolean(value);
 		eclipseContext.set(E4Workbench.DELTA_RESTORE,
 				Boolean.valueOf(deltaRestore));
 
