@@ -58,7 +58,7 @@ public class ResourceHandlerTest extends HeadlessStartupTest {
 		localContext.set(E4Workbench.INSTANCE_LOCATION, getInstanceLocation());
 		localContext.set(E4Workbench.PERSIST_STATE, Boolean.TRUE);
 		localContext.set(E4Workbench.CLEAR_PERSISTED_STATE, Boolean.TRUE);
-		localContext.set(E4Workbench.DELTA_IGNORE, Boolean.FALSE);
+		localContext.set(E4Workbench.DELTA_RESTORE, Boolean.TRUE);
 
 		localContext.set(E4Workbench.INITIAL_WORKBENCH_MODEL_URI, uri);
 

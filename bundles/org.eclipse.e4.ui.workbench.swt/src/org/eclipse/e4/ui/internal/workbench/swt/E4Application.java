@@ -295,11 +295,11 @@ public class E4Application implements IApplication {
 				Boolean.valueOf(clearPersistedState));
 
 		// Delta save and restore
-		boolean deltaIgnore;
-		value = getArgValue(E4Workbench.DELTA_IGNORE, appContext, true);
-		deltaIgnore = value != null && Boolean.parseBoolean(value);
-		eclipseContext.set(E4Workbench.DELTA_IGNORE,
-				Boolean.valueOf(deltaIgnore));
+		boolean deltaRestore;
+		value = getArgValue(E4Workbench.DELTA_RESTORE, appContext, false);
+		deltaRestore = value != null && Boolean.parseBoolean(value);
+		eclipseContext.set(E4Workbench.DELTA_RESTORE,
+				Boolean.valueOf(deltaRestore));
 
 		String resourceHandler = getArgValue(
 				E4Workbench.MODEL_RESOURCE_HANDLER, appContext, false);

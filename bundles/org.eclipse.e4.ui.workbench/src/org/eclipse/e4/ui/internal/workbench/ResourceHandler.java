@@ -90,10 +90,10 @@ public class ResourceHandler implements IModelResourceHandler {
 	@Inject
 	public ResourceHandler(@Named(E4Workbench.PERSIST_STATE) boolean saveAndRestore,
 			@Named(E4Workbench.CLEAR_PERSISTED_STATE) boolean clearPersistedState,
-			@Named(E4Workbench.DELTA_IGNORE) boolean deltaIgnore) {
+			@Named(E4Workbench.DELTA_RESTORE) boolean deltaRestore) {
 		this.saveAndRestore = saveAndRestore;
 		this.clearPersistedState = clearPersistedState;
-		this.deltaRestore = !deltaIgnore;
+		this.deltaRestore = deltaRestore;
 	}
 
 	@PostConstruct
