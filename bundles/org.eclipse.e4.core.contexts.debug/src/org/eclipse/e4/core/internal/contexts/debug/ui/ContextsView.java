@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts.debug.ui;
 
+import java.util.Map;
+import java.util.Set;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.internal.contexts.Computation;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -23,10 +26,15 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -37,6 +45,9 @@ public class ContextsView {
 	protected TreeViewer dataViewer;
 	protected ContextAllocation allocationsViewer;
 	protected TreeViewer linksViewer;
+
+	protected Button diffButton;
+	protected Button snapshotButton;
 
 	@Inject
 	public ContextsView(Composite parent, IEclipseContext context) {
@@ -89,6 +100,35 @@ public class ContextsView {
 		ContextLinks links = new ContextLinks(folder);
 		linksViewer = links.createControls();
 
+		Group leaksHelper = new Group(treeComposite, SWT.NONE);
+		leaksHelper.setLayout(new GridLayout(2, true));
+		leaksHelper.setText(ContextMessages.leaksGroup);
+		leaksHelper.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+		snapshotButton = new Button(leaksHelper, SWT.PUSH);
+		snapshotButton.setText(ContextMessages.snapshotButton);
+		snapshotButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				makeSnapshot();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+
+		diffButton = new Button(leaksHelper, SWT.PUSH);
+		diffButton.setText(ContextMessages.diffButton);
+		diffButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				makeDiff();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+		diffButton.setEnabled(false);
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 
@@ -99,6 +139,30 @@ public class ContextsView {
 	@Focus
 	public void setFocus() {
 		treeViewer.getControl().setFocus();
+	}
+
+	protected ContextSnapshot snapshot;
+
+	protected void makeSnapshot() {
+		// TBD do we need to "freeze" the context system while we do this?
+		snapshot = new ContextSnapshot();
+		diffButton.setEnabled(true);
+	}
+
+	protected void makeDiff() {
+		if (snapshot == null)
+			return;
+		Map<EclipseContext, Set<Computation>> snapshotDiff = snapshot.diff();
+		if (snapshotDiff == null) {
+			MessageBox dialog = new MessageBox(snapshotButton.getShell(), SWT.OK);
+			dialog.setMessage(ContextMessages.noDiffMsg);
+			dialog.setText(ContextMessages.diffDialogTitle);
+			dialog.open();
+			return;
+		}
+		LeaksDialog dialog = new LeaksDialog(snapshotButton.getShell());
+		dialog.setInput(snapshotDiff);
+		dialog.open();
 	}
 
 }

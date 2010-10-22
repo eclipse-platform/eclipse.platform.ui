@@ -12,14 +12,16 @@ package org.eclipse.e4.core.internal.contexts.debug.ui;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
 public class AllocationRecorder {
 
 	static private AllocationRecorder defaultRecorder;
 
-	private Map<IEclipseContext, Throwable> traces = Collections.synchronizedMap(new WeakHashMap<IEclipseContext, Throwable>());
+	private Map<EclipseContext, Throwable> traces = Collections.synchronizedMap(new WeakHashMap<EclipseContext, Throwable>());
 
 	static public AllocationRecorder getDefault() {
 		if (defaultRecorder == null)
@@ -31,7 +33,7 @@ public class AllocationRecorder {
 		// placeholder
 	}
 
-	public void allocated(IEclipseContext context, Throwable exception) {
+	public void allocated(EclipseContext context, Throwable exception) {
 		traces.put(context, exception);
 	}
 
@@ -41,5 +43,9 @@ public class AllocationRecorder {
 
 	public Throwable getTrace(IEclipseContext context) {
 		return traces.get(context);
+	}
+
+	public Set<EclipseContext> getContexts() {
+		return traces.keySet();
 	}
 }

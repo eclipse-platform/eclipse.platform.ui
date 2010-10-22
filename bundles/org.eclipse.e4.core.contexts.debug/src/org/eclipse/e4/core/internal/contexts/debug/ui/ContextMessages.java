@@ -27,6 +27,12 @@ public class ContextMessages extends NLS {
 	public static String contextTreeLabel;
 	public static String showFunctions;
 	public static String showCached;
+	public static String leaksGroup;
+	public static String snapshotButton;
+	public static String diffButton;
+	public static String diffDialogTitle;
+	public static String diffDialogMessage;
+	public static String noDiffMsg;
 
 	static {
 		// load message values from bundle file
