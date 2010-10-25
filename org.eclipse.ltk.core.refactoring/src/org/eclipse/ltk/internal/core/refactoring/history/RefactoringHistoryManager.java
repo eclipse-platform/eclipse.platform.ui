@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,9 +31,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -593,8 +593,6 @@ public final class RefactoringHistoryManager {
 	 */
 	private static final class DOMWriter extends PrintWriter {
 
-		private int tab;
-
 		/* constants */
 		private static final String XML_VERSION= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 
@@ -605,7 +603,6 @@ public final class RefactoringHistoryManager {
 		 */
 		public DOMWriter(Writer output) {
 			super(output);
-			tab= 0;
 		}
 
 		public void printDocument(Document doc) {
@@ -625,7 +622,6 @@ public final class RefactoringHistoryManager {
 			boolean hasChildren= element.hasChildNodes();
 			startTag(element, hasChildren);
 			if (hasChildren) {
-				tab++;
 				boolean prevWasText= false;
 				NodeList children= element.getChildNodes();
 				for (int i= 0; i < children.getLength(); i++) {
@@ -633,7 +629,6 @@ public final class RefactoringHistoryManager {
 					if (node instanceof Element) {
 						if (!prevWasText) {
 							println();
-							printTabulation();
 						}
 						printElement((Element) children.item(i));
 						prevWasText= false;
@@ -642,23 +637,11 @@ public final class RefactoringHistoryManager {
 						prevWasText= true;
 					}
 				}
-				tab--;
 				if (!prevWasText) {
 					println();
-					printTabulation();
 				}
 				endTag(element);
 			}
-		}
-
-		private void printTabulation() {
-			// Indenting is disabled, as it can affect the result of getTextData().
-			// In 3.0, elements were separated by a newline but not indented.
-			// This causes getTextData() to return "\n" even if no text data had explicitly been set.
-			// The code here emulates that behaviour.
-
-//    		for (int i = 0; i < tab; i++)
-//    			super.print("\t"); //$NON-NLS-1$
 		}
 
 		private void startTag(Element element, boolean hasChildren) {
