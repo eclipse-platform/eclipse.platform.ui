@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -226,8 +226,6 @@ abstract class TreeLineTracker implements ILineTracker {
 		 */
 		int remaining= offset;
 		Node node= fRoot;
-		int line= 0;
-
 		while (true) {
 			if (node == null)
 				fail(offset);
@@ -236,13 +234,11 @@ abstract class TreeLineTracker implements ILineTracker {
 				node= node.left;
 			} else {
 				remaining -= node.offset;
-				line+= node.line;
 				if (remaining < node.length
 						|| remaining == node.length && node.right == null) { // last line
 					break;
 				}
 				remaining -= node.length;
-				line ++;
 				node= node.right;
 			}
 		}
@@ -298,7 +294,6 @@ abstract class TreeLineTracker implements ILineTracker {
 		 * Works for any binary search tree.
 		 */
 		int remaining= line;
-		int offset= 0;
 		Node node= fRoot;
 
 		while (true) {
@@ -311,7 +306,6 @@ abstract class TreeLineTracker implements ILineTracker {
 				node= node.left;
 			} else {
 				remaining -= node.line + 1;
-				offset += node.offset + node.length;
 				node= node.right;
 			}
 		}
@@ -1264,7 +1258,6 @@ abstract class TreeLineTracker implements ILineTracker {
 		List roots= new LinkedList();
 		roots.add(fRoot);
 		StringBuffer buf= new StringBuffer((width + 1) * depth);
-		int nodes= 1;
 		int indents= leaves;
 		char[] space= new char[leaves * WIDTH / 2];
 		Arrays.fill(space, ' ');
@@ -1301,7 +1294,6 @@ abstract class TreeLineTracker implements ILineTracker {
 			}
 
 			buf.append('\n');
-			nodes *= 2;
 		}
 
 		return buf.toString();

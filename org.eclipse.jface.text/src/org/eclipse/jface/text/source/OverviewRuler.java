@@ -643,15 +643,12 @@ public class OverviewRuler implements IOverviewRuler {
 
 			int[] style= new int[] { FilterIterator.PERSISTENT, FilterIterator.TEMPORARY };
 			for (int t=0; t < style.length; t++) {
-
-				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
-
 				boolean areColorsComputed= false;
 				Color fill= null;
 				Color stroke= null;
 
-				for (int i= 0; e.hasNext(); i++) {
-
+				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
+				while (e.hasNext()) {
 					Annotation a= (Annotation) e.next();
 					Position p= fModel.getPosition(a);
 
@@ -756,15 +753,12 @@ public class OverviewRuler implements IOverviewRuler {
 
 			int[] style= new int[] { FilterIterator.PERSISTENT, FilterIterator.TEMPORARY };
 			for (int t=0; t < style.length; t++) {
-
-				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
-
 				boolean areColorsComputed= false;
 				Color fill= null;
 				Color stroke= null;
 
-				for (int i= 0; e.hasNext(); i++) {
-
+				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
+				while (e.hasNext()) {
 					Annotation a= (Annotation) e.next();
 					Position p= fModel.getPosition(a);
 
