@@ -943,10 +943,6 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(part, partSashContainer.getSelectedElement());
 	}
 
-	public void testElementContainer_ActiveChild3_True() {
-		testElementContainer_ActiveChild3(true);
-	}
-
 	public void testElementContainer_ActiveChild3_False() {
 		testElementContainer_ActiveChild3(false);
 	}

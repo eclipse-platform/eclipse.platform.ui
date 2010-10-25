@@ -43,9 +43,9 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.IPartListener;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.emf.common.notify.Notifier;
 
@@ -615,10 +615,6 @@ public class EPartServiceTest extends TestCase {
 
 	public void testIsPartVisible_NotInStackTrueTrue() {
 		testIsPartVisible_NotInStack(true, true);
-	}
-
-	public void testIsPartVisible_NotInStackTrueFalse() {
-		testIsPartVisible_NotInStack(true, false);
 	}
 
 	public void testIsPartVisible_NotInStackFalseTrue() {
@@ -1784,7 +1780,6 @@ public class EPartServiceTest extends TestCase {
 		part.setElementId("partId");
 		part.setToBeRendered(false);
 		window.getChildren().add(part);
-		window.setSelectedElement(part);
 
 		initialize(applicationContext, application);
 
@@ -1823,13 +1818,11 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		partStack.setToBeRendered(false);
 		window.getChildren().add(partStack);
-		window.setSelectedElement(partStack);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.setElementId("partId");
 		part.setToBeRendered(false);
 		partStack.getChildren().add(part);
-		partStack.setSelectedElement(part);
 
 		initialize(applicationContext, application);
 
@@ -1869,18 +1862,15 @@ public class EPartServiceTest extends TestCase {
 				.createPartSashContainer();
 		partSashContainer.setToBeRendered(false);
 		window.getChildren().add(partSashContainer);
-		window.setSelectedElement(partSashContainer);
 
 		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
 		partStack.setToBeRendered(false);
 		partSashContainer.getChildren().add(partStack);
-		partSashContainer.setSelectedElement(partStack);
 
 		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
 		part.setElementId("partId");
 		part.setToBeRendered(false);
 		partStack.getChildren().add(part);
-		partStack.setSelectedElement(part);
 
 		initialize(applicationContext, application);
 
@@ -5698,7 +5688,6 @@ public class EPartServiceTest extends TestCase {
 		placeholder.setRef(part);
 		placeholder.setToBeRendered(false);
 		perspective.getChildren().add(placeholder);
-		perspective.setSelectedElement(placeholder);
 
 		// setup the context
 		initialize(applicationContext, application);
@@ -5861,7 +5850,6 @@ public class EPartServiceTest extends TestCase {
 		placeholderB.setToBeRendered(false);
 		placeholderB.setRef(part);
 		perspectiveB.getChildren().add(placeholderB);
-		perspectiveB.setSelectedElement(placeholderB);
 
 		initialize(applicationContext, application);
 		getEngine().createGui(window);

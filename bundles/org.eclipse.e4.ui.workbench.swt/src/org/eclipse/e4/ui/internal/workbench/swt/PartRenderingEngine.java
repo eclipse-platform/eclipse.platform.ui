@@ -125,6 +125,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 				Activator
 						.trace(Policy.DEBUG_RENDERER, "visible -> false", null); //$NON-NLS-1$
 
+				// Ensure that the element about to be removed is not the
+				// selected element
+				if (parent.getSelectedElement() == changedElement)
+					parent.setSelectedElement(null);
+
 				// Note that the 'removeGui' protocol calls 'childRemoved'
 				removeGui(changedElement);
 			}
@@ -136,10 +141,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 		public void handleEvent(Event event) {
 			MUIElement changedElement = (MUIElement) event
 					.getProperty(UIEvents.EventTags.ELEMENT);
-			if (!(changedElement.getWidget() instanceof Control))
-				return;
-
-			Control ctrl = (Control) changedElement.getWidget();
 			MElementContainer<MUIElement> parent = changedElement.getParent();
 			if (parent == null)
 				return;
@@ -150,17 +151,27 @@ public class PartRenderingEngine implements IPresentationEngine {
 				return;
 
 			// Re-parent the control based on the visible state
-			if (changedElement.isVisible()) {
+			if (changedElement.isVisible()
+					&& changedElement.getWidget() instanceof Control) {
 				// Ensure that the control is under its 'real' parent if it's
 				// visible
 				Composite realComp = (Composite) renderer
 						.getUIContainer(changedElement);
+				Control ctrl = (Control) changedElement.getWidget();
 				ctrl.setParent(realComp);
 				fixZOrder(changedElement);
 				renderer.childRendered(parent, changedElement);
 			} else {
+				// Ensure that the element about to be removed is not the
+				// selected element
+				if (parent.getSelectedElement() == changedElement)
+					parent.setSelectedElement(null);
+
 				// Put the control under the 'limbo' shell
-				ctrl.setParent(getLimboShell());
+				if (changedElement.getWidget() instanceof Control) {
+					Control ctrl = (Control) changedElement.getWidget();
+					ctrl.setParent(getLimboShell());
+				}
 				renderer.hideChild(parent, changedElement);
 			}
 		}
@@ -250,6 +261,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 					ctrl.getParent().layout(new Control[] { ctrl },
 							SWT.CHANGED | SWT.DEFER);
 				}
+
+				// Ensure that the element about to be removed is not the
+				// selected element
+				if (changedElement.getSelectedElement() == removed)
+					changedElement.setSelectedElement(null);
 
 				if (renderer != null)
 					renderer.hideChild(changedElement, removed);

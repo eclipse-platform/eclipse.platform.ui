@@ -587,6 +587,190 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(partB, stack.getSelectedElement());
 	}
 
+	public void testSetSelectedElement() {
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA");
+		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setElementId("partB");
+		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		stack.getChildren().add(partA);
+		stack.getChildren().add(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setElementId("partB");
+		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		// You can set the selected element to a child
+		boolean causedException = false;
+		try {
+			stack.setSelectedElement(partA);
+		} catch (IllegalArgumentException e) {
+			causedException = true;
+		}
+		assertFalse("Exception should not have been thrown", causedException);
+
+		// You can *not* set the selected element to a non-child
+		causedException = false;
+		try {
+			stack.setSelectedElement(partC);
+		} catch (IllegalArgumentException e) {
+			causedException = true;
+		}
+		assertTrue("Exception should have been thrown", causedException);
+	}
+
+	public void testSelectedElementNullingTBR() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartSashContainer container = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		window.getChildren().add(container);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA");
+		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setElementId("partB");
+		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		partC.setElementId("partC");
+		partC.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		container.getChildren().add(partA);
+		container.getChildren().add(partB);
+		container.getChildren().add(partC);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		// Ensure that changing the state of an element that is *not*
+		// the selected element doesn't change its value
+		container.setSelectedElement(partA);
+		partB.setToBeRendered(false);
+		assertTrue(
+				"Changing the TBR of a non-selected element should not change the value of the container's seletedElement",
+				container.getSelectedElement() == partA);
+
+		// Ensure that changing the TBR state of the selected element results in
+		// it going null
+		container.setSelectedElement(partA);
+		partA.setToBeRendered(false);
+		assertTrue(
+				"Changing the TBR of the selected element should have set the field to null",
+				container.getSelectedElement() == null);
+	}
+
+	public void testSelectedElementNullingVisible() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartSashContainer container = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		window.getChildren().add(container);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA");
+		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setElementId("partB");
+		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		partC.setElementId("partC");
+		partC.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		container.getChildren().add(partA);
+		container.getChildren().add(partB);
+		container.getChildren().add(partC);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		// Ensure that changing the state of an element that is *not*
+		// the selected element doesn't change its value
+		container.setSelectedElement(partA);
+		partB.setVisible(false);
+		assertTrue(
+				"Changing the TBR of a non-selected element should not change the value of the container's seletedElement",
+				container.getSelectedElement() == partA);
+
+		// Ensure that changing the Visible state of the selected element
+		// results in it going null
+		container.setSelectedElement(partA);
+		partA.setVisible(false);
+		assertTrue(
+				"Changing the Visible state of the selected element should have set the field to null",
+				container.getSelectedElement() == null);
+	}
+
+	public void testSelectedElementNullingParentChange() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartSashContainer container = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		window.getChildren().add(container);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setElementId("partA");
+		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setElementId("partB");
+		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		partC.setElementId("partC");
+		partC.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		container.getChildren().add(partA);
+		container.getChildren().add(partB);
+		container.getChildren().add(partC);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		// Ensure that changing the state of an element that is *not*
+		// the selected element doesn't change its value
+		container.setSelectedElement(partA);
+		container.getChildren().remove(partB);
+		assertTrue(
+				"Changing the parent of a non-selected element should not change the value of the container's seletedElement",
+				container.getSelectedElement() == partA);
+
+		// Ensure that changing the parent of the selected element
+		// results in it going null
+		container.setSelectedElement(partA);
+		container.getChildren().remove(partA);
+		assertTrue(
+				"Changing the parent of the selected element should have set the field to null",
+				container.getSelectedElement() == null);
+	}
+
 	public void testCreateGuiBug301950() {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
@@ -1356,37 +1540,6 @@ public class PartRenderingEngineTests extends TestCase {
 
 		appContext.get(IPresentationEngine.class).removeGui(window);
 		assertEquals(part1, partStack.getSelectedElement());
-	}
-
-	public void testBug327933() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		application.getChildren().add(window);
-		application.setSelectedElement(window);
-
-		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
-		window.getChildren().add(partStackA);
-		window.setSelectedElement(partStackA);
-
-		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
-		partStackA.getChildren().add(part);
-		partStackA.setSelectedElement(part);
-
-		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
-		partStackB.setSelectedElement(part);
-		window.getChildren().add(partStackB);
-
-		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
-
-		assertNotNull(part.getContext());
-
-		partStackB.setToBeRendered(false);
-		assertNotNull(part.getContext());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {

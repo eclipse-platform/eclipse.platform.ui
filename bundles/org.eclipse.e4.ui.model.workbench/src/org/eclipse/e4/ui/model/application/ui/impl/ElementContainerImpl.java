@@ -150,9 +150,22 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public void setSelectedElement(T newSelectedElement) {
+		// Ensure that the new candidate is in *our* child list
+		if (newSelectedElement != null && newSelectedElement.getParent() != this) {
+			throw new IllegalArgumentException("The selected element " 
+					+ newSelectedElement + " is not a child of this container");
+		}
+		
+		// Ensure that the new candidate is visible in the UI
+		if (newSelectedElement != null && 
+				(!newSelectedElement.isToBeRendered() || !newSelectedElement.isVisible())) {
+			throw new IllegalArgumentException("The selected element " 
+					+ newSelectedElement + " must be visible in the UI presentation");
+		}
+		
 		T oldSelectedElement = selectedElement;
 		selectedElement = newSelectedElement;
 		if (eNotificationRequired())

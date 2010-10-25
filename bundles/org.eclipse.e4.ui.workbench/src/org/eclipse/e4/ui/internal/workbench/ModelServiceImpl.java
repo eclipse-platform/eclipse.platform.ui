@@ -635,27 +635,30 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	public void removePerspectiveModel(MPerspective persp, MWindow window) {
-		// Remove transient elements (minimized stacks, detached windows)
-		resetPerspectiveModel(persp, window);
-
-		// unrender the perspective...
-		persp.setToBeRendered(false);
-
-		// ...and remove it
+		// pick a new perspective to become active (if any)
 		MUIElement psElement = persp.getParent();
 		MPerspectiveStack ps = (MPerspectiveStack) psElement;
-		ps.getChildren().remove(persp);
-
-		// pick a new perspective to become active (if any)
+		boolean foundNewSelection = false;
 		if (ps.getSelectedElement() == persp) {
 			for (MPerspective p : ps.getChildren()) {
 				if (p != persp && p.isToBeRendered()) {
 					ps.setSelectedElement(p);
-					return;
+					foundNewSelection = true;
+					break;
 				}
 			}
-			ps.setSelectedElement(null);
+
+			if (!foundNewSelection) {
+				ps.setSelectedElement(null);
+			}
 		}
+
+		// Remove transient elements (minimized stacks, detached windows)
+		resetPerspectiveModel(persp, window);
+
+		// unrender the perspective and remove it
+		persp.setToBeRendered(false);
+		ps.getChildren().remove(persp);
 	}
 
 	/*
