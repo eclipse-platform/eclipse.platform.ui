@@ -97,8 +97,11 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 						if (parent instanceof MPartStack) {
 							MPartStack stack = (MPartStack) parent;
 							List<MStackElement> children = stack.getChildren();
-							if (children.size() == 1) {
-								stack.setSelectedElement((MStackElement) element);
+							MStackElement stackElement = (MStackElement) element;
+							if (children.size() == 1
+									&& stackElement.isVisible()
+									&& stackElement.isToBeRendered()) {
+								stack.setSelectedElement(stackElement);
 							}
 						}
 					}
