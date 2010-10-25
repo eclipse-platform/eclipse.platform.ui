@@ -14,10 +14,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.compare.patch.IFilePatchResult;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.core.runtime.Assert;
 
 /**
  * A Hunk describes a range of changed lines and some context lines.
@@ -176,7 +177,6 @@ public class Hunk implements IHunk {
 	public boolean tryPatch(PatchConfiguration configuration, List lines, int shift, int fuzz) {
 		boolean reverse = configuration.isReversed();
 		int pos = getStart(reverse) + shift;
-		int deleteMatches = 0;
 		List contextLines = new ArrayList();
 		boolean contextLinesMatched = true;
 		boolean precedingLinesChecked = false;
@@ -226,7 +226,6 @@ public class Hunk implements IHunk {
 				if (pos < 0 || pos >= lines.size()) // out of the file
 					return false;
 				if (linesMatch(configuration, line, (String) lines.get(pos))) {
-					deleteMatches++;
 					pos++;
 					continue; // line matched, continue with the next one
 				}
@@ -234,10 +233,7 @@ public class Hunk implements IHunk {
 				// We must remove all lines at once, return false if this
 				// fails. In other words, all lines considered for deletion
 				// must be found one by one.
-
-				// if (deleteMatches <= 0)
 				return false;
-				// pos++;
 			} else if (isAddedDelimeter(controlChar, reverse)) {
 				
 				if (precedingLinesChecked && !contextLinesMatched && contextLines.size() > 0)
