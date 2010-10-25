@@ -14,9 +14,9 @@ import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -43,12 +43,10 @@ public class PreferenceManager {
 	private static boolean migrated = false;
 
 	private IEclipsePreferences defaultScope;
-	private IEclipsePreferences instanceScope;
 	private IEclipsePreferences currentScope;
 
 	private PreferenceManager(String id) {
 		this.defaultScope = new DefaultScope().getNode(id);
-		this.instanceScope = new InstanceScope().getNode(id);
 	}
 	
 	/**
@@ -259,36 +257,36 @@ public class PreferenceManager {
 			return;
 		}
 		currentScope.putBoolean(PREF_HAS_MIGRATED, true);
-		migrateInstanceScopePreferences(proxies, true);
+		migrateInstanceScopePreferences(new InstanceScope().getNode(Activator.ID), currentScope, proxies, true);
 	}
 
-	void migrateInstanceScopePreferences(ProxyType[] proxies, boolean isInitialize) {
-		migrateUpdateHttpProxy(proxies, isInitialize);
+	void migrateInstanceScopePreferences(Preferences instanceScope, Preferences configuration, ProxyType[] proxies, boolean isInitialize) {
+		migrateUpdateHttpProxy(instanceScope, proxies, isInitialize);
 
 		// migrate enabled status
-		if (currentScope.get(ProxyManager.PREF_ENABLED, null) == null) {
+		if (configuration.get(ProxyManager.PREF_ENABLED, null) == null) {
 			String instanceEnabled = instanceScope.get(ProxyManager.PREF_ENABLED, null);
 			if (instanceEnabled != null)
-				currentScope.put(ProxyManager.PREF_ENABLED, instanceEnabled);
+				configuration.put(ProxyManager.PREF_ENABLED, instanceEnabled);
 		}
 		
 		// migrate enabled status
-		if (currentScope.get(ProxyManager.PREF_OS, null) == null) {
+		if (configuration.get(ProxyManager.PREF_OS, null) == null) {
 			String instanceEnabled = instanceScope.get(ProxyManager.PREF_OS, null);
 			if (instanceEnabled != null)
-				currentScope.put(ProxyManager.PREF_OS, instanceEnabled);
+				configuration.put(ProxyManager.PREF_OS, instanceEnabled);
 		}
 	
 		// migrate non proxied hosts if not already set
-		if (currentScope.get(ProxyManager.PREF_NON_PROXIED_HOSTS, null) == null) {
+		if (configuration.get(ProxyManager.PREF_NON_PROXIED_HOSTS, null) == null) {
 			String instanceNonProxiedHosts = instanceScope.get(ProxyManager.PREF_NON_PROXIED_HOSTS, null);
 			if (instanceNonProxiedHosts != null) {
-				currentScope.put(ProxyManager.PREF_NON_PROXIED_HOSTS, instanceNonProxiedHosts);
+				configuration.put(ProxyManager.PREF_NON_PROXIED_HOSTS, instanceNonProxiedHosts);
 			}
 		}
 		
 		// migrate proxy data
-		PreferenceManager instanceManager = PreferenceManager.createInstanceManager(Activator.ID);
+		PreferenceManager instanceManager = PreferenceManager.createInstanceManager(instanceScope);
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
 			IProxyData data = type.getProxyData(ProxyType.DO_NOT_VERIFY);
@@ -310,7 +308,7 @@ public class PreferenceManager {
 		}			
 	}
 	
-	private void migrateUpdateHttpProxy(ProxyType[] proxies, boolean isInitialize) {
+	private void migrateUpdateHttpProxy(Preferences instanceScope, ProxyType[] proxies, boolean isInitialize) {
 		if (!instanceScope.getBoolean(PREF_HAS_MIGRATED, false)) {
 			// Only set the migration bit when initializing
 			if (isInitialize)
@@ -373,10 +371,9 @@ public class PreferenceManager {
 		return httpProxyEnable;
 	}
 	
-	private static PreferenceManager createInstanceManager(String id) {
-		PreferenceManager manager = new PreferenceManager(id);
-		manager.currentScope = manager.instanceScope;
+	private static PreferenceManager createInstanceManager(Preferences instance) {
+		PreferenceManager manager = new PreferenceManager(Activator.ID);
+		manager.currentScope = (IEclipsePreferences) instance;
 		return manager;
 	}
-	
 }

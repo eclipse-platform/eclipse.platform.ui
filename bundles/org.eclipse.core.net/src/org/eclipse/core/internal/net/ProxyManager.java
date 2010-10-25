@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChang
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	
@@ -403,8 +404,10 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		preferenceManager.migrate(proxies);
 	}
 	
-	void migrateInstanceScopePreferences(boolean isInitialize) {
-		preferenceManager.migrateInstanceScopePreferences(proxies,  isInitialize);
+	void migrateInstanceScopePreferences(Preferences instance,
+			Preferences configuration, boolean isInitialize) {
+		preferenceManager.migrateInstanceScopePreferences(instance,
+				configuration, proxies, isInitialize);
 	}
 
 	public void preferenceChange(PreferenceChangeEvent event) {
