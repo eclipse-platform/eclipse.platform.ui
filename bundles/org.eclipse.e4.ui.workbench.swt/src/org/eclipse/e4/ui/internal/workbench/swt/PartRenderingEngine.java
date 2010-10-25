@@ -162,11 +162,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 				fixZOrder(changedElement);
 				renderer.childRendered(parent, changedElement);
 			} else {
-				// Ensure that the element about to be removed is not the
-				// selected element
-				if (parent.getSelectedElement() == changedElement)
-					parent.setSelectedElement(null);
-
 				// Put the control under the 'limbo' shell
 				if (changedElement.getWidget() instanceof Control) {
 					Control ctrl = (Control) changedElement.getWidget();

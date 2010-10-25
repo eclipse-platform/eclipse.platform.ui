@@ -673,55 +673,6 @@ public class PartRenderingEngineTests extends TestCase {
 				container.getSelectedElement() == null);
 	}
 
-	public void testSelectedElementNullingVisible() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		application.setContext(appContext);
-		appContext.set(MApplication.class.getName(), application);
-
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		application.getChildren().add(window);
-
-		MPartSashContainer container = BasicFactoryImpl.eINSTANCE
-				.createPartSashContainer();
-		window.getChildren().add(container);
-
-		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
-		partA.setElementId("partA");
-		partA.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
-
-		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
-		partB.setElementId("partB");
-		partB.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
-
-		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
-		partC.setElementId("partC");
-		partC.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
-
-		container.getChildren().add(partA);
-		container.getChildren().add(partB);
-		container.getChildren().add(partC);
-
-		wb = new E4Workbench(application, appContext);
-		wb.createAndRunUI(window);
-
-		// Ensure that changing the state of an element that is *not*
-		// the selected element doesn't change its value
-		container.setSelectedElement(partA);
-		partB.setVisible(false);
-		assertTrue(
-				"Changing the TBR of a non-selected element should not change the value of the container's seletedElement",
-				container.getSelectedElement() == partA);
-
-		// Ensure that changing the Visible state of the selected element
-		// results in it going null
-		container.setSelectedElement(partA);
-		partA.setVisible(false);
-		assertTrue(
-				"Changing the Visible state of the selected element should have set the field to null",
-				container.getSelectedElement() == null);
-	}
-
 	public void testSelectedElementNullingParentChange() {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();

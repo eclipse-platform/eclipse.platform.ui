@@ -160,8 +160,7 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		}
 		
 		// Ensure that the new candidate is visible in the UI
-		if (newSelectedElement != null && 
-				(!newSelectedElement.isToBeRendered() || !newSelectedElement.isVisible())) {
+		if (newSelectedElement != null && !newSelectedElement.isToBeRendered()) {
 			throw new IllegalArgumentException("The selected element " 
 					+ newSelectedElement + " must be visible in the UI presentation");
 		}
