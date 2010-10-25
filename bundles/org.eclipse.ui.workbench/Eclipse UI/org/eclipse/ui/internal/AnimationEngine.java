@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,7 +43,6 @@ public class AnimationEngine extends Job {
 	private long prevTime;
 	private int timingStyle = TICK_TIMER;
 	private long frameCount;
-	private long stepCount;
 	private boolean animationCanceled = false;
 	private long sleepAmount;
 
@@ -96,7 +95,6 @@ public class AnimationEngine extends Job {
 		feedbackRenderer.initialize(this);
 
 		// Set the animation's initial state
-		stepCount = 0;
 		curTime = startTime = System.currentTimeMillis();
 
 	}
@@ -122,7 +120,6 @@ public class AnimationEngine extends Job {
 				updateDisplay();
 				frameCount++;
 			}
-			stepCount++;
 		}
 
 	};

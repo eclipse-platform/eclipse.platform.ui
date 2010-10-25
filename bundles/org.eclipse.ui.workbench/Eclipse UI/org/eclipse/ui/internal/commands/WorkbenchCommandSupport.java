@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,16 +14,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.BindingManager;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
-import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
@@ -89,30 +86,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 						.getKeyFormatterForPlatform());
 	}
 
-	public final void addHandlerSubmission(
-			final HandlerSubmission handlerSubmission) {
-		/*
-		 * Create the source priorities based on the conditions mentioned in the
-		 * submission.
-		 */
-		int sourcePriorities = 0;
-		if (handlerSubmission.getActivePartId() != null) {
-			sourcePriorities |= ISources.ACTIVE_PART_ID;
-		}
-		if (handlerSubmission.getActiveShell() != null) {
-			sourcePriorities |= (ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW);
-		}
-		if (handlerSubmission.getActiveWorkbenchPartSite() != null) {
-			sourcePriorities |= ISources.ACTIVE_SITE;
-		}
-		if (handlerSubmission.getPriority() == Priority.LEGACY) {
-			sourcePriorities |= ISources.LEGACY_LEGACY;
-		} else if (handlerSubmission.getPriority() == Priority.LOW) {
-			sourcePriorities |= ISources.LEGACY_LOW;
-		} else if (handlerSubmission.getPriority() == Priority.MEDIUM) {
-			sourcePriorities |= ISources.LEGACY_MEDIUM;
-		}
-
+	public final void addHandlerSubmission(final HandlerSubmission handlerSubmission) {
 		final IHandlerActivation activation = handlerService.activateHandler(
 				handlerSubmission.getCommandId(), new LegacyHandlerWrapper(
 						handlerSubmission.getHandler()),

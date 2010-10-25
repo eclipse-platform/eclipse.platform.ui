@@ -495,8 +495,6 @@ public final class XMLMemento implements IMemento {
      */
     private static final class DOMWriter extends PrintWriter {
     	
-    	private int tab;
-
     	/* constants */
     	private static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 
@@ -507,7 +505,6 @@ public final class XMLMemento implements IMemento {
     	 */
     	public DOMWriter(Writer output) {
     		super(output);
-    		tab = 0;
     		println(XML_VERSION);
     	}
 
@@ -523,7 +520,6 @@ public final class XMLMemento implements IMemento {
         	boolean hasChildren = element.hasChildNodes();
         	startTag(element, hasChildren);
         	if (hasChildren) {
-	        	tab++;
 	        	boolean prevWasText = false;
 	        	NodeList children = element.getChildNodes();
 	    		for (int i = 0; i < children.getLength(); i++) {
@@ -531,7 +527,6 @@ public final class XMLMemento implements IMemento {
 	    			if (node instanceof Element) {
 	    				if (!prevWasText) {
 	    					println();
-	    					printTabulation();
 	    				}
 	    				print((Element) children.item(i));
 	    				prevWasText = false;
@@ -541,23 +536,11 @@ public final class XMLMemento implements IMemento {
 	    				prevWasText = true;
 	    			}
 	    		}
-	    		tab--;
 	    		if (!prevWasText) {
 	    			println();
-	    			printTabulation();
 	    		}
 	    		endTag(element);
         	}
-    	}
-
-    	private void printTabulation() {
-        	// Indenting is disabled, as it can affect the result of getTextData().
-        	// In 3.0, elements were separated by a newline but not indented.
-    		// This causes getTextData() to return "\n" even if no text data had explicitly been set.
-        	// The code here emulates that behaviour.
-    		
-//    		for (int i = 0; i < tab; i++)
-//    			super.print("\t"); //$NON-NLS-1$
     	}
 
     	private void startTag(Element element, boolean hasChildren) {

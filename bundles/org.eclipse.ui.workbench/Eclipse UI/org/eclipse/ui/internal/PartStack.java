@@ -19,25 +19,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.Geometry;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistable;
@@ -457,8 +453,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         LayoutPart[] children = ((ILayoutContainer) this).getChildren();
 
-        int visibleChildren = 0;
-
         for (int idx = 0; idx < children.length; idx++) {
 
             LayoutPart next = children[idx];
@@ -472,8 +466,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 }
 
                 next.describeLayout(buf);
-
-                visibleChildren++;
             }
         }
 

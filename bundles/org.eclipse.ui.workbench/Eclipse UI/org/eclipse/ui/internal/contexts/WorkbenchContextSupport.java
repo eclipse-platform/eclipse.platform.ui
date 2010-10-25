@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.LegacyHandlerSubmissionExpression;
 import org.eclipse.ui.contexts.EnabledSubmission;
 import org.eclipse.ui.contexts.IContextActivation;
@@ -86,23 +84,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 				.getContextManagerWrapper(contextManager);
 	}
 
-	public final void addEnabledSubmission(
-			final EnabledSubmission enabledSubmission) {
-		/*
-		 * Create the source priorities based on the conditions mentioned in the
-		 * submission.
-		 */
-		int sourcePriorities = 0;
-		if (enabledSubmission.getActivePartId() != null) {
-			sourcePriorities |= ISources.ACTIVE_PART_ID;
-		}
-		if (enabledSubmission.getActiveShell() != null) {
-			sourcePriorities |= (ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW);
-		}
-		if (enabledSubmission.getActiveWorkbenchPartSite() != null) {
-			sourcePriorities |= ISources.ACTIVE_SITE;
-		}
-
+	public final void addEnabledSubmission(final EnabledSubmission enabledSubmission) {
 		final IContextActivation activation = contextService.activateContext(
 				enabledSubmission.getContextId(),
 				new LegacyHandlerSubmissionExpression(enabledSubmission

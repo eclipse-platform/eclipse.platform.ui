@@ -50,7 +50,6 @@ public class RectangleAnimation extends Job {
     
     // Control State
     private DefaultAnimationFeedback feedbackRenderer;
-    private long stepCount;
     private long frameCount;
     private long startTime;
     private long curTime;
@@ -88,8 +87,6 @@ public class RectangleAnimation extends Job {
 	            updateDisplay();
 	            frameCount++;
             }
-            
-            stepCount++;
         }
 
     };
@@ -135,7 +132,6 @@ public class RectangleAnimation extends Job {
         feedbackRenderer.initialize(parentShell, start, end);
         
         // Set the animation's initial state
-        stepCount = 0;
         //long totalFrames = (long) ((duration / 1000.0) * framesPerSec);       
         curTime = startTime = System.currentTimeMillis();
     }
@@ -244,7 +240,6 @@ public class RectangleAnimation extends Job {
             Thread.yield();
         }
 
-        //System.out.println("Done: " + (curTime-startTime) + " steps: " + stepCount + " frames:" + frameCount);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
         // We're done, clean up
         display.syncExec(new Runnable() {
             public void run() {
