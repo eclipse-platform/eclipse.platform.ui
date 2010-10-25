@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.databinding.observable.Realm;
@@ -49,7 +50,12 @@ import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -59,6 +65,7 @@ import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
 import org.eclipse.e4.ui.workbench.lifecycle.PreSave;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessAdditions;
 import org.eclipse.e4.ui.workbench.lifecycle.ProcessRemovals;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.WorkbenchSWTMessages;
 import org.eclipse.emf.common.util.URI;
@@ -318,7 +325,64 @@ public class E4Application implements IApplication {
 		Resource resource = handler.loadMostRecentModel();
 		theApp = (MApplication) resource.getContents().get(0);
 
+		upgradeToMArea_M3(eclipseContext, theApp);
+
 		return theApp;
+	}
+
+	/**
+	 * Upgrades the provided application's model to use MAreas for the shared
+	 * area.
+	 * <p>
+	 * The shared area was originally represented by an MPartSashContainer. In
+	 * M3, the MArea model was introduced and is now the representation of the
+	 * shared area.
+	 * </p>
+	 */
+	private void upgradeToMArea_M3(IEclipseContext applicationContext,
+			MApplication application) {
+		EModelService service = applicationContext.get(EModelService.class);
+
+		// check all the windows of this application
+		for (MWindow window : application.getChildren()) {
+			// retrieve its shared elements
+			List<MUIElement> sharedElements = window.getSharedElements();
+			for (MUIElement shared : sharedElements) {
+				// look for a shared editor area that's an MPartSashContainer
+				// but not an MArea
+				if ("org.eclipse.ui.editorss".equals(shared.getElementId()) //$NON-NLS-1$
+						&& shared instanceof MPartSashContainer
+						&& !(shared instanceof MArea)) {
+					// create an MArea
+					MArea area = AdvancedFactoryImpl.eINSTANCE.createArea();
+					// initialize it
+					area.setLabel("Editor Area"); //$NON-NLS-1$
+					area.setElementId(shared.getElementId());
+
+					// add the original as a children of this area
+					area.getChildren().add((MPartSashContainerElement) shared);
+					// update references
+					area.setCurSharedRef(shared.getCurSharedRef());
+					// reset the original
+					shared.setCurSharedRef(null);
+
+					// update the shared elements list
+					sharedElements.remove(shared);
+					sharedElements.add(area);
+
+					// look for all placeholders with the editor area id
+					for (MPlaceholder placeholder : service.findElements(
+							window, "org.eclipse.ui.editorss", //$NON-NLS-1$
+							MPlaceholder.class, null)) {
+						// if we were pointing at the original, change it
+						if (placeholder.getRef() == shared) {
+							placeholder.setRef(area);
+						}
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	private String getArgValue(String argName, IApplicationContext appContext,
