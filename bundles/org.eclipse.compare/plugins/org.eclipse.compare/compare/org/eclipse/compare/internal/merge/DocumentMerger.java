@@ -15,6 +15,27 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.operation.IRunnableWithProgress;
+
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
+
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
+
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
 import org.eclipse.compare.internal.CompareContentViewerSwitchingPane;
@@ -29,22 +50,6 @@ import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
 
 /**
  * A document merger manages the differences between two documents
@@ -1113,7 +1118,7 @@ public class DocumentMerger {
 		int h= 1;
 		if (fAllDiffs != null) {
 			Iterator e= fAllDiffs.iterator();
-			for (int i= 0; e.hasNext(); i++) {
+			while (e.hasNext()) {
 				Diff diff= (Diff) e.next();
 				h+= diff.getMaxDiffHeight();
 			}
@@ -1128,7 +1133,7 @@ public class DocumentMerger {
 		int h= 1;
 		if (fAllDiffs != null) {
 			Iterator e= fAllDiffs.iterator();
-			for (int i= 0; e.hasNext(); i++) {
+			while (e.hasNext()) {
 				Diff diff= (Diff) e.next();
 				h+= diff.getRightHeight();
 			}
@@ -1180,7 +1185,7 @@ public class DocumentMerger {
 		int y= 0;
 		if (fAllDiffs != null) {
 			Iterator e= fAllDiffs.iterator();
-			for (int i= 0; e.hasNext(); i++) {
+			while (e.hasNext()) {
 				Diff diff= (Diff) e.next();
 				int h= synchronizedScrolling ? diff.getMaxDiffHeight()
 											  : diff.getRightHeight();
