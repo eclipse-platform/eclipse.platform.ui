@@ -3188,6 +3188,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	public final void addShowingMenus(final Set menuIds, final ISelection localSelection,
 			final ISelection localEditorInput) {
 		menuSourceProvider.addShowingMenus(menuIds, localSelection, localEditorInput);
+		Map currentState = menuSourceProvider.getCurrentState();
+		for (String key : menuSourceProvider.getProvidedSourceNames()) {
+			e4Context.set(key, currentState.get(key));
+		}
 	}
 
 	/**
@@ -3204,6 +3208,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 	public final void removeShowingMenus(final Set menuIds, final ISelection localSelection,
 			final ISelection localEditorInput) {
 		menuSourceProvider.removeShowingMenus(menuIds, localSelection, localEditorInput);
+		for (String key : menuSourceProvider.getProvidedSourceNames()) {
+			e4Context.remove(key);
+		}
 	}
 
 	/*
