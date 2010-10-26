@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,11 @@ package org.eclipse.jface.text;
  * Default document implementation. Uses a {@link org.eclipse.jface.text.GapTextStore} wrapped
  * inside a {@link org.eclipse.jface.text.CopyOnWriteTextStore} as text store.
  * <p>
- * The used line tracker considers the following strings as line delimiters: "\n", "\r", "\r\n".
+ * The used line tracker considers the following strings as line delimiters: "\n", "\r", "\r\n". In
+ * case of a text replacement across line delimiter boundaries and with different line delimiters,
+ * the line tracker might have to be repaired. Use
+ * {@link #isLineInformationRepairNeeded(int, int, String)} before doing the text replace if you
+ * have the need to discover such a situation.
  * </p>
  * <p>
  * The document is ready to use. It has a default position category for which a default position
@@ -32,7 +36,7 @@ package org.eclipse.jface.text;
  * See {@link GapTextStore} and <code>TreeLineTracker</code> for algorithmic behavior of the used
  * document structures.
  * </p>
- *
+ * 
  * @see org.eclipse.jface.text.GapTextStore
  * @see org.eclipse.jface.text.CopyOnWriteTextStore
  */
