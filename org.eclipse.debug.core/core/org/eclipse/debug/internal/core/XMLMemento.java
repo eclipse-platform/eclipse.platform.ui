@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -460,7 +460,7 @@ public final class XMLMemento {
      */
     private static final class DOMWriter extends PrintWriter {
     	
-    	private int tab;
+//    	private int tab;
 
     	/* constants */
     	private static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
@@ -472,7 +472,7 @@ public final class XMLMemento {
     	 */
     	public DOMWriter(Writer output) {
     		super(output);
-    		tab = 0;
+//    		tab = 0;
     		println(XML_VERSION);
     	}
 
@@ -488,7 +488,7 @@ public final class XMLMemento {
         	boolean hasChildren = element.hasChildNodes();
         	startTag(element, hasChildren);
         	if (hasChildren) {
-	        	tab++;
+//	        	tab++;
 	        	boolean prevWasText = false;
 	        	NodeList children = element.getChildNodes();
 	    		for (int i = 0; i < children.getLength(); i++) {
@@ -506,7 +506,7 @@ public final class XMLMemento {
 	    				prevWasText = true;
 	    			}
 	    		}
-	    		tab--;
+//	    		tab--;
 	    		if (!prevWasText) {
 	    			println();
 	    			printTabulation();
