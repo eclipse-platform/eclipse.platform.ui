@@ -583,6 +583,9 @@ public class MenuHelper {
 	}
 
 	public static MMenuItem createItem(MApplication application, CommandContributionItem cci) {
+		if (cci.getCommand() == null) {
+			return null;
+		}
 		String id = cci.getCommand().getId();
 		for (MCommand command : application.getCommands()) {
 			if (id.equals(command.getElementId())) {
