@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
@@ -40,7 +42,27 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		Widget newWidget = null;
 
 		final Composite newComposite = new Composite((Composite) parentWidget,
-				SWT.NONE);
+				SWT.NONE) {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.widgets.Composite#setFocus()
+			 */
+			@Override
+			public boolean setFocus() {
+				// delegate an attempt to set the focus here to the
+				// part's implementation (if there is one)
+				MPart part = (MPart) element;
+				Object object = part.getObject();
+				if (object != null) {
+					ContextInjectionFactory.invoke(object, Focus.class,
+							part.getContext(), null);
+					return true;
+				}
+				return super.setFocus();
+			}
+		};
+
 		newComposite.setLayout(new FillLayout(SWT.VERTICAL));
 
 		newWidget = newComposite;
