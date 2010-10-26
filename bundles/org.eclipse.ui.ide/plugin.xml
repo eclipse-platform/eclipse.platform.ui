@@ -439,10 +439,13 @@
             id="org.eclipse.ui.ide.themes"
             label="%PreferenceKeywords.Themes"/>
       <keyword
+            id="org.eclipse.ui.ide.textFont"
+            label="%PreferenceKeywords.TextFont"/>
+      <keyword
             id="org.eclipse.ui.ide.textEditorFont"
             label="%PreferenceKeywords.TextEditorFont"/>
       <keyword
-            id="org.eclipse.ui.ide.EditorFont"
+            id="org.eclipse.ui.ide.editorFont"
             label="%PreferenceKeywords.EditorFont"/>
       <keyword
             id="org.eclipse.ui.ide.apearancepage"
@@ -578,8 +581,9 @@
             id="org.eclipse.ui.preferencePages.ColorsAndFonts">
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
          <keywordReference id="org.eclipse.ui.ide.themes"/>
+         <keywordReference id="org.eclipse.ui.ide.textFont"/>
          <keywordReference id="org.eclipse.ui.ide.textEditorFont"/>
-         <keywordReference id="org.eclipse.ui.ide.EditorFont"/>
+         <keywordReference id="org.eclipse.ui.ide.editorFont"/>
       </page>
       <page
             name="%PreferencePages.Decorators"
