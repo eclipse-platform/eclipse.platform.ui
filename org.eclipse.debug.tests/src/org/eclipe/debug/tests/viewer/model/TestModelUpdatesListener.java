@@ -329,7 +329,7 @@ public class TestModelUpdatesListener
     }
     
     public boolean isTimedOut() {
-        return false && fTimeoutInterval > 0 && fTimeoutTime < System.currentTimeMillis();
+        return fTimeoutInterval > 0 && fTimeoutTime < System.currentTimeMillis();
     }
     
     public boolean isFinished(int flags) {
