@@ -33,7 +33,7 @@ public class RemoteIC {
 	    this.host    = host;
 	    this.path    = path;
 	    this.port    = port;
-	    this.port    = PROTOCOL_HTTP;
+	    this.protocol    = PROTOCOL_HTTP;
 	}
 
 	public RemoteIC(boolean enabled, String name, String host, String path, String protocol, String port){
