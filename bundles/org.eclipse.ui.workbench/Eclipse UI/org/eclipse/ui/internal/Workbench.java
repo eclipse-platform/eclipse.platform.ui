@@ -18,7 +18,6 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -63,7 +62,6 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextFunction;
@@ -103,7 +101,6 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -135,7 +132,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveableFilter;
 import org.eclipse.ui.ISaveablesLifecycleListener;
-import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
@@ -145,7 +141,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
@@ -3223,94 +3218,53 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	public boolean saveAll(final IShellProvider shellProvider,
 			final IRunnableContext runnableContext, final ISaveableFilter filter, boolean confirm) {
-		// FIXME: need to prompt
-		Map<Saveable, Set<IWorkbenchPart>> map = new HashMap<Saveable, Set<IWorkbenchPart>>();
-
-		for (IWorkbenchWindow window : getWorkbenchWindows()) {
-			IWorkbenchPage page = window.getActivePage();
-
-			IViewReference[] viewReferences = page.getViewReferences();
-			for (IWorkbenchPartReference reference : viewReferences) {
-				IWorkbenchPart part = reference.getPart(false);
-				if (part instanceof ISaveablesSource) {
-					Saveable[] saveables = ((ISaveablesSource) part).getSaveables();
-					for (Saveable saveable : saveables) {
-						if (saveable.isDirty()) {
-							Set<IWorkbenchPart> parts = map.get(saveable);
-							if (parts == null) {
-								parts = new HashSet<IWorkbenchPart>();
-								map.put(saveable, parts);
-							}
-							parts.add(part);
-						}
-					}
-				}
-			}
-
-			IEditorReference[] editorReferences = page.getEditorReferences();
-			for (IWorkbenchPartReference reference : editorReferences) {
-				IWorkbenchPart part = reference.getPart(false);
-				if (part instanceof ISaveablesSource) {
-					Saveable[] saveables = ((ISaveablesSource) part).getSaveables();
-					for (Saveable saveable : saveables) {
-						if (saveable.isDirty()) {
-							Set<IWorkbenchPart> parts = map.get(saveable);
-							if (parts == null) {
-								parts = new HashSet<IWorkbenchPart>();
-								map.put(saveable, parts);
-							}
-							parts.add(part);
-						}
-					}
-				}
-			}
-		}
-
-		final Set<Saveable> toSave = new HashSet<Saveable>();
-
-		for (Entry<Saveable, Set<IWorkbenchPart>> entrySet : map.entrySet()) {
-			Saveable saveable = entrySet.getKey();
-			Set<IWorkbenchPart> parts = entrySet.getValue();
-			if (filter.select(saveable, parts.toArray(new IWorkbenchPart[parts.size()]))) {
-				toSave.add(saveable);
-			}
-		}
-
+		SaveablesList saveablesList = (SaveablesList) getService(ISaveablesLifecycleListener.class);
+		Saveable[] saveables = saveablesList.getOpenModels();
+		List<Saveable> toSave = getFilteredSaveables(filter, saveables);
 		if (toSave.isEmpty()) {
 			return true;
 		}
 
-		final boolean[] success = { true };
-
-		try {
-			runnableContext.run(false, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException,
-						InterruptedException {
-					monitor = SubMonitor.convert(monitor);
-					monitor.beginTask("", toSave.size()); //$NON-NLS-1$
-					try {
-						for (Saveable saveable : toSave) {
-							try {
-								saveable.doSave(SubMonitor.convert(monitor, 1), shellProvider);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
-							}
-						}
-					} catch (RuntimeException e) {
-						success[0] = false;
-						throw e;
-					} finally {
-						monitor.done();
-					}
-				}
-			});
-		} catch (InvocationTargetException e) {
-			return false;
-		} catch (InterruptedException e) {
-			return false;
+		if (!confirm) {
+			return !saveablesList.saveModels(toSave, shellProvider, runnableContext);
 		}
 
-		return success[0];
+		// We must negate the result since false is cancel saveAll
+		return !saveablesList.promptForSaving(toSave, shellProvider, runnableContext, true, false);
+	}
+
+	/*
+	 * Apply the given filter to the list of saveables
+	 */
+	private List<Saveable> getFilteredSaveables(ISaveableFilter filter, Saveable[] saveables) {
+		List<Saveable> toSave = new ArrayList<Saveable>();
+		if (filter == null) {
+			for (int i = 0; i < saveables.length; i++) {
+				Saveable saveable = saveables[i];
+				if (saveable.isDirty()) {
+					toSave.add(saveable);
+				}
+			}
+		} else {
+			SaveablesList saveablesList = (SaveablesList) getService(ISaveablesLifecycleListener.class);
+			for (int i = 0; i < saveables.length; i++) {
+				Saveable saveable = saveables[i];
+				if (saveable.isDirty()) {
+					IWorkbenchPart[] parts = saveablesList.getPartsForSaveable(saveable);
+					if (matchesFilter(filter, saveable, parts)) {
+						toSave.add(saveable);
+					}
+				}
+			}
+		}
+		return toSave;
+	}
+
+	/*
+	 * Test whether the given filter matches the saveable
+	 */
+	private boolean matchesFilter(ISaveableFilter filter, Saveable saveable, IWorkbenchPart[] parts) {
+		return filter == null || filter.select(saveable, parts);
 	}
 
 	public ServiceLocator getServiceLocator() {
