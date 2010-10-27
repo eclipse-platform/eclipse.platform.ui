@@ -963,10 +963,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			currentFont.dispose();
 			currentFont = null;
 		}
-		if (currentColor != null && !currentColor.isDisposed()) {
-			currentColor.dispose();
-			currentColor = null;
-		}
         colorRegistry.dispose();
         fontRegistry.dispose();
     }
