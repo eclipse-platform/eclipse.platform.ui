@@ -312,7 +312,7 @@ public class ModeledPageLayout implements IPageLayout {
 		// temporary HACK for bug 303982
 		newStack.getTags().add("newtablook"); //$NON-NLS-1$
 		newStack.setElementId(id);
-		newStack.setVisible(visible);
+		newStack.setToBeRendered(visible);
 		return newStack;
 	}
 
