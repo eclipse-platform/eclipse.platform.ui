@@ -154,6 +154,9 @@ public class PopupMenuExtender implements IMenuListener2,
 	}
 
 	private void createModelFor(String id) {
+		if (id == null) {
+			id = getClass().getName() + '.' + System.identityHashCode(this);
+		}
 		menuModel = null;
 		for (MMenu item : modelPart.getMenus()) {
 			if (id.equals(item.getElementId()) && item instanceof MRenderedMenu
