@@ -69,11 +69,9 @@ public class HeavyResourceView extends ViewPart {
     public void useAll() {
         releaseAll();
         tempShell = new Shell(Display.getCurrent(), SWT.NONE);
-        int count = 0;
         try {
             for(;;) {
                 new Composite(tempShell, SWT.NONE);
-                count++;
             }
         } catch (SWTError e) {
             TestPlugin.getDefault().getLog().log(WorkbenchPlugin.getStatus(e));

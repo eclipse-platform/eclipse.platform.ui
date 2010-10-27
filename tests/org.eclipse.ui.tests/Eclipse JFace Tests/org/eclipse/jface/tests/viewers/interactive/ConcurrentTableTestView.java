@@ -54,10 +54,8 @@ public class ConcurrentTableTestView extends ViewPart {
 	            int delay = 2; // Time to spin the CPU for (milliseconds)
 	            
 	            // Do some work to occupy time 
-	            int counter = 0;
 	            long timestamp = System.currentTimeMillis();
 	            while (System.currentTimeMillis() < timestamp + delay) {
-	                counter++;
 	            }
         	}
             

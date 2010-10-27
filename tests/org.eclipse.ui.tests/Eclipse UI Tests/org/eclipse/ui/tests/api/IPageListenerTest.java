@@ -128,7 +128,7 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
      */
     public void pageActivated(IWorkbenchPage page) {
         if (pageMask == null || page == pageMask)
-            eventsReceived |= ACTIVATE;
+            eventsReceived = eventsReceived | ACTIVATE;
     }
 
     /**
@@ -136,7 +136,7 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
      */
     public void pageClosed(IWorkbenchPage page) {
         if (pageMask == null || page == pageMask)
-            eventsReceived |= CLOSE;
+        	eventsReceived = eventsReceived | CLOSE;
     }
 
     /**

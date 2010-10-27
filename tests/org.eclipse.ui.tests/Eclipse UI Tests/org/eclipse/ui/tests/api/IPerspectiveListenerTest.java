@@ -80,7 +80,7 @@ public class IPerspectiveListenerTest extends UITestCase implements
     public void perspectiveActivated(IWorkbenchPage page,
             IPerspectiveDescriptor perspective) {
         if (page == fPageMask && perspective == fPerMask)
-            fEvent |= ACTIVATED;
+            fEvent = fEvent | ACTIVATED;
     }
 
     /**
@@ -89,7 +89,7 @@ public class IPerspectiveListenerTest extends UITestCase implements
     public void perspectiveChanged(IWorkbenchPage page,
             IPerspectiveDescriptor perspective, String changeId) {
         if (page == fPageMask && perspective == fPerMask)
-            fEvent |= CHANGED;
+        	fEvent = fEvent | CHANGED;
     }
 
     public static boolean isOpen(int bits) {
