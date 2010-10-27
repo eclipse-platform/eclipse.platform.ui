@@ -103,7 +103,7 @@ public class ModeledPageLayout implements IPageLayout {
 
 		if (sharedArea == null) {
 			sharedArea = AdvancedFactoryImpl.eINSTANCE.createArea();
-			sharedArea.setLabel("Editor Area"); //$NON-NLS-1$
+			// sharedArea.setLabel("Editor Area"); //$NON-NLS-1$
 
 			editorStack = BasicFactoryImpl.eINSTANCE.createPartStack();
 			// temporary HACK for bug 303982
