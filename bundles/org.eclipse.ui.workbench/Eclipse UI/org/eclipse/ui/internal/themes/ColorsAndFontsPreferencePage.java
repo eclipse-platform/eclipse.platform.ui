@@ -963,6 +963,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			currentFont.dispose();
 			currentFont = null;
 		}
+		if (currentColor != null && !currentColor.isDisposed()) {
+			currentColor.dispose();
+			currentColor = null;
+		}
         colorRegistry.dispose();
         fontRegistry.dispose();
     }
@@ -1449,45 +1453,46 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         updateControls();
     }
 
-	/**
-	 * Resets the supplied definition to its default value.
-	 * 
-	 * @param definition
-	 *            the <code>ColorDefinition</code> to reset
-	 */
-	private void resetColor(ColorDefinition definition) {
-		if (!isDefault(definition)) {
-			RGB newRGB;
-			if (definition.getDefaultsTo() != null) {
-				newRGB = getColorAncestorValue(definition);
-				setDescendantRegistryValues(definition, newRGB);
-				colorPreferencesToSet.remove(definition.getId());
-			} else {
-				newRGB = definition.getValue();
-				setColorPreferenceValue(definition, newRGB);
-			}
+    /**
+     * Resets the supplied definition to its default value.
+     * 
+     * @param definition the <code>ColorDefinition</code> to reset.
+     * @return whether any change was made.
+     */
+    private boolean resetColor(ColorDefinition definition) {
+        if (!isDefault(definition)) {
+            RGB newRGB;
+            if (definition.getValue() != null)
+                newRGB = definition.getValue();
+            else
+                newRGB = getColorAncestorValue(definition);
 
-			if (newRGB != null) {
-				setRegistryValue(definition, newRGB);
-			}
-		}
-	}
+            if (newRGB != null) {
+                setColorPreferenceValue(definition, newRGB);
+                setRegistryValue(definition, newRGB);
+                return true;
+            }
+        }
+        return false;
+    }
 
-	private void resetFont(FontDefinition definition) {
-		if (!isDefault(definition)) {
-			FontData[] newFD;
-			if (definition.getDefaultsTo() != null) {
-				newFD = getFontAncestorValue(definition);
-				setDescendantRegistryValues(definition, newFD);
-				fontPreferencesToSet.remove(definition.getId());
-			} else {
-				newFD = PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(),
-						ThemeElementHelper.createPreferenceKey(currentTheme, definition.getId()));
-				setFontPreferenceValue(definition, newFD);
-			}
-			setRegistryValue(definition, newFD);
-		}
-	}
+    protected boolean resetFont(FontDefinition definition) {
+        if (!isDefault(definition)) {
+            FontData[] newFD;
+            if (definition.getDefaultsTo() != null)
+                newFD = getFontAncestorValue(definition);
+            else
+                newFD = PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(), ThemeElementHelper
+                                .createPreferenceKey(currentTheme, definition.getId()));
+
+            if (newFD != null) {
+                setFontPreferenceValue(definition, newFD);
+                setRegistryValue(definition, newFD);
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Set the value (in preferences) for the given color.
@@ -1534,8 +1539,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
     }
 
     protected void setFontPreferenceValue(FontDefinition definition, FontData[] datas) {
-		setDescendantRegistryValues(definition, datas);
-		fontPreferencesToSet.put(definition.getId(), datas);
+        setDescendantRegistryValues(definition, datas);
+        fontPreferencesToSet.put(definition.getId(), datas);
     }
 
     /**
@@ -1860,8 +1865,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	}
 	
 	private void setCurrentFont(FontDefinition fontDefinition) {
-		Font font = fontRegistry.get(fontDefinition.getId());
-		FontData[] fontData = font.getFontData();
+		FontData[] fontData = getFontValue(fontDefinition);
 		if (currentFont != null && !currentFont.isDisposed())
 			currentFont.dispose();
 		currentFont = new Font(previewComposite.getDisplay(), fontData);
@@ -1892,7 +1896,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	}
 	
 	public void setCurrentColor(ColorDefinition colorDefinition) {
-		currentColor = colorRegistry.get(colorDefinition.getId());
+		RGB color = getColorValue(colorDefinition);
+		if (currentColor != null && !currentColor.isDisposed())
+			currentColor.dispose();
+		currentColor = new Color(previewComposite.getDisplay(), color);
 		colorSampler.redraw();
 
 		String description = colorDefinition.getDescription();
