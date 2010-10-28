@@ -91,6 +91,8 @@ public final class ServiceLocator implements IDisposable, INestable,
 	public final Object getService(final Class key) {
 		if (disposed) {
 			return null;
+		} else if (IEclipseContext.class.equals(key)) {
+			return e4Context;
 		}
 		return e4Context.get(key.getName());
 	}
