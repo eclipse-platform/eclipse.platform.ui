@@ -154,7 +154,6 @@ public class SashLayout extends Layout {
 
 		sashes.clear();
 		tileSubNodes(bounds, root);
-		composite.getDisplay().update();
 	}
 
 	protected void adjustWeights(List<SashRect> sashes, int curX, int curY) {
