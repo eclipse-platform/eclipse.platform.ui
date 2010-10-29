@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -31,8 +32,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 
 
 /**
- * A form consisting of a title, a banner, and a info text. Banner and info text are
- * separated by a separator line. This form must be handled like a SWT widget.
+ * A form consisting of a title, a banner, and an info text. Banner and info text are
+ * separated by a separator line. This form must be handled like an SWT widget.
  *
  * @since 2.0
  * @deprecated since 3.0. there is no replacement, use org.eclipse.ui.forms to define a component with a similar look and function.
@@ -52,7 +53,7 @@ public class InfoForm {
 	/** The form banner */
 	private Label fBanner;
 	/** The form text */
-	private Label fText;
+	private Text fText;
 	/** The preference change listener */
 	private IPropertyChangeListener fPropertyChangeListener;
 
@@ -104,7 +105,7 @@ public class InfoForm {
 		data.heightHint= 2;
 		separator.setLayoutData(data);
 
-		fText= createLabel(composite, null);
+		fText= createText(composite, null);
 		createLabel(composite, null);
 
 		fScrolledComposite.setContent(composite);
@@ -186,7 +187,7 @@ public class InfoForm {
 	 * @see org.eclipse.update.ui.forms.internal.FormWidgetFactory#createCompositeSeparator(Composite)
 	 */
 	private Composite createCompositeSeparator(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NO_FOCUS);
 		composite.setBackground(fSeparatorColor);
 		return composite;
 	}
@@ -204,6 +205,18 @@ public class InfoForm {
 		label.setBackground(fBackgroundColor);
 		label.setForeground(fForegroundColor);
 		return label;
+	}
+	
+	private Text createText(Composite parent, String text) {
+		Text widget = new Text(parent, SWT.READ_ONLY | SWT.MULTI);
+		GridData data= new GridData(GridData.FILL_HORIZONTAL);
+		widget.setLayoutData(data);
+
+		if (text != null)
+			widget.setText(text);
+		widget.setBackground(fBackgroundColor);
+		widget.setForeground(fForegroundColor);
+		return widget;
 	}
 
 	/*

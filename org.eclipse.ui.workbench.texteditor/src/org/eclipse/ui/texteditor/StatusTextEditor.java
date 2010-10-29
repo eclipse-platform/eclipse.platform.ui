@@ -17,6 +17,7 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -62,8 +63,16 @@ public class StatusTextEditor extends AbstractTextEditor {
 	 * @param input the input whose status is checked
 	 */
 	public void updatePartControl(IEditorInput input) {
-
+		boolean restoreFocus= false;
+		
 		if (fStatusControl != null) {
+			if (!fStatusControl.isDisposed()) {
+				Control focusControl= fStatusControl.getDisplay().getFocusControl();
+				while (focusControl != fParent && focusControl != null && !(focusControl instanceof Shell)) {
+					focusControl= focusControl.getParent();
+				}
+				restoreFocus= focusControl == fParent;
+			}
 			fStatusControl.dispose();
 			fStatusControl= null;
 		}
@@ -86,6 +95,10 @@ public class StatusTextEditor extends AbstractTextEditor {
 			fStackLayout.topControl= front;
 			fParent.layout();
 			updateStatusFields();
+		}
+
+		if (restoreFocus) {
+			fParent.setFocus();
 		}
 	}
 	
