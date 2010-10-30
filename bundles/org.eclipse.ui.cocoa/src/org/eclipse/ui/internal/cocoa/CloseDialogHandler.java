@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.cocoa;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -25,15 +24,13 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class CloseDialogHandler extends AbstractHandler implements IHandler {
 
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 
 		Shell activeShell = Display.getDefault().getActiveShell();
-		// perform only if close is enabled
-		if ((activeShell.getStyle() & SWT.CLOSE) != 0) {
+		// perform only if shell is available & close is enabled
+		if (activeShell != null && (activeShell.getStyle() & SWT.CLOSE) != 0) {
 			activeShell.close();
 		}
-
-		activeShell.close();
 		return null;
 	}
 
