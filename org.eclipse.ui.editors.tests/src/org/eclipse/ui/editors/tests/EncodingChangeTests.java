@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -172,7 +172,7 @@ public class EncodingChangeTests extends TestCase {
 				String expected= encodingSupport.getStatusMessage(fileBuffer.getStatus());
 				Composite composite= (Composite)accessor.get("fStatusControl");
 				ScrolledComposite scrolledComposite= (ScrolledComposite)composite.getChildren()[0];
-				Label statusText= (Label)((Composite)scrolledComposite.getContent()).getChildren()[5];
+				Text statusText= (Text)((Composite)scrolledComposite.getContent()).getChildren()[5];
 				String actual= statusText.getText();
 				assertEquals(expected, actual);
 			} else
