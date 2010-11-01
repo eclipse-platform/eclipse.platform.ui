@@ -588,7 +588,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 
 	private boolean initializePatternControl() {
 		ISelection selection= getSelection();
-		if (selection instanceof ITextSelection && !selection.isEmpty()) {
+		if (selection instanceof ITextSelection && !selection.isEmpty() && ((ITextSelection)selection).getLength() > 0) {
 			String text= ((ITextSelection) selection).getText();
 			if (text != null) {
 				if (fIsRegExSearch)
