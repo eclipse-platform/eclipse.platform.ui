@@ -48,17 +48,18 @@ public class E4HandlerProxy {
 	}
 
 	@Execute
-	public void execute(IEclipseContext context,
+	public Object execute(IEclipseContext context,
 			@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms) {
 		Activator.trace(Policy.DEBUG_CMDS, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
 				+ handler + " with: " + context, null); //$NON-NLS-1$
 		ExpressionContext legacy = new ExpressionContext(context);
 		ExecutionEvent event = new ExecutionEvent(command, parms, null, legacy);
 		try {
-			handler.execute(event);
+			return handler.execute(event);
 		} catch (ExecutionException e) {
 			WorkbenchPlugin.log("Failure during execution of " + command.getId(), e); //$NON-NLS-1$
 		}
+		return null;
 	}
 
 	public IHandler getHandler() {
