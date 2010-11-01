@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,9 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.cheatsheets.CommandRunner;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetCommand;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
@@ -69,6 +71,18 @@ public class TestCommandExecution extends TestCase {
 		return null;
 	}
 	
+	private IHandlerService getHandlerService() {
+		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		if (wb != null) {
+			Object serviceObject = wb.getAdapter(IHandlerService.class);
+		    if (serviceObject != null) {
+			    IHandlerService service = (IHandlerService)serviceObject;
+			    return service;
+		    }
+		}
+		return null;
+	}
+	
 	/**
 	 * Execute a command without using the command runner class
 	 */
@@ -76,7 +90,7 @@ public class TestCommandExecution extends TestCase {
 		ParameterizedCommand selectedCommand;
 		try {
 			selectedCommand = getService().deserialize(SERIALIZED_COMMAND);
-			selectedCommand.executeWithChecks(null, null);
+			getHandlerService().executeCommand(selectedCommand, null);
 		} catch (NotDefinedException e) {
 			fail("Command not defined");
 		} catch (SerializationException e) {

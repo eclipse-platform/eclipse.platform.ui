@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,8 +79,8 @@ public class CommandRunner {
 		try {
 			String substitutedSerialization = csm.performVariableSubstitution(rawSerialization);
 			selectedCommand = commandService.deserialize(substitutedSerialization);
-			IEvaluationContext state = handlerService.getCurrentState();
-			result = selectedCommand.executeWithChecks(null, state);
+			result = handlerService.executeCommand(selectedCommand, null);
+
 			
 			String returnsAttribute = command.getReturns();
 			if ((returnsAttribute != null) && (result != null)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -324,7 +324,7 @@ public class IntroURL implements IIntroURL {
 
 		try {
 			ParameterizedCommand pCommand = commandService.deserialize(command);
-			pCommand.executeWithChecks(null, handlerService.getCurrentState());
+			handlerService.executeCommand(pCommand, null);
 
 			// Executed command successfully. Now set intro standby if needed.
 			if (standbyState == null)
