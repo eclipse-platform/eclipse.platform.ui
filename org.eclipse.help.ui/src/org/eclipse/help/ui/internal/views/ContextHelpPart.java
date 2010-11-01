@@ -44,6 +44,9 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
@@ -156,6 +159,16 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			}
 		});
 		text.setText(defaultText, false, false);
+		text.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+		    public void getName(AccessibleEvent e) {
+		        if (e.childID == ACC.CHILDID_SELF) {
+		            String currentName = e.result;
+		            e.result = Messages.ReusableHelpPart_contextHelpPage_name 
+		              + ' ' + getSection().getText()+ ' ' +currentName;    
+		        }
+		    }
+		});
+
 	}
 
 	private static int getSectionStyle() {
