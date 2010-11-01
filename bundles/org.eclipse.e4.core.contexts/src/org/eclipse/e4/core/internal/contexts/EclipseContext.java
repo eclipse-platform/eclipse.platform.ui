@@ -644,6 +644,22 @@ public class EclipseContext implements IEclipseContext {
 		return result;
 	}
 
+	// This method is for debug only, do not use externally
+	public Set<String> getRawListenerNames() {
+		Set<String> tmp = listeners.keySet(); // clone internal name list
+		Set<String> usedNames = new HashSet<String>(tmp.size());
+		usedNames.addAll(tmp);
+		return usedNames;
+	}
+
+	// This method is for debug only, do not use externally
+	public Set<Computation> getListeners(String name) {
+		Set<Computation> tmp = listeners.get(name);
+		Set<Computation> result = new HashSet<Computation>(tmp.size());
+		result.addAll(tmp);
+		return result;
+	}
+
 	public void addListener(Computation computation, Set<String> names) {
 		for (String name : names) {
 			if (listeners.containsKey(name)) {
