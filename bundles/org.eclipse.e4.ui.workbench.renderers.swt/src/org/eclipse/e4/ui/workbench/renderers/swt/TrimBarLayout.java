@@ -165,7 +165,7 @@ public class TrimBarLayout extends Layout {
 				// reset the tiling parameters
 				spaceLeft = totalSpace;
 				curMinor += maxMinor + wrapSpacing;
-				maxMinor = 0;
+				maxMinor = minor;
 
 				spacers.clear();
 				curLine.clear();
