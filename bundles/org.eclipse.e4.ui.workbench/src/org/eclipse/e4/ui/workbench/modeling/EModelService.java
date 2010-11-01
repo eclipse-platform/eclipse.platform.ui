@@ -96,19 +96,6 @@ public interface EModelService {
 	public void bringToTop(MUIElement element);
 
 	/**
-	 * Ensures that the given element is visible in the UI
-	 * 
-	 * @param window
-	 *            The containing MWindow
-	 * @param element
-	 *            The element to bring to the top
-	 * @deprecated Use {@link #bringToTop(MUIElement)} instead. This method will be removed in
-	 *             1.1M4.
-	 */
-	@Deprecated
-	public void bringToTop(MWindow window, MUIElement element);
-
-	/**
 	 * Given a containing MWindow find the MPlaceholder that is currently being used to host the
 	 * given element (if any)
 	 * 

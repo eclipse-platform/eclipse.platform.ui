@@ -244,17 +244,6 @@ public class ModelServiceImpl implements EModelService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * org.eclipse.e4.ui.workbench.modeling.EModelService#bringToTop(org.eclipse.e4.ui.model.application
-	 * .ui.basic.MWindow, org.eclipse.e4.ui.model.application.ui.MUIElement)
-	 */
-	public void bringToTop(MWindow window, MUIElement element) {
-		bringToTop(element);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#findPlaceholderFor(org.eclipse.e4.ui.model
 	 * .application.ui.basic.MWindow, org.eclipse.e4.ui.model.application.ui.MUIElement)
 	 */
