@@ -489,17 +489,6 @@ public class PartServiceImpl implements EPartService {
 		return activePart;
 	}
 
-	public void deactivate(MPart part) {
-		logger.warn("EPartService's deactivate(MPart) method will be removed in 1.1M4.", //$NON-NLS-1$ 
-				new Throwable());
-		MElementContainer<MUIElement> parent = part.getParent();
-		MPart oldSelectedElement = (MPart) parent.getSelectedElement();
-		if (oldSelectedElement == part) {
-			parent.setSelectedElement(null);
-			internalFixContext(null, oldSelectedElement);
-		}
-	}
-
 	private MPartDescriptor findDescriptor(String id) {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (descriptor.getElementId().equals(id)) {

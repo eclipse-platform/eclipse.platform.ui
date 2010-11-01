@@ -103,14 +103,6 @@ public interface EPartService {
 	public void activate(MPart part, boolean requiresFocus);
 
 	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @deprecated Parts will be deactivated automatically when hidden. This method will be removed
-	 *             in 1.1M4.
-	 */
-	@Deprecated
-	public void deactivate(MPart part);
-
-	/**
 	 * Brings this part to the top so that it will become visible to the end user. This does not
 	 * imply that the part will be granted focus.
 	 * 

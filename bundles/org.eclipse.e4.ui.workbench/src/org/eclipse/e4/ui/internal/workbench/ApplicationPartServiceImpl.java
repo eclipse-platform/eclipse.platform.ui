@@ -64,10 +64,6 @@ public class ApplicationPartServiceImpl implements EPartService {
 		getActiveWindowService().activate(part, requiresFocus);
 	}
 
-	public void deactivate(MPart part) {
-		getActiveWindowService().deactivate(part);
-	}
-
 	public void bringToTop(MPart part) {
 		getActiveWindowService().bringToTop(part);
 	}
