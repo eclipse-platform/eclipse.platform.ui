@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts.debug.ui;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -46,8 +48,12 @@ public class ContextsView {
 	protected ContextAllocation allocationsViewer;
 	protected TreeViewer linksViewer;
 
+	protected ContextTreeProvider treeProvider;
+
 	protected Button diffButton;
 	protected Button snapshotButton;
+	protected Button updateButton;
+	protected Button autoUpdateButton;
 
 	@Inject
 	public ContextsView(Composite parent, IEclipseContext context) {
@@ -73,17 +79,22 @@ public class ContextsView {
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection selection = (StructuredSelection) event.getSelection();
-				IEclipseContext selected = (IEclipseContext) selection.getFirstElement();
-				dataViewer.setInput(selected);
-				allocationsViewer.setInput(selected);
-				linksViewer.setInput(selected);
+				@SuppressWarnings("unchecked")
+				WeakReference<EclipseContext> selected = (WeakReference<EclipseContext>) selection.getFirstElement();
+				selectedContext((selected == null) ? null : selected.get());
 			}
 		});
 
-		treeViewer.setContentProvider(new ContextTreeProvider(this));
+		treeProvider = new ContextTreeProvider(this, parent.getDisplay());
+		treeViewer.setContentProvider(treeProvider);
 		treeViewer.setLabelProvider(new LabelProvider() {
 			public String getText(Object element) {
-				return element.toString();
+				@SuppressWarnings("unchecked")
+				WeakReference<EclipseContext> ref = (WeakReference<EclipseContext>) element;
+				EclipseContext parentContext = ref.get();
+				if (parentContext != null)
+					return parentContext.toString();
+				return ContextMessages.contextGCed;
 			}
 		});
 		treeViewer.setSorter(new ViewerSorter());
@@ -100,7 +111,11 @@ public class ContextsView {
 		ContextLinks links = new ContextLinks(folder);
 		linksViewer = links.createControls();
 
-		Group leaksHelper = new Group(treeComposite, SWT.NONE);
+		Composite buttons = new Composite(treeComposite, SWT.NONE);
+		buttons.setLayout(new GridLayout(2, true));
+		buttons.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+		Group leaksHelper = new Group(buttons, SWT.NONE);
 		leaksHelper.setLayout(new GridLayout(2, true));
 		leaksHelper.setText(ContextMessages.leaksGroup);
 		leaksHelper.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
@@ -129,11 +144,64 @@ public class ContextsView {
 			}
 		});
 		diffButton.setEnabled(false);
+
+		Group updateGroup = new Group(buttons, SWT.NONE);
+		updateGroup.setLayout(new GridLayout(2, false));
+		updateGroup.setText(ContextMessages.refreshGroup);
+		updateGroup.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false));
+
+		autoUpdateButton = new Button(updateGroup, SWT.CHECK);
+		autoUpdateButton.setText(ContextMessages.autoUpdateButton);
+		autoUpdateButton.setSelection(true);
+		autoUpdateButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				if (autoUpdateButton.getSelection()) {
+					treeProvider.setAutoUpdates(true);
+					fullRefresh();
+				} else {
+					treeProvider.setAutoUpdates(false);
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+
+		updateButton = new Button(updateGroup, SWT.PUSH);
+		updateButton.setText(ContextMessages.updateButton);
+		updateButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				fullRefresh();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 
-	public void refresh(EclipseContext changedContext) {
-		treeViewer.refresh(changedContext);
+	protected void fullRefresh() {
+		refresh();
+		ITreeSelection selection = (ITreeSelection) treeViewer.getSelection();
+		if (!selection.isEmpty()) {
+			@SuppressWarnings("unchecked")
+			WeakReference<EclipseContext> ref = (WeakReference<EclipseContext>) selection.getFirstElement();
+			EclipseContext selectedContext = ref.get();
+			selectedContext(selectedContext);
+		}
+	}
+
+	protected void selectedContext(IEclipseContext selected) {
+		dataViewer.setInput(selected);
+		allocationsViewer.setInput(selected);
+		linksViewer.setInput(selected);
+	}
+
+	public void refresh() {
+		treeViewer.refresh();
 	}
 
 	@Focus

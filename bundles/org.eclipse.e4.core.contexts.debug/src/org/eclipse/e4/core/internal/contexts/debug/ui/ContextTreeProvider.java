@@ -10,29 +10,73 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts.debug.ui;
 
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.core.internal.contexts.IEclipseContextDebugger;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.progress.UIJob;
 
 public class ContextTreeProvider implements IEclipseContextDebugger, ITreeContentProvider {
 
-	static private Set<EclipseContext> activeContexts = new HashSet<EclipseContext>();
+	private class RefreshJob extends UIJob {
+		public RefreshJob(Display display) {
+			super(display, "Context debug update job"); //$NON-NLS-1$
+			setSystem(true);
+		}
 
-	static private ContextsView view; // we have maximum one view
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if (monitor.isCanceled())
+				return Status.OK_STATUS;
+			if (view != null)
+				view.refresh();
+			return Status.OK_STATUS;
+		}
+	}
+
+	final private static int REFRESH_DELAY = 5000; // 5sec delay between refreshes
+
+	static private Set<WeakReference<EclipseContext>> activeContexts = new HashSet<WeakReference<EclipseContext>>();
+
+	static protected ContextsView view; // we have maximum one view
+
+	static protected RefreshJob refreshJob;
+
+	private Display display;
 
 	public ContextTreeProvider() {
 		// used by Declarative Services
 	}
 
-	public ContextTreeProvider(ContextsView contextView) {
+	public ContextTreeProvider(ContextsView contextView, Display display) {
 		view = contextView;
+		this.display = display;
+		refreshJob = new RefreshJob(display);
+	}
+
+	public void setAutoUpdates(boolean update) {
+		if (update) {
+			if (refreshJob == null && display != null)
+				refreshJob = new RefreshJob(display);
+		} else {
+			if (refreshJob != null) {
+				refreshJob.cancel();
+				refreshJob = null;
+			}
+		}
 	}
 
 	public void dispose() {
+		if (refreshJob != null)
+			refreshJob.cancel();
 		view = null;
 	}
 
@@ -41,37 +85,86 @@ public class ContextTreeProvider implements IEclipseContextDebugger, ITreeConten
 	}
 
 	public Object[] getElements(Object inputElement) {
+		for (Iterator<WeakReference<EclipseContext>> i = activeContexts.iterator(); i.hasNext();) {
+			WeakReference<EclipseContext> ref = i.next();
+			EclipseContext storedRoot = ref.get();
+			if (storedRoot == null)
+				i.remove();
+		}
 		return activeContexts.toArray();
 	}
 
 	public Object[] getChildren(Object parentElement) {
-		Set<EclipseContext> children = ((EclipseContext) parentElement).getChildren();
+		if (!(parentElement instanceof WeakReference<?>))
+			return null;
+		@SuppressWarnings("unchecked")
+		WeakReference<EclipseContext> ref = (WeakReference<EclipseContext>) parentElement;
+		EclipseContext parentContext = ref.get();
+		if (parentContext == null)
+			return null;
+		Set<EclipseContext> children = parentContext.getChildren();
 		if (children == null)
 			return null;
-		return children.toArray();
+		Set<WeakReference<EclipseContext>> childrenRef = new HashSet<WeakReference<EclipseContext>>(children.size());
+		for (EclipseContext child : children) {
+			childrenRef.add(new WeakReference<EclipseContext>(child));
+		}
+		return childrenRef.toArray();
 	}
 
 	public Object getParent(Object element) {
-		return ((EclipseContext) element).getParent();
+		return null;
 	}
 
 	public boolean hasChildren(Object element) {
-		return (((EclipseContext) element).getChildren() != null);
+		if (!(element instanceof WeakReference<?>))
+			return false;
+		@SuppressWarnings("unchecked")
+		WeakReference<EclipseContext> ref = (WeakReference<EclipseContext>) element;
+		EclipseContext parentContext = ref.get();
+		if (parentContext == null)
+			return false;
+		return (parentContext.getChildren() != null);
 	}
 
-	public void notify(EclipseContext context, IEclipseContextDebugger.EventType type, Object data) {
+	synchronized public void notify(EclipseContext context, IEclipseContextDebugger.EventType type, Object data) {
 		switch (type) {
 			case CONSTRUCTED :
 				AllocationRecorder.getDefault().allocated(context, new Exception());
-				activeContexts.add(getRoot(context));
-				if (view != null)
-					view.refresh(context.getParent());
+				EclipseContext newRoot = getRoot(context);
+				boolean found = false;
+				for (Iterator<WeakReference<EclipseContext>> i = activeContexts.iterator(); i.hasNext();) {
+					WeakReference<EclipseContext> ref = i.next();
+					EclipseContext storedRoot = ref.get();
+					if (storedRoot == null) {
+						i.remove();
+						continue;
+					}
+					if (storedRoot == newRoot) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					activeContexts.add(new WeakReference<EclipseContext>(context));
+				if (view != null && refreshJob != null)
+					refreshJob.schedule(REFRESH_DELAY);
 				break;
 			case DISPOSED :
-				AllocationRecorder.getDefault().disposed(context);
-				activeContexts.remove(context);
-				if (view != null)
-					view.refresh(context.getParent());
+				for (Iterator<WeakReference<EclipseContext>> i = activeContexts.iterator(); i.hasNext();) {
+					WeakReference<EclipseContext> ref = i.next();
+					EclipseContext storedRoot = ref.get();
+					if (storedRoot == null) {
+						i.remove();
+						continue;
+					}
+					if (storedRoot == context) {
+						i.remove();
+						break;
+					}
+				}
+				if (view != null && refreshJob != null)
+					refreshJob.schedule(REFRESH_DELAY);
 				break;
 		}
 	}

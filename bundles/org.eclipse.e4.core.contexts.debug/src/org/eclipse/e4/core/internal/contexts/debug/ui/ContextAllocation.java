@@ -55,8 +55,10 @@ public class ContextAllocation {
 		if (newContext == selectedContext)
 			return;
 		selectedContext = newContext;
-		if (selectedContext == null)
+		if (selectedContext == null) {
+			text.setText(EMPTY);
 			return;
+		}
 		Throwable t = AllocationRecorder.getDefault().getTrace(selectedContext);
 		String traceText;
 		if (t == null)
