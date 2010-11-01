@@ -669,10 +669,15 @@ public class StackRenderer extends LazyStackRenderer {
 			if (otherPart == null)
 				continue;
 
-			if (skipThisPart && part.equals(otherPart))
+			if (part.equals(otherPart))
 				continue; // skip selected item
 			if (otherPart.isToBeRendered())
 				others.add(otherPart);
+		}
+
+		// add the current part last so that we unrender obscured items first
+		if (!skipThisPart) {
+			others.add(part);
 		}
 
 		EPartService partService = getContextForParent(part).get(
