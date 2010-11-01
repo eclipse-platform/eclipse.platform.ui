@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - Custom trigger builder #equals
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -117,8 +118,9 @@ public class BuildCommand extends ModelObject implements ICommand {
 		if (!(object instanceof BuildCommand))
 			return false;
 		BuildCommand command = (BuildCommand) object;
-		// equal if same builder name and equal argument tables
-		return getBuilderName().equals(command.getBuilderName()) && getArguments(false).equals(command.getArguments(false)) && triggers == command.triggers;
+		// equal if same builder name, arguments, and triggers
+		return getBuilderName().equals(command.getBuilderName()) && getArguments(false).equals(command.getArguments(false)) && 
+								(triggers & ALL_TRIGGERS) == (command.triggers & ALL_TRIGGERS);
 	}
 
 	/**
@@ -147,8 +149,8 @@ public class BuildCommand extends ModelObject implements ICommand {
 	 * Method declared on Object
 	 */
 	public int hashCode() {
-		// hash on name alone
-		return 37 * getName().hashCode() + triggers;
+		// hash on name and trigger
+		return 37 * getName().hashCode() + (ALL_TRIGGERS & triggers);
 	}
 
 	/**

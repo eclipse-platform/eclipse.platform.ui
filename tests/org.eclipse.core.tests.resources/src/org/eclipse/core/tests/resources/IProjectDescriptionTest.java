@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.events.BuildCommand;
+import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.tests.internal.builders.CustomTriggerBuilder;
 
 /**
  * Tests protocol of IProjectDescription and other specified behavior
@@ -36,6 +39,37 @@ public class IProjectDescriptionTest extends ResourceTest {
 
 	public void testDescriptionConstant() {
 		assertEquals("1.0", ".project", IProjectDescription.DESCRIPTION_FILE_NAME);
+	}
+
+	/**
+	 * Tests that setting the build spec preserves any instantiated builder.
+	 */
+	public void testBuildSpecBuilder() throws Exception {
+		Project project = (Project) getWorkspace().getRoot().getProject("ProjectTBSB");
+		ensureExistsInWorkspace(project, true);
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+		IFile descriptionFile = project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME);
+		assertTrue("1.0", descriptionFile.exists());
+
+		// Add a builder to the build command.
+		IProjectDescription desc = project.getDescription();
+		ICommand command = desc.newCommand();
+		command.setBuilderName(CustomTriggerBuilder.BUILDER_NAME);
+		desc.setBuildSpec(new ICommand[] {command});
+		project.setDescription(desc, null);
+
+		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
+
+		// Get a non-cloned version of the project desc build spec, and check for the builder 
+		assertTrue("2.0", ((BuildCommand) project.internalGetDescription().getBuildSpec(false)[0]).getBuilder() != null);
+
+		// Now reset the build command. The builder shouldn't disappear.
+		desc = project.getDescription();
+		desc.setBuildSpec(new ICommand[] {command});
+		project.setDescription(desc, null);
+
+		// builder should still be there
+		assertTrue("3.0", ((BuildCommand) project.internalGetDescription().getBuildSpec(false)[0]).getBuilder() != null);
 	}
 
 	/**
