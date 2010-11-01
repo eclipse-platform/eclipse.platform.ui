@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.editors.text;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.expressions.IEvaluationContext;
+
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IFile;
@@ -24,6 +26,9 @@ import org.eclipse.core.filebuffers.manipulation.RemoveTrailingWhitespaceOperati
 
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.jface.text.ITextSelection;
+
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.editors.text.SelectResourcesDialog.IFilter;
 
 import org.eclipse.ui.editors.text.FileBufferOperationHandler;
@@ -36,6 +41,10 @@ import org.eclipse.ui.editors.text.FileBufferOperationHandler;
  */
 public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler {
 
+	/** @since 3.7 */
+	private boolean fStrictCheckIfTextLocation= true;
+
+
 	public RemoveTrailingWhitespaceHandler() {
 		super(new RemoveTrailingWhitespaceOperation());
 	}
@@ -45,7 +54,7 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 	 */
 	protected boolean isAcceptableLocation(IPath location) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		return location != null && manager.isTextFileLocation(location, true);
+		return location != null && manager.isTextFileLocation(location, fStrictCheckIfTextLocation);
 	}
 
 	/*
@@ -107,4 +116,16 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		return (IFile[]) filtered.toArray(new IFile[filtered.size()]);
 	}
 
+	/*
+	 * @see org.eclipse.core.commands.AbstractHandler#setEnabled(java.lang.Object)
+	 * @since 3.7
+	 */
+	public void setEnabled(Object evaluationContext) {
+		fStrictCheckIfTextLocation= true;
+		if (evaluationContext instanceof IEvaluationContext) {
+			Object selection= ((IEvaluationContext)evaluationContext).getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+			fStrictCheckIfTextLocation= !(selection instanceof ITextSelection);
+		}
+		super.setEnabled(evaluationContext);
+	}
 }
