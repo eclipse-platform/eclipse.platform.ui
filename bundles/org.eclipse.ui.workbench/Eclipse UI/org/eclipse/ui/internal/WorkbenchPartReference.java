@@ -444,10 +444,17 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 				partService.showPart(part, PartState.CREATE);
 			}
 
-			CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
-			if (compatibilityPart != null) {
-				legacyPart = compatibilityPart.getPart();
-				addPropertyListeners();
+			// check if we were actually created, it is insufficient to check
+			// whether the 'object' feature is valid or not because it is one of
+			// the last things to be unset during the teardown process, this
+			// means we may return a valid workbench part even if it is actually
+			// in the process of being destroyed, see bug 328944
+			if (part.getWidget() != null) {
+				CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
+				if (compatibilityPart != null) {
+					legacyPart = compatibilityPart.getPart();
+					addPropertyListeners();
+				}
 			}
 		}
 		return legacyPart;
