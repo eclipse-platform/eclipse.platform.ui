@@ -18,7 +18,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.core.internal.contexts.TestHelper;
 
 public class EclipseContextTest extends TestCase {
 
@@ -215,8 +214,8 @@ public class EclipseContextTest extends TestCase {
 		assertEquals(3, runCounter);
 		parent.set("parentValue", "y");
 		assertEquals(3, runCounter);
-		assertTrue(TestHelper.getListeners(child).isEmpty());
-		assertTrue(TestHelper.getListeners(parent).isEmpty());
+		assertEquals(0, listenersCount(child));
+		assertEquals(0, listenersCount(parent));
 	}
 
 	public void testModify() {
@@ -308,9 +307,9 @@ public class EclipseContextTest extends TestCase {
 		parent.set("sum", new AddContextFunction());
 
 		child.get("sum");
-		assertEquals(1, TestHelper.getListeners(parent).size());
+		assertEquals(1, listenersCount(parent));
 		child.dispose();
-		assertEquals(0, TestHelper.getListeners(parent).size());
+		assertEquals(0, listenersCount(parent));
 	}
 	
 	public void testNullInheritance() {
@@ -319,5 +318,9 @@ public class EclipseContextTest extends TestCase {
 		parent.set("x", new Integer(1));
 		child.set("x", null);
 		assertNull(child.get("x"));
+	}
+
+	private int listenersCount(IEclipseContext context) {
+		return ((EclipseContext) context).getListeners().size();		
 	}
 }

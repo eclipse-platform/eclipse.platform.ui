@@ -12,7 +12,6 @@ package org.eclipse.e4.core.internal.contexts;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,9 +30,9 @@ abstract public class Computation {
 	 */
 	public abstract int hashCode();
 
-	protected Map<IEclipseContext, Set<String>> dependencies = new HashMap<IEclipseContext, Set<String>>();
+	protected Map<EclipseContext, Set<String>> dependencies = new HashMap<EclipseContext, Set<String>>();
 
-	public void addDependency(IEclipseContext context, String name) {
+	public void addDependency(EclipseContext context, String name) {
 		Set<String> properties = dependencies.get(context);
 		if (properties == null) {
 			properties = new HashSet<String>(4);
@@ -48,57 +47,39 @@ abstract public class Computation {
 
 	public void handleInvalid(ContextChangeEvent event, List<Scheduled> scheduled) {
 		String name = event.getName();
-		IEclipseContext context = event.getContext();
-		Set<String> names = dependencies.get(context);
+		EclipseContext context = (EclipseContext) event.getContext();
 
-		boolean contextDisposed = (event.getEventType() == ContextChangeEvent.DISPOSE);
-		boolean affected = (names == null) ? false : names.contains(name);
-
-		if (contextDisposed || affected) {
-			stopListening(context, name);
-			doHandleInvalid(event, scheduled);
-		}
+		stopListening(context, name);
+		doHandleInvalid(event, scheduled);
 	}
 
 	/**
 	 * Remove this computation from all contexts that are tracking it
 	 */
 	protected void removeAll() {
-		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
-			((EclipseContext) it.next()).listeners.remove(this);
+		for (EclipseContext c : dependencies.keySet()) {
+			c.removeListener(this);
 		}
 		dependencies.clear();
 	}
 
 	public void startListening() {
-		for (Iterator<IEclipseContext> it = dependencies.keySet().iterator(); it.hasNext();) {
-			EclipseContext c = (EclipseContext) it.next();
-			Computation existingComputation = c.listeners.get(this);
-			if (existingComputation != null) {
-				// if the existing computation is equal but not identical, we need to update
-				if (this == existingComputation)
-					continue;
-				Set<String> existingDependencies = existingComputation.dependencies.get(c);
-				if (existingDependencies != null)
-					existingDependencies.addAll(dependencies.get(c));
-				else
-					existingComputation.dependencies.put(c, dependencies.get(c));
-			} else
-				c.listeners.put(this, this);
+		for (EclipseContext c : dependencies.keySet()) {
+			c.addListener(this, dependencies.get(c));
 		}
 	}
 
-	public void stopListening(IEclipseContext context, String name) {
+	public void stopListening(EclipseContext context, String name) {
 		if (context == null) {
-			Set<IEclipseContext> dependentContexts = dependencies.keySet();
-			for (IEclipseContext dependentContext : dependentContexts) {
-				((EclipseContext) dependentContext).listeners.remove(this);
+			Set<EclipseContext> dependentContexts = dependencies.keySet();
+			for (EclipseContext dependentContext : dependentContexts) {
+				dependentContext.removeListener(this);
 			}
 			return;
 		}
 		if (name == null) {
 			dependencies.remove(context);
-			((EclipseContext) context).listeners.remove(this);
+			context.removeListener(this);
 			return;
 		}
 		Set<String> properties = dependencies.get(context);
@@ -107,7 +88,7 @@ abstract public class Computation {
 			// if we no longer track any values in the context, remove dependency
 			if (properties.isEmpty()) {
 				dependencies.remove(context);
-				((EclipseContext) context).listeners.remove(this);
+				context.removeListener(this);
 			}
 		}
 	}

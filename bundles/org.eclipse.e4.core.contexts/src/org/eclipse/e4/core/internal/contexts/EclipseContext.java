@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,7 +72,7 @@ public class EclipseContext implements IEclipseContext {
 
 	static ThreadLocal<Computation> currentComputation = new ThreadLocal<Computation>();
 
-	final Map<Computation, Computation> listeners = Collections.synchronizedMap(new LinkedHashMap<Computation, Computation>());
+	private Map<String, Set<Computation>> listeners = Collections.synchronizedMap(new HashMap<String, Set<Computation>>());
 
 	final Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
 	final Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
@@ -168,16 +167,17 @@ public class EclipseContext implements IEclipseContext {
 			}
 		}
 
-		if (listeners.size() > 0) {
-			Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
-			ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
-			// reverse order of listeners
-			for (int i = ls.length - 1; i >= 0; i--) {
-				List<Scheduled> scheduled = new ArrayList<Scheduled>();
-				ls[i].handleInvalid(event, scheduled);
-				processScheduled(scheduled);
-			}
+		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.DISPOSE, null, null, null);
+		List<Scheduled> scheduled = new ArrayList<Scheduled>();
+		Set<Computation> allComputations = new HashSet<Computation>();
+		for (Set<Computation> computations : listeners.values()) {
+			allComputations.addAll(computations);
 		}
+		listeners.clear();
+		for (Computation computation : allComputations) {
+			computation.handleInvalid(event, scheduled);
+		}
+		processScheduled(scheduled);
 
 		synchronized (notifyOnDisposal) {
 			for (IContextDisposalListener listener : notifyOnDisposal) {
@@ -187,7 +187,6 @@ public class EclipseContext implements IEclipseContext {
 
 		if (strategy instanceof IDisposable)
 			((IDisposable) strategy).dispose();
-		listeners.clear();
 		localValueComputations.clear();
 
 		// if this was the parent's active child, deactivate it
@@ -277,10 +276,12 @@ public class EclipseContext implements IEclipseContext {
 	 * dependencies has changed).
 	 */
 	void handleInvalid(String name, int eventType, Object oldValue, List<Scheduled> scheduled) {
-		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
+		Set<Computation> computations = listeners.remove(name);
+		if (computations == null)
+			return;
 		ContextChangeEvent event = new ContextChangeEvent(this, eventType, null, name, oldValue);
-		for (int i = 0; i < ls.length; i++) {
-			ls[i].handleInvalid(event, scheduled);
+		for (Computation computation : computations) {
+			computation.handleInvalid(event, scheduled);
 		}
 	}
 
@@ -430,8 +431,10 @@ public class EclipseContext implements IEclipseContext {
 	public void removeListenersTo(Object object) {
 		if (object == null)
 			return;
-		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
 		ContextChangeEvent event = new ContextChangeEvent(this, ContextChangeEvent.UNINJECTED, new Object[] {object}, null, null);
+		// TBD computation here removes listeners. We should do that inside this method instead
+		Set<Computation> computations = getListeners();
+		Computation[] ls = computations.toArray(new Computation[computations.size()]);
 		for (Computation computation : ls) {
 			if (computation instanceof TrackableComputationExt)
 				((TrackableComputationExt) computation).update(event);
@@ -443,14 +446,10 @@ public class EclipseContext implements IEclipseContext {
 		// Add "boolean inReparent" on the root context and process right away?
 		processWaiting();
 		// 1) everybody who depends on me: I need to collect combined list of names injected
-		Computation[] ls = listeners.keySet().toArray(new Computation[listeners.size()]);
-		Set<String> usedNames = new HashSet<String>();
-		for (int i = 0; i < ls.length; i++) {
-			Set<String> listenerNames = ls[i].dependsOnNames(this);
-			if (listenerNames == null)
-				continue; // should not happen?
-			usedNames.addAll(listenerNames); // also removes duplicates
-		}
+		Set<String> tmp = listeners.keySet(); // clone internal name list
+		Set<String> usedNames = new HashSet<String>(tmp.size());
+		usedNames.addAll(tmp);
+
 		// 2) for each used name:
 		for (Iterator<String> i = usedNames.iterator(); i.hasNext();) {
 			String name = i.next();
@@ -645,9 +644,32 @@ public class EclipseContext implements IEclipseContext {
 		return result;
 	}
 
-	// This method is for debug only, do not use externally
+	public void addListener(Computation computation, Set<String> names) {
+		for (String name : names) {
+			if (listeners.containsKey(name)) {
+				Set<Computation> existingDependencies = listeners.get(name);
+				existingDependencies.add(computation);
+			} else {
+				Set<Computation> computations = new HashSet<Computation>();
+				computations.add(computation);
+				listeners.put(name, computations);
+			}
+		}
+	}
+
+	public void removeListener(Computation computation) {
+		for (Map.Entry<String, Set<Computation>> entry : listeners.entrySet()) {
+			Set<Computation> computations = entry.getValue();
+			computations.remove(computation);
+		}
+	}
+
 	public Set<Computation> getListeners() {
-		return listeners.keySet();
+		Set<Computation> computations = new HashSet<Computation>();
+		for (Map.Entry<String, Set<Computation>> entry : listeners.entrySet()) {
+			computations.addAll(entry.getValue());
+		}
+		return computations;
 	}
 
 }

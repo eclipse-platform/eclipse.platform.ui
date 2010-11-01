@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 import org.eclipse.e4.core.contexts.ContextFunction;
@@ -95,10 +92,7 @@ public class DependenciesLeakTest extends TestCase {
 	private void assertNoListeners(IEclipseContext context) {
 		EclipseContext c = (EclipseContext) context;
 		try {
-			Field field = c.getClass().getDeclaredField("listeners");
-			field.setAccessible(true);
-			Map<?, ?> listeners = (Map<?, ?>) field.get(c);
-			assertEquals(0, listeners.size());
+			assertTrue(c.getListeners().isEmpty());
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
