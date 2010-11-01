@@ -43,9 +43,9 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.IPartListener;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
-import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.emf.common.notify.Notifier;
 
@@ -7418,6 +7418,243 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(partC, partService.getActivePart());
 	}
 
+	/**
+	 * Create two separate perspectives. The first one has a shared part partA
+	 * in it. The second one has an unrendered part stack with the shared part
+	 * partA in it, and then two other shared parts partB and partC are outside
+	 * the part stack and are contained directly under the second perspective.
+	 * <p>
+	 * partA is initially active and we then switch perspectives to the second
+	 * perspective. partB becomes active now. Then partB is hidden and then we
+	 * want to assert that partC is the active part and that partA is not
+	 * despite the fact that partA is contained in the activation history.
+	 * </p>
+	 */
+	public void testHidePart_ActivationHistory22() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partC);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA1 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA1.setRef(partA);
+		partA.setCurSharedRef(placeholderA1);
+		perspectiveA.getChildren().add(placeholderA1);
+		perspectiveA.setSelectedElement(placeholderA1);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		partStack.setToBeRendered(false);
+		perspectiveB.getChildren().add(partStack);
+
+		MPlaceholder placeholderA2 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA2.setRef(partA);
+		partStack.getChildren().add(placeholderA2);
+		partStack.setSelectedElement(placeholderA2);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partB);
+		partB.setCurSharedRef(placeholderB);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		MPlaceholder placeholderC = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderC.setRef(partC);
+		partC.setCurSharedRef(placeholderC);
+		perspectiveB.getChildren().add(placeholderC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	/**
+	 * Create two separate perspectives. The first one has three shared parts in
+	 * it, partA, partB, and partC. The second perspective has partA by itself,
+	 * partB obscured in a part stack by another part, partD, and then partC
+	 * comes after the part stack.
+	 * <p>
+	 * partA is initially active, and we proceed to activate partC, partB, and
+	 * then partA again. Now we switch to the second perspective where partA
+	 * remains the active part. Hiding partA should cause partC to become the
+	 * active part as partB is obscured by partD despite the fact that partB is
+	 * the next available candidate in the activation history.
+	 * </p>
+	 */
+	public void testHidePart_ActivationHistory23() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partC);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA1 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA1.setRef(partA);
+		partA.setCurSharedRef(placeholderA1);
+		perspectiveA.getChildren().add(placeholderA1);
+		perspectiveA.setSelectedElement(placeholderA1);
+
+		MPlaceholder placeholderB1 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB1.setRef(partB);
+		partB.setCurSharedRef(placeholderB1);
+		perspectiveA.getChildren().add(placeholderB1);
+
+		MPlaceholder placeholderC1 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderC1.setRef(partC);
+		partC.setCurSharedRef(placeholderC1);
+		perspectiveA.getChildren().add(placeholderC1);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderA2 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA2.setRef(partA);
+		perspectiveB.getChildren().add(placeholderA2);
+		perspectiveB.setSelectedElement(placeholderA2);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspectiveB.getChildren().add(partStack);
+
+		MPlaceholder placeholderB2 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB2.setRef(partB);
+		partStack.getChildren().add(placeholderB2);
+
+		MPart partD = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partD);
+		partStack.setSelectedElement(partD);
+
+		MPlaceholder placeholderC2 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderC2.setRef(partC);
+		perspectiveB.getChildren().add(placeholderC2);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		partService.activate(partC);
+		partService.activate(partB);
+		partService.activate(partA);
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.hidePart(partA);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	/**
+	 * Create a window with three parts, partA, partB contained within a part
+	 * stack, and partC.
+	 * <p>
+	 * partA is initially active and then we proceed to activate partB and
+	 * partC. Now we turn off the 'toBeRendered' flag of the part stack
+	 * containing partB and then hide partC. partA should now become the active
+	 * part as partB's parent container has been unrendered despite the fact
+	 * that partB is the next available candidate in the activation history.
+	 * </p>
+	 */
+	public void testHidePart_ActivationHistory24() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+		partStack.setSelectedElement(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		partService.activate(partB);
+		partService.activate(partC);
+		partStack.setToBeRendered(false);
+		partService.hidePart(partC);
+		assertEquals(partA, partService.getActivePart());
+	}
+
 	public void testHidePart_ActivationHistory_Bug327952_01() {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
@@ -7980,6 +8217,629 @@ public class EPartServiceTest extends TestCase {
 		partService.activate(partC);
 		partService.hidePart(partC);
 		assertEquals(partB, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_01() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveA.getChildren().add(partA);
+		perspectiveA.setSelectedElement(partA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveB.getChildren().add(partB);
+		perspectiveB.setSelectedElement(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveB.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(partA);
+		partA.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveB.getChildren().add(partB);
+		perspectiveB.setSelectedElement(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveB.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_03() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveA.getChildren().add(partA);
+		perspectiveA.setSelectedElement(partA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partB);
+		partB.setCurSharedRef(placeholderB);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveB.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_04() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partC);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveA.getChildren().add(partA);
+		perspectiveA.setSelectedElement(partA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveB.getChildren().add(partB);
+		perspectiveB.setSelectedElement(partB);
+
+		MPlaceholder placeholderC = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderC.setRef(partC);
+		partC.setCurSharedRef(placeholderC);
+		perspectiveB.getChildren().add(placeholderC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_05() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(partA);
+		partA.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partB);
+		partB.setCurSharedRef(placeholderB);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveB.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_06() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partC);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(partA);
+		partA.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveB.getChildren().add(partB);
+		perspectiveB.setSelectedElement(partB);
+
+		MPlaceholder placeholderC = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderC.setRef(partC);
+		partC.setCurSharedRef(placeholderC);
+		perspectiveB.getChildren().add(placeholderC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_07() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partC);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		perspectiveA.getChildren().add(partA);
+		perspectiveA.setSelectedElement(partA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partB);
+		partB.setCurSharedRef(placeholderB);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		MPlaceholder placeholderC = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderC.setRef(partC);
+		partC.setCurSharedRef(placeholderC);
+		perspectiveB.getChildren().add(placeholderC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_08() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partC);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(partA);
+		partA.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partB);
+		partB.setCurSharedRef(placeholderB);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		MPlaceholder placeholderC = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderC.setRef(partC);
+		partC.setCurSharedRef(placeholderC);
+		perspectiveB.getChildren().add(placeholderC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_09() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partC);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA1 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA1.setRef(partA);
+		partA.setCurSharedRef(placeholderA1);
+		perspectiveA.getChildren().add(placeholderA1);
+		perspectiveA.setSelectedElement(placeholderA1);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderA2 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA2.setToBeRendered(false);
+		placeholderA2.setRef(partA);
+		perspectiveB.getChildren().add(placeholderA2);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partB);
+		partB.setCurSharedRef(placeholderB);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		MPlaceholder placeholderC = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderC.setRef(partC);
+		partC.setCurSharedRef(placeholderC);
+		perspectiveB.getChildren().add(placeholderC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
+	}
+
+	public void testHidePart_ActivationHistory_Bug328946_10() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partC);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA1 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA1.setRef(partA);
+		partA.setCurSharedRef(placeholderA1);
+		perspectiveA.getChildren().add(placeholderA1);
+		perspectiveA.setSelectedElement(placeholderA1);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partB);
+		partB.setCurSharedRef(placeholderB);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspectiveB.getChildren().add(partStack);
+
+		MPlaceholder placeholderC = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderC.setRef(partC);
+		partC.setCurSharedRef(placeholderC);
+		partStack.getChildren().add(placeholderC);
+		partStack.setSelectedElement(placeholderC);
+
+		MPlaceholder placeholderA2 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA2.setRef(partA);
+		partStack.getChildren().add(placeholderA2);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.switchPerspective(perspectiveB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.activate(partB);
+		assertEquals(partB, partService.getActivePart());
+
+		partService.hidePart(partB);
+		assertEquals(partC, partService.getActivePart());
 	}
 
 	/**

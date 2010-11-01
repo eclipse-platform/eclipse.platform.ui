@@ -153,6 +153,9 @@ public class PartServiceImpl implements EPartService {
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectedHandler);
 		constructed = true;
 		partActivationHistory = new PartActivationHistory(this, modelService);
+		if (activePart != null) {
+			partActivationHistory.queue(activePart);
+		}
 	}
 
 	@PreDestroy
@@ -386,7 +389,7 @@ public class PartServiceImpl implements EPartService {
 		return false;
 	}
 
-	MPlaceholder getLocalPlaceholder(MPart part) {
+	MPlaceholder getLocalPlaceholder(MUIElement part) {
 		return modelService.findPlaceholderFor(getWindow(), part);
 	}
 
@@ -856,7 +859,8 @@ public class PartServiceImpl implements EPartService {
 			// check if we're the active child
 			if (partContext != null && partContext.getParent().getActiveChild() == partContext) {
 				// get the activation candidate if we are
-				activationCandidate = partActivationHistory.getNextActivationCandidate(part);
+				activationCandidate = partActivationHistory.getNextActivationCandidate(getParts(),
+						part);
 			}
 
 			if (parent.getSelectedElement() == toBeRemoved) {

@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,6 +59,10 @@ class PartActivationHistory {
 			} while (parent.get(MWindow.class) != null);
 		}
 
+		queue(part);
+	}
+
+	void queue(MPart part) {
 		generalActivationHistory.remove(part);
 		generalActivationHistory.addFirst(part);
 	}
@@ -66,7 +71,7 @@ class PartActivationHistory {
 	 * Checks to see if this element and its parents are actually being rendered.
 	 */
 	private boolean isValid(MUIElement element) {
-		if (element == null) {
+		if (element == null || !element.isToBeRendered() || !element.isVisible()) {
 			return false;
 		}
 
@@ -74,20 +79,17 @@ class PartActivationHistory {
 			return true;
 		}
 
-		MElementContainer<MUIElement> parent = element.getParent();
-		if (parent == null) {
-			MPlaceholder placeholder = element.getCurSharedRef();
-			if (placeholder == null) {
-				return false;
-			}
-
-			parent = placeholder.getParent();
-			if (parent == null || !placeholder.isToBeRendered() || !placeholder.isVisible()) {
-				return false;
-			}
+		MUIElement parent = element.getParent();
+		if (parent == null && element instanceof MWindow) {
+			// might be a detached window
+			parent = (MUIElement) ((EObject) element).eContainer();
 		}
 
-		return element.isToBeRendered() && element.isVisible() && isValid(parent);
+		if (parent == null) {
+			return isValid(partService.getLocalPlaceholder(element));
+		}
+
+		return isValid(parent);
 	}
 
 	/**
@@ -151,49 +153,40 @@ class PartActivationHistory {
 				: isInArea(parent);
 	}
 
-	/**
-	 * Finds and returns a part that is a valid candidate to be granted activation.
-	 */
 	private MPart getActivationCandidate(MPart part) {
 		// get all the possible parts that we can possibly activate
 		Collection<MPart> candidates = part.getContext().get(EPartService.class).getParts();
+		return findActivationCandidate(candidates, part);
+	}
+
+	/**
+	 * Finds and returns a part that is a valid candidate to be granted activation.
+	 */
+	private MPart findActivationCandidate(Collection<MPart> candidates, MPart currentlyActivePart) {
+		candidates.remove(currentlyActivePart);
+
+		MPlaceholder activePlaceholder = partService.getLocalPlaceholder(currentlyActivePart);
 		for (MPart candidate : candidates) {
 			// make sure it's rendered and visible
-			if (part != candidate && candidate.isToBeRendered() && candidate.isVisible()) {
-				MPlaceholder placeholder = candidate.getCurSharedRef();
-				if (placeholder != null) {
-					// check that the placeholder is valid
-					if (!placeholder.isToBeRendered() || !placeholder.isVisible()) {
-						continue;
-					}
-				}
-
+			if (isValid(candidate)) {
+				MPlaceholder placeholder = partService.getLocalPlaceholder(candidate);
 				MElementContainer<MUIElement> parent = placeholder == null ? candidate.getParent()
 						: placeholder.getParent();
-				// check that the part is in a structure that's rendered
-				if (isValid(parent)) {
-					// stacks require considerations because we don't want to activate something
-					// that's not the selected element if possible
-					if (parent instanceof MGenericStack<?>) {
-						// get the selected element
-						MUIElement element = parent.getSelectedElement();
-						// get the real element if we're a placeholder
-						if (element instanceof MPlaceholder) {
-							element = ((MPlaceholder) element).getRef();
-						}
-
-						// the selected element is the part itself, just return the candidate
-						if (element == part) {
-							return candidate;
-						}
-
-						// FIXME: if we're a part, then we should return it since it is selected,
-						// this is correct, but if we're not a part, we should technically drill
-						// down further instead of just returning the candidate part, as it is not
-						// the selected element of the stack and will cause the stack to
-						// unnecessarily change its selection
-						return element instanceof MPart ? (MPart) element : candidate;
+				// stacks require special considerations because we don't want to activate something
+				// that's not the selected element if possible get the selected element
+				if (parent instanceof MGenericStack) {
+					MUIElement selection = parent.getSelectedElement();
+					// if the selected element is the currently active part, the candidate is valid
+					if (selection == activePlaceholder || selection == currentlyActivePart) {
+						return candidate;
 					}
+
+					// if the selected element is the current candidate, the candidate is valid
+					if (selection == candidate || selection == placeholder) {
+						return candidate;
+					}
+				} else {
+					// not in a stack, just return the candidate then
 					return candidate;
 				}
 			}
@@ -201,43 +194,7 @@ class PartActivationHistory {
 		return null;
 	}
 
-	private MPart findActivationCandidate(Collection<MPart> candidates, MPart currentlyActivePart) {
-		MPlaceholder activePlaceholder = partService.getLocalPlaceholder(currentlyActivePart);
-		for (MPart candidate : candidates) {
-			if (candidate != currentlyActivePart && candidate.isToBeRendered()
-					&& candidate.isVisible()) {
-				MPlaceholder placeholder = partService.getLocalPlaceholder(candidate);
-				if (placeholder == null) {
-					MElementContainer<MUIElement> parent = candidate.getParent();
-					// if stack, then must be the selected element to be valid
-					if (parent instanceof MGenericStack) {
-						MUIElement selection = parent.getSelectedElement();
-						if (selection == candidate || selection == activePlaceholder
-								|| selection == currentlyActivePart) {
-							return candidate;
-						}
-					} else {
-						return candidate;
-					}
-				} else if (placeholder.isToBeRendered() && placeholder.isVisible()) {
-					MElementContainer<MUIElement> parent = placeholder.getParent();
-					// if stack, then must be the selected element to be valid
-					if (parent instanceof MGenericStack) {
-						MUIElement selection = parent.getSelectedElement();
-						if (selection == placeholder || selection == activePlaceholder
-								|| selection == currentlyActivePart) {
-							return candidate;
-						}
-					} else {
-						return candidate;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	MPart getNextActivationCandidate(MPart part) {
+	MPart getNextActivationCandidate(Collection<MPart> validParts, MPart part) {
 		MArea area = isInArea(part);
 		if (area != null) {
 			// focus should stay in the area if possible
@@ -254,8 +211,15 @@ class PartActivationHistory {
 			}
 		}
 
-		// check activation history
-		MPart candidate = findActivationCandidate(generalActivationHistory, part);
+		// check activation history, since the history is global, we need to filter it down first
+		Collection<MPart> validCandidates = new ArrayList<MPart>();
+		for (MPart validPart : generalActivationHistory) {
+			if (validParts.contains(validPart)) {
+				validCandidates.add(validPart);
+			}
+		}
+
+		MPart candidate = findActivationCandidate(validCandidates, part);
 		return candidate == null ? getActivationCandidate(part) : candidate;
 	}
 
