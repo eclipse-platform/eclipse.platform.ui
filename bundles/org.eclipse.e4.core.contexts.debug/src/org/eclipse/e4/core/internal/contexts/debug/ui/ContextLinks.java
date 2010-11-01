@@ -48,14 +48,14 @@ public class ContextLinks {
 		public Object[] getElements(Object inputElement) {
 			if (selectedContext == null)
 				return new Object[0];
-			Set<Computation> listeners = selectedContext.getListeners();
+			Set<String> listeners = selectedContext.getRawListenerNames();
 			return listeners.toArray();
 		}
 
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof Computation) {
-				Set<String> names = ((Computation) parentElement).dependsOnNames(selectedContext);
-				return names.toArray();
+			if (parentElement instanceof String) {
+				Set<Computation> tmp = selectedContext.getListeners((String) parentElement);
+				return tmp.toArray();
 			}
 			return null;
 		}
@@ -65,9 +65,9 @@ public class ContextLinks {
 		}
 
 		public boolean hasChildren(Object element) {
-			if (element instanceof Computation) {
-				Set<String> names = ((Computation) element).dependsOnNames(selectedContext);
-				return !names.isEmpty();
+			if (element instanceof String) {
+				Set<Computation> tmp = selectedContext.getListeners((String) element);
+				return !tmp.isEmpty();
 			}
 			return false;
 		}
