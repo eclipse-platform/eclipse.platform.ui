@@ -67,11 +67,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 		
 		if (fStatusControl != null) {
 			if (!fStatusControl.isDisposed()) {
-				Control focusControl= fStatusControl.getDisplay().getFocusControl();
-				while (focusControl != fParent && focusControl != null && !(focusControl instanceof Shell)) {
-					focusControl= focusControl.getParent();
-				}
-				restoreFocus= focusControl == fParent;
+				restoreFocus= containsFocus(fStatusControl);
 			}
 			fStatusControl.dispose();
 			fStatusControl= null;
@@ -97,9 +93,20 @@ public class StatusTextEditor extends AbstractTextEditor {
 			updateStatusFields();
 		}
 
-		if (restoreFocus) {
+		if (restoreFocus && fStatusControl != null && !containsFocus(fStatusControl)) {
 			fParent.setFocus();
 		}
+	}
+
+	private boolean containsFocus(Control control) {
+		Control focusControl= control.getDisplay().getFocusControl();
+		if (focusControl != null) {
+			focusControl= focusControl.getParent();
+			while (focusControl != fParent && focusControl != null && !(focusControl instanceof Shell)) {
+				focusControl= focusControl.getParent();
+			}
+		}
+		return focusControl == fParent;
 	}
 	
 	/*

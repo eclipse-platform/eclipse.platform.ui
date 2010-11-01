@@ -15,6 +15,7 @@ package org.eclipse.ui.texteditor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
@@ -24,7 +25,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -53,7 +53,7 @@ public class InfoForm {
 	/** The form banner */
 	private Label fBanner;
 	/** The form text */
-	private Text fText;
+	private StyledText fText;
 	/** The preference change listener */
 	private IPropertyChangeListener fPropertyChangeListener;
 
@@ -207,8 +207,8 @@ public class InfoForm {
 		return label;
 	}
 	
-	private Text createText(Composite parent, String text) {
-		Text widget = new Text(parent, SWT.READ_ONLY | SWT.MULTI);
+	private StyledText createText(Composite parent, String text) {
+		StyledText widget = new StyledText(parent, SWT.READ_ONLY | SWT.MULTI);
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		widget.setLayoutData(data);
 
@@ -216,6 +216,7 @@ public class InfoForm {
 			widget.setText(text);
 		widget.setBackground(fBackgroundColor);
 		widget.setForeground(fForegroundColor);
+		widget.setCaret(null);
 		return widget;
 	}
 

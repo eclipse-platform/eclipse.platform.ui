@@ -16,8 +16,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -172,7 +172,7 @@ public class EncodingChangeTests extends TestCase {
 				String expected= encodingSupport.getStatusMessage(fileBuffer.getStatus());
 				Composite composite= (Composite)accessor.get("fStatusControl");
 				ScrolledComposite scrolledComposite= (ScrolledComposite)composite.getChildren()[0];
-				Text statusText= (Text)((Composite)scrolledComposite.getContent()).getChildren()[5];
+				StyledText statusText= (StyledText)((Composite)scrolledComposite.getContent()).getChildren()[5];
 				String actual= statusText.getText();
 				assertEquals(expected, actual);
 			} else
