@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.internal.part.StatusPart;
@@ -28,6 +26,7 @@ import org.eclipse.ui.part.EditorPart;
 public class ErrorEditorPart extends EditorPart {
 
 	private IStatus error;
+	private Composite parentControl;
 
 	/**
 	 * Creates instance of the class
@@ -66,6 +65,7 @@ public class ErrorEditorPart extends EditorPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
+		this.parentControl = parent;
 		if (error != null) {
 			new StatusPart(parent, error);
 		}
@@ -107,7 +107,7 @@ public class ErrorEditorPart extends EditorPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-
+		parentControl.setFocus();
 	}
 
 	/*
@@ -117,5 +117,15 @@ public class ErrorEditorPart extends EditorPart {
 	 */
 	public void setPartName(String newName) {
 		super.setPartName(newName);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		parentControl = null;
 	}
 }
