@@ -9424,6 +9424,68 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(partC, partService.getActivePart());
 	}
 
+	/**
+	 * Setup a shared part in two perspectives, perspectiveA and perspectiveB
+	 * with the part being in a detached window in perspectiveB's case.
+	 * <p>
+	 * First activate the part in perspectiveA. Switching to perspectiveB should
+	 * not cause any problems.
+	 * </p>
+	 */
+	public void testSwitchPerspective_Bug329184() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(part);
+		part.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MWindow detachedWindowB = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspectiveB.getWindows().add(detachedWindowB);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		detachedWindowB.getChildren().add(partStack);
+		detachedWindowB.setSelectedElement(partStack);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(part);
+		partStack.getChildren().add(placeholderB);
+		partStack.setSelectedElement(placeholderB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(part);
+		partService.switchPerspective(perspectiveB);
+		assertEquals(part, partService.getActivePart());
+	}
+
 	private MApplication createApplication(String partId) {
 		return createApplication(new String[] { partId });
 	}

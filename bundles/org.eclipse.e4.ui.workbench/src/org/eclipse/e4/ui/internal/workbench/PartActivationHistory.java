@@ -98,28 +98,24 @@ class PartActivationHistory {
 	boolean isValid(MPerspective perspective, MUIElement element) {
 		if (element instanceof MApplication) {
 			return true;
-		} else if (!element.isToBeRendered() || !element.isVisible()) {
+		} else if (element == null || !element.isToBeRendered() || !element.isVisible()) {
 			return false;
 		}
 
-		MElementContainer<MUIElement> parent = element.getParent();
+		MElementContainer<?> parent = element.getParent();
 		if (parent == null) {
 			for (MPlaceholder placeholder : modelService.findElements(perspective, null,
 					MPlaceholder.class, null)) {
 				if (placeholder.getRef() == element) {
-					parent = placeholder.getParent();
-					if (!placeholder.isToBeRendered() || !placeholder.isVisible() || parent == null) {
-						return false;
-					}
-
-					// if in a stack, then only valid if we're the selected element
-					if (parent instanceof MGenericStack
-							&& parent.getSelectedElement() != placeholder) {
-						return false;
-					}
-					break;
+					return isValid(perspective, placeholder);
 				}
 			}
+
+			if (element instanceof MWindow) {
+				// might be a detached window
+				return isValid(perspective, (MUIElement) ((EObject) element).eContainer());
+			}
+			return false;
 		} else if (parent instanceof MGenericStack && parent.getSelectedElement() != element) {
 			// if in a stack, then only valid if we're the selected element
 			return false;
