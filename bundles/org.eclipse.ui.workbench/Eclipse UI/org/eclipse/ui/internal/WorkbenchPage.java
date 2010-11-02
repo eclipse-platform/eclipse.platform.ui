@@ -2337,12 +2337,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (currentPart.isDirty() && !perspectiveParts.contains(currentPart)) {
 				Object object = currentPart.getObject();
 				if (object == null) {
-					currentPart.setDirty(false);
 					continue;
 				} else if (object instanceof CompatibilityPart) {
 					CompatibilityPart compatibilityPart = (CompatibilityPart) object;
 					if (!((ISaveablePart) compatibilityPart.getPart()).isSaveOnCloseNeeded()) {
-						currentPart.setDirty(false);
 						continue;
 					}
 				}
@@ -2411,29 +2409,55 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
 	boolean saveAllEditors(boolean confirm, boolean closing) {
-		if (closing) {
-			for (IEditorReference editorReference : getEditorReferences()) {
-				// save all restored editors
-				IEditorPart editor = editorReference.getEditor(false);
-				if (editor != null) {
-					if (!saveSaveable(editor, confirm, closing)) {
+		List<MPart> dirtyParts = new ArrayList<MPart>();
+		// find all the dirty parts in this window
+		for (MPart currentPart : modelService.findElements(window, null, MPart.class, null)) {
+			if (currentPart.isDirty()) {
+				Object object = currentPart.getObject();
+				if (object == null) {
+					continue;
+				} else if (object instanceof CompatibilityPart) {
+					CompatibilityPart compatibilityPart = (CompatibilityPart) object;
+					if (closing
+							&& !((ISaveablePart) compatibilityPart.getPart()).isSaveOnCloseNeeded()) {
+						continue;
+					}
+				}
+
+				dirtyParts.add(currentPart);
+			}
+		}
+
+		if (!dirtyParts.isEmpty()) {
+			if (confirm) {
+				if (dirtyParts.size() == 1) {
+					return partService.savePart(dirtyParts.get(0), true);
+				}
+
+				ISaveHandler saveHandler = window.getContext().get(ISaveHandler.class);
+				Save[] promptToSave = saveHandler.promptToSave(dirtyParts);
+				for (Save save : promptToSave) {
+					if (save == ISaveHandler.Save.CANCEL) {
 						return false;
 					}
 				}
-			}
 
-			for (IViewReference viewReference : viewReferences) {
-				// save all restored views
-				IWorkbenchPart part = viewReference.getPart(false);
-				if (part instanceof ISaveablePart) {
-					if (!saveSaveable((ISaveablePart) part, confirm, closing)) {
+				for (int i = 0; i < promptToSave.length; i++) {
+					if (promptToSave[i] == Save.YES) {
+						if (!partService.savePart(dirtyParts.get(i), false)) {
+							return false;
+						}
+					}
+				}
+			} else {
+				for (MPart part : dirtyParts) {
+					if (!partService.savePart(part, false)) {
 						return false;
 					}
 				}
 			}
 		}
-
-		return partService.saveAll(confirm);
+		return true;
 	}
 
 	/**
