@@ -561,7 +561,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 								: WorkbenchMessages.EditorManager_saveResourcesMessage,
 						canCancel, stillOpenElsewhere);
 				dlg.setInitialSelections(modelsToSave.toArray());
-				dlg.setTitle("EditorManager.SAVE_RESOURCES_TITLE"); //$NON-NLS-1$
+				dlg.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
 
 				// this "if" statement aids in testing.
 				if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
