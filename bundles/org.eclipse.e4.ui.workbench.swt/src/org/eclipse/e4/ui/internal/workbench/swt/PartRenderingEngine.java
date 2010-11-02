@@ -117,7 +117,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				Activator.trace(Policy.DEBUG_RENDERER, "visible -> true", null); //$NON-NLS-1$
 
 				// Note that the 'createGui' protocol calls 'childAdded'
-				Widget w = (Widget) createGui(changedElement);
+				Object w = createGui(changedElement);
 				if (w instanceof Control && !(w instanceof Shell)) {
 					fixZOrder(changedElement);
 				}
