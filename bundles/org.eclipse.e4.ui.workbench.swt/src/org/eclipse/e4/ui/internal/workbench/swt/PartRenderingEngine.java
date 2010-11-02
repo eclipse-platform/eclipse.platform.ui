@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -506,8 +505,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (element instanceof MContext) {
 				MContext ctxt = (MContext) element;
 				IEclipseContext lclContext = ctxt.getContext();
-				if (lclContext instanceof IDisposable) {
-					((IDisposable) lclContext).dispose();
+				if (lclContext != null) {
+					lclContext.dispose();
 				}
 			}
 		}
@@ -657,9 +656,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			}
 
 			ctxt.setContext(null);
-			if (lclContext instanceof IDisposable) {
-				((IDisposable) lclContext).dispose();
-			}
+			lclContext.dispose();
 		}
 	}
 

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
@@ -46,9 +45,7 @@ public class EModelServiceFindTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		if (applicationContext instanceof IDisposable) {
-			((IDisposable) applicationContext).dispose();
-		}
+		applicationContext.dispose();
 	}
 
 	private MApplication createApplication() {

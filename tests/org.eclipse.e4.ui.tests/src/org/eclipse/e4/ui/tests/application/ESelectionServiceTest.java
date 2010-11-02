@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -60,9 +59,7 @@ public class ESelectionServiceTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		if (applicationContext instanceof IDisposable) {
-			((IDisposable) applicationContext).dispose();
-		}
+		applicationContext.dispose();
 	}
 
 	private IPresentationEngine getEngine() {

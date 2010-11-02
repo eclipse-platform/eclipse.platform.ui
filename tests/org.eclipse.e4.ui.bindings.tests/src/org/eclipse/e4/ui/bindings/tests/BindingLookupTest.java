@@ -12,7 +12,6 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
@@ -88,9 +87,7 @@ public class BindingLookupTest extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		if (workbenchContext instanceof IDisposable) {
-			((IDisposable) workbenchContext).dispose();
-		}
+		workbenchContext.dispose();
 		workbenchContext = null;
 	}
 

@@ -2,7 +2,6 @@ package org.eclipse.e4.core.commands.tests;
 
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -55,9 +54,7 @@ public class TestActivator implements BundleActivator {
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		if (serviceContext instanceof IDisposable) {
-			((IDisposable) serviceContext).dispose();
-		}
+		serviceContext.dispose();
 		plugin = null;
 	}
 

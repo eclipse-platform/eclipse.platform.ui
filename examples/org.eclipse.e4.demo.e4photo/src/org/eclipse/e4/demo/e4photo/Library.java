@@ -13,6 +13,7 @@ package org.eclipse.e4.demo.e4photo;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Observables;
@@ -31,7 +32,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -48,7 +48,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.osgi.service.prefs.BackingStoreException;
 
-public class Library implements IDisposable {
+public class Library {
 
 	Map<IContainer, IObservableSet> observableSets = new HashMap<IContainer, IObservableSet>();
 	
@@ -203,6 +203,7 @@ public class Library implements IDisposable {
 		viewer.getControl().setFocus();
 	}
 
+	@PreDestroy
 	public void dispose() {
 		workspace.removeResourceChangeListener(listener);
 	}

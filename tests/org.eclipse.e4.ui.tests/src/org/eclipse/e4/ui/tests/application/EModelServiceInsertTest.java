@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.tests.application;
 
 import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
@@ -40,9 +39,7 @@ public class EModelServiceInsertTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		if (applicationContext instanceof IDisposable) {
-			((IDisposable) applicationContext).dispose();
-		}
+		applicationContext.dispose();
 	}
 
 	private MApplication createSimpleApplication() {
@@ -119,15 +116,15 @@ public class EModelServiceInsertTest extends TestCase {
 		assertTrue("invalid sash orientation", psc.isHorizontal() == horizontal);
 
 		if (where == EModelService.LEFT_OF || where == EModelService.ABOVE) {
-			assertTrue("new part should be first", psc.getChildren().indexOf(
-					newPart) == 0);
-			assertTrue("old part should be second", psc.getChildren().indexOf(
-					relTo) == 1);
+			assertTrue("new part should be first",
+					psc.getChildren().indexOf(newPart) == 0);
+			assertTrue("old part should be second",
+					psc.getChildren().indexOf(relTo) == 1);
 		} else {
-			assertTrue("old part should be first", psc.getChildren().indexOf(
-					relTo) == 0);
-			assertTrue("new part should be second", psc.getChildren().indexOf(
-					newPart) == 1);
+			assertTrue("old part should be first",
+					psc.getChildren().indexOf(relTo) == 0);
+			assertTrue("new part should be second",
+					psc.getChildren().indexOf(newPart) == 1);
 		}
 	}
 

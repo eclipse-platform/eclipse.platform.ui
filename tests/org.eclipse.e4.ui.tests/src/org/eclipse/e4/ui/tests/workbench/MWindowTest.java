@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -69,10 +68,7 @@ public class MWindowTest extends TestCase {
 		if (wb != null) {
 			wb.close();
 		}
-
-		if (appContext instanceof IDisposable) {
-			((IDisposable) appContext).dispose();
-		}
+		appContext.dispose();
 	}
 
 	public void testCreateWindow() {

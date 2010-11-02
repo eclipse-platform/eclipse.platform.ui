@@ -11,24 +11,20 @@
 package org.eclipse.e4.ui.workbench.modeling;
 
 import org.eclipse.core.runtime.IAdapterManager;
-import org.eclipse.e4.core.di.IDisposable;
 
-public class ModelService extends ModelHandlerBase implements IDisposable {
+public class ModelService extends ModelHandlerBase {
 	private IAdapterManager manager;
 
 	public ModelService(IAdapterManager manager) {
 		this.manager = manager;
 	}
 
-	public void dispose() {
-	}
-
 	private Object loadAdapterLocal(Object element) {
 		ModelHandlerBase handler = (ModelHandlerBase) manager.getAdapter(element,
 				ModelHandlerBase.class);
 		if (handler == null) {
-			handler = (ModelHandlerBase) manager.loadAdapter(element, ModelHandlerBase.class
-					.getName());
+			handler = (ModelHandlerBase) manager.loadAdapter(element,
+					ModelHandlerBase.class.getName());
 		}
 
 		return handler;

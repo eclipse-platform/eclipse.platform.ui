@@ -1,7 +1,5 @@
 package org.eclipse.e4.ui.bindings.tests;
 
-import java.lang.reflect.InvocationTargetException;
-
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
@@ -12,7 +10,6 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.bindings.EBindingService;
@@ -143,9 +140,7 @@ public class KeyDispatcherTest extends TestCase {
 
 	@Override
 	protected void tearDown() throws Exception {
-		if (workbenchContext instanceof IDisposable) {
-			((IDisposable) workbenchContext).dispose();
-		}
+		workbenchContext.dispose();
 		workbenchContext = null;
 		display.dispose();
 		display = null;
