@@ -105,7 +105,6 @@ public class LoadedClassesView extends TableWithTotalView {
 		String[] totals = new String[getColumnHeaders().length];
 		int ramTotal = 0;
 		int romTotal = 0;
-		int jitTotal = 0;
 		int count = 0;
 		if (!iterator.hasNext()) {
 			Object[] elements = ((ITreeContentProvider) viewer.getContentProvider()).getElements(viewer.getInput());
@@ -117,7 +116,6 @@ public class LoadedClassesView extends TableWithTotalView {
 			VMClassInfo classInfo = loader.getClass(clazz.getClassName());
 			ramTotal += classInfo.getRAMSize();
 			romTotal += classInfo.getROMSize();
-			jitTotal += classInfo.getJitSize();
 			count++;
 		}
 		totals[0] = "Total: " + count; //$NON-NLS-1$
