@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,14 +69,13 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 			String editorId = fgPresentation.getEditorId(input, breakpoint);
             if (editorId != null) {
     			try {
-    				part= page.openEditor(input, editorId);
+    				part= page.openEditor(input, editorId, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
     			} catch (PartInitException e) {
     				DebugUIPlugin.errorDialog(dwindow.getShell(), ActionMessages.OpenBreakpointMarkerAction_Go_to_Breakpoint_1, ActionMessages.OpenBreakpointMarkerAction_Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2, e); // 
     			}
             }
 		}
 		if (part != null) {
-			part.setFocus();
 			IDE.gotoMarker(part, breakpoint.getMarker());
 		}
 	}
