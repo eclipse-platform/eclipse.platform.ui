@@ -2316,8 +2316,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (desc == null)
 			return;
 
-		modelService.resetPerspectiveModel(persp, window);
-
 		// instantiate a dummy perspective perspective
 		MPerspective dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
 
@@ -2328,6 +2326,67 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		PerspectiveTagger.tagPerspective(dummyPerspective, modelService);
 		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 		reader.extendLayout(getExtensionTracker(), desc.getId(), modelLayout);
+
+		List<MPart> dirtyParts = new ArrayList<MPart>();
+		// compare all of the parts between the original and the current
+		// perspective to check for dirty parts that will no longer be present
+		List<MPart> perspectiveParts = modelService.findElements(dummyPerspective, null,
+				MPart.class, null);
+		for (MPart currentPart : modelService.findElements(persp, null, MPart.class,
+				null)) {
+			if (currentPart.isDirty() && !perspectiveParts.contains(currentPart)) {
+				Object object = currentPart.getObject();
+				if (object == null) {
+					currentPart.setDirty(false);
+					continue;
+				} else if (object instanceof CompatibilityPart) {
+					CompatibilityPart compatibilityPart = (CompatibilityPart) object;
+					if (!((ISaveablePart) compatibilityPart.getPart()).isSaveOnCloseNeeded()) {
+						currentPart.setDirty(false);
+						continue;
+					}
+				}
+
+				dirtyParts.add(currentPart);
+			}
+		}
+
+		if (!dirtyParts.isEmpty()) {
+			ISaveHandler saveHandler = window.getContext().get(ISaveHandler.class);
+			if (dirtyParts.size() == 1) {
+				MPart part = dirtyParts.get(0);
+				switch (saveHandler.promptToSave(part)) {
+				case YES:
+					partService.savePart(part, false);
+					break;
+				case NO:
+					part.setDirty(false);
+					break;
+				case CANCEL:
+					return;
+				}
+			} else {
+				Save[] promptToSave = saveHandler.promptToSave(dirtyParts);
+				for (Save save : promptToSave) {
+					if (save == ISaveHandler.Save.CANCEL) {
+						return;
+					}
+				}
+
+				for (int i = 0; i < promptToSave.length; i++) {
+					switch (promptToSave[i]) {
+					case NO:
+						dirtyParts.get(i).setDirty(false);
+						break;
+					case YES:
+						partService.savePart(dirtyParts.get(i), false);
+						break;
+					}
+				}
+			}
+		}
+
+		modelService.resetPerspectiveModel(persp, window);
 
 		int dCount = dummyPerspective.getChildren().size();
 		while (dummyPerspective.getChildren().size() > 0) {
