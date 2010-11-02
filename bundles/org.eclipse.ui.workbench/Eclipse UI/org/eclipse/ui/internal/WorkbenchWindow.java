@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -83,6 +84,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.commands.ActionHandler;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
@@ -92,6 +94,8 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
@@ -124,6 +128,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
@@ -440,7 +445,35 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 
 			public Save[] promptToSave(Collection<MPart> dirtyParts) {
-				return defaultSaveHandler.promptToSave(dirtyParts);
+				LabelProvider labelProvider = new LabelProvider() {
+					@Override
+					public String getText(Object element) {
+						return ((MPart) element).getLabel();
+					}
+				};
+				List<MPart> parts = new ArrayList<MPart>(dirtyParts);
+				ListSelectionDialog dialog = new ListSelectionDialog(getShell(), parts,
+						ArrayContentProvider.getInstance(), labelProvider,
+						WorkbenchMessages.EditorManager_saveResourcesMessage);
+				dialog.setInitialSelections(parts.toArray());
+				dialog.setTitle(WorkbenchMessages.EditorManager_saveResourcesTitle);
+				if (dialog.open() == IDialogConstants.CANCEL_ID) {
+					return new Save[] { Save.CANCEL };
+				}
+
+				Object[] toSave = dialog.getResult();
+				Save[] retSaves = new Save[parts.size()];
+				Arrays.fill(retSaves, Save.NO);
+				for (int i = 0; i < retSaves.length; i++) {
+					MPart part = parts.get(i);
+					for (Object o : toSave) {
+						if (o == part) {
+							retSaves[i] = Save.YES;
+							break;
+						}
+					}
+				}
+				return retSaves;
 			}
 		});
 
