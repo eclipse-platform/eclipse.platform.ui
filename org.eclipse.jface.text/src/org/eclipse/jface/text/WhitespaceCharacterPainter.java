@@ -109,41 +109,6 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param showTrailingTabs if <code>true</code>, show trailing Tabs
 	 * @param showCarriageReturn if <code>true</code>, show Carriage Returns
 	 * @param showLineFeed if <code>true</code>, show Line Feeds
-	 * @since 3.7
-	 * @deprecated this constructor will be removed right after 3.7 M3
-	 */
-	public WhitespaceCharacterPainter(ITextViewer viewer, boolean showLeadingSpaces, boolean showEnclosedSpaces, boolean showTrailingSpaces, boolean showLeadingIdeographicSpaces,
-			boolean showEnclosedIdeographicSpaces, boolean showTrailingIdeographicSpace, boolean showLeadingTabs,
-			boolean showEnclosedTabs, boolean showTrailingTabs, boolean showCarriageReturn, boolean showLineFeed) {
-		this(viewer);
-		fShowLeadingSpaces= showLeadingSpaces;
-		fShowEnclosedSpace= showEnclosedSpaces;
-		fShowTrailingSpaces= showTrailingSpaces;
-		fShowLeadingIdeographicSpaces= showLeadingIdeographicSpaces;
-		fShowEnclosedIdeographicSpaces= showEnclosedIdeographicSpaces;
-		fShowTrailingIdeographicSpaces= showTrailingIdeographicSpace;
-		fShowLeadingTabs= showLeadingTabs;
-		fShowEnclosedTabs= showEnclosedTabs;
-		fShowTrailingTabs= showTrailingTabs;
-		fShowCarriageReturn= showCarriageReturn;
-		fShowLineFeed= showLineFeed;
-	}
-
-	/**
-	 * Creates a new painter for the given text viewer and the painter options.
-	 * 
-	 * @param viewer the text viewer the painter should be attached to
-	 * @param showLeadingSpaces if <code>true</code>, show leading Spaces
-	 * @param showEnclosedSpaces if <code>true</code>, show enclosed Spaces
-	 * @param showTrailingSpaces if <code>true</code>, show trailing Spaces
-	 * @param showLeadingIdeographicSpaces if <code>true</code>, show leading Ideographic Spaces
-	 * @param showEnclosedIdeographicSpaces if <code>true</code>, show enclosed Ideographic Spaces
-	 * @param showTrailingIdeographicSpace if <code>true</code>, show trailing Ideographic Spaces
-	 * @param showLeadingTabs if <code>true</code>, show leading Tabs
-	 * @param showEnclosedTabs if <code>true</code>, show enclosed Tabs
-	 * @param showTrailingTabs if <code>true</code>, show trailing Tabs
-	 * @param showCarriageReturn if <code>true</code>, show Carriage Returns
-	 * @param showLineFeed if <code>true</code>, show Line Feeds
 	 * @param alpha the alpha value
 	 * @since 3.7
 	 */
