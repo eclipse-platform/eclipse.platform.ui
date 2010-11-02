@@ -11,8 +11,6 @@
 
 package org.eclipse.e4.core.contexts;
 
-import org.eclipse.e4.core.di.IDisposable;
-
 /**
  * A context is used to isolate application code from its dependencies on an application framework
  * or container. This helps avoid building in dependencies on a specific framework that inhibit
@@ -37,7 +35,7 @@ import org.eclipse.e4.core.di.IDisposable;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface IEclipseContext extends IDisposable {
+public interface IEclipseContext {
 
 	/**
 	 * Returns whether this context or a parent has a value stored for the given name.
@@ -281,4 +279,9 @@ public interface IEclipseContext extends IDisposable {
 	 */
 	public IEclipseContext getActiveLeaf();
 
+	/**
+	 * Disposes of this object. If this object is already disposed this method
+	 * will have no effect.
+	 */
+	public void dispose();
 }

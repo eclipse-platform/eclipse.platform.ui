@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 
 /**
  * Checks that injected objects that do not have normal links
@@ -68,7 +67,7 @@ public class DisposeClassLinkTest extends TestCase {
 		Test test = (Test) ContextInjectionFactory.make(Test.class, context);
 
 		assertEquals(0, test.getCount());
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertEquals(1, test.getCount());
 	}
 
@@ -78,9 +77,9 @@ public class DisposeClassLinkTest extends TestCase {
 		Test test = (Test) ContextInjectionFactory.make(Test.class, context);
 
 		assertEquals(0, test.getCount());
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertEquals(1, test.getCount());
-		((IDisposable) parentContext).dispose();
+		parentContext.dispose();
 		assertEquals(1, test.getCount());
 	}
 
@@ -91,7 +90,7 @@ public class DisposeClassLinkTest extends TestCase {
 		ContextInjectionFactory.inject(test, context);
 
 		assertEquals(0, test.getCount());
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertEquals(1, test.getCount());
 	}
 
@@ -102,9 +101,9 @@ public class DisposeClassLinkTest extends TestCase {
 		ContextInjectionFactory.inject(test, context);
 
 		assertEquals(0, test.getCount());
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertEquals(1, test.getCount());
-		((IDisposable) parentContext).dispose();
+		parentContext.dispose();
 		assertEquals(1, test.getCount());
 	}
 
@@ -117,7 +116,7 @@ public class DisposeClassLinkTest extends TestCase {
 	    assertEquals("@PostConstruct should have been called once", 1, obj.postConstruct);
 	    assertEquals("@PreDestroy should not have been called", 0, obj.preDestroy);
 
-	    ((IDisposable) context).dispose();
+	    context.dispose();
 
 	    assertNull("The object should have been uninjected", obj.context);
 	    assertEquals("@PostConstruct should only have been called once", 1, obj.postConstruct);

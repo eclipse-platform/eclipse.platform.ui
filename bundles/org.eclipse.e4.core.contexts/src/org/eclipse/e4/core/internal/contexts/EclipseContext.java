@@ -22,7 +22,6 @@ import java.util.Set;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.internal.contexts.osgi.ContextDebugHelper;
 
 /**
@@ -185,8 +184,8 @@ public class EclipseContext implements IEclipseContext {
 			}
 		}
 
-		if (strategy instanceof IDisposable)
-			((IDisposable) strategy).dispose();
+		if (strategy != null)
+			strategy.dispose();
 		localValueComputations.clear();
 
 		// if this was the parent's active child, deactivate it

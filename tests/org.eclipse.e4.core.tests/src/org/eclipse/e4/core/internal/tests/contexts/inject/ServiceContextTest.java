@@ -22,7 +22,6 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.internal.tests.CoreTestsActivator;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.BundleContext;
@@ -90,7 +89,7 @@ public class ServiceContextTest extends TestCase {
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		((IDisposable) context).dispose();
+		context.dispose();
 		for (ServiceRegistration reg : registrations) {
 			try {
 				reg.unregister();
@@ -170,7 +169,7 @@ public class ServiceContextTest extends TestCase {
 			assertEquals("1.0", stringPrint1, service);
 			assertEquals("1.1", 1, ref.getUsingBundles().length);
 			service = null;
-			((IDisposable) context).dispose();
+			context.dispose();
 			assertNull("2.0", ref.getUsingBundles());
 		} finally {
 			reg1.unregister();
@@ -189,7 +188,7 @@ public class ServiceContextTest extends TestCase {
 		context.runAndTrack(new RunAndTrack() {
 			public boolean changed(IEclipseContext context) {
 				if (context.get(PrintService.SERVICE_NAME) == null) {
-						((IDisposable) child).dispose();
+						child.dispose();
 					done[0] = true;
 				}
 				return true;
@@ -235,7 +234,7 @@ public class ServiceContextTest extends TestCase {
 		child = context.createChild("child-2");
 		service = (PrintService) child.get(PrintService.SERVICE_NAME);
 		service = null;
-		((IDisposable) child).dispose();
+		child.dispose();
 		child = null;
 
 		//now there should be no service references, even though child1 was never disposed

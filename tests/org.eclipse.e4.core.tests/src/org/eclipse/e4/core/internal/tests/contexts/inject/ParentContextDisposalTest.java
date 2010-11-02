@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 
 public class ParentContextDisposalTest extends TestCase {
 	static class Target {
@@ -50,7 +49,7 @@ public class ParentContextDisposalTest extends TestCase {
 		Target target = (Target) ContextInjectionFactory.make(Target.class, child);
 		assertEquals(1, target.pc);
 
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertEquals(1, target.pd);
 	}
 }

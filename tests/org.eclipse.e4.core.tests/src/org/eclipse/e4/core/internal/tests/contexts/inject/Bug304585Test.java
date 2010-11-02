@@ -18,7 +18,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.core.internal.contexts.ILookupStrategy;
 
@@ -47,8 +46,8 @@ public class Bug304585Test extends TestCase {
 
 		ContextInjectionFactory.make(InjectFieldTarget.class, child);
 
-		((IDisposable) child).dispose();
-		((IDisposable) parent).dispose();
+		child.dispose();
+		parent.dispose();
 		assertFalse("Strategy used after context disposed", strategy.lookupAfterDisposed);
 	}
 
@@ -59,12 +58,12 @@ public class Bug304585Test extends TestCase {
 
 		ContextInjectionFactory.make(InjectMethodTarget.class, child);
 
-		((IDisposable) child).dispose();
-		((IDisposable) parent).dispose();
+		child.dispose();
+		parent.dispose();
 		assertFalse("Strategy used after context disposed", strategy.lookupAfterDisposed);
 	}
 
-	public static class Strategy implements IDisposable, ILookupStrategy {
+	public static class Strategy implements ILookupStrategy {
 		private boolean disposed = false;
 		boolean lookupAfterDisposed = false;
 		private PrintService printer = new StringPrintService();

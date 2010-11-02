@@ -36,7 +36,6 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import org.eclipse.e4.core.di.IBinding;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -322,8 +321,6 @@ public class InjectorImpl implements IInjector {
 			}
 		}
 		for (int i = 0; i < count; i++) {
-			if (objects[i] instanceof IDisposable)
-				((IDisposable) objects[i]).dispose();
 			uninject(objects[i], objectSupplier);
 		}
 		forgetSupplier(objectSupplier);

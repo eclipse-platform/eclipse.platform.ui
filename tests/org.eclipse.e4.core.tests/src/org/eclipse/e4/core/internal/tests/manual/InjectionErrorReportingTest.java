@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.InjectionException;
 
 /**
@@ -227,7 +226,7 @@ public class InjectionErrorReportingTest extends TestCase {
 		ContextInjectionFactory.make(InjectedPreDestroy.class, context);
 		boolean exception = false;
 		try {
-			((IDisposable)context).dispose();
+			context.dispose();
 		} catch (InjectionException e) {
 			basicLog(e);
 			exception = true;

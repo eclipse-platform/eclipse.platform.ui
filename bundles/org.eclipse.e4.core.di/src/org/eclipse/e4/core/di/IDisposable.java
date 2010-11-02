@@ -12,6 +12,9 @@ package org.eclipse.e4.core.di;
 
 /**
  * A generic interface to be used on objects that require explicit disposal.
+ * @deprecated This interface will be removed by the end of 4.1M4:
+ * - The IEclipseContext includes {@link #dispose()} method in its definition; and 
+ * - regular objects should use PreDestroy annotation instead.
  */
 public interface IDisposable {
 	/**

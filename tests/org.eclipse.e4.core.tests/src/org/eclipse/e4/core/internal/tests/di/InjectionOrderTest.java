@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.InjectionException;
 
 public class InjectionOrderTest extends TestCase {
@@ -60,7 +59,7 @@ public class InjectionOrderTest extends TestCase {
 			exception = true;
 		}
 		assertTrue(exception);
-		((IDisposable) appContext).dispose();
+		appContext.dispose();
 		assertEquals(0, InjectUnsatisfied.count);
 	}
 }

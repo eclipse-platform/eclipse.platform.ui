@@ -21,7 +21,6 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 
 public class ExtraDependenciesTest extends TestCase {
 
@@ -79,7 +78,7 @@ public class ExtraDependenciesTest extends TestCase {
 		assertEquals("other", object.other);
 		
 		// dispose the other context; should not cause disposal of the test object
-		((IDisposable)otherContext).dispose();
+		otherContext.dispose();
 		assertEquals("other", object.other);
 		assertFalse(object.disposed);
 		
@@ -95,7 +94,7 @@ public class ExtraDependenciesTest extends TestCase {
 		assertNull(object.other);
 		
 		// check that disposal of the injected context causes disposal of the injected object
-		((IDisposable)context).dispose();
+		context.dispose();
 		assertTrue(object.disposed);
 		assertNull(object.string);
 		assertNull(object.integer);

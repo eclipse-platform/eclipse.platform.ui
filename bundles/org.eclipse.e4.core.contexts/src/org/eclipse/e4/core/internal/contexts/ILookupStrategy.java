@@ -43,4 +43,10 @@ public interface ILookupStrategy {
 	 * value for the given name, and <code>false</code> otherwise.
 	 */
 	public boolean containsKey(String name, IEclipseContext context);
+
+	/**
+	 * Disposes of this object. If this object is already disposed this method
+	 * will have no effect.
+	 */
+	public void dispose();
 }

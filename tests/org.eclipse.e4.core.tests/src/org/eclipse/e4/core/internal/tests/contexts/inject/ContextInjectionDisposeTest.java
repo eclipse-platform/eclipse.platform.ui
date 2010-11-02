@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 
 /**
  * Tests for injection handling of context dispose, and handling disposal of injected objects.
@@ -37,7 +39,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 	}
 
 	public void testContextDisposedNoArg() {
-		class Injected implements IDisposable {
+		class Injected {
 
 			boolean disposeInvoked = false;
 
@@ -45,6 +47,8 @@ public class ContextInjectionDisposeTest extends TestCase {
 			@Inject
 			private String Field;
 
+			@SuppressWarnings("unused")
+			@PreDestroy
 			public void dispose() {
 				disposeInvoked = true;
 			}
@@ -53,18 +57,20 @@ public class ContextInjectionDisposeTest extends TestCase {
 		context.set(String.class.getName(), "hello");
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertTrue(object.disposeInvoked);
 	}
 
 	public void testDisposeContext() {
-		class Injected implements IDisposable {
+		class Injected {
 			boolean disposeInvoked = false;
 
 			@Inject
 			Object Field;
 			String methodValue;
 
+			@SuppressWarnings("unused")
+			@PreDestroy
 			public void dispose() {
 				disposeInvoked = true;
 			}
@@ -87,26 +93,22 @@ public class ContextInjectionDisposeTest extends TestCase {
 		assertEquals(methodValue, object.methodValue);
 
 		// disposing context should clear values
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertNull(object.Field);
 		assertNull(object.methodValue);
 		assertTrue(object.disposeInvoked);
 	}
 
 	public void testReleaseObject() {
-		class Injected implements IDisposable {
+		class Injected {
 			boolean disposeInvoked = false;
-			boolean destroyInvoked = false;
 
 			@Inject
 			Integer Field;
 			Object methodValue;
 
 			@SuppressWarnings("unused")
-			public void destroy() {
-				destroyInvoked = true;
-			}
-
+			@PreDestroy
 			public void dispose() {
 				disposeInvoked = true;
 			}
@@ -134,8 +136,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 
 		assertNull(object.Field);
 		assertNull(object.methodValue);
-		assertFalse(object.disposeInvoked);
-		assertFalse(object.destroyInvoked);
+		assertTrue(object.disposeInvoked);
 	}
 
 }

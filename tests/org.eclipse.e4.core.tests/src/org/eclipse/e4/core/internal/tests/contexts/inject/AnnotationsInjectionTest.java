@@ -23,7 +23,6 @@ import junit.framework.TestSuite;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 
@@ -199,7 +198,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		assertEquals(fieldValue, object.injectedField);
 		assertNull(object.methodValue);
 
-		((IDisposable) context).dispose();
+		context.dispose();
 		if (error[0] != null)
 			throw error[0];
 	}
@@ -288,7 +287,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		assertEquals(0, userObject.subPreDestroyCount);
 		assertEquals(0, userObject.overriddenPreDestroyCount);
 
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertEquals(1, userObject.superPreDestroyCount);
 		assertEquals(1, userObject.subPreDestroyCount);
 		assertEquals(1, userObject.overriddenPreDestroyCount);
@@ -361,7 +360,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		assertNotNull(object.value);
 		assertNotNull(object.directFieldInjection);
 		
-		((IDisposable)context).dispose();
+		context.dispose();
 		
 		assertEquals(1, object.preDestoryCalled);
 		assertNull(object.value);

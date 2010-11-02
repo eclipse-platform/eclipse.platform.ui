@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.core.internal.contexts.IContextDisposalListener;
 import org.eclipse.e4.core.internal.contexts.ILookupStrategy;
@@ -35,7 +34,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  * <p>
  * OSGi services are looked up by service class name.
  */
-public class OSGiContextStrategy implements IContextDisposalListener, ILookupStrategy, IDisposable, ServiceTrackerCustomizer {
+public class OSGiContextStrategy implements IContextDisposalListener, ILookupStrategy, ServiceTrackerCustomizer {
 	class ServiceData {
 		// the service name
 		String name;

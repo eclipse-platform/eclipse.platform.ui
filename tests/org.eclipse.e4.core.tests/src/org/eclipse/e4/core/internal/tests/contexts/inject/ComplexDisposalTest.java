@@ -20,7 +20,6 @@ import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.IDisposable;
 
 /**
  * See bug 296337: duplicate disposal of an object
@@ -60,9 +59,9 @@ public class ComplexDisposalTest extends TestCase {
 		Test test = (Test) context.get(Test.class.getName());
 
 		assertEquals(0, test.getCount());
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertEquals("Context disposed, @PreDestroy should've been called", 1, test.getCount());
-		((IDisposable) parentContext).dispose();
+		parentContext.dispose();
 		assertEquals("Parent context disposed, @PreDestroy should not have been called again", 1, test.getCount());
 	}
 
@@ -74,9 +73,9 @@ public class ComplexDisposalTest extends TestCase {
 		Test test = (Test) ContextInjectionFactory.make(Test.class, context);
 
 		assertEquals(0, test.getCount());
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertEquals("Context disposed, @PreDestroy should've been called", 1, test.getCount());
-		((IDisposable) parentContext).dispose();
+		parentContext.dispose();
 		assertEquals("Parent context disposed, @PreDestroy should not have been called again", 1, test.getCount());
 	}
 
@@ -89,9 +88,9 @@ public class ComplexDisposalTest extends TestCase {
 		ContextInjectionFactory.inject(test, context);
 
 		assertEquals(0, test.getCount());
-		((IDisposable) context).dispose();
+		context.dispose();
 		assertEquals("Context disposed, @PreDestroy should've been called", 1, test.getCount());
-		((IDisposable) parentContext).dispose();
+		parentContext.dispose();
 		assertEquals("Parent context disposed, @PreDestroy should not have been called again", 1, test.getCount());
 	}
 }
