@@ -23,10 +23,6 @@ public class PageStore implements Observer {
 	private String name;
 	private RandomAccessFile file;
 	private int numberOfPages;
-	private int numberOfFileReads;
-	private int numberOfFileWrites;
-	private int numberOfReads;
-	private int numberOfCacheHits;
 	private Map modifiedPages;
 	private Map acquiredPages;
 	private int storeOffset;
@@ -132,10 +128,6 @@ public class PageStore implements Observer {
 		}
 		checkMetadata();
 		numberOfPages = numberOfPagesInFile();
-		numberOfFileReads = 0;
-		numberOfFileWrites = 0;
-		numberOfReads = 0;
-		numberOfCacheHits = 0;
 		/* apply any outstanding transaction by reading the log file and applying it */
 		modifiedPages = LogReader.getModifiedPages(this);
 		flush();
@@ -295,7 +287,6 @@ public class PageStore implements Observer {
 	 * Acquires the page that has the given page number from the page store.
 	 */
 	public Page acquire(int pageNumber) throws PageStoreException {
-		numberOfReads++;
 		Integer key = new Integer(pageNumber);
 		Page page = (Page) acquiredPages.get(key);
 		if (page == null) {
@@ -303,13 +294,9 @@ public class PageStore implements Observer {
 			if (page == null) {
 				numberOfPages = Math.max(pageNumber + 1, numberOfPages);
 				page = readPage(pageNumber);
-			} else {
-				numberOfCacheHits++;
 			}
 			acquiredPages.put(key, page);
 			page.addObserver(this);
-		} else {
-			numberOfCacheHits++;
 		}
 		page.addReference();
 		return page;
@@ -347,7 +334,6 @@ public class PageStore implements Observer {
 		if (!readBuffer(offsetOfPage(pageNumber), pageBuffer)) {
 			throw new PageStoreException(PageStoreException.ReadFailure);
 		}
-		numberOfFileReads++;
 		Page p = policy.createPage(pageNumber, pageBuffer, this);
 		p.addObserver(this);
 		return p;
@@ -359,7 +345,6 @@ public class PageStore implements Observer {
 		if (!writeBuffer(fileOffset, pageBuffer, 0, pageBuffer.length)) {
 			throw new PageStoreException(PageStoreException.WriteFailure);
 		}
-		numberOfFileWrites++;
 	}
 
 	/**
