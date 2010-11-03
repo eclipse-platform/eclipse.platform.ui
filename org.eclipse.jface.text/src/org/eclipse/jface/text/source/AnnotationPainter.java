@@ -262,7 +262,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		int fBorderStyle;
 
 		public BoxStrategy(int style) {
-			Assert.isLegal(style == SWT.BORDER_DASH || style == SWT.BORDER_DASH || style == SWT.BORDER_SOLID);
+			Assert.isLegal(style == SWT.BORDER_DASH || style == SWT.BORDER_DOT || style == SWT.BORDER_SOLID);
 			fBorderStyle= style;
 		}
 
