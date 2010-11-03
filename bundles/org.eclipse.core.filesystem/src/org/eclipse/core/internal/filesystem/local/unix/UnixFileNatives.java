@@ -133,7 +133,7 @@ public abstract class UnixFileNatives {
 			if (stat(name, stat) == 0) {
 				long flags = stat.st_flags;
 				flags |= UnixFileFlags.SF_IMMUTABLE;
-				code |= chflags(name, UnixFileFlags.UF_IMMUTABLE);
+				code |= chflags(name, (int) flags);
 			}
 		}
 		return code == 0;
