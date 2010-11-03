@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -151,11 +151,11 @@ public class RenameResourceProcessor extends RenameProcessor {
 		if (c == null)
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceProcessor_error_no_parent);
 
-		if (c.findMember(newName) != null)
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceProcessor_error_resource_already_exists);
-
 		if (!c.getFullPath().isValidSegment(newName))
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceProcessor_error_invalid_name);
+
+		if (c.findMember(newName) != null)
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.RenameResourceProcessor_error_resource_already_exists);
 
 		RefactoringStatus result= RefactoringStatus.create(c.getWorkspace().validateName(newName, fResource.getType()));
 		if (!result.hasFatalError())
