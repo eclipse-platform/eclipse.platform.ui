@@ -45,6 +45,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
+import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 
@@ -63,12 +64,18 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 
 		if (descriptor == null) {
 			try {
-				XMLMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(getModel()
-						.getPersistedState().get(MEMENTO_KEY)));
-				IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
-						.getEditorRegistry();
-				descriptorId = createReadRoot.getString(IWorkbenchConstants.TAG_ID);
-				this.descriptor = (EditorDescriptor) registry.findEditor(descriptorId);
+				String memento = getModel().getPersistedState().get(MEMENTO_KEY);
+				if (memento == null) {
+					descriptorId = EditorRegistry.EMPTY_EDITOR_ID;
+				} else {
+					XMLMemento createReadRoot = XMLMemento
+							.createReadRoot(new StringReader(memento));
+					IEditorRegistry registry = getPage().getWorkbenchWindow().getWorkbench()
+							.getEditorRegistry();
+					descriptorId = createReadRoot.getString(IWorkbenchConstants.TAG_ID);
+					this.descriptor = (EditorDescriptor) registry.findEditor(descriptorId);
+				}
+
 				if (this.descriptor == null) {
 					setImageDescriptor(ImageDescriptor.getMissingImageDescriptor());
 				} else {
@@ -221,13 +228,17 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		}
 		
 		if (input == null) {
-			XMLMemento createReadRoot;
-			try {
-				createReadRoot = XMLMemento.createReadRoot(new StringReader(getModel()
-						.getPersistedState().get(MEMENTO_KEY)));
-				input = restoreInput(createReadRoot);
-			} catch (WorkbenchException e) {
-				throw new PartInitException(e.getStatus());
+			String memento = getModel().getPersistedState().get(MEMENTO_KEY);
+			if (memento == null) {
+				input = new NullEditorInput();
+			} else {
+				try {
+					XMLMemento createReadRoot = XMLMemento
+							.createReadRoot(new StringReader(memento));
+					input = restoreInput(createReadRoot);
+				} catch (WorkbenchException e) {
+					throw new PartInitException(e.getStatus());
+				}
 			}
 		}
 		return input;
