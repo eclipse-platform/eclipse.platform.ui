@@ -16,7 +16,6 @@ import java.io.StringWriter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -141,7 +140,6 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	public void initialize(IWorkbenchPart part) throws PartInitException {
 		viewSite = new ViewSite(getModel(), part, descriptor == null ? null
 				: descriptor.getConfigurationElement());
-		ContextInjectionFactory.inject(viewSite, getModel().getContext());
 		((IViewPart) part).init(viewSite, memento);
 	}
 

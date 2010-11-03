@@ -192,21 +192,19 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		this.extensionId = extensionId;
 	}
 
-	// @Inject
-	void setWindow(MWindow window) {
+	private void setWindow(MWindow window) {
 		this.window = window;
 		
-		if (window != null) {
-			MWindow topWindow = getTopLevelModelWindow();
-			MApplication application = (MApplication) topWindow.getContext().get(
-					MApplication.class.getName());
-			Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class.getName());
+		MWindow topWindow = getTopLevelModelWindow();
+		MApplication application = (MApplication) topWindow.getContext().get(
+				MApplication.class.getName());
+		Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class.getName());
 
-			workbenchWindow = workbench.createWorkbenchWindow(workbench.getDefaultPageInput(),
-					workbench.getPerspectiveRegistry().findPerspectiveWithId(
-							workbench.getPerspectiveRegistry().getDefaultPerspective()), topWindow,
-					false);
-		}
+		workbenchWindow = workbench.createWorkbenchWindow(
+				workbench.getDefaultPageInput(),
+				workbench.getPerspectiveRegistry().findPerspectiveWithId(
+						workbench.getPerspectiveRegistry().getDefaultPerspective()), topWindow,
+				false);
 	}
 
 	/**

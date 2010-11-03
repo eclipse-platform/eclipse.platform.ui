@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
@@ -300,7 +299,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		if (element == null) {
 			editorSite.setExtensionId(descriptor.getId());
 		}
-		ContextInjectionFactory.inject(editorSite, getModel().getContext());
 		editorSite.setActionBars(createEditorActionBars((WorkbenchPage) getPage(), descriptor,
 				editorSite));
 		((IEditorPart) part).init(editorSite, getEditorInput());
