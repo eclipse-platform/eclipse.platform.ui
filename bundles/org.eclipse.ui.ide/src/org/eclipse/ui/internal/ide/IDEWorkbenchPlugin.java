@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,13 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -78,6 +85,8 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
     public static final String PL_PROJECT_NATURE_IMAGES = "projectNatureImages"; //$NON-NLS-1$
 	
 	private final static String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
+
+	private static final int PROBLEMS_VIEW_CREATION_DELAY= 6000;
 
     /**
      * Project image registry; lazily initialized.
@@ -329,5 +338,53 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		super.stop(context);
 		if (resourceManager != null)
 			resourceManager.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+
+		createProblemsViews();
+	}
+
+	/**
+	 * Create (but don't activate) the Problems views so that the view's tooltip and icon are
+	 * up-to-date.
+	 */
+	private void createProblemsViews() {
+		final Runnable r= new Runnable() {
+			public void run() {
+				if (PlatformUI.getWorkbench().getDisplay().isDisposed() || PlatformUI.getWorkbench().isClosing())
+					return;
+
+				if (PlatformUI.getWorkbench().isStarting()) {
+					Display.getDefault().timerExec(PROBLEMS_VIEW_CREATION_DELAY, this);
+					return;
+				}
+
+				IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
+				for (int i= 0; i < windows.length; i++) {
+					IWorkbenchWindow window= windows[i];
+					IWorkbenchPage activePage= window.getActivePage();
+					if (activePage == null)
+						continue;
+					IViewReference[] refs= activePage.getViewReferences();
+					for (int j= 0; j < refs.length; j++) {
+						IViewReference viewReference= refs[j];
+						if (IPageLayout.ID_PROBLEM_VIEW.equals(viewReference.getId()))
+							try {
+								if (viewReference.getPart(false) == null)
+									activePage.showView(viewReference.getId(), viewReference.getSecondaryId(), IWorkbenchPage.VIEW_CREATE);
+							} catch (PartInitException e) {
+								log("Could not create Problems view", e.getStatus()); //$NON-NLS-1$
+							}
+					}
+				}
+			}
+		};
+		Display.getDefault().timerExec(PROBLEMS_VIEW_CREATION_DELAY, r);
 	}
 }
