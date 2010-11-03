@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -210,7 +210,7 @@ public class CoreTest extends TestCase {
 		String[] envp = {};
 		try {
 			Process p;
-			if (isWindowsVista()) {
+			if (isWindowsVista() || isWindows7()) {
 				if (isDir) {
 					String[] cmd = {"mklink", "/d", linkName, linkTgt};
 					p = Runtime.getRuntime().exec(cmd, envp, basedir);
@@ -320,6 +320,11 @@ public class CoreTest extends TestCase {
 	 */
 	private static boolean isWindowsVista() {
 		return Platform.getOS().equals(Platform.OS_WIN32) && "6.0".equals(System.getProperty("org.osgi.framework.os.version")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	private static boolean isWindows7() {
+		return "Windows7".equals(System.getProperty("org.osgi.framework.os.name")) //$NON-NLS-1$ //$NON-NLS-2$
+				|| (Platform.getOS().equals(Platform.OS_WIN32) && "6.1.0".equals(System.getProperty("org.osgi.framework.os.version"))); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
