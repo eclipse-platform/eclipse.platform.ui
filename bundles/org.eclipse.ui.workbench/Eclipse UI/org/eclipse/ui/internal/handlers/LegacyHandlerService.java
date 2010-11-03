@@ -41,6 +41,7 @@ import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -48,12 +49,19 @@ import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.expressions.AndExpression;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * @since 3.5
  * 
  */
 public class LegacyHandlerService implements IHandlerService {
+
+	private static final String[] SELECTION_VARIABLES = { ISources.ACTIVE_CURRENT_SELECTION_NAME,
+			ISources.ACTIVE_FOCUS_CONTROL_ID_NAME, ISources.ACTIVE_FOCUS_CONTROL_NAME,
+			ISources.ACTIVE_MENU_EDITOR_INPUT_NAME, ISources.ACTIVE_MENU_NAME,
+			ISources.ACTIVE_MENU_SELECTION_NAME };
+
 	final static String LEGACY_H_ID = "legacy::handler::"; //$NON-NLS-1$
 
 	static class HandlerSelectionFunction extends ContextFunction {
@@ -380,7 +388,42 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
 		IEclipseContext targetContext = eclipseContext.getActiveLeaf();
-		return new ExpressionContext(targetContext.createChild());
+		IEvaluationContext tmpContext = getCurrentState();
+		IEvaluationContext context = new ExpressionContext(targetContext.createChild());
+
+		if (includeSelection) {
+			for (String variable : SELECTION_VARIABLES) {
+				copyVariable(context, tmpContext, variable);
+			}
+		}
+
+		ISourceProviderService sp = eclipseContext.get(ISourceProviderService.class);
+		for (ISourceProvider provider : sp.getSourceProviders()) {
+			String[] names = provider.getProvidedSourceNames();
+			for (String name : names) {
+				if (!isSelectionVariable(name)) {
+					copyVariable(context, tmpContext, name);
+				}
+			}
+		}
+
+		return context;
+	}
+
+	private boolean isSelectionVariable(String name) {
+		for (String variable : SELECTION_VARIABLES) {
+			if (variable.equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void copyVariable(IEvaluationContext context, IEvaluationContext tmpContext, String var) {
+		Object o = tmpContext.getVariable(var);
+		if (o != null) {
+			context.addVariable(var, o);
+		}
 	}
 
 	/*
