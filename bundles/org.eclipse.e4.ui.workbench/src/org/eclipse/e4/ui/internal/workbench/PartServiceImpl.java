@@ -575,15 +575,7 @@ public class PartServiceImpl implements EPartService {
 		if (descriptor == null) {
 			if (!isInContainer(providedPart)) {
 				adjustPlaceholder(providedPart);
-
-				MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
-				MPlaceholder placeholder = providedPart.getCurSharedRef();
-				if (placeholder != null) {
-					stack.getChildren().add(placeholder);
-				} else {
-					stack.getChildren().add(providedPart);
-				}
-				getContainer().getChildren().add(stack);
+				addToLastContainer(null, providedPart);
 			}
 		} else {
 			if (providedPart != localPart && !descriptor.isAllowMultiple()) {
@@ -664,6 +656,10 @@ public class PartServiceImpl implements EPartService {
 		if (lastContainer == null) {
 			MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
 			searchRoot.getChildren().add(stack);
+			return stack;
+		} else if (!(lastContainer instanceof MPartStack)) {
+			MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+			((List) lastContainer.getChildren()).add(stack);
 			return stack;
 		}
 		return lastContainer;
