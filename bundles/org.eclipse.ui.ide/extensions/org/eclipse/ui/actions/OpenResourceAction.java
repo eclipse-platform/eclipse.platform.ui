@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,7 +171,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 			return false;
 		}
 		String message = IDEWorkbenchMessages.OpenResourceAction_openRequiredProjects;
-		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), IDEWorkbenchMessages.Question, message, null, false, store, key);
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(getShell(), IDEWorkbenchMessages.Question, message, null, false, store, key);
 		int result = dialog.getReturnCode();
 		// the result is equal to SWT.DEFAULT if the user uses the 'esc' key to close the dialog
 		if (result == Window.CANCEL || result == SWT.DEFAULT) {
@@ -225,6 +225,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		Job job = new WorkspaceJob(removeMnemonics(getText())) {
 			private boolean openProjectReferences = true;
 			private boolean hasPrompted = false;
+			private boolean canceled = false;
 			/**
 			 * Opens a project along with all projects it references
 			 */
@@ -245,14 +246,19 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					if (openProjectReferences && hasOtherClosedProjects()) {
 						Display.getDefault().syncExec(new Runnable() {
 							public void run() {
+								try {
 								openProjectReferences = promptToOpenWithReferences();
+								} catch (OperationCanceledException e) {
+									canceled = true;
+								}
 								//remember that we have prompted to avoid repeating the analysis
 								hasPrompted = true;
 							}
 						});
+						if (canceled)
+							throw new OperationCanceledException();
 					}
 				}
-
 				if (openProjectReferences) {
 					for (int i = 0; i < references.length; i++) {
 						doOpenWithReferences(references[i], monitor);
