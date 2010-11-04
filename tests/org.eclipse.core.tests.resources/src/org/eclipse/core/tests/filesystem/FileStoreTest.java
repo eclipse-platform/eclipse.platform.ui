@@ -78,39 +78,69 @@ public class FileStoreTest extends LocalStoreTest {
 		}
 	}
 
+	private IFileStore getDirFileStore(String path) throws CoreException {
+		IFileStore store = EFS.getFileSystem(EFS.SCHEME_FILE).getStore(new Path(path));
+		store.mkdir(EFS.NONE, null);
+		return store;
+	}
+
+	private IFileStore[] getFileStoresOnTwoVolumes() {
+		IFileStore[] tempDirs = new IFileStore[2];
+
+		for (int i = 99/*c*/; i < 123/*z*/; i++) {
+			char c = (char) i;
+			try {
+				IFileStore store = getDirFileStore(c + ":/temp");
+				IFileInfo info = store.fetchInfo();
+				if (info.exists() && info.isDirectory() && !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
+					if (tempDirs[0] == null) {
+						tempDirs[0] = store;
+					} else {
+						tempDirs[1] = store;
+						break; //both temp dirs have been created
+					}
+				}
+			} catch (CoreException e) {//ignore and go to next volume
+				continue;
+			}
+		}
+		return tempDirs;
+	}
+
 	/**
 	 * Basically this is a test for the Windows Platform.
 	 */
 	public void testCopyAcrossVolumes() throws Throwable {
+		IFileStore[] tempDirectories = getFileStoresOnTwoVolumes();
 
 		/* test if we are in the adequate environment */
-		if (!new File("c:\\").exists() || !new File("d:\\").exists())
+		if (tempDirectories == null || tempDirectories.length < 2 || tempDirectories[0] == null || tempDirectories[1] == null)
 			return;
 
 		/* build scenario */
 		// create source root folder
-		IFileStore tempC = createDir("c:/temp", false);
-		// create destination root folder
-		IFileStore tempD = createDir("d:/temp", false);
+		IFileStore tempSrc = tempDirectories[0];
+		/* get the destination folder */
+		IFileStore tempDest = tempDirectories[1];
 		// create tree
-		IFileStore target = tempC.getChild("target");
+		IFileStore target = tempSrc.getChild("target");
 		createDir(target, true);
 		createTree(getTree(target));
 
 		/* c:\temp\target -> d:\temp\target */
-		IFileStore destination = tempD.getChild("target");
+		IFileStore destination = tempDest.getChild("target");
 		target.copy(destination, EFS.NONE, null);
 		assertTrue("3.1", verifyTree(getTree(destination)));
 		destination.delete(EFS.NONE, null);
 
 		/* c:\temp\target -> d:\temp\copy of target */
-		destination = tempD.getChild("copy of target");
+		destination = tempDest.getChild("copy of target");
 		target.copy(destination, EFS.NONE, null);
 		assertTrue("4.1", verifyTree(getTree(destination)));
 		destination.delete(EFS.NONE, null);
 
 		/* c:\temp\target -> d:\temp\target (but the destination is already a file) */
-		destination = tempD.getChild("target");
+		destination = tempDest.getChild("target");
 		String anotherContent = "nothing..................gnihton";
 		createFile(destination, anotherContent);
 		assertTrue("5.1", !destination.fetchInfo().isDirectory());
@@ -124,7 +154,7 @@ public class FileStoreTest extends LocalStoreTest {
 		destination.delete(EFS.NONE, null);
 
 		/* c:\temp\target -> d:\temp\target (but the destination is already a folder */
-		destination = tempD.getChild("target");
+		destination = tempDest.getChild("target");
 		createDir(destination, true);
 		target.copy(destination, EFS.NONE, null);
 		assertTrue("6.2", verifyTree(getTree(destination)));
@@ -227,37 +257,39 @@ public class FileStoreTest extends LocalStoreTest {
 	 * Basically this is a test for the Windows Platform.
 	 */
 	public void testCopyFileAcrossVolumes() throws Throwable {
+		IFileStore[] tempDirectories = getFileStoresOnTwoVolumes();
+
 		/* test if we are in the adequate environment */
-		if (!new File("c:\\").exists() || !new File("d:\\").exists())
+		if (tempDirectories == null || tempDirectories.length < 2 || tempDirectories[0] == null || tempDirectories[1] == null)
 			return;
 
 		/* build scenario */
-		// create source
-		IFileStore tempC = createDir("c:\\temp", false);
-		// create destination
-		IFileStore tempD = createDir("d:\\temp", false);
+		/* get the source folder */
+		IFileStore tempSrc = tempDirectories[0];
+		/* get the destination folder */
+		IFileStore tempDest = tempDirectories[1];
 		// create target
 		String content = "this is just a simple content \n to a simple file \n to test a 'simple' copy";
-		IFileStore target = tempC.getChild("target");
+		IFileStore target = tempSrc.getChild("target");
 		target.delete(EFS.NONE, null);
 		createFile(target, content);
 		assertTrue("1.3", target.fetchInfo().exists());
 		assertTrue("1.4", compareContent(getContents(content), target.openInputStream(EFS.NONE, null)));
 
 		/* c:\temp\target -> d:\temp\target */
-		IFileStore destination = tempD.getChild("target");
+		IFileStore destination = tempDest.getChild("target");
 		target.copy(destination, IResource.DEPTH_INFINITE, null);
 		assertTrue("3.1", compareContent(getContents(content), destination.openInputStream(EFS.NONE, null)));
 		destination.delete(EFS.NONE, null);
 
 		/* c:\temp\target -> d:\temp\copy of target */
-		destination = tempD.getChild("copy of target");
+		destination = tempDest.getChild("copy of target");
 		target.copy(destination, IResource.DEPTH_INFINITE, null);
 		assertTrue("4.1", compareContent(getContents(content), destination.openInputStream(EFS.NONE, null)));
 		destination.delete(EFS.NONE, null);
 
 		/* c:\temp\target -> d:\temp\target (but the destination is already a file */
-		destination = tempD.getChild("target");
+		destination = tempDest.getChild("target");
 		String anotherContent = "nothing..................gnihton";
 		createFile(destination, anotherContent);
 		assertTrue("5.1", !destination.fetchInfo().isDirectory());
@@ -266,7 +298,7 @@ public class FileStoreTest extends LocalStoreTest {
 		destination.delete(EFS.NONE, null);
 
 		/* c:\temp\target -> d:\temp\target (but the destination is already a folder */
-		destination = tempD.getChild("target");
+		destination = tempDest.getChild("target");
 		createDir(destination, true);
 		assertTrue("6.1", destination.fetchInfo().isDirectory());
 		boolean ok = false;
@@ -398,27 +430,29 @@ public class FileStoreTest extends LocalStoreTest {
 	}
 
 	public void testMoveAcrossVolumes() throws Throwable {
+		IFileStore[] tempDirectories = getFileStoresOnTwoVolumes();
+
 		/* test if we are in the adequate environment */
-		if (!new File("c:\\").exists() || !new File("d:\\").exists())
+		if (tempDirectories == null || tempDirectories.length < 2 || tempDirectories[0] == null || tempDirectories[1] == null)
 			return;
 
 		/* build scenario */
-		// create source
-		IFileStore tempC = createDir("c:\\temp", false);
-		// create destination
-		IFileStore tempD = createDir("d:\\temp", false);
+		/* get the source folder */
+		IFileStore tempSrc = tempDirectories[0];
+		/* get the destination folder */
+		IFileStore tempDest = tempDirectories[1];
 		// create target file
-		IFileStore target = tempC.getChild("target");
+		IFileStore target = tempSrc.getChild("target");
 		String content = "just a content.....tnetnoc a tsuj";
 		createFile(target, content);
 		assertTrue("1.3", target.fetchInfo().exists());
 		// create target tree
-		IFileStore tree = tempC.getChild("tree");
+		IFileStore tree = tempSrc.getChild("tree");
 		createDir(tree, true);
 		createTree(getTree(tree));
 
 		/* move file across volumes */
-		IFileStore destination = tempD.getChild("target");
+		IFileStore destination = tempDest.getChild("target");
 		target.move(destination, EFS.NONE, null);
 		assertTrue("5.1", !destination.fetchInfo().isDirectory());
 		assertTrue("5.2", !target.fetchInfo().exists());
@@ -427,7 +461,7 @@ public class FileStoreTest extends LocalStoreTest {
 		assertTrue("5.4", !destination.fetchInfo().exists());
 
 		/* move folder across volumes */
-		destination = tempD.getChild("target");
+		destination = tempDest.getChild("target");
 		tree.move(destination, EFS.NONE, null);
 		assertTrue("9.1", verifyTree(getTree(destination)));
 		assertTrue("9.2", !tree.fetchInfo().exists());
