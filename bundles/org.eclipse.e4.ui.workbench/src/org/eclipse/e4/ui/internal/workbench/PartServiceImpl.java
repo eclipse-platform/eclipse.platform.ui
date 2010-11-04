@@ -154,7 +154,7 @@ public class PartServiceImpl implements EPartService {
 		constructed = true;
 		partActivationHistory = new PartActivationHistory(this, modelService);
 		if (activePart != null) {
-			partActivationHistory.queue(activePart);
+			partActivationHistory.prepend(activePart);
 		}
 	}
 
@@ -467,8 +467,17 @@ public class PartServiceImpl implements EPartService {
 		IEclipseContext windowContext = window.getContext();
 		// check if the active part has changed or if we are no longer the active window
 		if (windowContext.getParent().getActiveChild() == windowContext && part == activePart) {
+			// insert it in the beginning of the activation history, it may not have been inserted
+			// pending when this service was instantiated
+			partActivationHistory.prepend(part);
 			return;
 		}
+
+		// record any sibling into the activation history if necessary, this will allow it to be
+		// reselected again in the future as it will be an activation candidate in the future, this
+		// prevents other unrendered elements from being selected arbitrarily which would cause
+		// unwanted bundle activation
+		recordStackActivation(part);
 
 		modelService.bringToTop(part);
 		window.getParent().setSelectedElement(window);
@@ -477,6 +486,48 @@ public class PartServiceImpl implements EPartService {
 		Object object = part.getObject();
 		if (object != null && requiresFocus) {
 			ContextInjectionFactory.invoke(object, Focus.class, part.getContext(), null);
+		}
+	}
+
+	/**
+	 * Records the specified parent part's selected element in the activation history if the parent
+	 * is a stack.
+	 * 
+	 * @param part
+	 *            the part whose parent's selected element should be checked for activation history
+	 *            recording
+	 */
+	private void recordStackActivation(MPart part) {
+		MElementContainer<? extends MUIElement> parent = part.getParent();
+		if (parent instanceof MGenericStack) {
+			recordSelectedActivation(parent);
+		} else if (parent == null) {
+			MPlaceholder placeholder = part.getCurSharedRef();
+			if (placeholder != null) {
+				parent = placeholder.getParent();
+				if (parent instanceof MGenericStack) {
+					recordSelectedActivation(parent);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Records the specified parent 's selected element in the activation history.
+	 * 
+	 * @param parent
+	 *            the element whose selected element should be checked for activation history
+	 *            recording
+	 */
+	private void recordSelectedActivation(MElementContainer<? extends MUIElement> parent) {
+		MUIElement selectedElement = parent.getSelectedElement();
+		if (selectedElement instanceof MPart) {
+			partActivationHistory.append((MPart) selectedElement);
+		} else if (selectedElement instanceof MPlaceholder) {
+			MUIElement ref = ((MPlaceholder) selectedElement).getRef();
+			if (ref instanceof MPart) {
+				partActivationHistory.append((MPart) ref);
+			}
 		}
 	}
 

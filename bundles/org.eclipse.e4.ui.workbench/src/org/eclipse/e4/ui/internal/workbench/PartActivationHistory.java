@@ -59,10 +59,29 @@ class PartActivationHistory {
 			} while (parent.get(MWindow.class) != null);
 		}
 
-		queue(part);
+		prepend(part);
 	}
 
-	void queue(MPart part) {
+	/**
+	 * Places the specified part at the end of the activation history if it is not already in the
+	 * list. If it is already in the activation history, then its position will not change.
+	 * 
+	 * @param part
+	 *            the part to possibly add to the end of the activation history
+	 */
+	void append(MPart part) {
+		if (!generalActivationHistory.contains(part)) {
+			generalActivationHistory.addLast(part);
+		}
+	}
+
+	/**
+	 * Adds the specified part to the front of the activation history.
+	 * 
+	 * @param part
+	 *            the part to insert into the front of the activation history
+	 */
+	void prepend(MPart part) {
 		generalActivationHistory.remove(part);
 		generalActivationHistory.addFirst(part);
 	}
