@@ -194,12 +194,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	private String executeQuery(String domValue) {
-		String query = "window.status=\"" + QUERY + "\"+" + domValue + ";"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		boolean status = browser.execute(query);
-		if (status) {
-			return (String) browser.getData("query"); //$NON-NLS-1$
-		}
-		return null;
+		return (String)browser.evaluate("return " + domValue + ';'); //$NON-NLS-1$
 	}
 
 	private boolean processQuery(String text) {
