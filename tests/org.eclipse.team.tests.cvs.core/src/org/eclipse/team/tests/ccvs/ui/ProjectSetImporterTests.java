@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.tests.ccvs.core;
+package org.eclipse.team.tests.ccvs.ui;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,6 +31,8 @@ import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ui.ProjectSetImporter;
+import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
+import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
 public class ProjectSetImporterTests extends EclipseTest {
 
