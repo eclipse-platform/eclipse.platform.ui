@@ -89,40 +89,40 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		}
 	}
 
-	void persist() {
+	boolean persist() {
 		IEditorPart editor = getEditor(false);
 		IEditorInput input = editor == null ? this.input : editor.getEditorInput();
-		if (input != null) {
-			boolean shouldPersist = false;
-			XMLMemento root = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR);
-			root.putString(IWorkbenchConstants.TAG_ID, descriptor.getId());
-
-			IPersistableElement persistable = input.getPersistable();
-			if (persistable != null) {
-				IMemento inputMem = root.createChild(IWorkbenchConstants.TAG_INPUT);
-				inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
-				persistable.saveState(inputMem);
-				shouldPersist = true;
-			}
-
-			if (editor instanceof IPersistableEditor) {
-				IMemento editorStateMem = root.createChild(IWorkbenchConstants.TAG_EDITOR_STATE);
-				editorStateMem.putString(IWorkbenchConstants.TAG_FACTORY_ID,
-						persistable.getFactoryId());
-				((IPersistableEditor) editor).saveState(editorStateMem);
-				shouldPersist = true;
-			}
-
-			if (shouldPersist) {
-				StringWriter writer = new StringWriter();
-				try {
-					root.save(writer);
-					getModel().getPersistedState().put(MEMENTO_KEY, writer.toString());
-				} catch (IOException e) {
-					WorkbenchPlugin.log(e);
-				}
-			}
+		if (input == null) {
+			return false;
 		}
+
+		IPersistableElement persistable = input.getPersistable();
+		if (persistable == null) {
+			return false;
+		}
+
+		XMLMemento root = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITOR);
+		root.putString(IWorkbenchConstants.TAG_ID, descriptor.getId());
+
+		IMemento inputMem = root.createChild(IWorkbenchConstants.TAG_INPUT);
+		inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID, persistable.getFactoryId());
+		persistable.saveState(inputMem);
+
+		if (editor instanceof IPersistableEditor) {
+			IMemento editorStateMem = root.createChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+			((IPersistableEditor) editor).saveState(editorStateMem);
+		}
+
+		StringWriter writer = new StringWriter();
+		try {
+			root.save(writer);
+			getModel().getPersistedState().put(MEMENTO_KEY, writer.toString());
+		} catch (IOException e) {
+			WorkbenchPlugin.log(e);
+			return false;
+		}
+
+		return true;
 	}
 
 	public EditorDescriptor getDescriptor() {
@@ -225,7 +225,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		if (editor != null) {
 			return editor.getEditorInput();
 		}
-		
+
 		if (input == null) {
 			String memento = getModel().getPersistedState().get(MEMENTO_KEY);
 			if (memento == null) {

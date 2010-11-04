@@ -1000,12 +1000,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 						IEditorReference[] references = pages[j].getEditorReferences();
 						for (int k = 0; k < references.length; k++) {
 							IEditorPart editor = references[k].getEditor(false);
-							if (editor != null) {
-								if (editor.getEditorInput().getPersistable() == null) {
-									pages[j].closeEditor(editor, false);
-								} else {
-									((EditorReference) references[k]).persist();
-								}
+							if (editor != null && !((EditorReference) references[k]).persist()) {
+								pages[j].closeEditor(editor, false);
 							}
 						}
 					}
