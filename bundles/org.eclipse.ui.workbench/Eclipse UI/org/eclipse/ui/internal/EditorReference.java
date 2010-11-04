@@ -139,16 +139,25 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	public String getFactoryId() {
 		IEditorPart editor = getEditor(false);
 		if (editor == null) {
-			try {
-				IEditorInput input = getEditorInput();
-				if (input != null) {
-					IPersistableElement persistable = input.getPersistable();
-					return persistable == null ? null : persistable.getFactoryId();
+			if (input == null) {
+				String memento = getModel().getPersistedState().get(MEMENTO_KEY);
+				if (memento != null) {
+					try {
+						XMLMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(
+								memento));
+						IMemento inputMem = createReadRoot.getChild(IWorkbenchConstants.TAG_INPUT);
+						if (inputMem != null) {
+							return inputMem.getString(IWorkbenchConstants.TAG_FACTORY_ID);
+						}
+					} catch (WorkbenchException e) {
+						return null;
+					}
 				}
-			} catch (PartInitException e) {
 				return null;
 			}
-			return null;
+
+			IPersistableElement persistable = input.getPersistable();
+			return persistable == null ? null : persistable.getFactoryId();
 		}
 
 		IPersistableElement persistable = editor.getEditorInput().getPersistable();
@@ -158,7 +167,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	public String getName() {
 		IEditorPart editor = getEditor(false);
 		if (input == null) {
-			return editor == null ? null : editor.getEditorInput().getName();
+			return editor == null ? getModel().getLabel() : editor.getEditorInput().getName();
 		}
 		return editor == null ? input.getName() : editor.getEditorInput().getName();
 	}

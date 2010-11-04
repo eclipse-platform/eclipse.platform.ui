@@ -75,6 +75,7 @@ import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -1639,7 +1640,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		IEditorPart editor = editorRef.getEditor(false);
 		if (editor == null) {
 			try {
-				if (input.equals(editorRef.getEditorInput())) {
+				String name = input.getName();
+				IPersistableElement persistable = input.getPersistable();
+				if (name == null || persistable == null) {
+					return;
+				}
+
+				String id = persistable.getFactoryId();
+				if (id != null && id.equals(editorRef.getFactoryId())
+						&& name.equals(editorRef.getName())
+						&& input.equals(editorRef.getEditorInput())) {
 					editorRefs.add(editorRef);
 				}
 			} catch (PartInitException e) {
