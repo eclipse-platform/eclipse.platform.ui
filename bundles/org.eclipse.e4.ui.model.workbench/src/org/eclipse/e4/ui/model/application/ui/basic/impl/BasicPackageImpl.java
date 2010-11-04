@@ -283,13 +283,40 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__TOOLTIP = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 15;
 
 	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__LOCAL_LABEL = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 16;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__LOCAL_TOOLTIP = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 17;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__LOCAL_IMAGE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 18;
+
+	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__HANDLERS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 16;
+	public static final int PART__HANDLERS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 19;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -298,7 +325,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__DIRTY = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 17;
+	public static final int PART__DIRTY = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 20;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
@@ -307,7 +334,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__BINDING_CONTEXTS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 18;
+	public static final int PART__BINDING_CONTEXTS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 21;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -316,7 +343,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__MENUS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 19;
+	public static final int PART__MENUS = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 22;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
@@ -325,7 +352,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__TOOLBAR = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 20;
+	public static final int PART__TOOLBAR = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 23;
 
 	/**
 	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
@@ -334,7 +361,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART__CLOSEABLE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 21;
+	public static final int PART__CLOSEABLE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 24;
 
 	/**
 	 * The number of structural features of the '<em>Part</em>' class.
@@ -343,7 +370,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 22;
+	public static final int PART_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 25;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.InputPartImpl <em>Input Part</em>}' class.
@@ -543,6 +570,33 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int INPUT_PART__TOOLTIP = PART__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int INPUT_PART__LOCAL_LABEL = PART__LOCAL_LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int INPUT_PART__LOCAL_TOOLTIP = PART__LOCAL_TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int INPUT_PART__LOCAL_IMAGE = PART__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -1079,13 +1133,40 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW__TOOLTIP = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW__LOCAL_LABEL = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW__LOCAL_TOOLTIP = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW__LOCAL_IMAGE = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 5;
+
+	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__CONTEXT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 3;
+	public static final int WINDOW__CONTEXT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -1094,7 +1175,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__VARIABLES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+	public static final int WINDOW__VARIABLES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' map.
@@ -1103,7 +1184,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__PROPERTIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 5;
+	public static final int WINDOW__PROPERTIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -1112,7 +1193,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__HANDLERS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 6;
+	public static final int WINDOW__HANDLERS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
@@ -1121,7 +1202,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__BINDING_CONTEXTS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 7;
+	public static final int WINDOW__BINDING_CONTEXTS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
@@ -1130,7 +1211,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__MAIN_MENU = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
+	public static final int WINDOW__MAIN_MENU = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>X</b></em>' attribute.
@@ -1139,7 +1220,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__X = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
+	public static final int WINDOW__X = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Y</b></em>' attribute.
@@ -1148,7 +1229,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__Y = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
+	public static final int WINDOW__Y = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Width</b></em>' attribute.
@@ -1157,7 +1238,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__WIDTH = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 11;
+	public static final int WINDOW__WIDTH = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Height</b></em>' attribute.
@@ -1166,7 +1247,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__HEIGHT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 12;
+	public static final int WINDOW__HEIGHT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
@@ -1175,7 +1256,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 13;
+	public static final int WINDOW__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 16;
 
 	/**
 	 * The feature id for the '<em><b>Shared Elements</b></em>' containment reference list.
@@ -1184,7 +1265,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW__SHARED_ELEMENTS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
+	public static final int WINDOW__SHARED_ELEMENTS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 17;
 
 	/**
 	 * The number of structural features of the '<em>Window</em>' class.
@@ -1193,7 +1274,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WINDOW_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 15;
+	public static final int WINDOW_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 18;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl <em>Trimmed Window</em>}' class.
@@ -1357,6 +1438,33 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIMMED_WINDOW__TOOLTIP = WINDOW__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMMED_WINDOW__LOCAL_LABEL = WINDOW__LOCAL_LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMMED_WINDOW__LOCAL_TOOLTIP = WINDOW__LOCAL_TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMMED_WINDOW__LOCAL_IMAGE = WINDOW__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.

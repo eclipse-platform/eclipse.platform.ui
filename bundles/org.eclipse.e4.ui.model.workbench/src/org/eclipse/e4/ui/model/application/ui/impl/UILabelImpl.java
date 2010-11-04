@@ -26,6 +26,9 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl#getLocalLabel <em>Local Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl#getLocalImage <em>Local Image</em>}</li>
  * </ul>
  * </p>
  *
@@ -91,6 +94,66 @@ public abstract class UILabelImpl extends EObjectImpl implements MUILabel {
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCAL_LABEL_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected String localLabel = LOCAL_LABEL_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCAL_TOOLTIP_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected String localTooltip = LOCAL_TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalImage()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Object LOCAL_IMAGE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalImage()
+	 * @generated
+	 * @ordered
+	 */
+	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -179,6 +242,69 @@ public abstract class UILabelImpl extends EObjectImpl implements MUILabel {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getLocalLabel() {
+		return localLabel;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalLabel(String newLocalLabel) {
+		String oldLocalLabel = localLabel;
+		localLabel = newLocalLabel;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_LABEL__LOCAL_LABEL, oldLocalLabel, localLabel));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalTooltip() {
+		return localTooltip;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalTooltip(String newLocalTooltip) {
+		String oldLocalTooltip = localTooltip;
+		localTooltip = newLocalTooltip;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP, oldLocalTooltip, localTooltip));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Object getLocalImage() {
+		return localImage;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalImage(Object newLocalImage) {
+		Object oldLocalImage = localImage;
+		localImage = newLocalImage;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_LABEL__LOCAL_IMAGE, oldLocalImage, localImage));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -188,6 +314,12 @@ public abstract class UILabelImpl extends EObjectImpl implements MUILabel {
 				return getIconURI();
 			case UiPackageImpl.UI_LABEL__TOOLTIP:
 				return getTooltip();
+			case UiPackageImpl.UI_LABEL__LOCAL_LABEL:
+				return getLocalLabel();
+			case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP:
+				return getLocalTooltip();
+			case UiPackageImpl.UI_LABEL__LOCAL_IMAGE:
+				return getLocalImage();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -208,6 +340,15 @@ public abstract class UILabelImpl extends EObjectImpl implements MUILabel {
 				return;
 			case UiPackageImpl.UI_LABEL__TOOLTIP:
 				setTooltip((String)newValue);
+				return;
+			case UiPackageImpl.UI_LABEL__LOCAL_LABEL:
+				setLocalLabel((String)newValue);
+				return;
+			case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP:
+				setLocalTooltip((String)newValue);
+				return;
+			case UiPackageImpl.UI_LABEL__LOCAL_IMAGE:
+				setLocalImage(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -230,6 +371,15 @@ public abstract class UILabelImpl extends EObjectImpl implements MUILabel {
 			case UiPackageImpl.UI_LABEL__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
+			case UiPackageImpl.UI_LABEL__LOCAL_LABEL:
+				setLocalLabel(LOCAL_LABEL_EDEFAULT);
+				return;
+			case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP:
+				setLocalTooltip(LOCAL_TOOLTIP_EDEFAULT);
+				return;
+			case UiPackageImpl.UI_LABEL__LOCAL_IMAGE:
+				setLocalImage(LOCAL_IMAGE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -248,6 +398,12 @@ public abstract class UILabelImpl extends EObjectImpl implements MUILabel {
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case UiPackageImpl.UI_LABEL__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case UiPackageImpl.UI_LABEL__LOCAL_LABEL:
+				return LOCAL_LABEL_EDEFAULT == null ? localLabel != null : !LOCAL_LABEL_EDEFAULT.equals(localLabel);
+			case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP:
+				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
+			case UiPackageImpl.UI_LABEL__LOCAL_IMAGE:
+				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -268,6 +424,12 @@ public abstract class UILabelImpl extends EObjectImpl implements MUILabel {
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
 		result.append(tooltip);
+		result.append(", localLabel: "); //$NON-NLS-1$
+		result.append(localLabel);
+		result.append(", localTooltip: "); //$NON-NLS-1$
+		result.append(localTooltip);
+		result.append(", localImage: "); //$NON-NLS-1$
+		result.append(localImage);
 		result.append(')');
 		return result.toString();
 	}

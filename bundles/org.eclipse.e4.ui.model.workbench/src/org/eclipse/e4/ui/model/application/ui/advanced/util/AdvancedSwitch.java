@@ -132,6 +132,7 @@ public class AdvancedSwitch<T1> {
 				MPerspectiveStack perspectiveStack = (MPerspectiveStack)theEObject;
 				T1 result = casePerspectiveStack(perspectiveStack);
 				if (result == null) result = caseGenericStack(perspectiveStack);
+				if (result == null) result = casePartSashContainerElement(perspectiveStack);
 				if (result == null) result = caseWindowElement(perspectiveStack);
 				if (result == null) result = caseApplicationElement(perspectiveStack);
 				if (result == null) result = caseElementContainer(perspectiveStack);

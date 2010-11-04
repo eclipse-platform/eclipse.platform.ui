@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 
 import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
@@ -262,6 +263,11 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 				default: return -1;
 			}
 		}
+		if (baseClass == MPartSashContainerElement.class) {
+			switch (derivedFeatureID) {
+				default: return -1;
+			}
+		}
 		if (baseClass == MWindowElement.class) {
 			switch (derivedFeatureID) {
 				default: return -1;
@@ -285,6 +291,11 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 			}
 		}
 		if (baseClass == MGenericStack.class) {
+			switch (baseFeatureID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MPartSashContainerElement.class) {
 			switch (baseFeatureID) {
 				default: return -1;
 			}

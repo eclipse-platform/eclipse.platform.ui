@@ -57,6 +57,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getLocalLabel <em>Local Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getLocalImage <em>Local Image</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl#getProperties <em>Properties</em>}</li>
@@ -126,6 +129,66 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCAL_LABEL_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected String localLabel = LOCAL_LABEL_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCAL_TOOLTIP_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected String localTooltip = LOCAL_TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalImage()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Object LOCAL_IMAGE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalImage()
+	 * @generated
+	 * @ordered
+	 */
+	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -264,6 +327,69 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getLocalLabel() {
+		return localLabel;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalLabel(String newLocalLabel) {
+		String oldLocalLabel = localLabel;
+		localLabel = newLocalLabel;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCAL_LABEL, oldLocalLabel, localLabel));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalTooltip() {
+		return localTooltip;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalTooltip(String newLocalTooltip) {
+		String oldLocalTooltip = localTooltip;
+		localTooltip = newLocalTooltip;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCAL_TOOLTIP, oldLocalTooltip, localTooltip));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Object getLocalImage() {
+		return localImage;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalImage(Object newLocalImage) {
+		Object oldLocalImage = localImage;
+		localImage = newLocalImage;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PERSPECTIVE__LOCAL_IMAGE, oldLocalImage, localImage));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public IEclipseContext getContext() {
 		return context;
 	}
@@ -346,6 +472,12 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				return getIconURI();
 			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
 				return getTooltip();
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_LABEL:
+				return getLocalLabel();
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_TOOLTIP:
+				return getLocalTooltip();
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_IMAGE:
+				return getLocalImage();
 			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
 				return getContext();
 			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
@@ -376,6 +508,15 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				return;
 			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
 				setTooltip((String)newValue);
+				return;
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_LABEL:
+				setLocalLabel((String)newValue);
+				return;
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_TOOLTIP:
+				setLocalTooltip((String)newValue);
+				return;
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_IMAGE:
+				setLocalImage(newValue);
 				return;
 			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
 				setContext((IEclipseContext)newValue);
@@ -412,6 +553,15 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_LABEL:
+				setLocalLabel(LOCAL_LABEL_EDEFAULT);
+				return;
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_TOOLTIP:
+				setLocalTooltip(LOCAL_TOOLTIP_EDEFAULT);
+				return;
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_IMAGE:
+				setLocalImage(LOCAL_IMAGE_EDEFAULT);
+				return;
 			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
@@ -442,6 +592,12 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_LABEL:
+				return LOCAL_LABEL_EDEFAULT == null ? localLabel != null : !LOCAL_LABEL_EDEFAULT.equals(localLabel);
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_TOOLTIP:
+				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
+			case AdvancedPackageImpl.PERSPECTIVE__LOCAL_IMAGE:
+				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
 			case AdvancedPackageImpl.PERSPECTIVE__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case AdvancedPackageImpl.PERSPECTIVE__VARIABLES:
@@ -466,6 +622,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				case AdvancedPackageImpl.PERSPECTIVE__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case AdvancedPackageImpl.PERSPECTIVE__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case AdvancedPackageImpl.PERSPECTIVE__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case AdvancedPackageImpl.PERSPECTIVE__LOCAL_LABEL: return UiPackageImpl.UI_LABEL__LOCAL_LABEL;
+				case AdvancedPackageImpl.PERSPECTIVE__LOCAL_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
+				case AdvancedPackageImpl.PERSPECTIVE__LOCAL_IMAGE: return UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -492,6 +651,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 				case UiPackageImpl.UI_LABEL__LABEL: return AdvancedPackageImpl.PERSPECTIVE__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return AdvancedPackageImpl.PERSPECTIVE__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return AdvancedPackageImpl.PERSPECTIVE__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCAL_LABEL: return AdvancedPackageImpl.PERSPECTIVE__LOCAL_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP: return AdvancedPackageImpl.PERSPECTIVE__LOCAL_TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCAL_IMAGE: return AdvancedPackageImpl.PERSPECTIVE__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -522,6 +684,12 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
 		result.append(tooltip);
+		result.append(", localLabel: "); //$NON-NLS-1$
+		result.append(localLabel);
+		result.append(", localTooltip: "); //$NON-NLS-1$
+		result.append(localTooltip);
+		result.append(", localImage: "); //$NON-NLS-1$
+		result.append(localImage);
 		result.append(", context: "); //$NON-NLS-1$
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$

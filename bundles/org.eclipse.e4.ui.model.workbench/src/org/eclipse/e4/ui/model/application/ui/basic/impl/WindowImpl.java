@@ -51,6 +51,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getLocalLabel <em>Local Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getLocalImage <em>Local Image</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.WindowImpl#getProperties <em>Properties</em>}</li>
@@ -128,6 +131,66 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCAL_LABEL_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalLabel()
+	 * @generated
+	 * @ordered
+	 */
+	protected String localLabel = LOCAL_LABEL_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String LOCAL_TOOLTIP_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalTooltip()
+	 * @generated
+	 * @ordered
+	 */
+	protected String localTooltip = LOCAL_TOOLTIP_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalImage()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Object LOCAL_IMAGE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLocalImage()
+	 * @generated
+	 * @ordered
+	 */
+	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -386,6 +449,69 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getLocalLabel() {
+		return localLabel;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalLabel(String newLocalLabel) {
+		String oldLocalLabel = localLabel;
+		localLabel = newLocalLabel;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__LOCAL_LABEL, oldLocalLabel, localLabel));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalTooltip() {
+		return localTooltip;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalTooltip(String newLocalTooltip) {
+		String oldLocalTooltip = localTooltip;
+		localTooltip = newLocalTooltip;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__LOCAL_TOOLTIP, oldLocalTooltip, localTooltip));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Object getLocalImage() {
+		return localImage;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setLocalImage(Object newLocalImage) {
+		Object oldLocalImage = localImage;
+		localImage = newLocalImage;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.WINDOW__LOCAL_IMAGE, oldLocalImage, localImage));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public IEclipseContext getContext() {
 		return context;
 	}
@@ -637,6 +763,12 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return getIconURI();
 			case BasicPackageImpl.WINDOW__TOOLTIP:
 				return getTooltip();
+			case BasicPackageImpl.WINDOW__LOCAL_LABEL:
+				return getLocalLabel();
+			case BasicPackageImpl.WINDOW__LOCAL_TOOLTIP:
+				return getLocalTooltip();
+			case BasicPackageImpl.WINDOW__LOCAL_IMAGE:
+				return getLocalImage();
 			case BasicPackageImpl.WINDOW__CONTEXT:
 				return getContext();
 			case BasicPackageImpl.WINDOW__VARIABLES:
@@ -683,6 +815,15 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return;
 			case BasicPackageImpl.WINDOW__TOOLTIP:
 				setTooltip((String)newValue);
+				return;
+			case BasicPackageImpl.WINDOW__LOCAL_LABEL:
+				setLocalLabel((String)newValue);
+				return;
+			case BasicPackageImpl.WINDOW__LOCAL_TOOLTIP:
+				setLocalTooltip((String)newValue);
+				return;
+			case BasicPackageImpl.WINDOW__LOCAL_IMAGE:
+				setLocalImage(newValue);
 				return;
 			case BasicPackageImpl.WINDOW__CONTEXT:
 				setContext((IEclipseContext)newValue);
@@ -746,6 +887,15 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			case BasicPackageImpl.WINDOW__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
+			case BasicPackageImpl.WINDOW__LOCAL_LABEL:
+				setLocalLabel(LOCAL_LABEL_EDEFAULT);
+				return;
+			case BasicPackageImpl.WINDOW__LOCAL_TOOLTIP:
+				setLocalTooltip(LOCAL_TOOLTIP_EDEFAULT);
+				return;
+			case BasicPackageImpl.WINDOW__LOCAL_IMAGE:
+				setLocalImage(LOCAL_IMAGE_EDEFAULT);
+				return;
 			case BasicPackageImpl.WINDOW__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
@@ -800,6 +950,12 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case BasicPackageImpl.WINDOW__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case BasicPackageImpl.WINDOW__LOCAL_LABEL:
+				return LOCAL_LABEL_EDEFAULT == null ? localLabel != null : !LOCAL_LABEL_EDEFAULT.equals(localLabel);
+			case BasicPackageImpl.WINDOW__LOCAL_TOOLTIP:
+				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
+			case BasicPackageImpl.WINDOW__LOCAL_IMAGE:
+				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
 			case BasicPackageImpl.WINDOW__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case BasicPackageImpl.WINDOW__VARIABLES:
@@ -840,6 +996,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				case BasicPackageImpl.WINDOW__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case BasicPackageImpl.WINDOW__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case BasicPackageImpl.WINDOW__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
+				case BasicPackageImpl.WINDOW__LOCAL_LABEL: return UiPackageImpl.UI_LABEL__LOCAL_LABEL;
+				case BasicPackageImpl.WINDOW__LOCAL_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
+				case BasicPackageImpl.WINDOW__LOCAL_IMAGE: return UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -878,6 +1037,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				case UiPackageImpl.UI_LABEL__LABEL: return BasicPackageImpl.WINDOW__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return BasicPackageImpl.WINDOW__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return BasicPackageImpl.WINDOW__TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCAL_LABEL: return BasicPackageImpl.WINDOW__LOCAL_LABEL;
+				case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP: return BasicPackageImpl.WINDOW__LOCAL_TOOLTIP;
+				case UiPackageImpl.UI_LABEL__LOCAL_IMAGE: return BasicPackageImpl.WINDOW__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -920,6 +1082,12 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
 		result.append(tooltip);
+		result.append(", localLabel: "); //$NON-NLS-1$
+		result.append(localLabel);
+		result.append(", localTooltip: "); //$NON-NLS-1$
+		result.append(localTooltip);
+		result.append(", localImage: "); //$NON-NLS-1$
+		result.append(localImage);
 		result.append(", context: "); //$NON-NLS-1$
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$

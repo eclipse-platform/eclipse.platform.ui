@@ -353,13 +353,40 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int UI_LABEL__TOOLTIP = 2;
 
 	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int UI_LABEL__LOCAL_LABEL = 3;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int UI_LABEL__LOCAL_TOOLTIP = 4;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int UI_LABEL__LOCAL_IMAGE = 5;
+
+	/**
 	 * The number of structural features of the '<em>UI Label</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int UI_LABEL_FEATURE_COUNT = 3;
+	public static final int UI_LABEL_FEATURE_COUNT = 6;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl <em>Element Container</em>}' class.
@@ -1489,6 +1516,48 @@ public class UiPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalLabel <em>Local Label</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Local Label</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalLabel()
+	 * @see #getUILabel()
+	 * @generated
+	 */
+	public EAttribute getUILabel_LocalLabel() {
+		return (EAttribute)uiLabelEClass.getEStructuralFeatures().get(3);
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalTooltip <em>Local Tooltip</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Local Tooltip</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalTooltip()
+	 * @see #getUILabel()
+	 * @generated
+	 */
+	public EAttribute getUILabel_LocalTooltip() {
+		return (EAttribute)uiLabelEClass.getEStructuralFeatures().get(4);
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalImage <em>Local Image</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Local Image</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalImage()
+	 * @see #getUILabel()
+	 * @generated
+	 */
+	public EAttribute getUILabel_LocalImage() {
+		return (EAttribute)uiLabelEClass.getEStructuralFeatures().get(5);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MElementContainer <em>Element Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1711,6 +1780,9 @@ public class UiPackageImpl extends EPackageImpl {
 		createEAttribute(uiLabelEClass, UI_LABEL__LABEL);
 		createEAttribute(uiLabelEClass, UI_LABEL__ICON_URI);
 		createEAttribute(uiLabelEClass, UI_LABEL__TOOLTIP);
+		createEAttribute(uiLabelEClass, UI_LABEL__LOCAL_LABEL);
+		createEAttribute(uiLabelEClass, UI_LABEL__LOCAL_TOOLTIP);
+		createEAttribute(uiLabelEClass, UI_LABEL__LOCAL_IMAGE);
 
 		elementContainerEClass = createEClass(ELEMENT_CONTAINER);
 		createEReference(elementContainerEClass, ELEMENT_CONTAINER__CHILDREN);
@@ -1832,6 +1904,9 @@ public class UiPackageImpl extends EPackageImpl {
 		initEAttribute(getUILabel_Label(), ecorePackage.getEString(), "label", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getUILabel_IconURI(), ecorePackage.getEString(), "iconURI", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getUILabel_Tooltip(), ecorePackage.getEString(), "tooltip", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getUILabel_LocalLabel(), ecorePackage.getEString(), "localLabel", null, 0, 1, MUILabel.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getUILabel_LocalTooltip(), ecorePackage.getEString(), "localTooltip", null, 0, 1, MUILabel.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getUILabel_LocalImage(), ecorePackage.getEJavaObject(), "localImage", null, 0, 1, MUILabel.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(elementContainerEClass, MElementContainer.class, "ElementContainer", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		g1 = createEGenericType(elementContainerEClass_T);
@@ -2067,6 +2142,30 @@ public class UiPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute UI_LABEL__TOOLTIP = eINSTANCE.getUILabel_Tooltip();
+
+		/**
+		 * The meta object literal for the '<em><b>Local Label</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute UI_LABEL__LOCAL_LABEL = eINSTANCE.getUILabel_LocalLabel();
+
+		/**
+		 * The meta object literal for the '<em><b>Local Tooltip</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute UI_LABEL__LOCAL_TOOLTIP = eINSTANCE.getUILabel_LocalTooltip();
+
+		/**
+		 * The meta object literal for the '<em><b>Local Image</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute UI_LABEL__LOCAL_IMAGE = eINSTANCE.getUILabel_LocalImage();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl <em>Element Container</em>}' class.

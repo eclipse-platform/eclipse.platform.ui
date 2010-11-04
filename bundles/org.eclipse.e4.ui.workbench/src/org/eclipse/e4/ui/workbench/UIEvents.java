@@ -219,6 +219,7 @@ public class UIEvents {
 
 	public static interface UIElement {
 		public static final String TOPIC = UITopicBase + "/ui/UIElement"; //$NON-NLS-1$
+		public static final String ACCESSIBILITYPHRASE = "accessibilityPhrase"; //$NON-NLS-1$
 		public static final String CONTAINERDATA = "containerData"; //$NON-NLS-1$
 		public static final String CURSHAREDREF = "curSharedRef"; //$NON-NLS-1$
 		public static final String ONTOP = "onTop"; //$NON-NLS-1$
@@ -234,6 +235,9 @@ public class UIEvents {
 		public static final String TOPIC = UITopicBase + "/ui/UILabel"; //$NON-NLS-1$
 		public static final String ICONURI = "iconURI"; //$NON-NLS-1$
 		public static final String LABEL = "label"; //$NON-NLS-1$
+		public static final String LOCALIMAGE = "localImage"; //$NON-NLS-1$
+		public static final String LOCALLABEL = "localLabel"; //$NON-NLS-1$
+		public static final String LOCALTOOLTIP = "localTooltip"; //$NON-NLS-1$
 		public static final String TOOLTIP = "tooltip"; //$NON-NLS-1$
 	}
 

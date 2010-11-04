@@ -382,13 +382,40 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE__TOOLTIP = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__LOCAL_LABEL = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__LOCAL_TOOLTIP = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__LOCAL_IMAGE = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 5;
+
+	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE__CONTEXT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 3;
+	public static final int PERSPECTIVE__CONTEXT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -397,7 +424,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE__VARIABLES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+	public static final int PERSPECTIVE__VARIABLES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' map.
@@ -406,7 +433,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE__PROPERTIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 5;
+	public static final int PERSPECTIVE__PROPERTIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Windows</b></em>' containment reference list.
@@ -415,7 +442,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 6;
+	public static final int PERSPECTIVE__WINDOWS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of structural features of the '<em>Perspective</em>' class.
@@ -424,7 +451,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 7;
+	public static final int PERSPECTIVE_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 10;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
@@ -744,13 +771,40 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int AREA__TOOLTIP = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AREA__LOCAL_LABEL = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AREA__LOCAL_TOOLTIP = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AREA__LOCAL_IMAGE = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 5;
+
+	/**
 	 * The number of structural features of the '<em>Area</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int AREA_FEATURE_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 3;
+	public static final int AREA_FEATURE_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1024,6 +1078,8 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		g1 = createEGenericType(theUiPackage.getGenericStack());
 		g2 = createEGenericType(this.getPerspective());
 		g1.getETypeArguments().add(g2);
+		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(theBasicPackage.getPartSashContainerElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theBasicPackage.getWindowElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);

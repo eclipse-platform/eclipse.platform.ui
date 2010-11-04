@@ -111,6 +111,33 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR__TOOLTIP = UiPackageImpl.UI_LABEL__TOOLTIP;
 
 	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LOCAL_LABEL = UiPackageImpl.UI_LABEL__LOCAL_LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LOCAL_TOOLTIP = UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LOCAL_IMAGE = UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
+
+	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
