@@ -62,7 +62,7 @@ public abstract class Request {
 	 * This method is invoked by Session to get a mutable copy of the
 	 * global list of acceptable response handlers.
 	 * 
-	 * @return a map of reponse handlers
+	 * @return a map of response handlers
 	 */
 	protected static Map getReponseHandlerMap() {
 		synchronized(responseHandlers) {
@@ -173,7 +173,7 @@ public abstract class Request {
 				if (serious) {
 					throw new CVSServerException(status);
 				} else {
-					// look for particularly bad errors in the accumulated statii
+					// look for particularly bad errors in the accumulated statuses
 				    IStatus[] errors = session.getErrors();
 				    for (int i = 0; i < errors.length; i++) {
                         IStatus s = errors[i];
@@ -228,7 +228,7 @@ public abstract class Request {
 		} else {
 			return new MultiStatus(CVSProviderPlugin.ID, IStatus.INFO,
 				session.getErrors(),
-				NLS.bind(CVSMessages.Command_warnings, new String[] { getDisplayText() }), null);  //  
+				NLS.bind(CVSMessages.Command_warnings, new String[] { getDisplayText() }), null);
 		}
 	}
 	
@@ -237,7 +237,7 @@ public abstract class Request {
 	 * reports as error.
 	 */
 	protected String getServerErrorMessage() {
-		return NLS.bind(CVSMessages.Command_serverError, new String[] { getDisplayText() }); //  
+		return NLS.bind(CVSMessages.Command_serverError, new String[] { getDisplayText() });
 	}
     protected String getDisplayText() {
         return getRequestId();
