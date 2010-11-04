@@ -1586,12 +1586,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// BEGIN FIXME: workaround for bug 325960, v1.99 diff
 		List<EditorReference> filteredReferences = new ArrayList<EditorReference>();
 		for (MPart part : partService.getParts()) {
-			Object object = part.getObject();
-			if (object instanceof CompatibilityEditor) {
-				for (EditorReference editorRef : editorReferences) {
-					if (editorRef.getPart(false) == ((CompatibilityEditor) object).getPart()) {
-						filteredReferences.add(editorRef);
-					}
+			for (EditorReference editorRef : editorReferences) {
+				if (editorRef.getModel() == part) {
+					filteredReferences.add(editorRef);
+					break;
 				}
 			}
 		}
