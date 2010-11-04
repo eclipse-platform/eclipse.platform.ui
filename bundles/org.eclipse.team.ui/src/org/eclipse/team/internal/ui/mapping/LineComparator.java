@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.io.*;
 import java.util.ArrayList;
+
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IStorage;
@@ -100,10 +101,6 @@ class LineComparator implements IRangeComparator {
         ArrayList ar = new ArrayList();
         while ((line = br.readLine()) != null) {
             ar.add(line);
-        }
-        try {
-            is.close();
-        } catch (IOException e1) {
         }
         // Add a trailing line if the last character in the file was a line feed.
         // We do this because a BufferedReader doesn't distinguish the case
