@@ -1628,12 +1628,12 @@ public class EPartServiceTest extends TestCase {
 
 		assertEquals(2, partStack.getChildren().size());
 		assertEquals(
-				"The part is in the same stack as the active part, so the active part should not have changed",
-				partA, partService.getActivePart());
+				"The part is in the same stack as the active part, so the active part should have changed",
+				partB, partService.getActivePart());
 		assertNotNull("The shown part should have a context",
 				partB.getContext());
-		assertTrue(partService.isPartVisible(partA));
-		assertFalse(partService.isPartVisible(partB));
+		assertFalse(partService.isPartVisible(partA));
+		assertTrue(partService.isPartVisible(partB));
 	}
 
 	public void testShowPart_Id_VISIBLE3() {
@@ -1759,12 +1759,12 @@ public class EPartServiceTest extends TestCase {
 
 		assertEquals(2, partStack.getChildren().size());
 		assertEquals(
-				"The part is in the same stack as the active part, so the active part should not have changed",
-				partA, partService.getActivePart());
+				"The part is in the same stack as the active part, so the active part should have changed",
+				partB, partService.getActivePart());
 		assertNotNull("The shown part should have a context",
 				partB.getContext());
-		assertTrue(partService.isPartVisible(partA));
-		assertFalse(partService.isPartVisible(partB));
+		assertFalse(partService.isPartVisible(partA));
+		assertTrue(partService.isPartVisible(partB));
 		assertEquals(partB, shownPart);
 		assertTrue(partB.isToBeRendered());
 	}

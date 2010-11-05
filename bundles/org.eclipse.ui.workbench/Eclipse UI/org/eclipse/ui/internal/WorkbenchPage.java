@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.PartServiceImpl;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -692,7 +693,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				part.getTags().add(secondaryId);
 			}
 
-			partService.showPart(part, convert(mode));
+			part = showPart(mode, part);
 
 			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
 
@@ -705,7 +706,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return compatibilityView.getView();
 		}
 
-		part = partService.showPart(part, convert(mode));
+		part = showPart(mode, part);
+
 		if (secondaryId != null) {
 			part.getTags().add(secondaryId);
 		}
@@ -721,6 +723,34 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return compatibilityView.getView();
         
     }
+
+	private MPart showPart(int mode, MPart part) {
+		switch (mode) {
+		case VIEW_ACTIVATE:
+			partService.showPart(part, PartState.ACTIVATE);
+			break;
+		case VIEW_VISIBLE:
+			MPart activePart = partService.getActivePart();
+			if (activePart == null) {
+				partService.showPart(part, PartState.ACTIVATE);
+			} else {
+				part = ((PartServiceImpl) partService).addPart(part);
+				MPlaceholder activePlaceholder = activePart.getCurSharedRef();
+				MUIElement activePartParent = activePlaceholder == null ? activePart
+						.getParent() : activePlaceholder.getParent();
+				if (part.getCurSharedRef().getParent() == activePartParent) {
+					partService.showPart(part, PartState.CREATE);
+				} else {
+					partService.bringToTop(part);
+				}
+			}
+			break;
+		case VIEW_CREATE:
+			partService.showPart(part, PartState.CREATE);
+			break;
+		}
+		return part;
+	}
 
     /**
      * Returns whether a part exists in the current page.

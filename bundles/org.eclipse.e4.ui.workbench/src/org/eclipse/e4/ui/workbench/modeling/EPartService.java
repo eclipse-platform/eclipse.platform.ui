@@ -43,7 +43,7 @@ public interface EPartService {
 		/**
 		 * Part state that indicates the part should be made visible though it may not necessarily
 		 * be granted focus. If the part will be displayed in the same stack as the currently active
-		 * part, then this has the same effect as <code>CREATE</code>.
+		 * part, then this has the same effect as <code>ACTIVATE</code>.
 		 */
 		VISIBLE,
 
@@ -181,13 +181,15 @@ public interface EPartService {
 	 * Shows a part with the identified by the given id. In the event that there are multiple parts
 	 * with the specified id, the client is recommended to use {@link #getParts()} and iterate over
 	 * the collection to find the interested part and invoke {@link #showPart(MPart, PartState)} on
-	 * it.
-	 * <p>
-	 * The behavior of this method is dictated by the supplied state. If <code>ACTIVATE</code> is
-	 * supplied, then the part is made visible and granted focus. If <code>VISIBLE</code> is
-	 * supplied, then the part will be made visible but not given focus. If <code>CREATE</code> is
-	 * supplied, then the part will be instantiated though its contents may not necessarily be
-	 * visible to the end user.
+	 * it. The behavior of this method is dictated by the supplied state.
+	 * <ul>
+	 * <li>If <code>ACTIVATE</code> is supplied, then the part is made visible and granted focus.</li>
+	 * <li>If <code>VISIBLE</code> is supplied, then the part will be made visible and possibly be
+	 * granted focus depending on where it is relative to the active part. If it is in the same
+	 * stack as the currently active part, then it will be granted focus.</li>
+	 * <li>If <code>CREATE</code> is supplied, then the part will be instantiated though its
+	 * contents may not necessarily be visible to the end user. visible to the end user.</li>
+	 * </ul>
 	 * </p>
 	 * 
 	 * @param id
@@ -210,11 +212,15 @@ public interface EPartService {
 	 * </ul>
 	 * </p>
 	 * <p>
-	 * The behavior of this method is dictated by the supplied state. If <code>ACTIVATE</code> is
-	 * supplied, then the part is made visible and granted focus. If <code>VISIBLE</code> is
-	 * supplied, then the part will be made visible but not given focus. If <code>CREATE</code> is
-	 * supplied, then the part will be instantiated though its contents may not necessarily be
-	 * visible to the end user.
+	 * The behavior of this method is dictated by the supplied state.
+	 * <ul>
+	 * <li>If <code>ACTIVATE</code> is supplied, then the part is made visible and granted focus.</li>
+	 * <li>If <code>VISIBLE</code> is supplied, then the part will be made visible and possibly be
+	 * granted focus depending on where it is relative to the active part. If it is in the same
+	 * stack as the currently active part, then it will be granted focus.</li>
+	 * <li>If <code>CREATE</code> is supplied, then the part will be instantiated though its
+	 * contents may not necessarily be visible to the end user. visible to the end user.</li>
+	 * </ul>
 	 * </p>
 	 * 
 	 * @param part

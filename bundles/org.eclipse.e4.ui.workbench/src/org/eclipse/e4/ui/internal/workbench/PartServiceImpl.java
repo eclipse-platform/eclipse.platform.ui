@@ -791,32 +791,47 @@ public class PartServiceImpl implements EPartService {
 		return placeholder == null ? part : placeholder;
 	}
 
-	private MPart showPart(PartState partState, MPart providedPart, MPart localPart) {
-		MPart part = addPart(providedPart, localPart);
+	public MPart addPart(MPart part) {
+		Assert.isNotNull(part);
+		MPart localPart = findPart(part.getElementId());
+		return addPart(part, localPart == null ? part : localPart);
+	}
+
+	public MPart showPart(String id, PartState partState) {
+		Assert.isNotNull(id);
+		Assert.isNotNull(partState);
+
+		MPart part = findPart(id);
+		if (part == null) {
+			MPartDescriptor descriptor = findDescriptor(id);
+			part = createPart(descriptor);
+			if (part == null) {
+				return null;
+			}
+		}
+		return showPart(addPart(part), partState);
+	}
+
+	public MPart showPart(MPart part, PartState partState) {
+		Assert.isNotNull(part);
+		Assert.isNotNull(partState);
+
+		MPart addedPart = addPart(part);
 		switch (partState) {
 		case ACTIVATE:
-			activate(part);
-			return part;
+			activate(addedPart);
+			return addedPart;
 		case VISIBLE:
 			MPart activePart = getActivePart();
-			if (activePart == null) {
-				bringToTop(part);
-			} else if (getParent(activePart) == getParent(part)) {
-				// same parent as the active part, just instantiate this part then
-				part.setToBeRendered(true);
-				if (part.getCurSharedRef() != null) {
-					part.getCurSharedRef().setToBeRendered(true);
-					engine.createGui(part.getCurSharedRef());
-				} else {
-					engine.createGui(part);
-				}
+			if (activePart == null || getParent(activePart) == getParent(addedPart)) {
+				activate(addedPart);
 			} else {
-				bringToTop(part);
+				bringToTop(addedPart);
 			}
-			return part;
+			return addedPart;
 		case CREATE:
-			part.setToBeRendered(true);
-			MPlaceholder placeholder = part.getCurSharedRef();
+			addedPart.setToBeRendered(true);
+			MPlaceholder placeholder = addedPart.getCurSharedRef();
 			if (placeholder != null) {
 				placeholder.setToBeRendered(true);
 				engine.createGui(placeholder);
@@ -826,45 +841,16 @@ public class PartServiceImpl implements EPartService {
 					parent.setSelectedElement(placeholder);
 				}
 			} else {
-				engine.createGui(part);
+				engine.createGui(addedPart);
 
-				MElementContainer<MUIElement> parent = part.getParent();
+				MElementContainer<MUIElement> parent = addedPart.getParent();
 				if (parent.getChildren().size() == 1) {
-					parent.setSelectedElement(part);
+					parent.setSelectedElement(addedPart);
 				}
 			}
-			return part;
+			return addedPart;
 		}
-		return part;
-	}
-
-	public MPart showPart(String id, PartState partState) {
-		Assert.isNotNull(id);
-		Assert.isNotNull(partState);
-
-		MPart part = findPart(id);
-		if (part != null) {
-			return showPart(part, partState);
-		}
-
-		MPartDescriptor descriptor = findDescriptor(id);
-		part = createPart(descriptor);
-		if (part == null) {
-			return null;
-		}
-
-		return showPart(partState, part, part);
-	}
-
-	public MPart showPart(MPart part, PartState partState) {
-		Assert.isNotNull(part);
-		Assert.isNotNull(partState);
-
-		MPart localPart = findPart(part.getElementId());
-		if (localPart != null) {
-			return showPart(partState, part, localPart);
-		}
-		return showPart(partState, part, part);
+		return addedPart;
 	}
 
 	public void hidePart(MPart part) {
