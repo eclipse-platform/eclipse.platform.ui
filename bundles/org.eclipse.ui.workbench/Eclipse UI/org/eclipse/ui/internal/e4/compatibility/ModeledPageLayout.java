@@ -570,6 +570,12 @@ public class ModeledPageLayout implements IPageLayout {
 				createReferences);
 		if (viewModel != null) {
 			((MPartStack) refModel).getChildren().add(viewModel);
+			
+			if (visible) {
+				// ensure that the parent is being rendered, it may have been a
+				// placeholder folder so its flag may actually be false
+				refModel.setToBeRendered(true);
+			}
 		}
 	}
 }
