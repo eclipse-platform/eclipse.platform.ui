@@ -73,6 +73,8 @@ public class ModeledPageLayout implements IPageLayout {
 	MPerspective perspModel;
 	private IPerspectiveDescriptor descriptor;
 
+	private MPlaceholder eaRef;
+
 	private MPartStack editorStack;
 
 	boolean createReferences;
@@ -117,7 +119,7 @@ public class ModeledPageLayout implements IPageLayout {
 			window.getSharedElements().add(sharedArea);
 		}
 
-		MPlaceholder eaRef = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+		eaRef = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
 		eaRef.setElementId(getEditorArea());
 		eaRef.setRef(sharedArea);
 
@@ -256,7 +258,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void setEditorAreaVisible(boolean showEditorArea) {
-		// editorStack.setToBeRendered(showEditorArea);
+		eaRef.setToBeRendered(showEditorArea);
 	}
 
 	public void setEditorReuseThreshold(int openEditors) {
