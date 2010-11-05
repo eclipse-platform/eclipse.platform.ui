@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestHarnessImpl.java,v 1.6 2010/07/15 17:24:12 pwebster Exp $
+ * $Id: TestHarnessImpl.java,v 1.7 2010/09/21 17:55:23 tschindl Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
@@ -2059,6 +2059,72 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 		result.append(dirty);
 		result.append(')');
 		return result.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalLabel()
+	 */
+	public String getLocalLabel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.model.application.ui.MUILabel#setLocalLabel(java.lang
+	 * .String)
+	 */
+	public void setLocalLabel(String value) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalTooltip()
+	 */
+	public String getLocalTooltip() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.model.application.ui.MUILabel#setLocalTooltip(java.
+	 * lang.String)
+	 */
+	public void setLocalTooltip(String value) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalImage()
+	 */
+	public Object getLocalImage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.model.application.ui.MUILabel#setLocalImage(java.lang
+	 * .Object)
+	 */
+	public void setLocalImage(Object value) {
+		// TODO Auto-generated method stub
+
 	}
 
 } // TestHarnessImpl
