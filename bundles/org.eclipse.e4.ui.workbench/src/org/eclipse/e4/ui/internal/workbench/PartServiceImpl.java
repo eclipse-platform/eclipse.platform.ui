@@ -616,38 +616,56 @@ public class PartServiceImpl implements EPartService {
 		return sharedPartRef;
 	}
 
+	/**
+	 * Adds a part to the current container if it isn't already in the container. The part may still
+	 * be added to the container if the part supports having multiple copies of itself in a given
+	 * container.
+	 * 
+	 * @param providedPart
+	 *            the part to add
+	 * @param localPart
+	 *            a part that shares attributes with <code>providedPart</code>, for example, it may
+	 *            have been backed by the same part descriptor, this part may already be in the
+	 *            current container
+	 * @return a part that has been added to the current container, note that this may not
+	 *         necessarily be <code>providedPart</code>
+	 * @see MPartDescriptor#isAllowMultiple()
+	 */
 	private MPart addPart(MPart providedPart, MPart localPart) {
-		// if they're the same and it's already in the current container, no need to do anything
-		if (providedPart == localPart && isInContainer(providedPart)) {
-			return providedPart;
-		}
-
 		MPartDescriptor descriptor = findDescriptor(providedPart.getElementId());
 		if (descriptor == null) {
+			// there is no part descriptor backing the provided part, just add it to the container
+			// if it's not already there
 			if (!isInContainer(providedPart)) {
 				adjustPlaceholder(providedPart);
 				addToLastContainer(null, providedPart);
 			}
 		} else {
 			if (providedPart != localPart && !descriptor.isAllowMultiple()) {
+				// multiple copies of this part are not allowed, just return the local one
 				return localPart;
 			}
 
+			// already in the container, return as is
 			if (isInContainer(providedPart)) {
 				return providedPart;
 			}
 
+			// corrects this part's placeholder if necessary
 			adjustPlaceholder(providedPart);
 
 			String category = descriptor.getCategory();
 			if (category == null) {
+				// no category, just add it to the end
 				addToLastContainer(null, providedPart);
 			} else {
 				List<MElementContainer> containers = modelService.findElements(getContainer(),
 						null, MElementContainer.class, Collections.singletonList(category));
 				if (containers.isEmpty()) {
+					// couldn't find any containers with the specified tag, just add it to the end
 					addToLastContainer(category, providedPart);
 				} else {
+					// add the part to the container
 					MElementContainer container = containers.get(0);
 					MPlaceholder placeholder = providedPart.getCurSharedRef();
 					if (placeholder == null) {
