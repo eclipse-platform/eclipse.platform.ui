@@ -222,7 +222,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public int getEditorReuseThreshold() {
-		return 0;
+		return -1;
 	}
 
 	public IPlaceholderFolderLayout getFolderForView(String id) {
@@ -262,6 +262,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void setEditorReuseThreshold(int openEditors) {
+		// ignored, no-op, same as 3.x implementation
 	}
 
 	public void setFixed(boolean isFixed) {
