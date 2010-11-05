@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -312,21 +313,23 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 				editorSite));
 		((IEditorPart) part).init(editorSite, getEditorInput());
 
-		try {
+		if (useIPersistableEditor()) {
 			if (part instanceof IPersistableEditor) {
 				String mementoString = getModel().getPersistedState().get(MEMENTO_KEY);
 				if (mementoString != null) {
-					IMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(
-							mementoString));
-					IMemento editorStateMemento = createReadRoot
-							.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
-					if (editorStateMemento != null) {
-						((IPersistableEditor) part).restoreState(editorStateMemento);
+					try {
+						IMemento createReadRoot = XMLMemento.createReadRoot(new StringReader(
+								mementoString));
+						IMemento editorStateMemento = createReadRoot
+								.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+						if (editorStateMemento != null) {
+							((IPersistableEditor) part).restoreState(editorStateMemento);
+						}
+					} catch (WorkbenchException e) {
+						throw new PartInitException(e.getStatus());
 					}
 				}
 			}
-		} catch (WorkbenchException e) {
-			throw new PartInitException(e.getStatus());
 		}
 	}
 
@@ -405,5 +408,10 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			}
 			actionBars.dispose();
 		}
+	}
+
+	private static boolean useIPersistableEditor() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		return store.getBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS);
 	}
 }
