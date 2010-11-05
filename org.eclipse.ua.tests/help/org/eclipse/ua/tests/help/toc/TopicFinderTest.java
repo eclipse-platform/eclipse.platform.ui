@@ -108,8 +108,8 @@ public class TopicFinderTest extends TestCase{
 		assertEquals("The plugin org.eclipse.help is installed", topics[1].getLabel());
 		assertEquals("/org.eclipse.ua.tests/data/help/toc/filteredToc/helpInstalled.html", topics[1].getHref());
 	}
-	
-	public void testNavURL() {
+
+	public void testTocNavURL() {
 		String topic = "http://localhost:8082/help/topic/org.eclipse.ua.tests/data/help/toc/filteredToc/helpInstalled.html";
 		IToc[] tocs = getTocs();
 		TopicFinder finder = new TopicFinder(topic, tocs, new UniversalScope());
@@ -118,6 +118,36 @@ public class TopicFinderTest extends TestCase{
 		TopicFinder finder2 = new TopicFinder(navPath, tocs, new UniversalScope());
 		assertEquals(selectedToc, finder2.getSelectedToc());
 		assertEquals(0, finder2.getTopicPath().length);
+	}
+
+	public void testTopic_0_0NavURL() {
+		checkNavTopic(0, 0);
+	}
+
+	public void testTopic_0_1NavURL() {
+		checkNavTopic(0, 1);
+	}
+	
+	public void testTopic_1_0NavURL() {
+		checkNavTopic(1, 0);
+	}
+
+	private void checkNavTopic(int index1, int index2) {
+		String topic = "http://localhost:8082/help/topic/org.eclipse.ua.tests/data/help/toc/filteredToc/helpInstalled.html";
+		IToc[] tocs = getTocs();
+		TopicFinder finder = new TopicFinder(topic, tocs, new UniversalScope());
+		int selectedToc = finder.getSelectedToc();
+		String navPath = "http://127.0.0.1:1936/help/nav/" + selectedToc + 
+           '_' + index1 + '_' + index2;
+		TopicFinder finder2 = new TopicFinder(navPath, tocs, new UniversalScope());
+		assertEquals(selectedToc, finder2.getSelectedToc());
+		ITopic[] topicPath = finder2.getTopicPath();
+		assertEquals(2, topicPath.length);
+		ITopic[] topLevelTopics = tocs[selectedToc].getTopics();
+		assertEquals(topLevelTopics[index1], topicPath[0]);
+		ITopic[] secondLevelTopics = topLevelTopics[index1].getSubtopics();
+		assertEquals(secondLevelTopics[index2], topicPath[1]);
+		assertEquals("" + index1 + '_' + index2, finder2.getNumericPath());
 	}
 	
 }

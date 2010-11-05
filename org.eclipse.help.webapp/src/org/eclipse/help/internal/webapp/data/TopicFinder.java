@@ -40,10 +40,16 @@ public class TopicFinder {
 			int index = -1;
 			do {
 				selectedToc = findTocContainingTopic(topicHref);
-				
-				ITopic topic = findTopic(UrlUtil.getHelpURL(topicHref));
-				if (topic != null && selectedToc >= 0) {
-					foundTopicPath = getTopicPathInToc(topic, tocs[selectedToc]);
+				index = topicHref.indexOf("/nav/"); //$NON-NLS-1$
+				if (index != -1) {
+					foundTopicPath = getTopicPathFromNav(topicHref.substring(index + 5));
+			
+				} else {
+					ITopic topic = findTopic(UrlUtil.getHelpURL(topicHref));
+					if (topic != null && selectedToc >= 0) {
+						foundTopicPath = getTopicPathInToc(topic,
+								tocs[selectedToc]);
+					}
 				}
 				// if no match has been found, check if there is an anchor
 				if (foundTopicPath == null && topicHref != null) {
@@ -57,6 +63,28 @@ public class TopicFinder {
 	    	selectedToc = -1;
 			foundTopicPath = null;
 	    }	
+	}
+	
+	public ITopic[] getTopicPathFromNav(String nav) {
+		StringTokenizer tok = new StringTokenizer(nav, "_"); //$NON-NLS-1$
+		try {
+			int segments = tok.countTokens();
+			ITopic[] path = new ITopic[segments - 1];
+			// first number is toc index
+			int index = Integer.parseInt(tok.nextToken());
+			IToc toc = tocs[index];
+			ITopic current = toc.getTopic(null);
+			for (int i = 0; tok.hasMoreTokens(); i++) {
+				index = Integer.parseInt(tok.nextToken());
+				appendFilteredIndex(index, current.getSubtopics());
+				current = current.getSubtopics()[index];
+				path[i] = current;
+			}
+			return path;
+		} catch (Exception e) {
+			numericPath = null;
+			return null;
+		}
 	}
 
     public ITopic[] getTopicPath() {
@@ -85,7 +113,7 @@ public class TopicFinder {
 				// returns path in reverse order
 				List reversePath = getTopicPathInTopic(topicToFind, topics[i]);
 				if (reversePath != null) {
-					appendFilteredIndex(i, topics);
+					prependFilteredIndex(i, topics);
 					return invertPath(reversePath);
 				}
 			}
@@ -131,7 +159,7 @@ public class TopicFinder {
 					// it was in a subtopic.. add to the path and return
 					path.add(topic);
 					// Add to the numeric path counting only enabled topics
-					appendFilteredIndex(i, subtopics);
+					prependFilteredIndex(i, subtopics);
 					return path;
 				}
 			}
@@ -143,6 +171,24 @@ public class TopicFinder {
 	// of filtered topics. Note that we need to convert the index in the unfiltered
 	// list to an index in a filtered list of topics
 	private void appendFilteredIndex(int indexInUnfilteredList, ITopic[] unfiltered) {
+		int indexInFilteredList = 0;
+		for (int i = 0; i < indexInUnfilteredList; i++) {
+			if (ScopeUtils.showInTree(unfiltered[i], scope)) {
+				indexInFilteredList++;
+			}
+		}
+		
+		if (numericPath == null) {
+			numericPath = "" + indexInFilteredList; //$NON-NLS-1$
+		} else {
+			numericPath = numericPath  + '_' + indexInFilteredList;
+		}						
+	}
+	
+	// Prepend an entry to the numeric path representing the position in the list 
+	// of filtered topics. Note that we need to convert the index in the unfiltered
+	// list to an index in a filtered list of topics
+	private void prependFilteredIndex(int indexInUnfilteredList, ITopic[] unfiltered) {
 		int indexInFilteredList = 0;
 		for (int i = 0; i < indexInUnfilteredList; i++) {
 			if (ScopeUtils.showInTree(unfiltered[i], scope)) {

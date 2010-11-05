@@ -12,6 +12,9 @@
 
 <toc label="extraContent2" topic="data/help/toc/extraContent/simple_page.html" link_to="data/help/toc/root.xml#content">
  	<topic label="extraContent2">
+ 	   <topic label="Getting started" unknownAttribute2="value2">
+ 	       <topic label="Tips and tricks" href="data/help/toc/extraContent/simple_page.html"/>
+	   </topic>
 	   <topic label="Tests FOR product: Unit Tests, WAS; version: 9.0,8.0 ; platform: z/OS;AIX" href="data/help/toc/extraContent/simple_page.html">
 	   	  <criteria name="prodname" value="Happy Tests" />
 	   	  <criteria name="prodname" value="WAS" />
