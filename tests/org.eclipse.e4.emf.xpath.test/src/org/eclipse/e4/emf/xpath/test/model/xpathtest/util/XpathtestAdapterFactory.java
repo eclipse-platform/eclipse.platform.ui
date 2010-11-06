@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: XpathtestAdapterFactory.java,v 1.1 2010/11/06 13:43:11 tschindl Exp $
  */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest.util;
 
@@ -80,6 +80,10 @@ public class XpathtestAdapterFactory extends AdapterFactoryImpl {
 				return createNodeAdapter();
 			}
 			@Override
+			public Adapter caseExtendedNode(ExtendedNode object) {
+				return createExtendedNodeAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -124,6 +128,20 @@ public class XpathtestAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createNodeAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode <em>Extended Node</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode
+	 * @generated
+	 */
+	public Adapter createExtendedNodeAdapter() {
 		return null;
 	}
 

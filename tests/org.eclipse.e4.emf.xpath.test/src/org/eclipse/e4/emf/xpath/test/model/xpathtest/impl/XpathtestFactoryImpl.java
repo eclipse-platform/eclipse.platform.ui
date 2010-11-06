@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: XpathtestFactoryImpl.java,v 1.1 2010/11/06 13:43:10 tschindl Exp $
  */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest.impl;
 
@@ -62,6 +62,7 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 		switch (eClass.getClassifierID()) {
 			case XpathtestPackage.ROOT: return createRoot();
 			case XpathtestPackage.NODE: return createNode();
+			case XpathtestPackage.EXTENDED_NODE: return createExtendedNode();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -85,6 +86,16 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	public Node createNode() {
 		NodeImpl node = new NodeImpl();
 		return node;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ExtendedNode createExtendedNode() {
+		ExtendedNodeImpl extendedNode = new ExtendedNodeImpl();
+		return extendedNode;
 	}
 
 	/**

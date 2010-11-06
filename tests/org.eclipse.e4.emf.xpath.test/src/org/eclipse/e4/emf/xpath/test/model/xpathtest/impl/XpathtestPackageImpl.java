@@ -2,10 +2,11 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: XpathtestPackageImpl.java,v 1.1 2010/11/06 13:43:10 tschindl Exp $
  */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest.impl;
 
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.Root;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestFactory;
@@ -38,6 +39,13 @@ public class XpathtestPackageImpl extends EPackageImpl implements XpathtestPacka
 	 * @generated
 	 */
 	private EClass nodeEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass extendedNodeEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -213,6 +221,24 @@ public class XpathtestPackageImpl extends EPackageImpl implements XpathtestPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getExtendedNode() {
+		return extendedNodeEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getExtendedNode_Name() {
+		return (EAttribute)extendedNodeEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public XpathtestFactory getXpathtestFactory() {
 		return (XpathtestFactory)getEFactoryInstance();
 	}
@@ -249,6 +275,9 @@ public class XpathtestPackageImpl extends EPackageImpl implements XpathtestPacka
 		createEAttribute(nodeEClass, NODE__ID);
 		createEReference(nodeEClass, NODE__INREFS);
 		createEReference(nodeEClass, NODE__OUTREFS);
+
+		extendedNodeEClass = createEClass(EXTENDED_NODE);
+		createEAttribute(extendedNodeEClass, EXTENDED_NODE__NAME);
 	}
 
 	/**
@@ -279,6 +308,7 @@ public class XpathtestPackageImpl extends EPackageImpl implements XpathtestPacka
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		extendedNodeEClass.getESuperTypes().add(this.getNode());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(rootEClass, Root.class, "Root", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -294,6 +324,9 @@ public class XpathtestPackageImpl extends EPackageImpl implements XpathtestPacka
 		initEAttribute(getNode_Id(), ecorePackage.getEString(), "id", null, 0, 1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getNode_Inrefs(), this.getNode(), this.getNode_Outrefs(), "inrefs", null, 0, -1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getNode_Outrefs(), this.getNode(), this.getNode_Inrefs(), "outrefs", null, 0, -1, Node.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(extendedNodeEClass, ExtendedNode.class, "ExtendedNode", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getExtendedNode_Name(), ecorePackage.getEString(), "name", null, 0, 1, ExtendedNode.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

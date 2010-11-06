@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: XpathtestFactory.java,v 1.1 2010/11/06 13:43:10 tschindl Exp $
  */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest;
 
@@ -42,6 +42,15 @@ public interface XpathtestFactory extends EFactory {
 	 * @generated
 	 */
 	Node createNode();
+
+	/**
+	 * Returns a new object of class '<em>Extended Node</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Extended Node</em>'.
+	 * @generated
+	 */
+	ExtendedNode createExtendedNode();
 
 	/**
 	 * Returns the package supported by this factory.

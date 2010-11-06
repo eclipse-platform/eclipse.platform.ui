@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: XpathtestSwitch.java,v 1.1 2010/11/06 13:43:11 tschindl Exp $
  */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest.util;
 
@@ -99,6 +99,13 @@ public class XpathtestSwitch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case XpathtestPackage.EXTENDED_NODE: {
+				ExtendedNode extendedNode = (ExtendedNode)theEObject;
+				T result = caseExtendedNode(extendedNode);
+				if (result == null) result = caseNode(extendedNode);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -130,6 +137,21 @@ public class XpathtestSwitch<T> {
 	 * @generated
 	 */
 	public T caseNode(Node object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Extended Node</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Extended Node</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseExtendedNode(ExtendedNode object) {
 		return null;
 	}
 

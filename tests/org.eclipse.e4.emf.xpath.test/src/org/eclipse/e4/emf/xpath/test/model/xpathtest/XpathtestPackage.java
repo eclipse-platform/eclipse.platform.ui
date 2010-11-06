@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id$
+ * $Id: XpathtestPackage.java,v 1.1 2010/11/06 13:43:10 tschindl Exp $
  */
 package org.eclipse.e4.emf.xpath.test.model.xpathtest;
 
@@ -189,6 +189,107 @@ public interface XpathtestPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.ExtendedNodeImpl <em>Extended Node</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.ExtendedNodeImpl
+	 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.XpathtestPackageImpl#getExtendedNode()
+	 * @generated
+	 */
+	int EXTENDED_NODE = 2;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE__PARENT = NODE__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE__CHILDREN = NODE__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Root</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE__ROOT = NODE__ROOT;
+
+	/**
+	 * The feature id for the '<em><b>Cat</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE__CAT = NODE__CAT;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE__VALUE = NODE__VALUE;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE__ID = NODE__ID;
+
+	/**
+	 * The feature id for the '<em><b>Inrefs</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE__INREFS = NODE__INREFS;
+
+	/**
+	 * The feature id for the '<em><b>Outrefs</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE__OUTREFS = NODE__OUTREFS;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE__NAME = NODE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Extended Node</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTENDED_NODE_FEATURE_COUNT = NODE_FEATURE_COUNT + 1;
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.Root <em>Root</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -319,6 +420,27 @@ public interface XpathtestPackage extends EPackage {
 	EReference getNode_Outrefs();
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode <em>Extended Node</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Extended Node</em>'.
+	 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode
+	 * @generated
+	 */
+	EClass getExtendedNode();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.ExtendedNode#getName()
+	 * @see #getExtendedNode()
+	 * @generated
+	 */
+	EAttribute getExtendedNode_Name();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -439,6 +561,24 @@ public interface XpathtestPackage extends EPackage {
 		 * @generated
 		 */
 		EReference NODE__OUTREFS = eINSTANCE.getNode_Outrefs();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.ExtendedNodeImpl <em>Extended Node</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.ExtendedNodeImpl
+		 * @see org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.XpathtestPackageImpl#getExtendedNode()
+		 * @generated
+		 */
+		EClass EXTENDED_NODE = eINSTANCE.getExtendedNode();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EXTENDED_NODE__NAME = eINSTANCE.getExtendedNode_Name();
 
 	}
 
