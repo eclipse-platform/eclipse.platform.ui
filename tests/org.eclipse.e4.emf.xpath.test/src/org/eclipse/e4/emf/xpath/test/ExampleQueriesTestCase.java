@@ -16,11 +16,9 @@ import org.apache.commons.jxpath.JXPathNotFoundException;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
-import org.eclipse.e4.ui.model.application.impl.ApplicationImpl;
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.TrimmedWindowImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuImpl;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.NodeImpl;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.RootImpl;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -39,47 +37,38 @@ public class ExampleQueriesTestCase extends TestCase {
 
 		// Register the package to ensure it is available during loading.
 		//
-		resourceSet.getPackageRegistry().put(ApplicationPackageImpl.eNS_URI,
-				ApplicationPackageImpl.eINSTANCE);
-		URI uri = URI.createPlatformPluginURI("/org.eclipse.e4.emf.xpath.test/Application.e4xmi", true);
+		resourceSet.getPackageRegistry().put(XpathtestPackage.eNS_URI,
+				XpathtestPackage.eINSTANCE);
+		URI uri = URI.createPlatformPluginURI(
+				"/org.eclipse.e4.emf.xpath.test/model/Test.xmi", true);
 		Resource resource = resourceSet.getResource(uri, true);
-				
+
 		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
 		XPathContext context = f.newContext(resource.getContents().get(0));
-		
+
 		Object application = context.getValue("/");
 		assertNotNull(application);
-		assertSame(ApplicationImpl.class, application.getClass());
-		
+		assertSame(RootImpl.class, application.getClass());
+
 		application = context.getValue(".");
 		assertNotNull(application);
-		assertSame(ApplicationImpl.class, application.getClass());
-		
+		assertSame(RootImpl.class, application.getClass());
+
 		try {
-			application = context.getValue(".[@elementId='nixda']");
+			application = context.getValue(".[@id='nixda']");
 			fail("This query should fail with JXPathNotFoundException");
-		} catch ( JXPathNotFoundException path) {
+		} catch (JXPathNotFoundException path) {
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-		
-		application = context.getValue(".[@elementId='TestVersion']");
+
+		application = context.getValue(".[@id='root']");
 		assertNotNull(application);
-		assertSame(ApplicationImpl.class, application.getClass());
+		assertSame(RootImpl.class, application.getClass());
 		
-		Object window = context.getValue("children[1]");
-		assertNotNull(window);
-		assertSame(TrimmedWindowImpl.class, window.getClass());
+		assertEquals("element1",context.getValue("nodes[1]/@id"));
 		
-		Object menu = context.getValue("children[1]/mainMenu[1]");
-		assertNotNull(menu);
-		assertSame(MenuImpl.class, menu.getClass());
-		
-		Object detailsView = context.getValue("//.[@elementId='DetailsView']");
-		assertNotNull(detailsView);
-		assertSame(PartImpl.class, detailsView.getClass());
-		
-		
+		assertEquals(NodeImpl.class, context.getValue("//.[@id='element2.2']").getClass());
 	}
 }
