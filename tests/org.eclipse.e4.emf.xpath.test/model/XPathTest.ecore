@@ -22,4 +22,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="outrefs" upperBound="-1"
         eType="#//Node" eOpposite="#//Node/inrefs"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExtendedNode" eSuperTypes="#//Node">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
 </ecore:EPackage>

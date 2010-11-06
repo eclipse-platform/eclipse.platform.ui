@@ -16,7 +16,9 @@ import org.apache.commons.jxpath.JXPathNotFoundException;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
 import org.eclipse.e4.emf.xpath.XPathContext;
 import org.eclipse.e4.emf.xpath.XPathContextFactory;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.Node;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.XpathtestPackage;
+import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.ExtendedNodeImpl;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.NodeImpl;
 import org.eclipse.e4.emf.xpath.test.model.xpathtest.impl.RootImpl;
 import org.eclipse.emf.common.util.URI;
@@ -70,5 +72,7 @@ public class ExampleQueriesTestCase extends TestCase {
 		assertEquals("element1",context.getValue("nodes[1]/@id"));
 		
 		assertEquals(NodeImpl.class, context.getValue("//.[@id='element2.2']").getClass());
+		assertEquals(ExtendedNodeImpl.class,context.getValue("//.[ecore:eClassName(.)='ExtendedNode']").getClass());
+		
 	}
 }

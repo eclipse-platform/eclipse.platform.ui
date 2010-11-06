@@ -9,5 +9,6 @@
       <children root="/" cat="cat2.1.1" value="val2.1.1" id="element2.1.1" outrefs="//@nodes.0/@children.0"/>
     </children>
     <children root="/" cat="cat2.2" value="val2.2" id="element2.2"/>
+    <children xsi:type="xpathtest:ExtendedNode" root="/" cat="cat2.3" value="val2.3" id="element2.3" name="myname"/>
   </nodes>
 </xpathtest:Root>
