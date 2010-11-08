@@ -14,7 +14,6 @@ package org.eclipse.ui.keys;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Event;
@@ -23,7 +22,7 @@ import org.eclipse.ui.internal.keys.NativeKeyFormatter;
 /**
  * A utility class for converting SWT events into key strokes.
  * 
- * @deprecated Please use org.eclipse.jface.bindings.keys.SWTKeySupport
+ * @deprecated Please use {@link org.eclipse.jface.bindings.keys.SWTKeySupport}
  * @since 3.0
  */
 public final class SWTKeySupport {
@@ -38,7 +37,7 @@ public final class SWTKeySupport {
      */
     public static KeyStroke convertAcceleratorToKeyStroke(int accelerator) {
         final SortedSet modifierKeys = new TreeSet();
-        NaturalKey naturalKey = null;
+		NaturalKey naturalKey;
 
         if ((accelerator & SWT.ALT) != 0) {
 			modifierKeys.add(ModifierKey.ALT);
