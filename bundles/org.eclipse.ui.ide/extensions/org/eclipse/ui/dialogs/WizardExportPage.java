@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
@@ -627,7 +628,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 
         ListSelectionDialog dialog = new ListSelectionDialog(getContainer()
                 .getShell(), editorMappings,
-                FileEditorMappingContentProvider.INSTANCE,
+                ArrayContentProvider.getInstance(),
                 FileEditorMappingLabelProvider.INSTANCE, IDEWorkbenchMessages.WizardExportPage_selectionDialogMessage){
         	protected int getShellStyle() {
         		return super.getShellStyle() | SWT.SHEET;
