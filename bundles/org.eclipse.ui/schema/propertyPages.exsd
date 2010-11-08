@@ -159,7 +159,7 @@ This flag is used if objectClass adapts to IResource.  Default value is false.
                <documentation>
                   This is an optional attribute. If it is not specified, the property page is assumed to only support single selection (a selection that contains a single object only).
 &lt;p&gt;
-Set this attribute to &quot;multi&quot; to indicate that the property page supports multiple selected objects. Property pages supporting this mode must implement the interface &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPageMulti&lt;/tt&gt;.
+Set this attribute to &quot;multi&quot; to indicate that the property page supports multiple selected objects. Property pages supporting this mode must implement the interface &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPageMulti&lt;/tt&gt;. For multi-select pages &quot;enabledWhen&quot; condition will be provided with a Container filled with selected items (even if the selection contains only one item). On such pages &quot;enabledWhen&quot; expression should  use &quot;iterate&quot; to access the selection&apos;s elements.
 &lt;/p&gt;&lt;p&gt;
 Set this attribute to &quot;single&quot; to indicate that the property page supports only single selection.
 &lt;/p&gt;&lt;p&gt;

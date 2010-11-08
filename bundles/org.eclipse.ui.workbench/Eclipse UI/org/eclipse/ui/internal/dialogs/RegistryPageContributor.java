@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -161,7 +162,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 								IStatus.ERROR,
 								"Property page must implement IWorkbenchPropertyPageMulti: " + getPageName(), //$NON-NLS-1$
 								null));
-		} else if (ppage instanceof IWorkbenchPropertyPage)
+		} else
 			((IWorkbenchPropertyPage) ppage).setElement(adapt[0]);
 
 		return ppage;
@@ -294,22 +295,22 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	}
 
 	/**
-	 * Return whether or not object fails the enablement criterea.
+	 * Return whether or not object fails the enabledWhen enablement criterea.
+	 * For multi-select pages, evaluate the enabledWhen expression using the
+	 * structured selection as a Collection (which should be iterated over).
 	 * @return boolean <code>true</code> if it fails the enablement test
 	 */
 	private boolean failsEnablement(Object[] objs) {
 		if (enablementExpression == null)
 			return false;
 		try {
-			for (int i = 0; i < objs.length; i++) {
-				Object selectedObject = objs[i];
-				EvaluationContext context = new EvaluationContext(null, selectedObject);
-				context.setAllowPluginActivation(true);
-				if (enablementExpression.evaluate(context).equals(EvaluationResult.FALSE)) {
-					return true;
-				}
-			}
-			return false;
+			// If multi-select property page, always pass a collection for iteration
+			Object object = (supportsMultiSelect) ? Arrays.asList(objs) : objs[0];
+			EvaluationContext context = new EvaluationContext(null, object);
+			context.setAllowPluginActivation(true);
+			return enablementExpression.evaluate(
+					context).equals(
+					EvaluationResult.FALSE);
 		} catch (CoreException e) {
 			WorkbenchPlugin.log(e);
 			return false;
