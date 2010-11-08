@@ -412,13 +412,17 @@ public class QuickAccessDialog extends PopupDialog {
 			setInfoText(QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
 		} else {
 			TriggerSequence[] sequences = getInvokingCommandKeySequences();
-			if (showAllMatches || sequences == null || sequences.length == 0) {
-				setInfoText(""); //$NON-NLS-1$
+			if (sequences != null && sequences.length != 0) {
+				if (showAllMatches) {
+					setInfoText(NLS.bind(
+							QuickAccessMessages.QuickAccess_PressKeyToShowInitialMatches,
+							sequences[0].format()));
+				} else {
+					setInfoText(NLS.bind(QuickAccessMessages.QuickAccess_PressKeyToShowAllMatches,
+							sequences[0].format()));
+				}
 			} else {
-				setInfoText(NLS
-						.bind(
-								QuickAccessMessages.QuickAccess_PressKeyToShowAllMatches,
-								sequences[0].format()));
+				setInfoText(""); //$NON-NLS-1$
 			}
 		}
 	}
