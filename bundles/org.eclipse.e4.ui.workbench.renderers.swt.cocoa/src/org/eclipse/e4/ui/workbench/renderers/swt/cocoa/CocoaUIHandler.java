@@ -651,6 +651,9 @@ public class CocoaUIHandler {
 	 * @return the action or <code>null</code>
 	 */
 	private MMenuItem findAction(String actionId, MMenu menu) {
+		if (menu == null) {
+			return null;
+		}
 		for (MMenuElement item : menu.getChildren()) {
 			if (item instanceof MMenuItem) {
 				MMenuItem mmi = (MMenuItem) item;
