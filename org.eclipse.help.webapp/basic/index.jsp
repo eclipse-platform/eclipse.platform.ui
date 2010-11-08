@@ -29,8 +29,8 @@
 <%
 	}
 %>
-	<frame name="TabsFrame" title="<%=ServletResources.getString("helpToolbarFrame", request)%>" src='<%="basic/tabs.jsp"+data.getQuery()%>' marginwidth="5" marginheight="5" scrolling="no">
-	<frame name="HelpFrame" title="<%=ServletResources.getString("ignore", "HelpFrame", request)%>" src='<%="basic/help.jsp"+data.getQuery()%>' frameborder="no" marginwidth="0" marginheight="0" scrolling="no">
+	<frame name="TabsFrame" title="<%=ServletResources.getString("helpToolbarFrame", request)%>" src='<%="basic/tabs.jsp"+UrlUtil.htmlEncode(data.getQuery())%>' marginwidth="5" marginheight="5" scrolling="no">
+	<frame name="HelpFrame" title="<%=ServletResources.getString("ignore", "HelpFrame", request)%>" src='<%="basic/help.jsp"+UrlUtil.htmlEncode(data.getQuery())%>' frameborder="no" marginwidth="0" marginheight="0" scrolling="no">
 <%
 	if(!("0".equals(data.getFooterHeight()))){
 %>

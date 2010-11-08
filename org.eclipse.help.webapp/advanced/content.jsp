@@ -45,7 +45,7 @@ FRAMESET {
 
 </head>
     <frameset id="contentFrameset" rows="<%=frameData.getContentAreaFrameSizes()%>" frameborder=0" framespacing="0" border="0" spacing="0">
-	<frame name="ContentToolbarFrame" title="<%=ServletResources.getString("topicViewToolbar", request)%>" src='<%="contentToolbar.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" >
+	<frame name="ContentToolbarFrame" title="<%=ServletResources.getString("topicViewToolbar", request)%>" src='<%="contentToolbar.jsp"+UrlUtil.htmlEncode(data.getQuery())%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" >
 	<frame ACCESSKEY="K" name="ContentViewFrame" title="<%=ServletResources.getString("topicView", request)%>" src='<%=UrlUtil.htmlEncode(data.getContentURL())%>'  marginwidth="10"<%=(data.isIE() && "6.0".compareTo(data.getIEVersion()) <=0)?"scrolling=\"yes\"":""%> marginheight="0" frameborder="0" >
 	<%
 	    AbstractFrame[] frames = frameData.getFrames(AbstractFrame.BELOW_CONTENT);
