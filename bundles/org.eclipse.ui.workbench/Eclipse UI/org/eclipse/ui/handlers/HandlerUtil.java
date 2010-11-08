@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.commands.State;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
@@ -283,6 +284,43 @@ public class HandlerUtil {
 					String.class, o.getClass());
 		}
 		return (String) o;
+	}
+
+	/**
+	 * Return the input of the active editor.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the input of the active editor, or <code>null</code>.
+	 * @since 3.7
+	 */
+	public static IEditorInput getActiveEditorInput(ExecutionEvent event) {
+		Object o = getVariable(event, ISources.ACTIVE_EDITOR_INPUT_NAME);
+		if (o instanceof IEditorInput) {
+			return (IEditorInput) o;
+		}
+		return null;
+	}
+
+	/**
+	 * Return the input of the active editor.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the input of the active editor. Will not return <code>null</code>
+	 *         .
+	 * @throws ExecutionException
+	 *             If the active editor input variable is not found.
+	 * @since 3.7
+	 */
+	public static IEditorInput getActiveEditorInputChecked(ExecutionEvent event)
+			throws ExecutionException {
+		Object o = getVariableChecked(event, ISources.ACTIVE_EDITOR_INPUT_NAME);
+		if (!(o instanceof IEditorInput)) {
+			incorrectTypeFound(event, ISources.ACTIVE_EDITOR_INPUT_NAME, IEditorInput.class,
+					o.getClass());
+		}
+		return (IEditorInput) o;
 	}
 
 	/**
