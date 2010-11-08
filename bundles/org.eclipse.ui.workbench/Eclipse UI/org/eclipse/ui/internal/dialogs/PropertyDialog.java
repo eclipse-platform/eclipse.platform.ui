@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - Bug 294628 multiple selection
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.Iterator;
-
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
@@ -91,18 +92,35 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	}
 
 	/**
-	 * Returns the name of the given element.
+	 * Returns the name of the given element(s). Prints at most 3 names.
 	 * 
 	 * @param element
-	 *            the element
+	 *            the element / IStructuredSelection
 	 * @return the name of the element
 	 */
 	private static String getName(Object element) {
-		IWorkbenchAdapter adapter = (IWorkbenchAdapter)Util.getAdapter(element, IWorkbenchAdapter.class);
-		if (adapter != null) {
-			return adapter.getLabel(element);
+		Object[] elements;
+		if (element instanceof IStructuredSelection)
+			elements = ((IStructuredSelection) element).toArray();
+		else
+			elements = new Object[] { element };
+		StringBuffer sb = new StringBuffer();
+		// Print at most 3 entries...
+		for (int i = 0; i < elements.length; i++) {
+			element = elements[i];
+			if (i > 2) {
+				sb.append(" ..."); //$NON-NLS-1$
+				break;
+			}
+			IWorkbenchAdapter adapter = (IWorkbenchAdapter) Util.getAdapter(element,
+					IWorkbenchAdapter.class);
+			if (adapter != null) {
+				if (sb.length() > 0)
+					sb.append(", "); //$NON-NLS-1$
+				sb.append(adapter.getLabel(element));
+			}
 		}
-		return "";//$NON-NLS-1$
+		return sb.toString();
 	}
 
 	/**

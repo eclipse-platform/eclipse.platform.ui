@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,15 @@ package org.eclipse.ui.dialogs;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
+import org.eclipse.ui.IWorkbenchPropertyPageMulti;
 
 /**
  * Abstract base implementation of a workbench property page (
  * <code>IWorkbenchPropertyPage</code>). The implementation is a JFace
  * preference page with an adaptable element.
+ * <p>
+ * Property pages that support multiple selected objects should
+ * implement {@link IWorkbenchPropertyPageMulti} instead.
  * <p>
  * Subclasses must implement the <code>createContents</code> framework method to
  * supply the property page's main control.
@@ -38,9 +42,9 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
  * </p>
  * 
  * @see IWorkbenchPropertyPage
+ * @see IWorkbenchPropertyPageMulti
  */
-public abstract class PropertyPage extends PreferencePage implements
-        IWorkbenchPropertyPage {
+public abstract class PropertyPage extends PreferencePage implements IWorkbenchPropertyPage {
     /**
      * The element.
      */

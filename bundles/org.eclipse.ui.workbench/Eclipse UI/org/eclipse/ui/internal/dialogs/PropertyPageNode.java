@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,9 +12,9 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
@@ -28,7 +28,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
     private RegistryPageContributor contributor;
 
-    private IWorkbenchPropertyPage page;
+	private IPreferencePage page;
 
     private Image icon;
 

@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="propertyPages" name="Property Pages"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point is used to add additional property page for objects of a given type.  Once defined, these property pages will appear in the Properties Dialog for objects of that type. 
 &lt;p&gt;
@@ -24,6 +24,11 @@ If these filtering mechanisms are inadequate a property page may use the filter 
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="page" minOccurs="0" maxOccurs="unbounded"/>
@@ -47,9 +52,9 @@ If these filtering mechanisms are inadequate a property page may use the filter 
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -79,9 +84,9 @@ If these filtering mechanisms are inadequate a property page may use the filter 
                <documentation>
                   a translatable name that will be used in the UI for this page
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -89,9 +94,9 @@ If these filtering mechanisms are inadequate a property page may use the filter 
                <documentation>
                   a relative path to an icon that will be used in the UI in addition to the page name
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="objectClass" type="string">
@@ -101,9 +106,9 @@ If these filtering mechanisms are inadequate a property page may use the filter 
 
 &lt;p&gt;Deprecated in Eclipse 3.3. Use the instanceOf or adapt element of the enabledWhen element instead.  If duplicate page definitions were previously used to register the page for multiple objectClass types, these should be combined into one page definition using multiple instanceOf elements combined inside an or element&lt;/p&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" deprecated="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -111,9 +116,9 @@ If these filtering mechanisms are inadequate a property page may use the filter 
                <documentation>
                   a fully qualified name of the class that implements &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/tt&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.dialogs.PropertyPage:org.eclipse.ui.IWorkbenchPropertyPage"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="nameFilter" type="string">
@@ -134,9 +139,9 @@ This flag is used if objectClass adapts to IResource.  Default value is false.
 
 &lt;strong&gt;NOTE:&lt;/strong&gt; The adaptable attribute will attempt adapt an object to &lt;code&gt;org.eclipse.core.resources.IResource&lt;/code&gt; before referencing the types registered in &lt;code&gt;Platform#getAdaptorManager&lt;/code&gt;. The enabledWhen element has no special case tests for &lt;code&gt;org.eclipse.core.resources.IResource&lt;/code&gt; and uses &lt;code&gt;Platform#getAdaptorManager&lt;/code&gt; to look up adaptable types. These can be registered using the &lt;code&gt;org.eclipse.core.runtime.adaptors&lt;/code&gt; extension point.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute deprecated="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -144,10 +149,33 @@ This flag is used if objectClass adapts to IResource.  Default value is false.
                <documentation>
                   A path indicating the location of the page in the properties tree. The path may either be a parent node ID or a sequence of IDs separated by &apos;/&apos;, representing the full path from the root node.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.propertyPages/page/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
+         </attribute>
+         <attribute name="selectionFilter">
+            <annotation>
+               <documentation>
+                  This is an optional attribute. If it is not specified, the property page is assumed to only support single selection (a selection that contains a single object only).
+&lt;p&gt;
+Set this attribute to &quot;multi&quot; to indicate that the property page supports multiple selected objects. Property pages supporting this mode must implement the interface &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPageMulti&lt;/tt&gt;.
+&lt;/p&gt;&lt;p&gt;
+Set this attribute to &quot;single&quot; to indicate that the property page supports only single selection.
+&lt;/p&gt;&lt;p&gt;
+Default: single 
+&lt;/p&gt;
+Since 3.7.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="single">
+                  </enumeration>
+                  <enumeration value="multi">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
@@ -190,9 +218,9 @@ define the target object for a property page.
                <documentation>
                   The id of the keyword being referred to.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.keywords/keyword/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -224,9 +252,9 @@ define the target object for a property page.
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of the property page definition: 
 &lt;p&gt;
@@ -251,22 +279,21 @@ define the target object for a property page.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The attribute &lt;samp&gt;class&lt;/samp&gt; must specify a fully qualified name 
 of the class that implements 
-&lt;samp&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/samp&gt; or &lt;samp&gt;org.eclipse.ui.IWorkbenchPropertyPageMulti&lt;/samp&gt;.
       </documentation>
    </annotation>
 
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Some objects provided by the workbench may have 
 property pages registered. Plug-ins are allowed 
@@ -280,11 +307,11 @@ allowed to register property pages for them.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         Copyright (c) 2002, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2010 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
