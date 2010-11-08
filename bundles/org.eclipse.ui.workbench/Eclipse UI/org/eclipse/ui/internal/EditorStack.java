@@ -344,7 +344,7 @@ public class EditorStack extends PartStack {
 			return;
 		
 		//isMinimized = getState() == IStackPresentationSite.STATE_MINIMIZED;
-		super.setMinimized(newState == IStackPresentationSite.STATE_MINIMIZED);
+		setMinimized(newState == IStackPresentationSite.STATE_MINIMIZED);
 		presentationSite.setPresentationState(newState);
 	}
 	
