@@ -394,4 +394,16 @@
        point="org.eclipse.core.runtime.preferences">
     <initializer class="org.eclipse.search.internal.ui.SearchPreferenceInitializer"/>
  </extension>
+   <extension
+      point="org.eclipse.ui.themes">
+      <colorDefinition
+         label="%match_highlight.label"
+         categoryId="org.eclipse.ui.workbenchMisc"
+         value="206,204,247"
+         id="org.eclipse.search.ui.match.highlight">
+         <description>
+            %match_highlight.description
+         </description>
+      </colorDefinition>
+   </extension>
 </plugin>
