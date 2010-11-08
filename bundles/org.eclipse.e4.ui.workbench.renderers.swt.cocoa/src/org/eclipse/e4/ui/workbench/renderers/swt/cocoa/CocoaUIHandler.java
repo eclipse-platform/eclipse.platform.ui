@@ -20,6 +20,8 @@ import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -36,6 +38,11 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MHandler;
+import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
@@ -45,6 +52,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -62,6 +70,7 @@ import org.eclipse.swt.internal.cocoa.NSString;
 import org.eclipse.swt.internal.cocoa.NSToolbar;
 import org.eclipse.swt.internal.cocoa.NSWindow;
 import org.eclipse.swt.internal.cocoa.OS;
+import org.eclipse.swt.internal.cocoa.id;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -69,23 +78,35 @@ import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.EventHandler;
 
 /**
- * The {@link CocoaUIHandler} provides the standard "About", "Preferences...",
- * and "Quit" menu items and links them to the corresponding workbench commands.
- * This must be done in a MacOS X fragment because SWT doesn't provide an
- * abstraction for the (MacOS X only) application menu and we have to use MacOS
- * specific natives. The fragment is for the
- * org.eclipse.e4.ui.workbench.renderers.swt plug-in because we need access to
- * the Workbench "About", "Preferences...", and "Quit" actions.
+ * The {@link CocoaUIHandler} is a port of the Eclipse 3.x
+ * org.eclipse.ui.cocoa's CocoaUIEnhancer for native e4 apps. This class
+ * redirects the standard MacOS X "About", "Preferences...", and "Quit" menu
+ * items to link them to the corresponding workbench commands, as well as
+ * hooking in Close-Dialog behaviour.
+ * 
+ * This functionality uses Cocoa-specific natives as SWT doesn't provide an
+ * abstraction for the application menu.
  * 
  * @noreference this class is not intended to be referenced by any client.
  * @since 1.0
  */
 public class CocoaUIHandler {
+	protected static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
+	protected static final String HOST_ID = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
+	public static final String CLASS_URI = "platform:/plugin/" //$NON-NLS-1$  
+			+ HOST_ID + "/" + CocoaUIHandler.class.getName(); //$NON-NLS-1$
+
 	// these constants are defined in IWorkbenchCommandConstants
 	// but reproduced here to support pure-e4 apps
-	private static final String MENU_ID_ABOUT = "org.eclipse.ui.help.aboutAction"; //$NON-NLS-1$
-	private static final String MENU_ID_PREFERENCES = "org.eclipse.ui.window.preferences"; //$NON-NLS-1$
-	private static final String MENU_ID_QUIT = "org.eclipse.ui.file.exit"; //$NON-NLS-1$
+	private static final String COMMAND_ID_ABOUT = "org.eclipse.ui.help.aboutAction"; //$NON-NLS-1$
+	private static final String COMMAND_ID_PREFERENCES = "org.eclipse.ui.window.preferences"; //$NON-NLS-1$
+	private static final String COMMAND_ID_QUIT = "org.eclipse.ui.file.exit"; //$NON-NLS-1$
+	// toggle coolbar isn't actually defined anywhere
+	private static final String COMMAND_ID_TOGGLE_COOLBAR = "org.eclipse.ui.ToggleCoolbarAction"; //$NON-NLS-1$
+
+	private static final String COMMAND_ID_CLOSE_DIALOG = "org.eclipse.ui.cocoa.closeDialog"; //$NON-NLS-1$
+	private static final String DIALOG_CONTEXT_ID = "org.eclipse.ui.contexts.dialog"; //$NON-NLS-1$
+	private static final String CLOSE_DIALOG_KEYSEQUENCE = "M1+W"; //$NON-NLS-1$
 
 	private static final int kAboutMenuItem = 0;
 	private static final int kPreferencesMenuItem = 2;
@@ -104,66 +125,17 @@ public class CocoaUIHandler {
 	static final byte[] SWT_OBJECT = { 'S', 'W', 'T', '_', 'O', 'B', 'J', 'E',
 			'C', 'T', '\0' };
 
-	private void init() throws SecurityException, NoSuchMethodException,
-			IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException, NoSuchFieldException {
-		// TODO: These should either move out of Display or be accessible to
-		// this class.
-		byte[] types = { '*', '\0' };
-		int size = C.PTR_SIZEOF, align = C.PTR_SIZEOF == 4 ? 2 : 3;
-
-		Class clazz = CocoaUIHandler.class;
-
-		proc3Args = new Callback(clazz, "actionProc", 3); //$NON-NLS-1$
-		// call getAddress
-		Method getAddress = Callback.class
-				.getMethod("getAddress", new Class[0]); //$NON-NLS-1$
-		Object object = getAddress.invoke(proc3Args, null);
-		long proc3 = convertToLong(object);
-		if (proc3 == 0)
-			SWT.error(SWT.ERROR_NO_MORE_CALLBACKS);
-
-		// call objc_allocateClassPair
-		Field field = OS.class.getField("class_NSObject"); //$NON-NLS-1$
-		Object fieldObj = field.get(OS.class);
-		object = invokeMethod(
-				OS.class,
-				"objc_allocateClassPair", new Object[] { fieldObj, "SWTCocoaEnhancerDelegate", wrapPointer(0) }); //$NON-NLS-1$ //$NON-NLS-2$
-		long cls = convertToLong(object);
-
-		invokeMethod(OS.class, "class_addIvar", new Object[] { //$NON-NLS-1$
-				wrapPointer(cls), SWT_OBJECT, wrapPointer(size),
-						new Byte((byte) align), types });
-
-		// Add the action callback
-		invokeMethod(
-				OS.class,
-				"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_toolbarButtonClicked_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$ //$NON-NLS-2$
-		invokeMethod(OS.class, "class_addMethod", new Object[] { //$NON-NLS-1$
-				wrapPointer(cls),
-						wrapPointer(sel_preferencesMenuItemSelected_),
-						wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
-		invokeMethod(
-				OS.class,
-				"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_aboutMenuItemSelected_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$ //$NON-NLS-2$
-		invokeMethod(
-				OS.class,
-				"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_quitMenuItemSelected_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$ //$NON-NLS-2$
-
-		invokeMethod(OS.class, "objc_registerClassPair", //$NON-NLS-1$
-				new Object[] { wrapPointer(cls) });
-	}
-
 	SWTCocoaEnhancerDelegate delegate;
 	private long delegateJniRef;
 
 	private static final String RESOURCE_BUNDLE = CocoaUIHandler.class
 			.getPackage().getName() + ".Messages"; //$NON-NLS-1$
-	private static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
 
 	private String fAboutActionName;
 	private String fQuitActionName;
 	private String fHideActionName;
+
+	protected MCommand closeDialogCommand;
 
 	@Inject
 	protected MApplication app;
@@ -178,10 +150,12 @@ public class CocoaUIHandler {
 	@Inject
 	protected IEventBroker eventBroker;
 
-	/**
-	 * Default constructor
-	 */
-	public CocoaUIHandler() {
+	private EventHandler shellListener;
+	private EventHandler menuListener;
+	private EventHandler menuContributionListener;
+	private EventHandler commandListener;
+
+	public void constructActionNames() {
 		String productName = null;
 		IProduct product = Platform.getProduct();
 		if (product != null) {
@@ -233,7 +207,7 @@ public class CocoaUIHandler {
 				sel_preferencesMenuItemSelected_ = registerName("preferencesMenuItemSelected:"); //$NON-NLS-1$
 				sel_aboutMenuItemSelected_ = registerName("aboutMenuItemSelected:"); //$NON-NLS-1$
 				sel_quitMenuItemSelected_ = registerName("quitMenuItemSelected:"); //$NON-NLS-1$
-				init();
+				setupDelegateClass();
 			}
 		} catch (Exception e) {
 			// theoretically, one of
@@ -241,6 +215,57 @@ public class CocoaUIHandler {
 			// not expected to happen at all.
 			log(e);
 		}
+	}
+
+	private void setupDelegateClass() throws SecurityException,
+			NoSuchMethodException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchFieldException {
+		// TODO: These should either move out of Display or be accessible to
+		// this class.
+		byte[] types = { '*', '\0' };
+		int size = C.PTR_SIZEOF, align = C.PTR_SIZEOF == 4 ? 2 : 3;
+
+		Class clazz = CocoaUIHandler.class;
+
+		proc3Args = new Callback(clazz, "actionProc", 3); //$NON-NLS-1$
+		// call getAddress
+		Method getAddress = Callback.class
+				.getMethod("getAddress", new Class[0]); //$NON-NLS-1$
+		Object object = getAddress.invoke(proc3Args, null);
+		long proc3 = convertToLong(object);
+		if (proc3 == 0)
+			SWT.error(SWT.ERROR_NO_MORE_CALLBACKS);
+
+		// call objc_allocateClassPair
+		Field field = OS.class.getField("class_NSObject"); //$NON-NLS-1$
+		Object fieldObj = field.get(OS.class);
+		object = invokeMethod(
+				OS.class,
+				"objc_allocateClassPair", new Object[] { fieldObj, "SWTCocoaEnhancerDelegate", wrapPointer(0) }); //$NON-NLS-1$ //$NON-NLS-2$
+		long cls = convertToLong(object);
+
+		invokeMethod(OS.class, "class_addIvar", new Object[] { //$NON-NLS-1$
+				wrapPointer(cls), SWT_OBJECT, wrapPointer(size),
+						new Byte((byte) align), types });
+
+		// Add the action callback
+		invokeMethod(
+				OS.class,
+				"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_toolbarButtonClicked_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$ //$NON-NLS-2$
+		invokeMethod(OS.class, "class_addMethod", new Object[] { //$NON-NLS-1$
+				wrapPointer(cls),
+						wrapPointer(sel_preferencesMenuItemSelected_),
+						wrapPointer(proc3), "@:@" }); //$NON-NLS-1$
+		invokeMethod(
+				OS.class,
+				"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_aboutMenuItemSelected_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$ //$NON-NLS-2$
+		invokeMethod(
+				OS.class,
+				"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_quitMenuItemSelected_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$ //$NON-NLS-2$
+
+		invokeMethod(OS.class, "objc_registerClassPair", //$NON-NLS-1$
+				new Object[] { wrapPointer(cls) });
 	}
 
 	private long registerName(String name) throws IllegalArgumentException,
@@ -252,8 +277,10 @@ public class CocoaUIHandler {
 		return convertToLong(object);
 	}
 
-	@Execute
-	public void execute() {
+	@PostConstruct
+	public void init() {
+		constructActionNames();
+
 		final Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
@@ -283,7 +310,18 @@ public class CocoaUIHandler {
 									wrapPointer(delegateJniRef) });
 
 					hookApplicationMenu();
-					hookWorkbenchListener();
+					hookWorkbenchListeners();
+					processModelMenus();
+
+					// Now add the special Cmd-W dialog helper
+					addCloseDialogCommand();
+					addCloseDialogHandler();
+					addCloseDialogBinding();
+
+					// modify all shells opened on startup
+					for (MWindow window : app.getChildren()) {
+						modifyWindowShell(window);
+					}
 
 					// schedule disposal of callback object
 					display.disposeExec(new Runnable() {
@@ -308,11 +346,6 @@ public class CocoaUIHandler {
 
 						}
 					});
-
-					// modify all shells opened on startup
-					for (MWindow window : app.getChildren()) {
-						modifyWindowShell(window);
-					}
 				} catch (Exception e) {
 					// theoretically, one of
 					// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
@@ -322,6 +355,102 @@ public class CocoaUIHandler {
 			}
 
 		});
+	}
+
+	@PreDestroy
+	public void dispose() {
+		if (shellListener != null) {
+			eventBroker.unsubscribe(shellListener);
+		}
+		if (menuListener != null) {
+			eventBroker.unsubscribe(menuListener);
+		}
+		if (menuContributionListener != null) {
+			eventBroker.unsubscribe(menuContributionListener);
+		}
+		if (commandListener != null) {
+			eventBroker.unsubscribe(commandListener);
+		}
+	}
+
+	/**
+	 * Process defined windows and menu contributions
+	 */
+	protected void processModelMenus() {
+		for (MWindow window : app.getChildren()) {
+			redirectHandledMenuItems(window.getMainMenu());
+		}
+		for (MMenuContribution contribution : app.getMenuContributions()) {
+			processMenuContribution(contribution);
+		}
+	}
+
+	/**
+	 * @param contribution
+	 */
+	private void processMenuContribution(MMenuContribution contribution) {
+		for (MMenuElement elmt : contribution.getChildren()) {
+			if (elmt instanceof MMenu) {
+				redirectHandledMenuItems((MMenu) elmt);
+			} else if (elmt instanceof MMenuItem) {
+				redirectHandledMenuItem((MMenuItem) elmt);
+			}
+		}
+	}
+
+	private void addCloseDialogCommand() {
+		closeDialogCommand = findCommand(COMMAND_ID_CLOSE_DIALOG);
+		if (closeDialogCommand != null) {
+			return;
+		}
+		closeDialogCommand = CommandsFactoryImpl.eINSTANCE.createCommand();
+		closeDialogCommand.setElementId(COMMAND_ID_CLOSE_DIALOG);
+		closeDialogCommand.setCommandName(COMMAND_ID_CLOSE_DIALOG);
+		app.getCommands().add(closeDialogCommand);
+	}
+
+	private void addCloseDialogHandler() {
+		MHandler handler = findHandler(closeDialogCommand);
+		if (handler != null) {
+			return;
+		}
+		handler = CommandsFactoryImpl.eINSTANCE.createHandler();
+		handler.setCommand(closeDialogCommand);
+		handler.setContributionURI("platform:/plugin/" + HOST_ID + "/" //$NON-NLS-1$ //$NON-NLS-2$
+				+ CloseDialogHandler.class.getName());
+		app.getHandlers().add(handler);
+	}
+
+	private void addCloseDialogBinding() {
+		MBindingTable bt = findBindingTable(DIALOG_CONTEXT_ID);
+		for (MKeyBinding kb : bt.getBindings()) {
+			if (kb.getCommand() == closeDialogCommand) {
+				return;
+			}
+		}
+		MKeyBinding kb = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
+		kb.setCommand(closeDialogCommand);
+		kb.setKeySequence(CLOSE_DIALOG_KEYSEQUENCE);
+		bt.getBindings().add(kb);
+	}
+
+	/**
+	 * Find or create a binding table for the provided {@code contextId}
+	 * 
+	 * @param contextId
+	 * @return
+	 */
+	private MBindingTable findBindingTable(String contextId) {
+		for (MBindingTable bt : app.getBindingTables()) {
+			if (bt.getBindingContextId() != null
+					&& bt.getBindingContextId().equals(contextId)) {
+				return bt;
+			}
+		}
+		MBindingTable bt = CommandsFactoryImpl.eINSTANCE.createBindingTable();
+		bt.setBindingContextId(contextId);
+		app.getBindingTables().add(bt);
+		return bt;
 	}
 
 	void log(Exception e) {
@@ -335,13 +464,10 @@ public class CocoaUIHandler {
 	/**
 	 * Hooks a listener that tweaks newly opened workbench window shells with
 	 * the proper OS flags.
-	 * 
-	 * @since 3.2
 	 */
-	protected void hookWorkbenchListener() {
+	protected void hookWorkbenchListeners() {
 		// watch for a window's "widget" attribute being flipped to a shell
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.WIDGET), new EventHandler() {
+		shellListener = new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				if (event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MWindow
 						&& event.getProperty(UIEvents.EventTags.NEW_VALUE) != null) {
@@ -350,13 +476,16 @@ public class CocoaUIHandler {
 					modifyWindowShell(window);
 				}
 			}
-		});
+		};
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.WIDGET), shellListener);
+
 		// this listener is handling the Eclipse 4.0 compatibility case,
 		// where the window is created without a main menu or trim first,
 		// and then later when the main menu is being set it is time
-		// for us to do our work.
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC,
-				UIEvents.Window.MAINMENU), new EventHandler() {
+		// for us to do our work. It also handles dynamically created
+		// windows too.
+		menuListener = new EventHandler() {
 			public void handleEvent(org.osgi.service.event.Event event) {
 				Object newValue = event
 						.getProperty(UIEvents.EventTags.NEW_VALUE);
@@ -368,7 +497,44 @@ public class CocoaUIHandler {
 					modifyWindowShell((MWindow) element);
 				}
 			}
-		});
+		};
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC,
+				UIEvents.Window.MAINMENU), menuListener);
+
+		// watch for new menu contributions
+		menuContributionListener = new EventHandler() {
+			public void handleEvent(org.osgi.service.event.Event event) {
+				if (event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuContribution
+						&& event.getProperty(UIEvents.EventTags.NEW_VALUE) != null) {
+					MMenuContribution contribution = (MMenuContribution) event
+							.getProperty(UIEvents.EventTags.ELEMENT);
+					processMenuContribution(contribution);
+				}
+			}
+		};
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.MenuContributions.TOPIC,
+				UIEvents.MenuContributions.MENUCONTRIBUTIONS),
+				menuContributionListener);
+
+		// watch for command changes
+		commandListener = new EventHandler() {
+			public void handleEvent(org.osgi.service.event.Event event) {
+				if (event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MCommand) {
+					MCommand cmd = (MCommand) event
+							.getProperty(UIEvents.EventTags.ELEMENT);
+					String id = cmd.getElementId();
+					if (COMMAND_ID_ABOUT.equals(id)
+							|| COMMAND_ID_PREFERENCES.equals(id)
+							|| COMMAND_ID_QUIT.equals(id)) {
+						hookApplicationMenu();
+					}
+				}
+			}
+		};
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Application.TOPIC,
+				UIEvents.Application.COMMANDS), commandListener);
+
 	}
 
 	/**
@@ -389,8 +555,7 @@ public class CocoaUIHandler {
 		redirectHandledMenuItems(window.getMainMenu());
 		// only add the button when either the cool bar or perspective bar
 		// is initially visible. This is so that RCP applications can choose to
-		// use
-		// this fragment without fear that their explicitly invisible bars
+		// use this fragment without fear that their explicitly invisible bars
 		// can't be shown.
 		boolean trimInitiallyVisible = false;
 		if (window instanceof MTrimmedWindow
@@ -457,18 +622,18 @@ public class CocoaUIHandler {
 	private void redirectHandledMenuItem(MMenuItem item) {
 		String elmtId = item.getElementId();
 		if (elmtId != null
-				&& (elmtId.equals(MENU_ID_ABOUT)
-						|| elmtId.equals(MENU_ID_PREFERENCES) || elmtId
-						.equals(MENU_ID_QUIT))) {
+				&& (elmtId.equals(COMMAND_ID_ABOUT)
+						|| elmtId.equals(COMMAND_ID_PREFERENCES) || elmtId
+						.equals(COMMAND_ID_QUIT))) {
 			item.setVisible(false);
 		} else if (item instanceof MHandledMenuItem) {
 			MHandledMenuItem mhmi = (MHandledMenuItem) item;
 			elmtId = mhmi.getCommand() == null ? null : mhmi.getCommand()
 					.getElementId();
 			if (elmtId != null
-					&& (elmtId.equals(MENU_ID_ABOUT)
-							|| elmtId.equals(MENU_ID_PREFERENCES) || elmtId
-							.equals(MENU_ID_QUIT))) {
+					&& (elmtId.equals(COMMAND_ID_ABOUT)
+							|| elmtId.equals(COMMAND_ID_PREFERENCES) || elmtId
+							.equals(COMMAND_ID_QUIT))) {
 				item.setVisible(false);
 			}
 		}
@@ -512,22 +677,13 @@ public class CocoaUIHandler {
 					"itemAtIndex", new Object[] { wrapPointer(kPreferencesMenuItem) }); //$NON-NLS-1$
 			prefMenuItem.setEnabled(true);
 
-			// Register as a target on the prefs and quit items.
-			prefMenuItem.setTarget(delegate);
-			invokeMethod(
-					NSMenuItem.class,
-					prefMenuItem,
-					"setAction", new Object[] { wrapPointer(sel_preferencesMenuItemSelected_) }); //$NON-NLS-1$
-			aboutMenuItem.setTarget(delegate);
-			invokeMethod(
-					NSMenuItem.class,
-					aboutMenuItem,
-					"setAction", new Object[] { wrapPointer(sel_aboutMenuItemSelected_) }); //$NON-NLS-1$
-			quitMenuItem.setTarget(delegate);
-			invokeMethod(
-					NSMenuItem.class,
-					quitMenuItem,
-					"setAction", new Object[] { wrapPointer(sel_quitMenuItemSelected_) }); //$NON-NLS-1$
+			// Register as a target on the about, prefs and quit items.
+			setMenuDelegate(COMMAND_ID_ABOUT, aboutMenuItem,
+					sel_aboutMenuItemSelected_);
+			setMenuDelegate(COMMAND_ID_PREFERENCES, prefMenuItem,
+					sel_preferencesMenuItemSelected_);
+			setMenuDelegate(COMMAND_ID_QUIT, quitMenuItem,
+					sel_quitMenuItemSelected_);
 		} catch (Exception e) {
 			// theoretically, one of
 			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
@@ -537,7 +693,81 @@ public class CocoaUIHandler {
 	}
 
 	/**
-	 * Locate an action with the given id in the current menu bar and run it.
+	 * @param commandId
+	 *            the command id to be invoked
+	 * @param menuItem
+	 *            the menu item to be modified
+	 * @param selector
+	 *            the selector
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 * @throws SecurityException
+	 * @throws IllegalArgumentException
+	 */
+	private void setMenuDelegate(String commandId, NSMenuItem menuItem,
+			long selector) throws IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException {
+		if (!isDefined(commandId)) {
+			menuItem.setTarget(new id());
+		} else {
+			menuItem.setTarget(delegate);
+			invokeMethod(NSMenuItem.class, menuItem,
+					"setAction", new Object[] { wrapPointer(selector) }); //$NON-NLS-1$
+		}
+	}
+
+	/**
+	 * Check if there is a corresponding MCommand
+	 * 
+	 * @param commandId
+	 *            the command id
+	 * @return true if found or false otherwise
+	 */
+	private boolean isDefined(String commandId) {
+		// cannot use "commandService.getCommand(commandId).isDefined()" as
+		// it may not yet have processed the MCommand definitions
+		return findCommand(commandId) != null;
+	}
+
+	/**
+	 * Find the command definition
+	 * 
+	 * @param commandId
+	 * @return the command definition or null if not found
+	 */
+	private MCommand findCommand(String commandId) {
+		for (MCommand cmd : app.getCommands()) {
+			if (commandId.equals(cmd.getElementId())) {
+				return cmd;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Find a handler defined for the provided command. This command returns on
+	 * the first command found.
+	 * 
+	 * @param cmd
+	 * @return the first handler found, or <code>null</code> if none
+	 */
+	private MHandler findHandler(MCommand cmd) {
+		if (cmd == null) {
+			return null;
+		}
+		for (MHandler handler : app.getHandlers()) {
+			if (handler.getCommand() == cmd) {
+				return handler;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Locate an action (a menu item, actually) with the given id in the current
+	 * menu bar and run it.
 	 */
 	private void runAction(String actionId) {
 		MWindow window = app.getSelectedElement();
@@ -546,6 +776,8 @@ public class CocoaUIHandler {
 			MMenuItem item = findAction(actionId, topMenu);
 			if (item != null && item.isEnabled()) {
 				try {
+					// disable the about and prefs items -- they shouldn't be
+					// able to be run when another item is being triggered
 					NSMenu mainMenu = NSApplication.sharedApplication()
 							.mainMenu();
 					NSMenuItem mainMenuItem = (NSMenuItem) invokeMethod(
@@ -624,19 +856,22 @@ public class CocoaUIHandler {
 		return modelService.getContainingContext(element);
 	}
 
-	private void runCommand(String commandId) {
-		MWindow window = app.getSelectedElement();
-		if (window == null) {
-			return;
-		}
-
+	/**
+	 * Delegate to the handler for the provided command id.
+	 * 
+	 * @param commandId
+	 * @return true if the command was found, false otherwise
+	 */
+	private boolean runCommand(String commandId) {
 		if (handlerService != null) {
 			ParameterizedCommand cmd = commandService.createCommand(commandId,
 					Collections.emptyMap());
 			if (cmd != null) {
 				handlerService.executeHandler(cmd);
+				return true;
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -697,7 +932,10 @@ public class CocoaUIHandler {
 			Shell shell = (Shell) widget;
 			for (MWindow mwin : app.getChildren()) {
 				if (mwin.getWidget() == shell) {
-					runCommand("org.eclipse.ui.ToggleCoolbarAction"); //$NON-NLS-1$
+					if (!runCommand(COMMAND_ID_TOGGLE_COOLBAR)) {
+						// there may be a menu item to do the toggle...
+						runAction(COMMAND_ID_TOGGLE_COOLBAR);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -709,15 +947,21 @@ public class CocoaUIHandler {
 	}
 
 	void preferencesMenuItemSelected() {
-		runAction(MENU_ID_PREFERENCES);
+		if (!runCommand(COMMAND_ID_PREFERENCES)) {
+			runAction(COMMAND_ID_PREFERENCES);
+		}
 	}
 
 	void aboutMenuItemSelected() {
-		runAction(MENU_ID_ABOUT);
+		if (!runCommand(COMMAND_ID_ABOUT)) {
+			runAction(COMMAND_ID_ABOUT);
+		}
 	}
 
 	void quitMenuItemSelected() {
-		runAction(MENU_ID_QUIT);
+		if (!runCommand(COMMAND_ID_QUIT)) {
+			runAction(COMMAND_ID_QUIT);
+		}
 	}
 
 	static int actionProc(int id, int sel, int arg0) throws Exception {

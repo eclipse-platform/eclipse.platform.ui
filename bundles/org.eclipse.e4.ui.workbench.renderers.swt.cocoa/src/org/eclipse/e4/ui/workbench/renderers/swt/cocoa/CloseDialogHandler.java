@@ -7,16 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brian de Alwis - rewritten for e4
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt.cocoa;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
+import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -25,18 +23,14 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.6
  * 
  */
-public class CloseDialogHandler extends AbstractHandler implements IHandler {
+public class CloseDialogHandler {
 
 	@Execute
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-
-		Shell activeShell = Display.getDefault().getActiveShell();
+	public Object execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell) {
 		// perform only if close is enabled
-		if ((activeShell.getStyle() & SWT.CLOSE) != 0) {
-			activeShell.close();
+		if ((shell.getStyle() & SWT.CLOSE) != 0) {
+			shell.close();
 		}
-
-		activeShell.close();
 		return null;
 	}
 
