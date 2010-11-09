@@ -15,11 +15,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
@@ -55,6 +52,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.internal.EditorManager;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -64,7 +62,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.layout.CellData;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.Row;
-import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 import com.ibm.icu.text.Collator;
 
@@ -472,15 +469,21 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         if (items.length == 0) {
 			return;
 		}
-        ProgressMonitorDialog pmd = new ProgressMonitorJobsDialog(getShell());
-        pmd.open();
-        for (int i = 0; i < items.length; i++) {
-            Adapter editor = (Adapter) items[i].getData();
-            editor.save(pmd.getProgressMonitor());
-            updateItem(items[i], editor);
-        }
-        pmd.close();
-        updateItems();
+
+		// collect all instantiated editors that have been selected
+		List selectedEditors = new ArrayList();
+		for (int i = 0; i < items.length; i++) {
+			Adapter e = (Adapter) items[i].getData();
+			if (e.editorRef != null) {
+				IWorkbenchPart part = e.editorRef.getPart(false);
+				if (part != null) {
+					selectedEditors.add(part);
+				}
+			}
+		}
+
+		EditorManager.saveAll(selectedEditors, false, false, false, window);
+		updateItems();
     }
 
     /**
@@ -702,16 +705,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                     .getPage();
             // already saved when the i
             p.closeEditor(editorRef, false);
-        }
-
-        void save(IProgressMonitor monitor) {
-            if (editorRef == null) {
-				return;
-			}
-            IEditorPart editor = (IEditorPart) editorRef.getPart(true);
-            if (editor != null) {
-				editor.doSave(monitor);
-			}
         }
 
         String[] getText() {
