@@ -421,7 +421,8 @@ public class CommandContributionItem extends ContributionItem {
 	 * state.
 	 * </p>
 	 * 
-	 * @return The parameterized command for this contribution.
+	 * @return The parameterized command for this contribution. May be
+	 *         <code>null</code>.
 	 * 
 	 * @since 3.5
 	 */
