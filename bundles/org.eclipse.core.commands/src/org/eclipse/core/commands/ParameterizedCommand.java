@@ -545,23 +545,17 @@ public final class ParameterizedCommand implements Comparable {
 			if (parameterizations != null) {
 				nameBuffer.append(" ("); //$NON-NLS-1$
 				final int parameterizationCount = parameterizations.length;
-				for (int i = 0; i < parameterizationCount; i++) {
-					final Parameterization parameterization = parameterizations[i];
-					nameBuffer
-							.append(parameterization.getParameter().getName());
-					nameBuffer.append(": "); //$NON-NLS-1$
-					try {
-						nameBuffer.append(parameterization.getValueName());
-					} catch (final ParameterValuesException e) {
-						/*
-						 * Just let it go for now. If someone complains we can
-						 * add more info later.
-						 */
-					}
-
-					// If there is another item, append a separator.
-					if (i + 1 < parameterizationCount) {
-						nameBuffer.append(", "); //$NON-NLS-1$
+				if(parameterizationCount == 1) {
+					appendParameter(nameBuffer, parameterizations[0], false);
+				}else {
+					for (int i = 0; i < parameterizationCount; i++) {
+						
+						appendParameter(nameBuffer, parameterizations[i], true);
+	
+						// If there is another item, append a separator.
+						if (i + 1 < parameterizationCount) {
+							nameBuffer.append(", "); //$NON-NLS-1$
+						}
 					}
 				}
 				nameBuffer.append(')');
@@ -569,6 +563,24 @@ public final class ParameterizedCommand implements Comparable {
 			name = nameBuffer.toString();
 		}
 		return name;
+	}
+
+	private void appendParameter(final StringBuffer nameBuffer,
+			final Parameterization parameterization, boolean shouldAppendName) {
+		
+		if(shouldAppendName) {
+			nameBuffer
+					.append(parameterization.getParameter().getName());
+			nameBuffer.append(": "); //$NON-NLS-1$
+		}
+		try {
+			nameBuffer.append(parameterization.getValueName());
+		} catch (final ParameterValuesException e) {
+			/*
+			 * Just let it go for now. If someone complains we can
+			 * add more info later.
+			 */
+		}
 	}
 
 	/**
