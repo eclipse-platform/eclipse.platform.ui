@@ -57,6 +57,9 @@ function showView(view)
  */
 function displayTocFor(topic, isAutosynch)
 {
+    if (!ViewsFrame || !ViewsFrame.toc) {
+        return;
+    }
 	var tocView = ViewsFrame.toc.tocViewFrame;
 	
 	if (isAutosynch) {
