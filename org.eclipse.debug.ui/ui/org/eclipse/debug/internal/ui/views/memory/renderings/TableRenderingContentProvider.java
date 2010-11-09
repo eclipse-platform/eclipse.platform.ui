@@ -489,7 +489,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			String tmpAddress = address.toUpperCase();
 			if (tmpAddress.length() < addressLength)
 			{
-				for (int j = 0; tmpAddress.length() < addressLength; j++)
+				while  (tmpAddress.length() < addressLength)
 				{
 					tmpAddress = "0" + tmpAddress; //$NON-NLS-1$
 				}
@@ -959,7 +959,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			String tmpAddress = address.toUpperCase();
 			if (tmpAddress.length() < addressLength)
 			{
-				for (int j = 0; tmpAddress.length() < addressLength; j++)
+				while (tmpAddress.length() < addressLength)
 				{
 					tmpAddress = "0" + tmpAddress; //$NON-NLS-1$
 				}
