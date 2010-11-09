@@ -523,7 +523,9 @@ public class KeyController {
 					for (int i = 0; i < bindingElements.length; i++) {
 						final BindingElement be = (BindingElement) bindingElements[i];
 						if (be.getTrigger() == null
-								|| be.getTrigger().isEmpty()) {
+								|| be.getTrigger().isEmpty()
+								|| be.getContext() == null
+								|| be.getContext().getName() == null) {
 							continue;
 						}
 						StringBuffer buffer = new StringBuffer();
