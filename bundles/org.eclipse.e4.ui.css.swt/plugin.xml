@@ -315,6 +315,14 @@
                name="shadow-visible">
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertye4SelectedTabFillHandler">
+         <property-name
+               name="selected-tab-fill">
+         </property-name>
+      </handler>
    </extension>
                
 

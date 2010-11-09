@@ -56,6 +56,7 @@ public class CTabRendering extends CTabFolderRenderer {
 	Color[] inactiveToolbar;
 	int[] inactivePercents;
 	boolean active;
+	Color selectedTabFillColor;
 
 	@Inject
 	public CTabRendering(CTabFolder parent) {
@@ -369,10 +370,10 @@ public class CTabRendering extends CTabFolderRenderer {
 				- (shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE
 						+ OUTER_KEYLINE), bounds.y + bounds.height);// bounds.height
 																	// + 4);
-		Color selectionFillColor = gc.getDevice().getSystemColor(
-				SWT.COLOR_WHITE);
-		gc.setBackground(selectionFillColor);
-		gc.setForeground(selectionFillColor);
+		if (selectedTabFillColor == null)
+			selectedTabFillColor = gc.getDevice().getSystemColor(SWT.COLOR_WHITE);
+		gc.setBackground(selectedTabFillColor);
+		gc.setForeground(selectedTabFillColor);
 		int[] tmpPoints = new int[index];
 		System.arraycopy(points, 0, tmpPoints, 0, index);
 		gc.fillPolygon(tmpPoints);
@@ -783,6 +784,11 @@ public class CTabRendering extends CTabFolderRenderer {
 		// TODO: HACK! Should be set based on pseudo-state.
 		setActive(!(color.getRed() == 255 && color.getGreen() == 255 && color
 				.getBlue() == 255));
+		parent.redraw();
+	}
+
+	public void setSelectedTabFill(Color color) {
+		this.selectedTabFillColor = color;
 		parent.redraw();
 	}
 
