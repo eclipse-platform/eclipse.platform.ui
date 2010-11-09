@@ -14,7 +14,6 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -81,6 +80,9 @@ public class FastViewDnDHandler implements IDragOverListener {
          * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
          */
         public void drop() {
+			if (curItem == null)
+				return;
+
             Perspective persp = wbw.getActiveWorkbenchPage().getActivePerspective();
             FastViewManager fvm = persp.getFastViewManager();
 
