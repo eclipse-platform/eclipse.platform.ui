@@ -57,8 +57,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -1353,6 +1353,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 			// if location is null, project already exists in this location or
 			// some error condition occured.
 			if (locationURI != null) {
+				// validate the location of the project being copied
+				IStatus result = ResourcesPlugin.getWorkspace().validateProjectLocationURI(project,
+						locationURI);
+				if(!result.isOK())					
+					throw new InvocationTargetException(new CoreException(result));
+				
 				importSource = new File(locationURI);
 				IProjectDescription desc = workspace
 						.newProjectDescription(projectName);
