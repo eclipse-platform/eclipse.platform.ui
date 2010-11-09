@@ -535,6 +535,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         //Update enablements when this is selected
         updateWidgetEnablements();
         fileSystemStructureProvider.clearVisitedDirs();
+        selectionGroup.setFocus();
     }
 
     /**
@@ -1166,6 +1167,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         super.setVisible(visible);
         resetSelection();
         if (visible) {
+        	this.selectionGroup.setFocus();
 			this.sourceNameField.setFocus();
 		}
     }
