@@ -2057,15 +2057,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			Resource parent = (Resource) currentResource.getParent();
 			IFileStore store = currentResource.getStore();
 			if (store != null) {
-				IFileInfo fileInfo = store.fetchInfo();
+				FileInfo fileInfo = new FileInfo(store.getName());
+				fileInfo.setDirectory(currentResource.getType() == IResource.FOLDER);
 				if (fileInfo != null) {
-					if (!fileInfo.exists()) {
-						// If the file/folder doesn't exist, it won't have the file/folder flag set,
-						// so we create another one and set that attribute directly.
-						FileInfo info = new FileInfo(fileInfo.getName());
-						info.setDirectory(currentResource.getType() == IResource.FOLDER);
-						fileInfo = info;
-					}
 					IFileInfo[] filtered = parent.filterChildren(new IFileInfo[] {fileInfo}, throwExeception);
 					if (filtered.length == 0)
 						return true;

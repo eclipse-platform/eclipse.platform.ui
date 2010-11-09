@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import junit.framework.Test;
@@ -1819,5 +1820,45 @@ public class FilteredResourceTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.8", e);
 		}
+	}
+
+	/**
+	 * Regression test for bug 328464
+	 */
+	public void test328464() {
+		IFolder folder = existingProject.getFolder(getUniqueString());
+		ensureExistsInWorkspace(folder, true);
+
+		IFile file_a_txt = folder.getFile("a.txt");
+		ensureExistsInWorkspace(file_a_txt, true);
+
+		try {
+			FileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "a\\.txt");
+			existingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES | IResourceFilterDescription.INHERITABLE, matcherDescription, 0, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		assertFalse("2.0", existingProject.getWorkspace().validateFiltered(file_a_txt).isOK());
+
+		// rename a.txt to A.txt in the file system
+		File ioFile = file_a_txt.getLocation().toFile();
+		assertTrue("3.0", ioFile.exists());
+		ioFile.renameTo(new File(file_a_txt.getLocation().removeLastSegments(1).append("A.txt").toString()));
+
+		assertFalse("4.0", existingProject.getWorkspace().validateFiltered(file_a_txt).isOK());
+
+		try {
+			folder.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("5.0", e);
+		}
+
+		assertFalse("6.0", file_a_txt.exists());
+		assertFalse("7.0", existingProject.getWorkspace().validateFiltered(file_a_txt).isOK());
+
+		IFile file_A_txt = folder.getFile("A.txt");
+		assertTrue("9.0", file_A_txt.exists());
+		assertTrue("10.0", existingProject.getWorkspace().validateFiltered(file_A_txt).isOK());
 	}
 }
