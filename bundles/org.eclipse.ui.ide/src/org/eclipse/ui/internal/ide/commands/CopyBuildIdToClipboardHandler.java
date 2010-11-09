@@ -36,7 +36,7 @@ public class CopyBuildIdToClipboardHandler extends AbstractHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		final String buildId = ConfigurationInfo.getBuildId();
-		if (buildId == null)
+		if (buildId == null || buildId.length() == 0)
 			throw new ExecutionException("No build ID in this instance."); //$NON-NLS-1$
 		Clipboard clipboard = null;
 		try {
