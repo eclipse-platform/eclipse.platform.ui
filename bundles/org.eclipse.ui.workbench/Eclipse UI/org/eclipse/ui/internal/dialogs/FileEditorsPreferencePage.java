@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,7 +186,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         data.horizontalSpan = 2;
         label.setLayoutData(data);
 
-        resourceTypeTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER
+        resourceTypeTable = new Table(pageComponent, SWT.MULTI | SWT.BORDER
                 | SWT.FULL_SELECTION);
         resourceTypeTable.addListener(SWT.Selection, this);
         resourceTypeTable.addListener(SWT.DefaultSelection, this);
@@ -234,7 +234,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         data.horizontalSpan = 2;
         editorLabel.setLayoutData(data);
 
-        editorTable = new Table(pageComponent, SWT.SINGLE | SWT.BORDER);
+        editorTable = new Table(pageComponent, SWT.MULTI | SWT.BORDER);
         editorTable.addListener(SWT.Selection, this);
         editorTable.addListener(SWT.DefaultSelection, this);
         data = new GridData(GridData.FILL_BOTH);
@@ -412,8 +412,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
 
     protected FileEditorMapping getSelectedResourceType() {
         TableItem[] items = resourceTypeTable.getSelection();
-        if (items.length > 0) {
-            return (FileEditorMapping) items[0].getData(); //Table is single select
+        if (items.length == 1) {
+            return (FileEditorMapping) items[0].getData();
         }
         return null;        
     }
@@ -566,21 +566,19 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         TableItem[] items = editorTable.getSelection();
         boolean defaultEditor = editorTable.getSelectionIndex() == 0;
         if (items.length > 0) {
-            getSelectedResourceType().removeEditor(
-                    (EditorDescriptor) items[0].getData(DATA_EDITOR));
-            items[0].dispose(); //Table is single selection
+        	for (int i = 0; i < items.length; i++) {
+                getSelectedResourceType().removeEditor(
+                        (EditorDescriptor) items[i].getData(DATA_EDITOR));
+                items[i].dispose();	
+        	}
         }
         if (defaultEditor && editorTable.getItemCount() > 0) {
             TableItem item = editorTable.getItem(0);
-            // explicitly set the new editor first editor to default
+            // explicitly set the first editor as the default
             getSelectedResourceType().setDefaultEditor(
 					(EditorDescriptor) item.getData(DATA_EDITOR));
-            if (item != null) {
-				item
-                        .setText(((EditorDescriptor) (item.getData(DATA_EDITOR)))
-                                .getLabel()
-                                + " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
-			}
+			item.setText(((EditorDescriptor) (item.getData(DATA_EDITOR))).getLabel()
+					+ " " + WorkbenchMessages.FileEditorPreference_defaultLabel); //$NON-NLS-1$
 			if (!isEditorRemovable(item)) {
 				setLockedItemText(item, item.getText());
 			}
@@ -593,8 +591,8 @@ public class FileEditorsPreferencePage extends PreferencePage implements
      */
     public void removeSelectedResourceType() {
         TableItem[] items = resourceTypeTable.getSelection();
-        if (items.length > 0) {
-            items[0].dispose(); //Table is single selection
+        for (int i = 0; i < items.length; i++) {
+        	items[i].dispose();
         }
         //Clear out the editors too
         editorTable.removeAll();
@@ -641,29 +639,35 @@ public class FileEditorsPreferencePage extends PreferencePage implements
      */
     public void updateEnabledState() {
         //Update enabled state
-        boolean resourceTypeSelected = resourceTypeTable.getSelectionIndex() != -1;
-        boolean editorSelected = editorTable.getSelectionIndex() != -1;
+    	int selectedResources = resourceTypeTable.getSelectionCount();
+        int selectedEditors = editorTable.getSelectionCount();
 
-        removeResourceTypeButton.setEnabled(resourceTypeSelected);
-        editorLabel.setEnabled(resourceTypeSelected);
-        addEditorButton.setEnabled(resourceTypeSelected);
-        removeEditorButton.setEnabled(editorSelected && isEditorRemovable());
-        defaultEditorButton.setEnabled(editorSelected);
+        removeResourceTypeButton.setEnabled(selectedResources != 0);
+		editorLabel.setEnabled(selectedResources == 1);
+        addEditorButton.setEnabled(selectedResources == 1);
+		removeEditorButton.setEnabled(areEditorsRemovable());
+        defaultEditorButton.setEnabled(selectedEditors == 1);
     }
     
     /**
-	 * Return whether the selected editor is removable. An editor is removable
-	 * if it is not submitted via a content-type binding.
+	 * Return whether the selected editors are removable. An editor is removable
+	 * if it was not submitted via a content-type binding.
 	 * 
-	 * @return whether the selected editor is removable
+	 * @return whether all the selected editors are removable or not
 	 * @since 3.1
 	 */
-    private boolean isEditorRemovable() {
+	private boolean areEditorsRemovable() {
 		TableItem[] items = editorTable.getSelection();
-		if (items.length > 0) {
-			return isEditorRemovable(items[0]);
+		if (items.length == 0) {
+			return false;
 		}
-		return false;
+
+		for (int i = 0; i < items.length; i++) {
+			if (!isEditorRemovable(items[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
     
     /**
