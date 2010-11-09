@@ -2263,19 +2263,31 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            The new array of bindings; may be <code>null</code>. This
 	 *            set is copied into a local data structure.
 	 */
-	public final void setBindings(final Binding[] bindings) {
+	public final void setBindings(Binding[] bindings) {
+		if (bindings != null) {
+			// discard bindings not applicable for this platform
+			List newList = new ArrayList();
+			for (int i = 0; i < bindings.length; i++) {
+				Binding binding = bindings[i];
+				String p = binding.getPlatform();
+				if (p == null) {
+					newList.add(binding);
+				} else if (p.equals(platform)) {
+					newList.add(binding);
+				}
+			}
+			bindings = (Binding[]) newList.toArray(new Binding[newList.size()]);
+		}
+		//Check for equality after the munge
 		if (Arrays.equals(this.bindings, bindings)) {
 			return; // nothing has changed
 		}
-
 		if ((bindings == null) || (bindings.length == 0)) {
 			this.bindings = null;
 			bindingCount = 0;
 		} else {
-			final int bindingsLength = bindings.length;
-			this.bindings = new Binding[bindingsLength];
-			System.arraycopy(bindings, 0, this.bindings, 0, bindingsLength);
-			bindingCount = bindingsLength;
+			this.bindings = bindings;
+			bindingCount = bindings.length;
 		}
 		clearCache();
 	}
