@@ -48,12 +48,15 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
@@ -435,11 +438,31 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         if (items.length == 0) {
 			return;
 		}
+        
+        // collect all instantiated editors that have been selected
+		List selectedEditors = new ArrayList();
         for (int i = 0; i < items.length; i++) {
             Adapter e = (Adapter) items[i].getData();
-            e.close();
+			if (e.editorRef != null) {
+				IWorkbenchPart part = e.editorRef.getPart(false);
+				if (part != null) {
+					selectedEditors.add(part);
+				}
+			}
+		}
+
+		SaveablesList saveablesList = (SaveablesList) window
+				.getService(ISaveablesLifecycleListener.class);
+		// prompt for save
+		if (saveablesList.preCloseParts(selectedEditors, true, window) != null) {
+			// close all editors
+			for (int i = 0; i < items.length; i++) {
+				Adapter e = (Adapter) items[i].getData();
+				e.close();
+			}
+			// update the list
+			updateItems();
         }
-        updateItems();
     }
 
     /**
@@ -677,7 +700,8 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			}
             WorkbenchPage p = ((WorkbenchPartReference) editorRef).getPane()
                     .getPage();
-            p.closeEditor(editorRef, true);
+            // already saved when the i
+            p.closeEditor(editorRef, false);
         }
 
         void save(IProgressMonitor monitor) {
