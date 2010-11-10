@@ -323,6 +323,14 @@
                name="selected-tab-fill">
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertye4TabOutline">
+         <property-name
+               name="tab-outline">
+         </property-name>
+      </handler>
    </extension>
                
 

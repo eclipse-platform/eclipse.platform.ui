@@ -57,6 +57,7 @@ public class CTabRendering extends CTabFolderRenderer {
 	int[] inactivePercents;
 	boolean active;
 	Color selectedTabFillColor;
+	Color tabOutlineColor;
 
 	@Inject
 	public CTabRendering(CTabFolder parent) {
@@ -378,9 +379,9 @@ public class CTabRendering extends CTabFolderRenderer {
 		System.arraycopy(points, 0, tmpPoints, 0, index);
 		gc.fillPolygon(tmpPoints);
 		gc.drawLine(selectionX1, selectionY1, selectionX2, selectionY2);
-		Color tempBorder = new Color(gc.getDevice(), 182, 188, 204);
-		gc.setForeground(tempBorder);
-		tempBorder.dispose();
+		if (tabOutlineColor == null)
+			tabOutlineColor = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+		gc.setForeground(tabOutlineColor);
 		if (active)
 			gc.drawPolyline(tmpPoints);
 		Rectangle rect = null;
@@ -789,6 +790,11 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	public void setSelectedTabFill(Color color) {
 		this.selectedTabFillColor = color;
+		parent.redraw();
+	}
+
+	public void setTabOutline(Color color) {
+		this.tabOutlineColor = color;
 		parent.redraw();
 	}
 
