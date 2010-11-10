@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.internal.filesystem.local.LocalFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -29,6 +30,11 @@ public class FileCache {
 	 * Thread safety for lazy instantiation of the cache
 	 */
 	private static final Object creationLock = new Object();
+
+	/**
+	 * Cached constant indicating if the current OS is Mac OSX
+	 */
+	static final boolean MACOSX = FileCache.getOS().equals(Constants.OS_MACOSX);
 
 	/**
 	 * The singleton file cache instance.
@@ -103,7 +109,44 @@ public class FileCache {
 	 */
 	private void cleanOldCache(File cacheParent) throws CoreException {
 		//clear any old cache - this could be moved to a background thread
+		if (MACOSX) {
+			// fix for bug 323833: clear the immutable flag before old cache deletion on MacOS
+			clearImmutableFlag(cacheParent);
+		}
 		new LocalFile(cacheParent).delete(EFS.NONE, null);
+	}
+
+	private void clearImmutableFlag(File target) {
+		if (!target.exists()) {
+			return;
+		}
+		if (target.isDirectory()) {
+			File[] children = target.listFiles();
+			if (children != null) {
+				for (int i = 0, imax = children.length; i < imax; i++) {
+					clearImmutableFlag(children[i]);
+				}
+			}
+		} else {
+			LocalFile lfile = new LocalFile(target);
+			try {
+				IFileInfo info = lfile.fetchInfo(EFS.NONE, null);
+				if (info.getAttribute(EFS.ATTRIBUTE_IMMUTABLE)) {
+					info.setAttribute(EFS.ATTRIBUTE_IMMUTABLE, false);
+					lfile.putInfo(info, EFS.SET_ATTRIBUTES, null);
+				}
+			} catch (CoreException e) {
+				// ignore and continue since failed deletions will be reported by LocalFile.delete()
+			}
+		}
+	}
+
+	/**
+	 * Returns the current OS.  This is equivalent to Platform.getOS(), but
+	 * is tolerant of the platform runtime not being present.
+	 */
+	static String getOS() {
+		return System.getProperty("osgi.os", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
