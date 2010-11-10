@@ -22,16 +22,18 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.CloseAllSavedAction;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.IntroAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.internal.OpenPreferencesAction;
 import org.eclipse.ui.internal.SaveAction;
 import org.eclipse.ui.internal.SaveAllAction;
 import org.eclipse.ui.internal.SaveAsAction;
 import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.actions.CommandAction;
+import org.eclipse.ui.internal.intro.IntroDescriptor;
+import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -346,9 +348,19 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new IntroAction(window);
-            action.setId(getId());
-            return action;
+
+			WorkbenchCommandAction action = new WorkbenchCommandAction(getCommandId(), window);
+
+			action.setId(getId());
+			action.setText(IntroMessages.Intro_action_text);
+			window.getWorkbench().getHelpSystem()
+					.setHelp(action, IWorkbenchHelpContextIds.INTRO_ACTION);
+			IntroDescriptor introDescriptor = ((Workbench) window.getWorkbench())
+					.getIntroDescriptor();
+			if (introDescriptor != null)
+				action.setImageDescriptor(introDescriptor.getImageDescriptor());
+
+			return action;
         }
     };
 

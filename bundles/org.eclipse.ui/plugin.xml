@@ -2200,6 +2200,27 @@
             </or>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.IntroHandler"
+            commandId="org.eclipse.ui.help.quickStartAction">
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activeWorkbenchWindow">
+                  <test
+                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
+                  </test>
+               </with>
+               <!-- this is a workaround to evaluate the expression -->
+               <with
+                     variable="activePart">
+                  <instanceof
+                        value="org.eclipse.ui.IWorkbenchPart">
+                  </instanceof>
+               </with>
+            </or>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
