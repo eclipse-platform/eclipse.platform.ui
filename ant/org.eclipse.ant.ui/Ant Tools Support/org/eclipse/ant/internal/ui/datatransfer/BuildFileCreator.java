@@ -157,8 +157,8 @@ public class BuildFileCreator
         Set confirmedFiles = ExportUtil.validateEdit(shell, files);
         SubMonitor localmonitor = SubMonitor.convert(pm, DataTransferMessages.AntBuildfileExportPage_0, confirmedFiles.size());
         try {
-            int i = 0;
-            for (Iterator iter = projects.iterator(); iter.hasNext(); i++)
+			Iterator iter= projects.iterator();
+			while (iter.hasNext())
             {
                 IJavaProject currentProject = (IJavaProject) iter.next();
                 IFile file = currentProject.getProject().getFile(BuildFileCreator.BUILD_XML);

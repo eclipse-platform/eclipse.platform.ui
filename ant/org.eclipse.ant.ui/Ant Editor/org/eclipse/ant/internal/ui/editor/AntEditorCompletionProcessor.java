@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.IntrospectionHelper;
@@ -43,6 +45,11 @@ import org.apache.tools.ant.taskdefs.MacroDef;
 import org.apache.tools.ant.taskdefs.MacroInstance;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Reference;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -65,11 +72,18 @@ import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
+
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -90,8 +104,7 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateProposal;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -99,12 +112,8 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 /**
  * The completion processor for the Ant Editor.
@@ -540,12 +549,12 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 			id= ((AntTaskNode)node).getId();
 		}
 		List proposals= new ArrayList(refIds.size());
-		int i= 0;
 		String refId;
 		ICompletionProposal proposal;
 		int prefixLength= prefix.length();
 		int replacementOffset= cursorPosition - prefixLength;
-		for (Iterator iter = refIds.iterator(); iter.hasNext(); i++) {
+		Iterator iter= refIds.iterator();
+		while (iter.hasNext()) {
 			refId= (String) iter.next();
 			if (!refId.equals(id) && (prefixLength == 0 || refId.toLowerCase().startsWith(prefix))) {
 				proposal= new AntCompletionProposal(refId, replacementOffset, prefixLength, refId.length(), null, refId, null, AntCompletionProposal.TASK_PROPOSAL);
@@ -584,7 +593,6 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         Map targets= getTargets();
         Set targetNames= targets.keySet();
         List proposals= new ArrayList(targets.size() - 2); //current target and implicit target
-        int index= 0;
         Iterator itr= targetNames.iterator();
         while (itr.hasNext()) {
             String targetName = (String) itr.next();
@@ -594,7 +602,6 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
             if (targetName.toLowerCase().startsWith(prefix) && targetName.length() > 0){
                 ICompletionProposal proposal = new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, ((Target)targets.get(targetName)).getDescription(), AntCompletionProposal.TASK_PROPOSAL);
                 proposals.add(proposal);
-                index++;
             }
         }
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);      
