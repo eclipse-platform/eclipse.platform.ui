@@ -400,8 +400,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		if (fPreferenceStore == null || !fPreferenceStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
 			return null;
 
-		IQuickAssistAssistant assistant= new QuickAssistAssistant();
+		QuickAssistAssistant assistant= new QuickAssistAssistant();
 		assistant.setQuickAssistProcessor(new SpellingCorrectionProcessor());
+		assistant.setRestoreCompletionProposalSize(EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
 		assistant.setInformationControlCreator(getQuickAssistAssistantInformationControlCreator());
 
 		return assistant;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.jface.text.quickassist;
 import org.eclipse.swt.graphics.Color;
 
 import org.eclipse.core.commands.IHandler;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -191,6 +193,30 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 		fQuickAssistAssistantImpl.setProposalSelectorForeground(foreground);
 	}
 
+	/**
+	 * Tells this assistant to open the proposal popup with the size
+	 * contained in the given dialog settings and to store the control's last valid size in the
+	 * given dialog settings.
+	 * <p>
+	 * Note: This API is only valid if the information control implements
+	 * {@link org.eclipse.jface.text.IInformationControlExtension3}. Not following this restriction
+	 * will later result in an {@link UnsupportedOperationException}.
+	 * </p>
+	 * <p>
+	 * The constants used to store the values are:
+	 * <ul>
+	 * <li>{@link ContentAssistant#STORE_SIZE_X}</li>
+	 * <li>{@link ContentAssistant#STORE_SIZE_Y}</li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param dialogSettings the dialog settings
+	 * @since 3.7
+	 */
+	public void setRestoreCompletionProposalSize(IDialogSettings dialogSettings) {
+		fQuickAssistAssistantImpl.setRestoreCompletionProposalSize(dialogSettings);
+	}
+	
 	/**
 	 * Callback to signal this quick assist assistant that the presentation of the
 	 * possible completions has been stopped.
