@@ -131,6 +131,9 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 						}
 					}
 
+					// reset the 'cur' ref
+					refElement.setCurSharedRef(aPH);
+
 					// Reparent the widget
 					refCtrl.setParent(phComp);
 					break;
