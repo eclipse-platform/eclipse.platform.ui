@@ -17,6 +17,7 @@ import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.filesystem.FileCache;
 import org.eclipse.core.internal.filesystem.local.LocalFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.resources.AutomatedTests;
 import org.eclipse.core.tests.resources.WorkspaceSessionTest;
 import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
@@ -34,6 +35,9 @@ public class TestBug323833 extends WorkspaceSessionTest {
 	}
 
 	public void test1() {
+		if (!Platform.getOS().equals(Platform.OS_MACOSX))
+			return;
+
 		IFileStore fileStore = getTempStore().getChild(getUniqueString());
 		createFileInFileSystem(fileStore);
 
@@ -62,6 +66,9 @@ public class TestBug323833 extends WorkspaceSessionTest {
 	}
 
 	public void test2() {
+		if (!Platform.getOS().equals(Platform.OS_MACOSX))
+			return;
+
 		try {
 			FileCache.getCache();
 		} catch (CoreException e) {
