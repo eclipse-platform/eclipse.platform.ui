@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.internal.navigator.dnd;
 
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -86,8 +86,7 @@ public final class CommonDropAdapterDescriptor implements
 	public boolean isDropElementSupported(Object anElement) {
 		if (dropExpr != null && anElement != null) {
 			try {
-				EvaluationContext context = new EvaluationContext(null, anElement);
-				context.setAllowPluginActivation(true);
+				IEvaluationContext context = NavigatorPlugin.getEvalContext(anElement);
 				return dropExpr
 						.evaluate(context) == EvaluationResult.TRUE;
 			} catch (CoreException e) {

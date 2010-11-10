@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.navigator.extensions;
 
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -119,8 +118,7 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 		}
 
 		try {
-			EvaluationContext context = new EvaluationContext(null, anInput);
-			context.setAllowPluginActivation(true);
+			IEvaluationContext context = NavigatorPlugin.getEvalContext(anInput);
 			return (editorInputEnablement.evaluate(context) == EvaluationResult.TRUE);
 		} catch (CoreException e) {
 			NavigatorPlugin.log(IStatus.ERROR, 0, e.getMessage(), e);
@@ -139,8 +137,7 @@ public class LinkHelperDescriptor implements ILinkHelperExtPtConstants {
 			return false;
 		}
 
-		IEvaluationContext context = new EvaluationContext(null, anObject);
-		context.setAllowPluginActivation(true);
+		IEvaluationContext context = NavigatorPlugin.getEvalContext(anObject);
 		try {
 			if (selectionEnablement.evaluate(context) != EvaluationResult.TRUE) {
 				return false;

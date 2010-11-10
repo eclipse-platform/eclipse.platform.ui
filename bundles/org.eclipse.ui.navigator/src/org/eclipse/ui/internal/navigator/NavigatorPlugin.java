@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
+import java.util.Collections;
+
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -18,7 +22,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.services.IEvaluationService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
@@ -177,6 +183,35 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 		logJob.schedule(LOG_DELAY);
 	}
 
+	/**
+	 * @return an evaluation context
+	 */
+	public static IEvaluationContext getApplicationContext() {
+		IEvaluationService es = (IEvaluationService) PlatformUI.getWorkbench().getService(
+				IEvaluationService.class);
+		return es == null ? null : es.getCurrentState();
+	}
+
+	/**
+	 * @return an evaluation context
+	 */
+	public static IEvaluationContext getEmptyEvalContext() {
+		IEvaluationContext c = new EvaluationContext(getApplicationContext(),
+				Collections.EMPTY_LIST);
+		c.setAllowPluginActivation(true);
+		return c;
+	}
+
+	/**
+	 * @param selection 
+	 * @return an evaluation context
+	 */
+	public static IEvaluationContext getEvalContext(Object selection) {
+		IEvaluationContext c = new EvaluationContext(getApplicationContext(), selection);
+		c.setAllowPluginActivation(true);
+		return c;
+	}
+	
 	/**
 	 * Create a status associated with this plugin.
 	 *  

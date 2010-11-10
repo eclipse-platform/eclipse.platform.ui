@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.internal.navigator.sorters;
 
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.ViewerSorter;
@@ -75,8 +75,7 @@ public class CommonSorterDescriptor implements INavigatorContentExtPtConstants {
 		}
 
 		if (parentExpression != null) {
-			EvaluationContext context = new EvaluationContext(null, aParent);
-			context.setAllowPluginActivation(true);
+			IEvaluationContext context = NavigatorPlugin.getEvalContext(aParent);
 			try {
 				return parentExpression.evaluate(context) == EvaluationResult.TRUE;
 			} catch (CoreException e) {
