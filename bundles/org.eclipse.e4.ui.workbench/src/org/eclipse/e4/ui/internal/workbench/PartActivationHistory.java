@@ -209,6 +209,47 @@ class PartActivationHistory {
 		return null;
 	}
 
+	MPart getActivationCandidate(Collection<MPart> validParts) {
+		// check activation history, since the history is global, we need to filter it down first
+		Collection<MPart> validCandidates = new ArrayList<MPart>();
+		for (MPart validPart : generalActivationHistory) {
+			if (validParts.contains(validPart)) {
+				validCandidates.add(validPart);
+			}
+		}
+		
+		MPart candidate = findActivationCandidate(validCandidates);
+		if (candidate == null) {
+			validParts.removeAll(validCandidates);
+			return findActivationCandidate(validParts);
+		}
+		return candidate;
+	}
+
+	private MPart findActivationCandidate(Collection<MPart> candidates) {
+		for (MPart candidate : candidates) {
+			// make sure it's rendered and visible
+			if (isValid(candidate)) {
+				MPlaceholder placeholder = partService.getLocalPlaceholder(candidate);
+				MElementContainer<MUIElement> parent = placeholder == null ? candidate.getParent()
+						: placeholder.getParent();
+				// stacks require special considerations because we don't want to activate something
+				// that's not the selected element if possible get the selected element
+				if (parent instanceof MGenericStack) {
+					MUIElement selection = parent.getSelectedElement();
+					// if the selected element is the current candidate, the candidate is valid
+					if (selection == candidate || selection == placeholder) {
+						return candidate;
+					}
+				} else {
+					// not in a stack, just return the candidate then
+					return candidate;
+				}
+			}
+		}
+		return null;
+	}
+
 	MPart getNextActivationCandidate(Collection<MPart> validParts, MPart part) {
 		MArea area = isInArea(part);
 		if (area != null) {

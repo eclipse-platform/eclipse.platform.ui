@@ -64,6 +64,10 @@ public class ApplicationPartServiceImpl implements EPartService {
 		getActiveWindowService().activate(part, requiresFocus);
 	}
 
+	public void requestActivation() {
+		getActiveWindowService().requestActivation();
+	}
+
 	public void bringToTop(MPart part) {
 		getActiveWindowService().bringToTop(part);
 	}

@@ -871,6 +871,21 @@ public class PartServiceImpl implements EPartService {
 		return addedPart;
 	}
 
+	public void requestActivation() {
+		if (activePart == null) {
+			MPart candidate = partActivationHistory.getActivationCandidate(getParts());
+			if (candidate != null) {
+				activate(candidate);
+			}
+		} else if (!getParts().contains(activePart)) {
+			MPart candidate = partActivationHistory.getNextActivationCandidate(getParts(),
+					activePart);
+			if (candidate != null) {
+				activate(candidate);
+			}
+		}
+	}
+
 	public void hidePart(MPart part) {
 		hidePart(part, false);
 	}

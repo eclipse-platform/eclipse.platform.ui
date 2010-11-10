@@ -2435,6 +2435,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			child.setToBeRendered(false);
 			persp.getChildren().remove(0);
 		}
+
+		partService.requestActivation();
 	}
 
 

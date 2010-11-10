@@ -103,6 +103,11 @@ public interface EPartService {
 	public void activate(MPart part, boolean requiresFocus);
 
 	/**
+	 * Ask the service to assign activation to a valid part.
+	 */
+	public void requestActivation();
+
+	/**
 	 * Brings this part to the top so that it will become visible to the end user. This does not
 	 * imply that the part will be granted focus.
 	 * 
