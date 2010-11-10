@@ -1,38 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.navigator.resources" version="2">
-    <resource path="src/org/eclipse/ui/navigator/resources/ProjectExplorer.java" type="org.eclipse.ui.navigator.resources.ProjectExplorer">
-        <filter id="642777099">
+    <resource path="src/org/eclipse/ui/internal/navigator/resources/actions/WorkingSetActionProvider.java" type="org.eclipse.ui.internal.navigator.resources.actions.WorkingSetActionProvider">
+        <filter id="640712815">
             <message_arguments>
                 <message_argument value="CommonNavigator"/>
-                <message_argument value="ProjectExplorer"/>
+                <message_argument value="WorkingSetActionProvider"/>
                 <message_argument value="setWorkingSetLabel(String)"/>
-            </message_arguments>
-        </filter>
-        <filter id="642777099">
-            <message_arguments>
-                <message_argument value="CommonNavigator"/>
-                <message_argument value="ProjectExplorer"/>
-                <message_argument value="getWorkingSetLabel()"/>
-            </message_arguments>
-        </filter>
-        <filter id="642777099">
-            <message_arguments>
-                <message_argument value="CommonNavigator"/>
-                <message_argument value="ProjectExplorer"/>
-                <message_argument value="getRootMode()"/>
-            </message_arguments>
-        </filter>
-        <filter id="642777099">
-            <message_arguments>
-                <message_argument value="CommonNavigator"/>
-                <message_argument value="ProjectExplorer"/>
-                <message_argument value="setRootMode(int)"/>
             </message_arguments>
         </filter>
         <filter id="640712815">
             <message_arguments>
                 <message_argument value="CommonViewer"/>
-                <message_argument value="ProjectExplorer"/>
+                <message_argument value="WorkingSetActionProvider"/>
+                <message_argument value="getFrameList()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/internal/navigator/resources/actions/WorkingSetActionProvider.java" type="org.eclipse.ui.internal.navigator.resources.actions.WorkingSetActionProvider$WorkingSetManagerListener">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="WorkingSetManagerListener"/>
+                <message_argument value="setWorkingSetLabel(String)"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CommonViewer"/>
+                <message_argument value="WorkingSetManagerListener"/>
                 <message_argument value="getFrameList()"/>
             </message_arguments>
         </filter>
@@ -61,36 +56,49 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/internal/navigator/resources/actions/WorkingSetActionProvider.java" type="org.eclipse.ui.internal.navigator.resources.actions.WorkingSetActionProvider$WorkingSetManagerListener">
-        <filter id="640712815">
-            <message_arguments>
-                <message_argument value="CommonViewer"/>
-                <message_argument value="WorkingSetManagerListener"/>
-                <message_argument value="getFrameList()"/>
-            </message_arguments>
-        </filter>
-        <filter id="640712815">
-            <message_arguments>
-                <message_argument value="CommonNavigator"/>
-                <message_argument value="WorkingSetManagerListener"/>
-                <message_argument value="setWorkingSetLabel(String)"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/internal/navigator/resources/actions/TextActionHandler.java" type="org.eclipse.ui.internal.navigator.resources.actions.TextActionHandler">
-        <filter id="571473929">
-            <message_arguments>
-                <message_argument value="TextActionHandler"/>
-                <message_argument value="TextActionHandler"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/ui/navigator/resources/GoIntoActionProvider.java" type="org.eclipse.ui.navigator.resources.GoIntoActionProvider">
         <filter id="640712815">
             <message_arguments>
                 <message_argument value="CommonViewer"/>
                 <message_argument value="GoIntoActionProvider"/>
                 <message_argument value="getFrameList()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/resources/ProjectExplorer.java" type="org.eclipse.ui.navigator.resources.ProjectExplorer">
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="CommonViewer"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="getFrameList()"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="getRootMode()"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="getWorkingSetLabel()"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="setRootMode(int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="642777099">
+            <message_arguments>
+                <message_argument value="CommonNavigator"/>
+                <message_argument value="ProjectExplorer"/>
+                <message_argument value="setWorkingSetLabel(String)"/>
             </message_arguments>
         </filter>
     </resource>
