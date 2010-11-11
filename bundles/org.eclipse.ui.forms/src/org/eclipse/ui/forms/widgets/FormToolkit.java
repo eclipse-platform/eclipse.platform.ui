@@ -165,10 +165,23 @@ public class FormToolkit {
 	}
 
 	private static class VisibilityHandler extends FocusAdapter {
+		private boolean handleNextFocusGained = true;
+		
 		public void focusGained(FocusEvent e) {
+			if (!handleNextFocusGained) {
+				handleNextFocusGained = true;
+			} else {
+				Widget w = e.widget;
+				if (w instanceof Control) {
+					FormUtil.ensureVisible((Control) w);
+				}
+			}
+		}
+		
+		public void focusLost(FocusEvent e) {
 			Widget w = e.widget;
 			if (w instanceof Control) {
-				FormUtil.ensureVisible((Control) w);
+				handleNextFocusGained = w.getDisplay().getActiveShell() == ((Control) w).getShell(); 
 			}
 		}
 	}
