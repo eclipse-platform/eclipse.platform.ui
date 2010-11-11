@@ -680,6 +680,19 @@ public class StackRenderer extends LazyStackRenderer {
 			others.add(part);
 		}
 
+		// add the selected element of the stack at the end, else we may end up
+		// selecting another part when we hide it since it is the selected
+		// element
+		MUIElement selectedElement = container.getSelectedElement();
+		if (others.remove(selectedElement)) {
+			others.add((MPart) selectedElement);
+		} else if (selectedElement instanceof MPlaceholder) {
+			selectedElement = ((MPlaceholder) selectedElement).getRef();
+			if (others.remove(selectedElement)) {
+				others.add((MPart) selectedElement);
+			}
+		}
+
 		EPartService partService = getContextForParent(part).get(
 				EPartService.class);
 		for (MPart otherPart : others) {
