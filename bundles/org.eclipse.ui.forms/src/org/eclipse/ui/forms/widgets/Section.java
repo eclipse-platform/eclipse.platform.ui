@@ -364,13 +364,8 @@ public class Section extends ExpandableComposite {
 			Point tcsize = null;
 			if (toggle != null)
 				tsize = toggle.getSize();
-			int twidth = bounds.width - marginWidth - marginWidth;
-			if (tsize != null)
-				twidth -= tsize.x + IGAP;
 			if (getTextClient() != null)
 				tcsize = getTextClient().getSize();
-			if (tcsize != null)
-				twidth -= tcsize.x + IGAP;
 			Point size = textLabel == null ? new Point(0,0) : textLabel.getSize();
 			if (tsize != null)
 				theight += Math.max(theight, tsize.y);
