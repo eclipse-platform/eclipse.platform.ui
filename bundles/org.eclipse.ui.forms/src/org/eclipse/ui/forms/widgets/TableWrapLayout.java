@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.*;
 
 /**
  * This implementation of the layout algorithm attempts to position controls in
- * the composite using a two-pass autolayout HTML table altorithm recommeded by
+ * the composite using a two-pass autolayout HTML table algorithm recommended by
  * HTML 4.01 W3C specification (see
  * http://www.w3.org/TR/html4/appendix/notes.html#h-B.5.2.2). The main
  * differences with GridLayout is that it has two passes and that width and
@@ -251,9 +251,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 				columnWidths = maxColumnWidths;
 			} else {
 				columnWidths = new int[numColumns];
-				int colSpace = tableWidth - leftMargin - rightMargin;
-				colSpace -= (numColumns - 1) * horizontalSpacing;
-				int extra = parentWidth - maxWidth;
+			    int extra = parentWidth - maxWidth;
 				int colExtra = extra / growingColumns.length;
 				for (int i = 0; i < numColumns; i++) {
 					columnWidths[i] = maxColumnWidths[i];
