@@ -35,6 +35,7 @@
 	unselected-tabs-color: #DCDCDC #E1E1E1 #FFFFFF 100% 100%;
     outer-keyline-color: #C4C5C1;
 	inner-keyline-color: #FFFFFF;
+	tab-outline: #B6BCCC;
 }
 
 #PerspectiveSwitcher {
