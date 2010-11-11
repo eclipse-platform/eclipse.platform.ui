@@ -662,9 +662,6 @@ public class TextSegment extends ParagraphSegment {
 				// only wrap on the first fragment if we are not at the start of a line
 				if ((i != 0 || locator.x > locator.getStartX() + (isSelectable() ? 1 : 0)) && locator.x + lineExtent.x + fragment.length > rightEdge) {
 					// overflow
-					int lineWidth = locator.x + lineExtent.x;
-					if (isSelectable())
-						lineWidth += 1;
 					int ly = locator.getBaseline(lineHeight - fm.getLeading());
 					Rectangle br = new Rectangle(isSelectable()?
 							locator.x - 1:locator.x, ly,
