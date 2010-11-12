@@ -30,9 +30,10 @@ public interface IRequestor {
 
 	/**
 	 * Forces the requestor to resolve arguments it depends on. 
+	 * @param initial <code>true</code> if this is the initial attempt to resolve arguments
 	 * @throws InjectionException if an exception occurred while performing this task
 	 */
-	public void resolveArguments() throws InjectionException;
+	public void resolveArguments(boolean initial) throws InjectionException;
 
 	/**
 	 * Call this method to perform requestor's task. This method should be called

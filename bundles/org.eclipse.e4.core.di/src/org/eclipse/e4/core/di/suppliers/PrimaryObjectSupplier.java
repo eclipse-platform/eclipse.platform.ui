@@ -15,11 +15,11 @@ package org.eclipse.e4.core.di.suppliers;
  * corresponding to the object descriptor.
  * <p> 
  * If supplier is asked to track changes, it should notify requestor whenever any of the objects
- * produced by the {@link #get(IObjectDescriptor[], Object[], IRequestor, boolean, boolean)} method change.
- * The supplier can do this by performing calls to the {@link IRequestor#resolveArguments()} and
+ * produced by the {@link #get(IObjectDescriptor[], Object[], IRequestor, boolean, boolean, boolean)} method change.
+ * The supplier can do this by performing calls to the {@link IRequestor#resolveArguments(boolean)} and
  * {@link IRequestor#execute()}.
  * </p>
- *  @see IRequestor#resolveArguments()
+ *  @see IRequestor#resolveArguments(boolean)
  *  @see IRequestor#execute()
  */
 abstract public class PrimaryObjectSupplier {
@@ -38,12 +38,13 @@ abstract public class PrimaryObjectSupplier {
 	 * @param descriptors descriptors to the objects requested by the requestor
 	 * @param actualValues the values of actual arguments computed so far for the descriptors (in/out)
 	 * @param requestor the requestor originating this request
+	 * @param initial <code>true</code> true if this is the initial request from the requestor
 	 * @param track <code>true</code> if the object suppliers should notify requestor of
 	 * changes to the returned objects; <code>false</code> otherwise
 	 * @param group <code>true</code> if the change notifications can be grouped; 
 	 * <code>false</code> otherwise
 	 */
-	abstract public void get(IObjectDescriptor[] descriptors, Object[] actualValues, IRequestor requestor, boolean track, boolean group);
+	abstract public void get(IObjectDescriptor[] descriptors, Object[] actualValues, IRequestor requestor, boolean initial, boolean track, boolean group);
 
 	/**
 	 * Pause tracking access to the supplier's objects.

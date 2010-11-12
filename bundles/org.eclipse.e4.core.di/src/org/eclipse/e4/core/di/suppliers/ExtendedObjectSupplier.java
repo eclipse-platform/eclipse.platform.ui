@@ -19,10 +19,10 @@ import org.osgi.framework.BundleContext;
  * <p> 
  * If the supplier is asked to track changes, it should notify requestor whenever any of 
  * the objects produced by the {@link #get(IObjectDescriptor, IRequestor, boolean, boolean)} 
- * method change. The supplier can do this by performing calls to the {@link IRequestor#resolveArguments()}
+ * method change. The supplier can do this by performing calls to the {@link IRequestor#resolveArguments(boolean)}
  * and {@link IRequestor#execute()}.
  * </p>
- *  @see IRequestor#resolveArguments()
+ *  @see IRequestor#resolveArguments(boolean)
  *  @see IRequestor#execute()
  */
 abstract public class ExtendedObjectSupplier {

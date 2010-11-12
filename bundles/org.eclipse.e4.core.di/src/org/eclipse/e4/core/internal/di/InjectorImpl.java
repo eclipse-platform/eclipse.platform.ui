@@ -89,7 +89,7 @@ public class InjectorImpl implements IInjector {
 			requestors.add(new ClassRequestor(object.getClass(), this, objectSupplier, tempSupplier, object, true));
 
 		// Then ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		resolveRequestorArgs(requestors, objectSupplier, tempSupplier, false, true);
+		resolveRequestorArgs(requestors, objectSupplier, tempSupplier, false, true, true);
 
 		// Call requestors in order
 		for (Requestor requestor : requestors) {
@@ -165,7 +165,7 @@ public class InjectorImpl implements IInjector {
 		processClassHierarchy(object, objectSupplier, null, true /* track */, false /* inverse order */, requestors);
 		// might still need to get resolved values from secondary suppliers
 		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		resolveRequestorArgs(requestors, null, null, true /* fill with nulls */, false);
+		resolveRequestorArgs(requestors, null, null, true /* fill with nulls */, false, false);
 
 		// Call requestors in order
 		for (Requestor requestor : requestors) {
@@ -196,7 +196,7 @@ public class InjectorImpl implements IInjector {
 				continue;
 			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject, false);
 
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, true, false);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1) {
 				if (throwUnresolved)
@@ -241,7 +241,7 @@ public class InjectorImpl implements IInjector {
 		if (objectSupplier != null) {
 			IObjectDescriptor actualClass = new ObjectDescriptor(implementationClass, null);
 			Object[] actualArgs = new Object[] {IInjector.NOT_A_VALUE};
-			objectSupplier.get(new IObjectDescriptor[] {actualClass}, actualArgs, null, false, false);
+			objectSupplier.get(new IObjectDescriptor[] {actualClass}, actualArgs, null, false, true, false);
 			if (actualArgs[0] != IInjector.NOT_A_VALUE)
 				return actualArgs[0];
 		}
@@ -281,7 +281,7 @@ public class InjectorImpl implements IInjector {
 				continue;
 
 			ConstructorRequestor requestor = new ConstructorRequestor(constructor, this, objectSupplier, tempSupplier);
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, true, false);
 			if (unresolved(actualArgs) != -1)
 				continue;
 			requestor.setResolvedArgs(actualArgs);
@@ -300,11 +300,11 @@ public class InjectorImpl implements IInjector {
 		throw new InjectionException("Could not find satisfiable constructor in " + clazz.getName()); //$NON-NLS-1$
 	}
 
-	public void resolveArguments(IRequestor requestor) {
+	public void resolveArguments(IRequestor requestor, boolean initial) {
 		ArrayList<Requestor> list = new ArrayList<Requestor>(1);
 		Requestor internalRequestor = ((Requestor) requestor);
 		list.add(internalRequestor);
-		resolveRequestorArgs(list, internalRequestor.getPrimarySupplier(), internalRequestor.getTempSupplier(), true, internalRequestor.shouldTrack());
+		resolveRequestorArgs(list, internalRequestor.getPrimarySupplier(), internalRequestor.getTempSupplier(), true, initial, internalRequestor.shouldTrack());
 	}
 
 	public void disposed(PrimaryObjectSupplier objectSupplier) {
@@ -326,9 +326,9 @@ public class InjectorImpl implements IInjector {
 		forgetSupplier(objectSupplier);
 	}
 
-	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean track) {
+	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean initial, boolean track) {
 		for (Requestor requestor : requestors) {
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, fillNulls, track);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, fillNulls, initial, track);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved == -1) {
 				requestor.setResolvedArgs(actualArgs);
@@ -352,7 +352,7 @@ public class InjectorImpl implements IInjector {
 		throw new InjectionException(tmp.toString());
 	}
 
-	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean track) {
+	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean initial, boolean track) {
 		IObjectDescriptor[] descriptors = requestor.getDependentObjects();
 
 		// 0) initial fill - all values are unresolved
@@ -369,11 +369,11 @@ public class InjectorImpl implements IInjector {
 
 		// 2) use the temporary supplier
 		if (tempSupplier != null)
-			tempSupplier.get(descriptors, actualArgs, requestor, false /* no tracking */, requestor.shouldGroupUpdates());
+			tempSupplier.get(descriptors, actualArgs, requestor, initial, false /* no tracking */, requestor.shouldGroupUpdates());
 
 		// 3) use the primary supplier
 		if (objectSupplier != null)
-			objectSupplier.get(descriptors, actualArgs, requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
+			objectSupplier.get(descriptors, actualArgs, requestor, initial, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
 
 		// 4) try extended suppliers
 		for (int i = 0; i < actualArgs.length; i++) {
@@ -782,7 +782,7 @@ public class InjectorImpl implements IInjector {
 				continue;
 
 			MethodRequestor requestor = new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject, false);
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, false);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, false, false);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved != -1) {
 				if (method.isAnnotationPresent(Optional.class))

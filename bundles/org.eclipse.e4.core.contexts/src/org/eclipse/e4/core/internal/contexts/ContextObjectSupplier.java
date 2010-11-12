@@ -71,7 +71,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			} else {
 				if (!requestor.isValid())
 					return false; // remove this listener
-				requestor.resolveArguments();
+				requestor.resolveArguments(false);
 				requestor.execute();
 			}
 			return true;
@@ -133,7 +133,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 	}
 
 	@Override
-	public void get(IObjectDescriptor[] descriptors, Object[] actualArgs, final IRequestor requestor, boolean track, boolean group) {
+	public void get(IObjectDescriptor[] descriptors, Object[] actualArgs, final IRequestor requestor, boolean initial, boolean track, boolean group) {
 		final String[] keys = new String[descriptors.length];
 		final boolean[] active = new boolean[descriptors.length];
 
@@ -152,25 +152,33 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 		}
 
 		if (requestor != null && track) { // only track if requested
-			RunAndTrack trackable = new ContextInjectionListener(context, actualArgs, keys, active, requestor, group);
-			context.runAndTrack(trackable);
+			if (initial) {
+				RunAndTrack trackable = new ContextInjectionListener(context, actualArgs, keys, active, requestor, group);
+				context.runAndTrack(trackable);
+			} else { // we do track if this is done inside a computation, but don't create another runnable
+				fillArgs(actualArgs, keys, active);
+			}
 		} else {
 			if (descriptors.length > 0) {
 				pauseRecording();
 				try {
-					for (int i = 0; i < descriptors.length; i++) {
-						if (keys[i] == null)
-							continue;
-						IEclipseContext targetContext = (active[i]) ? context.getActiveLeaf() : context;
-						if (ECLIPSE_CONTEXT_NAME.equals(keys[i]))
-							actualArgs[i] = targetContext;
-						else if (context.containsKey(keys[i]))
-							actualArgs[i] = targetContext.get(keys[i]);
-					}
+					fillArgs(actualArgs, keys, active);
 				} finally {
 					resumeRecoding();
 				}
 			}
+		}
+	}
+
+	private void fillArgs(Object[] actualArgs, String[] keys, boolean[] active) {
+		for (int i = 0; i < keys.length; i++) {
+			if (keys[i] == null)
+				continue;
+			IEclipseContext targetContext = (active[i]) ? context.getActiveLeaf() : context;
+			if (ECLIPSE_CONTEXT_NAME.equals(keys[i]))
+				actualArgs[i] = targetContext;
+			else if (targetContext.containsKey(keys[i]))
+				actualArgs[i] = targetContext.get(keys[i]);
 		}
 	}
 

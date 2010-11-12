@@ -77,7 +77,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier {
 			}
 
 			addCurrentEvent(topic, event);
-			requestor.resolveArguments();
+			requestor.resolveArguments(false);
 			removeCurrentEvent(topic);
 
 			requestor.execute();

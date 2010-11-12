@@ -17,10 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
@@ -48,7 +48,7 @@ public class PreferencesObjectSupplier extends ExtendedObjectSupplier {
 				node.removePreferenceChangeListener(this);
 				return;
 			}
-			requestor.resolveArguments();
+			requestor.resolveArguments(false);
 			requestor.execute();
 		}
 

@@ -104,8 +104,8 @@ abstract public class Requestor implements IRequestor {
 		return (getRequestingObject() != null);
 	}
 
-	public void resolveArguments() {
-		((InjectorImpl) injector).resolveArguments(this);
+	public void resolveArguments(boolean initial) {
+		((InjectorImpl) injector).resolveArguments(this, initial);
 	}
 
 	public void disposed(PrimaryObjectSupplier objectSupplier) {
