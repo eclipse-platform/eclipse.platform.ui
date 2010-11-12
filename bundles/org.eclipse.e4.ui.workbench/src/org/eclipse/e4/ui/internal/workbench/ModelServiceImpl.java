@@ -79,7 +79,8 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	private <T> void findElementsRecursive(MUIElement searchRoot, String id,
-			Class<? extends T> type, List<String> tagsToMatch, List<T> elements) {
+			Class<? extends T> type, List<String> tagsToMatch, List<T> elements,
+			boolean perspectiveBased) {
 		// are *we* a match ?
 		if (match(searchRoot, id, type, tagsToMatch)) {
 			if (!elements.contains((T) searchRoot))
@@ -88,10 +89,18 @@ public class ModelServiceImpl implements EModelService {
 
 		// Check regular containers
 		if (searchRoot instanceof MElementContainer<?>) {
-			MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
-			List<MUIElement> children = container.getChildren();
-			for (MUIElement child : children) {
-				findElementsRecursive(child, id, type, tagsToMatch, elements);
+			if (perspectiveBased && searchRoot instanceof MPerspectiveStack) {
+				// Only search the currently active perspective, if any
+				MPerspective active = ((MPerspectiveStack) searchRoot).getSelectedElement();
+				if (active != null) {
+					findElementsRecursive(active, id, type, tagsToMatch, elements, perspectiveBased);
+				}
+			} else {
+				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
+				List<MUIElement> children = container.getChildren();
+				for (MUIElement child : children) {
+					findElementsRecursive(child, id, type, tagsToMatch, elements, perspectiveBased);
+				}
 			}
 		}
 
@@ -100,7 +109,7 @@ public class ModelServiceImpl implements EModelService {
 			MTrimmedWindow tw = (MTrimmedWindow) searchRoot;
 			List<MTrimBar> bars = tw.getTrimBars();
 			for (MTrimBar bar : bars) {
-				findElementsRecursive(bar, id, type, tagsToMatch, elements);
+				findElementsRecursive(bar, id, type, tagsToMatch, elements, perspectiveBased);
 			}
 		}
 
@@ -108,33 +117,47 @@ public class ModelServiceImpl implements EModelService {
 		if (searchRoot instanceof MWindow) {
 			MWindow window = (MWindow) searchRoot;
 			for (MWindow dw : window.getWindows()) {
-				findElementsRecursive(dw, id, type, tagsToMatch, elements);
+				findElementsRecursive(dw, id, type, tagsToMatch, elements, perspectiveBased);
 			}
 		}
 		if (searchRoot instanceof MPerspective) {
 			MPerspective persp = (MPerspective) searchRoot;
 			for (MWindow dw : persp.getWindows()) {
-				findElementsRecursive(dw, id, type, tagsToMatch, elements);
+				findElementsRecursive(dw, id, type, tagsToMatch, elements, perspectiveBased);
 			}
 		}
 		// Search shared elements
 		if (searchRoot instanceof MPlaceholder) {
 			MPlaceholder ph = (MPlaceholder) searchRoot;
-			findElementsRecursive(ph.getRef(), id, type, tagsToMatch, elements);
+			findElementsRecursive(ph.getRef(), id, type, tagsToMatch, elements, perspectiveBased);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getAllElements(org.eclipse.e4.ui.model.
-	 * application.MUIElement, java.lang.String, java.lang.Class, java.util.List)
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#findElements(org.eclipse.e4.ui.model.
+	 * application.ui.MUIElement, java.lang.String, java.lang.Class, java.util.List)
 	 */
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch) {
 		List<T> elements = new ArrayList<T>();
-		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements);
+		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, false);
+		return elements;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#findPerspectiveElements(org.eclipse.e4
+	 * .ui.model.application.ui.MUIElement, java.lang.String, java.lang.Class, java.util.List,
+	 * boolean)
+	 */
+	public <T> List<T> findPerspectiveElements(MUIElement searchRoot, String id, Class<T> clazz,
+			List<String> tagsToMatch) {
+		List<T> elements = new ArrayList<T>();
+		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, true);
 		return elements;
 	}
 
@@ -248,20 +271,9 @@ public class ModelServiceImpl implements EModelService {
 	 * .application.ui.basic.MWindow, org.eclipse.e4.ui.model.application.ui.MUIElement)
 	 */
 	public MPlaceholder findPlaceholderFor(MWindow window, MUIElement element) {
-		List<MPerspectiveStack> psList = findElements(window, null, MPerspectiveStack.class, null);
-		if (psList.size() != 1)
-			return null;
-		MPerspectiveStack pStack = psList.get(0);
-		MPerspective persp = pStack.getSelectedElement();
-		if (persp == null)
-			return null;
-
-		List<MPlaceholder> phList = findElements(persp, null, MPlaceholder.class, null);
-		for (MPlaceholder ph : phList) {
-			if (ph.getRef() == element)
-				return ph;
-		}
-		return null;
+		List<MPlaceholder> phList = findPerspectiveElements(window, element.getElementId(),
+				MPlaceholder.class, null);
+		return phList.size() > 0 ? phList.get(0) : null;
 	}
 
 	/*

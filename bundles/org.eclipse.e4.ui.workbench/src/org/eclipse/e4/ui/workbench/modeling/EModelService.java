@@ -64,6 +64,16 @@ public interface EModelService {
 			List<String> tagsToMatch);
 
 	/**
+	 * Identical to 'findElements' except that the search is limited to the currently active
+	 * perspective (if any).
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#findElements(org.eclipse.e4.ui.model.
+	 *      application.ui.MUIElement, java.lang.String, java.lang.Class, java.util.List)
+	 */
+	public <T> List<T> findPerspectiveElements(MUIElement searchRoot, String id, Class<T> clazz,
+			List<String> tagsToMatch);
+
+	/**
 	 * Returns the first element, recursively searching under the specified search root (inclusive)
 	 * 
 	 * @param id
