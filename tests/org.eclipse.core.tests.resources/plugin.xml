@@ -74,6 +74,13 @@
       <run class="org.eclipse.core.tests.internal.builders.EmptyDeltaBuilder2"/>
     </builder>
   </extension>
+  <extension point="org.eclipse.core.resources.builders" id="configbuilder" name="Configuration Builder">
+    <builder
+          callOnEmptyDelta="false"
+          supportsConfigurations="true">
+      <run class="org.eclipse.core.tests.internal.builders.ConfigurationBuilder"/>
+    </builder>
+  </extension>
   
 <extension
       id="simpleNature"

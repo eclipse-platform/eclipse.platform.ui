@@ -61,7 +61,7 @@ public class IProjectDescriptionTest extends ResourceTest {
 		project.build(IncrementalProjectBuilder.FULL_BUILD, null);
 
 		// Get a non-cloned version of the project desc build spec, and check for the builder 
-		assertTrue("2.0", ((BuildCommand) project.internalGetDescription().getBuildSpec(false)[0]).getBuilder() != null);
+		assertTrue("2.0", ((BuildCommand) project.internalGetDescription().getBuildSpec(false)[0]).getBuilders() != null);
 
 		// Now reset the build command. The builder shouldn't disappear.
 		desc = project.getDescription();
@@ -69,7 +69,7 @@ public class IProjectDescriptionTest extends ResourceTest {
 		project.setDescription(desc, null);
 
 		// builder should still be there
-		assertTrue("3.0", ((BuildCommand) project.internalGetDescription().getBuildSpec(false)[0]).getBuilder() != null);
+		assertTrue("3.0", ((BuildCommand) project.internalGetDescription().getBuildSpec(false)[0]).getBuilders() != null);
 	}
 
 	/**

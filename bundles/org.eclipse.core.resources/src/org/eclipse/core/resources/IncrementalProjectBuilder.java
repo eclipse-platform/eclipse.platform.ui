@@ -10,6 +10,7 @@
  * Anton Leherbauer (Wind River) - [198591] Allow Builder to specify scheduling rule
  * Anton Leherbauer (Wind River) - [305858] Allow Builder to return null rule
  * James Blackburn (Broadcom) - [306822] Provide Context for Builder getRule()
+ * Broadcom Corporation - build configurations and references
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -182,9 +183,26 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * previously built states. Typically this means that the next time the
 	 * builder runs, it will have to do a full build since it does not have any
 	 * state upon which to base an incremental build.
+	 * This supersedes a call to {@link #rememberLastBuiltState()}.
 	 */
 	public final void forgetLastBuiltState() {
 		super.forgetLastBuiltState();
+	}
+
+	/**
+	 * Requests that this builder remember any build invocation specific state.
+	 * This means that the next time the builder runs, it will receive a delta 
+	 * which includes changes reported in the current {@link #getDelta(IProject)}.
+	 *<p>
+	 * This can be used to indicate that a builder didn't run, even though there
+	 * are changes, and the builder wishes that the delta be preserved until its
+	 * next invocation.
+	 * </p>
+	 * This is superseded by a call to {@link #forgetLastBuiltState()}.
+	 * @since 3.7
+	 */
+	public final void rememberLastBuiltState() {
+		super.rememberLastBuiltState();
 	}
 
 	/**
@@ -258,6 +276,15 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	}
 
 	/**
+	 * Returns the build configuration for which this build was invoked.
+	 * @return the build configuration
+	 * @since 3.7
+	 */
+	public final IBuildConfiguration getBuildConfiguration() {
+		return super.getBuildConfiguration();
+	}
+
+	/**
 	 * Returns whether the given project has already been built during this
 	 * build iteration.
 	 * <p>
@@ -297,8 +324,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	}
 
 	/**
-	 * Indicates that this builder made changes that affect a project that
-	 * precedes this project in the currently executing build order, and thus a
+	 * Indicates that this builder made changes that affect a build configuration that
+	 * precedes this build configuration in the currently executing build order, and thus a
 	 * rebuild will be necessary.
 	 * <p>
 	 * This is an advanced feature that builders should use with caution. This
@@ -372,7 +399,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 
 	/**
 	 * Returns the scheduling rule that is required for building 
-	 * the project for which this builder is defined. The default 
+	 * the project build configuration for which this builder is defined. The default 
 	 * is {@link #getRule()}, which returns the workspace root 
 	 * rule unless overridden.
 	 * <p>

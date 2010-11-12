@@ -8,8 +8,11 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
+ * Broadcom Corporation - build configurations and references
  *******************************************************************************/
 package org.eclipse.core.resources;
+
+import org.eclipse.core.runtime.CoreException;
 
 import java.net.URI;
 
@@ -30,7 +33,8 @@ import org.eclipse.core.runtime.content.IContentTypeMatcher;
  * <li>A project can carry session and persistent properties.</li>
  * <li>A project can be open or closed; a closed project is
  * 		passive and has a minimal in-memory footprint.</li>
- * <li>A project can carry references to other projects.</li>
+ * <li>A project can have one or more project build configurations.</li>
+ * <li>A project can carry references to other project build configurations.</li>
  * <li>A project can have one or more project natures.</li>
  * </ul>
  * </p>
@@ -57,7 +61,8 @@ public interface IProject extends IContainer, IAdaptable {
 	 * Invokes the <code>build</code> method of the specified builder 
 	 * for this project. Does nothing if this project is closed.  If this project
 	 * has multiple builders on its build spec matching the given name, only
-	 * the first matching builder will be run.
+	 * the first matching builder will be run. The build is run for the project's
+	 * active build configuration.
 	 * <p>
 	 * The builder name is declared in the extension that plugs in
 	 * to the standard <code>org.eclipse.core.resources.builders</code> 
@@ -105,7 +110,8 @@ public interface IProject extends IContainer, IAdaptable {
 	 * Builds this project. Does nothing if the project is closed.
 	 * <p>
 	 * Building a project involves executing the commands found
-	 * in this project's build spec.
+	 * in this project's build spec. The build is run for the project's
+	 * active build configuration.
 	 * </p>
 	 * <p>
 	 * This method may change resources; these changes will be reported
@@ -138,6 +144,47 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#buildRule()
 	 */
 	public void build(int kind, IProgressMonitor monitor) throws CoreException;
+
+	/** 
+	 * Builds a specific build configuration of this project. Does nothing if the project is closed
+	 * or the build configuration does not exist.
+	 * <p>
+	 * Building a project involves executing the commands found
+	 * in this project's build spec. The build is run for the specific project
+	 * build configuration.
+	 * </p>
+	 * <p>
+	 * This method may change resources; these changes will be reported
+	 * in a subsequent resource change event.
+	 * </p>
+	 * <p>
+	 * This method is long-running; progress and cancellation are provided
+	 * by the given progress monitor.
+	 * </p>
+	 * @param config build configuration to build
+	 * @param kind the kind of build being requested. Valid values are:
+	 *		<ul>
+	 *		<li> <code>IncrementalProjectBuilder.FULL_BUILD</code> - indicates a full build.</li>
+	 *		<li> <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> - indicates an incremental build.</li>
+	 * 		<li><code>CLEAN_BUILD</code>- indicates a clean request. Clean does
+	 * 		not actually build anything, but rather discards all problems and build states.
+	 *		</ul>
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *		reporting is not desired
+	 * @exception CoreException if the build fails.
+	 *		The status contained in the exception may be a generic <code>BUILD_FAILED</code>
+	 *		code, but it could also be any other status code; it might
+	 *		also be a multi-status.
+	 * @exception OperationCanceledException if the operation is canceled.
+	 * Cancelation can occur even if no progress monitor is provided.
+	 *
+	 * @see IProjectDescription
+	 * @see IncrementalProjectBuilder#FULL_BUILD
+	 * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
+	 * @see IResourceRuleFactory#buildRule()
+	 * @since 3.7
+	 */
+	public void build(IBuildConfiguration config, int kind, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Closes this project.  The project need not be open.  Closing
@@ -375,6 +422,55 @@ public interface IProject extends IContainer, IAdaptable {
 	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
 	
 	/**
+	 * Returns the active build configuration for the project.
+	 * <p>
+	 * If at any point the active configuration is removed from the project, for example
+	 * when updating the list of build configurations, the active build configuration will be set to
+	 * the first build configuration specified by {@link IProjectDescription#setBuildConfigurations(IBuildConfiguration[])}.
+	 * <p>
+	 * If all of the build configurations are removed, the active build configuration will be set to the
+	 * default configuration.
+	 * </p>
+	 * @return the active build configuration
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This project does not exist.</li>
+	 * <li> This project is not open.</li>
+	 * </ul>
+	 * @since 3.7
+	 */
+	public IBuildConfiguration getActiveBuildConfiguration() throws CoreException;
+
+	/**
+	 * Returns the project build configuration with the given id for this project.
+	 * @param configurationId the id of the configuration to get
+	 * @return a project configuration
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This project does not exist.</li>
+	 * <li> This project is not open.</li>
+	 * <li> The configuration does not exist in this project.</li>
+	 * </ul>
+	 * @see #getBuildConfigurations()
+	 * @since 3.7
+	 */
+	public IBuildConfiguration getBuildConfiguration(String configurationId) throws CoreException;
+
+	/**
+	 * Returns the build configurations for this project. A project always has at
+	 * least one build configuration, so this will never return an empty list or null.
+	 * The result will not contain duplicates.
+	 * @return a list of project build configurations
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This project does not exist.</li>
+	 * <li> This project is not open.</li>
+	 * </ul>
+	 * @since 3.7
+	 */
+	public IBuildConfiguration[] getBuildConfigurations() throws CoreException;
+
+	/**
 	 * Returns this project's content type matcher. This content type matcher takes 
 	 * project specific preferences and nature-content type associations into 
 	 * account.
@@ -510,6 +606,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * <li> This project does not exist.</li>
 	 * <li> This project is not open.</li>
 	 * </ul>
+	 * @see #getReferencedBuildConfigurations(IBuildConfiguration, boolean)
 	 * @see IProjectDescription#getReferencedProjects()
 	 * @see IProjectDescription#getDynamicReferences()
 	 */
@@ -523,6 +620,55 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @return a list of open projects referencing this project
 	 */
 	public IProject[] getReferencingProjects();
+
+	/**
+	 * Returns the build configurations referenced by the passed in build configuration
+	 * on this project.
+	 * <p>
+	 * This includes both the static and dynamic project level references.  These are 
+	 * converted to build configurations pointing at the currently active referenced 
+	 * project configuration.
+	 * The result will not contain duplicates.
+	 * </p>
+	 * <p>
+	 * References to active configurations will be translated to references to actual
+	 * build configurations, if the project is accessible.  Note that if includeMissing
+	 * is true BuildConfigurations which can't be resolved (i.e. exist on missing projects,
+	 * or aren't listed on the referenced project) are still included in the  returned 
+	 * IBuildConfiguration array.
+	 * </p>
+	 * <p>
+	 * Returns an empty array if there are no references.
+	 * </p>
+	 *
+	 * @param config the configuration to get the references for
+	 * @param includeMissing boolean controls whether unresolved buildConfiguration should 
+	 *        be included in the result
+	 * @return an array of project build configurations
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This project does not exist.</li>
+	 * <li> This project is not open.</li>
+	 * <li> The build configuration does not exist in this project.</li>
+	 * </ul>
+	 * @see IProjectDescription#getBuildConfigReferences(String)
+	 * @since 3.7
+	 */
+	public IBuildConfiguration[] getReferencedBuildConfigurations(IBuildConfiguration config, boolean includeMissing) throws CoreException;
+
+	/**
+	 * Checks whether the project has the specified build configuration.
+	 *
+	 * @param config the configuration
+	 * @return <code>true</code> if the project has the specified configuration, false otherwise
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This project does not exist.</li>
+	 * <li> This project is not open.</li>
+	 * </ul>
+	 * @since 3.7
+	 */
+	public boolean hasBuildConfiguration(IBuildConfiguration config) throws CoreException;
 
 	/** 
 	 * Returns whether the project nature specified by the given

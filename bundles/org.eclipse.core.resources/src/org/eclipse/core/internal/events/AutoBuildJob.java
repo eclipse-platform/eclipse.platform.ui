@@ -75,7 +75,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		long delay = computeScheduleDelay();
 		int state = getState();
 		if (Policy.DEBUG_BUILD_NEEDED)
-			Policy.debug("Build requested, needsBuild: " + needsBuild + " state: " + state + " delay: " + delay); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Policy.debug("Auto-Build requested, needsBuild: " + needsBuild + " state: " + state + " delay: " + delay); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (needsBuild && Policy.DEBUG_BUILD_NEEDED_STACK && state != Job.RUNNING)
 			new RuntimeException("Build Needed").printStackTrace(); //$NON-NLS-1$
 		//don't mess with the interrupt flag if the job is still running
@@ -141,7 +141,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				IStatus result = Status.OK_STATUS;
 				try {
 					if (shouldBuild())
-						result = workspace.getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+						result = workspace.getBuildManager().build(workspace.getBuildOrder(), trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 				} finally {
 					//always send POST_BUILD if there has been a PRE_BUILD
 					workspace.broadcastBuildEvent(workspace, IResourceChangeEvent.POST_BUILD, trigger);

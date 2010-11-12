@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat Incorporated - loadProjectDescription(InputStream)
+ *     Broadcom Corporation - build configurations and references
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -228,6 +229,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * 
+	 * @see IWorkspace#build(IBuildConfiguration[], int, boolean, IProgressMonitor)
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see #computeProjectOrder(IProject[])
 	 * @see IncrementalProjectBuilder#FULL_BUILD
@@ -236,6 +238,51 @@ public interface IWorkspace extends IAdaptable {
 	 * @see IResourceRuleFactory#buildRule()
 	 */
 	public void build(int kind, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Build the build configurations specified in the passed in build configuration array.
+	 * <p>
+	 * Build order is determined by the workspace description and the project build configuration 
+	 * reference graph.
+	 * </p>
+	 * <p>
+	 * If buildReferences is true, build configurations reachable through the build configuration graph are
+	 * built as part of this build invocation.
+	 * </p>
+	 * <p>
+	 * This method may change resources; these changes will be reported in a
+	 * subsequent resource change event.
+	 * </p>
+	 * <p>
+	 * This method is long-running; progress and cancellation are provided by
+	 * the given progress monitor.
+	 * </p>
+	 * @param buildConfigs array of configurations to build
+	 * @param kind the kind of build being requested. Valid values are
+	 *	<ul>
+	 * <li>{@link IncrementalProjectBuilder#FULL_BUILD}- indicates a full build.</li>
+	 * <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}- indicates a incremental build.</li>
+	 * <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}- indicates a clean request.  Clean does
+	 * not actually build anything, but rather discards all problems and build states.</li>
+	 *	</ul>
+	 * @param buildReferences boolean indicating if references should be transitively built.
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 * reporting is not desired
+	 * @exception CoreException if the build fails.
+	 *		The status contained in the exception may be a generic {@link IResourceStatus#BUILD_FAILED}
+	 *		code, but it could also be any other status code; it might
+	 *		also be a {@link MultiStatus}.
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancellation can occur even if no progress monitor is provided.
+	 * 
+	 * @see IProject#build(int, IProgressMonitor)
+	 * @see IncrementalProjectBuilder#FULL_BUILD
+	 * @see IncrementalProjectBuilder#INCREMENTAL_BUILD
+	 * @see IncrementalProjectBuilder#CLEAN_BUILD
+	 * @see IResourceRuleFactory#buildRule()
+	 * @since 3.7
+	 */
+	public void build(IBuildConfiguration[] buildConfigs, int kind, boolean buildReferences, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Checkpoints the operation currently in progress. This method is used in
@@ -267,7 +314,8 @@ public interface IWorkspace extends IAdaptable {
 
 	/**
 	 * Returns the prerequisite ordering of the given projects. The computation
-	 * is done by interpreting project references as dependency relationships.
+	 * is done by interpreting the projects' active build configuration references
+	 * as dependency relationships.
 	 * For example if A references B and C, and C references B, this method,
 	 * given the list A, B, C will return the order B, C, A. That is, projects
 	 * with no dependencies are listed first.
@@ -321,9 +369,10 @@ public interface IWorkspace extends IAdaptable {
 		}
 
 		/**
-		 * A list of projects ordered so as to honor the project reference
-		 * relationships between these projects wherever possible. The elements
-		 * are a subset of the ones passed as the <code>projects</code>
+		 * A list of projects ordered so as to honor the project reference, and
+		 * build configuration reference, relationships between these projects
+		 * wherever possible.
+		 * The elements are a subset of the ones passed as the <code>projects</code>
 		 * parameter to <code>IWorkspace.computeProjectOrder</code>, where
 		 * inaccessible (closed or non-existent) projects have been omitted.
 		 */
@@ -331,7 +380,7 @@ public interface IWorkspace extends IAdaptable {
 		/**
 		 * Indicates whether any of the accessible projects in
 		 * <code>projects</code> are involved in non-trivial cycles.
-		 * <code>true</code> if the project reference graph contains at least
+		 * <code>true</code> if the reference graph contains at least
 		 * one cycle involving two or more of the projects in
 		 * <code>projects</code>, and <code>false</code> if none of the
 		 * projects in <code>projects</code> are involved in cycles.
@@ -912,6 +961,33 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 2.0
 	 */
 	public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Returns a new build configuration for the project, with the given id.  
+	 * The id is an implementation specific unique id for the build configuration in the
+	 * project.  The project need not exist.
+	 *<p>
+	 * The new build configuration does not become part of a project
+	 * description until it is installed using
+	 * {@link IProjectDescription#setBuildConfigurations(IBuildConfiguration[])}.
+	 *</p>
+	 *<p>
+	 * This API can be used to create IBuildConfigurations that will be used as references
+	 * to IBuildConfigurations in other projects.  These references are set using
+	 * {@link IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])}
+	 * and may have a <code>null</code> configuration Id which will resolve to the referenced
+	 * project's active configuration when the configuration reference is used.
+	 *</p>
+	 *
+	 * @param projectName the name of the project on which the configuration will exist
+	 * @param configurationId the application specific unique id of the configuration
+	 * @return a build configuration
+	 * @see IProjectDescription#setBuildConfigurations(IBuildConfiguration[])
+	 * @see IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])
+	 * @see IBuildConfiguration
+	 * @since 3.7
+	 */
+	public IBuildConfiguration newBuildConfiguration(String projectName, String configurationId);
 
 	/**
 	 * Creates and returns a new project description for a project with the

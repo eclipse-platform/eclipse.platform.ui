@@ -8,8 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
+ * Broadcom Corporation - build configurations and references
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
+
+import java.util.Iterator;
+
+import java.util.Map;
+
+import java.util.HashMap;
 
 import java.io.*;
 import java.net.URI;
@@ -301,7 +308,8 @@ public class LocalMetaArea implements ICoreConstants {
 	/**
 	 * Returns the portions of the project description that are private, and
 	 * adds them to the supplied project description. In particular, the
-	 * project location and the project's dynamic references are stored here.
+	 * project location, the project's dynamic references and build configurations
+	 * are stored here.
 	 * The project location will be set to <code>null</code> if the default
 	 * location should be used. In the case of failure, log the exception and
 	 * return silently, thus reverting to using the default location and no
@@ -310,8 +318,21 @@ public class LocalMetaArea implements ICoreConstants {
 	 *    int - number of dynamic project references
 	 *    UTF - project reference 1
 	 *    ... repeat for remaining references
+	 * since 3.7:
+	 *    int - number of build configurations
+	 *      UTF - configuration id in order
+	 *      ... repeated for N configurations
+	 *    UTF - active build configuration name
+	 *    int - number of build configurations with refs
+	 *      UTF - build configuration id
+	 *      int - number of referenced configuration
+	 *        UTF - project name
+	 *        bool - hasConfigurationId
+	 *        UTF - configurationId if hasConfigId
+	 *        ... repeat for number of referenced configurations
+	 *      ... repeat for number of build configurations with references
 	 */
-	public void readPrivateDescription(IProject target, IProjectDescription description) {
+	public void readPrivateDescription(IProject target, ProjectDescription description) {
 		IPath locationFile = locationFor(target).append(F_PROJECT_LOCATION);
 		java.io.File file = locationFile.toFile();
 		if (!file.exists()) {
@@ -346,6 +367,36 @@ public class LocalMetaArea implements ICoreConstants {
 				for (int i = 0; i < numRefs; i++)
 					references[i] = root.getProject(dataIn.readUTF());
 				description.setDynamicReferences(references);
+
+				// Since 3.7 -  Build Configurations
+				IBuildConfiguration[] configs = new IBuildConfiguration[dataIn.readInt()];
+				for (int i = 0; i < configs.length; i++) {
+					String configId = dataIn.readUTF();
+					configs[i] = new BuildConfiguration(target, configId);
+				}
+				if (configs.length > 0)
+					// In the future we may decide this is better stored in the 
+					// .project, so only set if configs.length > 0
+					description.setBuildConfigurations(configs);
+				// Active configuration Id
+				description.setActiveBuildConfiguration(dataIn.readUTF());
+				// Build configuration references?
+				int numBuildConifgsWithRefs = dataIn.readInt();
+				HashMap m = new HashMap(numBuildConifgsWithRefs);
+				for (int i = 0; i < numBuildConifgsWithRefs; i++) {
+					String configId = dataIn.readUTF();
+					numRefs = dataIn.readInt();
+					IBuildConfiguration[] refs = new IBuildConfiguration[numRefs];
+					for (int j = 0; j < numRefs; j++) {
+						String projName = dataIn.readUTF();
+						if (dataIn.readBoolean())
+							refs[j] = new BuildConfiguration(root.getProject(projName), dataIn.readUTF());
+						else
+							refs[j] = new BuildConfiguration(root.getProject(projName), null);
+					}
+					m.put(configId, refs);
+				}
+				description.setBuildConfigReferences(m);
 			} finally {
 				dataIn.close();
 			}
@@ -389,9 +440,11 @@ public class LocalMetaArea implements ICoreConstants {
 		if (desc == null)
 			return;
 		final URI projectLocation = desc.getLocationURI();
-		final IProject[] references = desc.getDynamicReferences(false);
-		final int numRefs = references.length;
-		if (projectLocation == null && numRefs == 0)
+		final IProject[] prjRefs = desc.getDynamicReferences(false);
+		final IBuildConfiguration[] buildConfigs = desc.getBuildConfigurations(false);
+		final Map configRefs = desc.getBuildConfigReferences(false);
+		if (projectLocation == null && prjRefs.length == 0 && 
+				buildConfigs.length == 0 && configRefs.isEmpty())
 			return;
 		//write the private metadata file
 		try {
@@ -402,9 +455,37 @@ public class LocalMetaArea implements ICoreConstants {
 					dataOut.writeUTF(""); //$NON-NLS-1$
 				else
 					dataOut.writeUTF(URI_PREFIX + projectLocation.toString());
-				dataOut.writeInt(numRefs);
-				for (int i = 0; i < numRefs; i++)
-					dataOut.writeUTF(references[i].getName());
+				dataOut.writeInt(prjRefs.length);
+				for (int i = 0; i < prjRefs.length; i++)
+					dataOut.writeUTF(prjRefs[i].getName());
+
+				// Since 3.7 - build configurations + references
+				// Write out the build configurations
+				dataOut.writeInt(buildConfigs.length);
+				for (int i = 0; i < buildConfigs.length; i++) {
+					dataOut.writeUTF(buildConfigs[i].getId());
+				}
+				// Write active configuration id
+				dataOut.writeUTF(desc.getActiveBuildConfigurationId());
+				// Write out the configuration level references
+				dataOut.writeInt(configRefs.size());
+				for (Iterator it = configRefs.entrySet().iterator(); it.hasNext(); ) {
+					Map.Entry e = (Map.Entry)it.next();
+					String refdId = (String)e.getKey();
+					IBuildConfiguration[] refs = (IBuildConfiguration[])e.getValue();
+
+					dataOut.writeUTF(refdId);
+					dataOut.writeInt(refs.length);
+					for (int j = 0; j < refs.length; j++) {
+						dataOut.writeUTF(refs[j].getProject().getName());
+						if (refs[j].getId() == null) {
+							dataOut.writeBoolean(false);
+						} else {
+							dataOut.writeBoolean(true);
+							dataOut.writeUTF(refs[j].getId());
+						}
+					}
+				}
 				output.succeed();
 			} finally {
 				dataOut.close();

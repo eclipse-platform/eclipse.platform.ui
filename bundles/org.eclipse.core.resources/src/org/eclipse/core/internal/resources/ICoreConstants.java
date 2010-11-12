@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group Support
+ *     Broadcom Corporation - build configurations
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 

@@ -10,8 +10,11 @@
  *     Red Hat Incorporated - loadProjectDescription(InputStream)
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
+ *     Broadcom Corporation - build configurations and references
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
+
+import org.eclipse.core.resources.IBuildConfiguration;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +26,8 @@ import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.refresh.RefreshManager;
+import org.eclipse.core.internal.resources.ComputeProjectOrder.VertexFilter;
+import org.eclipse.core.internal.resources.ComputeProjectOrder.VertexOrder;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
@@ -84,7 +89,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected WorkManager _workManager;
 	protected AliasManager aliasManager;
 	protected BuildManager buildManager;
-	protected IProject[] buildOrder = null;
+	protected volatile IBuildConfiguration[] buildOrder = null;
 	protected CharsetManager charsetManager;
 	protected ContentDescriptionManager contentDescriptionManager;
 	/** indicates if the workspace crashed in a previous session */
@@ -173,6 +178,73 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * The currently installed file modification validator.
 	 */
 	protected IFileModificationValidator validator = null;
+
+	/**
+	 * Data structure for holding the multi-part outcome of
+	 * <code>IWorkspace.computeProjectBuildConfigOrder</code>.
+	 * <p>
+	 * This class is not intended to be instantiated by clients.
+	 * </p>
+	 * 
+	 * @see Workspace#computeProjectBuildConfigOrder(IBuildConfiguration[])
+	 * @since 3.7
+	 */
+	public static final class ProjectBuildConfigOrder {
+		/**
+		 * Creates an instance with the given values.
+		 * <p>
+		 * This class is not intended to be instantiated by clients.
+		 * </p>
+		 * 
+		 * @param buildConfigurations initial value of <code>buildConfigurations</code> field
+		 * @param hasCycles initial value of <code>hasCycles</code> field
+		 * @param knots initial value of <code>knots</code> field
+		 */
+		public ProjectBuildConfigOrder(IBuildConfiguration[] buildConfigurations, boolean hasCycles, IBuildConfiguration[][] knots) {
+			this.buildConfigurations = buildConfigurations;
+			this.hasCycles = hasCycles;
+			this.knots = knots;
+		}
+
+		/**
+		 * A list of project buildConfigs ordered so as to honor the build configuration reference
+		 * relationships between these project buildConfigs wherever possible. The elements
+		 * are a subset of the ones passed as the <code>buildConfigurations</code>
+		 * parameter to <code>IWorkspace.computeProjectOrder</code>, where
+		 * inaccessible (closed or non-existent) projects have been omitted.
+		 */
+		public IBuildConfiguration[] buildConfigurations;
+		/**
+		 * Indicates whether any of the accessible project buildConfigs in
+		 * <code>buildConfigurations</code> are involved in non-trivial cycles.
+		 * <code>true</code> if the reference graph contains at least
+		 * one cycle involving two or more of the project buildConfigs in
+		 * <code>buildConfigurations</code>, and <code>false</code> if none of the
+		 * project buildConfigs in <code>buildConfigurations</code> are involved in cycles.
+		 */
+		public boolean hasCycles;
+		/**
+		 * A list of knots in the reference graph. This list is empty if
+		 * the reference graph does not contain cycles. If the
+		 * reference graph contains cycles, each element is a knot of two or
+		 * more accessible project buildConfigs from <code>buildConfigurations</code> that are
+		 * involved in a cycle of mutually dependent references.
+		 */
+		public IBuildConfiguration[][] knots;
+	}
+
+	// Comparator used to provide a stable ordering of project buildConfigs
+	private static class BuildConfigurationComparator implements Comparator {
+		public BuildConfigurationComparator() {}
+		public int compare(Object x, Object y) {
+			IBuildConfiguration px = (IBuildConfiguration) x;
+			IBuildConfiguration py = (IBuildConfiguration) y;
+			int cmp = py.getProject().getName().compareTo(px.getProject().getName());
+			if (cmp == 0)
+				cmp = py.getId().compareTo(px.getId());
+			return cmp;
+		}
+	}
 
 	/**
 	 * Deletes all the files and directories from the given root down (inclusive).
@@ -331,6 +403,70 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#build(int, IProgressMonitor)
 	 */
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
+		// If this is a workspace level clean, clean everything...
+		if (trigger == IncrementalProjectBuilder.CLEAN_BUILD) {
+			ArrayList configs = new ArrayList();
+			IProject[] prjs = getRoot().getProjects();
+			for (int i = 0; i < prjs.length; i++)
+				if (prjs[i].isAccessible())
+					configs.addAll(Arrays.asList(prjs[i].getBuildConfigurations()));
+			buildInternal((IBuildConfiguration[])configs.toArray(new IBuildConfiguration[configs.size()]), trigger, monitor);			
+		} else
+			buildInternal(getBuildOrder(), trigger, monitor);
+	}
+
+	/**
+	 * Add all IBuildConfigurations reachable from config to the configs collection.
+	 * @param configs collection of configurations to extend
+	 * @param config config to find reachable configurations to.
+	 */
+	private void recursivelyAddBuildConfigs(Collection/*<IBuildConfiguration>*/ configs, IBuildConfiguration config) {
+		try {
+			IBuildConfiguration[] referenced = config.getProject().getReferencedBuildConfigurations(config, false);
+			for (int i = 0; i < referenced.length; i++) {
+				if (configs.contains(referenced[i]))
+					continue;
+				configs.add(referenced[i]);
+				recursivelyAddBuildConfigs(configs, referenced[i]);
+			}
+		} catch (CoreException e) {
+			// Not possible, we've checked that the project + configuration are accessible.
+			Assert.isTrue(false);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see IWorkspace#build(IBuildConfiguration[], int, IProgressMonitor)
+	 */
+	public void build(IBuildConfiguration[] configs, int trigger, boolean buildReferences, IProgressMonitor monitor) throws CoreException {
+		if (configs.length == 0)
+			return;
+
+		Set refsList = new HashSet();
+		for (int i = 0 ; i < configs.length ; i++) {
+			// Check project + build configuration are accessible.
+			if (!configs[i].getProject().isAccessible() || !configs[i].getProject().hasBuildConfiguration(configs[i]))
+				continue;
+			refsList.add(configs[i]);
+			// Find transitive closure of referenced project buildConfigs
+			if (buildReferences)
+				recursivelyAddBuildConfigs(refsList, configs[i]);
+		}
+
+		// Order the referenced project buildConfigs
+		ProjectBuildConfigOrder order = computeProjectBuildConfigOrder((IBuildConfiguration[]) refsList.toArray(new IBuildConfiguration[refsList.size()]));
+
+		// Run the build
+		IBuildConfiguration[] finalOrder = new IBuildConfiguration[order.buildConfigurations.length];
+		System.arraycopy(order.buildConfigurations, 0, finalOrder, 0, order.buildConfigurations.length);
+		buildInternal(finalOrder, trigger, monitor);
+	}
+
+	/**
+	 * Builds the given project buildConfigs in the order supplied.
+	 */
+	private void buildInternal(IBuildConfiguration[] configs, int trigger, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		final ISchedulingRule rule = getRuleFactory().buildRule();
 		try {
@@ -341,7 +477,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				aboutToBuild(this, trigger);
 				IStatus result;
 				try {
-					result = getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+					result = getBuildManager().build(configs, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 				} finally {
 					//must fire POST_BUILD if PRE_BUILD has occurred
 					broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
@@ -477,7 +613,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @return result describing the global project order
 	 * @since 2.1
 	 */
-	private ProjectOrder computeFullProjectOrder() {
+	private VertexOrder computeFullProjectOrder() {
 
 		// determine the full set of accessible projects in the workspace
 		// order the set in descending alphabetical order of project name
@@ -509,18 +645,182 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					edges.add(new IProject[] {project, ref});
 			}
 		}
+		return ComputeProjectOrder.computeVertexOrder(allAccessibleProjects, edges);
+	}
 
-		ProjectOrder fullProjectOrder = ComputeProjectOrder.computeProjectOrder(allAccessibleProjects, edges);
-		return fullProjectOrder;
+	/**
+	 * Computes the global total ordering of all open projects' active buildConfigs in the
+	 * workspace based on build configuration references. If an existing and open project's build config P
+	 * references another existing and open project's build config Q, then Q should come before P
+	 * in the resulting ordering. If a build config references a non-active build config it is
+	 * added to the resulting ordered list. Closed and non-existent projects/buildConfigs are
+	 * ignored, and will not appear in the result. References to non-existent or closed
+	 * projects/buildConfigs are also ignored, as are any self-references.
+	 * <p>
+	 * When there are choices, the choice is made in a reasonably stable way. For
+	 * example, given an arbitrary choice between two project buildConfigs, the one with the
+	 * lower collating project name and build config Id will appear earlier in the list.
+	 * </p>
+	 * <p>
+	 * When the build configuration reference graph contains cyclic references, it is
+	 * impossible to honor all of the relationships. In this case, the result
+	 * ignores as few relationships as possible.  For example, if P2 references P1,
+	 * P4 references P3, and P2 and P3 reference each other, then exactly one of the
+	 * relationships between P2 and P3 will have to be ignored. The outcome will be
+	 * either [P1, P2, P3, P4] or [P1, P3, P2, P4]. The result also contains
+	 * complete details of any cycles present.
+	 * </p>
+	 *
+	 * @return result describing the global active build configuration order
+	 */
+	private VertexOrder computeActiveBuildConfigurationOrder() {
+		// Determine the full set of accessible active project buildConfigs in the workspace,
+		// and all the accessible project buildConfigs that they reference. This forms a set
+		// of all the project buildConfigs that will be returned.
+		// Order the set in descending alphabetical order of project name then build config Id,
+		// as a secondary sort applied after sorting based on references, to achieve a stable
+		// ordering.
+		SortedSet allAccessibleBuildConfigs = new TreeSet(new BuildConfigurationComparator());
+
+		// For each project's active build config, perform a depth first search in the reference graph
+		// rooted at that build config.
+		// This generates the required subset of the reference graph that is required to order all
+		// the dependencies of the active project buildConfigs.
+		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
+		List/*<IBuildConfiguration[]>*/ edges = new ArrayList(allProjects.length);
+
+		for (int i = 0; i < allProjects.length; i++) {
+			Project project = (Project) allProjects[i];
+			// Ignore projects that are not accessible
+			if (!project.isAccessible())
+				continue;
+
+			// If the active build configuration hasn't already been explored
+			// perform a depth first search rooted at it
+			if (!allAccessibleBuildConfigs.contains(project.internalGetActiveBuildConfig())) {
+				allAccessibleBuildConfigs.add(project.internalGetActiveBuildConfig());
+				Stack stack = new Stack();
+				stack.push(project.internalGetActiveBuildConfig());
+
+				while (!stack.isEmpty()) {
+					IBuildConfiguration buildConfiguration = (IBuildConfiguration) stack.pop();
+
+					// Add all referenced buildConfigs from the current configuration
+					// (it is guaranteed to be accessible as it was pushed onto the stack)
+					Project subProject = (Project) buildConfiguration.getProject();
+					IBuildConfiguration[] refs = subProject.internalGetReferencedBuildConfigurations(buildConfiguration, false);
+					for (int j = 0; j < refs.length; j++) {
+						IBuildConfiguration ref = refs[j];
+
+						// Ignore self references and references to projects that are not accessible
+						if (ref.equals(buildConfiguration))
+							continue;
+
+						// Add the referenced accessible configuration
+						edges.add(new IBuildConfiguration[] {buildConfiguration, ref});
+
+						// If we have already explored the referenced configuration, don't explore it again
+						if (allAccessibleBuildConfigs.contains(ref))
+							continue;
+
+						allAccessibleBuildConfigs.add(ref);
+
+						// Push the referenced configuration onto the stack so that it is explored by the depth first search
+						stack.push(ref);
+					}
+				}
+			}
+		}
+		return ComputeProjectOrder.computeVertexOrder(allAccessibleBuildConfigs, edges);
+	}
+
+	/**
+	 * Computes the global total ordering of all project buildConfigs in the workspace based
+	 * on build config references. If an existing and open build config P
+	 * references another existing and open project build config Q, then Q should come before P
+	 * in the resulting ordering. Closed and non-existent projects/buildConfigs are
+	 * ignored, and will not appear in the result. References to non-existent or closed
+	 * projects/buildConfigs are also ignored, as are any self-references.
+	 * <p>
+	 * When there are choices, the choice is made in a reasonably stable way. For
+	 * example, given an arbitrary choice between two project buildConfigs, the one with the
+	 * lower collating project name and build config id will appear earlier in the list.
+	 * </p>
+	 * <p>
+	 * When the build config reference graph contains cyclic references, it is
+	 * impossible to honor all of the relationships. In this case, the result
+	 * ignores as few relationships as possible.  For example, if P2 references P1,
+	 * P4 references P3, and P2 and P3 reference each other, then exactly one of the
+	 * relationships between P2 and P3 will have to be ignored. The outcome will be
+	 * either [P1, P2, P3, P4] or [P1, P3, P2, P4]. The result also contains
+	 * complete details of any cycles present.
+	 * </p>
+	 *
+	 * @return result describing the global project build configuration order
+	 */
+	private VertexOrder computeFullBuildConfigurationOrder() {
+		// Compute the order for all accessible project buildConfigs
+		SortedSet allAccessibleBuildConfigurations = new TreeSet(new BuildConfigurationComparator());
+
+		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
+		List/*<IBuildConfiguration[]>*/ edges = new ArrayList(allProjects.length);
+
+		for (int i = 0; i < allProjects.length; i++) {
+			Project project = (Project) allProjects[i];
+			// Ignore projects that are not accessible
+			if (!project.isAccessible())
+				continue;
+
+			IBuildConfiguration[] configs = project.internalGetBuildConfigs(false);
+			for (int j = 0; j < configs.length; j++) {
+				IBuildConfiguration config = configs[j];
+				allAccessibleBuildConfigurations.add(config);
+				IBuildConfiguration[] refs = project.internalGetReferencedBuildConfigurations(config, false);
+				for (int k = 0; k < refs.length; k++) {
+					IBuildConfiguration ref = refs[k];
+
+					// Ignore self references
+					if (ref.equals(config))
+						continue;
+
+					// Add the reference to the set of reachable configs + add an edge
+					allAccessibleBuildConfigurations.add(ref);
+					edges.add(new IBuildConfiguration[] {config, ref});
+				}
+			}
+		}
+		return ComputeProjectOrder.computeVertexOrder(allAccessibleBuildConfigurations, edges);
+	}
+
+	private static ProjectOrder vertexOrderToProjectOrder(VertexOrder order) {
+		IProject[] projects = new IProject[order.vertexes.length];
+		System.arraycopy(order.vertexes, 0, projects, 0, order.vertexes.length);
+		IProject[][] knots = new IProject[order.knots.length][];
+		for (int i = 0; i < order.knots.length; i++) {
+			knots[i] = new IProject[order.knots[i].length];
+			System.arraycopy(order.knots[i], 0, knots[i], 0, order.knots[i].length);
+		}
+		return new ProjectOrder(projects, order.hasCycles, knots);
+	}
+
+	private static ProjectBuildConfigOrder vertexOrderToProjectBuildConfigOrder(VertexOrder order) {
+		IBuildConfiguration[] buildConfigs = new IBuildConfiguration[order.vertexes.length];
+		System.arraycopy(order.vertexes, 0, buildConfigs, 0, order.vertexes.length);
+		IBuildConfiguration[][] knots = new IBuildConfiguration[order.knots.length][];
+		for (int i = 0; i < order.knots.length; i++) {
+			knots[i] = new IBuildConfiguration[order.knots[i].length];
+			System.arraycopy(order.knots[i], 0, knots[i], 0, order.knots[i].length);
+		}
+		return new ProjectBuildConfigOrder(buildConfigs, order.hasCycles, knots);
 	}
 
 	/**
 	 * Implementation of API method declared on IWorkspace.
 	 * 
 	 * @see IWorkspace#computePrerequisiteOrder(IProject[])
-	 * @deprecated Replaced by <code>IWorkspace.computeProjectOrder</code>, which
-	 * produces a more usable result when there are cycles in project reference
-	 * graph.
+	 * @deprecated Replaced by {@link IWorkspace#computeProjectOrder(IProject[])} and
+	 * {@link Workspace#computeProjectBuildConfigOrder(IBuildConfiguration[])} which
+	 * produces more usable results when there are cycles in project reference.
 	 */
 	public IProject[][] computePrerequisiteOrder(IProject[] targets) {
 		return computePrerequisiteOrder1(targets);
@@ -577,60 +877,71 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public ProjectOrder computeProjectOrder(IProject[] projects) {
 
-		// compute the full project order for all accessible projects
-		ProjectOrder fullProjectOrder = computeFullProjectOrder();
+		// Compute the full project order for all accessible projects
+		VertexOrder fullProjectOrder = computeFullProjectOrder();
 
-		// "fullProjectOrder.projects" contains no inaccessible projects
-		// but might contain accessible projects omitted from "projects"
-		// optimize common case where "projects" includes everything
-		int accessibleCount = 0;
-		for (int i = 0; i < projects.length; i++) {
-			if (projects[i].isAccessible()) {
-				accessibleCount++;
+		// Create a filter to remove all projects that are not in the list asked for
+		final Set projectSet = new HashSet(projects.length);
+		projectSet.addAll(Arrays.asList(projects));
+		VertexFilter filter = new VertexFilter() {
+			public boolean matches(Object vertex) {
+				return !projectSet.contains(vertex);
 			}
-		}
-		// no filtering required if the subset accounts for the full list
-		if (accessibleCount == fullProjectOrder.projects.length) {
-			return fullProjectOrder;
-		}
+		};
 
-		// otherwise we need to eliminate mention of other projects...
-		// ... from "fullProjectOrder.projects"...		
-		// Set<IProject> keepers
-		Set keepers = new HashSet(Arrays.asList(projects));
-		// List<IProject> projects
-		List reducedProjects = new ArrayList(fullProjectOrder.projects.length);
-		for (int i = 0; i < fullProjectOrder.projects.length; i++) {
-			IProject project = fullProjectOrder.projects[i];
-			if (keepers.contains(project)) {
-				// remove projects not in the initial subset
-				reducedProjects.add(project);
-			}
-		}
-		IProject[] p1 = new IProject[reducedProjects.size()];
-		reducedProjects.toArray(p1);
+		// Filter the order and return it
+		return vertexOrderToProjectOrder(ComputeProjectOrder.filterVertexOrder(fullProjectOrder, filter));
+	}
 
-		// ... and from "fullProjectOrder.knots"		
-		// List<IProject[]> knots
-		List reducedKnots = new ArrayList(fullProjectOrder.knots.length);
-		for (int i = 0; i < fullProjectOrder.knots.length; i++) {
-			IProject[] knot = fullProjectOrder.knots[i];
-			List x = new ArrayList(knot.length);
-			for (int j = 0; j < knot.length; j++) {
-				IProject project = knot[j];
-				if (keepers.contains(project)) {
-					x.add(project);
-				}
+	/**
+	 * Computes a total ordering of the given projects buildConfigs based on both static and
+	 * dynamic project references. If an existing and open project's build configuratioin P references
+	 * another existing and open project's configuration Q also included in the list, then Q
+	 * should come before P in the resulting ordering. Closed and non-existent
+	 * projects are ignored, and will not appear in the result. References to
+	 * non-existent or closed projects/buildConfigs are also ignored, as are any
+	 * self-references. The total ordering is always consistent with the global
+	 * total ordering of all open projects' buildConfigs in the workspace.
+	 * <p>
+	 * When there are choices, the choice is made in a reasonably stable way.
+	 * For example, given an arbitrary choice between two project buildConfigs, the one with
+	 * the lower collating configuration id then configuration id is usually selected.
+	 * </p>
+	 * <p>
+	 * When the project reference graph contains cyclic references, it is
+	 * impossible to honor all of the relationships. In this case, the result
+	 * ignores as few relationships as possible. For example, if P2 references
+	 * P1, P4 references P3, and P2 and P3 reference each other, then exactly
+	 * one of the relationships between P2 and P3 will have to be ignored. The
+	 * outcome will be either [P1, P2, P3, P4] or [P1, P3, P2, P4]. The result
+	 * also contains complete details of any cycles present.
+	 * </p>
+	 * <p>
+	 * This method is time-consuming and should not be called unnecessarily.
+	 * There are a very limited set of changes to a workspace that could affect
+	 * the outcome: creating, renaming, or deleting a project; opening or
+	 * closing a project; deleting a build configuration; adding or removing a build configuration reference.
+	 * </p>
+	 * 
+	 * @param buildConfigs the build configurations to order
+	 * @return result describing the build configuration order
+	 * @since 3.7
+	 */
+	public ProjectBuildConfigOrder computeProjectBuildConfigOrder(IBuildConfiguration[] buildConfigs) {
+		// Compute the full project order for all accessible projects
+		VertexOrder fullBuildConfigOrder = computeFullBuildConfigurationOrder();
+
+		// Create a filter to remove all project buildConfigs that are not in the list asked for
+		final Set projectConfigSet = new HashSet(buildConfigs.length);
+		projectConfigSet.addAll(Arrays.asList(buildConfigs));
+		VertexFilter filter = new VertexFilter() {
+			public boolean matches(Object vertex) {
+				return !projectConfigSet.contains(vertex);
 			}
-			// keep knots containing 2 or more projects in the specified subset
-			if (x.size() > 1) {
-				reducedKnots.add(x.toArray(new IProject[x.size()]));
-			}
-		}
-		IProject[][] k1 = new IProject[reducedKnots.size()][];
-		// okay to use toArray here because reducedKnots elements are IProject[]
-		reducedKnots.toArray(k1);
-		return new ProjectOrder(p1, (k1.length > 0), k1);
+		};
+
+		// Filter the order and return it
+		return vertexOrderToProjectBuildConfigOrder(ComputeProjectOrder.filterVertexOrder(fullBuildConfigOrder, filter));
 	}
 
 	/* (non-Javadoc)
@@ -1197,13 +1508,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	/**
-	 * Flush the build order cache for the workspace.  Only needed if the
-	 * description does not already have a build order.  That is, if this
-	 * is really a cache.
+	 * Flush the build order cache for the workspace.  The buildOrder cache contains the total
+	 * order of the build configurations in the workspace, including projects not mentioned in
+	 * the workspace description.
 	 */
 	protected void flushBuildOrder() {
-		if (description.getBuildOrder(false) == null)
-			buildOrder = null;
+		buildOrder = null;
 	}
 
 	/* (non-Javadoc)
@@ -1226,48 +1536,61 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	/**
 	 * Returns the order in which open projects in this workspace will be built.
+	 * The result returned is a list of project buildConfigs, that need to be built
+	 * in order to successfully build the active config of every project in this
+	 * workspace.
 	 * <p>
-	 * The project build order is based on information specified in the workspace
-	 * description. The projects are built in the order specified by
+	 * The build configuration order is based on information specified in the workspace
+	 * description. The project build configs are built in the order specified by
 	 * <code>IWorkspaceDescription.getBuildOrder</code>; closed or non-existent
-	 * projects are ignored and not included in the result. If
-	 * <code>IWorkspaceDescription.getBuildOrder</code> is non-null, the default
-	 * build order is used; again, only open projects are included in the result.
+	 * projects are ignored and not included in the result. If any open projects are
+	 * not specified in this order, they are appended to the end of the build order
+	 * sorted by project name (to provide a stable ordering).
+	 * </p>
+	 * <p>
+	 * If <code>IWorkspaceDescription.getBuildOrder</code> is non-null, the default
+	 * build order is used (calculated based on references); again, only open projects'
+	 * buildConfigs are included in the result.
 	 * </p>
 	 * <p>
 	 * The returned value is cached in the <code>buildOrder</code> field.
 	 * </p>
 	 * 
-	 * @return the list of currently open projects in the workspace in the order in
-	 * which they would be built by <code>IWorkspace.build</code>.
+	 * @return the list of currently open projects active buildConfigs (and the project buildConfigs
+	 * they depend on) in the workspace in the order in which they would be built by <code>IWorkspace.build</code>.
 	 * @see IWorkspace#build(int, IProgressMonitor)
 	 * @see IWorkspaceDescription#getBuildOrder()
-	 * @since 2.1
 	 */
-	public IProject[] getBuildOrder() {
-		if (buildOrder != null) {
-			// return previously-computed and cached project build order
+	public IBuildConfiguration[] getBuildOrder() {
+		// Return the build order cache.
+		if (buildOrder != null)
 			return buildOrder;
-		}
+
 		// see if a particular build order is specified
 		String[] order = description.getBuildOrder(false);
 		if (order != null) {
-			// convert from project names to project handles
+			LinkedHashSet configs = new LinkedHashSet();
+
+			// convert from project names to active project buildConfigs
 			// and eliminate non-existent and closed projects
-			List projectList = new ArrayList(order.length);
 			for (int i = 0; i < order.length; i++) {
 				IProject project = getRoot().getProject(order[i]);
-				if (project.isAccessible()) {
-					projectList.add(project);
-				}
+				if (project.isAccessible())
+					configs.add(((Project) project).internalGetActiveBuildConfig());
 			}
-			buildOrder = new IProject[projectList.size()];
-			projectList.toArray(buildOrder);
-		} else {
+
+			// Add projects not mentioned in the build order to the end, in a sensible reference order
+			configs.addAll(Arrays.asList(vertexOrderToProjectBuildConfigOrder(computeActiveBuildConfigurationOrder()).buildConfigurations));
+
+			// Update the cache - Java 5 volatile memory barrier semantics
+			IBuildConfiguration[] bo = new IBuildConfiguration[configs.size()];
+			configs.toArray(bo);
+			this.buildOrder = bo;
+		} else
 			// use default project build order
 			// computed for all accessible projects in workspace
-			buildOrder = computeFullProjectOrder().projects;
-		}
+			buildOrder = vertexOrderToProjectBuildConfigOrder(computeActiveBuildConfigurationOrder()).buildConfigurations;
+
 		return buildOrder;
 	}
 
@@ -1775,6 +2098,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		updateModificationStamp(result);
 		result.setType(type);
 		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.resources.IWorkspace#newBuildConfiguration(java.lang.String, java.lang.String)
+	 */
+	public IBuildConfiguration newBuildConfiguration(String projectName, String configurationId) {
+		return new BuildConfiguration(getRoot().getProject(projectName), configurationId);
 	}
 
 	/* (non-Javadoc)

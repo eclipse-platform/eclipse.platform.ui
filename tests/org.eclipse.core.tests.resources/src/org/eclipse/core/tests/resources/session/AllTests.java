@@ -50,6 +50,7 @@ public class AllTests extends TestCase {
 		//session tests from other packages  
 		suite.addTest(org.eclipse.core.tests.resources.regression.TestMultipleBuildersOfSameType.suite());
 		suite.addTest(org.eclipse.core.tests.resources.usecase.SnapshotTest.suite());
+		suite.addTest(ProjectDescriptionDynamicTest.suite());
 		return suite;
 	}
 }
