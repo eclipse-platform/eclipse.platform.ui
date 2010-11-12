@@ -379,6 +379,11 @@ public class PartDescriptorItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(BasicPackageImpl.Literals.PART_DESCRIPTOR__MENUS,
+				 MMenuFactory.INSTANCE.createOpaqueMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(BasicPackageImpl.Literals.PART_DESCRIPTOR__TOOLBAR,
 				 MMenuFactory.INSTANCE.createToolBar()));
 

@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.ui.workbench.swt.modeling;
+package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
@@ -20,10 +19,8 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -35,10 +32,10 @@ import org.eclipse.swt.widgets.Widget;
 public class MenuManagerServiceFilter implements Listener {
 	public static final String NUL_MENU_ITEM = "(None Applicable)"; //$NON-NLS-1$
 
-	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context";
+	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context"; //$NON-NLS-1$
 
 	private static void trace(String msg, Widget menu, MMenu menuModel) {
-		WorkbenchSWTActivator.trace(Policy.MENUS, msg + ": " + menu + ": "
+		WorkbenchSWTActivator.trace(Policy.MENUS, msg + ": " + menu + ": " //$NON-NLS-1$ //$NON-NLS-2$
 				+ menuModel, null);
 	}
 
@@ -48,7 +45,7 @@ public class MenuManagerServiceFilter implements Listener {
 		if (aboutToShow == null) {
 			try {
 				aboutToShow = MenuManager.class
-						.getDeclaredMethod("handleAboutToShow");
+						.getDeclaredMethod("handleAboutToShow"); //$NON-NLS-1$
 				aboutToShow.setAccessible(true);
 			} catch (SecurityException e) {
 				// TODO Auto-generated catch block
@@ -62,18 +59,10 @@ public class MenuManagerServiceFilter implements Listener {
 	}
 
 	@Inject
-	private MApplication application;
-
-	@Inject
-	private IPresentationEngine renderer;
-
-	@Inject
 	private Logger logger;
 
 	@Inject
 	EModelService modelService;
-
-	private HashMap<Menu, Runnable> pendingCleanup = new HashMap<Menu, Runnable>();
 
 	public void handleEvent(final Event event) {
 		// wrap the handling in a SafeRunner so that exceptions do not prevent
@@ -103,7 +92,7 @@ public class MenuManagerServiceFilter implements Listener {
 		}
 		final Menu menu = (Menu) event.widget;
 		if (event.type == SWT.Dispose) {
-			trace("handleMenu.Dispose", menu, null);
+			trace("handleMenu.Dispose", menu, null); //$NON-NLS-1$
 			cleanUp(menu);
 		}
 		Object obj = menu.getData(AbstractPartRenderer.OWNING_ME);

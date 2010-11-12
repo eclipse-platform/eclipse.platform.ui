@@ -445,6 +445,75 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected OpaqueMenuItemItemProvider opaqueMenuItemItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createOpaqueMenuItemAdapter() {
+		if (opaqueMenuItemItemProvider == null) {
+			opaqueMenuItemItemProvider = new OpaqueMenuItemItemProvider(this);
+		}
+
+		return opaqueMenuItemItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected OpaqueMenuSeparatorItemProvider opaqueMenuSeparatorItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createOpaqueMenuSeparatorAdapter() {
+		if (opaqueMenuSeparatorItemProvider == null) {
+			opaqueMenuSeparatorItemProvider = new OpaqueMenuSeparatorItemProvider(this);
+		}
+
+		return opaqueMenuSeparatorItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected OpaqueMenuItemProvider opaqueMenuItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createOpaqueMenuAdapter() {
+		if (opaqueMenuItemProvider == null) {
+			opaqueMenuItemProvider = new OpaqueMenuItemProvider(this);
+		}
+
+		return opaqueMenuItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -559,6 +628,9 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		if (toolBarContributionItemProvider != null) toolBarContributionItemProvider.dispose();
 		if (trimContributionItemProvider != null) trimContributionItemProvider.dispose();
 		if (renderedMenuItemItemProvider != null) renderedMenuItemItemProvider.dispose();
+		if (opaqueMenuItemItemProvider != null) opaqueMenuItemItemProvider.dispose();
+		if (opaqueMenuSeparatorItemProvider != null) opaqueMenuSeparatorItemProvider.dispose();
+		if (opaqueMenuItemProvider != null) opaqueMenuItemProvider.dispose();
 	}
 
 }

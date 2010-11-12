@@ -104,6 +104,9 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.TOOL_BAR_CONTRIBUTION: return (EObject)createToolBarContribution();
 			case MenuPackageImpl.TRIM_CONTRIBUTION: return (EObject)createTrimContribution();
 			case MenuPackageImpl.RENDERED_MENU_ITEM: return (EObject)createRenderedMenuItem();
+			case MenuPackageImpl.OPAQUE_MENU_ITEM: return (EObject)createOpaqueMenuItem();
+			case MenuPackageImpl.OPAQUE_MENU_SEPARATOR: return (EObject)createOpaqueMenuSeparator();
+			case MenuPackageImpl.OPAQUE_MENU: return (EObject)createOpaqueMenu();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -297,6 +300,36 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MRenderedMenuItem createRenderedMenuItem() {
 		RenderedMenuItemImpl renderedMenuItem = new RenderedMenuItemImpl();
 		return renderedMenuItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MOpaqueMenuItem createOpaqueMenuItem() {
+		OpaqueMenuItemImpl opaqueMenuItem = new OpaqueMenuItemImpl();
+		return opaqueMenuItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MOpaqueMenuSeparator createOpaqueMenuSeparator() {
+		OpaqueMenuSeparatorImpl opaqueMenuSeparator = new OpaqueMenuSeparatorImpl();
+		return opaqueMenuSeparator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MOpaqueMenu createOpaqueMenu() {
+		OpaqueMenuImpl opaqueMenu = new OpaqueMenuImpl();
+		return opaqueMenu;
 	}
 
 	/**

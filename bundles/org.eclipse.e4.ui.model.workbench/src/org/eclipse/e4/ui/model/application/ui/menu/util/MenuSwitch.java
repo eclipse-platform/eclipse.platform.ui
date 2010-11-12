@@ -376,6 +376,41 @@ public class MenuSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MenuPackageImpl.OPAQUE_MENU_ITEM: {
+				MOpaqueMenuItem opaqueMenuItem = (MOpaqueMenuItem)theEObject;
+				T1 result = caseOpaqueMenuItem(opaqueMenuItem);
+				if (result == null) result = caseMenuItem(opaqueMenuItem);
+				if (result == null) result = caseItem(opaqueMenuItem);
+				if (result == null) result = caseMenuElement(opaqueMenuItem);
+				if (result == null) result = caseUIElement(opaqueMenuItem);
+				if (result == null) result = caseUILabel(opaqueMenuItem);
+				if (result == null) result = caseApplicationElement(opaqueMenuItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.OPAQUE_MENU_SEPARATOR: {
+				MOpaqueMenuSeparator opaqueMenuSeparator = (MOpaqueMenuSeparator)theEObject;
+				T1 result = caseOpaqueMenuSeparator(opaqueMenuSeparator);
+				if (result == null) result = caseMenuSeparator(opaqueMenuSeparator);
+				if (result == null) result = caseMenuElement(opaqueMenuSeparator);
+				if (result == null) result = caseUIElement(opaqueMenuSeparator);
+				if (result == null) result = caseUILabel(opaqueMenuSeparator);
+				if (result == null) result = caseApplicationElement(opaqueMenuSeparator);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MenuPackageImpl.OPAQUE_MENU: {
+				MOpaqueMenu opaqueMenu = (MOpaqueMenu)theEObject;
+				T1 result = caseOpaqueMenu(opaqueMenu);
+				if (result == null) result = caseMenu(opaqueMenu);
+				if (result == null) result = caseMenuElement(opaqueMenu);
+				if (result == null) result = caseElementContainer(opaqueMenu);
+				if (result == null) result = caseUIElement(opaqueMenu);
+				if (result == null) result = caseUILabel(opaqueMenu);
+				if (result == null) result = caseApplicationElement(opaqueMenu);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -752,6 +787,51 @@ public class MenuSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseRenderedMenuItem(MRenderedMenuItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Opaque Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Opaque Menu Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseOpaqueMenuItem(MOpaqueMenuItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Opaque Menu Separator</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Opaque Menu Separator</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseOpaqueMenuSeparator(MOpaqueMenuSeparator object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Opaque Menu</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Opaque Menu</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseOpaqueMenu(MOpaqueMenu object) {
 		return null;
 	}
 

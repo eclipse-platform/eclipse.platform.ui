@@ -188,7 +188,15 @@ public class EditorMenuManager extends SubMenuManager {
 			mc.getChildren().add(separator);
 		} else if (!(item instanceof SubContributionItem) && !(item instanceof SubMenuManager)) {
 			MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
+			menuItem.setElementId(item.getId());
 			menuItem.setContributionItem(item);
+			// IRendererFactory factory =
+			// application.getContext().get(IRendererFactory.class);
+			// AbstractPartRenderer renderer = factory.getRenderer(mc, null);
+			// if (renderer instanceof MenuManagerRenderer) {
+			// ((MenuManagerRenderer)
+			// renderer).linkModelToContribution(menuItem, item);
+			// }
 			mc.getChildren().add(menuItem);
 		}
 	}

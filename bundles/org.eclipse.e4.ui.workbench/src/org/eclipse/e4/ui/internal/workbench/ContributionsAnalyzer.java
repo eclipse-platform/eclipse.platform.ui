@@ -104,14 +104,27 @@ public final class ContributionsAnalyzer {
 			final List<MMenuContribution> menuContributionList, final String id,
 			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
 			boolean includePopups) {
+		ArrayList<String> popupIds = new ArrayList<String>();
+		if (includePopups) {
+			popupIds.add(POPUP_PARENT_ID);
+			popupIds.add(id);
+			for (String tag : menuModel.getTags()) {
+				if (tag.startsWith("popup:")) { //$NON-NLS-1$
+					String tmp = tag.substring("popup:".length()); //$NON-NLS-1$
+					if (!popupIds.contains(tmp)) {
+						popupIds.add(tmp);
+					}
+				}
+			}
+		}
 		for (MMenuContribution menuContribution : menuContributionList) {
 			String parentID = menuContribution.getParentId();
 			if (parentID == null) {
 				// it doesn't make sense for this to be null, temporary workaround for bug 320790
 				continue;
 			}
-			boolean popup = parentID.equals(POPUP_PARENT_ID) && (menuModel instanceof MPopupMenu)
-					&& includePopups;
+			boolean popup = includePopups && (menuModel instanceof MPopupMenu)
+					&& popupIds.contains(parentID);
 			boolean filtered = isFiltered(menuModel, menuContribution);
 			if (filtered || (!popup && !parentID.equals(id)) || !menuContribution.isToBeRendered()) {
 				continue;
@@ -176,7 +189,7 @@ public final class ContributionsAnalyzer {
 		return isVisible((MCoreExpression) contribution.getVisibleWhen(), eContext);
 	}
 
-	static boolean isVisible(MCoreExpression exp, ExpressionContext eContext) {
+	public static boolean isVisible(MCoreExpression exp, ExpressionContext eContext) {
 		Expression ref = null;
 		if (exp.getCoreExpression() instanceof Expression) {
 			ref = (Expression) exp.getCoreExpression();

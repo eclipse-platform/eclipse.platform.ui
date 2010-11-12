@@ -85,6 +85,17 @@ public class E4Workbench implements IWorkbench {
 	 */
 	public void createAndRunUI(MApplicationElement uiRoot) {
 		// Has someone already created one ?
+		instantiateRenderer();
+
+		if (renderer != null) {
+			renderer.run(uiRoot, appContext);
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void instantiateRenderer() {
 		renderer = (IPresentationEngine) appContext.get(IPresentationEngine.class.getName());
 		if (renderer == null) {
 			String presentationURI = (String) appContext.get(PRESENTATION_URI_ARG);
@@ -98,10 +109,6 @@ public class E4Workbench implements IWorkbench {
 				Logger logger = (Logger) appContext.get(Logger.class.getName());
 				logger.error("Failed to create the presentation engine for URI: " + presentationURI); //$NON-NLS-1$
 			}
-		}
-
-		if (renderer != null) {
-			renderer.run(uiRoot, appContext);
 		}
 	}
 

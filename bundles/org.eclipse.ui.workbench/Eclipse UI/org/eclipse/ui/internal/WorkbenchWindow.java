@@ -659,6 +659,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			} else {
 				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
 				menuItem.setContributionItem(item);
+				menuItem.setElementId(item.getId());
 				menu.getChildren().add(menuItem);
 			}
 		}

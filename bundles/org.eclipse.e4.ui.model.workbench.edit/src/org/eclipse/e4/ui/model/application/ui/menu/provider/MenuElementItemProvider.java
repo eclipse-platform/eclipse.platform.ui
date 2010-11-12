@@ -69,6 +69,9 @@ public class MenuElementItemProvider
 			addLabelPropertyDescriptor(object);
 			addIconURIPropertyDescriptor(object);
 			addTooltipPropertyDescriptor(object);
+			addLocalLabelPropertyDescriptor(object);
+			addLocalTooltipPropertyDescriptor(object);
+			addLocalImagePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -140,6 +143,72 @@ public class MenuElementItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Local Label feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addLocalLabelPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_localLabel_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_localLabel_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__LOCAL_LABEL,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Local Tooltip feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addLocalTooltipPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_localTooltip_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_localTooltip_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__LOCAL_TOOLTIP,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Local Image feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addLocalImagePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_localImage_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_localImage_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__LOCAL_IMAGE,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -168,6 +237,9 @@ public class MenuElementItemProvider
 			case MenuPackageImpl.MENU_ELEMENT__LABEL:
 			case MenuPackageImpl.MENU_ELEMENT__ICON_URI:
 			case MenuPackageImpl.MENU_ELEMENT__TOOLTIP:
+			case MenuPackageImpl.MENU_ELEMENT__LOCAL_LABEL:
+			case MenuPackageImpl.MENU_ELEMENT__LOCAL_TOOLTIP:
+			case MenuPackageImpl.MENU_ELEMENT__LOCAL_IMAGE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

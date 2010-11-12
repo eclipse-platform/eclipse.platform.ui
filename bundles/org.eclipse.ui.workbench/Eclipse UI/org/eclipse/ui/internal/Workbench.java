@@ -533,6 +533,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 					IEclipseContext workbenchContext = e4Workbench.getContext();
 					workbenchContext.set(Display.class, display);
 
+					e4Workbench.instantiateRenderer();
+
 					// create the workbench instance
 					Workbench workbench = new Workbench(display, advisor, e4Workbench
 							.getApplication(), e4Workbench.getContext());

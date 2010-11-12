@@ -171,4 +171,31 @@ public interface MMenuFactory {
 	 */
 	MRenderedMenuItem createRenderedMenuItem();
 
+	/**
+	 * Returns a new object of class '<em>Opaque Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Opaque Menu Item</em>'.
+	 * @generated
+	 */
+	MOpaqueMenuItem createOpaqueMenuItem();
+
+	/**
+	 * Returns a new object of class '<em>Opaque Menu Separator</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Opaque Menu Separator</em>'.
+	 * @generated
+	 */
+	MOpaqueMenuSeparator createOpaqueMenuSeparator();
+
+	/**
+	 * Returns a new object of class '<em>Opaque Menu</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Opaque Menu</em>'.
+	 * @generated
+	 */
+	MOpaqueMenu createOpaqueMenu();
+
 } //MMenuFactory

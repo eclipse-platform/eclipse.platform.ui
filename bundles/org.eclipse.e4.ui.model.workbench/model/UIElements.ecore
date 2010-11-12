@@ -316,6 +316,15 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
             transient="true"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuItem" eSuperTypes="#//ui/menu/MenuItem">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+            transient="true"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenuSeparator" eSuperTypes="#//ui/menu/MenuSeparator">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="opaqueItem" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+            transient="true"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="OpaqueMenu" eSuperTypes="#//ui/menu/Menu"/>
     </eSubpackages>
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
         nsPrefix="basic">

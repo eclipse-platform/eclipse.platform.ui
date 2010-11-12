@@ -276,6 +276,16 @@ public class UIEvents {
 		public static final String MNEMONICS = "mnemonics"; //$NON-NLS-1$
 	}
 
+	public static interface OpaqueMenuItem {
+		public static final String TOPIC = UITopicBase + "/menu/OpaqueMenuItem"; //$NON-NLS-1$
+		public static final String OPAQUEITEM = "opaqueItem"; //$NON-NLS-1$
+	}
+
+	public static interface OpaqueMenuSeparator {
+		public static final String TOPIC = UITopicBase + "/menu/OpaqueMenuSeparator"; //$NON-NLS-1$
+		public static final String OPAQUEITEM = "opaqueItem"; //$NON-NLS-1$
+	}
+
 	public static interface RenderedMenu {
 		public static final String TOPIC = UITopicBase + "/menu/RenderedMenu"; //$NON-NLS-1$
 		public static final String CONTRIBUTIONMANAGER = "contributionManager"; //$NON-NLS-1$

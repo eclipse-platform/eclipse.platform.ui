@@ -12,11 +12,8 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.List;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
@@ -41,21 +38,10 @@ public class SeparatorRenderer extends SWTPartRenderer {
 			return null;
 		}
 		if (nextVisibleChild.isVisible()
-				&& (nextVisibleChild instanceof MMenuSeparator || nextVisibleChild instanceof MToolBarSeparator)) {
+				&& (nextVisibleChild instanceof MToolBarSeparator)) {
 			return null;
 		}
-		if (element instanceof MMenuSeparator) {
-			Menu menu = null;
-			Object widget = element.getParent().getWidget();
-			if (widget instanceof Menu) {
-				menu = (Menu) widget;
-			} else if (widget instanceof MenuItem) {
-				menu = ((MenuItem) widget).getMenu();
-			}
-			if (menu != null) {
-				newSep = new MenuItem(menu, SWT.SEPARATOR, addIndex);
-			}
-		} else if (element instanceof MToolBarSeparator) {
+		if (element instanceof MToolBarSeparator) {
 			ToolBar tb = parent instanceof ToolBar ? (ToolBar) parent
 					: (ToolBar) element.getParent().getWidget();
 			newSep = new ToolItem(tb, SWT.SEPARATOR, addIndex);

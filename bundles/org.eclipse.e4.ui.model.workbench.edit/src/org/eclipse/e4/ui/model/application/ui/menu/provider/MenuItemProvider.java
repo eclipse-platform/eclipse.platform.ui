@@ -289,6 +289,21 @@ public class MenuItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createOpaqueMenuItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createOpaqueMenuSeparator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
+				 MMenuFactory.INSTANCE.createOpaqueMenu()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN,
 				 MApplicationFactory.INSTANCE.createApplication()));
 
 		newChildDescriptors.add

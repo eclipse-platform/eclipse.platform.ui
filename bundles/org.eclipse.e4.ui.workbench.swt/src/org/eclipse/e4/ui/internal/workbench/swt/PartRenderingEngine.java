@@ -51,6 +51,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
@@ -58,7 +59,6 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
-import org.eclipse.e4.ui.workbench.swt.modeling.MenuServiceFilter;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -90,8 +90,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	IRendererFactory curFactory = null;
 
-	MenuServiceFilter menuServiceFilter;
-
 	org.eclipse.swt.widgets.Listener keyListener;
 
 	// Life Cycle handlers
@@ -108,8 +106,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.eContainer();
 			}
 
+			boolean menuChild = parent instanceof MMenu;
+
 			// If the parent isn't displayed who cares?
-			if (parent == null || parent.getWidget() == null)
+			if (parent == null || parent.getWidget() == null || menuChild)
 				return;
 
 			if (changedElement.isToBeRendered()) {
@@ -207,9 +207,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 			MElementContainer<MUIElement> changedElement = (MElementContainer<MUIElement>) changedObj;
 			boolean isApplication = changedObj instanceof MApplication;
 
+			boolean menuChild = changedObj instanceof MMenu;
 			// If the parent isn't in the UI then who cares?
 			AbstractPartRenderer renderer = getRendererFor(changedElement);
-			if (!isApplication && renderer == null)
+			if ((!isApplication && renderer == null) || menuChild)
 				return;
 
 			String eventType = (String) event
@@ -685,7 +686,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	public Object run(final MApplicationElement uiRoot,
 			final IEclipseContext runContext) {
-		final Display display = Display.getDefault();
+		final Display display;
+		if (runContext.get(Display.class) != null) {
+			display = runContext.get(Display.class);
+		} else {
+			display = Display.getDefault();
+			runContext.set(Display.class, display);
+		}
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 
 			public void run() {
@@ -702,13 +709,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 				keyListener = dispatcher.getKeyDownFilter();
 				display.addFilter(SWT.KeyDown, keyListener);
 				display.addFilter(SWT.Traverse, keyListener);
-
-				menuServiceFilter = ContextInjectionFactory.make(
-						MenuServiceFilter.class, runContext);
-				display.addFilter(SWT.Show, menuServiceFilter);
-				display.addFilter(SWT.Hide, menuServiceFilter);
-				display.addFilter(SWT.Dispose, menuServiceFilter);
-				runContext.set(MenuServiceFilter.class, menuServiceFilter);
 
 				// Show the initial UI
 
@@ -842,17 +842,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * why this is needed we should make this safe for multiple calls
 	 */
 	private void cleanUp() {
-		if (menuServiceFilter != null) {
-			Display display = Display.getDefault();
-			if (!display.isDisposed()) {
-				display.removeFilter(SWT.Show, menuServiceFilter);
-				display.removeFilter(SWT.Hide, menuServiceFilter);
-				display.removeFilter(SWT.Dispose, menuServiceFilter);
-				menuServiceFilter.dispose();
-				menuServiceFilter = null;
-				appContext.remove(MenuServiceFilter.class);
-			}
-		}
 		if (keyListener != null) {
 			Display display = Display.getDefault();
 			if (!display.isDisposed()) {

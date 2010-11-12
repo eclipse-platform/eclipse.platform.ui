@@ -26,11 +26,12 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
-import org.eclipse.e4.ui.internal.workbench.ExtensionPointProxy;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -60,15 +61,19 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.OpenPreferencesAction;
+import org.eclipse.ui.internal.PluginAction;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -348,13 +353,30 @@ public class MenuHelper {
 				.getIconUrl(menuAddition, IWorkbenchRegistryConstants.ATT_ICON));
 		element.setLabel(Util.safeString(text));
 
-		for (IConfigurationElement child : menuAddition.getChildren()) {
+		for (final IConfigurationElement child : menuAddition.getChildren()) {
 			if (child.getName().equals(IWorkbenchRegistryConstants.TAG_DYNAMIC)) {
-				ExtensionPointProxy proxy = new ExtensionPointProxy(child,
-						IWorkbenchRegistryConstants.TAG_CLASS, new ExtensionContribution());
+				ContextFunction generator = new ContextFunction() {
+					@Override
+					public Object compute(IEclipseContext context) {
+						ServiceLocator sl = new ServiceLocator();
+						sl.setContext(context);
+						DynamicMenuContributionItem item = new DynamicMenuContributionItem(
+								getId(child), sl, child);
+						return item;
+					}
+				};
+
 				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
 				menuItem.setElementId(getId(child));
-				menuItem.setContributionItem(proxy);
+				menuItem.setContributionItem(generator);
+				// IRendererFactory factory =
+				// application.getContext().get(IRendererFactory.class);
+				// AbstractPartRenderer renderer = factory.getRenderer(element,
+				// null);
+				// if (renderer instanceof MenuManagerRenderer) {
+				// ((MenuManagerRenderer)
+				// renderer).linkModelToContribution(menuItem, item);
+				// }
 				element.getChildren().add(menuItem);
 			}
 		}
@@ -395,58 +417,32 @@ public class MenuHelper {
 		String pulldown = element.getAttribute("pulldown"); //$NON-NLS-1$
 		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)
 				|| (pulldown != null && pulldown.equals("true"))) { //$NON-NLS-1$
-			MRenderedMenu menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
-			menu.setElementId(id);
-			menu.setLabel(text);
+			MRenderedMenuItem item = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
+			item.setLabel(text);
 			if (iconUri != null) {
-				menu.setIconURI(iconUri);
+				item.setIconURI(iconUri);
 			}
-			ECommandService cs = app.getContext().get(ECommandService.class);
-			final ParameterizedCommand parmCmd = cs.createCommand(cmdId, null);
-			menu.setContributionManager(new IMenuCreator() {
-				private ActionDelegateHandlerProxy handlerProxy;
-
-				private ActionDelegateHandlerProxy getProxy() {
-					if (handlerProxy == null) {
-						handlerProxy = new ActionDelegateHandlerProxy(element,
-								IWorkbenchRegistryConstants.ATT_CLASS, id, parmCmd, PlatformUI
-										.getWorkbench().getActiveWorkbenchWindow(), null, null,
-								null);
-					}
-					return handlerProxy;
-				}
-
-				private IWorkbenchWindowPulldownDelegate getDelegate() {
-					getProxy();
-					if (handlerProxy == null) {
+			IContextFunction generator = new ContextFunction() {
+				@Override
+				public Object compute(IEclipseContext context) {
+					IWorkbenchWindow window = context.get(IWorkbenchWindow.class);
+					if (window == null) {
 						return null;
 					}
-					if (handlerProxy.getDelegate() == null) {
-						handlerProxy.loadDelegate();
-					}
-					return (IWorkbenchWindowPulldownDelegate) handlerProxy.getDelegate();
+					ActionDescriptor desc = new ActionDescriptor(element,
+							ActionDescriptor.T_WORKBENCH_PULLDOWN, window);
+					final PluginAction action = desc.getAction();
+					return new ActionContributionItem(action) {
+						@Override
+						public void dispose() {
+							super.dispose();
+							action.disposeDelegate();
+						}
+					};
 				}
-
-				public Menu getMenu(Menu parent) {
-					IWorkbenchWindowPulldownDelegate2 delegate = (IWorkbenchWindowPulldownDelegate2) getDelegate();
-					if (delegate == null) {
-						return null;
-					}
-					return delegate.getMenu(parent);
-				}
-
-				public Menu getMenu(Control parent) {
-					return getDelegate() == null ? null : getDelegate().getMenu(parent);
-				}
-
-				public void dispose() {
-					if (handlerProxy != null) {
-						handlerProxy.dispose();
-						handlerProxy = null;
-					}
-				}
-			});
-			return menu;
+			};
+			item.setContributionItem(generator);
+			return item;
 		}
 
 		ItemType type = ItemType.PUSH;
