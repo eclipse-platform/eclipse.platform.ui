@@ -271,9 +271,12 @@ public class ModelServiceImpl implements EModelService {
 	 * .application.ui.basic.MWindow, org.eclipse.e4.ui.model.application.ui.MUIElement)
 	 */
 	public MPlaceholder findPlaceholderFor(MWindow window, MUIElement element) {
-		List<MPlaceholder> phList = findPerspectiveElements(window, element.getElementId(),
-				MPlaceholder.class, null);
-		return phList.size() > 0 ? phList.get(0) : null;
+		List<MPlaceholder> phList = findPerspectiveElements(window, null, MPlaceholder.class, null);
+		for (MPlaceholder ph : phList) {
+			if (ph.getRef() == element)
+				return ph;
+		}
+		return null;
 	}
 
 	/*
