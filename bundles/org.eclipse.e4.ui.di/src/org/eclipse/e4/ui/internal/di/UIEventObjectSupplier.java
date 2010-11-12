@@ -36,7 +36,7 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 
 		public void handleEvent(org.osgi.service.event.Event event) {
 			addCurrentEvent(topic, event);
-			requestor.resolveArguments();
+			requestor.resolveArguments(false);
 			removeCurrentEvent(topic);
 			if( contextRealm == null ) {
 				if (logger != null)
