@@ -50,6 +50,7 @@ public class CTabRendering extends CTabFolderRenderer {
 	int cornerSize = 14;
 
 	boolean shadowEnabled = true;
+	Color shadowColor;
 	Color outerKeyline, innerKeyline;
 	Color[] activeToolbar;
 	int[] activePercents;
@@ -311,8 +312,10 @@ public class CTabRendering extends CTabFolderRenderer {
 	}
 
 	void drawSelectedTab(int itemIndex, GC gc, Rectangle bounds, int state) {
-		int width = bounds.width;
+		if (parent.getSingle() && parent.getItem(itemIndex).isShowing())
+			return;
 
+		int width = bounds.width;
 		int[] points = new int[1024];
 		int index = 0;
 		int radius = cornerSize / 2;
@@ -372,7 +375,8 @@ public class CTabRendering extends CTabFolderRenderer {
 						+ OUTER_KEYLINE), bounds.y + bounds.height);// bounds.height
 																	// + 4);
 		if (selectedTabFillColor == null)
-			selectedTabFillColor = gc.getDevice().getSystemColor(SWT.COLOR_WHITE);
+			selectedTabFillColor = gc.getDevice().getSystemColor(
+					SWT.COLOR_WHITE);
 		gc.setBackground(selectedTabFillColor);
 		gc.setForeground(selectedTabFillColor);
 		int[] tmpPoints = new int[index];
@@ -566,7 +570,7 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	void drawShadow(final Display display, Rectangle bounds, GC gc) {
 		if (shadowImage == null)
-			createShadow(display);
+			createShadow(display, false);
 
 		int x = bounds.x;
 		int y = bounds.y;
@@ -622,16 +626,17 @@ public class CTabRendering extends CTabFolderRenderer {
 				+ width - SIZE - 1, xFill + SIZE, SIZE, fillHeight - xFill);
 	}
 
-	void createShadow(final Display display) {
+	void createShadow(final Display display, boolean recreate) {
 		Object obj = display.getData(E4_SHADOW_IMAGE);
-		if (obj != null) {
+		if (obj != null && !recreate) {
 			shadowImage = (Image) obj;
 		} else {
 			ImageData data = new ImageData(60, 60, 32, new PaletteData(
 					0xFF0000, 0xFF00, 0xFF));
 			Image tmpImage = shadowImage = new Image(display, data);
 			GC gc = new GC(tmpImage);
-			Color shadowColor = new Color(display, new RGB(128, 128, 128));
+			if (shadowColor == null)
+				shadowColor = gc.getDevice().getSystemColor(SWT.COLOR_GRAY);
 			gc.setBackground(shadowColor);
 			drawTabBody(gc, new Rectangle(0, 0, 60, 60), SWT.None);
 			ImageData blured = blur(tmpImage, 5, 25);
@@ -777,6 +782,12 @@ public class CTabRendering extends CTabFolderRenderer {
 
 	public void setShadowVisible(boolean visible) {
 		this.shadowEnabled = visible;
+		parent.redraw();
+	}
+
+	public void setShadowColor(Color color) {
+		this.shadowColor = color;
+		createShadow(parent.getDisplay(), true);
 		parent.redraw();
 	}
 

@@ -331,6 +331,14 @@
                name="tab-outline">
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShadowColorHandler">
+         <property-name
+               name="shadow-color">
+         </property-name>
+      </handler>
    </extension>
                
 
