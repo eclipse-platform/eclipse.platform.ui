@@ -172,7 +172,8 @@ public class StackRenderer extends LazyStackRenderer {
 						MElementContainer<MUIElement> refParent = ref
 								.getParent();
 						// can be null, see bug 328296
-						if (refParent != null && refParent.getRenderer() instanceof StackRenderer) {
+						if (refParent != null
+								&& refParent.getRenderer() instanceof StackRenderer) {
 							CTabItem cti = findItemForPart(ref, refParent);
 							if (cti != null) {
 								updateTab(cti, part, attName, newValue);
@@ -319,7 +320,7 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		int createFlags = SWT.NONE;
-		if (part != null && part.isCloseable()) {
+		if (part != null && isClosable(part)) {
 			createFlags |= SWT.CLOSE;
 		}
 
@@ -578,6 +579,16 @@ public class StackRenderer extends LazyStackRenderer {
 		tabMenu.setVisible(true);
 	}
 
+	private boolean isClosable(MPart part) {
+		MUIElement presentationElement = part;
+		// if it's a shared part check its current ref
+		if (part.getCurSharedRef() != null) {
+			presentationElement = part.getCurSharedRef();
+		}
+
+		return !(presentationElement.getTags().contains(IPresentationEngine.NO_CLOSE));
+	}
+
 	private Menu createTabMenu(CTabFolder folder, MPart part) {
 		Shell shell = folder.getShell();
 		Menu cachedMenu = (Menu) shell.getData(SHELL_CLOSE_EDITORS_MENU);
@@ -591,17 +602,20 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		final Menu menu = cachedMenu;
-		MenuItem menuItemClose = new MenuItem(menu, SWT.NONE);
-		menuItemClose.setText(SWTRenderersMessages.menuClose);
-		menuItemClose.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
-				EPartService partService = getContextForParent(part).get(
-						EPartService.class);
-				if (partService.savePart(part, true))
-					partService.hidePart(part);
-			}
-		});
+
+		if (isClosable(part)) {
+			MenuItem menuItemClose = new MenuItem(menu, SWT.NONE);
+			menuItemClose.setText(SWTRenderersMessages.menuClose);
+			menuItemClose.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					MPart part = (MPart) menu.getData(STACK_SELECTED_PART);
+					EPartService partService = getContextForParent(part).get(
+							EPartService.class);
+					if (partService.savePart(part, true))
+						partService.hidePart(part);
+				}
+			});
+		}
 
 		MElementContainer<MUIElement> parent = getParent(part);
 		if (parent != null) {
@@ -671,12 +685,12 @@ public class StackRenderer extends LazyStackRenderer {
 
 			if (part.equals(otherPart))
 				continue; // skip selected item
-			if (otherPart.isToBeRendered())
+			if (otherPart.isToBeRendered() && isClosable(otherPart))
 				others.add(otherPart);
 		}
 
 		// add the current part last so that we unrender obscured items first
-		if (!skipThisPart) {
+		if (!skipThisPart && part.isToBeRendered() && isClosable(part)) {
 			others.add(part);
 		}
 

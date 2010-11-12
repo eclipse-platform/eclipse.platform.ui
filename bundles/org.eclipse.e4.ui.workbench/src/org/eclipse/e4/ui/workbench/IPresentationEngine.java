@@ -28,6 +28,21 @@ public interface IPresentationEngine {
 	public static final String SERVICE_NAME = IPresentationEngine.class.getName();
 
 	/**
+	 * When applied as a tag to an MUILabel inhibits the display of the label text
+	 */
+	public static final String NO_TITLE = "NoTitle"; //$NON-NLS-1$
+
+	/**
+	 * When applied as a tag to an MStackElement inhibits the display of the close affordance
+	 */
+	public static final String NO_CLOSE = "NoClose"; //$NON-NLS-1$
+
+	/**
+	 * When applied as a tag to an MUIElement inhibits moveing the elemnt (ie. through DnD...
+	 */
+	public static final String NO_MOVE = "NoMove"; //$NON-NLS-1$
+
+	/**
 	 * Creates and returns the UI element for the given model element.
 	 * 
 	 * @param element
