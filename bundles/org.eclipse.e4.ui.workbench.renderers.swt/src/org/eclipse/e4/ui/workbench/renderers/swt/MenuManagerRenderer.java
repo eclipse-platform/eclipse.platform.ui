@@ -645,6 +645,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			itemModel.setContributionItem(ici);
 		} else if (obj instanceof IContributionItem) {
 			ici = (IContributionItem) obj;
+		} else {
+			System.err.println("Failed to load MRenderedMenuItem " + itemModel //$NON-NLS-1$
+					+ "\n\t" + obj); //$NON-NLS-1$
+			return;
 		}
 		ici.setVisible(itemModel.isVisible());
 		parentManager.add(ici);
