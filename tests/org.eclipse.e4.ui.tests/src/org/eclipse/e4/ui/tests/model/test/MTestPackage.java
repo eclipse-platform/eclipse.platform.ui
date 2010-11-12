@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MTestPackage.java,v 1.5 2010/07/15 17:24:14 pwebster Exp $
+ * $Id: MTestPackage.java,v 1.6 2010/09/21 17:55:23 tschindl Exp $
  */
 package org.eclipse.e4.ui.tests.model.test;
 
@@ -332,13 +332,40 @@ public interface MTestPackage extends EPackage {
 	int TEST_HARNESS__TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 27;
 
 	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__LOCAL_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 28;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__LOCAL_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 29;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__LOCAL_IMAGE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 30;
+
+	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__DIRTY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 28;
+	int TEST_HARNESS__DIRTY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 31;
 
 	/**
 	 * The number of structural features of the '<em>Harness</em>' class. <!--
@@ -347,7 +374,7 @@ public interface MTestPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 29;
+	int TEST_HARNESS_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 32;
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.tests.model.test.MTestHarness <em>Harness</em>}'.
