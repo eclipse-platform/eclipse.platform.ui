@@ -78,9 +78,7 @@ public class TrackableComputationExt extends Computation {
 				if (runnable instanceof RunAndTrackExt)
 					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments());
 				else {
-					if (eventType == ContextChangeEvent.DISPOSE)
-						runnable.disposed(cachedEvent.getContext());
-					else if (eventType != ContextChangeEvent.UNINJECTED)
+					if (eventType == ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED)
 						result = runnable.changed(cachedEvent.getContext());
 				}
 				cachedEvent = null;
@@ -89,9 +87,7 @@ public class TrackableComputationExt extends Computation {
 				if (runnable instanceof RunAndTrackExt)
 					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments());
 				else {
-					if (eventType == ContextChangeEvent.DISPOSE)
-						runnable.disposed(event.getContext());
-					else if (eventType != ContextChangeEvent.UNINJECTED)
+					if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED)
 						result = runnable.changed(event.getContext());
 				}
 			}

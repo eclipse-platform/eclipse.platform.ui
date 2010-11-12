@@ -25,19 +25,6 @@ abstract public class RunAndTrack {
 	}
 
 	/**
-	 * The method will be called before the associated context is disposed of.
-	 * <p>
-	 * Subclasses may override this method. Overrides should finish the processing
-	 * by calling this method in the superclass.
-	 * </p>
-	 * @param context the context being disposed of
-	 * @deprecated this method will be removed; use IContextDisposalListener instead
-	 */
-	public void disposed(IEclipseContext context) {
-		// subclasses may override
-	}
-
-	/**
 	 * This method is initially called by the framework when an instance of this
 	 * class is associated with the context via {@link IEclipseContext#runAndTrack(RunAndTrack)}.
 	 * <p>
