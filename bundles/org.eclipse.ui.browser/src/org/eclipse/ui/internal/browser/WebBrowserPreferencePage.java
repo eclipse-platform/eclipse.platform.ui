@@ -600,9 +600,17 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		else
 			choice = WebBrowserPreference.EXTERNAL;
 		WebBrowserPreference.setBrowserChoice(choice);
-		if (checkedBrowser != null)
+		if (checkedBrowser != null) {
 			BrowserManager.getInstance().setCurrentWebBrowser(checkedBrowser);
+		} else {
+			BrowserManager.getInstance().saveBrowsers();
+		}
 
 		return true;
+	}
+	
+	public boolean performCancel() {
+		BrowserManager.getInstance().loadBrowsers();
+		return super.performCancel();
 	}
 }

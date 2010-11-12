@@ -87,7 +87,7 @@ public class BrowserManager extends Observable {
 		return new ArrayList(browsers);
 	}
 
-	protected void loadBrowsers() {
+	public void loadBrowsers() {
 		Trace.trace(Trace.FINEST, "Loading web browsers"); //$NON-NLS-1$
 		
 		String xmlString = Platform.getPreferencesService().getString
@@ -193,8 +193,6 @@ public class BrowserManager extends Observable {
 			browsers.add(browser);
 		if (browsers.size() == 1)
 			setCurrentWebBrowser(browser);
-		
-		saveBrowsers();
 	}
 
 	protected void removeWebBrowser(IBrowserDescriptor browser) {
@@ -229,4 +227,5 @@ public class BrowserManager extends Observable {
 			throw new IllegalArgumentException();
 		saveBrowsers();
 	}
+	
 }
