@@ -76,7 +76,7 @@ public class ContextServlet extends HttpServlet {
 		out.write(">\n"); //$NON-NLS-1$
 		String description = context.getText();
 		if (description != null) {
-			out.write("   <description>" + description + "</description>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			out.write("   <description>" + UrlUtil.htmlEncode(description) + "</description>\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		IHelpResource[] topics = context.getRelatedTopics();
