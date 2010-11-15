@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
+import org.w3c.dom.DOMException;
+
 /**
  * Interface to a memento used for saving the important state of an object in a
  * form that can be persisted in the file system.
@@ -36,11 +38,16 @@ package org.eclipse.ui;
  * the value of <code>TAG_ID</code> is reserved for internal use.
  * </p>
  * <p>
+ * The default implementation can throw a {@link DOMException} for createChild
+ * and put operations. See {@link XMLMemento}.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
  * 
  * @see IPersistableElement
  * @see IElementFactory
+ * @see XMLMemento
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMemento {
@@ -83,19 +90,24 @@ public interface IMemento {
     public IMemento createChild(String type, String id);
 
     /**
-     * Returns the first child with the given type id.
-     *
-     * @param type the type id
-     * @return the first child with the given type
-     */
+	 * Returns the first child with the given type id.
+	 * 
+	 * @param type
+	 *            the type id
+	 * @return the first child with the given type. May return <code>null</code>
+	 *         .
+	 */
     public IMemento getChild(String type);
 
     /**
-     * Returns all children with the given type id.
-     *
-     * @param type the type id
-     * @return an array of children with the given type
-     */
+	 * Returns all children with the given type id.
+	 * 
+	 * @param type
+	 *            the type id
+	 * @return an array of children with the given type. This will not be
+	 *         <code>null</code>. If there are no keys, an array of length zero
+	 *         will be returned.
+	 */
     public IMemento[] getChildren(String type);
 
     /**
