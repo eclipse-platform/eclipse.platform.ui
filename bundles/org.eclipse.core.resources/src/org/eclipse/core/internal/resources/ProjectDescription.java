@@ -9,21 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [245937] setLinkLocation() detects non-change
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
- * Markus Schorn (Wind River) - [306575] Save snapshot location with project
- * Broadcom Corporation - build configurations and references
+ *     Markus Schorn (Wind River) - [306575] Save snapshot location with project
+ *     Broadcom Corporation - build configurations and references
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-import java.util.Arrays;
-
-import java.util.Map;
-
-import java.util.LinkedHashMap;
-import org.eclipse.core.resources.IBuildConfiguration;
-
-import org.eclipse.core.runtime.Assert;
-
-import java.util.HashMap;
 
 import java.net.URI;
 import java.util.*;
@@ -108,6 +97,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			clone.variableDescriptions = (HashMap) variableDescriptions.clone();
 		clone.buildSpec = getBuildSpec(true);
 		clone.dynamicConfigRefs = (HashMap) dynamicConfigRefs.clone();
+		clone.cachedConfigRefs = new HashMap(1);
 		clone.clearCachedReferences(null);
 		return clone;
 	}
