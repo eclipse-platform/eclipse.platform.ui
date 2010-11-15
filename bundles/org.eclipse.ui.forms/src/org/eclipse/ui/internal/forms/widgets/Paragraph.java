@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,6 +136,10 @@ public class Paragraph {
 		for (int j = 0; j < segments.length; j++) {
 			ParagraphSegment segment = segments[j];
 			segment.advanceLocator(gc, width, hloc, resourceTable, true);
+		}
+		if (hloc.rowHeight == 0) {
+			FontMetrics fm = gc.getFontMetrics();
+			hloc.rowHeight = fm.getHeight();
 		}
 		hloc.collectHeights();
 		loc.heights = heights;
