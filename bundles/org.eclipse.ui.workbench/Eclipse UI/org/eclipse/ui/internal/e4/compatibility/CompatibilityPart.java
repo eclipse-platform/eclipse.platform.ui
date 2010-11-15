@@ -19,9 +19,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
@@ -39,6 +36,7 @@ import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -238,10 +236,10 @@ public abstract class CompatibilityPart {
 	}
 
 	@Persist
-	void doSave(@Optional IProgressMonitor monitor) {
-		monitor = SubMonitor.convert(monitor);
+	void doSave() {
 		if (wrapped instanceof ISaveablePart) {
-			((ISaveablePart) wrapped).doSave(monitor);
+			SaveableHelper.savePart((ISaveablePart) wrapped, wrapped, getReference().getSite()
+					.getWorkbenchWindow(), false);
 		}
 	}
 
