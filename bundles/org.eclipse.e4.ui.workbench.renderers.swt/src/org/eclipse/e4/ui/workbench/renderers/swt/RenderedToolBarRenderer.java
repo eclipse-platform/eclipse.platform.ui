@@ -234,10 +234,30 @@ public class RenderedToolBarRenderer extends SWTPartRenderer {
 	protected void showMenu(ToolItem item) {
 		// Create the UI for the menu
 		final MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
-		MPart part = (MPart) item.getData("thePart"); //$NON-NLS-1$
-		Control ctrl = (Control) part.getWidget();
-		Menu menu = (Menu) renderer.createGui(menuModel, ctrl.getShell(),
-				part.getContext());
+		Menu menu = null;
+		Object obj = menuModel.getWidget();
+		if (obj instanceof Menu) {
+			menu = (Menu) obj;
+		}
+		if (menu == null || menu.isDisposed()) {
+			MPart part = (MPart) item.getData("thePart"); //$NON-NLS-1$
+			Control ctrl = (Control) part.getWidget();
+			final Menu tmpMenu = (Menu) renderer.createGui(menuModel,
+					ctrl.getShell(), part.getContext());
+			menu = tmpMenu;
+			if (tmpMenu != null) {
+				ctrl.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						if (!tmpMenu.isDisposed()) {
+							tmpMenu.dispose();
+						}
+					}
+				});
+			}
+		}
+		if (menu == null) {
+			return;
+		}
 
 		// ...and Show it...
 		Rectangle ib = item.getBounds();
@@ -250,7 +270,6 @@ public class RenderedToolBarRenderer extends SWTPartRenderer {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-		menu.dispose();
 	}
 
 	private Image getViewMenuImage() {
