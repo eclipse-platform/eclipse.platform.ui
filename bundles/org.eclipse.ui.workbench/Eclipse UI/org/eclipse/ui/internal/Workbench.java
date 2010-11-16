@@ -3237,8 +3237,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	private void updateActiveWorkbenchWindowMenuManager(boolean textOnly) {
 		if (activeWorkbenchWindow != null) {
-			activeWorkbenchWindow
-					.removeActionSetsListener(actionSetSourceProvider);
+			if (actionSetSourceProvider != null) {
+				activeWorkbenchWindow.removeActionSetsListener(actionSetSourceProvider);
+			}
 			activeWorkbenchWindow = null;
 		}
 		boolean actionSetsUpdated = false;
@@ -3255,17 +3256,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 			final Shell windowShell = activeWorkbenchWindow.getShell();
 			final Shell activeShell = getDisplay().getActiveShell();
 			final IContextService service = (IContextService) getService(IContextService.class);
-			if (Util.equals(windowShell, activeShell)
-					|| service.getShellType(activeShell) == IContextService.TYPE_WINDOW) {
-				activeWorkbenchWindow
-						.addActionSetsListener(actionSetSourceProvider);
-				final WorkbenchPage page = activeWorkbenchWindow
-						.getActiveWorkbenchPage();
+			if ((Util.equals(windowShell, activeShell) || service.getShellType(activeShell) == IContextService.TYPE_WINDOW)
+					&& actionSetSourceProvider != null) {
+				activeWorkbenchWindow.addActionSetsListener(actionSetSourceProvider);
+				final WorkbenchPage page = activeWorkbenchWindow.getActiveWorkbenchPage();
 				final IActionSetDescriptor[] newActionSets;
 				if (page != null) {
 					newActionSets = page.getActionSets();
-					final ActionSetsEvent event = new ActionSetsEvent(
-							newActionSets);
+					final ActionSetsEvent event = new ActionSetsEvent(newActionSets);
 					actionSetSourceProvider.actionSetsChanged(event);
 					actionSetsUpdated = true;
 				}
@@ -3281,7 +3279,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		}
 
-		if (!actionSetsUpdated) {
+		if (!actionSetsUpdated && actionSetSourceProvider != null) {
 			final ActionSetsEvent event = new ActionSetsEvent(null);
 			actionSetSourceProvider.actionSetsChanged(event);
 		}
