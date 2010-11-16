@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -42,10 +43,13 @@ public class ContentTypeDecorator implements ILightweightLabelDecorator {
 		ImageDescriptor image = null;
 		IContentDescription contentDescription = null;
 		try {
+			Job.getJobManager().beginRule(file, null);
 			contentDescription = file.getContentDescription();
 		} catch (CoreException e) {
 			// We already have some kind of icon for this file so it's OK to not
 			// find a better icon.
+		} finally {
+			Job.getJobManager().endRule(file);
 		}
 		if (contentDescription != null) {
 			IContentType contentType = contentDescription.getContentType();
