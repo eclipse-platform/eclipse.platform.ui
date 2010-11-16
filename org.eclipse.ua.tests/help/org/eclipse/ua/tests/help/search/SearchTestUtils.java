@@ -34,6 +34,18 @@ public class SearchTestUtils {
 	}
 
 	public static void searchOneLocale(String searchWord, String[] hrefs, String nl) {
+		String unexpected = searchForExpectedResults(searchWord, hrefs, nl);
+		if (unexpected != null) {
+			Assert.fail(unexpected);
+		}
+	}
+
+	/**
+	 * @return null if the expected results are returned, otherwise a string describing
+	 * any discrepancies
+	 */
+	public static String searchForExpectedResults(String searchWord,
+			String[] hrefs, String nl) {
 		final Set hrefsToFind = new HashSet();
 		final Set unexpectedHrefs = new HashSet();		
 		hrefsToFind.addAll(Arrays.asList(hrefs));
@@ -77,8 +89,9 @@ public class SearchTestUtils {
 					buf.append(unexpectedHref + "\n");
 				}
 			}
-			Assert.fail(buf.toString());
+			return buf.toString();
 		}
+		return null;
 	}
 
 	public static SearchHit[] getSearchHits(String searchWord, String nl) {

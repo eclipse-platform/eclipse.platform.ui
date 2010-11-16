@@ -30,8 +30,6 @@ public class RemoteSearchManager {
 	private static final String PARAM_PHRASE = "phrase"; //$NON-NLS-1$
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
-	
-	private RemoteSearchParser parser;
 
 	/*
 	 * Performs a search for remote content.
@@ -70,9 +68,7 @@ public class RemoteSearchManager {
 								in = HttpsUtility.getHttpsStream(url);
 							}
 							
-							if (parser == null) {
-								parser = new RemoteSearchParser();
-							}
+							RemoteSearchParser parser = new RemoteSearchParser();							
 							// parse the XML-serialized search results
 							List hits = parser.parse(in, new SubProgressMonitor(pm, 100));
 							collector.addHits(hits, null);

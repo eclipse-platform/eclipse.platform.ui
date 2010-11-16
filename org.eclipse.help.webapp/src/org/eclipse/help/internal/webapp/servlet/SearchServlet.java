@@ -40,11 +40,9 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
  */
 public class SearchServlet extends HttpServlet {
 	
-	private static final long serialVersionUID = 1L;
-	private static final String PARAMETER_PHRASE = "phrase"; //$NON-NLS-1$
-	private Collection results = new ArrayList();
-	private QueryTooComplexException searchException;
-	private ISearchHitCollector collector = new ISearchHitCollector() {
+	private final class HitCollector implements ISearchHitCollector {
+		public Collection results = new ArrayList();
+
 		public void addHits(List hits, String wordsSearched) {
 			if (results != null) {
 				results.addAll(hits);
@@ -55,11 +53,16 @@ public class SearchServlet extends HttpServlet {
 				throws QueryTooComplexException {
 			searchException = exception;			
 		}
-	};
+	}
+
+	private static final long serialVersionUID = 1L;
+	private static final String PARAMETER_PHRASE = "phrase"; //$NON-NLS-1$
+	private QueryTooComplexException searchException;
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		BaseHelpSystem.checkMode();
+		HitCollector collector = new HitCollector();
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
@@ -67,10 +70,10 @@ public class SearchServlet extends HttpServlet {
 		if (phrase != null) {
 		    phrase = URLCoder.decode(phrase);
 			ISearchQuery query = new SearchQuery(phrase, false, Collections.EMPTY_LIST, locale);
-			results.clear();
+			collector.results.clear();
 			BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
 			if (searchException == null) {
-				String response = serialize(results);
+				String response = serialize(collector.results);
 				resp.getWriter().write(response);
 				return;
 			}

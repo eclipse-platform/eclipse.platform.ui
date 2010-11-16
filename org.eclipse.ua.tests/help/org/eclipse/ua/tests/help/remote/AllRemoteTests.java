@@ -42,5 +42,7 @@ public class AllRemoteTests extends TestSuite {
 		addTestSuite(GetContextUsingRemoteHelp.class);
 		addTestSuite(TocManagerTest.class);
 		addTestSuite(SearchIndexCreation.class);
+		addTestSuite(ParallelSearchUsingRemote.class);
+		addTestSuite(ParallelSearchServletTest.class);
 	}
 }

@@ -35,38 +35,46 @@ public class SearchManager {
 	private LocalSearchManager localManager = new LocalSearchManager();
 	private RemoteSearchManager remoteManager = new RemoteSearchManager();
 	
-	private IProgressMonitor localMonitor;
-	private IProgressMonitor remoteMonitor;
-	
-	private ISearchQuery searchQuery;
-	private ISearchHitCollector collector;
-	private BufferedSearchHitCollector bufferedCollector = new BufferedSearchHitCollector();
-	
-	private Job localSearchJob;
-	private Job remoteSearchJob;
+	private class SearchState {
+
+		public IProgressMonitor localMonitor;
+		public IProgressMonitor remoteMonitor;
+
+		public ISearchQuery searchQuery;
+		public BufferedSearchHitCollector bufferedCollector = new BufferedSearchHitCollector();
+
+		public Job localSearchJob;
+		public Job remoteSearchJob;
+
+		public SearchState() {
+			/*
+			 * We use these jobs to perform the local and remote searches in parallel in the
+			 * background.
+			 */
+			localSearchJob = new Job("localSearchJob") { //$NON-NLS-1$
+
+				protected IStatus run(IProgressMonitor monitor) {
+					localManager.search(searchQuery, bufferedCollector, localMonitor);
+					return Status.OK_STATUS;
+				}
+			};
+			remoteSearchJob = new Job("remoteSearchJob") { //$NON-NLS-1$
+
+				protected IStatus run(IProgressMonitor monitor) {
+					remoteManager.search(searchQuery, bufferedCollector, remoteMonitor);
+					return Status.OK_STATUS;
+				}
+			};
+			localSearchJob.setSystem(true);
+			remoteSearchJob.setSystem(true);
+		}
+	}
 
 	/*
 	 * Constructs a new SearchManager.
 	 */
 	public SearchManager() {
-		/*
-		 * We use these jobs to perform the local and remote searches in parallel
-		 * in the background.
-		 */
-		localSearchJob = new Job("localSearchJob") { //$NON-NLS-1$
-			protected IStatus run(IProgressMonitor monitor) {
-				localManager.search(searchQuery, bufferedCollector, localMonitor);
-				return Status.OK_STATUS;
-			}
-		};
-		remoteSearchJob = new Job("remoteSearchJob") { //$NON-NLS-1$
-			protected IStatus run(IProgressMonitor monitor) {
-				remoteManager.search(searchQuery, bufferedCollector, remoteMonitor);
-				return Status.OK_STATUS;
-			}
-		};
-		localSearchJob.setSystem(true);
-		remoteSearchJob.setSystem(true);
+		
 	}
 	
 	/*
@@ -95,23 +103,23 @@ public class SearchManager {
 	 */
 	public void searchLocalAndRemote(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)
 			throws QueryTooComplexException {
-		this.searchQuery = searchQuery;
-		this.collector = collector;
+		SearchState state = new SearchState();
+		state.searchQuery = searchQuery;
 		
 		pm.beginTask("", 100); //$NON-NLS-1$
 		
 		// allocate half of the progress bar for each
-		localMonitor = new SubProgressMonitor(pm, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
-		remoteMonitor = new SubProgressMonitor(pm, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
+		state.localMonitor = new SubProgressMonitor(pm, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
+		state.remoteMonitor = new SubProgressMonitor(pm, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
 		
 		// start both searches in parallel
-		localSearchJob.schedule();
-		remoteSearchJob.schedule();
+		state.localSearchJob.schedule();
+		state.remoteSearchJob.schedule();
 		
 		// wait until finished
 		try {
-			localSearchJob.join();
-			remoteSearchJob.join();
+			state.localSearchJob.join();
+			state.remoteSearchJob.join();
 		}
 		catch (InterruptedException e) {
 			String msg = "Unexpected InterruptedException while waiting for help search jobs to finish"; //$NON-NLS-1$
@@ -119,7 +127,7 @@ public class SearchManager {
 		}
 
 		// results are in; send them off to the collector
-		bufferedCollector.flush();
+		state.bufferedCollector.flush(collector);
 		pm.done();
 	}
 	
@@ -176,7 +184,7 @@ public class SearchManager {
 		 * Send all the buffered hits to the underlying collector,
 		 * and reset the buffers.
 		 */
-		public void flush() {
+		public void flush(ISearchHitCollector collector) {
 			// sort by score
 			List hitsList = new ArrayList(allHits);
 			Collections.sort(hitsList);
