@@ -31,6 +31,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -357,15 +358,16 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	private void createProblemsViews() {
 		final Runnable r= new Runnable() {
 			public void run() {
-				if (PlatformUI.getWorkbench().getDisplay().isDisposed() || PlatformUI.getWorkbench().isClosing())
+				IWorkbench workbench = PlatformUI.isWorkbenchRunning() ? PlatformUI.getWorkbench() : null;
+				if (workbench != null && (workbench.getDisplay().isDisposed() || PlatformUI.getWorkbench().isClosing()))
 					return;
 
-				if (PlatformUI.getWorkbench().isStarting()) {
+				if (workbench == null || workbench.isStarting()) {
 					Display.getDefault().timerExec(PROBLEMS_VIEW_CREATION_DELAY, this);
 					return;
 				}
 
-				IWorkbenchWindow[] windows= PlatformUI.getWorkbench().getWorkbenchWindows();
+				IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 				for (int i= 0; i < windows.length; i++) {
 					IWorkbenchWindow window= windows[i];
 					IWorkbenchPage activePage= window.getActivePage();
