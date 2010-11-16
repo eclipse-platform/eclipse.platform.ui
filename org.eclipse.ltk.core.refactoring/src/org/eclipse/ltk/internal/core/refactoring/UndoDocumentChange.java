@@ -93,7 +93,7 @@ public class UndoDocumentChange extends Change {
 		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
 		
 		ITextFileBuffer fileBuffer= fileBufferManager.getTextFileBuffer(fDocument);
-		if (! fileBuffer.isSynchronizationContextRequested()) {
+		if (fileBuffer == null || ! fileBuffer.isSynchronizationContextRequested()) {
 			return fUndo.apply(fDocument, TextEdit.CREATE_UNDO);
 		}
 		
