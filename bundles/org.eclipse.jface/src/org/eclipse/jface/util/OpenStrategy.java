@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.util;
 
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.custom.TableTreeItem;
@@ -26,6 +25,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.core.runtime.ListenerList;
 
 /**
  * Implementation of single-click and double-click strategies.
@@ -350,10 +351,10 @@ public class OpenStrategy {
                     arrowKeyDown = false;
                     break;
                 case SWT.Expand:
-						expandOccurred= e.button == 1 && (e.stateMask & ~SWT.BUTTON1) == 0;
+                    expandOccurred = true;
                     break;
                 case SWT.Collapse:
-						collapseOccurred= e.button == 1 && (e.stateMask & ~SWT.BUTTON1) == 0;
+                    collapseOccurred = true;
                     break;
                 case SWT.MouseUp:
                     mouseMoveEvent = null;
@@ -367,6 +368,7 @@ public class OpenStrategy {
                         mouseUpEvent = e;
                         collapseOccurred = false;
                         expandOccurred = false;
+                        selectionPendent= null;
                     }
                     break;
                 case SWT.KeyDown:
@@ -383,6 +385,8 @@ public class OpenStrategy {
                             enterKeyDown = true;
                         }
                     }
+                    collapseOccurred= false;
+                    expandOccurred= false;
                     break;
                 case SWT.Selection:
                     SelectionEvent event = new SelectionEvent(e);
