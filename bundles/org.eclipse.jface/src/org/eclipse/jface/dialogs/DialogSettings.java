@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -210,6 +210,27 @@ public class DialogSettings implements IDialogSettings {
     public String getName() {
         return name;
     }
+    
+	/**
+	 * Returns a section with the given name in the given dialog settings. If
+	 * the section doesn't exist yet, then it is first created.
+	 * 
+	 * @param settings
+	 *            the parent settings
+	 * @param sectionName
+	 *            the name of the section
+	 * @return the section
+	 * 
+	 * @since 3.7
+	 */
+	public static IDialogSettings getOrCreateSection(IDialogSettings settings,
+			String sectionName) {
+		IDialogSettings section = settings.getSection(sectionName);
+		if (section == null) {
+			section = settings.addNewSection(sectionName);
+		}
+		return section;
+	}
 
     /* (non-Javadoc)
      * Method declared on IDialogSettings.

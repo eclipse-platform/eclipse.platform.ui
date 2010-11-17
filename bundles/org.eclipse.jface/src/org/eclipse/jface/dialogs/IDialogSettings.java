@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,8 @@ import java.io.Writer;
  * The store manages a collection of key/value pairs. The keys must be strings
  * and the values can be either, strings or array of strings. Convenience API to
  * convert primitive types to strings is provided.
+ * 
+ * @see DialogSettings
  */
 public interface IDialogSettings {
     /**
@@ -27,6 +29,8 @@ public interface IDialogSettings {
      * @param name
      *            the name of the new section
      * @return the new section
+     * 
+     * @see DialogSettings#getOrCreateSection(IDialogSettings, String)
      */
     public IDialogSettings addNewSection(String name);
 
@@ -140,6 +144,8 @@ public interface IDialogSettings {
      * @param sectionName
      *            the key
      * @return IDialogSettings (the section), or <code>null</code> if none
+     * 
+     * @see DialogSettings#getOrCreateSection(IDialogSettings, String)
      */
     public IDialogSettings getSection(String sectionName);
 
