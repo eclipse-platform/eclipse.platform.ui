@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -571,6 +571,23 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		parentManager.update(false);
 	}
 
+	private void addToManager(MenuManager parentManager, MMenuElement model,
+			IContributionItem menuManager) {
+		MElementContainer<MUIElement> parent = model.getParent();
+		// technically this shouldn't happen
+		if (parent == null) {
+			parentManager.add(menuManager);
+		} else {
+			int index = parent.getChildren().indexOf(model);
+			// shouldn't be -1, but better safe than sorry
+			if (index > parentManager.getSize() || index == -1) {
+				parentManager.add(menuManager);
+			} else {
+				parentManager.insert(index, menuManager);
+			}
+		}
+	}
+
 	/**
 	 * @param parentManager
 	 * @param menuModel
@@ -584,7 +601,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 					menuModel.getElementId());
 			linkModelToManager(menuModel, menuManager);
 			menuManager.setVisible(menuModel.isVisible());
-			parentManager.add(menuManager);
+			addToManager(parentManager, menuModel, menuManager);
 		}
 		processContributions(menuModel, false);
 		List<MMenuElement> parts = menuModel.getChildren();
@@ -651,7 +668,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			return;
 		}
 		ici.setVisible(itemModel.isVisible());
-		parentManager.add(ici);
+		addToManager(parentManager, itemModel, ici);
 		linkModelToContribution(itemModel, ici);
 	}
 
@@ -674,7 +691,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				marker = new GroupMarker(itemModel.getElementId());
 			}
 		}
-		menuManager.add(marker);
+		addToManager(menuManager, itemModel, marker);
 		linkModelToContribution(itemModel, marker);
 	}
 
@@ -694,7 +711,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				DirectContributionItem.class, lclContext);
 		ci.setModel(itemModel);
 		ci.setVisible(itemModel.isVisible());
-		parentManager.add(ci);
+		addToManager(parentManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
 	}
 
@@ -713,7 +730,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 				HandledContributionItem.class, lclContext);
 		ci.setModel(itemModel);
 		ci.setVisible(itemModel.isVisible());
-		parentManager.add(ci);
+		addToManager(parentManager, itemModel, ci);
 		linkModelToContribution(itemModel, ci);
 	}
 

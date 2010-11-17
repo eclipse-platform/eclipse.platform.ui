@@ -386,8 +386,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			contr.init(actionBars, page);
 		}
 
-		((EditorMenuManager) actionBars.getMenuManager()).processMenuManagers();
-
 		// Return action bars.
 		return actionBars;
 	}

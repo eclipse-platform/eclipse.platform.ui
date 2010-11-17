@@ -58,7 +58,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -69,8 +69,10 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
@@ -185,6 +187,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private MTrimmedWindow model;
 	@Inject
 	private IPresentationEngine engine;
+
+	@Inject
+	private IRendererFactory rendererFactory;
 
 	@Inject
 	private MApplication application;
@@ -530,7 +535,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
 			mainMenu.setElementId("org.eclipse.ui.main.menu"); //$NON-NLS-1$
 
-			fill(mainMenu, menuManager);
+			MenuManagerRenderer renderer = (MenuManagerRenderer) rendererFactory.getRenderer(
+					mainMenu, null);
+			renderer.linkModelToManager(mainMenu, menuManager);
+			fill(renderer, mainMenu, menuManager);
 			model.setMainMenu(mainMenu);
 			Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(), model.getContext());
 			shell.setMenuBar(menu);
@@ -630,37 +638,42 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return null;
 	}
 
-	private void fill(MMenu menu, IMenuManager manager) {
+	private void fill(MenuManagerRenderer renderer, MMenu menu, IMenuManager manager) {
 		for (IContributionItem item : manager.getItems()) {
 			if (item instanceof MenuManager) {
 				MenuManager menuManager = (MenuManager) item;
 				MMenu subMenu = MenuHelper.createMenu(menuManager);
 				if (subMenu != null) {
-					fill(subMenu, menuManager);
+					renderer.linkModelToContribution(subMenu, item);
+					renderer.linkModelToManager(subMenu, menuManager);
+					fill(renderer, subMenu, menuManager);
 					menu.getChildren().add(subMenu);
 				}
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
 				MMenuItem menuItem = MenuHelper.createItem(application, cci);
+				manager.remove(item);
 				if (menuItem != null) {
 					menu.getChildren().add(menuItem);
 				}
 			} else if (item instanceof ActionContributionItem) {
 				MMenuItem menuItem = MenuHelper.createItem(application,
 						(ActionContributionItem) item);
+				manager.remove(item);
 				if (menuItem != null) {
 					menu.getChildren().add(menuItem);
 				}
 			} else if (item instanceof AbstractGroupMarker) {
 				MMenuSeparator separator = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
-				separator.setToBeRendered(item.isVisible());
+				separator.setVisible(item.isVisible());
 				separator.setElementId(item.getId());
 				menu.getChildren().add(separator);
+				manager.remove(item);
 			} else {
-				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
-				menuItem.setContributionItem(item);
+				MOpaqueMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createOpaqueMenuItem();
 				menuItem.setElementId(item.getId());
 				menu.getChildren().add(menuItem);
+				renderer.linkModelToContribution(menuItem, item);
 			}
 		}
 	}

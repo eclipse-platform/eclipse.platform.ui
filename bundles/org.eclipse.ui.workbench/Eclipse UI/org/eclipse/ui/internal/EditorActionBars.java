@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.GroupMarker;
@@ -105,8 +104,6 @@ public class EditorActionBars extends SubActionBars2 {
 
 	private WorkbenchPage page;
 
-	private MApplication application;
-
 	/**
 	 * Constructs the EditorActionBars for an editor.
 	 */
@@ -114,8 +111,6 @@ public class EditorActionBars extends SubActionBars2 {
 		super((IActionBars2) page.getActionBars(), serviceLocator);
 		this.page = page;
 		this.type = type;
-
-		application = (MApplication) serviceLocator.getService(MApplication.class);
 	}
 
 	public WorkbenchPage getPage() {
@@ -140,7 +135,7 @@ public class EditorActionBars extends SubActionBars2 {
 	 * (non-Javadoc) Method declared on SubActionBars.
 	 */
 	protected SubMenuManager createSubMenuManager(IMenuManager parent) {
-		return new EditorMenuManager(application, page.getWorkbenchWindow(), type, parent);
+		return new EditorMenuManager(parent);
 	}
 
 	/*
