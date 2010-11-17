@@ -23,6 +23,7 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
@@ -59,6 +60,10 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 
 public final class EditorSelectionDialog extends Dialog {
 	private EditorDescriptor selectedEditor;
+
+	private EditorDescriptor hiddenSelectedEditor;
+
+	private int hiddenTableTopIndex;
 
 	private Button externalButton;
 
@@ -229,11 +234,32 @@ public final class EditorSelectionDialog extends Dialog {
 	}
 
 	protected void fillEditorTable() {
-		if (internalButton.getSelection()) {
-			editorTableViewer.setInput(getInternalEditors());
-		} else {
-			editorTableViewer.setInput(getExternalEditors());
+		EditorDescriptor newSelection = null;
+		int newTopIndex = 0;
+
+		boolean showInternal = internalButton.getSelection();
+		boolean isShowingInternal = editorTableViewer.getInput() == getInternalEditors();
+		if (showInternal != isShowingInternal) {
+			newSelection = hiddenSelectedEditor;
+			newTopIndex = hiddenTableTopIndex;
+			if (editorTable.getSelectionIndex() != -1) {
+				hiddenSelectedEditor = (EditorDescriptor) editorTable.getSelection()[0].getData();
+				hiddenTableTopIndex = editorTable.getTopIndex();
+			}
 		}
+
+		editorTableViewer.setInput(showInternal ? getInternalEditors() : getExternalEditors());
+
+		if (newSelection != null) {
+			editorTable.setTopIndex(newTopIndex);
+			editorTableViewer.setSelection(new StructuredSelection(newSelection), true);
+		} else {
+			// set focus to first element, but don't select it:
+			editorTable.setTopIndex(0);
+			editorTable.setSelection(0);
+			editorTable.deselectAll();
+		}
+		editorTable.setFocus();
 	}
 
 	/**
