@@ -37,8 +37,6 @@ public class HttpsUtility {
 		InputStream in =null; 
 		try
 		{
-			System.setProperty( "java.protocol.handler.pkgs" , "javax.net.ssl" ); //$NON-NLS-1$ //$NON-NLS-2$
-	           // java.security.Security.addProvider( new com.sun.net.ssl.internal.ssl.Provider() );
 	            TrustManager[] trustAllCerts = new TrustManager[] {
 	                        new X509TrustManager(){
 	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
@@ -68,8 +66,6 @@ public class HttpsUtility {
 		InputStream in = null;
 		try
 		{
-			System.setProperty( "java.protocol.handler.pkgs" , "javax.net.ssl" ); //$NON-NLS-1$ //$NON-NLS-2$
-	           // java.security.Security.addProvider( new com.sun.net.ssl.internal.ssl.Provider() );
 	            TrustManager[] trustAllCerts = new TrustManager[] {
 	                        new X509TrustManager(){
 	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
@@ -101,8 +97,6 @@ public class HttpsUtility {
 		URL url=null; 
 		try
 		{
-			System.setProperty( "java.protocol.handler.pkgs" , "javax.net.ssl" ); //$NON-NLS-1$ //$NON-NLS-2$
-	           // java.security.Security.addProvider( new com.sun.net.ssl.internal.ssl.Provider() );
 	            TrustManager[] trustAllCerts = new TrustManager[] {
 	                        new X509TrustManager(){
 	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
@@ -131,8 +125,6 @@ public class HttpsUtility {
 		URL url=null; 
 		try
 		{
-			System.setProperty( "java.protocol.handler.pkgs" , "javax.net.ssl" ); //$NON-NLS-1$ //$NON-NLS-2$
-	           // java.security.Security.addProvider( new com.sun.net.ssl.internal.ssl.Provider() );
 	            TrustManager[] trustAllCerts = new TrustManager[] {
 	                        new X509TrustManager(){
 	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
@@ -161,8 +153,6 @@ public class HttpsUtility {
 		URL url=null; 
 		try
 		{
-			System.setProperty( "java.protocol.handler.pkgs" , "javax.net.ssl" ); //$NON-NLS-1$ //$NON-NLS-2$
-	           // java.security.Security.addProvider( new com.sun.net.ssl.internal.ssl.Provider() );
 	            TrustManager[] trustAllCerts = new TrustManager[] {
 	                        new X509TrustManager(){
 	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
@@ -191,8 +181,6 @@ public class HttpsUtility {
 		boolean validConnection=true;
 		try
 		{
-			System.setProperty( "java.protocol.handler.pkgs" , "javax.net.ssl" ); //$NON-NLS-1$ //$NON-NLS-2$
-	           // java.security.Security.addProvider( new com.sun.net.ssl.internal.ssl.Provider() );
 	            TrustManager[] trustAllCerts = new TrustManager[] {
 	                        new X509TrustManager(){
 	                              public java.security.cert.X509Certificate[] getAcceptedIssuers(){
