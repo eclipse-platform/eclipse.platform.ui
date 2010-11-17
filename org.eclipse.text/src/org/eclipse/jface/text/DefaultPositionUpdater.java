@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,8 @@ package org.eclipse.jface.text;
  * position is not deleted if its only shrunken to length zero. To delete a position, the
  * modification must delete from <i>strictly before</i> to <i>strictly after</i> the position.</li>
  * <li>Replacing text overlapping with the position is considered as a sequence of first deleting
- * the replaced text and afterwards inserting the new text. Thus, a position might first be shifted
- * and shrunken and then be stretched.</li>
+ * the replaced text and afterwards inserting the new text. Thus, a position is shrunken and can
+ * then be shifted.</li>
  * </ul>
  * This class can be used as is or be adapted by subclasses. Fields are protected to allow
  * subclasses direct access. Because of the frequency with which position updaters are used this is
@@ -40,14 +40,11 @@ package org.eclipse.jface.text;
 public class DefaultPositionUpdater implements IPositionUpdater {
 
 	/** The position category the updater draws responsible for */
-	private String fCategory;
+	private final String fCategory;
 
 	/** Caches the currently investigated position */
 	protected Position fPosition;
-	/**
-	 * Remembers the original state of the investigated position
-	 * @since 2.1
-	 */
+	/** Caches the original state of the investigated position */
 	protected Position fOriginalPosition= new Position(0, 0);
 	/** Caches the offset of the replaced text */
 	protected int fOffset;
@@ -55,7 +52,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 	protected int fLength;
 	/** Caches the length of the newly inserted text */
 	protected int fReplaceLength;
-	/** Catches the document */
+	/** Caches the document */
 	protected IDocument fDocument;
 
 
@@ -104,20 +101,10 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 		if (myEnd < yoursStart)
 			return;
 
-		if (fLength <= 0) {
-
-			if (myStart < yoursStart)
-				fPosition.length += fReplaceLength;
-			else
-				fPosition.offset += fReplaceLength;
-
-		} else {
-
-			if (myStart <= yoursStart && fOriginalPosition.offset <= yoursStart)
-				fPosition.length += fReplaceLength;
-			else
-				fPosition.offset += fReplaceLength;
-		}
+		if (myStart < yoursStart)
+			fPosition.length += fReplaceLength;
+		else
+			fPosition.offset += fReplaceLength;
 	}
 
 	/**
@@ -173,11 +160,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 		if (fPosition.offset == fOffset && fPosition.length == fLength && fPosition.length > 0) {
 
 			// replace the whole range of the position
-			fPosition.length += (fReplaceLength - fLength);
-			if (fPosition.length < 0) {
-				fPosition.offset += fPosition.length;
-				fPosition.length= 0;
-			}
+			fPosition.length = 0;
 
 		} else {
 

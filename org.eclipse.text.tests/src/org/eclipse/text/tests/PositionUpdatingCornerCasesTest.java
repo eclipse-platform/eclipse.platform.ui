@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,14 +41,6 @@ public class PositionUpdatingCornerCasesTest extends TestCase {
 		return "[" + p.getOffset() + "," + p.getLength() + "]";
 	}
 
-	protected void setUp() throws Exception {
-		fDocument= new Document("x-x-x-x-x-x-x-x-x-x-x");
-		fDocument.addPosition(new Position(0, 0));
-		fDocument.addPosition(new Position(0, 1));
-		fDocument.addPosition(new Position(5, 0));
-		fDocument.addPosition(new Position(5, 3));
-	}
-
 	public static Test suite() {
 		return new TestSuite(PositionUpdatingCornerCasesTest.class);
 	}
@@ -58,6 +50,12 @@ public class PositionUpdatingCornerCasesTest extends TestCase {
 	}
 
 	public void testInsert() throws Exception {
+		fDocument= new Document("x-x-x-x-x-x-x-x-x-x-x");
+		fDocument.addPosition(new Position(0, 0));
+		fDocument.addPosition(new Position(0, 1));
+		fDocument.addPosition(new Position(5, 0));
+		fDocument.addPosition(new Position(5, 3));
+		
 		fDocument.replace(0, 0, "yy");
 
 		Position[] positions= new Position[] {
@@ -68,5 +66,31 @@ public class PositionUpdatingCornerCasesTest extends TestCase {
 		};
 
 		checkPositions(positions);
+	}
+	
+	public void testInsert2() throws Exception {
+		fDocument= new Document("x-x-x-x-x-x-x-x-x-x-x");
+		fDocument.addPosition(new Position(0, 0));
+		fDocument.addPosition(new Position(0, 1));
+		fDocument.addPosition(new Position(4, 1));
+		fDocument.addPosition(new Position(5, 0));
+		fDocument.addPosition(new Position(5, 3));
+		fDocument.addPosition(new Position(10, 0));
+		fDocument.addPosition(new Position(10, 2));
+		
+		fDocument.replace(5, 0, "yy");
+		
+		Position[] positions= new Position[] {
+				new Position(0, 1),
+				new Position(0, 0),
+				new Position(4, 1),
+				new Position(7, 3),
+				new Position(7, 0),
+				new Position(12, 2),
+				new Position(12, 0),
+		};
+		
+		checkPositions(positions);
+		
 	}
 }
