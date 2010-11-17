@@ -240,9 +240,11 @@ public class PartServiceImpl implements EPartService {
 
 	public void bringToTop(MPart part) {
 		if (isInContainer(part)) {
+			MUIElement currentElement = part;
 			MElementContainer<MUIElement> parent = part.getParent();
 			if (parent == null) {
-				parent = modelService.findPlaceholderFor(getWindow(), part).getParent();
+				currentElement = modelService.findPlaceholderFor(getWindow(), part);
+				parent = currentElement.getParent();
 			}
 
 			MUIElement oldSelectedElement = parent.getSelectedElement();
@@ -250,7 +252,8 @@ public class PartServiceImpl implements EPartService {
 			modelService.bringToTop(part);
 
 			// check to make sure that the currently selected element is actually valid
-			if (oldSelectedElement != part && parent.getChildren().contains(oldSelectedElement)
+			if (oldSelectedElement != currentElement
+					&& parent.getChildren().contains(oldSelectedElement)
 					&& parent instanceof MGenericStack<?>) {
 				internalFixContext(part, oldSelectedElement);
 			}

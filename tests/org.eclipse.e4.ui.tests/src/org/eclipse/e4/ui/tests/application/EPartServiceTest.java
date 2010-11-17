@@ -440,6 +440,76 @@ public class EPartServiceTest extends TestCase {
 				partBack.isToBeRendered());
 	}
 
+	public void testBringToTop_Bug330508_01() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+		partStack.setSelectedElement(partB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.bringToTop(partB);
+		assertEquals(
+				"Bringing a part to top that's not in the same container as the active part shouldn't change the active part",
+				partA, partService.getActivePart());
+	}
+
+	public void testBringToTop_Bug330508_02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		partB.setCurSharedRef(placeholderB);
+		placeholderB.setRef(partB);
+		partStack.getChildren().add(placeholderB);
+		partStack.setSelectedElement(placeholderB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.bringToTop(partB);
+		assertEquals(
+				"Bringing a part to top that's not in the same container as the active part shouldn't change the active part",
+				partA, partService.getActivePart());
+	}
+
 	public void testGetParts_Empty() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);
