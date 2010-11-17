@@ -26,11 +26,13 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 public class ViewAction extends ActionSet {
 
 	private IConfigurationElement parent;
+	private boolean isMenu;
 
 	public ViewAction(MApplication application, IEclipseContext appContext,
-			IConfigurationElement parent, IConfigurationElement element) {
+			IConfigurationElement parent, IConfigurationElement element, boolean isMenu) {
 		super(application, appContext, element);
 		this.parent = parent;
+		this.isMenu = isMenu;
 	}
 
 	@Override
@@ -48,9 +50,11 @@ public class ViewAction extends ActionSet {
 		}
 
 		String parentId = parent.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
-		addContribution(idContrib, menuContributions, configElement, false, parentId);
-		addToolBarContribution(idContrib, toolBarContributions, trimContributions, configElement,
-				parentId);
+		addContribution(idContrib, menuContributions, configElement, isMenu, parentId);
+		if (!isMenu) {
+			addToolBarContribution(idContrib, toolBarContributions, trimContributions,
+					configElement, parentId);
+		}
 	}
 
 	protected Expression createExpression(IConfigurationElement configElement) {

@@ -60,8 +60,7 @@ final class MenuPersistence extends RegistryPersistence {
 	private ArrayList<MTrimContribution> trimContributions = new ArrayList<MTrimContribution>();
 	private final Comparator<IConfigurationElement> comparer = new Comparator<IConfigurationElement>() {
 		public int compare(IConfigurationElement c1, IConfigurationElement c2) {
-			return c1.getContributor().getName()
-					.compareToIgnoreCase(c2.getContributor().getName());
+			return c1.getContributor().getName().compareToIgnoreCase(c2.getContributor().getName());
 		}
 	};
 
@@ -102,8 +101,8 @@ final class MenuPersistence extends RegistryPersistence {
 	}
 
 	public boolean menusNeedUpdating(final IRegistryChangeEvent event) {
-		final IExtensionDelta[] menuDeltas = event.getExtensionDeltas(
-				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_MENUS);
+		final IExtensionDelta[] menuDeltas = event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_MENUS);
 		if (menuDeltas.length == 0) {
 			return false;
 		}
@@ -150,7 +149,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 	//
 	// 3.3 menu extension code
-	// 
+	//
 
 	public void readTrimAdditions() {
 	}
@@ -194,9 +193,10 @@ final class MenuPersistence extends RegistryPersistence {
 			}
 		}
 	}
-	
+
 	/**
-	 * Return whether or not this contribution is programmatic (ie: has a class attribute).
+	 * Return whether or not this contribution is programmatic (ie: has a class
+	 * attribute).
 	 * 
 	 * @param menuAddition
 	 * @return whether or not this contribution is programamtic
@@ -287,8 +287,7 @@ final class MenuPersistence extends RegistryPersistence {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		ArrayList<IConfigurationElement> configElements = new ArrayList<IConfigurationElement>();
 
-		configElements
-				.addAll(Arrays.asList(registry
+		configElements.addAll(Arrays.asList(registry
 				.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_VIEW_ACTIONS)));
 
 		Collections.sort(configElements, comparer);
@@ -296,8 +295,14 @@ final class MenuPersistence extends RegistryPersistence {
 		for (IConfigurationElement element : configElements) {
 			for (IConfigurationElement child : element.getChildren()) {
 				if (child.getName().equals(IWorkbenchRegistryConstants.TAG_ACTION)) {
-					ViewAction viewAction = new ViewAction(application, appContext, element,
-							child);
+					ViewAction viewAction = new ViewAction(application, appContext, element, child,
+							false);
+					viewActionContributions.add(viewAction);
+					viewAction.addToModel(menuContributions, toolBarContributions,
+							trimContributions);
+				} else if (child.getName().equals(IWorkbenchRegistryConstants.TAG_MENU)) {
+					ViewAction viewAction = new ViewAction(application, appContext, element, child,
+							true);
 					viewActionContributions.add(viewAction);
 					viewAction.addToModel(menuContributions, toolBarContributions,
 							trimContributions);

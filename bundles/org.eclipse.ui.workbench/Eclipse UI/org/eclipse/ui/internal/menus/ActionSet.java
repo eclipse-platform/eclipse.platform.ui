@@ -234,7 +234,10 @@ public class ActionSet {
 		menuContribution.setPositionInParent(positionInParent);
 		if (isMenu) {
 			MMenu menu = MenuHelper.createMenuAddition(element);
-			menuContribution.getChildren().add(menu);
+			if (menu != null) {
+				contributeMenuGroup(contributions, parentId, positionInParent);
+				menuContribution.getChildren().add(menu);
+			}
 		} else {
 			if (parentId.equals(MAIN_MENU)) {
 				E4Util.unsupported("****MC: bad pie: " + menuPath); //$NON-NLS-1$
