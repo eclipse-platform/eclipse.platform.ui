@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -32,6 +35,11 @@ import org.eclipse.swt.widgets.Widget;
  * Create a contribute part.
  */
 public class ContributedPartRenderer extends SWTPartRenderer {
+
+	@Optional
+	@Inject
+	private Logger logger;
+
 	private MUIElement partToActivate;
 
 	public Object createWidget(final MUIElement element, Object parent) {
@@ -40,9 +48,17 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 
 		Widget parentWidget = (Widget) parent;
 		Widget newWidget = null;
+		final MPart part = (MPart) element;
 
 		final Composite newComposite = new Composite((Composite) parentWidget,
 				SWT.NONE) {
+
+			/**
+			 * Field to determine whether we are currently in the midst of
+			 * granting focus to the part.
+			 */
+			private boolean beingFocused = false;
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -50,16 +66,40 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 			 */
 			@Override
 			public boolean setFocus() {
-				// delegate an attempt to set the focus here to the
-				// part's implementation (if there is one)
-				MPart part = (MPart) element;
-				Object object = part.getObject();
-				if (object != null) {
-					ContextInjectionFactory.invoke(object, Focus.class,
-							part.getContext(), null);
-					return true;
+				if (!beingFocused) {
+					try {
+						// we are currently asking the part to take focus
+						beingFocused = true;
+						// delegate an attempt to set the focus here to the
+						// part's implementation (if there is one)
+						Object object = part.getObject();
+						if (object != null) {
+							ContextInjectionFactory.invoke(object, Focus.class,
+									part.getContext(), null);
+							return true;
+						}
+						return super.setFocus();
+					} finally {
+						// we are done, unset our flag
+						beingFocused = false;
+					}
 				}
-				return super.setFocus();
+
+				if (logger != null) {
+					String id = part.getElementId();
+					if (id == null) {
+						logger.warn(new IllegalStateException(),
+								"Blocked recursive attempt to activate part " //$NON-NLS-1$
+										+ id);
+					} else {
+						logger.warn(new IllegalStateException(),
+								"Blocked recursive attempt to activate part"); //$NON-NLS-1$
+					}
+				}
+
+				// already being focused, likely some strange recursive call,
+				// just return
+				return true;
 			}
 		};
 
@@ -67,7 +107,6 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 
 		newWidget = newComposite;
 		bindWidget(element, newWidget);
-		final MPart part = (MPart) element;
 
 		// Create a context for this part
 		IEclipseContext localContext = part.getContext();
