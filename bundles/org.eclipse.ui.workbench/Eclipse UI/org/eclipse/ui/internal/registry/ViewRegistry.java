@@ -50,14 +50,6 @@ public class ViewRegistry implements IViewRegistry {
 
 	@PostConstruct
 	void postConstruct() {
-		for (MPartDescriptor descriptor : application.getDescriptors()) {
-			if (!descriptor.getContributionURI().equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
-				descriptors.put(descriptor.getElementId(), new ViewDescriptor(application,
-						descriptor,
-						null));
-			}
-		}
-
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.views"); //$NON-NLS-1$
 		for (IExtension extension : point.getExtensions()) {
 			// find the category first

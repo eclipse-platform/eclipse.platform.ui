@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -67,7 +68,7 @@ public class SearchField {
 	private LinkedList<QuickAccessElement> previousPicksList = new LinkedList<QuickAccessElement>();
 
 	@PostConstruct
-	void createWidget(final Composite parent, MWindow window) {
+	void createWidget(final Composite parent, MApplication application, MWindow window) {
 		this.window = window;
 		// borderColor = new Color(parent.getDisplay(), 170, 176, 191);
 		final Composite comp = new Composite(parent, SWT.NONE);
@@ -78,9 +79,9 @@ public class SearchField {
 
 		final CommandProvider commandProvider = new CommandProvider();
 		QuickAccessProvider[] providers = new QuickAccessProvider[] { new PreviousPicksProvider(),
-				new EditorProvider(), new ViewProvider(), new PerspectiveProvider(),
-				commandProvider, new ActionProvider(), new WizardProvider(),
-				new PreferenceProvider(), new PropertiesProvider() };
+				new EditorProvider(), new ViewProvider(application, window),
+				new PerspectiveProvider(), commandProvider, new ActionProvider(),
+				new WizardProvider(), new PreferenceProvider(), new PropertiesProvider() };
 		for (int i = 0; i < providers.length; i++) {
 			providerMap.put(providers[i].getId(), providers[i]);
 		}

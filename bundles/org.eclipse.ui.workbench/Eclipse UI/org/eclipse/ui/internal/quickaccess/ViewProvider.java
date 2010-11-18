@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,16 @@
 package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.views.IViewDescriptor;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 
 /**
  * @since 3.3
@@ -25,48 +29,63 @@ import org.eclipse.ui.views.IViewDescriptor;
  */
 public class ViewProvider extends QuickAccessProvider {
 
-	private QuickAccessElement[] cachedElements;
-	private Map idToElement = new HashMap();
+	private MApplication application;
+	private MWindow window;
+	private Map<String, QuickAccessElement> idToElement = new HashMap<String, QuickAccessElement>();
 
-	public String getId() {
-		return "org.eclipse.ui.views"; //$NON-NLS-1$
+	public ViewProvider(MApplication application, MWindow window) {
+		this.application = application;
+		this.window = window;
 	}
 
+	@Override
+	public String getId() {
+		return "org.eclipse.e4.ui.parts"; //$NON-NLS-1$
+	}
+
+	@Override
 	public QuickAccessElement getElementForId(String id) {
 		getElements();
-		return (ViewElement) idToElement.get(id);
+		return idToElement.get(id);
 	}
 
+	@Override
 	public QuickAccessElement[] getElements() {
-		if (PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-				.getActivePage() == null) {
-			cachedElements = null;
+		IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
+		if (workbenchWindow == null || workbenchWindow.getActivePage() == null) {
 			return new QuickAccessElement[0];
 		}
-		if (cachedElements == null) {
-			IViewDescriptor[] views = PlatformUI.getWorkbench()
-					.getViewRegistry().getViews();
-			cachedElements = new QuickAccessElement[views.length];
-			for (int i = 0; i < views.length; i++) {
-				ViewElement viewElement = new ViewElement(views[i], this);
-				cachedElements[i] = viewElement;
-				idToElement.put(viewElement.getId(), viewElement);
+
+		if (idToElement.isEmpty()) {
+			List<MPartDescriptor> descriptors = application.getDescriptors();
+			for (int i = 0; i < descriptors.size(); i++) {
+				MPartDescriptor descriptor = descriptors.get(i);
+				String uri = descriptor.getContributionURI();
+				if (uri != null && !uri.equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
+					String id = descriptor.getElementId();
+					if (id != null) {
+						ViewElement element = new ViewElement(this, window, descriptors.get(i));
+						idToElement.put(element.getId(), element);
+					}
+				}
 			}
 		}
-		return cachedElements;
+		return idToElement.values().toArray(new QuickAccessElement[idToElement.size()]);
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 		return WorkbenchImages
 				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC);
 	}
 
+	@Override
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Views;
 	}
 
+	@Override
 	protected void doReset() {
-		cachedElements = null;
-		idToElement = new HashMap();
+		idToElement.clear();
 	}
 }

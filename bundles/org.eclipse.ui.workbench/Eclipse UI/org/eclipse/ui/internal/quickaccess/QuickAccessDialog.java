@@ -16,6 +16,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
@@ -41,6 +43,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -73,13 +76,17 @@ public class QuickAccessDialog extends PopupDialog {
 				true, true, null, QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
 		this.window = window;
 
+		WorkbenchWindow workbenchWindow = (WorkbenchWindow) window;
+		final MWindow model = workbenchWindow.getModel();
+
 		BusyIndicator.showWhile(window.getShell() == null ? null : window.getShell().getDisplay(),
 				new Runnable() {
 
 					public void run() {
 						QuickAccessProvider[] providers = new QuickAccessProvider[] {
 								new PreviousPicksProvider(), new EditorProvider(),
-								new ViewProvider(), new PerspectiveProvider(),
+								new ViewProvider(model.getContext().get(MApplication.class), model),
+								new PerspectiveProvider(),
 								new CommandProvider(), new ActionProvider(), new WizardProvider(),
 								new PreferenceProvider(), new PropertiesProvider() };
 						providerMap = new HashMap();
