@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,18 +14,14 @@
 package org.eclipse.ui.actions;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
-
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.CreateMarkersOperation;
@@ -125,37 +121,23 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 * (non-Javadoc) Method declared on IAction.
 	 */
 	public void run() {
-		IStructuredSelection selection = getStructuredSelection();
-		for (Iterator i = selection.iterator(); i.hasNext();) {
-			Object o = i.next();
-			IFile file = null;
-			if (o instanceof IFile) {
-				file = (IFile) o;
-			} else if (o instanceof IAdaptable) {
-				Object resource = ((IAdaptable) o).getAdapter(IResource.class);
-				if (resource instanceof IFile) {
-					file = (IFile) resource;
-				}
-			}
-			if (file != null) {
-				if (promptForName) {
-					BookmarkPropertiesDialog dialog = new BookmarkPropertiesDialog(
-							shellProvider.getShell());
-					dialog.setResource(file);
-					dialog.open();
-				} else {
-					Map attrs = new HashMap();
-					attrs.put(IMarker.MESSAGE, file.getName());
-					CreateMarkersOperation op = new CreateMarkersOperation(
-							IMarker.BOOKMARK, attrs, file,
-							BookmarkMessages.CreateBookmark_undoText);
-					try {
-						PlatformUI.getWorkbench().getOperationSupport()
-								.getOperationHistory().execute(op, null,
-										WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
-					} catch (ExecutionException e) {
-						IDEWorkbenchPlugin.log(null, e); // We don't care
-					}
+		if (getSelectedResources().isEmpty())
+			return;
+
+		IResource resource= (IResource)getSelectedResources().get(0);
+		if (resource != null) {
+			if (promptForName) {
+				BookmarkPropertiesDialog dialog= new BookmarkPropertiesDialog(shellProvider.getShell());
+				dialog.setResource(resource);
+				dialog.open();
+			} else {
+				Map attrs= new HashMap();
+				attrs.put(IMarker.MESSAGE, resource.getName());
+				CreateMarkersOperation op= new CreateMarkersOperation(IMarker.BOOKMARK, attrs, resource, BookmarkMessages.CreateBookmark_undoText);
+				try {
+					PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, null, WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
+				} catch (ExecutionException e) {
+					IDEWorkbenchPlugin.log(null, e); // We don't care
 				}
 			}
 		}
@@ -169,7 +151,6 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		// @issue typed selections
-		return super.updateSelection(selection) && !selection.isEmpty()
-				&& selectionIsOfType(IResource.FILE);
+		return super.updateSelection(selection) && getSelectedResources().size() == 1;
 	}
 }
