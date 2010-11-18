@@ -48,7 +48,7 @@ public class FindReplaceDialogTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite();
+		TestSuite suite= new TestSuite(FindReplaceDialogTest.class.getName());
 		suite.addTest(new FindReplaceDialogTest("testInitialButtonState"));
 		suite.addTest(new FindReplaceDialogTest("testDisableWholeWordIfRegEx"));
 		suite.addTest(new FindReplaceDialogTest("testDisableWholeWordIfNotWord"));
@@ -147,9 +147,7 @@ public class FindReplaceDialogTest extends TestCase {
 
 		assertTrue(isRegExCheckBox.isEnabled());
 		assertFalse(wholeWordCheckbox.isEnabled());
-
-		// XXX: enable once https://bugs.eclipse.org/bugs/show_bug.cgi?id=72462 has been fixed
-//		assertFalse(wholeWordCheckbox.getSelection());
+		assertTrue(wholeWordCheckbox.getSelection());
 	}
 
 	public void testDisableWholeWordIfNotWord() {
@@ -172,9 +170,7 @@ public class FindReplaceDialogTest extends TestCase {
 		findField.setText("no word");
 		assertTrue(isRegExCheckBox.isEnabled());
 		assertFalse(wholeWordCheckbox.isEnabled());
-
-		// XXX: enable once https://bugs.eclipse.org/bugs/show_bug.cgi?id=72462 has been fixed
-//		assertFalse(wholeWordCheckbox.getSelection());
+		assertTrue(wholeWordCheckbox.getSelection());
 	}
 
 	public void testFocusNotChangedWhenEnterPressed() {
@@ -191,6 +187,10 @@ public class FindReplaceDialogTest extends TestCase {
 		event.doit= true;
 		findField.traverse(SWT.TRAVERSE_RETURN, event);
 		runEventQueue();
+		Shell shell= ((Shell)fFindReplaceDialog.get("fActiveShell"));
+		if (shell == null && Util.isGtk())
+			fail("this test does not work on GTK unless the runtime workbench has focus");
+		
 		assertTrue(findField.isFocusControl());
 
 		Button wrapSearchBox= (Button)fFindReplaceDialog.get("fWrapCheckBox");
