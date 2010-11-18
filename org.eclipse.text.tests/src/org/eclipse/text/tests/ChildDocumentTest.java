@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -371,7 +371,7 @@ public class ChildDocumentTest extends TestCase {
 
 		Position[] positions= new Position[] {
 			new Position( 0,   20),
-			new Position( 21,  10),
+			new Position( 31,   0),
 			new Position( 32, 111),
 			new Position( 55,  12),
 			new Position( 69,  27),

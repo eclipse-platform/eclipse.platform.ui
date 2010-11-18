@@ -29,9 +29,11 @@ package org.eclipse.jface.text;
  * <li>Deleting text which strictly contains the position deletes the position. Note that the
  * position is not deleted if its only shrunken to length zero. To delete a position, the
  * modification must delete from <i>strictly before</i> to <i>strictly after</i> the position.</li>
- * <li>Replacing text overlapping with the position is considered as a sequence of first deleting
+ * <li>Replacing text contained by the position shrinks or expands the position (but does not shift it),
+ * such that the final position contains the original position and the replacing text.</li>
+ * <li>Replacing text overlapping the position in other ways is considered as a sequence of first deleting
  * the replaced text and afterwards inserting the new text. Thus, a position is shrunken and can
- * then be shifted.</li>
+ * then be shifted (if the replaced text overlaps the offset of the position).</li>
  * </ul>
  * This class can be used as is or be adapted by subclasses. Fields are protected to allow
  * subclasses direct access. Because of the frequency with which position updaters are used this is
@@ -46,6 +48,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 	protected Position fPosition;
 	/** Caches the original state of the investigated position */
 	protected Position fOriginalPosition= new Position(0, 0);
+
 	/** Caches the offset of the replaced text */
 	protected int fOffset;
 	/** Caches the length of the replaced text */
@@ -151,16 +154,17 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 
 	/**
 	 * Adapts the currently investigated position to the replace operation.
-	 * First it checks whether the change replaces the whole range of the position.
+	 * First it checks whether the change replaces only a non-zero range inside the range of the position (including the borders).
 	 * If not, it performs first the deletion of the previous text and afterwards
 	 * the insertion of the new text.
 	 */
 	protected void adaptToReplace() {
 
-		if (fPosition.offset == fOffset && fPosition.length == fLength && fPosition.length > 0) {
+		if (fLength > 0
+				&& fPosition.offset <= fOffset
+				&& fOffset + fLength <= fPosition.offset + fPosition.length) {
 
-			// replace the whole range of the position
-			fPosition.length = 0;
+			fPosition.length += fReplaceLength - fLength;
 
 		} else {
 

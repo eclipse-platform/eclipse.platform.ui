@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,7 @@ public class DocumentTest extends TestCase {
 		try {
 
 			Position[] actual= fDocument.getPositions(IDocument.DEFAULT_CATEGORY);
-			assertTrue("invalid number of positions", actual.length == expected.length);
-
-			for (int i= 0; i < expected.length; i++) {
-				assertEquals(print(actual[i]) + " != " + print(expected[i]), expected[i], actual[i]);
-			}
+			checkPositions(expected, actual);
 
 		} catch (BadPositionCategoryException x) {
 			assertTrue("BadPositionCategoryException thrown", false);
@@ -53,44 +49,40 @@ public class DocumentTest extends TestCase {
 		assertTrue("invalid number of positions", expected.length == actual.length);
 
 		for (int i= 0; i < expected.length; i++) {
-			assertEquals(print(actual[i]) + " != " + print(expected[i]), expected[i], actual[i]);
+			assertEquals("Position " + i + " wrong:", expected[i], actual[i]);
 		}
 
-	}
-
-	protected String print(Position p) {
-		return "[" + p.getOffset() + "," + p.getLength() + "]";
 	}
 
 	protected void setUp() {
 
 		fDocument= new Document();
 
-		String text=
-		"package TestPackage;\n" +
-		"/*\n" +
-		"* comment\n" +
-		"*/\n" +
-		"	public class Class {\n" +
-		"		// comment1\n" +
-		"		public void method1() {\n" +
-		"		}\n" +
-		"		// comment2\n" +
-		"		public void method2() {\n" +
-		"		}\n" +
-		"	}\n";
+		String text=                          // 0
+		"package TestPackage;\n" +            // 21
+		"/*\n" +                              // 24
+		"* comment\n" +                       // 34
+		"*/\n" +                              // 37
+		"	public class Class {\n" +         // 59 
+		"		// comment1\n" +              // 73
+		"		public void method1() {\n" +  // 99
+		"		}\n" +                        //103
+		"		// comment2\n" +              //117
+		"		public void method2() {\n" +  //143
+		"		}\n" +                        //147
+		"	}\n";                             //150
 
 		fDocument.set(text);
 
 		try {
 
-			fDocument.addPosition(new Position( 0,   20));
-			fDocument.addPosition(new Position( 21,  15));
-			fDocument.addPosition(new Position( 38, 111));
-			fDocument.addPosition(new Position( 61,  12));
-			fDocument.addPosition(new Position( 75,  27));
-			fDocument.addPosition(new Position(105,  12));
-			fDocument.addPosition(new Position(119,  27));
+			fDocument.addPosition(new Position( 0,   20)); // "package TestPackage;"
+			fDocument.addPosition(new Position( 21,  15)); // "/*\n* comment\n*/"
+			fDocument.addPosition(new Position( 38, 111)); // "public class Class {\n ... }"
+			fDocument.addPosition(new Position( 61,  12)); // "// comment1\n"
+			fDocument.addPosition(new Position( 75,  27)); // "public void method1() {\n		}"
+			fDocument.addPosition(new Position(105,  12)); // "// comment2\n"
+			fDocument.addPosition(new Position(119,  27)); // "public void method2() {\n		}"
 
 		} catch (BadLocationException x) {
 			assertTrue("initilization failed", false);
@@ -340,7 +332,7 @@ public class DocumentTest extends TestCase {
 
 		Position[] positions= new Position[] {
 			new Position( 0,   20),
-			new Position( 21,  10),
+			new Position( 31,   0),
 			new Position( 32, 111),
 			new Position( 55,  12),
 			new Position( 69,  27),
@@ -384,7 +376,7 @@ public class DocumentTest extends TestCase {
 		}
 
 		Position[] positions= new Position[] {
-			new Position( 0,   19),
+			new Position( 0,   25),
 			new Position( 26,  15),
 			new Position( 43, 111),
 			new Position( 66,  12),

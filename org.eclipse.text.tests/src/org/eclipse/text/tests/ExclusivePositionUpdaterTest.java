@@ -226,29 +226,29 @@ public class ExclusivePositionUpdaterTest extends TestCase {
 	public void testReplaceAtOffset1() throws BadLocationException {
 		fDoc.replace(5, 1, "yy");
 		// 01234[fPo]0123456789
-		Assert.assertEquals(7, fPos.offset);
-		Assert.assertEquals(4, fPos.length);
+		Assert.assertEquals(5, fPos.offset);
+		Assert.assertEquals(6, fPos.length);
 	}
 	
 	public void testReplaceAtOffset2() throws BadLocationException {
 		fDoc.replace(5, 4, "yy");
 		// 01234[fPo]0123456789
-		Assert.assertEquals(7, fPos.offset);
-		Assert.assertEquals(1, fPos.length);
+		Assert.assertEquals(5, fPos.offset);
+		Assert.assertEquals(3, fPos.length);
 	}
 	
 	public void testReplaceAtOffsetTillRight() throws BadLocationException {
 		fDoc.replace(5, 5, "yy");
 		// 01234[fPo]0123456789
 		Assert.assertEquals(5, fPos.offset);
-		Assert.assertEquals(0, fPos.length);
+		Assert.assertEquals(2, fPos.length);
 		Assert.assertFalse(fPos.isDeleted);
 	}
 	
 	public void testReplaceAtRight() throws BadLocationException {
 		fDoc.replace(6, 4, "yy");
 		Assert.assertEquals(5, fPos.offset);
-		Assert.assertEquals(1, fPos.length);
+		Assert.assertEquals(3, fPos.length);
 	}
 	
 	public void testReplaceRightBorder() throws BadLocationException {
