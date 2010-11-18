@@ -51,7 +51,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
@@ -1396,12 +1395,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			// Null out the progress region. Bug 64024.
 			progressRegion = null;
 
-			IEclipseContext currentlyActive = model.getContext().getActiveChild();
-			if (currentlyActive != null)
-				currentlyActive.deactivate();
-			for (MWindowElement windowElement : model.getChildren()) {
-				engine.removeGui(windowElement);
-			}
 			MWindow window = model;
 			engine.removeGui(model);
 
