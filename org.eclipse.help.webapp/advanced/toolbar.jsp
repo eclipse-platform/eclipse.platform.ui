@@ -196,8 +196,12 @@ function setTitle(label)
 function registerMaximizedChangedListener(){
 	// get to the frameset
 	var p = parent;
-	while (p && !p.registerMaximizeListener)
+	while (p && !p.registerMaximizeListener) {	   
+	    if (p === p.parent)  {
+	        return;
+        }
 		p = p.parent;
+	}
 	
 	if (p!= null){
 		p.registerMaximizeListener('<%=UrlUtil.JavaScriptEncode(data.getName())%>Toolbar', maximizedChanged);
