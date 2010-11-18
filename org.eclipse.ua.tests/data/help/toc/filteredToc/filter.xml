@@ -53,8 +53,8 @@
 		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
 	</topic>
 
-	<topic filter="category=org.eclipse.categories.developmentCategory" label="The category2 org.eclipse.categories.developmentCategory is enabled" href="data/help/toc/filteredToc/simple_page.html">
-
+	<topic filter="category=org.eclipse.categories.developmentCategory" label="The category org.eclipse.categories.developmentCategory is enabled" href="data/help/toc/filteredToc/simple_page.html">
+		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
 	</topic>
 
 	<!-- should never appear -->
@@ -62,8 +62,8 @@
 		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
 	</topic>
 
-	<topic filter="activity=org.eclipse.javaDevelopment" label="The activity2 org.eclipse.javaDevelopment is enabled" href="data/help/toc/filteredToc/simple_page.html">
-
+	<topic filter="activity=org.eclipse.javaDevelopment" label="The activity org.eclipse.javaDevelopment is enabled" href="data/help/toc/filteredToc/simple_page.html">
+		<link toc="data/help/toc/filteredToc/simple_toc.xml" />
 	</topic>
 
 	<!-- should never appear -->
