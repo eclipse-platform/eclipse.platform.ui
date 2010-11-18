@@ -186,7 +186,7 @@ function onloadHandler()
 	<table id="searchTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:0px 10px;"><label for="searchWord"><%=ServletResources.getString("SearchExpression", request)%></label>
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value="<%=UrlUtil.htmlEncode(data.getSearchWord())%>" maxlength=256 alt='<%=ServletResources.getString("SearchExpression", request)%>' title='<%=ServletResources.getString("SearchExpression", request)%>'>
+		<tr><td style="padding:0px 10px;"><input type="text" id="searchWord" name="searchWord" value="<%=UrlUtil.htmlEncode(data.getSearchWord())%>" maxlength=256 alt="<%=ServletResources.getString("SearchExpression", request)%>" title="<%=ServletResources.getString("SearchExpression", request)%>">
           	  	<input type="hidden" name="maxHits" value="500" >
         </td></tr>
         <tr><td style="padding:0px 10px;"><%=ServletResources.getString("expression_label", request)%>
@@ -218,10 +218,10 @@ for (int i=0; i<tocData.getTocCount(); i++)
   			<table cellspacing=10 cellpading=0 border=0 align=<%=isRTL?"left":"right"%>  style="background:transparent;">
 				<tr>
 					<td>
-						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value='<%=ServletResources.getString("SearchLabel", request)%>'  id="go" alt='<%=ServletResources.getString("SearchLabel", request)%>' title='<%=ServletResources.getString("SearchLabel", request)%>'>
+						<input id="searchButton" class='button'  type="button" onclick="doAdvancedSearch()" value="<%=ServletResources.getString("SearchLabel", request)%>"  id="go" alt="<%=ServletResources.getString("SearchLabel", request)%>" title="<%=ServletResources.getString("SearchLabel", request)%>">
 					</td>
 					<td>
-					  	<input class='button' type="button" onclick="window.close()"  type="button"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>' title='<%=ServletResources.getString("Cancel", request)%>'>
+					  	<input class='button' type="button" onclick="window.close()"  type="button"  value="<%=ServletResources.getString("Cancel", request)%>"  id="cancel" alt="<%=ServletResources.getString("Cancel", request)%>" title="<%=ServletResources.getString("Cancel", request)%>">
 					</td>
 				</tr>
   			</table>

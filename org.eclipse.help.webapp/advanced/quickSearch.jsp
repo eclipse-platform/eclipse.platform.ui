@@ -137,8 +137,8 @@ function doQuickSearch(){
     	 <br/>
 		<input type="text" id="searchWord" name="searchWord"
 			value='' size='<%=data.isIE()?"32":"24"%>' maxlength="256"
-			alt='<%=ServletResources.getString("SearchExpression", request)%>'
-			title='<%=ServletResources.getString("SearchExpression", request)%>'/>
+			alt="<%=ServletResources.getString("SearchExpression", request)%>"
+			title="<%=ServletResources.getString("SearchExpression", request)%>"/>
    </div>
 
 	<div id="buttonArea">

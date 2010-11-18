@@ -295,14 +295,14 @@ function onloadHandler(e)
 					</label>
 				</td>
 				<td>
-					<input type="text" id="searchWord" name="searchWord" value='' size="24" maxlength="256" alt='<%=ServletResources.getString("expression_label", request)%>' title='<%=ServletResources.getString("expression_label", request)%>'>
+					<input type="text" id="searchWord" name="searchWord" value='' size="24" maxlength="256" alt="<%=ServletResources.getString("expression_label", request)%>" title="<%=ServletResources.getString("expression_label", request)%>">
 				</td>
 				<td >
-					<input type="button" onclick="this.blur();doSearch()" value='<%=ServletResources.getString("GO", request)%>' id="go" alt='<%=ServletResources.getString("GO", request)%>' title='<%=ServletResources.getString("GO", request)%>'>
+					<input type="button" onclick="this.blur();doSearch()" value="<%=ServletResources.getString("GO", request)%>" id="go" alt="<%=ServletResources.getString("GO", request)%>" title="<%=ServletResources.getString("GO", request)%>">
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=ServletResources.getString("ScopeTooltip", request)%>' alt='<%=ServletResources.getString("ScopeTooltip", request)%>' onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("ScopeTooltip", request))%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getLabel("Scope", request)%></a>
+					<a id="scopeLabel" href="javascript:openAdvanced();" title="<%=ServletResources.getString("ScopeTooltip", request)%>" alt="<%=ServletResources.getString("ScopeTooltip", request)%>" onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("ScopeTooltip", request))%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getLabel("Scope", request)%></a>
 				</td>
 				<td nowrap>
 					<input type="hidden" name="workingSet" value='<%=UrlUtil.htmlEncode(data.getScope())%>'>

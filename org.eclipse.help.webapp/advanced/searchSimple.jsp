@@ -216,14 +216,14 @@ function onloadHandler(e)
 					</label>
 				</td>
 				<td>
-					<input type="text" id="searchWord" name="searchWord" value='' size="20" maxlength="256" alt='<%=ServletResources.getString("SearchExpression", request)%>' title='<%=ServletResources.getString("SearchExpression", request)%>'>
+					<input type="text" id="searchWord" name="searchWord" value='' size="20" maxlength="256" alt="<%=ServletResources.getString("SearchExpression", request)%>" title="<%=ServletResources.getString("SearchExpression", request)%>">
 				</td>
 				<td >
-					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=ServletResources.getString("GO", request)%>' id="go" alt='<%=ServletResources.getString("GO", request)%>' title='<%=ServletResources.getString("GO", request)%>'>
+					&nbsp;<input type="button" onclick="this.blur();doSearch()" value="<%=ServletResources.getString("GO", request)%>" id="go" alt="<%=ServletResources.getString("GO", request)%>" title="<%=ServletResources.getString("GO", request)%>">
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					<a id="advanced" href="javascript:openAdvanced();" alt='<%=ServletResources.getString("Advanced", request)%>' title='<%=ServletResources.getString("Advanced", request)%>' onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Advanced", request))%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getString("Advanced", request)%></a>&nbsp;
+					<a id="advanced" href="javascript:openAdvanced();" alt="<%=ServletResources.getString("Advanced", request)%>" title="<%=ServletResources.getString("Advanced", request)%>" onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Advanced", request))%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getString("Advanced", request)%></a>&nbsp;
 				</td>
 			</tr>
 
