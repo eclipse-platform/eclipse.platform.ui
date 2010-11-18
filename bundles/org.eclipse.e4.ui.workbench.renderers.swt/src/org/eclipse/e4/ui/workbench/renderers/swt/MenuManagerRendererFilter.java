@@ -28,8 +28,6 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.ui.MContext;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
@@ -239,14 +237,6 @@ public class MenuManagerRendererFilter implements Listener {
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
-		if (!menuManager.getRemoveAllWhenShown()) {
-			renderer.reconcileManagerToModel(menuManager, menuModel);
-			// this will make sure all model elements are represented in the
-			// menu itself.
-			// double cast because we're bad people
-			renderer.processContents((MElementContainer<MUIElement>) ((Object) menuModel));
 		}
 
 		final IEclipseContext evalContext;

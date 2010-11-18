@@ -104,9 +104,11 @@ public final class ContributionsAnalyzer {
 			final List<MMenuContribution> menuContributionList, final String id,
 			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
 			boolean includePopups) {
+		if (id == null || id.length() == 0) {
+			return;
+		}
 		ArrayList<String> popupIds = new ArrayList<String>();
 		if (includePopups) {
-			popupIds.add(POPUP_PARENT_ID);
 			popupIds.add(id);
 			for (String tag : menuModel.getTags()) {
 				if (tag.startsWith("popup:")) { //$NON-NLS-1$
@@ -123,10 +125,12 @@ public final class ContributionsAnalyzer {
 				// it doesn't make sense for this to be null, temporary workaround for bug 320790
 				continue;
 			}
-			boolean popup = includePopups && (menuModel instanceof MPopupMenu)
-					&& popupIds.contains(parentID);
-			boolean filtered = isFiltered(menuModel, menuContribution);
-			if (filtered || (!popup && !parentID.equals(id)) || !menuContribution.isToBeRendered()) {
+			boolean popupTarget = includePopups && popupIds.contains(parentID);
+			boolean popupAny = includePopups && menuModel instanceof MPopupMenu
+					&& POPUP_PARENT_ID.equals(parentID);
+			boolean filtered = isFiltered(menuModel, menuContribution, includePopups);
+			if (filtered || (!popupAny && !popupTarget && !parentID.equals(id))
+					|| !menuContribution.isToBeRendered()) {
 				continue;
 			}
 			toContribute.add(menuContribution);
@@ -146,7 +150,7 @@ public final class ContributionsAnalyzer {
 			}
 			boolean popup = parentID.equals(POPUP_PARENT_ID) && (menuModel instanceof MPopupMenu)
 					&& includePopups;
-			boolean filtered = isFiltered(menuModel, menuContribution);
+			boolean filtered = isFiltered(menuModel, menuContribution, includePopups);
 			if (filtered || (!popup && !parentID.equals(id)) || !menuContribution.isToBeRendered()) {
 				continue;
 			}
@@ -156,8 +160,9 @@ public final class ContributionsAnalyzer {
 		}
 	}
 
-	static boolean isFiltered(MMenu menuModel, MMenuContribution menuContribution) {
-		if (menuModel.getTags().contains(ContributionsAnalyzer.MC_POPUP)) {
+	static boolean isFiltered(MMenu menuModel, MMenuContribution menuContribution,
+			boolean includePopups) {
+		if (includePopups || menuModel.getTags().contains(ContributionsAnalyzer.MC_POPUP)) {
 			return !menuContribution.getTags().contains(ContributionsAnalyzer.MC_POPUP)
 					&& menuContribution.getTags().contains(ContributionsAnalyzer.MC_MENU);
 		}

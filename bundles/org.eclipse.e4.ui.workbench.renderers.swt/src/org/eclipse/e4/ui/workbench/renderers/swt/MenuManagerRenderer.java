@@ -309,7 +309,8 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			newMenu.setData(menuManager);
 		}
 		if (!menuManager.getRemoveAllWhenShown()) {
-			processContributions(menuModel, menuBar);
+			processContributions(menuModel, menuBar,
+					menuModel instanceof MPopupMenu);
 		}
 		if (newMenu != null) {
 			newMenu.addDisposeListener(new DisposeListener() {
@@ -339,14 +340,14 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 						MenuManager copyManager = getManager(menuCopy);
 						clearModelToManager(menuCopy, copyManager);
 						if (copyManager != null) {
-							record.manager.remove(copyManager);
+							record.getManagerForModel().remove(copyManager);
 							copyManager.dispose();
 						}
 					} else {
 						IContributionItem ici = getContribution(copy);
 						clearModelToContribution(copy, ici);
 						if (ici != null) {
-							record.manager.remove(ici);
+							record.getManagerForModel().remove(ici);
 						}
 					}
 				}
@@ -357,14 +358,24 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	/**
 	 * @param menuModel
-	 * @param menuBar
+	 * @param isMenuBar
+	 * @param isPopup
 	 */
-	public void processContributions(MMenu menuModel, boolean menuBar) {
+	public void processContributions(MMenu menuModel, boolean isMenuBar,
+			boolean isPopup) {
+		if (menuModel.getElementId() == null) {
+			return;
+		}
 		final ArrayList<MMenuContribution> toContribute = new ArrayList<MMenuContribution>();
 		ContributionsAnalyzer.XXXgatherMenuContributions(menuModel,
 				application.getMenuContributions(), menuModel.getElementId(),
-				toContribute, null, menuModel instanceof MPopupMenu);
-		generateContributions(menuModel, toContribute, menuBar);
+				toContribute, null, isPopup);
+		generateContributions(menuModel, toContribute, isMenuBar);
+		for (MMenuElement element : menuModel.getChildren()) {
+			if (element instanceof MMenu) {
+				processContributions((MMenu) element, false, isPopup);
+			}
+		}
 	}
 
 	/**
@@ -421,7 +432,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			return false;
 		}
 		final ContributionRecord record = new ContributionRecord(menuModel,
-				menuContribution, manager);
+				menuContribution, this);
 		record.generate();
 		for (MMenuElement copy : record.generatedElements) {
 			modelContributionToRecord.put(copy, record);
@@ -490,13 +501,17 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		MMenu menuModel;
 		MMenuContribution menuContribution;
 		ArrayList<MMenuElement> generatedElements = new ArrayList<MMenuElement>();
-		MenuManager manager;
+		MenuManagerRenderer renderer;
 
 		public ContributionRecord(MMenu menuModel,
-				MMenuContribution contribution, MenuManager manager) {
+				MMenuContribution contribution, MenuManagerRenderer renderer) {
 			this.menuModel = menuModel;
 			this.menuContribution = contribution;
-			this.manager = manager;
+			this.renderer = renderer;
+		}
+
+		public MenuManager getManagerForModel() {
+			return renderer.getManager(menuModel);
 		}
 
 		/**
@@ -508,13 +523,13 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 					menuContribution, exprContext);
 			for (MMenuElement item : generatedElements) {
 				if (isVisible && item.getVisibleWhen() != null) {
-					MenuManagerRenderer.updateVisibility(manager, item,
-							exprContext);
+					MenuManagerRenderer.updateVisibility(getManagerForModel(),
+							item, exprContext);
 				} else {
 					item.setVisible(isVisible);
 				}
 			}
-			manager.markDirty();
+			getManagerForModel().markDirty();
 		}
 
 		public void generate() {
@@ -603,7 +618,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			menuManager.setVisible(menuModel.isVisible());
 			addToManager(parentManager, menuModel, menuManager);
 		}
-		processContributions(menuModel, false);
+		// processContributions(menuModel, false);
 		List<MMenuElement> parts = menuModel.getChildren();
 		if (parts != null) {
 			MMenuElement[] plist = parts
@@ -635,7 +650,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		} else if (childME instanceof MMenuSeparator) {
 			MMenuSeparator sep = (MMenuSeparator) childME;
 			processSeparator(menuManager, sep);
-		} else if (childME instanceof MOpaqueMenu) {
+			// } else if (childME instanceof MOpaqueMenu) {
 			// I'm not sure what to do here
 			// so I'll just take it out of the running
 		} else if (childME instanceof MMenu) {

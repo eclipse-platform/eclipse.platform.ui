@@ -404,7 +404,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		if (obj instanceof MenuManagerRenderer) {
 			MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
 			renderer.reconcileManagerToModel(menu, menuModel);
-			renderer.processContributions(menuModel, false);
+			renderer.processContributions(menuModel, false, true);
 			// double cast because we're bad people
 			renderer.processContents((MElementContainer<MUIElement>) ((Object) menuModel));
 		}
