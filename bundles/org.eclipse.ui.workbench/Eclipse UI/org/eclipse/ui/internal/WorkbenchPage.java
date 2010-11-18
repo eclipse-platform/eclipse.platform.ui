@@ -548,11 +548,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return null;
 	}
 
-	public void createEditorReferenceForPart(final MPart part, IEditorInput input, String editorId) {
+	public void createEditorReferenceForPart(final MPart part, IEditorInput input, String editorId,
+			IMemento memento) {
 		IEditorRegistry registry = legacyWindow.getWorkbench().getEditorRegistry();
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
 		final EditorReference ref = new EditorReference(window.getContext(), this, part, input,
-				descriptor);
+				descriptor, memento);
 		editorReferences.add(ref);
 		final IEventBroker broker = (IEventBroker) application.getContext().get(
 				IEventBroker.class.getName());
@@ -1967,7 +1968,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				} else if (uri.equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
 					// TODO compat: we need that editor input back, or we have
 					// squat
-					createEditorReferenceForPart(part, null, part.getElementId());
+					createEditorReferenceForPart(part, null, part.getElementId(), null);
 				}
 			}
 		}
@@ -2244,7 +2245,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		MPart editor = partService.createPart("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
-		createEditorReferenceForPart(editor, input, editorId);
+		createEditorReferenceForPart(editor, input, editorId, editorState);
 		partService.showPart(editor, PartState.VISIBLE);
 
 		CompatibilityEditor compatibilityEditor = (CompatibilityEditor) editor.getObject();

@@ -55,12 +55,14 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	private EditorDescriptor descriptor;
 	private EditorSite editorSite;
 	private String descriptorId;
+	private IMemento editorState;
 
 	EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
-			IEditorInput input, EditorDescriptor descriptor) {
+			IEditorInput input, EditorDescriptor descriptor, IMemento editorState) {
 		super(windowContext, page, part);
 		this.input = input;
 		this.descriptor = descriptor;
+		this.editorState = editorState;
 
 		if (descriptor == null) {
 			try {
@@ -313,8 +315,10 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 				editorSite));
 		((IEditorPart) part).init(editorSite, getEditorInput());
 
-		if (useIPersistableEditor()) {
-			if (part instanceof IPersistableEditor) {
+		if (part instanceof IPersistableEditor) {
+			if (editorState != null) {
+				((IPersistableEditor) part).restoreState(editorState);
+			} else if (useIPersistableEditor()) {
 				String mementoString = getModel().getPersistedState().get(MEMENTO_KEY);
 				if (mementoString != null) {
 					try {

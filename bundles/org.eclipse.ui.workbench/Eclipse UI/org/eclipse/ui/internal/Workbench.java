@@ -1695,7 +1695,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private EditorReference createEditorReference(MPart part, WorkbenchPage page) {
 		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
 		EditorReference ref = new EditorReference(window.getModel().getContext(), page, part, null,
-				null);
+				null, null);
 		page.addEditorReference(ref);
 		return ref;
 	}
