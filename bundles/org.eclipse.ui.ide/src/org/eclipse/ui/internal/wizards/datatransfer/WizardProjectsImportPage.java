@@ -296,6 +296,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 	private Button copyCheckbox;
 
 	private boolean copyFiles = false;
+	
+	private boolean lastCopyFiles = false;
 
 	private ProjectRecord[] selectedProjects = new ProjectRecord[0];
 
@@ -424,6 +426,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		copyCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				copyFiles = copyCheckbox.getSelection();
+				updateProjectsList(directoryPathField.getText().trim());
 			}
 		});
 	}
@@ -850,7 +853,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		final File directory = new File(path);
 		long modified = directory.lastModified();
-		if (path.equals(lastPath) && lastModified == modified) {
+		if (path.equals(lastPath) && lastModified == modified && lastCopyFiles == copyFiles) {
 			// since the file/folder was not modified and the path did not
 			// change, no refreshing is required
 			return;
@@ -858,6 +861,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		lastPath = path;
 		lastModified = modified;
+		lastCopyFiles = copyFiles;
 
 		// We can't access the radio button from the inner class so get the
 		// status beforehand
@@ -1503,13 +1507,27 @@ public class WizardProjectsImportPage extends WizardPage implements
 	public ProjectRecord[] getProjectRecords() {
 		List projectRecords = new ArrayList();
 		for (int i = 0; i < selectedProjects.length; i++) {
-			if (isProjectInWorkspace(selectedProjects[i].getProjectName())) {
+			if ( (isProjectInWorkspacePath(selectedProjects[i].getProjectName()) && copyFiles)||
+					isProjectInWorkspace(selectedProjects[i].getProjectName())) {
 				selectedProjects[i].hasConflicts = true;
 			}
 			projectRecords.add(selectedProjects[i]);
 		}
 		return (ProjectRecord[]) projectRecords
 				.toArray(new ProjectRecord[projectRecords.size()]);
+	}
+
+	/**
+	 * Determine if there is a directory with the project name in the workspace path.
+	 * 
+	 * @param projectName the name of the project
+	 * @return true if there is a directory with the same name of the imported project
+	 */
+	private boolean isProjectInWorkspacePath(String projectName){
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IPath wsPath = workspace.getRoot().getLocation();
+		IPath localProjectPath = wsPath.append(projectName);
+		return localProjectPath.toFile().exists();
 	}
 
 	/**
@@ -1549,6 +1567,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			// checkbox
 			copyFiles = settings.getBoolean(STORE_COPY_PROJECT_ID);
 			copyCheckbox.setSelection(copyFiles);
+			lastCopyFiles = copyFiles;
 		}
 				
 		// Second, check to see if we don't have an initial path, 
