@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -24,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.MarkerField;
-import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * MarkersViewSettingDialog is the dialog for showing marker preferences.
@@ -34,7 +34,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * @author Hitesh Soliwal
  * 
  */
-public class MarkersViewSettingDialog extends ViewerColumnsDialog {
+public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 	private ExtendedMarkersView extendedView;
 
@@ -44,7 +44,7 @@ public class MarkersViewSettingDialog extends ViewerColumnsDialog {
 	 * @param view
 	 *            - the view this is being launched from
 	 */
-	public MarkersViewSettingDialog(ExtendedMarkersView view) {
+	public MarkersViewColumnsDialog(ExtendedMarkersView view) {
 		super(view.getSite().getShell());
 		this.extendedView = view;
 		initialize(false);
@@ -61,7 +61,7 @@ public class MarkersViewSettingDialog extends ViewerColumnsDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(MarkerMessages.MarkerPreferences_DialogTitle);
+		newShell.setText(JFaceResources.getString("ConfigureColumnsDialog_Title")); //$NON-NLS-1$
 	}
 
 	/*

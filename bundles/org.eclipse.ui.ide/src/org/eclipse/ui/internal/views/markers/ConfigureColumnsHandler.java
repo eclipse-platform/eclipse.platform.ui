@@ -32,7 +32,7 @@ public class ConfigureColumnsHandler extends MarkerViewHandler implements IHandl
 		ExtendedMarkersView view = getView(event);
 		if (view == null)
 			return this;
-		new MarkersViewSettingDialog(view).open();
+		new MarkersViewColumnsDialog(view).open();
 		return this;
 	}
 
