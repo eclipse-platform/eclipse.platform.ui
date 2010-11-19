@@ -548,7 +548,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return null;
 	}
 
-	public void createEditorReferenceForPart(final MPart part, IEditorInput input, String editorId,
+	public EditorReference createEditorReferenceForPart(final MPart part, IEditorInput input,
+			String editorId,
 			IMemento memento) {
 		IEditorRegistry registry = legacyWindow.getWorkbench().getEditorRegistry();
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
@@ -569,6 +570,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 						}
 					}
 				});
+		return ref;
 	}
 
 
@@ -3120,20 +3122,39 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, int matchFlags)
 			throws MultiPartInitException {
 		Assert.isTrue(inputs.length == editorIDs.length);
+		if (inputs.length == 1) {
+			try {
+				IWorkbenchPartReference reference = getReference(openEditor(inputs[0],
+						editorIDs[0], true, matchFlags));
+				return new IEditorReference[] { (IEditorReference) reference };
+			} catch (PartInitException e) {
+				throw new MultiPartInitException(new IWorkbenchPartReference[] { null },
+						new PartInitException[] { e });
+			}
+		}
 
 		PartInitException[] exceptions = new PartInitException[inputs.length];
 		IEditorReference[] references = new IEditorReference[inputs.length];
 		boolean hasFailures = false;
 
-		for (int i = 0; i < inputs.length; i++) {
-			try {
-				IEditorPart editor = openEditor(inputs[i], editorIDs[i], i == 0, matchFlags);
-				references[i] = (IEditorReference) getReference(editor);
-			} catch (PartInitException e) {
-				if (!hasFailures) {
-					hasFailures = true;
-					exceptions[i] = e;
-				}
+		try {
+			references[0] = (IEditorReference) getReference(openEditor(inputs[0], editorIDs[0],
+					true, matchFlags));
+		} catch (PartInitException e) {
+			hasFailures = true;
+			exceptions[0] = e;
+		}
+
+		IEditorRegistry reg = getWorkbenchWindow().getWorkbench().getEditorRegistry();
+		for (int i = 1; i < inputs.length; i++) {
+			if (reg.findEditor(editorIDs[i]) == null) {
+				references[i] = null;
+				exceptions[i] = new PartInitException(NLS.bind(
+						WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorIDs[i]));
+			} else {
+				MPart editor = partService.createPart("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
+				references[i] = createEditorReferenceForPart(editor, inputs[i], editorIDs[i], null);
+				((PartServiceImpl) partService).addPart(editor);
 			}
 		}
 
