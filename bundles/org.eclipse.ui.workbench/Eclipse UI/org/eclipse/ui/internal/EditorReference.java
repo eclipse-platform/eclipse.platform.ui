@@ -48,6 +48,7 @@ import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.util.Util;
 
 public class EditorReference extends WorkbenchPartReference implements IEditorReference {
 
@@ -56,6 +57,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	private EditorSite editorSite;
 	private String descriptorId;
 	private IMemento editorState;
+	private String title;
 
 	EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
 			IEditorInput input, EditorDescriptor descriptor, IMemento editorState) {
@@ -89,6 +91,16 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		} else {
 			descriptorId = this.descriptor.getId();
 			setImageDescriptor(this.descriptor.getImageDescriptor());
+		}
+
+		if (input == null) {
+			if (this.descriptor == null) {
+				title = Util.safeString(part.getLabel());
+			} else {
+				title = this.descriptor.getLabel();
+			}
+		} else {
+			title = Util.safeString(input.getName());
 		}
 	}
 
@@ -173,6 +185,10 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			return editor == null ? getModel().getLabel() : editor.getEditorInput().getName();
 		}
 		return editor == null ? input.getName() : editor.getEditorInput().getName();
+	}
+
+	public String getTitle() {
+		return title;
 	}
 
 	private IEditorInput restoreInput(IMemento editorMem) throws PartInitException {
