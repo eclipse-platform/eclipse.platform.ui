@@ -292,13 +292,13 @@ public class ExtendedMarkersView extends ViewPart {
 			int columnWidth = -1;
 			if(i < widths.length){
 				columnWidth = widths[i];
-				if (columnWidths != null) {
-					//save it
-					columnWidths.putInteger(markerField.getConfigurationElement().getAttribute(
-							MarkerSupportInternalUtilities.ATTRIBUTE_ID), columnWidth);
-				}
 			}else{
 				columnWidth = getFieldWidth(markerField, columnWidth);
+			}
+			if (columnWidths != null) {
+				//save it
+				columnWidths.putInteger(markerField.getConfigurationElement().getAttribute(
+						MarkerSupportInternalUtilities.ATTRIBUTE_ID), columnWidth);
 			}
 			// Take trim into account if we are using the default value, but not
 			// if it is restored.
