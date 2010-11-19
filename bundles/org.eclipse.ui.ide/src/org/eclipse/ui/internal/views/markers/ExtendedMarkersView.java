@@ -289,15 +289,14 @@ public class ExtendedMarkersView extends ViewPart {
 			if (memento != null){
 				columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
 			}
-			int columnWidth = -1;
-			if(i < widths.length){
-				columnWidth = widths[i];
-			}else{
-				columnWidth = getFieldWidth(markerField, columnWidth);
-			}
+			
+			//adjust the column width
+			int columnWidth = i < widths.length ? widths[i] : -1;
+			columnWidth = getFieldWidth(markerField, columnWidth, false);
 			if (columnWidths != null) {
-				//save it
-				columnWidths.putInteger(markerField.getConfigurationElement().getAttribute(
+				// save it
+				columnWidths.putInteger(
+						markerField.getConfigurationElement().getAttribute(
 						MarkerSupportInternalUtilities.ATTRIBUTE_ID), columnWidth);
 			}
 			// Take trim into account if we are using the default value, but not
@@ -307,7 +306,6 @@ public class ExtendedMarkersView extends ViewPart {
 						.getDefaultColumnWidth(tree), true, true));
 			else
 				layout.addColumnData(new ColumnPixelData(columnWidth, true));
-
 		}
 
 		// Remove extra columns
@@ -323,11 +321,19 @@ public class ExtendedMarkersView extends ViewPart {
 		tree.layout(true);
 
 	}
-	
-	int getFieldWidth(MarkerField markerField, int columnWidth) {
+
+	/**
+	 * 
+	 * @param markerField
+	 * @param preferredWidth
+	 * @param considerUIWidths
+	 * @return desired width for the column representing markerField
+	 */
+	int getFieldWidth(MarkerField markerField, int preferredWidth,
+			boolean considerUIWidths) {
 		Tree tree = getViewer().getTree();
 
-		if (columnWidth < 0 && memento != null) {
+		if (preferredWidth < 0 && memento != null) {
 			IMemento columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
 			if (columnWidths != null) {
 				Integer value = columnWidths.getInteger(markerField
@@ -335,26 +341,29 @@ public class ExtendedMarkersView extends ViewPart {
 								MarkerSupportInternalUtilities.ATTRIBUTE_ID));
 				// Make sure we get a useful value
 				if (value != null && value.intValue() > 0)
-					columnWidth = value.intValue();
+					preferredWidth = value.intValue();
 			}
 		}
-		if (columnWidth <= 0) {
+		if (preferredWidth <= 0) {
 			// Compute and store a font metric
 			GC gc = new GC(tree);
 			gc.setFont(tree.getFont());
 			FontMetrics fontMetrics = gc.getFontMetrics();
 			gc.dispose();
-			columnWidth = Math.max(markerField.getDefaultColumnWidth(tree),
+			preferredWidth = Math.max(markerField.getDefaultColumnWidth(tree),
 					fontMetrics.getAverageCharWidth() * 5);
 		}
-		TreeColumn[] columns = tree.getColumns();
-		for (int i = 0; i < columns.length; i++) {
-			if (MARKER_FIELD.equals(columns[i].getData(MARKER_FIELD))) {
-				columnWidth = Math.max(columnWidth, columns[i].getWidth());
-				return columnWidth;
+		if (considerUIWidths) {
+			TreeColumn[] columns = tree.getColumns();
+			for (int i = 0; i < columns.length; i++) {
+				if (markerField.equals(columns[i].getData(MARKER_FIELD))) {
+					preferredWidth = Math.max(preferredWidth,
+							columns[i].getWidth());
+					return preferredWidth;
+				}
 			}
 		}
-		return columnWidth;
+		return preferredWidth;
 	}
 
 	/*

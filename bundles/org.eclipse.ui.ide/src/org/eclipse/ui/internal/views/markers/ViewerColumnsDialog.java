@@ -52,10 +52,10 @@ import org.eclipse.ui.preferences.ViewSettingsDialog;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
- * This was introduced as a fix to Bug 231081 and related, as an effort to combine the columns and
- * preference dialogs into one. It should be noted that the class can be re-used
- * or turned into a tool for column viewers in general, but with some
- * modifications. See example attached at the end of this class
+ * This was introduced as a fix to Bug 231081 and related, as an effort to
+ * combine the columns and preference dialogs into one. It should be noted that
+ * the class can be re-used or turned into a tool for column viewers in general,
+ * but with some modifications. See example attached at the end of this class
  * 
  * @since 3.7
  * 
@@ -604,6 +604,14 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 	void handleNonVisibleSelection(ISelection selection) {
 		Object[] nvKeys = ((IStructuredSelection) selection).toArray();
 		toVisibleBtt.setEnabled(nvKeys.length > 0);
+
+		if (visibleViewer.getControl().isFocusControl()
+				&& getVisible().size() <= 1) {
+			handleStatusUdpate(IStatus.INFO,
+					MarkerMessages.MarkerPreferences_AtLeastOneVisibleColumn);
+		} else {
+			handleStatusUdpate(IStatus.INFO, getDefaultMessage());
+		}
 	}
 
 	/**
@@ -729,6 +737,7 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 		nonVisibleViewer.refresh();
 		handleVisibleSelection(selection);
 		handleNonVisibleSelection(nonVisibleViewer.getSelection());
+
 	}
 
 	/**
@@ -738,7 +747,8 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 	 *            event from the button click
 	 */
 	protected void handleToNonVisibleButton(Event e) {
-		if (getVisible().size() <= 1) {
+		if (visibleViewer.getControl().isFocusControl()
+				&& getVisible().size() <= 1) {
 			handleStatusUdpate(IStatus.INFO,
 					MarkerMessages.MarkerPreferences_AtLeastOneVisibleColumn);
 			return;
@@ -758,7 +768,6 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 		visibleViewer.refresh();
 		handleVisibleSelection(visibleViewer.getSelection());
 		handleNonVisibleSelection(nonVisibleViewer.getSelection());
-		handleStatusUdpate(IStatus.INFO, getDefaultMessage());
 	}
 
 	void updateIndices(List list) {

@@ -47,9 +47,7 @@ public class MarkersViewSettingDialog extends ViewerColumnsDialog {
 	public MarkersViewSettingDialog(ExtendedMarkersView view) {
 		super(view.getSite().getShell());
 		this.extendedView = view;
-		initialize(convert(extendedView.getBuilder().getGenerator()
-				.getVisibleFields()), convert(extendedView.getBuilder()
-				.getGenerator().getAllFields()), false);
+		initialize(false);
 		setLimitValue(IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getInt(IDEInternalPreferences.MARKER_LIMITS_VALUE));
 	}
@@ -111,10 +109,10 @@ public class MarkersViewSettingDialog extends ViewerColumnsDialog {
 		int i = 0;
 		Iterator iterator = visible.iterator();
 		while (iterator.hasNext()) {
-			widths[i++] = ((FieldEntry) iterator.next()).width;
+			widths[i] = ((FieldEntry) iterator.next()).width;
+			i++;
 		}
 		return widths;
-
 	}
 
 	private Collection getVisibleFields() {
@@ -133,40 +131,64 @@ public class MarkersViewSettingDialog extends ViewerColumnsDialog {
 	 * @see org.eclipse.ui.preferences.ViewSettingsDialog#performDefaults()
 	 */
 	protected void performDefaults() {
-		initialize(convert(extendedView.getBuilder().getGenerator()
-				.getInitialVisible()), convert(extendedView.getBuilder()
-				.getGenerator().getAllFields()), true);
+		initialize(true);
 		setLimitValue(IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getDefaultInt(IDEInternalPreferences.MARKER_LIMITS_VALUE));
 		super.performDefaults();
 	}
 
 	/**
-	 * @param visibleFields
-	 * @param allFields
 	 */
-	void initialize(FieldEntry[] visibleFields, FieldEntry[] allFields,
-			boolean defaultWidths) {
+	void initialize(boolean defaultWidths) {
+		MarkerField[] allFields = extendedView.getBuilder().getGenerator()
+				.getAllFields();
+		MarkerField[] visibleFields = extendedView.getBuilder().getGenerator()
+				.getVisibleFields();
+
 		List visible = getVisible();
 		List nonVisible = getNonVisible();
 		visible.clear();
 		nonVisible.clear();
+
+		FieldEntry entry = null;
 		for (int i = 0; i < allFields.length; i++) {
-			nonVisible.add(allFields[i]);
-		}
-		for (int i = 0; i < visibleFields.length; i++) {
-			nonVisible.remove(visibleFields[i]);
-			visible.add(visibleFields[i]);
-			visibleFields[i].visible = true;
-			if (defaultWidths) {
-				visibleFields[i].width = extendedView.getFieldWidth(
-						visibleFields[i].field, 0);
-			} else {
-				// from a persistent store
-				visibleFields[i].width = extendedView.getFieldWidth(
-						visibleFields[i].field, -1);
+			if (!contains(visibleFields, allFields[i])) {
+				entry = new FieldEntry(allFields[i], -1);
+				if (defaultWidths) {
+					entry.width = extendedView.getFieldWidth(entry.field, 0,
+							true);
+				} else {
+					entry.width = extendedView.getFieldWidth(entry.field, -1,
+							true);
+				}
+				entry.visible = false;
+				nonVisible.add(entry);
 			}
 		}
+		for (int i = 0; i < visibleFields.length; i++) {
+			entry = new FieldEntry(visibleFields[i], -1);
+			if (defaultWidths) {
+				entry.width = extendedView.getFieldWidth(entry.field, 0, true);
+			} else {
+				entry.width = extendedView.getFieldWidth(entry.field, -1, true);
+			}
+			entry.visible = true;
+			visible.add(entry);
+		}
+
+	}
+
+	/**
+	 * @param visibleFields
+	 * @param field
+	 */
+	private boolean contains(MarkerField[] visibleFields, MarkerField field) {
+		for (int i = 0; i < visibleFields.length; i++) {
+			if (visibleFields[i].equals(field)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/*
@@ -199,7 +221,8 @@ public class MarkersViewSettingDialog extends ViewerColumnsDialog {
 
 			public int getColumnWidth(Object columnObj) {
 				FieldEntry field = (FieldEntry) columnObj;
-				return extendedView.getFieldWidth(field.field, field.width);
+				return extendedView.getFieldWidth(field.field, field.width,
+						true);
 			}
 
 			public boolean isColumnVisible(Object columnObj) {
@@ -248,14 +271,6 @@ public class MarkersViewSettingDialog extends ViewerColumnsDialog {
 		};
 	}
 
-	private static FieldEntry[] convert(Object[] fields) {
-		FieldEntry[] entries = new FieldEntry[fields.length];
-		for (int i = 0; i < entries.length; i++) {
-			entries[i] = new FieldEntry((MarkerField) fields[i], -1);
-		}
-		return entries;
-	}
-
 	static class FieldEntry {
 		final MarkerField field;
 		int width;
@@ -265,54 +280,6 @@ public class MarkersViewSettingDialog extends ViewerColumnsDialog {
 			this.field = field;
 			this.width = width;
 			visible = false;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#toString()
-		 */
-		public String toString() {
-			// TODO Auto-generated method stub
-			return super.toString();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((field == null) ? 0 : field.hashCode());
-			return result;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (!(obj instanceof FieldEntry)) {
-				return false;
-			}
-			FieldEntry other = (FieldEntry) obj;
-			if (field == null) {
-				if (other.field != null) {
-					return false;
-				}
-			} else if (!field.equals(other.field)) {
-				return false;
-			}
-			return true;
 		}
 	}
 }
