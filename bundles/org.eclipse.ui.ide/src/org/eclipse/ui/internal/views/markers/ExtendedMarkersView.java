@@ -117,10 +117,10 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public final Object MARKERSVIEW_UPDATE_JOB_FAMILY = new Object();
 
+	static final String MARKER_FIELD = "MARKER_FIELD"; //$NON-NLS-1$
+	
 	private static int instanceCount = 1;
 	private static final String TAG_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
-
-	private static final String MARKER_FIELD = "MARKER_FIELD"; //$NON-NLS-1$
 
 	private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
 
@@ -240,7 +240,7 @@ public class ExtendedMarkersView extends ViewPart {
 				/*| SWT.VIRTUAL */| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
-		createColumns(new TreeColumn[0]);
+		createColumns(new TreeColumn[0], new int[0]);
 		viewer.setContentProvider(getContentProvider());
 	}
 
@@ -249,22 +249,18 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @param currentColumns
 	 *            the columns to refresh
+	 * @param widths 
 	 */
-	private void createColumns(TreeColumn[] currentColumns) {
+	private void createColumns(TreeColumn[] currentColumns, int[] widths) {
 
 		Tree tree = viewer.getTree();
 		TableLayout layout = new TableLayout();
 
 		MarkerField[] fields = generator.getVisibleFields();
 
-		IMemento columnWidths = null;
-		if (memento != null)
-			columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
-
 		for (int i = 0; i < fields.length; i++) {
 			MarkerField markerField = fields[i];
-
-			TreeViewerColumn column;
+			TreeViewerColumn column = null;
 			if (i < currentColumns.length)
 				column = new TreeViewerColumn(viewer, currentColumns[i]);
 			else {
@@ -289,27 +285,21 @@ public class ExtendedMarkersView extends ViewPart {
 			if (builder.getPrimarySortField().equals(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
 
+			IMemento columnWidths = null;
+			if (memento != null){
+				columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
+			}
 			int columnWidth = -1;
-
-			if (i == 0) {
-				// Compute and store a font metric
-				GC gc = new GC(tree);
-				gc.setFont(tree.getFont());
-				FontMetrics fontMetrics = gc.getFontMetrics();
-				gc.dispose();
-				columnWidth = Math.max(markerField.getDefaultColumnWidth(tree),
-						fontMetrics.getAverageCharWidth() * 5);
+			if(i < widths.length){
+				columnWidth = widths[i];
+				if (columnWidths != null) {
+					//save it
+					columnWidths.putInteger(markerField.getConfigurationElement().getAttribute(
+							MarkerSupportInternalUtilities.ATTRIBUTE_ID), columnWidth);
+				}
+			}else{
+				columnWidth = getFieldWidth(markerField, columnWidth);
 			}
-
-			if (columnWidths != null) {
-				Integer value = columnWidths.getInteger(getFieldId(column
-						.getColumn()));
-
-				// Make sure we get a useful value
-				if (value != null && value.intValue() > 0)
-					columnWidth = value.intValue();
-			}
-
 			// Take trim into account if we are using the default value, but not
 			// if it is restored.
 			if (columnWidth < 0)
@@ -324,7 +314,6 @@ public class ExtendedMarkersView extends ViewPart {
 		if (currentColumns.length > fields.length) {
 			for (int i = fields.length; i < currentColumns.length; i++) {
 				currentColumns[i].dispose();
-
 			}
 		}
 
@@ -333,6 +322,39 @@ public class ExtendedMarkersView extends ViewPart {
 		tree.setHeaderVisible(true);
 		tree.layout(true);
 
+	}
+	
+	int getFieldWidth(MarkerField markerField, int columnWidth) {
+		Tree tree = getViewer().getTree();
+
+		if (columnWidth < 0 && memento != null) {
+			IMemento columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
+			if (columnWidths != null) {
+				Integer value = columnWidths.getInteger(markerField
+						.getConfigurationElement().getAttribute(
+								MarkerSupportInternalUtilities.ATTRIBUTE_ID));
+				// Make sure we get a useful value
+				if (value != null && value.intValue() > 0)
+					columnWidth = value.intValue();
+			}
+		}
+		if (columnWidth <= 0) {
+			// Compute and store a font metric
+			GC gc = new GC(tree);
+			gc.setFont(tree.getFont());
+			FontMetrics fontMetrics = gc.getFontMetrics();
+			gc.dispose();
+			columnWidth = Math.max(markerField.getDefaultColumnWidth(tree),
+					fontMetrics.getAverageCharWidth() * 5);
+		}
+		TreeColumn[] columns = tree.getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			if (MARKER_FIELD.equals(columns[i].getData(MARKER_FIELD))) {
+				columnWidth = Math.max(columnWidth, columns[i].getWidth());
+				return columnWidth;
+			}
+		}
+		return columnWidth;
 	}
 
 	/*
@@ -1460,11 +1482,11 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * @param visible
 	 */
-	void setVisibleFields(Collection visible) {
+	void setVisibleFields(Collection visible,int[] widths) {
 		generator.setVisibleFields(visible);
 		//viewer.setSelection(new StructuredSelection());
 		//viewer.removeAndClearAll();
-		createColumns(viewer.getTree().getColumns());
+		createColumns(viewer.getTree().getColumns(), widths);
 		scheduleUpdate(0L);
 	}
 

@@ -1850,16 +1850,6 @@
                mnemonic="%command.configureColumns.mnemonic"
                style="push">
          </command>
-         <command
-               commandId="org.eclipse.ui.window.preferences"
-               label="%command.preferences.label"
-               mnemonic="%command.preferences.mnemonic"
-               style="push">
-            <parameter
-                  name="preferencePageId"
-                  value="org.eclipse.ui.ide.markers">
-            </parameter>
-         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.TaskList">
@@ -1912,16 +1902,6 @@
                commandId="org.eclipse.ui.ide.configureColumns"
                mnemonic="%command.configureColumns.mnemonic"
                style="push">
-         </command>
-         <command
-               commandId="org.eclipse.ui.window.preferences"
-               label="%command.preferences.label"
-               mnemonic="%command.preferences.mnemonic"
-               style="push">
-            <parameter
-                  name="preferencePageId"
-                  value="org.eclipse.ui.ide.markers">
-            </parameter>
          </command>
       </menuContribution>
       <menuContribution
@@ -1986,16 +1966,6 @@
                mnemonic="%command.configureColumns.mnemonic"
                style="push">
          </command>
-         <command
-               commandId="org.eclipse.ui.window.preferences"
-               label="%command.preferences.label"
-               mnemonic="%command.preferences.mnemonic"
-               style="push">
-            <parameter
-                  name="preferencePageId"
-                  value="org.eclipse.ui.ide.markers">
-            </parameter>
-         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.AllMarkersView">
@@ -2048,16 +2018,6 @@
                commandId="org.eclipse.ui.ide.configureColumns"
                mnemonic="%command.configureColumns.mnemonic"
                style="push">
-         </command>
-         <command
-               commandId="org.eclipse.ui.window.preferences"
-               label="%command.preferences.label"
-               mnemonic="%command.preferences.mnemonic"
-               style="push">
-            <parameter
-                  name="preferencePageId"
-                  value="org.eclipse.ui.ide.markers">
-            </parameter>
          </command>
       </menuContribution>
    </extension>
@@ -2239,18 +2199,6 @@
                </test>
             </iterate>
          </enabledWhen>
-      </handler>
-      <handler
-            class="org.eclipse.ui.internal.views.markers.MarkerPreferencesHandler"
-            commandId="org.eclipse.ui.window.preferences">
-         <activeWhen>
-            <with
-                  variable="activePart">
-               <instanceof
-                     value="org.eclipse.ui.views.markers.MarkerSupportView">
-               </instanceof>
-            </with>
-         </activeWhen>
       </handler>
    </extension>
    <extension

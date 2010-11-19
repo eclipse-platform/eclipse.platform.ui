@@ -255,7 +255,7 @@ public abstract class MarkerField {
 	 */
 	public void update(ViewerCell cell) {
 		cell.setText(getValue((MarkerItem) cell.getElement()));
-
+		cell.setImage(null);
 	}
 
 }

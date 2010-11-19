@@ -219,6 +219,7 @@ public class MarkerMessages extends NLS {
 	public static String MarkerPreferences_VisibleColumnsTitle;
 	public static String MarkerPreferences_HiddenColumnsTitle;
 	public static String MarkerPreferences_AtLeastOneVisibleColumn;
+	public static String MarkerPreferences_ZeroOrBlankValueCanBeUsedToDisableTheLimit;
 
 	public static String ProblemFilterDialog_System_Filters_Title;
 	public static String ProblemFilterDialog_All_Problems;

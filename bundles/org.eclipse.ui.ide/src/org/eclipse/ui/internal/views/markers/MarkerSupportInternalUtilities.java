@@ -317,15 +317,12 @@ public class MarkerSupportInternalUtilities {
 	 */
 	static int getMarkerLimit() {
 
-		// If limits are enabled return it. Otherwise return -1
-		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
-				IDEInternalPreferences.USE_MARKER_LIMITS)) {
-			return IDEWorkbenchPlugin.getDefault().getPreferenceStore().getInt(
-					IDEInternalPreferences.MARKER_LIMITS_VALUE);
-
+		int value = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.getInt(IDEInternalPreferences.MARKER_LIMITS_VALUE);
+		if (value <= 0) {
+			return -1;
 		}
-		return -1;
-
+		return value;
 	}
 
 	/**

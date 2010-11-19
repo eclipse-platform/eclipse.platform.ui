@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.util.ConfigureColumns;
 import org.eclipse.ui.views.markers.MarkerViewHandler;
 
 /**
@@ -33,7 +32,7 @@ public class ConfigureColumnsHandler extends MarkerViewHandler implements IHandl
 		ExtendedMarkersView view = getView(event);
 		if (view == null)
 			return this;
-		ConfigureColumns.forTree(view.getViewer().getTree(), view.getSite());
+		new MarkersViewSettingDialog(view).open();
 		return this;
 	}
 
