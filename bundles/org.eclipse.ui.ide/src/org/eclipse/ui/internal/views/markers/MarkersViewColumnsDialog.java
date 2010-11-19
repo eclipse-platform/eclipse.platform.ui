@@ -61,7 +61,8 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(JFaceResources.getString("ConfigureColumnsDialog_Title")); //$NON-NLS-1$
+		newShell.setText(JFaceResources
+				.getString("ConfigureColumnsDialog_Title")); //$NON-NLS-1$
 	}
 
 	/*
@@ -142,40 +143,35 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 	void initialize(boolean defaultWidths) {
 		MarkerField[] allFields = extendedView.getBuilder().getGenerator()
 				.getAllFields();
-		MarkerField[] visibleFields = extendedView.getBuilder().getGenerator()
-				.getVisibleFields();
-
+		MarkerField[] visibleFields = null;
+		if (defaultWidths) {
+			visibleFields = extendedView.getBuilder().getGenerator()
+					.getInitialVisible();
+		} else {
+			visibleFields = extendedView.getBuilder().getGenerator()
+					.getVisibleFields();
+		}
 		List visible = getVisible();
 		List nonVisible = getNonVisible();
 		visible.clear();
 		nonVisible.clear();
-
 		FieldEntry entry = null;
 		for (int i = 0; i < allFields.length; i++) {
 			if (!contains(visibleFields, allFields[i])) {
 				entry = new FieldEntry(allFields[i], -1);
-				if (defaultWidths) {
-					entry.width = extendedView.getFieldWidth(entry.field, 0,
-							true);
-				} else {
-					entry.width = extendedView.getFieldWidth(entry.field, -1,
-							true);
-				}
+				entry.width = extendedView.getFieldWidth(entry.field,
+						defaultWidths ? 0 : -1, !defaultWidths);
 				entry.visible = false;
 				nonVisible.add(entry);
 			}
 		}
 		for (int i = 0; i < visibleFields.length; i++) {
 			entry = new FieldEntry(visibleFields[i], -1);
-			if (defaultWidths) {
-				entry.width = extendedView.getFieldWidth(entry.field, 0, true);
-			} else {
-				entry.width = extendedView.getFieldWidth(entry.field, -1, true);
-			}
+			entry.width = extendedView.getFieldWidth(entry.field,
+					defaultWidths ? 0 : -1, !defaultWidths);
 			entry.visible = true;
 			visible.add(entry);
 		}
-
 	}
 
 	/**
@@ -221,8 +217,11 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 
 			public int getColumnWidth(Object columnObj) {
 				FieldEntry field = (FieldEntry) columnObj;
-				return extendedView.getFieldWidth(field.field, field.width,
-						true);
+				if (field.width <= 0) {
+					field.width = extendedView.getFieldWidth(field.field,
+							field.width, false);
+				}
+				return field.width;
 			}
 
 			public boolean isColumnVisible(Object columnObj) {
