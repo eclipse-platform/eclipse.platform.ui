@@ -2233,6 +2233,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
+		if (getWorkbenchWindow().getWorkbench().getEditorRegistry().findEditor(editorId) == null) {
+			throw new PartInitException(NLS.bind(
+					WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorId));
+		}
+
 		IEditorReference[] editorReferences = findEditors(input, editorId, matchFlags);
 		if (editorReferences.length != 0) {
 			IEditorPart editor = editorReferences[0].getEditor(true);
