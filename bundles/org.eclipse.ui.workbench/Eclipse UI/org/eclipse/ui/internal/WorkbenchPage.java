@@ -675,7 +675,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			secondaryId = SECONDARY_ID_HEADER + secondaryId;
 
 			MPartDescriptor descriptor = findDescriptor(viewId);
-			if (!descriptor.isAllowMultiple()) {
+			if (descriptor == null) {
+				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate,
+						viewId));
+			} else if (!descriptor.isAllowMultiple()) {
 				throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_noMultiple,
 						viewId));
 			}
