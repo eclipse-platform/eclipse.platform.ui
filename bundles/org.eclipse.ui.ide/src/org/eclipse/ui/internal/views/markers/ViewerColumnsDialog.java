@@ -52,7 +52,7 @@ import org.eclipse.ui.preferences.ViewSettingsDialog;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
- * This was introduced as a fix to Bug , as an effort to combine the columns and
+ * This was introduced as a fix to Bug 231081 and related, as an effort to combine the columns and
  * preference dialogs into one. It should be noted that the class can be re-used
  * or turned into a tool for column viewers in general, but with some
  * modifications. See example attached at the end of this class
