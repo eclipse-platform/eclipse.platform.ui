@@ -643,7 +643,6 @@ public class CTabRendering extends CTabFolderRenderer {
 			shadowImage = new Image(display, blured);
 			display.setData(E4_SHADOW_IMAGE, shadowImage);
 			tmpImage.dispose();
-			shadowColor.dispose();
 			display.disposeExec(new Runnable() {
 				public void run() {
 					Object obj = display.getData(E4_SHADOW_IMAGE);
