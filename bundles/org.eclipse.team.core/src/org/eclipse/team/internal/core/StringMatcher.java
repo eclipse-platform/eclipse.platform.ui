@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,7 +87,7 @@ public class StringMatcher {
 	}
 	
 	/**
-	 * Find the first occurrence of the pattern between <code>start</code)(inclusive) 
+	 * Find the first occurrence of the pattern between <code>start</code>(inclusive) 
 	 * and <code>end</code>(exclusive).  
 	 * @param text the String object to search in 
 	 * @param start the starting index of the search range, inclusive
