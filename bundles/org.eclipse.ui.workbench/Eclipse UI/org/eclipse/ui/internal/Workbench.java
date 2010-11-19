@@ -1576,12 +1576,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 					if (UIEvents.EventTypes.SET.equals(event
 							.getProperty(UIEvents.EventTags.TYPE))) {
 						MWindow window = (MWindow) event.getProperty(UIEvents.EventTags.NEW_VALUE);
-						IWorkbenchWindow wwindow = (IWorkbenchWindow) window.getContext().get(
-								IWorkbenchWindow.class.getName());
-						if (wwindow != null) {
-							e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, wwindow);
-							e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, wwindow
-									.getShell());
+						if (window != null) {
+							IWorkbenchWindow wwindow = (IWorkbenchWindow) window.getContext().get(
+									IWorkbenchWindow.class.getName());
+							if (wwindow != null) {
+								e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, wwindow);
+								e4Context.set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
+										wwindow.getShell());
+							}
 						}
 					}
 				}
