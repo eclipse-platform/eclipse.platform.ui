@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project name="Core Resources Automated Tests" default="run" basedir=".">
 
-  <!-- The property ${eclipse-home} should be passed into this script -->
+  <!-- The property ${eclipse-home} should be passed into this script  -->
   <!-- sets the properties eclipse-home, and library-file -->
   <property name="eclipse-home" value="${basedir}/../../"/>
   <property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
