@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -31,6 +32,7 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -40,11 +42,14 @@ import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -67,9 +72,6 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	Logger logger;
 	@Inject
 	IEventBroker eventBroker;
-
-	@Inject
-	private IPresentationEngine engine;
 
 	private EventHandler itemUpdater = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -304,8 +306,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 					ti.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
 							if (e.detail == SWT.ARROW) {
-								Menu menu = (Menu) engine.createGui(mmenu, ti
-										.getParent().getShell(), null);
+								Menu menu = getMenu(mmenu, ti);
 
 								Rectangle itemBounds = ti.getBounds();
 								Point displayAt = ti.getParent().toDisplay(
@@ -420,5 +421,44 @@ public class ToolItemRenderer extends SWTPartRenderer {
 				}
 			});
 		}
+	}
+
+	/**
+	 * @param mmenu
+	 * @param shell
+	 * @return
+	 */
+	protected Menu getMenu(MMenu mmenu, ToolItem toolItem) {
+		Object obj = mmenu.getWidget();
+		if (obj instanceof Menu) {
+			return (Menu) obj;
+		}
+		// this is a temporary passthrough of the IMenuCreator
+		if (mmenu instanceof MRenderedMenu) {
+			obj = ((MRenderedMenu) mmenu).getContributionManager();
+			if (obj instanceof IContextFunction) {
+				final IEclipseContext lclContext = getContext(mmenu);
+				obj = ((IContextFunction) obj).compute(lclContext);
+				((MRenderedMenu) mmenu).setContributionManager(obj);
+			}
+			if (obj instanceof IMenuCreator) {
+				final IMenuCreator creator = (IMenuCreator) obj;
+				final Menu menu = creator.getMenu(toolItem.getParent()
+						.getShell());
+				if (menu != null) {
+					toolItem.addDisposeListener(new DisposeListener() {
+						public void widgetDisposed(DisposeEvent e) {
+							if (menu != null && !menu.isDisposed()) {
+								creator.dispose();
+							}
+						}
+					});
+					mmenu.setWidget(menu);
+					menu.setData(AbstractPartRenderer.OWNING_ME, menu);
+					return menu;
+				}
+			}
+		}
+		return null;
 	}
 }

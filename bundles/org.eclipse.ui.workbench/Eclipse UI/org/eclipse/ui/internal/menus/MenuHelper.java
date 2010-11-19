@@ -507,54 +507,62 @@ public class MenuHelper {
 			MRenderedMenu menu = MenuFactoryImpl.eINSTANCE.createRenderedMenu();
 			ECommandService cs = app.getContext().get(ECommandService.class);
 			final ParameterizedCommand parmCmd = cs.createCommand(cmdId, null);
-			menu.setContributionManager(new IMenuCreator() {
-				private ActionDelegateHandlerProxy handlerProxy;
+			IContextFunction generator = new ContextFunction() {
+				@Override
+				public Object compute(IEclipseContext context) {
+					return new IMenuCreator() {
+						private ActionDelegateHandlerProxy handlerProxy;
 
-				private ActionDelegateHandlerProxy getProxy() {
-					if (handlerProxy == null) {
-						handlerProxy = new ActionDelegateHandlerProxy(element,
-								IWorkbenchRegistryConstants.ATT_CLASS, id, parmCmd, PlatformUI
+						private ActionDelegateHandlerProxy getProxy() {
+							if (handlerProxy == null) {
+								handlerProxy = new ActionDelegateHandlerProxy(element,
+										IWorkbenchRegistryConstants.ATT_CLASS, id, parmCmd,
+										PlatformUI
 										.getWorkbench().getActiveWorkbenchWindow(), null, null,
-								null);
-					}
-					return handlerProxy;
-				}
+ null);
+							}
+							return handlerProxy;
+						}
 
-				private IWorkbenchWindowPulldownDelegate getDelegate() {
-					getProxy();
-					if (handlerProxy == null) {
-						return null;
-					}
-					if (handlerProxy.getDelegate() == null) {
-						handlerProxy.loadDelegate();
+						private IWorkbenchWindowPulldownDelegate getDelegate() {
+							getProxy();
+							if (handlerProxy == null) {
+								return null;
+							}
+							if (handlerProxy.getDelegate() == null) {
+								handlerProxy.loadDelegate();
 
-						ISelectionService service = PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getSelectionService();
-						IActionDelegate delegate = handlerProxy.getDelegate();
-						delegate.selectionChanged(handlerProxy.getAction(), service.getSelection());
-					}
-					return (IWorkbenchWindowPulldownDelegate) handlerProxy.getDelegate();
-				}
+								ISelectionService service = PlatformUI.getWorkbench()
+										.getActiveWorkbenchWindow().getSelectionService();
+								IActionDelegate delegate = handlerProxy.getDelegate();
+								delegate.selectionChanged(handlerProxy.getAction(),
+										service.getSelection());
+							}
+							return (IWorkbenchWindowPulldownDelegate) handlerProxy.getDelegate();
+						}
 
-				public Menu getMenu(Menu parent) {
-					IWorkbenchWindowPulldownDelegate2 delegate = (IWorkbenchWindowPulldownDelegate2) getDelegate();
-					if (delegate == null) {
-						return null;
-					}
-					return delegate.getMenu(parent);
-				}
+						public Menu getMenu(Menu parent) {
+							IWorkbenchWindowPulldownDelegate2 delegate = (IWorkbenchWindowPulldownDelegate2) getDelegate();
+							if (delegate == null) {
+								return null;
+							}
+							return delegate.getMenu(parent);
+						}
 
-				public Menu getMenu(Control parent) {
-					return getDelegate() == null ? null : getDelegate().getMenu(parent);
-				}
+						public Menu getMenu(Control parent) {
+							return getDelegate() == null ? null : getDelegate().getMenu(parent);
+						}
 
-				public void dispose() {
-					if (handlerProxy != null) {
-						handlerProxy.dispose();
-						handlerProxy = null;
-					}
+						public void dispose() {
+							if (handlerProxy != null) {
+								handlerProxy.dispose();
+								handlerProxy = null;
+							}
+						}
+					};
 				}
-			});
+			};
+			menu.setContributionManager(generator);
 			item.setMenu(menu);
 		} else {
 			item.setType(ItemType.PUSH);
