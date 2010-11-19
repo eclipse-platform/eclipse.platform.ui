@@ -2032,37 +2032,36 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Returns the preference page ids of the preference pages to be shown
-	 * when executing the preferences action from the editor context menu.
+	 * Returns the preference page ids of the preference pages to be shown when executing the
+	 * preferences action from the editor context menu. The first page will be selected.
 	 * <p>
 	 * Subclasses may extend or replace.
 	 * </p>
-	 *
+	 * 
 	 * @return the preference page ids to show, may be empty
 	 * @since 3.1
 	 */
 	protected String[] collectContextMenuPreferencePages() {
-		return new String[] {
-			"org.eclipse.ui.preferencePages.GeneralTextEditor", //$NON-NLS-1$
-			"org.eclipse.ui.editors.preferencePages.Annotations", //$NON-NLS-1$
-			"org.eclipse.ui.editors.preferencePages.QuickDiff", //$NON-NLS-1$
-			"org.eclipse.ui.editors.preferencePages.Accessibility", //$NON-NLS-1$
-			"org.eclipse.ui.editors.preferencePages.Spelling", //$NON-NLS-1$
-			"org.eclipse.ui.editors.preferencePages.LinkedModePreferencePage", //$NON-NLS-1$
+		return new String[] { "org.eclipse.ui.preferencePages.GeneralTextEditor", //$NON-NLS-1$
+				"org.eclipse.ui.editors.preferencePages.Annotations", //$NON-NLS-1$
+				"org.eclipse.ui.editors.preferencePages.QuickDiff", //$NON-NLS-1$
+				"org.eclipse.ui.editors.preferencePages.Accessibility", //$NON-NLS-1$
+				"org.eclipse.ui.editors.preferencePages.Spelling", //$NON-NLS-1$
+				"org.eclipse.ui.editors.preferencePages.LinkedModePreferencePage", //$NON-NLS-1$
+				"org.eclipse.ui.preferencePages.ColorsAndFonts", //$NON-NLS-1$
 		};
 	}
 
 	/**
-	 * Returns the preference page ids of the preference pages to be shown when
-	 * executing the preferences action from the editor ruler context menu.
+	 * Returns the preference page ids of the preference pages to be shown when executing the
+	 * preferences action from the editor ruler context menu. The first page will be selected.
 	 * <p>
-	 * The default is to return the same list as
-	 * <code>collectContextMenuPreferencePages</code>.
+	 * The default is to return the same list as <code>collectContextMenuPreferencePages</code>.
 	 * </p>
 	 * <p>
 	 * Subclasses may extend or replace.
 	 * </p>
-	 *
+	 * 
 	 * @return the preference page ids to show, may be empty
 	 * @since 3.1
 	 */
@@ -2071,24 +2070,25 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/**
-	 * Returns the preference page ids of the preference pages to be shown when
-	 * executing the preferences action from the editor overview ruler context menu.
+	 * Returns the preference page ids of the preference pages to be shown when executing the
+	 * preferences action from the editor overview ruler context menu. The first page will be
+	 * selected.
 	 * <p>
-	 * The default is to return the 'Annotations' preference page.
+	 * The default is to select the 'Annotations' preference page.
 	 * </p>
 	 * <p>
 	 * Subclasses may extend or replace.
 	 * </p>
-	 *
+	 * 
 	 * @return the preference page ids to show, may be empty
 	 * @since 3.4
 	 */
 	protected String[] collectOverviewRulerMenuPreferencePages() {
-		return new String[] {
-				"org.eclipse.ui.editors.preferencePages.Annotations", //$NON-NLS-1$
+		return new String[] { "org.eclipse.ui.editors.preferencePages.Annotations", //$NON-NLS-1$
 				"org.eclipse.ui.preferencePages.GeneralTextEditor", //$NON-NLS-1$
-				"org.eclipse.ui.editors.preferencePages.QuickDiff" //$NON-NLS-1$
-			};
+				"org.eclipse.ui.editors.preferencePages.QuickDiff", //$NON-NLS-1$
+				"org.eclipse.ui.preferencePages.ColorsAndFonts" //$NON-NLS-1$
+		};
 	}
 
 	/*
