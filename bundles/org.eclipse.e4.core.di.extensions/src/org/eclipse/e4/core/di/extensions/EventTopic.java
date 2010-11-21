@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schind<tom.schindl@bestsolution.at> - bugfix 330756
  *******************************************************************************/
 package org.eclipse.e4.core.di.extensions;
 
@@ -29,6 +30,7 @@ import javax.inject.Qualifier;
  * 
  * <pre>
  *   public class Car {
+ *     @Inject
  *     &#064;void handle(@Optional @EventTopic("org/eclipse/e4/some/event/topic") Payload payload);
  *     ...
  *   }
