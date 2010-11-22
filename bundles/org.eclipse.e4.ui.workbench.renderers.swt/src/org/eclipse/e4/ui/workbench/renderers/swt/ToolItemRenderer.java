@@ -428,7 +428,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	 * @param shell
 	 * @return
 	 */
-	protected Menu getMenu(MMenu mmenu, ToolItem toolItem) {
+	protected Menu getMenu(final MMenu mmenu, ToolItem toolItem) {
 		Object obj = mmenu.getWidget();
 		if (obj instanceof Menu) {
 			return (Menu) obj;
@@ -450,6 +450,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 						public void widgetDisposed(DisposeEvent e) {
 							if (menu != null && !menu.isDisposed()) {
 								creator.dispose();
+								((MRenderedMenu) mmenu).setWidget(null);
 							}
 						}
 					});
