@@ -70,6 +70,13 @@ public class TeamUIPlugin extends AbstractUIPlugin {
 	
 	// manages synchronize participants
 	private SynchronizeManager synchronizeManager;
+
+	/**
+	 * ID of the 'Remove from View' action.
+	 * Value: <code>"org.eclipse.team.internal.ui.RemoveFromView"</code>
+	 */
+	public static final String REMOVE_FROM_VIEW_ACTION_ID = "org.eclipse.team.internal.ui.RemoveFromView"; //$NON-NLS-1$
+	
 	
 	/**
 	 * Creates a new TeamUIPlugin.

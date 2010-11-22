@@ -14,6 +14,7 @@ import org.eclipse.compare.ICompareNavigator;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.ExpandAllAction;
 import org.eclipse.team.internal.ui.synchronize.actions.NavigateAction;
@@ -58,7 +59,13 @@ public class NavigationActionGroup extends SynchronizePageActionGroup {
 		}
 	}
 	public void fillContextMenu(IMenuManager manager) {
-		appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, expandAllAction);
+		if (manager == null || expandAllAction == null)
+			return;
+
+		if (manager.find(TeamUIPlugin.REMOVE_FROM_VIEW_ACTION_ID) != null)
+			manager.insertBefore(TeamUIPlugin.REMOVE_FROM_VIEW_ACTION_ID, expandAllAction);
+		else
+			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, expandAllAction);
 	}
 	public void fillActionBars(IActionBars actionBars) {
 		IToolBarManager manager = actionBars.getToolBarManager();

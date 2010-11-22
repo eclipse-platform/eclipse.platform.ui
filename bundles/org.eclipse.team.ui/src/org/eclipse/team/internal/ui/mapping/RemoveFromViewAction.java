@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,7 @@ public class RemoveFromViewAction extends ResourceModelParticipantAction {
 	public RemoveFromViewAction(ISynchronizePageConfiguration configuration) {
 		super(null, configuration);
 		Utils.initAction(this, "action.removeFromView."); //$NON-NLS-1$
+		setId(TeamUIPlugin.REMOVE_FROM_VIEW_ACTION_ID);
 	}
 
 	/* (non-Javadoc)

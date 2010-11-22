@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,19 +23,17 @@ import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.subscribers.WorkingSetFilteredSyncInfoCollector;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage;
-import org.eclipse.team.ui.synchronize.ISynchronizePage;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
-import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
- * Remove the selected elemements from the page
+ * Remove the selected elements from the page
  */
 public class RemoveFromViewAction extends SynchronizeModelAction {
-
+	
 	public RemoveFromViewAction(ISynchronizePageConfiguration configuration) {
 		super(null, configuration);
 		Utils.initAction(this, "action.removeFromView."); //$NON-NLS-1$
+		setId(TeamUIPlugin.REMOVE_FROM_VIEW_ACTION_ID);
 	}
 
 	/* (non-Javadoc)
