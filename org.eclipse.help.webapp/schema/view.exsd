@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.help.webapp" id="view" name="Webapp View"/>
       </appInfo>
       <documentation>
-         The view extension point allows a view to be contributed to the help system webapp. The view area of the webapp is the tabbed area (in the advanced presentation) which contains the table of contents as well as search results and other views. Each view requires two jsp files, a View.jsp file and a Toolbar.jsp file. This extension point uses a class to get all of teh properties of teh view.
+         The view extension point allows a view to be contributed to the help system webapp. The view area of the webapp is the tabbed area (in the advanced presentation) which contains the table of contents as well as search results and other views. Each view requires two jsp files, a View.jsp file and a Toolbar.jsp file. This extension point uses a class to get all of the properties of the view.
       </documentation>
    </annotation>
 
