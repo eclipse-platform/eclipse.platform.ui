@@ -107,7 +107,7 @@ public class ContextTreeProvider implements IEclipseContextDebugger, ITreeConten
 			return null;
 		Set<WeakReference<EclipseContext>> childrenRef = new HashSet<WeakReference<EclipseContext>>(children.size());
 		for (EclipseContext child : children) {
-			childrenRef.add(new WeakReference<EclipseContext>(child));
+			childrenRef.add(new WeakContextRef(child));
 		}
 		return childrenRef.toArray();
 	}
@@ -146,7 +146,7 @@ public class ContextTreeProvider implements IEclipseContextDebugger, ITreeConten
 					}
 				}
 				if (!found)
-					activeContexts.add(new WeakReference<EclipseContext>(context));
+					activeContexts.add(new WeakContextRef(context));
 				if (view != null && refreshJob != null)
 					refreshJob.schedule(REFRESH_DELAY);
 				break;

@@ -37,6 +37,7 @@ public class ContextMessages extends NLS {
 	public static String diffDialogMessage;
 	public static String noDiffMsg;
 	public static String contextGCed;
+	public static String targetButtonTooltip;
 
 	static {
 		// load message values from bundle file

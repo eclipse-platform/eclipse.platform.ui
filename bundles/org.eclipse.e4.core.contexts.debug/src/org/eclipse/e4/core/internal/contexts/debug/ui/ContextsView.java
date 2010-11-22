@@ -11,37 +11,58 @@
 package org.eclipse.e4.core.internal.contexts.debug.ui;
 
 import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.internal.contexts.Computation;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.ui.dialogs.FilteredTree;
-import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.swt.widgets.Tree;
+import org.osgi.framework.Bundle;
 
 public class ContextsView {
+
+	private static final String TARGET_IMG = "icons/full/obj16/target.gif"; //$NON-NLS-1$
+
+	// TBD this is from internal AbstractPartRenderer.OWNING_ME
+	// make that API
+	private static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
 
 	protected TreeViewer treeViewer;
 	protected TreeViewer dataViewer;
@@ -54,6 +75,12 @@ public class ContextsView {
 	protected Button snapshotButton;
 	protected Button updateButton;
 	protected Button autoUpdateButton;
+	protected Button targetButton;
+
+	protected Cursor targetCursor;
+	protected Cursor displayCursor;
+
+	protected Image targetImage;
 
 	@Inject
 	public ContextsView(Composite parent, IEclipseContext context) {
@@ -66,16 +93,77 @@ public class ContextsView {
 		compositeTreeLayout.marginHeight = 0;
 		compositeTreeLayout.marginWidth = 0;
 		treeComposite.setLayout(compositeTreeLayout);
-
 		treeComposite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
+
+		Bundle myBundle = Activator.getDefault().getBundle();
+		URL targetImageURL = myBundle.getEntry(TARGET_IMG);
+		ImageDescriptor desc = ImageDescriptor.createFromURL(targetImageURL);
+		targetImage = desc.createImage();
+
+		targetButton = new Button(treeComposite, SWT.NONE);
+		targetButton.setImage(targetImage);
+		targetButton.setToolTipText(ContextMessages.targetButtonTooltip);
+
+		targetCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_CROSS);
+
+		targetButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				displayCursor = targetButton.getCursor();
+				targetButton.setCursor(targetCursor);
+				targetButton.setCapture(true);
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+
+		final Display display = parent.getDisplay();
+		targetButton.addMouseListener(new MouseListener() {
+			public void mouseDoubleClick(MouseEvent e) {
+				// nothing
+			}
+			public void mouseDown(MouseEvent e) {
+				// nothing
+			}
+			public void mouseUp(MouseEvent e) {
+				Control control = display.getCursorControl();
+				if (targetButton == control)
+					return;
+				IEclipseContext targetContext = null;
+				while (control != null) {
+					Object data = control.getData(OWNING_ME);
+					if (data instanceof MContext) {
+						targetContext = ((MContext) data).getContext();
+						if (targetContext != null)
+							break;
+					}
+					control = control.getParent();
+				}
+				if (targetContext != null) {
+					List<WeakContextRef> contexts = new ArrayList<WeakContextRef>();
+					while (targetContext != null) {
+						contexts.add(new WeakContextRef((EclipseContext) targetContext));
+						targetContext = targetContext.getParent();
+					}
+					Collections.reverse(contexts);
+					TreePath path = new TreePath(contexts.toArray());
+
+					TreeSelection selection = new TreeSelection(path);
+					treeViewer.setSelection(selection, true);
+					treeViewer.getTree().setFocus();
+				}
+				targetButton.setCursor(displayCursor);
+				targetButton.setCapture(false);
+			}
+		});
 
 		Label treeLabel = new Label(treeComposite, SWT.NONE);
 		treeLabel.setText(ContextMessages.contextTreeLabel);
 
-		FilteredTree contextTree = new FilteredTree(treeComposite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, new PatternFilter(), true);
+		treeViewer = new TreeViewer(treeComposite);
+		Tree tree = treeViewer.getTree();
 		GridData gridData = new GridData(GridData.FILL, GridData.FILL, true, true);
-		contextTree.setLayoutData(gridData);
-		treeViewer = contextTree.getViewer();
+		tree.setLayoutData(gridData);
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection selection = (StructuredSelection) event.getSelection();
@@ -231,6 +319,19 @@ public class ContextsView {
 		LeaksDialog dialog = new LeaksDialog(snapshotButton.getShell());
 		dialog.setInput(snapshotDiff);
 		dialog.open();
+	}
+
+	@PreDestroy
+	public void dispose() {
+		if (targetCursor != null) {
+			targetCursor.dispose();
+			targetCursor = null;
+		}
+		if (targetImage != null) {
+			targetImage.dispose();
+			targetImage = null;
+		}
+		displayCursor = null;
 	}
 
 }
