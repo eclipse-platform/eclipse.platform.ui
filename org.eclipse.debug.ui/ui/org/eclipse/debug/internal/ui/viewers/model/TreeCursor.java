@@ -193,20 +193,20 @@ public TreeCursor(Tree parent, int style) {
 		public void handleEvent(Event event) {
 			switch (event.type) {
 				case SWT.Dispose :
-					dispose(event);
+						treeCursorDispose(event);
 					break;
 				case SWT.FocusIn :
 				case SWT.FocusOut :
 					redraw();
 					break;
 				case SWT.KeyDown :
-					keyDown(event);
+						treeCursorKeyDown(event);
 					break;
 				case SWT.Paint :
-					paint(event);
+						treeCursorPaint(event);
 					break;
 				case SWT.Traverse :
-					traverse(event);
+						treeCursorTraverse(event);
 					break;
 			}
 		}
@@ -299,7 +299,7 @@ public void addSelectionListener(SelectionListener listener) {
 /**
  * @param event  
  */
-void dispose(Event event) {
+void treeCursorDispose(Event event) {
 	tree.removeListener(SWT.FocusIn, treeListener);
 	tree.removeListener(SWT.MouseDown, treeListener);
 	if (column != null) {
@@ -322,7 +322,7 @@ void dispose(Event event) {
 	}
 }
 
-void keyDown(Event event) {
+void treeCursorKeyDown(Event event) {
 	if (row == null) return;
 	switch (event.character) {
 		case SWT.CR :
@@ -402,7 +402,7 @@ void keyDown(Event event) {
 	}
 }
 
-void paint(Event event) {
+void treeCursorPaint(Event event) {
 	if (row == null) return;
 	int columnIndex = column == null ? 0 : tree.indexOf(column);
 	GC gc = event.gc;
@@ -523,7 +523,7 @@ void tableMouseDown(Event event) {
 	return;
 }
 
-void traverse(Event event) {
+void treeCursorTraverse(Event event) {
 	switch (event.detail) {
 		case SWT.TRAVERSE_ARROW_NEXT :
 		case SWT.TRAVERSE_ARROW_PREVIOUS :
