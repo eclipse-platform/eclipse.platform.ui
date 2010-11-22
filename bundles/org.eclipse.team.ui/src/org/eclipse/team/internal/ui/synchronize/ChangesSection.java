@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,8 +51,9 @@ public class ChangesSection extends Composite {
 	/**
 	 * Create a changes section on the following page.
 	 * 
-	 * @param parent the parent control 
+	 * @param parent the parent control
 	 * @param page the page showing this section
+	 * @param configuration the configuration for the synchronize page
 	 */
 	public ChangesSection(Composite parent, AbstractSynchronizePage page, ISynchronizePageConfiguration configuration) {
 		super(parent, SWT.NONE);
@@ -68,9 +69,9 @@ public class ChangesSection extends Composite {
 		setLayoutData(data);
 		
 		forms = new FormToolkit(parent.getDisplay());
-		forms.setBackground(getBackgroundColor());
+		forms.setBackground(getListBackgroundColor());
 		HyperlinkGroup group = forms.getHyperlinkGroup();
-		group.setBackground(getBackgroundColor());
+		group.setBackground(getListBackgroundColor());
 		
 		changesSectionContainer = new PageBook(this, SWT.NONE);
 		data = new GridData(GridData.FILL_BOTH);
@@ -79,7 +80,7 @@ public class ChangesSection extends Composite {
 		changesSectionContainer.setLayoutData(data);
 	}
 	
-	protected Color getBackgroundColor() {
+	protected Color getListBackgroundColor() {
 		return getShell().getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
 	

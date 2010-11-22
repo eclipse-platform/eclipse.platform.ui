@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ui.*;
@@ -86,8 +86,9 @@ public class SyncInfoSetChangesSection extends ForwardingChangesSection {
 	/**
 	 * Create a changes section on the following page.
 	 * 
-	 * @param parent the parent control 
+	 * @param parent the parent control
 	 * @param page the page showing this section
+	 * @param configuration the configuration for the synchronize page
 	 */
 	public SyncInfoSetChangesSection(Composite parent, AbstractSynchronizePage page, ISynchronizePageConfiguration configuration) {
 		super(parent, page, configuration);
@@ -179,7 +180,7 @@ public class SyncInfoSetChangesSection extends ForwardingChangesSection {
 	
 	private Composite getErrorComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor());
+		composite.setBackground(getListBackgroundColor());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
@@ -194,7 +195,7 @@ public class SyncInfoSetChangesSection extends ForwardingChangesSection {
 				showErrors();
 			}
 		});
-		link.setBackground(getBackgroundColor());
+		link.setBackground(getListBackgroundColor());
 		link.setUnderlined(true);
 		
 		link = new Hyperlink(composite, SWT.WRAP);
@@ -204,7 +205,7 @@ public class SyncInfoSetChangesSection extends ForwardingChangesSection {
 				getPage().reset();
 			}
 		});
-		link.setBackground(getBackgroundColor());
+		link.setBackground(getListBackgroundColor());
 		link.setUnderlined(true);
 		
 		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, getConfiguration().getParticipant().getName()) })); 

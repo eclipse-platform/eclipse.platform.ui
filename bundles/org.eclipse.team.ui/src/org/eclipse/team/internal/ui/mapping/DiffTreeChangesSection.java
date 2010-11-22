@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -291,7 +291,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 
 	private Composite createEnableParticipantModelProvidersPane(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor());
+		composite.setBackground(getListBackgroundColor());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
@@ -358,7 +358,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 
 	private Composite getInitializationPane(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor());
+		composite.setBackground(getListBackgroundColor());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
@@ -417,7 +417,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 
 	private Composite getInitializingMessagePane(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor());
+		composite.setBackground(getListBackgroundColor());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
@@ -442,7 +442,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 
 	private Composite getPointerToModel(Composite parent, final ModelProvider provider, String oldId) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor());
+		composite.setBackground(getListBackgroundColor());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
@@ -532,7 +532,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	
 	private Composite getErrorComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor());
+		composite.setBackground(getListBackgroundColor());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);

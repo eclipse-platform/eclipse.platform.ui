@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -83,7 +83,7 @@ public abstract class ForwardingChangesSection extends ChangesSection {
 	
 	protected Composite getEmptyChangesComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor());
+		composite.setBackground(getListBackgroundColor());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
@@ -140,7 +140,7 @@ public abstract class ForwardingChangesSection extends ChangesSection {
 		data.widthHint = 100;
 		description.setLayoutData(data);
 		description.setText(text);
-		description.setBackground(getBackgroundColor());
+		description.setBackground(getListBackgroundColor());
 		return description;
 	}
 	
