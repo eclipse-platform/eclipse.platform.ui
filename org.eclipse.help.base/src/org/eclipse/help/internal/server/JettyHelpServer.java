@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.http.jetty.JettyConfigurator;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.server.HelpServer;
 import org.osgi.framework.Bundle;
@@ -67,10 +68,9 @@ public class JettyHelpServer extends HelpServer {
 				// suppress Jetty INFO/DEBUG messages to stderr
 				Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
 
-				String hostCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("server_host"); //$NON-NLS-1$
-				if (hostCommandLineOverride != null && hostCommandLineOverride.trim().length() > 0) {
-				    d.put("http.host", hostCommandLineOverride); //$NON-NLS-1$
-				}
+				if (bindServerToHostname()) { 
+					d.put("http.host", getHost()); //$NON-NLS-1$
+				}		   
 				
 				JettyConfigurator.startServer(webappName, d);
 			} catch (Throwable t) {
@@ -206,5 +206,13 @@ public class JettyHelpServer extends HelpServer {
 	protected String getOtherInfo() {
 		return "org.eclipse.help"; //$NON-NLS-1$
 	}	
+	
+	public boolean bindServerToHostname() {
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH) {
+			return true;
+		}
+		String host = HelpBasePlugin.getBundleContext().getProperty("server_host"); //$NON-NLS-1$
+        return host != null && host.trim().length() > 0;
+	}
 
 }
