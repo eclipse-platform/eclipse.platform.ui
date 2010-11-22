@@ -61,6 +61,7 @@ function displayTocFor(topic, isAutosynch)
         return;
     }
 	var tocView = ViewsFrame.toc.tocViewFrame;
+	if (!tocView) return;
 	
 	if (isAutosynch) {
 	    if (!tocView.isAutosynchEnabled()) {
