@@ -2056,6 +2056,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				IPerspectiveDescriptor perspective = registry.findPerspectiveWithId(newPersp
 						.getElementId());
 				legacyWindow.firePerspectiveActivated(WorkbenchPage.this, perspective);
+
+				sortedPerspectives.remove(perspective);
+				sortedPerspectives.add(perspective);
 			}
 		}
 	};
@@ -2586,11 +2589,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			// no change
 			return;
 		}
-
-		if (sortedPerspectives.contains(perspective)) {
-			sortedPerspectives.remove(perspective);
-		}
-		sortedPerspectives.add(perspective);
 
 		MPerspectiveStack perspectives = getPerspectiveStack();
 		for (MPerspective mperspective : perspectives.getChildren()) {
