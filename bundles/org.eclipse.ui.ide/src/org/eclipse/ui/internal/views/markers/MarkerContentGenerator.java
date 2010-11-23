@@ -758,37 +758,39 @@ public class MarkerContentGenerator {
 	 */
 	boolean select(MarkerEntry entry) {
 		try {
-			Collection enabledFilters = getEnabledFilters();
-			IResource[] resources = getSelectedResources();
-			boolean andFilters = andFilters();
-			if (enabledFilters.size() > 0) {
-				Iterator filtersIterator = enabledFilters.iterator();
-				if (andFilters) {
-					while (filtersIterator.hasNext()) {
-						MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filtersIterator
-								.next();
-						if (!group.selectByScope(entry, resources)
-								|| !group.selectByFilters(entry)) {
-							return false;
-						}
-					}
-					return true;
-				}
-
-				while (filtersIterator.hasNext()) {
-					MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filtersIterator
-							.next();
-					if (group.selectByScope(entry, resources)
-							&& group.selectByFilters(entry)) {
-						return true;
-					}
-				}
-				return false;
-			}
-			return true;
+			return select(entry, getSelectedResources(), getEnabledFilters(), andFilters());
 		} finally {
 			entry.clearCache();
 		}
+	}
+
+	boolean select(MarkerEntry entry, IResource[] selResources,
+			Collection enabledFilters, boolean andFilters) {
+		if (enabledFilters.size() > 0) {
+			Iterator filtersIterator = enabledFilters.iterator();
+			if (andFilters) {
+				while (filtersIterator.hasNext()) {
+					MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filtersIterator
+							.next();
+					if (!group.selectByScope(entry, selResources)
+							|| !group.selectByFilters(entry)) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			while (filtersIterator.hasNext()) {
+				MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filtersIterator
+						.next();
+				if (group.selectByScope(entry, selResources)
+						&& group.selectByFilters(entry)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -1049,6 +1051,9 @@ public class MarkerContentGenerator {
 		if (monitor.isCanceled()) {
 			return false;
 		}
+		IResource[] selected = getSelectedResources();
+		Collection filters = getEnabledFilters();
+		boolean andFilters = andFilters();
 		Iterator iterator = resources.iterator();
 		while (iterator.hasNext()) {
 			IMarker[] markers = null;
@@ -1068,11 +1073,14 @@ public class MarkerContentGenerator {
 			if (monitor.isCanceled()) {
 				return false;
 			}
-			for (int i = 0; i < markers.length; i++) {
-				MarkerEntry entry = new MarkerEntry(markers[i]);
-				if (select(entry)) {
+			MarkerEntry entry = null;
+			int lenght =  markers.length;
+			for (int i = 0; i < lenght; i++) {
+				entry = new MarkerEntry(markers[i]);
+				if (select(entry, selected, filters, andFilters)) {
 					result.add(entry);
 				}
+				entry.clearCache();
 				if (i % 500 == 0) {
 					if (monitor.isCanceled()) {
 						return false;

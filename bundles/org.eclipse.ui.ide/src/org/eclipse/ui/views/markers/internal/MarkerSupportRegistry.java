@@ -60,6 +60,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private static final Object WARNING = "WARNING";//$NON-NLS-1$
 
 	private static final String MARKER_ID = "markerId"; //$NON-NLS-1$
+	
+	/**
+	 * Filter enablement : A zero/negative integer implies that the limit is
+	 * disabled.
+	 */
+	public static final String FILTER_LIMIT = "filterLimit"; //$NON-NLS-1$
 
 	/**
 	 * The tag for the marker support extension

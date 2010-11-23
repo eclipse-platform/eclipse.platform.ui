@@ -22,8 +22,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.ide.IDEInternalPreferences;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.MarkerField;
 
 /**
@@ -48,8 +46,6 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 		super(view.getSite().getShell());
 		this.extendedView = view;
 		initialize(false);
-		setLimitValue(IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.getInt(IDEInternalPreferences.MARKER_LIMITS_VALUE));
 	}
 
 	/*
@@ -92,12 +88,6 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		IDEWorkbenchPlugin
-				.getDefault()
-				.getPreferenceStore()
-				.setValue(IDEInternalPreferences.MARKER_LIMITS_VALUE,
-						getLimitValue());
-		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
 		extendedView.setVisibleFields(getVisibleFields(), getNewWidths());
 		super.okPressed();
 	}
@@ -133,8 +123,6 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 	 */
 	protected void performDefaults() {
 		initialize(true);
-		setLimitValue(IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.getDefaultInt(IDEInternalPreferences.MARKER_LIMITS_VALUE));
 		super.performDefaults();
 	}
 

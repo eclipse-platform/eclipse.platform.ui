@@ -95,6 +95,7 @@ class MarkerFieldFilterGroup {
 	private static final String TAG_SCOPE = "scope"; //$NON-NLS-1$
 	private static final String TAG_FIELD_FILTER_ENTRY = "fieldFilter"; //$NON-NLS-1$
 	private static final String TAG_WORKING_SET = "workingSet"; //$NON-NLS-1$
+	private static final String TAG_LIMIT = "filterLimit"; //$NON-NLS-1$
 	// The identifier for user filters
 	private static String USER = "USER"; //$NON-NLS-1$
 
@@ -106,6 +107,8 @@ class MarkerFieldFilterGroup {
 	private boolean enabled = true;
 	protected MarkerFieldFilter[] fieldFilters;
 	private int scope;
+	private int limit;
+	
 	private String name;
 	private String id;
 
@@ -131,11 +134,16 @@ class MarkerFieldFilterGroup {
 
 		if (configurationElement == null)
 			return;
-		String enablementString = configurationElement
+		String stringValue = configurationElement
 				.getAttribute(MarkerSupportRegistry.ENABLED);
-		if (MarkerSupportInternalUtilities.FALSE.equals(enablementString))
+		if (MarkerSupportInternalUtilities.FALSE.equals(stringValue)) {
 			enabled = false;
-
+		}
+		stringValue = configurationElement
+				.getAttribute(MarkerSupportRegistry.FILTER_LIMIT);
+		if (stringValue == null || stringValue.length() == 0) {
+			limit = -1;
+		}
 	}
 
 	/**
@@ -433,9 +441,10 @@ class MarkerFieldFilterGroup {
 	 */
 	void loadSettings(IMemento memento) {
 
-		String enabledString = memento.getString(TAG_ENABLED);
-		if (enabledString != null && enabledString.length() > 0)
-			enabled = Boolean.valueOf(enabledString).booleanValue();
+		String stringValue = memento.getString(TAG_ENABLED);
+		if (stringValue != null && stringValue.length() > 0){
+			enabled = Boolean.valueOf(stringValue).booleanValue();
+		}
 		scope = memento.getInteger(TAG_SCOPE).intValue();
 
 		String workingSetName = memento.getString(TAG_WORKING_SET);
@@ -444,6 +453,11 @@ class MarkerFieldFilterGroup {
 			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager()
 					.getWorkingSet(workingSetName));
 
+		stringValue = memento.getString(TAG_LIMIT);
+		if (stringValue != null && stringValue.length() > 0) {
+			setLimit(Integer.parseInt(stringValue));
+		}
+		
 		Map filterMap = new HashMap();
 		MarkerFieldFilter[] filters = getFieldFilters();
 		for (int i = 0; i < filters.length; i++) {
@@ -502,6 +516,7 @@ class MarkerFieldFilterGroup {
 	 */
 	protected boolean populateClone(MarkerFieldFilterGroup clone) {
 		clone.scope = this.scope;
+		clone.limit = limit;
 		clone.workingSet = this.workingSet;
 		clone.enabled = this.enabled;
 		clone.fieldFilters = new MarkerFieldFilter[getFieldFilters().length];
@@ -560,6 +575,7 @@ class MarkerFieldFilterGroup {
 	void saveFilterSettings(IMemento memento) {
 		memento.putString(TAG_ENABLED, String.valueOf(enabled));
 		memento.putString(TAG_SCOPE, String.valueOf(scope));
+		memento.putString(TAG_LIMIT, String.valueOf(limit));
 
 		if (workingSet != null) {
 			memento.putString(TAG_WORKING_SET, workingSet.getName());
@@ -660,6 +676,21 @@ class MarkerFieldFilterGroup {
 	 */
 	void setWorkingSet(IWorkingSet workingSet) {
 		this.workingSet = workingSet;
+	}
+	
+	/**
+	 * @return Returns -1 for no limit else the limit.
+	 */
+	int getLimit() {
+		return limit;
+	}
+
+	/**
+	 * @param limit
+	 *            The limit to set, -1 or 0 for no limit.
+	 */
+	void setLimit(int limit) {
+		this.limit = limit;
 	}
 
 	/**

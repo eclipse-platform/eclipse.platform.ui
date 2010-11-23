@@ -19,7 +19,6 @@ import java.util.ListIterator;
 import java.util.Random;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -31,7 +30,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -48,7 +46,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.preferences.ViewSettingsDialog;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -64,7 +61,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * @noextend This class is not intended to be subclassed by clients.
  * 
  */
-abstract class ViewerColumnsDialog extends ViewSettingsDialog {
+abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 	/** The list contains columns that are currently visible in viewer */
 	private List visible;
@@ -72,28 +69,18 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 	/** The list contains columns that are note shown in viewer */
 	private List nonVisible;
 
-	/**
-	 * The number of elements to show at Max. A zero value may indicate
-	 * disablement of limit
-	 */
-	private int limitValue;
-
-	/** The message area */
-	private CLabel messageLabel;
-
 	private TableViewer visibleViewer, nonVisibleViewer;
 
 	private Button upButton, downButton;
 
 	private Button toVisibleBtt, toNonVisibleBtt;
 
-	private Text widthText, limitEditor;
+	private Text widthText;
 
 	/**
 	 * A listener to validate positive integer numbers only
 	 */
-	Listener postivIntTextListener = new Listener() {
-
+	Listener postiveIntTextListener = new Listener() {
 		private String intialValue;
 
 		public void handleEvent(Event event) {
@@ -139,115 +126,20 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets
-	 * .Shell)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.ViewerSettingsAndStatusDialog#createDialogContentArea(org.eclipse.swt.widgets.Composite)
 	 */
-	protected void configureShell(Shell newShell) {
-		super.configureShell(newShell);
-		newShell.setText(JFaceResources
-				.getString("ConfigureColumnsDialog_Title")); //$NON-NLS-1$
+	protected Control createDialogContentArea(Composite dialogArea) {
+		return createColumnsArea(dialogArea);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#getShellStyle()
-	 */
-	protected int getShellStyle() {
-		return super.getShellStyle() | SWT.RESIZE;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
-	protected Control createDialogArea(Composite parent) {
-
-		Composite dialogArea = (Composite) super.createDialogArea(parent);
-
-		dialogArea.setLayout(new GridLayout(1, true));
-
-		initializeDialogUnits(dialogArea);
-
-		createMessageArea(dialogArea);
-
-		createLimitArea(dialogArea);
-
-		createColumnsArea(dialogArea);
-
-		applyDialogFont(dialogArea);
-
-		initializeDlg();
-
-		return dialogArea;
-	}
-
-	/**
-	 * 
-	 */
-	void initializeDlg() {
-		handleStatusUdpate(IStatus.INFO, getDefaultMessage());
-	}
-
-	/**
-	 * Create message area.
-	 * 
-	 * @param parent
-	 */
-	void createMessageArea(Composite parent) {
-		messageLabel = new CLabel(parent, SWT.NONE);
-		messageLabel.setImage(JFaceResources
-				.getImage(Dialog.DLG_IMG_MESSAGE_INFO));
-		messageLabel
-				.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
-	}
-
-	/**
-	 * Create element limit area.
-	 * 
-	 * @param parent
-	 */
-	void createLimitArea(Composite parent) {
-		Composite composite = new Group(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		CLabel cLabel = new CLabel(composite, SWT.NONE);
-		cLabel.setText(MarkerMessages.MarkerPreferences_VisibleItems);
-		cLabel.setLayoutData(new GridData());
-
-		limitEditor = new Text(composite, SWT.BORDER);
-		limitEditor.setText(Integer.toString(getLimitValue()));
-		limitEditor.setLayoutData(new GridData());
-		limitEditor.addListener(SWT.FocusOut, postivIntTextListener);
-		limitEditor.addListener(SWT.KeyDown, postivIntTextListener);
-		limitEditor.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				int limit = 0;
-				try {
-					limit = Integer.parseInt(limitEditor.getText().trim());
-				} catch (Exception e) {
-					return;// ignore this one
-				}
-				setLimitValue(limit);
-			}
-		});
-		limitEditor.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	}
-
+	
 	/**
 	 * Create the controls to configure columns.
 	 * 
 	 * @param dialogArea
+	 * @return {@link Control}
 	 */
-	void createColumnsArea(Composite dialogArea) {
+	Control createColumnsArea(Composite dialogArea) {
 		Group columnArea = new Group(dialogArea, SWT.NONE);
 		columnArea.setLayout(new GridLayout(4, false));
 		GridData gData = new GridData(GridData.FILL_BOTH
@@ -260,6 +152,7 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 		createVisibleTable(columnArea);
 		createUpDownBtt(columnArea);
 		createWidthArea(columnArea);
+		return columnArea;
 	}
 
 	/**
@@ -267,7 +160,7 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 	 * 
 	 * @param parent
 	 */
-	void createUpDownBtt(Composite parent) {
+	Control createUpDownBtt(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(1, true);
 		layout.horizontalSpacing = 0;
@@ -297,14 +190,16 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 		});
 		downButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		downButton.setEnabled(false);
+		return composite;
 	}
 
 	/**
 	 * Create the controls responsible to display/edit column widths.
 	 * 
 	 * @param parent
+	 * @return {@link Control}
 	 */
-	void createWidthArea(Composite parent) {
+	Control createWidthArea(Composite parent) {
 		Label widthLabel = new Label(parent, SWT.NONE);
 		widthLabel.setText(JFaceResources
 				.getString("ConfigureColumnsDialog_WidthOfSelectedColumn")); //$NON-NLS-1$
@@ -319,28 +214,28 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 				| GridData.HORIZONTAL_ALIGN_CENTER);
 		gridData.widthHint = convertWidthInCharsToPixels(5);
 		widthText.setLayoutData(gridData);
-		widthText.addListener(SWT.KeyDown, postivIntTextListener);
-		widthText.addListener(SWT.FocusOut, postivIntTextListener);
+		widthText.addListener(SWT.Modify, postiveIntTextListener);
 		widthText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
 				if (widthText.isEnabled()) {
-					int width = 0;
 					try {
-						width = Integer.parseInt(widthText.getText().trim());
+						int width = Integer
+								.parseInt(widthText.getText().trim());
+						Object data = ((IStructuredSelection) visibleViewer
+								.getSelection()).getFirstElement();
+						if (data != null) {
+							IColumnUpdater updater = getColumnUpdater();
+							updater.setColumnWidth(data, width);
+						}
 					} catch (Exception e) {
-						return;// ignore this one
-					}
-					Object data = ((IStructuredSelection) visibleViewer
-							.getSelection()).getFirstElement();
-					if (data != null) {
-						IColumnUpdater updater = getColumnUpdater();
-						updater.setColumnWidth(data, width);
+						return;// ignore
 					}
 				}
 			}
 		});
 		widthText.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
 		widthText.setEditable(false);
+		return widthText;
 	}
 
 	/**
@@ -359,8 +254,9 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 	 * Creates the table that lists out visible columns in the viewer
 	 * 
 	 * @param parent
+	 * @return {@link Control}
 	 */
-	void createVisibleTable(Composite parent) {
+	Control createVisibleTable(Composite parent) {
 		final Table table = new Table(parent, SWT.BORDER | SWT.MULTI);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.widthHint = convertWidthInCharsToPixels(30);
@@ -396,14 +292,16 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 			}
 		});
 		visibleViewer.setInput(this);
+		return table;
 	}
 
 	/**
 	 * Creates the table that lists out non-visible columns in the viewer
 	 * 
 	 * @param parent
+	 * @return {@link Control}
 	 */
-	void createInvisibleTable(Composite parent) {
+	Control createInvisibleTable(Composite parent) {
 		final Table table = new Table(parent, SWT.BORDER | SWT.MULTI);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.widthHint = convertWidthInCharsToPixels(30);
@@ -439,6 +337,7 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 			}
 		});
 		nonVisibleViewer.setInput(this);
+		return table;
 	}
 
 	/**
@@ -446,8 +345,9 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 	 * vice-versa
 	 * 
 	 * @param parent
+	 * @return {@link Control}
 	 */
-	void createMoveButtons(Composite parent) {
+	Control createMoveButtons(Composite parent) {
 		Composite bttArea = new Composite(parent, SWT.NONE);
 		bttArea.setLayout(new GridLayout(1, true));
 		bttArea.setLayoutData(new GridData(GridData.FILL_VERTICAL));
@@ -476,119 +376,37 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 			}
 		});
 		toVisibleBtt.setEnabled(false);
-	}
-
-	/**
-	 * Display the error message and an appropriate icon.
-	 * 
-	 * @param messgage
-	 * @param severity
-	 */
-	protected void handleStatusUdpate(int severity, String messgage) {
-		Image image = null;
-		switch (severity) {
-		case IStatus.ERROR: {
-			if (messgage == null) {
-				messgage = getErrorMessage();
-			}
-			image = getErrorImage();
-			break;
-		}
-		case IStatus.WARNING: {
-			image = getWarningImage();
-			break;
-		}
-		case IStatus.OK:
-		case IStatus.INFO:
-		default:
-			image = getInfoImage();
-		}
-		messageLabel.setImage(image);
-		if (messgage == null) {
-			messgage = getDefaultMessage();
-		}
-		if (messgage == null) {
-			messgage = MarkerSupportInternalUtilities.EMPTY_STRING;
-		}
-		messageLabel.setText(messgage);
-	}
-
-	/**
-	 * Return the message to display when dialog is opened.
-	 */
-	protected String getDefaultMessage() {
-		return MarkerMessages.MarkerPreferences_ZeroOrBlankValueCanBeUsedToDisableTheLimit;
-	}
-
-	/**
-	 * @return Returns the error message to display for a wrong limit value.
-	 */
-	protected String getErrorMessage() {
-		return JFaceResources.getString("IntegerFieldEditor.errorMessage"); //$NON-NLS-1$
-	}
-
-	/**
-	 */
-	protected Image getInfoImage() {
-		return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
-	}
-
-	/**
-	 */
-	protected Image getWarningImage() {
-		return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
-	}
-
-	/**
-	 */
-	protected Image getErrorImage() {
-		return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.preferences.ViewSettingsDialog#performDefaults()
-	 */
-	protected void performDefaults() {
-		refreshViewers();
-		super.performDefaults();
+		return bttArea;
 	}
 
 	/**
 	 * 
 	 * @param event
 	 * @param intialvalue
-	 * @return new integer value
+	 * @return new value in String
 	 */
 	String handleIntegerFieldChange(Event event, String intialvalue) {
-		Text text = (Text) event.widget;
-		String value = text.getText().trim();
+		String value = ((Text) event.widget).getText().trim();
 		switch (event.type) {
 		case SWT.KeyDown:
-			if (!Character.isDigit(event.character)) {
-				if (!Character.isISOControl(event.character)) {
-					handleStatusUdpate(IStatus.ERROR, getErrorMessage());
-					event.doit = false;
-					return intialvalue;
-				}
-			}
+		case SWT.Modify:
 		case SWT.FocusOut:
 			if (value.length() == 0) {
-				value = Integer.toString(0);
-				text.setText(value);
-				text.selectAll();
-				handleStatusUdpate(IStatus.INFO, null);
+				handleStatusUdpate(IStatus.ERROR, null);
 			} else {
 				try {
-					Integer.parseInt(value);
-					handleStatusUdpate(IStatus.INFO, null);
+					int number = Integer.parseInt(value);
+					if (number > 0) {
+						handleStatusUdpate(IStatus.INFO, null);
+					} else {
+						value = intialvalue;
+						((Text) event.widget).selectAll();
+						handleStatusUdpate(IStatus.ERROR, getErrorMessage());
+					}
 				} catch (Exception e) {
 					value = intialvalue;
-					text.setText(value);
-					text.selectAll();
+					((Text) event.widget).selectAll();
 					handleStatusUdpate(IStatus.ERROR, getErrorMessage());
-					event.doit = false;
 				}
 			}
 		}
@@ -785,53 +603,22 @@ abstract class ViewerColumnsDialog extends ViewSettingsDialog {
 			updater.setColumnVisible(iterator.next(), visibility);
 		}
 	}
+	
+	protected void performDefaults() {
+		refreshViewers();
+		super.performDefaults();
+	}
 
 	/**
 	 * Updates the UI based on values of the variable
 	 */
 	void refreshViewers() {
-		if (limitEditor != null) {
-			limitEditor.setText(Integer.toString(getLimitValue()));
-		}
 		if (nonVisibleViewer != null) {
 			nonVisibleViewer.refresh();
 		}
 		if (visibleViewer != null) {
 			visibleViewer.refresh();
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
-	 */
-	protected boolean isResizable() {
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
-	protected void okPressed() {
-		super.okPressed();
-	}
-
-	/**
-	 * @return Returns the limitValue.
-	 */
-	public int getLimitValue() {
-		return limitValue;
-	}
-
-	/**
-	 * @param limitValue
-	 *            The limitValue to set.
-	 */
-	void setLimitValue(int limitValue) {
-		this.limitValue = limitValue;
 	}
 
 	/**
