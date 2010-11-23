@@ -615,14 +615,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return null;
 	}
 
-	public void addViewReference(ViewReference reference) {
-		// should only add it if we don't already have such a reference
+	private boolean contains(ViewReference reference) {
+		String id = reference.getId();
+		String secondaryId = reference.getSecondaryId();
 		for (ViewReference viewReference : viewReferences) {
-			if (viewReference.getId().equals(reference.getId())) {
-				return;
+			if (id.equals(viewReference.getId())
+					&& Util.equals(secondaryId, viewReference.getSecondaryId())) {
+				return true;
 			}
 		}
-		viewReferences.add(reference);
+		return false;
+	}
+
+	public void addViewReference(ViewReference reference) {
+		if (!contains(reference)) {
+			viewReferences.add(reference);
+		}
 	}
 
 	public void addEditorReference(EditorReference editorReference) {
@@ -1434,15 +1442,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
 	public void createViewReferenceForPart(final MPart part, String viewId) {
-		for (ViewReference viewReference : viewReferences) {
-			if (viewReference.getId().equals(viewId)) {
-				return;
-			}
-		}
-
 		IViewDescriptor desc = getWorkbenchWindow().getWorkbench().getViewRegistry().find(viewId);
 		final ViewReference ref = new ViewReference(window.getContext(), this, part,
 				(ViewDescriptor) desc);
+		if (contains(ref)) {
+			return;
+		}
+
 		IEclipseContext partContext = part.getContext();
 		if (partContext == null) {
 			final IEventBroker broker = (IEventBroker) application.getContext().get(
