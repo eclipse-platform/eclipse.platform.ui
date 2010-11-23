@@ -595,6 +595,22 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		return result;
 	}
 
+	/*
+	 * Create a "file:" URL for the specified File making sure the URL ends with a slash if the File denotes a directory.
+	 */
+	private URL getClasspathEntryURL(Bundle bundle, String library) throws IOException {
+		File urlFile;
+		if (library.equals("/")) { //$NON-NLS-1$
+			urlFile = FileLocator.getBundleFile(bundle);
+		} else {
+			urlFile = new File(FileLocator.toFileURL(bundle.getEntry(library)).getPath());
+		}
+		if (!urlFile.exists())
+			return null;
+	    String path = urlFile.getAbsolutePath();
+	    return new URL("file:" + (urlFile.isDirectory() ? path + "/" : path));  //$NON-NLS-1$//$NON-NLS-2$
+	}
+
 	private void configureAntObject(List result, IConfigurationElement element, AntObject antObject, String objectName, String errorMessage) {
 		String runtime = element.getAttribute(AntCorePlugin.ECLIPSE_RUNTIME);
 		if (runtime != null) {
@@ -617,10 +633,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
             IContributor contributor= element.getContributor();
 			antObject.setPluginLabel(contributor.getName());
 			Bundle bundle = Platform.getBundle(contributor.getName());
-			URL url = FileLocator.toFileURL(bundle.getEntry(library));
-			File urlFile = new File(url.getPath());
-			if (urlFile.exists()) {
-				url = new URL("file:" +  urlFile.getAbsolutePath()); //$NON-NLS-1$
+			URL url = getClasspathEntryURL(bundle, library);
+			if (url != null) {
 				addURLToExtraClasspathEntries(url, element);
 				result.add(antObject);
 				addPluginClassLoader(bundle);
@@ -629,7 +643,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			} 
 
 			//type specifies a library that does not exist
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(errorMessage, new String[]{url.toExternalForm(), element.getContributor().getName()}), null);
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(errorMessage, new String[]{library, element.getContributor().getName()}), null);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
 		} catch (MalformedURLException e) {
@@ -657,15 +671,13 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			String library = element.getAttribute(AntCorePlugin.LIBRARY);
 			Bundle bundle = Platform.getBundle(element.getContributor().getName());
 			try {
-				URL url = FileLocator.toFileURL(bundle.getEntry(library));
-				File urlFile = new File(url.getPath());
-				if (urlFile.exists()) {
-					url = new URL("file:" +  urlFile.getAbsolutePath()); //$NON-NLS-1$
+				URL url = getClasspathEntryURL(bundle, library);
+				if (url != null) {
 					addURLToExtraClasspathEntries(url, element);  
 					addPluginClassLoader(bundle);
 				} else {
 					//extra classpath entry that does not exist
-					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_6, new String[]{url.toExternalForm(), element.getContributor().getName()}), null);
+					IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, NLS.bind(InternalCoreAntMessages.AntCorePreferences_6, new String[]{library, element.getContributor().getName()}), null);
 					AntCorePlugin.getPlugin().getLog().log(status);
 					continue;
 				}
