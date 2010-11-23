@@ -40,7 +40,8 @@ public class ModeledPlaceholderFolderLayout implements IPlaceholderFolderLayout 
 
 		MUIElement existingView = layout.findElement(layout.perspModel, viewId);
 		if (existingView instanceof MPlaceholder) {
-			existingView.getParent().getChildren().remove(existingView);
+			return;
+			// existingView.getParent().getChildren().remove(existingView);
 		}
 
 		MStackElement viewModel = ModeledPageLayout.createViewModel(application, viewId, false,

@@ -42,11 +42,13 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -73,6 +75,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPathEditorInput;
@@ -116,6 +119,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -1827,8 +1831,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public IViewReference[] getViewReferences() {
 		MPerspective perspective = getCurrentPerspective();
 		if (perspective != null) {
-			List<MPlaceholder> placeholders = modelService.findPerspectiveElements(perspective,
-					null, MPlaceholder.class, null);
+			List<MPlaceholder> placeholders = modelService.findElements(perspective, null,
+					MPlaceholder.class, null, EModelService.IN_ACTIVE_PERSPECTIVE);
 			List<IViewReference> visibleReferences = new ArrayList<IViewReference>();
 			for (ViewReference reference : viewReferences) {
 				for (MPlaceholder placeholder : placeholders) {
@@ -2000,7 +2004,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		public void handleEvent(Event event) {
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
-			if (changedElement != getPerspectiveStack()) {
+			if (!(changedElement instanceof MPerspectiveStack)) {
 				return;
 			}
 
@@ -2658,15 +2662,44 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @return the stack of perspectives of this page's containing window
 	 */
 	private MPerspectiveStack getPerspectiveStack() {
+		List<MPerspectiveStack> theStack = modelService.findElements(window, null,
+				MPerspectiveStack.class, null);
+		if (theStack.size() > 0)
+			return theStack.get(0);
+
 		for (MWindowElement child : window.getChildren()) {
 			if (child instanceof MPerspectiveStack) {
 				return (MPerspectiveStack) child;
 			}
 		}
 
+		MPartSashContainer stickySash = BasicFactoryImpl.eINSTANCE.createPartSashContainer();
+		stickySash.setHorizontal(true);
+
 		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE.createPerspectiveStack();
-		window.getChildren().add(perspectiveStack);
-		window.setSelectedElement(perspectiveStack);
+		perspectiveStack.setContainerData("7500"); //$NON-NLS-1$
+
+		MPartStack stickyFolder = BasicFactoryImpl.eINSTANCE.createPartStack();
+		stickyFolder.setContainerData("2500"); //$NON-NLS-1$
+		stickyFolder.setElementId("stickyFolderRight"); //$NON-NLS-1$
+		stickyFolder.setToBeRendered(false);
+
+		IStickyViewDescriptor[] stickyViews = getWorkbenchWindow().getWorkbench().getViewRegistry()
+				.getStickyViews();
+		for (int i = 0; i < stickyViews.length; i++) {
+			if (stickyViews[i].getLocation() == IPageLayout.RIGHT) {
+				MStackElement viewModel = ModeledPageLayout.createViewModel(application,
+						stickyViews[i].getId(), false, this, partService, true);
+				stickyFolder.getChildren().add(viewModel);
+			}
+		}
+
+		stickySash.getChildren().add(perspectiveStack);
+		stickySash.getChildren().add(stickyFolder);
+		stickySash.setSelectedElement(perspectiveStack);
+
+		window.getChildren().add(stickySash);
+		window.setSelectedElement(stickySash);
 		return perspectiveStack;
 	}
     

@@ -29,7 +29,6 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -306,12 +305,9 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart findPart(String id) {
-		MApplicationElement element = modelService.find(id, getContainer());
-		if (element instanceof MPlaceholder) {
-			((MPlaceholder) element).getRef().setCurSharedRef((MPlaceholder) element);
-			element = ((MPlaceholder) element).getRef();
-		}
-		return element instanceof MPart ? (MPart) element : null;
+		List<MPart> parts = modelService.findElements(workbenchWindow, id, MPart.class, null,
+				EModelService.IN_ACTIVE_PERSPECTIVE);
+		return parts.size() > 0 ? parts.get(0) : null;
 	}
 
 	public Collection<MPart> getParts() {
@@ -345,7 +341,9 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInContainer(MUIElement element) {
-		return isInContainer(getContainer(), element);
+		List<MUIElement> allPerspectiveElements = modelService.findElements(workbenchWindow, null,
+				MUIElement.class, null, EModelService.IN_ACTIVE_PERSPECTIVE);
+		return allPerspectiveElements.contains(element);
 	}
 
 	boolean isInContainer(MElementContainer<?> container, MUIElement element) {

@@ -33,6 +33,67 @@ public interface EModelService {
 	public static final int LEFT_OF = 2;
 	public static final int RIGHT_OF = 3;
 
+	// Search modifiers / Location Constants
+	public static final int NOT_IN_UI = 0x00;
+	public static final int OUTSIDE_PERSPECTIVE = 0x01;
+	public static final int IN_ACTIVE_PERSPECTIVE = 0x02;
+	public static final int IN_ANY_PERSPECTIVE = 0x04;
+	public static final int IN_SHARED_AREA = 0x08;
+	public static final int IN_TRIM = 0x10;
+
+	// 'Standard' searches
+	public static final int UI_LAYOUT = OUTSIDE_PERSPECTIVE | IN_ACTIVE_PERSPECTIVE
+			| IN_SHARED_AREA;
+	public static final int PRESENTATION = OUTSIDE_PERSPECTIVE | IN_ACTIVE_PERSPECTIVE
+			| IN_SHARED_AREA | IN_TRIM;
+	public static final int ANYWHERE = OUTSIDE_PERSPECTIVE | IN_ANY_PERSPECTIVE | IN_SHARED_AREA
+			| IN_TRIM;
+	public static final int GLOBAL = OUTSIDE_PERSPECTIVE | IN_SHARED_AREA;
+
+	/**
+	 * Return a list of any elements that match the given search criteria. The search is recursive
+	 * and includes the specified search root. Any of the search parameters may be specified as
+	 * <code>null</code> in which case that field will always 'match'.
+	 * <p>
+	 * NOTE: This is a generically typed method with the List's generic type expected to be the
+	 * value of the 'clazz' parameter. If the 'clazz' parameter is null then the returned list is
+	 * untyped but may safely be assigned to List&lt;MUIElement&gt;.
+	 * </p>
+	 * 
+	 * @param <T>
+	 *            The generic type of the returned list
+	 * @param searchRoot
+	 *            The element at which to start the search. This element must be non-null and is
+	 *            included in the search.
+	 * @param id
+	 *            The ID of the element. May be null to omit the test for this field.
+	 * @param clazz
+	 *            The class specifier determining the 'instanceof' type of the elements to be found.
+	 *            If specified then the returned List will be generically specified as being of this
+	 *            type.
+	 * @param tagsToMatch
+	 *            The list of tags to match. All the tags specified in this list must be defined in
+	 *            the search element's tags in order to be a match.
+	 * @param searchFlags
+	 *            A bitwise combination of the following constants:
+	 *            <ul>
+	 *            <li><b>OUTSIDE_PERSPECTIVE</b> Include the elements in the window's model that are
+	 *            not in a perspective</;i>
+	 *            <li><b>IN_ANY_PERSPECTIVE</b> Include the elements in all perspectives</;i>
+	 *            <li><b>IN_ACTIVE_PERSPECTIVE</b> Include the elements in the currently active
+	 *            perspective only</;i>
+	 *            <li><b>IN_SHARED_AREA</b> Include the elements in the shared area</;i>
+	 *            <li><b>IN_TRIM</b> Include the elements in the window's trim</;i>
+	 *            </ul>
+	 *            Note that you may omit both perspective flags but still define
+	 *            <b>IN_SHARED_AREA</b>; the flags <b>OUTSIDE_PERSPECTIVE | IN_SHARED_AREA</b> for
+	 *            example will search the presentation <i>excluding</i> the elements in perspective
+	 *            stacks.
+	 * @return The generically typed list of matching elements.
+	 */
+	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
+			List<String> tagsToMatch, int searchFlags);
+
 	/**
 	 * Return a list of any elements that match the given search criteria. The search is recursive
 	 * and includes the specified search root. Any of the search parameters may be specified as
@@ -61,16 +122,6 @@ public interface EModelService {
 	 * @return The generically typed list of matching elements.
 	 */
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
-			List<String> tagsToMatch);
-
-	/**
-	 * Identical to 'findElements' except that the search is limited to the currently active
-	 * perspective (if any).
-	 * 
-	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#findElements(org.eclipse.e4.ui.model.
-	 *      application.ui.MUIElement, java.lang.String, java.lang.Class, java.util.List)
-	 */
-	public <T> List<T> findPerspectiveElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch);
 
 	/**
@@ -295,4 +346,24 @@ public interface EModelService {
 	 *         is a snippet unattached to the UI Model itself.
 	 */
 	public MUIElement getContainer(MUIElement element);
+
+	/**
+	 * Given an element this method responds with information about where the element exists within
+	 * the current UI Model. This is used in cases where it is necessary to know if an element is in
+	 * the 'shared area' or outside of any perspective.
+	 * 
+	 * @param element
+	 * @return The location of the element in the UI, will be one of:
+	 *         <ul>
+	 *         <li><b>NOT_IN_UI:</b> The element is not in the UI model at all</li>
+	 *         <li><b>OUTSIDE_PERSPECTIVE:</b> The element not within a perspective stack</li>
+	 *         <li><b>IN_ACTIVE_PERSPECTIVE:</b> The element is within the currently active
+	 *         perspective</li>
+	 *         <li><b>IN_ANY_PERSPECTIVE:</b> The element is within a perspective but not the active
+	 *         one</li>
+	 *         <li><b>IN_SHARED_AREA:</b> The element is within an area that is shared between
+	 *         different perspectives</li>
+	 *         </ul>
+	 */
+	public int getElementLocation(MUIElement element);
 }

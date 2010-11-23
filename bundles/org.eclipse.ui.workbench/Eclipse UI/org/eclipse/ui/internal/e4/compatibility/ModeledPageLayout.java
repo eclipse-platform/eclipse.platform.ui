@@ -66,6 +66,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	private MApplication application;
+	private MWindow window;
 	private EModelService modelService;
 
 	EPartService partService;
@@ -83,6 +84,7 @@ public class ModeledPageLayout implements IPageLayout {
 			EPartService partService,
 			MPerspective perspModel, IPerspectiveDescriptor descriptor, WorkbenchPage page,
 			boolean createReferences) {
+		this.window = window;
 		MUIElement winParent = window.getParent();
 		this.application = (MApplication) winParent;
 		this.modelService = modelService;
@@ -522,7 +524,18 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	MUIElement findElement(MUIElement toSearch, String id) {
-		return modelService.find(id, toSearch);
+		MUIElement foundElement = modelService.find(id, toSearch);
+		if (foundElement == null) {
+			// if not found in the current perspective model check outside the
+			// perspective
+			// and in the shared area to see if it's 'globally' in the
+			// presentation
+			List<Object> elements = modelService.findElements(window, id, null, null,
+					EModelService.OUTSIDE_PERSPECTIVE | EModelService.IN_SHARED_AREA);
+			if (elements.size() == 1)
+				foundElement = (MUIElement) elements.get(0);
+		}
+		return foundElement;
 	}
 
 	private MPart findPart(MUIElement toSearch, String id) {

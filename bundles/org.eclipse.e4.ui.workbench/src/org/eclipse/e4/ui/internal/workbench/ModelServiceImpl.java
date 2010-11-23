@@ -79,8 +79,10 @@ public class ModelServiceImpl implements EModelService {
 	}
 
 	private <T> void findElementsRecursive(MUIElement searchRoot, String id,
-			Class<? extends T> type, List<String> tagsToMatch, List<T> elements,
-			boolean perspectiveBased) {
+			Class<? extends T> type, List<String> tagsToMatch, List<T> elements, int searchFlags) {
+		if (searchFlags == 0)
+			return;
+
 		// are *we* a match ?
 		if (match(searchRoot, id, type, tagsToMatch)) {
 			if (!elements.contains((T) searchRoot))
@@ -89,27 +91,37 @@ public class ModelServiceImpl implements EModelService {
 
 		// Check regular containers
 		if (searchRoot instanceof MElementContainer<?>) {
-			if (perspectiveBased && searchRoot instanceof MPerspectiveStack) {
-				// Only search the currently active perspective, if any
-				MPerspective active = ((MPerspectiveStack) searchRoot).getSelectedElement();
-				if (active != null) {
-					findElementsRecursive(active, id, type, tagsToMatch, elements, perspectiveBased);
+			if (searchRoot instanceof MPerspectiveStack && (searchFlags & IN_ANY_PERSPECTIVE) == 0) {
+				// Special cases: search only the active perspective or *only* the shared ares
+				if ((searchFlags & IN_ACTIVE_PERSPECTIVE) != 0) {
+					// Only search the currently active perspective, if any
+					MPerspective active = ((MPerspectiveStack) searchRoot).getSelectedElement();
+					if (active != null) {
+						findElementsRecursive(active, id, type, tagsToMatch, elements, searchFlags);
+					}
+				} else if ((searchFlags & IN_SHARED_AREA) != 0) {
+					// skip the perspective but check its shared area
+					List<MArea> sharedAreas = findElements(searchRoot, null, MArea.class, null);
+					if (sharedAreas.size() > 0) {
+						findElementsRecursive(sharedAreas.get(0), id, type, tagsToMatch, elements,
+								searchFlags);
+					}
 				}
 			} else {
 				MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
 				List<MUIElement> children = container.getChildren();
 				for (MUIElement child : children) {
-					findElementsRecursive(child, id, type, tagsToMatch, elements, perspectiveBased);
+					findElementsRecursive(child, id, type, tagsToMatch, elements, searchFlags);
 				}
 			}
 		}
 
 		// Search Trim
-		if (searchRoot instanceof MTrimmedWindow) {
+		if (searchRoot instanceof MTrimmedWindow && (searchFlags & IN_TRIM) != 0) {
 			MTrimmedWindow tw = (MTrimmedWindow) searchRoot;
 			List<MTrimBar> bars = tw.getTrimBars();
 			for (MTrimBar bar : bars) {
-				findElementsRecursive(bar, id, type, tagsToMatch, elements, perspectiveBased);
+				findElementsRecursive(bar, id, type, tagsToMatch, elements, searchFlags);
 			}
 		}
 
@@ -117,19 +129,19 @@ public class ModelServiceImpl implements EModelService {
 		if (searchRoot instanceof MWindow) {
 			MWindow window = (MWindow) searchRoot;
 			for (MWindow dw : window.getWindows()) {
-				findElementsRecursive(dw, id, type, tagsToMatch, elements, perspectiveBased);
+				findElementsRecursive(dw, id, type, tagsToMatch, elements, searchFlags);
 			}
 		}
 		if (searchRoot instanceof MPerspective) {
 			MPerspective persp = (MPerspective) searchRoot;
 			for (MWindow dw : persp.getWindows()) {
-				findElementsRecursive(dw, id, type, tagsToMatch, elements, perspectiveBased);
+				findElementsRecursive(dw, id, type, tagsToMatch, elements, searchFlags);
 			}
 		}
 		// Search shared elements
 		if (searchRoot instanceof MPlaceholder) {
 			MPlaceholder ph = (MPlaceholder) searchRoot;
-			findElementsRecursive(ph.getRef(), id, type, tagsToMatch, elements, perspectiveBased);
+			findElementsRecursive(ph.getRef(), id, type, tagsToMatch, elements, searchFlags);
 		}
 	}
 
@@ -142,7 +154,14 @@ public class ModelServiceImpl implements EModelService {
 	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch) {
 		List<T> elements = new ArrayList<T>();
-		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, false);
+		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, ANYWHERE);
+		return elements;
+	}
+
+	public <T> List<T> findElements(MUIElement searchRoot, String id, Class<T> clazz,
+			List<String> tagsToMatch, int searchFlags) {
+		List<T> elements = new ArrayList<T>();
+		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, searchFlags);
 		return elements;
 	}
 
@@ -157,7 +176,7 @@ public class ModelServiceImpl implements EModelService {
 	public <T> List<T> findPerspectiveElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch) {
 		List<T> elements = new ArrayList<T>();
-		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, true);
+		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, IN_ACTIVE_PERSPECTIVE);
 		return elements;
 	}
 
@@ -708,5 +727,48 @@ public class ModelServiceImpl implements EModelService {
 			return null;
 
 		return (MUIElement) ((EObject) element).eContainer();
+	}
+
+	public int getElementLocation(MUIElement element) {
+		if (element == null)
+			return NOT_IN_UI;
+
+		MUIElement curElement = element;
+		while (curElement != null) {
+			MUIElement parent = curElement.getParent();
+			if (parent instanceof MPerspective) {
+				if (parent.getParent().getSelectedElement() == parent)
+					return IN_ACTIVE_PERSPECTIVE;
+				else
+					return IN_ANY_PERSPECTIVE;
+			} else if (parent instanceof MApplication) {
+				return OUTSIDE_PERSPECTIVE;
+			} else if (parent instanceof MTrimBar) {
+				return IN_TRIM;
+			} else if (parent == null) {
+				EObject container = ((EObject) curElement).eContainer();
+
+				// DW tests
+				if (container instanceof MWindow) {
+					MWindow containerWin = (MWindow) container;
+					if (containerWin.getSharedElements().contains(curElement))
+						return IN_SHARED_AREA;
+
+					EObject containerParent = container.eContainer();
+					if (containerParent instanceof MPerspective) {
+						int location = IN_ANY_PERSPECTIVE;
+						if (((MPerspective) containerParent).getParent().getSelectedElement() == containerParent)
+							location |= IN_ACTIVE_PERSPECTIVE;
+						return location;
+					} else if (containerParent instanceof MWindow)
+						return OUTSIDE_PERSPECTIVE;
+					else
+						return NOT_IN_UI;
+				}
+			}
+			curElement = parent;
+		}
+
+		return NOT_IN_UI;
 	}
 }
