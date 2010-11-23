@@ -233,7 +233,7 @@ public class FiltersConfigurationDialog extends ViewerSettingsAndStatusDialog {
 					break;
 				case SWT.Modify:
 					try {
-						int limit = Integer.parseInt(event.text);
+						int limit = Integer.parseInt(limitEditor.getText());
 						if (limit > 0) {
 							setLimitValue(limit);
 						} else {
