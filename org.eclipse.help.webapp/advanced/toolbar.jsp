@@ -231,8 +231,12 @@ function restore_maximize(button)
 function toggleFrame(){
 	// get to the frameset
 	var p = parent;
-	while (p && !p.toggleFrame)
+	while (p && !p.toggleFrame)  {	   
+	    if (p === p.parent)  {
+	        return;
+        }
 		p = p.parent;
+	}
 	
 	if (p!= null){
 		p.toggleFrame('<%=UrlUtil.JavaScriptEncode(data.getTitle())%>');
