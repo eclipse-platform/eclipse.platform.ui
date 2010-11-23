@@ -73,7 +73,7 @@ public class SashRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.GenericTile.TOPIC,
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
 				UIEvents.UIElement.CONTAINERDATA), sashWeightHandler);
 	}
 

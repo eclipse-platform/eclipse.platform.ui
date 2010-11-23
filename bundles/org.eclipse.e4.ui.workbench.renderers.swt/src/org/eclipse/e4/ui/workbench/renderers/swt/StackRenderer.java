@@ -23,12 +23,10 @@ import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -40,6 +38,7 @@ import org.eclipse.e4.ui.widgets.CTabFolderEvent;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -95,13 +94,9 @@ public class StackRenderer extends LazyStackRenderer {
 				// when using a dialog to open a perspective
 				// we end up in the situation where this stack is in the
 				// previously active perspective
-				MWindow win = modelService
-						.getTopLevelWindowFor(stackToActivate);
-				MPerspective activePersp = modelService
-						.getActivePerspective(win);
-				MPerspective myPersp = modelService
-						.getPerspectiveFor(stackToActivate);
-				if (activePersp != null && myPersp != activePersp)
+				int location = modelService.getElementLocation(stackToActivate);
+				if ((location & EModelService.IN_ACTIVE_PERSPECTIVE) == 0
+						&& (location & EModelService.OUTSIDE_PERSPECTIVE) == 0)
 					return;
 
 				MUIElement selElement = stackToActivate.getSelectedElement();
@@ -396,7 +391,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// find the 'stale' tab for this element and dispose it
 		CTabItem cti = findItemForPart(child, parentElement);
-		if (cti != null) {
+		if (cti != null && !cti.isDisposed()) {
 			cti.setControl(null);
 			cti.dispose();
 		}
@@ -586,7 +581,8 @@ public class StackRenderer extends LazyStackRenderer {
 			presentationElement = part.getCurSharedRef();
 		}
 
-		return !(presentationElement.getTags().contains(IPresentationEngine.NO_CLOSE));
+		return !(presentationElement.getTags()
+				.contains(IPresentationEngine.NO_CLOSE));
 	}
 
 	private Menu createTabMenu(CTabFolder folder, MPart part) {
