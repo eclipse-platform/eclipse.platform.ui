@@ -596,8 +596,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return null;
 	}
 
-	public void addViewReference(ViewReference viewReference) {
-		viewReferences.add(viewReference);
+	public void addViewReference(ViewReference reference) {
+		// should only add it if we don't already have such a reference
+		for (ViewReference viewReference : viewReferences) {
+			if (viewReference.getId().equals(reference.getId())) {
+				return;
+			}
+		}
+		viewReferences.add(reference);
 	}
 
 	public void addEditorReference(EditorReference editorReference) {
@@ -940,37 +946,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return true;
     }
 
-	/**
-	 * Hides the part from this page (window). If the part corresponds to a 3.x
-	 * part, its part reference will also be removed.
-	 * <p>
-	 * This method merely performs the hide invocations. Clients are recommended
-	 * to call {@link #hidePart(MPart, boolean, boolean)} instead.
-	 * </p>
-	 * 
-	 * @param part
-	 *            the part that should be hidden
-	 */
-	private void hidePart(MPart part, boolean force) {
-		partService.hidePart(part, force);
-
-		for (Iterator<ViewReference> it = viewReferences.iterator(); it.hasNext();) {
-			ViewReference reference = it.next();
-			if (reference.getModel() == part) {
-				it.remove();
-				return;
-			}
-		}
-
-		for (Iterator<EditorReference> it = editorReferences.iterator(); it.hasNext();) {
-			EditorReference reference = it.next();
-			if (reference.getModel() == part) {
-				it.remove();
-				return;
-			}
-		}
-	}
-
 	private boolean hidePart(MPart part, boolean save, boolean confirm, boolean force) {
 		if (!partService.getParts().contains(part)) {
 			return false;
@@ -982,12 +957,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (save) {
 				// save as necessary
 				if (partService.savePart(part, confirm)) {
-					hidePart(part, force);
+					partService.hidePart(part, force);
 					return true;
 				}
 				return false;
 			}
-			hidePart(part, force);
+			partService.hidePart(part, force);
 			return true;
 		}
 
@@ -1002,34 +977,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		IWorkbenchPartReference reference = null;
-
 		for (IViewReference viewRef : viewReferences) {
 			if (workbenchPart == viewRef.getPart(false)) {
-				reference = viewRef;
-				break;
+				partService.hidePart(part, force);
+				return true;
 			}
-		}
-
-		if (reference != null) {
-			partService.hidePart(part, force);
-			// viewReferences.remove(reference);
-			return true;
 		}
 
 		for (IEditorReference viewRef : editorReferences) {
 			if (workbenchPart == viewRef.getPart(false)) {
-				reference = viewRef;
-				break;
+				partService.hidePart(part, force);
+				return true;
 			}
 		}
-
-		if (reference != null) {
-			partService.hidePart(part, force);
-			editorReferences.remove(reference);
-			return true;
-		}
-
 		return false;
 	}
 
@@ -1439,7 +1399,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage
      */
     public IViewReference findViewReference(String viewId, String secondaryId) {
-		for (IViewReference reference : viewReferences) {
+		for (IViewReference reference : getViewReferences()) {
 			if (viewId.equals(reference.getId())) {
 				String refSecondaryId = reference.getSecondaryId();
 				if (refSecondaryId == null) {
@@ -1455,6 +1415,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
 	public void createViewReferenceForPart(final MPart part, String viewId) {
+		for (ViewReference viewReference : viewReferences) {
+			if (viewReference.getId().equals(viewId)) {
+				return;
+			}
+		}
+
 		IViewDescriptor desc = getWorkbenchWindow().getWorkbench().getViewRegistry().find(viewId);
 		final ViewReference ref = new ViewReference(window.getContext(), this, part,
 				(ViewDescriptor) desc);
@@ -1477,7 +1443,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		} else {
 			partContext.set(ViewReference.class.getName(), ref);
 		}
-		viewReferences.add(ref);
+		addViewReference(ref);
 	}
 
 
@@ -1560,20 +1526,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public IWorkbenchPartReference getActivePartReference() {
 		IWorkbenchPart part = getActivePart();
-		if (part != null) {
-			for (IWorkbenchPartReference reference : viewReferences) {
-				if (reference.getPart(false) == part) {
-					return reference;
-				}
-			}
-
-			for (IWorkbenchPartReference reference : editorReferences) {
-				if (reference.getPart(false) == part) {
-					return reference;
-				}
-			}
-		}
-		return null;
+		return part == null ? null : getReference(part);
 	}
 
 
@@ -1739,8 +1692,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		List<IWorkbenchPartReference> sortedReferences = new ArrayList<IWorkbenchPartReference>();
 
 		activationLoop: for (MPart part : activationList) {
-			for (ViewReference ref : viewReferences) {
-				if (ref.getModel() == part) {
+			for (IViewReference ref : getViewReferences()) {
+				if (((ViewReference) ref).getModel() == part) {
 					sortedReferences.add(ref);
 					continue activationLoop;
 				}
@@ -1754,7 +1707,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		for (ViewReference ref : viewReferences) {
+		for (IViewReference ref : getViewReferences()) {
 			if (!sortedReferences.contains(ref)) {
 				sortedReferences.add(ref);
 			}
@@ -1857,17 +1810,34 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage.
      */
     public IViewReference[] getViewReferences() {
-		return viewReferences.toArray(new IViewReference[viewReferences.size()]);
+		MPerspective perspective = getCurrentPerspective();
+		if (perspective != null) {
+			List<MPlaceholder> placeholders = modelService.findPerspectiveElements(perspective,
+					null, MPlaceholder.class, null);
+			List<IViewReference> visibleReferences = new ArrayList<IViewReference>();
+			for (ViewReference reference : viewReferences) {
+				for (MPlaceholder placeholder : placeholders) {
+					if (reference.getModel() == placeholder.getRef()
+							&& placeholder.isToBeRendered()) {
+						// only rendered placeholders are valid view references
+						visibleReferences.add(reference);
+					}
+				}
+			}
+			return visibleReferences.toArray(new IViewReference[visibleReferences.size()]);
+		}
+		return new IViewReference[0];
 	}
 
     /**
      * See IWorkbenchPage.
      */
     public IViewPart[] getViews() {
-		int length = viewReferences.size();
+		IViewReference[] viewReferences = getViewReferences();
+		int length = viewReferences.length;
 		IViewPart[] views = new IViewPart[length];
 		for (int i = 0; i < length; i++) {
-			views[i] = viewReferences.get(i).getView(true);
+			views[i] = viewReferences[i].getView(true);
 		}
 		return views;
 	}
@@ -2897,6 +2867,25 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
+		MPerspective perspective = getCurrentPerspective();
+		if (perspective != null) {
+			for (IViewReference viewRef : getViewReferences()) {
+				if (viewRef.getPart(false) == part) {
+					return viewRef;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private IWorkbenchPartReference findReference(IWorkbenchPart part) {
+		for (IEditorReference editorRef : editorReferences) {
+			if (editorRef.getPart(false) == part) {
+				return editorRef;
+			}
+		}
+
 		for (IViewReference viewRef : viewReferences) {
 			if (viewRef.getPart(false) == part) {
 				return viewRef;
@@ -2906,9 +2895,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return null;
 	}
 
-    
-
-    
+	private MPerspective getCurrentPerspective() {
+		MPerspectiveStack stack = getPerspectiveStack();
+		return stack == null ? null : stack.getSelectedElement();
+	}
 
     /*
      * (non-Javadoc)
@@ -3197,7 +3187,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			IWorkbenchPartReference partReference = findReference(workbenchPart);
 
 			for (Object listener : partListenerList.getListeners()) {
 				((IPartListener) listener).partDeactivated(workbenchPart);
@@ -3240,7 +3230,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		if (part instanceof IViewPart) {
-			// viewReferences.remove(partReference);
+			viewReferences.remove(partReference);
 		} else {
 			editorReferences.remove(partReference);
 		}
@@ -3264,7 +3254,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			IWorkbenchPartReference partReference = findReference(workbenchPart);
 
 			for (Object listener : partListenerList.getListeners()) {
 				((IPartListener) listener).partBroughtToTop(workbenchPart);
@@ -3281,7 +3271,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			IWorkbenchPartReference partReference = findReference(workbenchPart);
 
 			for (Object listener : partListener2List.getListeners()) {
 				((IPartListener2) listener).partVisible(partReference);
@@ -3294,7 +3284,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			IWorkbenchPartReference partReference = findReference(workbenchPart);
 
 			for (Object listener : partListener2List.getListeners()) {
 				((IPartListener2) listener).partHidden(partReference);
