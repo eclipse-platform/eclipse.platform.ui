@@ -129,11 +129,11 @@ public abstract class ViewerSettingsAndStatusDialog extends ViewSettingsDialog {
 				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		messageArea = new Text(msgParent, SWT.READ_ONLY | SWT.NONE | SWT.WRAP
-				| SWT.MULTI | SWT.NO_FOCUS);
+				| SWT.MULTI | SWT.V_SCROLL);
 		messageArea.setEditable(false);
 		messageArea.setBackground(msgParent.getBackground());
 		messageArea
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		return msgParent;
 	}
 
