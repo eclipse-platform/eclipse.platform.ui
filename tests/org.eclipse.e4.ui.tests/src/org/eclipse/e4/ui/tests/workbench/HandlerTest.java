@@ -15,8 +15,10 @@ import junit.framework.TestCase;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -28,6 +30,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 public class HandlerTest extends TestCase {
 	private static final String HELP_COMMAND_ID = "org.eclipse.ui.commands.help";
 	private static final String HELP_COMMAND1_ID = HELP_COMMAND_ID + "1";
+	private IEclipseContext appContext;
 
 	public static class TestHandler {
 		boolean ran = false;
@@ -51,9 +54,28 @@ public class HandlerTest extends TestCase {
 		}
 	}
 
-	public void testOneCommand() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		appContext = E4Application.createDefaultContext();
+		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		appContext.dispose();
+	}
+
+	public void testOneCommand() throws Exception {
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
 				HELP_COMMAND_ID);
@@ -75,8 +97,6 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testTwoCommands() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
-
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
 				HELP_COMMAND_ID);
@@ -98,8 +118,6 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testTwoHandlers() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
-
 		defineCommands(appContext);
 
 		ParameterizedCommand helpCommand = getCommand(appContext,
@@ -141,8 +159,6 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testCanExecute() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
-
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
 				HELP_COMMAND_ID);
@@ -170,8 +186,6 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testThreeContexts() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
-
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
 				HELP_COMMAND_ID);
@@ -199,8 +213,6 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testDifferentExecutionContexts() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
-
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
 				HELP_COMMAND_ID);

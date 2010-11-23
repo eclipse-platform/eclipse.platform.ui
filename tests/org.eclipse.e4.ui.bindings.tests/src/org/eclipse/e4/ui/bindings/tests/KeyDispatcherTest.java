@@ -6,6 +6,7 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -105,6 +106,7 @@ public class KeyDispatcherTest extends TestCase {
 		display = new Display();
 		IEclipseContext globalContext = Activator.getDefault().getGlobalContext(); 
 		workbenchContext = globalContext.createChild("workbenchContext");
+		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 		defineContexts(workbenchContext);
 		defineBindingTables(workbenchContext);
 		defineCommands(workbenchContext);

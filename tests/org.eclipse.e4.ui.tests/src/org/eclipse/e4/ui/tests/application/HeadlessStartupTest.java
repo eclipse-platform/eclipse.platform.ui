@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.tests.application;
 import junit.framework.TestCase;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -80,6 +81,8 @@ public abstract class HeadlessStartupTest extends TestCase {
 		appContext
 				.set(Logger.class.getName(), ContextInjectionFactory.make(
 						WorkbenchLogger.class, appContext));
+
+		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 
 		appContext.set(Adapter.class.getName(),
 				ContextInjectionFactory.make(EclipseAdapter.class, appContext));

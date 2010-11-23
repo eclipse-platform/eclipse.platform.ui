@@ -1,4 +1,4 @@
-package org.eclipse.e4.core.commands;
+package org.eclipse.e4.core.commands.internal;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

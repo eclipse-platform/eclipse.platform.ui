@@ -22,8 +22,10 @@ import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.IParameterValues;
 import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -319,6 +321,7 @@ public class HandlerTest extends TestCase {
 	protected void setUp() throws Exception {
 		IEclipseContext globalContext = TestActivator.getDefault().getGlobalContext();
 		workbenchContext = globalContext.createChild("workbenchContext");
+		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 		defineCommands(workbenchContext);
 	}
 

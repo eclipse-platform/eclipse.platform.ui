@@ -7,5 +7,13 @@
       <initializer
             class="org.eclipse.ui.internal.WorkbenchPreferenceInitializer"/>
    </extension>
+     <extension
+           id="id1"
+           point="org.eclipse.e4.workbench.model">
+        <processor
+              beforefragment="true"
+              class="org.eclipse.ui.internal.CommandToModelProcessor">
+        </processor>
+     </extension>
 
 </plugin>

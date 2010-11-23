@@ -4,7 +4,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
+import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 
 public class DefineCommandsTest extends TestCase {
@@ -79,6 +81,7 @@ public class DefineCommandsTest extends TestCase {
 	protected void setUp() throws Exception {
 		IEclipseContext globalContext = TestActivator.getDefault().getGlobalContext();
 		workbenchContext = globalContext.createChild("workbenchContext");
+		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
 	}
 
 	@Override

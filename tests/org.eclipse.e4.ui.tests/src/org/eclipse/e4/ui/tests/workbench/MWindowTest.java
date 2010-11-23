@@ -12,6 +12,8 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
+import org.eclipse.e4.core.commands.CommandServiceAddon;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -55,6 +57,7 @@ public class MWindowTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
+		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
 	}

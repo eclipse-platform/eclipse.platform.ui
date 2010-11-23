@@ -61,4 +61,6 @@
   <commands xmi:id="_4L5EAEjPEd-XR9_8rlW1bQ" elementId="e4photo.switchPersepective" commandName="Switch Perspective"/>
   <commands xmi:id="_6B0q4EjPEd-XR9_8rlW1bQ" elementId="e4photo.imageDialog" commandName="Image Dialog"/>
   <commands xmi:id="_9w2hYEjPEd-XR9_8rlW1bQ" elementId="e4photo.addNote" commandName="Add Note"/>
+  <addons xmi:id="_XGB3wPZlEd-XstlTZ6nTXg" elementId="org.eclipse.e4.core.commands.service" contributionURI="platform:/plugin/org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_LK0NgPZmEd-XstlTZ6nTXg" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
 </application:Application>
