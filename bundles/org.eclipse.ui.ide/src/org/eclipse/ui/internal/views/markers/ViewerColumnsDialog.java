@@ -387,10 +387,15 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 */
 	String handleIntegerFieldChange(Event event, String intialvalue) {
 		String value = ((Text) event.widget).getText().trim();
+		boolean editable = ((Text) event.widget).getEditable();
 		switch (event.type) {
 		case SWT.KeyDown:
 		case SWT.Modify:
 		case SWT.FocusOut:
+			if (!editable) {
+				handleStatusUdpate(IStatus.INFO, null);
+				break;
+			}
 			if (value.length() == 0) {
 				handleStatusUdpate(IStatus.ERROR, null);
 			} else {
@@ -473,13 +478,13 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 		boolean edit = selVCols.size() == 1 ? infoProvider
 				.isColumnResizable(selVCols.get(0)) : false;
+		widthText.setEditable(edit);
 		if (edit) {
 			widthText.setText(Integer.toString(infoProvider
 					.getColumnWidth(selVCols.get(0))));
 		} else {
-			widthText.setText(Integer.toString(0));
+			widthText.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
 		}
-		widthText.setEditable(edit);
 	}
 
 	/**
