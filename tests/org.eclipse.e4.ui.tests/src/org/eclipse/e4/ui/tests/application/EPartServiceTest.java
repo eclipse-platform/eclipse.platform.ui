@@ -510,6 +510,98 @@ public class EPartServiceTest extends TestCase {
 				partA, partService.getActivePart());
 	}
 
+	public void testBringToTop_Bug330508_03() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.activate(partC);
+		assertEquals(partC, partService.getActivePart());
+
+		partService.bringToTop(partB);
+		assertEquals(
+				"Bringing a part to top that's not in the same container as the active part shouldn't change the active part",
+				partC, partService.getActivePart());
+	}
+
+	public void testBringToTop_Bug330508_04() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partA);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStack);
+		perspective.setSelectedElement(partStack);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(partA);
+		partA.setCurSharedRef(placeholderA);
+		partStack.getChildren().add(placeholderA);
+		partStack.setSelectedElement(placeholderA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		perspective.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		assertEquals(partA, partService.getActivePart());
+
+		partService.activate(partC);
+		assertEquals(partC, partService.getActivePart());
+
+		partService.bringToTop(partB);
+		assertEquals(
+				"Bringing a part to top that's not in the same container as the active part shouldn't change the active part",
+				partC, partService.getActivePart());
+	}
+
 	public void testGetParts_Empty() {
 		MApplication application = createApplication(1, new String[1][0]);
 		MWindow window = application.getChildren().get(0);

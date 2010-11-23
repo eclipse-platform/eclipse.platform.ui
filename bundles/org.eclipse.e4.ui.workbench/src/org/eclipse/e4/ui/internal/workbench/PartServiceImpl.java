@@ -217,13 +217,17 @@ public class PartServiceImpl implements EPartService {
 	private MContext getParentWithContext(MUIElement part) {
 		MElementContainer<MUIElement> parent = part.getParent();
 		MUIElement intermediate = parent;
-		while (parent != null) {
-			if (parent instanceof MContext) {
-				if (((MContext) parent).getContext() != null)
-					return (MContext) parent;
+		if (intermediate == null) {
+			intermediate = part;
+		} else {
+			while (parent != null) {
+				if (parent instanceof MContext) {
+					if (((MContext) parent).getContext() != null)
+						return (MContext) parent;
+				}
+				intermediate = parent;
+				parent = parent.getParent();
 			}
-			intermediate = parent;
-			parent = parent.getParent();
 		}
 
 		MPlaceholder placeholder = modelService.findPlaceholderFor(getWindow(), intermediate);
@@ -255,6 +259,9 @@ public class PartServiceImpl implements EPartService {
 			if (oldSelectedElement != currentElement
 					&& parent.getChildren().contains(oldSelectedElement)
 					&& parent instanceof MGenericStack<?>) {
+				if (oldSelectedElement instanceof MPlaceholder) {
+					oldSelectedElement = ((MPlaceholder) oldSelectedElement).getRef();
+				}
 				internalFixContext(part, oldSelectedElement);
 			}
 		}
