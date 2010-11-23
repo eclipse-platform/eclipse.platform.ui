@@ -264,6 +264,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private void updateBroughtToTop(MPart part) {
 		MElementContainer<?> parent = part.getParent();
+		if (parent == null) {
+			MPlaceholder placeholder = part.getCurSharedRef();
+			if (placeholder == null) {
+				return;
+			}
+
+			parent = placeholder.getParent();
+		}
+
 		if (parent instanceof MPartStack) {
 			int newIndex = lastIndexOfContainer(parent);
 			// New index can be -1 if there is no last index
@@ -282,8 +291,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private int lastIndexOfContainer(MElementContainer<?> parent) {
 		for (int i = 0; i < activationList.size(); i++) {
 			MPart mPart = activationList.get(i);
-			if (mPart.getParent() == parent) {
+			MElementContainer<MUIElement> container = mPart.getParent();
+			if (container == parent) {
 				return i;
+			} else if (container == null) {
+				MPlaceholder placeholder = mPart.getCurSharedRef();
+				if (placeholder != null && placeholder.getParent() == parent) {
+					return i;
+				}
 			}
 		}
 		return -1;
