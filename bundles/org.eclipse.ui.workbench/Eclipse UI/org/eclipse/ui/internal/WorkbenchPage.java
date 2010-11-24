@@ -1217,6 +1217,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		viewReferences.clear();
 		editorReferences.clear();
+		sortedPerspectives.clear();
 
 		if (unsetPage) {
 			legacyWindow.setActivePage(null);
