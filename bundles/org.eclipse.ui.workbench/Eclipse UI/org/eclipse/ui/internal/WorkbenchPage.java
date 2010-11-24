@@ -784,9 +784,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				MPlaceholder activePlaceholder = activePart.getCurSharedRef();
 				MUIElement activePartParent = activePlaceholder == null ? activePart
 						.getParent() : activePlaceholder.getParent();
-				if (part.getCurSharedRef().getParent() == activePartParent) {
-					partService.showPart(part, PartState.CREATE);
-				} else {
+				partService.showPart(part, PartState.CREATE);
+				if (part.getCurSharedRef().getParent() != activePartParent) {
 					partService.bringToTop(part);
 				}
 			}
