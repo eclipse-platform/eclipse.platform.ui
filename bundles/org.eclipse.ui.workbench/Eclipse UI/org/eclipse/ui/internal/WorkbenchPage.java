@@ -2911,22 +2911,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return null;
 	}
 
-	private IWorkbenchPartReference findReference(IWorkbenchPart part) {
-		for (IEditorReference editorRef : editorReferences) {
-			if (editorRef.getPart(false) == part) {
-				return editorRef;
-			}
-		}
-
-		for (IViewReference viewRef : viewReferences) {
-			if (viewRef.getPart(false) == part) {
-				return viewRef;
-			}
-		}
-
-		return null;
-	}
-
 	private MPerspective getCurrentPerspective() {
 		MPerspectiveStack stack = getPerspectiveStack();
 		return stack == null ? null : stack.getSelectedElement();
@@ -3219,7 +3203,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = findReference(workbenchPart);
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
 
 			for (Object listener : partListenerList.getListeners()) {
 				((IPartListener) listener).partDeactivated(workbenchPart);
@@ -3286,7 +3270,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = findReference(workbenchPart);
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
 
 			for (Object listener : partListenerList.getListeners()) {
 				((IPartListener) listener).partBroughtToTop(workbenchPart);
@@ -3303,7 +3287,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = findReference(workbenchPart);
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
 
 			for (Object listener : partListener2List.getListeners()) {
 				((IPartListener2) listener).partVisible(partReference);
@@ -3316,7 +3300,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = findReference(workbenchPart);
+			IWorkbenchPartReference partReference = getReference(workbenchPart);
 
 			for (Object listener : partListener2List.getListeners()) {
 				((IPartListener2) listener).partHidden(partReference);
