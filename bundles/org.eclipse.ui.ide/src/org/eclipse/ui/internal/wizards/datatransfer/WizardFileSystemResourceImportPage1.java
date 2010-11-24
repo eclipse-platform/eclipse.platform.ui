@@ -80,9 +80,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
     protected Button overwriteExistingResourcesCheckbox;
 
-    protected Button createContainerStructureButton;
-
-    protected Button createOnlySelectedButton;
+    protected Button createTopLevelFolderCheckbox;
 
     protected Button createVirtualFoldersButton;
 
@@ -286,25 +284,12 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         overwriteExistingResourcesCheckbox.setFont(optionsGroup.getFont());
         overwriteExistingResourcesCheckbox.setText(DataTransferMessages.FileImport_overwriteExisting);
 
-        // create containers radio
-        createContainerStructureButton = new Button(optionsGroup, SWT.RADIO);
-        createContainerStructureButton.setFont(optionsGroup.getFont());
-        createContainerStructureButton.setText(DataTransferMessages.FileImport_createComplete);
-        createContainerStructureButton.setSelection(false);
-
-        createContainerStructureButton.addSelectionListener(new SelectionAdapter() {
-        	public void widgetSelected(SelectionEvent e) {
-        		updateWidgetEnablements();
-        	}
-        });
-
-        // create selection only radio
-        createOnlySelectedButton = new Button(optionsGroup, SWT.RADIO);
-        createOnlySelectedButton.setFont(optionsGroup.getFont());
-        createOnlySelectedButton.setText(DataTransferMessages.FileImport_createSelectedFolders);
-        createOnlySelectedButton.setSelection(true);
-
-        createOnlySelectedButton.addSelectionListener(new SelectionAdapter() {
+        // create top-level folder check box
+        createTopLevelFolderCheckbox= new Button(optionsGroup, SWT.CHECK);
+        createTopLevelFolderCheckbox.setFont(optionsGroup.getFont());
+        createTopLevelFolderCheckbox.setText(DataTransferMessages.FileImport_createTopLevel);
+        createTopLevelFolderCheckbox.setSelection(false);
+        createTopLevelFolderCheckbox.addSelectionListener(new SelectionAdapter() {
         	public void widgetSelected(SelectionEvent e) {
         		updateWidgetEnablements();
         	}
@@ -832,17 +817,21 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
         ImportOperation operation;
         
         boolean shouldImportTopLevelFoldersRecursively = selectionGroup.isEveryItemChecked() &&
-        											createOnlySelectedButton.getSelection() &&
+        											!createTopLevelFolderCheckbox.getSelection() &&
         											(createLinksInWorkspaceButton != null && createLinksInWorkspaceButton.getSelection()) &&
         											(createVirtualFoldersButton != null && createVirtualFoldersButton.getSelection() == false);
 		
+		File sourceDirectory = getSourceDirectory();
+		if (createTopLevelFolderCheckbox.getSelection() && sourceDirectory.getParentFile() != null)
+        	sourceDirectory = sourceDirectory.getParentFile();
+        
         if (shouldImportTopLevelFoldersRecursively)
             operation = new ImportOperation(getContainerFullPath(),
-                    getSourceDirectory(), fileSystemStructureProvider,
+                    sourceDirectory, fileSystemStructureProvider,
                     this, Arrays.asList(new File[] {getSourceDirectory()}));
         else
         	operation = new ImportOperation(getContainerFullPath(),
-                getSourceDirectory(), fileSystemStructureProvider,
+                sourceDirectory, fileSystemStructureProvider,
                 this, fileSystemObjects);
 
         operation.setContext(getShell());
@@ -869,8 +858,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
      * Initializes the specified operation appropriately.
      */
     protected void initializeOperation(ImportOperation op) {
-        op.setCreateContainerStructure(createContainerStructureButton
-                .getSelection());
+        op.setCreateContainerStructure(false);
         op.setOverwriteResources(overwriteExistingResourcesCheckbox
                 .getSelection());
         if (createLinksInWorkspaceButton != null && createLinksInWorkspaceButton.getSelection()) {
@@ -951,8 +939,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
             boolean createStructure = settings
                     .getBoolean(STORE_CREATE_CONTAINER_STRUCTURE_ID);
-            createContainerStructureButton.setSelection(createStructure);
-            createOnlySelectedButton.setSelection(!createStructure);
+            createTopLevelFolderCheckbox.setSelection(createStructure);
 
             if (createVirtualFoldersButton != null) {
 	            boolean createVirtualFolders = settings
@@ -996,7 +983,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
                     overwriteExistingResourcesCheckbox.getSelection());
 
             settings.put(STORE_CREATE_CONTAINER_STRUCTURE_ID,
-                    createContainerStructureButton.getSelection());
+                    createTopLevelFolderCheckbox.getSelection());
 
             if (createVirtualFoldersButton != null) {
 	            settings.put(STORE_CREATE_VIRTUAL_FOLDERS_ID,
@@ -1200,7 +1187,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 			createVirtualFoldersButton.setEnabled(createLinksInWorkspaceButton.getSelection());
 	
 			if (!selectionGroup.isEveryItemChecked() ||
-				(createOnlySelectedButton.getSelection() == false)) {
+				(createTopLevelFolderCheckbox.getSelection())) {
 	        	createVirtualFoldersButton.setSelection(true);
 			}
     	}
