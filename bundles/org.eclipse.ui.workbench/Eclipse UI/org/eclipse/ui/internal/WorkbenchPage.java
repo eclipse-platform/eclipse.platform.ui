@@ -2013,6 +2013,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (!(changedElement instanceof MPerspectiveStack)) {
 				return;
 			}
+			
+			List<MPerspectiveStack> theStack = modelService.findElements(window, null,
+					MPerspectiveStack.class, null);
+			if (theStack.isEmpty()) {
+				return;
+			} else if (!theStack.isEmpty() && changedElement != theStack.get(0)) {
+				return;
+			}
 
 			EContextService contextService = window.getContext().get(EContextService.class);
 			MPerspective oldPersp = (MPerspective) event.getProperty(UIEvents.EventTags.OLD_VALUE);
