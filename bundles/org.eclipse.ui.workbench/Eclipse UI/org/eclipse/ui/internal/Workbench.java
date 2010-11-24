@@ -166,6 +166,7 @@ import org.eclipse.ui.internal.contexts.ActiveContextSourceProvider;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
@@ -1622,7 +1623,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		descriptor.getTags().add("Editor"); //$NON-NLS-1$
 		descriptor.setCloseable(true);
 		descriptor.setAllowMultiple(true);
-		descriptor.setElementId("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
+		descriptor.setElementId(CompatibilityEditor.MODEL_ELEMENT_ID);
 		descriptor.setContributionURI(CompatibilityPart.COMPATIBILITY_EDITOR_URI);
 		descriptor.setCategory("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
 		application.getDescriptors().add(descriptor);

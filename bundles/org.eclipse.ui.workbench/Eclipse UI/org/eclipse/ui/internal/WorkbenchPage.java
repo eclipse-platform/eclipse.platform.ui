@@ -592,9 +592,42 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return ref;
 	}
 
+	private List<EditorReference> getCurrentEditorReferences() {
+		List<EditorReference> sortedReferences = new ArrayList<EditorReference>();
+		for (MPart part : activationList) {
+			for (EditorReference ref : editorReferences) {
+				if (ref.getModel() == part) {
+					sortedReferences.add(ref);
+					break;
+				}
+			}
+		}
 
-	public List<EditorReference> getInternalEditorReferences() {
-		return editorReferences;
+		for (EditorReference ref : editorReferences) {
+			if (!sortedReferences.contains(ref)) {
+				sortedReferences.add(ref);
+			}
+		}
+
+		MPerspective currentPerspective = getCurrentPerspective();
+		if (currentPerspective != null) {
+			List<MPart> placeholders = modelService.findElements(window,
+					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null,
+					EModelService.IN_ACTIVE_PERSPECTIVE | EModelService.OUTSIDE_PERSPECTIVE);
+			List<EditorReference> visibleReferences = new ArrayList<EditorReference>();
+			for (EditorReference reference : sortedReferences) {
+				for (MPart placeholder : placeholders) {
+					if (reference.getModel() == placeholder && placeholder.isToBeRendered()) {
+						// only rendered placeholders are valid references
+						visibleReferences.add(reference);
+					}
+				}
+			}
+
+			return visibleReferences;
+		}
+
+		return sortedReferences;
 	}
 
 	public EditorReference getEditorReference(MPart part) {
@@ -1598,17 +1631,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * java.lang.String, int)
 	 */
 	public IEditorReference[] findEditors(IEditorInput input, String editorId, int matchFlags) {
-		// BEGIN FIXME: workaround for bug 325960, v1.99 diff
-		List<EditorReference> filteredReferences = new ArrayList<EditorReference>();
-		for (MPart part : partService.getParts()) {
-			for (EditorReference editorRef : editorReferences) {
-				if (editorRef.getModel() == part) {
-					filteredReferences.add(editorRef);
-					break;
-				}
-			}
-		}
-		// END FIXME: workaround for bug 325960, v1.99 diff
+		List<EditorReference> filteredReferences = getCurrentEditorReferences();
 
 		switch (matchFlags) {
 		case MATCH_INPUT:
@@ -1694,23 +1717,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditorReferences()
 	 */
 	public IEditorReference[] getEditorReferences() {
-		List<IEditorReference> sortedReferences = new ArrayList<IEditorReference>();
-		for (MPart part : activationList) {
-			for (EditorReference ref : editorReferences) {
-				if (ref.getModel() == part) {
-					sortedReferences.add(ref);
-					break;
-				}
-			}
-		}
-
-		for (EditorReference ref : editorReferences) {
-			if (!sortedReferences.contains(ref)) {
-				sortedReferences.add(ref);
-			}
-		}
-
-		return sortedReferences.toArray(new IEditorReference[sortedReferences.size()]);
+		List<EditorReference> references = getCurrentEditorReferences();
+		return references.toArray(new IEditorReference[references.size()]);
 	}
 
 	public IWorkbenchPartReference[] getSortedParts() {
@@ -2261,7 +2269,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return editor;
 		}
 
-		MPart editor = partService.createPart("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
+		MPart editor = partService.createPart(CompatibilityEditor.MODEL_ELEMENT_ID);
 		createEditorReferenceForPart(editor, input, editorId, editorState);
 		partService.showPart(editor, PartState.VISIBLE);
 
@@ -3211,7 +3219,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				exceptions[i] = new PartInitException(NLS.bind(
 						WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorIDs[i]));
 			} else {
-				MPart editor = partService.createPart("org.eclipse.e4.ui.compatibility.editor"); //$NON-NLS-1$
+				MPart editor = partService.createPart(CompatibilityEditor.MODEL_ELEMENT_ID);
 				references[i] = createEditorReferenceForPart(editor, inputs[i], editorIDs[i], null);
 				((PartServiceImpl) partService).addPart(editor);
 			}

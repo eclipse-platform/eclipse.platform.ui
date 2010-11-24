@@ -11,26 +11,23 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import java.util.Iterator;
-import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.EditorReference;
-import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 public class CompatibilityEditor extends CompatibilityPart {
+
+	public static final String MODEL_ELEMENT_ID = "org.eclipse.e4.ui.compatibility.editor"; //$NON-NLS-1$
 
 	private EditorReference reference;
 
@@ -81,20 +78,6 @@ public class CompatibilityEditor extends CompatibilityPart {
 	@Override
 	public WorkbenchPartReference getReference() {
 		return reference;
-	}
-
-	@PreDestroy
-	void preDestroy() {
-		IWorkbenchPartReference reference = getReference();
-		WorkbenchPage page = (WorkbenchPage) reference.getPage();
-		for (Iterator<EditorReference> it = page.getInternalEditorReferences().iterator(); it
-				.hasNext();) {
-			IEditorReference ref = it.next();
-			if (ref == reference) {
-				it.remove();
-				continue;
-			}
-		}
 	}
 
 	@Override
