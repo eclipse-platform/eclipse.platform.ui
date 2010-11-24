@@ -51,6 +51,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.layout.GridData;
@@ -69,6 +71,9 @@ import org.osgi.service.event.EventHandler;
  * Render a Window or Workbench Window.
  */
 public class WBWRenderer extends SWTPartRenderer {
+
+	private static String ShellMinimizedTag = "shellMinimized"; //$NON-NLS-1$
+	private static String ShellMaximizedTag = "shellMaximized"; //$NON-NLS-1$
 
 	private class WindowSizeUpdateJob implements Runnable {
 		public List<MWindow> windowsToUpdate = new ArrayList<MWindow>();
@@ -301,6 +306,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		} else {
 			wbwShell = new Shell(parentShell, SWT.TOOL | SWT.TITLE | SWT.RESIZE);
 		}
+
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		wbwShell.setBounds(wbwModel.getX(), wbwModel.getY(),
 				wbwModel.getWidth(), wbwModel.getHeight());
@@ -389,6 +395,10 @@ public class WBWRenderer extends SWTPartRenderer {
 			final MWindow w = (MWindow) me;
 			shell.addControlListener(new ControlListener() {
 				public void controlResized(ControlEvent e) {
+					// Don't store the maximized size in the model
+					if (shell.getMaximized())
+						return;
+
 					try {
 						ignoreSizeChanges = true;
 						w.setWidth(shell.getSize().x);
@@ -399,6 +409,10 @@ public class WBWRenderer extends SWTPartRenderer {
 				}
 
 				public void controlMoved(ControlEvent e) {
+					// Don't store the maximized size in the model
+					if (shell.getMaximized())
+						return;
+
 					try {
 						ignoreSizeChanges = true;
 						w.setX(shell.getLocation().x);
@@ -530,12 +544,35 @@ public class WBWRenderer extends SWTPartRenderer {
 	 * .e4.ui.model.application.MPart)
 	 */
 	@Override
-	public void postProcess(MUIElement childME) {
-		super.postProcess(childME);
+	public void postProcess(MUIElement shellME) {
+		super.postProcess(shellME);
 
-		Shell shell = (Shell) childME.getWidget();
+		Shell shell = (Shell) shellME.getWidget();
+
+		// Capture the max/min state
+		final MUIElement disposeME = shellME;
+		shell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				Shell shell = (Shell) e.widget;
+				if (disposeME != null) {
+					disposeME.getTags().remove(ShellMinimizedTag);
+					disposeME.getTags().remove(ShellMaximizedTag);
+					if (shell.getMinimized())
+						disposeME.getTags().add(ShellMinimizedTag);
+					if (shell.getMaximized())
+						disposeME.getTags().add(ShellMaximizedTag);
+				}
+			}
+		});
+
+		// Apply the correct shell state
+		if (shellME.getTags().contains(ShellMaximizedTag))
+			shell.setMaximized(true);
+		else if (shellME.getTags().contains(ShellMinimizedTag))
+			shell.setMinimized(true);
+
 		shell.layout(true);
-		if (childME.isVisible()) {
+		if (shellME.isVisible()) {
 			shell.open();
 		} else {
 			shell.setVisible(false);
