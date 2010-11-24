@@ -20,6 +20,7 @@ import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.SubActionBars2;
 import org.eclipse.ui.dnd.IDragAndDropService;
@@ -38,8 +39,9 @@ public class EditorSite extends PartSite implements IEditorSite {
     /**
      * Constructs an EditorSite for an editor.
      */
-	public EditorSite(MPart model, IWorkbenchPart part, IConfigurationElement element) {
-		super(model, part, element);
+	public EditorSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
+			IConfigurationElement element) {
+		super(model, part, ref, element);
         
 		// Initialize the services specific to this editor site.
         initializeDefaultServices();

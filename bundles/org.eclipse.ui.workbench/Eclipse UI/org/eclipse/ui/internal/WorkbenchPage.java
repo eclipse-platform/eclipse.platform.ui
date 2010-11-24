@@ -95,6 +95,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -2901,21 +2902,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * to this workbench page
      */
 	public IWorkbenchPartReference getReference(IWorkbenchPart part) {
-		for (IEditorReference editorRef : editorReferences) {
-			if (editorRef.getPart(false) == part) {
-				return editorRef;
+		if (part != null) {
+			IWorkbenchPartSite site = part.getSite();
+			if (site instanceof PartSite) {
+				return ((PartSite) site).getPartReference();
 			}
 		}
-
-		MPerspective perspective = getCurrentPerspective();
-		if (perspective != null) {
-			for (IViewReference viewRef : getViewReferences()) {
-				if (viewRef.getPart(false) == part) {
-					return viewRef;
-				}
-			}
-		}
-
 		return null;
 	}
 

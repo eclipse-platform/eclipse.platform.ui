@@ -323,7 +323,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
 		IConfigurationElement element = descriptor.getConfigurationElement();
-		editorSite = new EditorSite(getModel(), part, element);
+		editorSite = new EditorSite(getModel(), part, this, element);
 		if (element == null) {
 			editorSite.setExtensionId(descriptor.getId());
 		}

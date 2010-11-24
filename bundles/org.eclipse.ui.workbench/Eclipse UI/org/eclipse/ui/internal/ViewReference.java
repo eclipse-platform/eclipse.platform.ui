@@ -138,7 +138,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	 */
 	@Override
 	public void initialize(IWorkbenchPart part) throws PartInitException {
-		viewSite = new ViewSite(getModel(), part, descriptor == null ? null
+		viewSite = new ViewSite(getModel(), part, this, descriptor == null ? null
 				: descriptor.getConfigurationElement());
 		((IViewPart) part).init(viewSite, memento);
 	}

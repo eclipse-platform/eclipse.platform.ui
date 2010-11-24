@@ -162,9 +162,11 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @param page
 	 *            the page it belongs to
 	 */
-	public PartSite(MPart model, IWorkbenchPart part, IConfigurationElement element) {
+	public PartSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
+			IConfigurationElement element) {
 		this.model = model;
 		this.part = part;
+		this.partReference = ref;
 		this.element = element;
 
 		MElementContainer<?> parent = (MElementContainer<?>) ((EObject) model).eContainer();

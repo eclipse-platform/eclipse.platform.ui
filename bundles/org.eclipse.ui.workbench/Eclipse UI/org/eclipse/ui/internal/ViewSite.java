@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.e4.compatibility.ActionBars;
 
 /**
@@ -21,8 +22,9 @@ import org.eclipse.ui.internal.e4.compatibility.ActionBars;
  */
 public class ViewSite extends PartSite implements IViewSite {
     
-	public ViewSite(MPart model, IWorkbenchPart part, IConfigurationElement element) {
-		super(model, part, element);
+	public ViewSite(MPart model, IWorkbenchPart part, IWorkbenchPartReference ref,
+			IConfigurationElement element) {
+		super(model, part, ref, element);
 		setActionBars(new ActionBars(((WorkbenchPage) getPage()).getActionBars(), serviceLocator,
 				model));
 	}
