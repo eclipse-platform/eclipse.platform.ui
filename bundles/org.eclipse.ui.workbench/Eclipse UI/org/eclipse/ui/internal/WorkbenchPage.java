@@ -1025,13 +1025,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 		return false;
 	}
-
-	private void hidePart(String id) {
-		MPart part = partService.findPart(id);
-		if (part != null) {
-			hidePart(part, true, true, false);
-		}
-	}
     
     /**
      * Enables or disables listener notifications. This is used to delay listener notifications until the
@@ -1891,21 +1884,25 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewReference)
      */
 	public void hideView(IViewReference view) {
-        
     	if (view != null) {
-			hidePart(view.getId());
+    		for (IViewReference reference : getViewReferences()) {
+    			if (reference == view) {
+					hidePart(((ViewReference) view).getModel(), true, true, false);
+					break;
+    			}
+    		}
 		}
 
 		// Notify interested listeners after the hide
 		legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_VIEW_HIDE);
 	}
 
-	/**
-	 * See IPerspective
-	 */
 	public void hideView(IViewPart view) {
 		if (view != null) {
-			hidePart(view.getSite().getId());
+			MPart part = findPart(view);
+			if (part != null) {
+				hidePart(part, true, true, false);
+			}
 		}
 	}
 
