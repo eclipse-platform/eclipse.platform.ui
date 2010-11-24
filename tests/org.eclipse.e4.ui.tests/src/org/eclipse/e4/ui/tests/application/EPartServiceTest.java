@@ -3231,6 +3231,66 @@ public class EPartServiceTest extends TestCase {
 		assertTrue(partSashContainer.getChildren().get(1) instanceof MPartStack);
 	}
 
+	private void testShowPart_Bug331047(PartState partState) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(partB);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStack);
+		perspective.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(partB);
+		partStack.getChildren().add(placeholderB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		assertNull("The part shouldn't have been rendered", partB.getContext());
+		assertEquals(partB, placeholderB.getRef());
+		assertNull(partB.getCurSharedRef());
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.showPart(partB, partState);
+		assertNotNull("The part should have been rendered", partB.getContext());
+		assertEquals(partB, placeholderB.getRef());
+		assertEquals(placeholderB, partB.getCurSharedRef());
+	}
+
+	public void testShowPart_Bug331047_CREATE() {
+		testShowPart_Bug331047(PartState.CREATE);
+	}
+
+	public void testShowPart_Bug331047_VISIBLE() {
+		testShowPart_Bug331047(PartState.VISIBLE);
+	}
+
+	public void testShowPart_Bug331047_ACTIVATE() {
+		testShowPart_Bug331047(PartState.ACTIVATE);
+	}
+
 	public void testHidePart_PartInAnotherWindow() {
 		MApplication application = createApplication(
 				new String[] { "partInWindow1" },

@@ -843,6 +843,12 @@ public class PartServiceImpl implements EPartService {
 		Assert.isNotNull(partState);
 
 		MPart addedPart = addPart(part);
+		MPlaceholder localPlaceholder = getLocalPlaceholder(addedPart);
+		// correct the placeholder setting if necessary
+		if (localPlaceholder != null && addedPart.getCurSharedRef() != localPlaceholder) {
+			addedPart.setCurSharedRef(localPlaceholder);
+		}
+
 		switch (partState) {
 		case ACTIVATE:
 			activate(addedPart);
