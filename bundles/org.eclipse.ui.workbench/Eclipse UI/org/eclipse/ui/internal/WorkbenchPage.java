@@ -429,33 +429,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 		MPart mpart = findPart(part);
 		if (mpart != null) {
-			if (CompatibilityPart.COMPATIBILITY_EDITOR_URI.equals(mpart.getContributionURI())) {
-				for (MPart localPart : partService.getParts()) {
-					if (localPart == mpart) {
-						// this editor is actually in this perspective, activate
-						// it
-						partService.activate(mpart);
-					}
-				}
-			} else {
-				// we show the view instead of simply activating it, this is
-				// because we do not currently clear out our view references, so
-				// we may find a part that is not not actually visible in the
-				// current perspective so we have to force a show, see bug
-				// 315133 and bug 320327
-				String secondaryId = null;
-				for (String tag : mpart.getTags()) {
-					if (tag != null && tag.startsWith(SECONDARY_ID_HEADER)) {
-						secondaryId = tag.substring(SECONDARY_ID_HEADER.length());
-					}
-				}
-
-				try {
-					showView(mpart.getElementId(), secondaryId, VIEW_ACTIVATE);
-				} catch (PartInitException e) {
-					WorkbenchPlugin.log(e);
-				}
-			}
+			partService.activate(mpart);
 		}
 	}
 
