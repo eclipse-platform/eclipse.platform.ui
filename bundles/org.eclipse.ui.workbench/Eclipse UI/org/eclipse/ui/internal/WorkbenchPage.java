@@ -548,7 +548,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
 		final EditorReference ref = new EditorReference(window.getContext(), this, part, input,
 				descriptor, memento);
-		editorReferences.add(ref);
+		addEditorReference(ref);
 		final IEventBroker broker = (IEventBroker) application.getContext().get(
 				IEventBroker.class.getName());
 		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
