@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * Refactoring id of the 'Move Resources Resource' refactoring (value:
-	 * <code>org.eclipse.ltk.core.refactoring.rename.resources</code>).
+	 * <code>org.eclipse.ltk.core.refactoring.move.resources</code>).
 	 * <p>
 	 * Clients may safely cast the obtained refactoring descriptor to
 	 * {@link MoveResourcesDescriptor}.
