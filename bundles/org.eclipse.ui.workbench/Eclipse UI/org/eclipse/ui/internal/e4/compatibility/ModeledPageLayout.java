@@ -329,7 +329,7 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 
 		MUIElement refModel = findElement(perspModel, refId);
-		if (refModel instanceof MPart) {
+		if (refModel instanceof MPart || refModel instanceof MPlaceholder) {
 			refModel = refModel.getParent();
 		}
 
