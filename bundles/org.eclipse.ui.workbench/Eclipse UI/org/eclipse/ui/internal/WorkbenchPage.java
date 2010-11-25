@@ -1203,8 +1203,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return false;
 		}
 
-		sortedPerspectives.clear();
-
 		for (MPart part : partService.getParts()) {
 			// no save, no confirm, force
 			hidePart(part, false, true, true);
