@@ -737,7 +737,10 @@ public class ModelServiceImpl implements EModelService {
 		while (curElement != null) {
 			MUIElement parent = curElement.getParent();
 			if (parent instanceof MPerspective) {
-				if (parent.getParent().getSelectedElement() == parent)
+				MElementContainer<MUIElement> perspectiveParent = parent.getParent();
+				if (perspectiveParent == null)
+					return NOT_IN_UI;
+				else if (perspectiveParent.getSelectedElement() == parent)
 					return IN_ACTIVE_PERSPECTIVE;
 				else
 					return IN_ANY_PERSPECTIVE;
@@ -756,8 +759,12 @@ public class ModelServiceImpl implements EModelService {
 
 					EObject containerParent = container.eContainer();
 					if (containerParent instanceof MPerspective) {
+						MElementContainer<MUIElement> perspectiveParent = ((MPerspective) containerParent)
+								.getParent();
+						if (perspectiveParent == null)
+							return NOT_IN_UI;
 						int location = IN_ANY_PERSPECTIVE;
-						if (((MPerspective) containerParent).getParent().getSelectedElement() == containerParent)
+						if (perspectiveParent.getSelectedElement() == containerParent)
 							location |= IN_ACTIVE_PERSPECTIVE;
 						return location;
 					} else if (containerParent instanceof MWindow)

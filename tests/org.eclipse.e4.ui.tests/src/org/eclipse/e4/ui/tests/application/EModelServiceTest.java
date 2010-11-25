@@ -234,4 +234,31 @@ public class EModelServiceTest extends TestCase {
 		modelService.bringToTop(partB);
 		assertEquals(windowA, application.getSelectedElement());
 	}
+
+	public void testGetElementLocation_Bug331062_01() {
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		perspective.getChildren().add(part);
+
+		EModelService modelService = applicationContext
+				.get(EModelService.class);
+		assertEquals(EModelService.NOT_IN_UI,
+				modelService.getElementLocation(part));
+	}
+
+	public void testGetElementLocation_Bug331062_02() {
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspective.getWindows().add(detachedWindow);
+
+		MWindow innerWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		detachedWindow.getWindows().add(innerWindow);
+
+		EModelService modelService = applicationContext
+				.get(EModelService.class);
+		assertEquals(EModelService.NOT_IN_UI,
+				modelService.getElementLocation(innerWindow));
+	}
 }
