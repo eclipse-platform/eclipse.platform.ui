@@ -615,9 +615,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	public ViewReference getViewReference(MPart part) {
-		for (IViewReference ref : viewReferences) {
-			if (((ViewReference) ref).getModel() == part) {
-				return (ViewReference) ref;
+		for (ViewReference ref : viewReferences) {
+			if (ref.getModel() == part) {
+				return ref;
 			}
 		}
 		return null;
