@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,14 +13,17 @@ package org.eclipse.jface.wizard;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * An abstract base implementation of a wizard. A typical client subclasses
@@ -402,17 +405,21 @@ public abstract class Wizard implements IWizard {
     }
 
     /**
-     * Sets whether help is available for this wizard.
-     * <p>
-     * The result of this method is typically used by the container to show or
-     * hide the Help button.
-     * </p>
-     * 
-     * @param b
-     *            <code>true</code> if help is available, and
-     *            <code>false</code> if this wizard is helpless
-     * @see #isHelpAvailable()
-     */
+	 * Sets whether help is available for this wizard.
+	 * <p>
+	 * The result of this method is typically used by the container to show or hide the button
+	 * labeled "Help".
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> This wizard's container might be a {@link TrayDialog} which provides
+	 * its own help support.
+	 * </p>
+	 * 
+	 * @param b <code>true</code> if help is available, <code>false</code> otherwise
+	 * @see #isHelpAvailable()
+	 * @see TrayDialog#isHelpAvailable()
+	 * @see TrayDialog#setHelpAvailable(boolean)
+	 */
     public void setHelpAvailable(boolean b) {
         isHelpAvailable = b;
     }

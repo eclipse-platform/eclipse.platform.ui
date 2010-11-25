@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.wizard;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.TrayDialog;
 
 /**
  * Interface for a wizard.  A wizard maintains a list of wizard pages,
@@ -163,15 +165,20 @@ public interface IWizard {
     public String getWindowTitle();
 
     /**
-     * Returns whether help is available for this wizard.
-     * <p>
-     * The result of this method is typically used by the container to
-     * show or hide the Help button.
-     * </p>
-     *
-     * @return <code>true</code> if help is available,
-     *   and <code>false</code> if this wizard is helpless
-     */
+	 * Returns whether help is available for this wizard.
+	 * <p>
+	 * The result of this method is typically used by the container to show or hide a button labeled
+	 * "Help".
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> This wizard's container might be a {@link TrayDialog} which provides
+	 * its own help support.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if help is available, <code>false</code> otherwise
+	 * @see TrayDialog#isHelpAvailable()
+	 * @see TrayDialog#setHelpAvailable(boolean)
+	 */
     public boolean isHelpAvailable();
 
     /**
