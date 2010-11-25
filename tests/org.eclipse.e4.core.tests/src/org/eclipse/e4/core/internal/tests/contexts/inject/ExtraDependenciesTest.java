@@ -96,8 +96,8 @@ public class ExtraDependenciesTest extends TestCase {
 		// check that disposal of the injected context causes disposal of the injected object
 		context.dispose();
 		assertTrue(object.disposed);
-		assertNull(object.string);
-		assertNull(object.integer);
+		assertNotNull(object.string);
+		assertNotNull(object.integer);
 		assertNull(object.other);
 	}
 

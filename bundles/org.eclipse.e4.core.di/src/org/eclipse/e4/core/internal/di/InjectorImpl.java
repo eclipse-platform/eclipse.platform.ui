@@ -43,11 +43,16 @@ import org.eclipse.e4.core.di.suppliers.ExtendedObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
+import org.eclipse.e4.core.internal.di.osgi.DIActivator;
+import org.eclipse.e4.core.internal.di.osgi.LogHelper;
 
 /**
  * Reflection-based dependency injector.
  */
 public class InjectorImpl implements IInjector {
+
+	final static private String DEBUG_INJECTION = "org.eclipse.e4.core.di/debug/injector"; //$NON-NLS-1$
+	final static private boolean shouldDebug = DIActivator.getDefault().getBooleanDebugOption(DEBUG_INJECTION, false);
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 
@@ -160,15 +165,32 @@ public class InjectorImpl implements IInjector {
 		if (!forgetInjectedObject(object, objectSupplier))
 			return; // not injected at this time
 		processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<Class<?>>(5));
-		// Two stages: first, go and collect {requestor, descriptor[] }
+
 		ArrayList<Requestor> requestors = new ArrayList<Requestor>();
 		processClassHierarchy(object, objectSupplier, null, true /* track */, false /* inverse order */, requestors);
-		// might still need to get resolved values from secondary suppliers
-		// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
-		resolveRequestorArgs(requestors, null, null, true /* fill with nulls */, false, false);
 
-		// Call requestors in order
 		for (Requestor requestor : requestors) {
+			// Ask suppliers to fill actual values {requestor, descriptor[], actualvalues[] }
+			Object[] actualArgs = resolveArgs(requestor, null, null, true, false, false);
+			int unresolved = unresolved(actualArgs);
+			if (unresolved == -1) {
+				requestor.setResolvedArgs(actualArgs);
+			} else {
+				if (requestor.isOptional())
+					requestor.setResolvedArgs(null);
+				else {
+					if (shouldDebug) {
+						StringBuffer tmp = new StringBuffer();
+						tmp.append("Uninjecting object \""); //$NON-NLS-1$
+						tmp.append(object.toString());
+						tmp.append("\": dependency on \""); //$NON-NLS-1$
+						tmp.append(requestor.getDependentObjects()[unresolved].toString());
+						tmp.append("\" is not optional."); //$NON-NLS-1$
+						LogHelper.logError(tmp.toString(), null);
+					}
+					continue; // do not execute requestors with unresolved arguments
+				}
+			}
 			requestor.execute();
 		}
 	}
@@ -301,10 +323,19 @@ public class InjectorImpl implements IInjector {
 	}
 
 	public void resolveArguments(IRequestor requestor, boolean initial) {
-		ArrayList<Requestor> list = new ArrayList<Requestor>(1);
 		Requestor internalRequestor = ((Requestor) requestor);
-		list.add(internalRequestor);
-		resolveRequestorArgs(list, internalRequestor.getPrimarySupplier(), internalRequestor.getTempSupplier(), true, initial, internalRequestor.shouldTrack());
+		Object[] actualArgs = resolveArgs(internalRequestor, internalRequestor.getPrimarySupplier(), internalRequestor.getTempSupplier(), false, initial, internalRequestor.shouldTrack());
+		int unresolved = unresolved(actualArgs);
+		if (unresolved == -1)
+			internalRequestor.setResolvedArgs(actualArgs);
+		else {
+			if (internalRequestor.isOptional())
+				internalRequestor.setResolvedArgs(null);
+			else {
+				String msg = resolutionError(internalRequestor, unresolved);
+				LogHelper.logError(msg, null);
+			}
+		}
 	}
 
 	public void disposed(PrimaryObjectSupplier objectSupplier) {
@@ -321,14 +352,17 @@ public class InjectorImpl implements IInjector {
 			}
 		}
 		for (int i = 0; i < count; i++) {
-			uninject(objects[i], objectSupplier);
+			Object object = objects[i];
+			if (!forgetInjectedObject(object, objectSupplier))
+				continue; // not injected at this time
+			processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<Class<?>>(5));
 		}
 		forgetSupplier(objectSupplier);
 	}
 
-	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean initial, boolean track) {
+	private void resolveRequestorArgs(ArrayList<Requestor> requestors, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean uninject, boolean initial, boolean track) {
 		for (Requestor requestor : requestors) {
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, fillNulls, initial, track);
+			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, uninject, initial, track);
 			int unresolved = unresolved(actualArgs);
 			if (unresolved == -1) {
 				requestor.setResolvedArgs(actualArgs);
@@ -343,16 +377,20 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private void reportUnresolvedArgument(Requestor requestor, int argIndex) {
+		throw new InjectionException(resolutionError(requestor, argIndex));
+	}
+
+	private String resolutionError(Requestor requestor, int argIndex) {
 		StringBuffer tmp = new StringBuffer();
 		tmp.append("Unable to process \""); //$NON-NLS-1$
 		tmp.append(requestor.toString());
 		tmp.append("\": no actual value was found for the argument \""); //$NON-NLS-1$
 		tmp.append(requestor.getDependentObjects()[argIndex].toString());
 		tmp.append("\"."); //$NON-NLS-1$
-		throw new InjectionException(tmp.toString());
+		return tmp.toString();
 	}
 
-	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean fillNulls, boolean initial, boolean track) {
+	private Object[] resolveArgs(Requestor requestor, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean uninject, boolean initial, boolean track) {
 		IObjectDescriptor[] descriptors = requestor.getDependentObjects();
 
 		// 0) initial fill - all values are unresolved
@@ -395,7 +433,7 @@ public class InjectorImpl implements IInjector {
 		}
 
 		// 5) create simple classes (implied bindings) - unless we uninject or optional
-		if (!fillNulls && !requestor.isOptional()) {
+		if (!uninject && !requestor.isOptional()) {
 			for (int i = 0; i < actualArgs.length; i++) {
 				if (actualArgs[i] != NOT_A_VALUE)
 					continue; // already resolved
@@ -436,7 +474,7 @@ public class InjectorImpl implements IInjector {
 					actualArgs[i] = IInjector.NOT_A_VALUE;
 			}
 			if (actualArgs[i] == IInjector.NOT_A_VALUE) { // still unresolved?
-				if (fillNulls || descriptors[i].hasQualifier(Optional.class)) { // uninject or optional - fill defaults
+				if (descriptors[i].hasQualifier(Optional.class)) { // uninject or optional - fill defaults
 					Class<?> descriptorsClass = getDesiredClass(descriptors[i].getDesiredType());
 					if (descriptorsClass.isPrimitive()) {
 						if (descriptorsClass.equals(boolean.class))

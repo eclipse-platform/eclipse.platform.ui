@@ -118,7 +118,7 @@ public class DisposeClassLinkTest extends TestCase {
 
 	    context.dispose();
 
-	    assertNull("The object should have been uninjected", obj.context);
+	    assertNotNull(obj.context);
 	    assertEquals("@PostConstruct should only have been called once", 1, obj.postConstruct);
 	    assertEquals("@PreDestroy should have been called during uninjection", 1, obj.preDestroy);
 	}

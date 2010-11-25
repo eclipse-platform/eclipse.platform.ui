@@ -46,7 +46,7 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
  * </p>
  * <p>
  * When a context is disposed, the injection factory will attempt to notify all injected objects by
- * calling methods with the <tt>javax.annotation.PreDestroy</tt> annotation before resetting injected values to <code>null</code>.
+ * calling methods with the <tt>javax.annotation.PreDestroy</tt> annotation.
  * 
  * @noextend This class is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -124,7 +124,8 @@ final public class ContextInjectionFactory {
 	}
 
 	/**
-	 * Un-injects the context from the object.
+	 * Un-injects the context from the object. The un-injection requires that all injected 
+	 * values were marked as optional, or the un-injection will fail.
 	 * 
 	 * @param object The domain object previously injected with the context
 	 * @param context The context previously injected into the object

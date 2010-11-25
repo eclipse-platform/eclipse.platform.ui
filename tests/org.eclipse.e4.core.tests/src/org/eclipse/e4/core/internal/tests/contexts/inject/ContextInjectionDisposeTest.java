@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 
 /**
  * Tests for injection handling of context dispose, and handling disposal of injected objects.
@@ -92,10 +93,10 @@ public class ContextInjectionDisposeTest extends TestCase {
 		assertEquals(fieldValue, object.Field);
 		assertEquals(methodValue, object.methodValue);
 
-		// disposing context should clear values
+		// disposing context calls @PreDestory, but does not clear injected values
 		context.dispose();
-		assertNull(object.Field);
-		assertNull(object.methodValue);
+		assertNotNull(object.Field);
+		assertNotNull(object.methodValue);
 		assertTrue(object.disposeInvoked);
 	}
 
@@ -115,7 +116,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 
 			@SuppressWarnings("unused")
 			@Inject
-			public void InjectedMethod(String arg) {
+			public void InjectedMethod(@Optional String arg) {
 				methodValue = arg;
 			}
 		}
@@ -134,7 +135,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 		// disposing the context does.
 		ContextInjectionFactory.uninject(object, context);
 
-		assertNull(object.Field);
+		assertEquals(fieldValue, object.Field);
 		assertNull(object.methodValue);
 		assertTrue(object.disposeInvoked);
 	}

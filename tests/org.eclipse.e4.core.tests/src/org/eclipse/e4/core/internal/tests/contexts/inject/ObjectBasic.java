@@ -15,6 +15,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 
 /**
  * Test class to check injection mechanism
@@ -22,7 +23,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 public class ObjectBasic {
 
 	// Injected directly
-	@Inject
+	@Inject @Optional
 	public String injectedString;
 	@Inject
 	private Integer injectedInteger;
@@ -50,7 +51,7 @@ public class ObjectBasic {
 	}
 
 	@Inject
-	public void arguments(Float f, Character c) {
+	public void arguments(Float f, @Optional Character c) {
 		setMethodCalled2++;
 		this.f = f;
 		this.c = c;

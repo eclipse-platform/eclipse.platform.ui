@@ -47,7 +47,7 @@ public class InjectBaseTypeTest extends TestCase {
 		@Inject @Named("test_byte")
 		public byte byteField;
 		
-		@Inject @Named("test_boolean")
+		@Inject @Optional @Named("test_boolean")
 		public boolean booleanField;
 		
 		@Inject @Named("test_char")
@@ -96,19 +96,21 @@ public class InjectBaseTypeTest extends TestCase {
 		// test end-of-life reset of values
 		ContextInjectionFactory.uninject(testClass, context);
 		
-		assertEquals(0, testClass.intField);
-		assertEquals(0, testClass.intFieldOptional);
-		assertEquals(0L, testClass.longField);
-		assertEquals(0f, testClass.floatField);
-		assertEquals(0.0d, testClass.doubleField);
-		assertEquals((short)0, testClass.shortField);
-		assertEquals((byte)0, testClass.byteField);
-		assertEquals(false, testClass.booleanField);
-		assertEquals((char)0, testClass.charField);
+		// optional fields are reset to default;
+		// non-optional keep their values
+		assertEquals(12, testClass.intField);
+		assertEquals(0, testClass.intFieldOptional); // optional
+		assertEquals(124564523466L, testClass.longField);
+		assertEquals(12.34f, testClass.floatField);
+		assertEquals(12.34534534563463466546d, testClass.doubleField);
+		assertEquals((short)10, testClass.shortField);
+		assertEquals((byte)55, testClass.byteField);
+		assertEquals(false, testClass.booleanField); // optional
+		assertEquals('a', testClass.charField);
 		
-		assertEquals(0, testClass.intArg);
-		assertEquals((char)0, testClass.charArg);
-		assertEquals(false, testClass.booleanArg);
+		assertEquals(12, testClass.intArg);
+		assertEquals('a', testClass.charArg);
+		assertEquals(true, testClass.booleanArg);
 		
 	}
 }

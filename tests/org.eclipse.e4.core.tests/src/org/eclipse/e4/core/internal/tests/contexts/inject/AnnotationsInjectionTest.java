@@ -170,7 +170,7 @@ public class AnnotationsInjectionTest extends TestCase {
 
 			@SuppressWarnings("unused")
 			@Inject
-			public void injectedMethod(@Named("valueMethod") Object arg) {
+			public void injectedMethod(@Optional @Named("valueMethod") Object arg) {
 				try {
 					assertTrue(injectedField != null);
 				} catch (AssertionFailedError e) {
@@ -363,7 +363,7 @@ public class AnnotationsInjectionTest extends TestCase {
 		context.dispose();
 		
 		assertEquals(1, object.preDestoryCalled);
-		assertNull(object.value);
-		assertNull(object.directFieldInjection);
+		assertNotNull(object.value);
+		assertNotNull(object.directFieldInjection);
 	}
 }

@@ -21,6 +21,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.annotations.Optional;
 
 /**
  * Tests for the context injection functionality using 2 contexts 
@@ -39,12 +40,12 @@ public class InjectStaticContextTest extends TestCase {
 		public int preDestroyCalled = 0;
 
 		@Inject
-		public void contextSet(IEclipseContext context) {
+		public void contextSet(@Optional IEclipseContext context) {
 			injectedContext = context;
 		}
 		
 		@Inject
-		public void setA(@Named("a") String aString) {
+		public void setA(@Optional @Named("a") String aString) {
 			this.aString = aString;
 		}
 		

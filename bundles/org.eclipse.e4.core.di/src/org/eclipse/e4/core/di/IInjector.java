@@ -42,8 +42,7 @@ import org.eclipse.e4.core.di.suppliers.PrimaryObjectSupplier;
  * </p>
  * <p>
  * When supplier is disposed, the injector will attempt to notify all injected objects by
- * calling methods with the {@link PreDestroy} annotation before resetting injected values 
- * to <code>null</code>.
+ * calling methods with the {@link PreDestroy} annotation.
  * 
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -66,7 +65,8 @@ public interface IInjector {
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) throws InjectionException;
 
 	/**
-	 * Un-injects the supplier from the object.
+	 * Un-injects the supplier from the object. All un-injected values have to be optional,
+	 * or un-injection will fail.
 	 * @param object the domain object previously injected with the supplier's data
 	 * @param objectSupplier primary object supplier for the injection
 	 * @throws InjectionException if an exception occurred while performing this operation
