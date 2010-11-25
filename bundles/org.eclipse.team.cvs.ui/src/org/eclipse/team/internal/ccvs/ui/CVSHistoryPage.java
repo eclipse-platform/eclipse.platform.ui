@@ -159,6 +159,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private final static String SASH_WEIGHTS = "SASH_WEIGHTS"; //$NON-NLS-1$
 	private final static String INNER_SASH_WEIGHTS = "INNER_SASH_WEIGHTS"; //$NON-NLS-1$
 	private final static String SASH_WEIGHTS_SEPARATOR = ";"; //$NON-NLS-1$
+	private final static String SORT_ORDER_KEY = "SORT_ORDER"; //$NON-NLS-1$
 
 	// page settings section name
 	private static final String CVS_HISTORY_PAGE_SECTION = CVSHistoryPage.class.getName();
@@ -170,7 +171,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private Text searchField;
 	
 	//current tag list sort order.
-	private boolean sortTagsAscending = true;
+	private boolean sortTagsAscending;
 
 	// listener registered on the book this page is contained
 	private DisposeListener disposeListener;
@@ -194,6 +195,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (settings == null) {
 			settings = viewsSettings.addNewSection(CVS_HISTORY_PAGE_SECTION);
 		}
+		sortTagsAscending= settings.get(SORT_ORDER_KEY) == null || settings.getBoolean(SORT_ORDER_KEY);
 	}
 
 	/**
@@ -281,6 +283,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		saveSashWeights(SASH_WEIGHTS, sashForm.getWeights());
 		saveSashWeights(INNER_SASH_WEIGHTS, innerSashForm.getWeights());
 		historyTableProvider.saveColumnLayout();
+		settings.put(SORT_ORDER_KEY, sortTagsAscending);
 	}
 
 	private int[] loadSashWeights(String key) {
