@@ -646,7 +646,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		// project location entry field
 		this.directoryPathField = new Text(projectGroup, SWT.BORDER);
 
-		GridData directoryPathData = new GridData(SWT.FILL, SWT.NONE, true, false);
+		GridData directoryPathData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		directoryPathData.widthHint = new PixelConverter(directoryPathField).convertWidthInCharsToPixels(25);
 		directoryPathField.setLayoutData(directoryPathData);
 		
@@ -664,7 +664,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		// project location entry field
 		archivePathField = new Text(projectGroup, SWT.BORDER);
 
-		GridData archivePathData = new GridData(SWT.FILL, SWT.NONE, true, false);
+		GridData archivePathData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		archivePathData.widthHint = new PixelConverter(archivePathField).convertWidthInCharsToPixels(25);
 		archivePathField.setLayoutData(archivePathData); // browse button
 		browseArchivesButton = new Button(projectGroup, SWT.PUSH);
