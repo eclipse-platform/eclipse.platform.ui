@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
@@ -63,94 +65,146 @@ public class PartService implements IPartListener, IPartListener2, IPartService 
 		partListeners2.remove(listener);
 	}
 
-	public void partActivated(IWorkbenchPart part) {
+	public void partActivated(final IWorkbenchPart part) {
 		Object[] listeners = partListeners.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener) listener).partActivated(part);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partActivated(part);
+				}
+			});
 		}
 	}
 
-	public void partBroughtToTop(IWorkbenchPart part) {
+	public void partBroughtToTop(final IWorkbenchPart part) {
 		Object[] listeners = partListeners.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener) listener).partBroughtToTop(part);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partBroughtToTop(part);
+				}
+			});
 		}
 	}
 
-	public void partClosed(IWorkbenchPart part) {
+	public void partClosed(final IWorkbenchPart part) {
 		Object[] listeners = partListeners.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener) listener).partClosed(part);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partClosed(part);
+				}
+			});
 		}
 	}
 
-	public void partDeactivated(IWorkbenchPart part) {
+	public void partDeactivated(final IWorkbenchPart part) {
 		Object[] listeners = partListeners.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener) listener).partDeactivated(part);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partDeactivated(part);
+				}
+			});
 		}
 	}
 
-	public void partOpened(IWorkbenchPart part) {
+	public void partOpened(final IWorkbenchPart part) {
 		Object[] listeners = partListeners.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener) listener).partOpened(part);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partOpened(part);
+				}
+			});
 		}
 	}
 
-	public void partActivated(IWorkbenchPartReference partRef) {
+	public void partActivated(final IWorkbenchPartReference partRef) {
 		Object[] listeners = partListeners2.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener2) listener).partActivated(partRef);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partActivated(partRef);
+				}
+			});
 		}
 	}
 
-	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+	public void partBroughtToTop(final IWorkbenchPartReference partRef) {
 		Object[] listeners = partListeners2.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener2) listener).partBroughtToTop(partRef);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partBroughtToTop(partRef);
+				}
+			});
 		}
 	}
 
-	public void partClosed(IWorkbenchPartReference partRef) {
+	public void partClosed(final IWorkbenchPartReference partRef) {
 		Object[] listeners = partListeners2.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener2) listener).partClosed(partRef);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partClosed(partRef);
+				}
+			});
 		}
 	}
 
-	public void partDeactivated(IWorkbenchPartReference partRef) {
+	public void partDeactivated(final IWorkbenchPartReference partRef) {
 		Object[] listeners = partListeners2.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener2) listener).partDeactivated(partRef);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partDeactivated(partRef);
+				}
+			});
 		}
 	}
 
-	public void partOpened(IWorkbenchPartReference partRef) {
+	public void partOpened(final IWorkbenchPartReference partRef) {
 		Object[] listeners = partListeners2.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener2) listener).partOpened(partRef);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partOpened(partRef);
+				}
+			});
 		}
 	}
 
-	public void partHidden(IWorkbenchPartReference partRef) {
+	public void partHidden(final IWorkbenchPartReference partRef) {
 		Object[] listeners = partListeners2.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener2) listener).partHidden(partRef);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partHidden(partRef);
+				}
+			});
 		}
 	}
 
-	public void partVisible(IWorkbenchPartReference partRef) {
+	public void partVisible(final IWorkbenchPartReference partRef) {
 		Object[] listeners = partListeners2.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener2) listener).partVisible(partRef);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partVisible(partRef);
+				}
+			});
 		}
 	}
 
-	public void partInputChanged(IWorkbenchPartReference partRef) {
+	public void partInputChanged(final IWorkbenchPartReference partRef) {
 		Object[] listeners = partListeners2.getListeners();
-		for (Object listener : listeners) {
-			((IPartListener2) listener).partInputChanged(partRef);
+		for (final Object listener : listeners) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partInputChanged(partRef);
+				}
+			});
 		}
 	}
 

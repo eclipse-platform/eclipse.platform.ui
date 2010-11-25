@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -59,6 +60,7 @@ import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
@@ -3182,19 +3184,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private void firePartActivated(MPart part) {
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
-			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			final IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			final IWorkbenchPartReference partReference = getReference(workbenchPart);
 			if (partReference == null) {
 				WorkbenchPlugin.log("Reference is null in firePartActivated"); //$NON-NLS-1$
 				return;
 			}
 
-			for (Object listener : partListenerList.getListeners()) {
-				((IPartListener) listener).partActivated(workbenchPart);
+			for (final Object listener : partListenerList.getListeners()) {
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						((IPartListener) listener).partActivated(workbenchPart);
+					}
+				});
 			}
 
-			for (Object listener : partListener2List.getListeners()) {
-				((IPartListener2) listener).partActivated(partReference);
+			for (final Object listener : partListener2List.getListeners()) {
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						((IPartListener2) listener).partActivated(partReference);
+					}
+				});
 			}
 		}
 	}
@@ -3202,47 +3212,71 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private void firePartDeactivated(MPart part) {
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
-			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			final IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			final IWorkbenchPartReference partReference = getReference(workbenchPart);
 
-			for (Object listener : partListenerList.getListeners()) {
-				((IPartListener) listener).partDeactivated(workbenchPart);
+			for (final Object listener : partListenerList.getListeners()) {
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						((IPartListener) listener).partDeactivated(workbenchPart);
+					}
+				});
 			}
 
-			for (Object listener : partListener2List.getListeners()) {
-				((IPartListener2) listener).partDeactivated(partReference);
+			for (final Object listener : partListener2List.getListeners()) {
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						((IPartListener2) listener).partDeactivated(partReference);
+					}
+				});
 			}
 		}
 	}
 
 	public void firePartOpened(CompatibilityPart compatibilityPart) {
-		IWorkbenchPart part = compatibilityPart.getPart();
-		IWorkbenchPartReference partReference = compatibilityPart.getReference();
+		final IWorkbenchPart part = compatibilityPart.getPart();
+		final IWorkbenchPartReference partReference = compatibilityPart.getReference();
 
 		SaveablesList saveablesList = (SaveablesList) getWorkbenchWindow().getService(
 				ISaveablesLifecycleListener.class);
 		saveablesList.postOpen(part);
 
-		for (Object listener : partListenerList.getListeners()) {
-			((IPartListener) listener).partOpened(part);
+		for (final Object listener : partListenerList.getListeners()) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partOpened(part);
+				}
+			});
 		}
 
-		for (Object listener : partListener2List.getListeners()) {
-			((IPartListener2) listener).partOpened(partReference);
+		for (final Object listener : partListener2List.getListeners()) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partOpened(partReference);
+				}
+			});
 		}
 	}
 
 	public void firePartClosed(CompatibilityPart compatibilityPart) {
-		IWorkbenchPart part = compatibilityPart.getPart();
-		WorkbenchPartReference partReference = compatibilityPart.getReference();
+		final IWorkbenchPart part = compatibilityPart.getPart();
+		final WorkbenchPartReference partReference = compatibilityPart.getReference();
 		MPart model = partReference.getModel();
 
-		for (Object listener : partListenerList.getListeners()) {
-			((IPartListener) listener).partClosed(part);
+		for (final Object listener : partListenerList.getListeners()) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener) listener).partClosed(part);
+				}
+			});
 		}
 
-		for (Object listener : partListener2List.getListeners()) {
-			((IPartListener2) listener).partClosed(partReference);
+		for (final Object listener : partListener2List.getListeners()) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partClosed(partReference);
+				}
+			});
 		}
 
 		if (part instanceof IViewPart) {
@@ -3269,15 +3303,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private void firePartBroughtToTop(MPart part) {
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
-			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			final IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
+			final IWorkbenchPartReference partReference = getReference(workbenchPart);
 
-			for (Object listener : partListenerList.getListeners()) {
-				((IPartListener) listener).partBroughtToTop(workbenchPart);
+			for (final Object listener : partListenerList.getListeners()) {
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						((IPartListener) listener).partBroughtToTop(workbenchPart);
+					}
+				});
 			}
 
-			for (Object listener : partListener2List.getListeners()) {
-				((IPartListener2) listener).partBroughtToTop(partReference);
+			for (final Object listener : partListener2List.getListeners()) {
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						((IPartListener2) listener).partBroughtToTop(partReference);
+					}
+				});
 			}
 		}
 	}
@@ -3287,10 +3329,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			final IWorkbenchPartReference partReference = getReference(workbenchPart);
 
-			for (Object listener : partListener2List.getListeners()) {
-				((IPartListener2) listener).partVisible(partReference);
+			for (final Object listener : partListener2List.getListeners()) {
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						((IPartListener2) listener).partVisible(partReference);
+					}
+				});
 			}
 		}
 	}
@@ -3300,10 +3346,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
 			IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
-			IWorkbenchPartReference partReference = getReference(workbenchPart);
+			final IWorkbenchPartReference partReference = getReference(workbenchPart);
 
-			for (Object listener : partListener2List.getListeners()) {
-				((IPartListener2) listener).partHidden(partReference);
+			for (final Object listener : partListener2List.getListeners()) {
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						((IPartListener2) listener).partHidden(partReference);
+					}
+				});
 			}
 		}
 	}
