@@ -1693,9 +1693,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	public IWorkbenchPartReference[] getSortedParts() {
 		List<IWorkbenchPartReference> sortedReferences = new ArrayList<IWorkbenchPartReference>();
+		IViewReference[] viewReferences = getViewReferences();
+		List<EditorReference> editorReferences = getCurrentEditorReferences();
 
 		activationLoop: for (MPart part : activationList) {
-			for (IViewReference ref : getViewReferences()) {
+			for (IViewReference ref : viewReferences) {
 				if (((ViewReference) ref).getModel() == part) {
 					sortedReferences.add(ref);
 					continue activationLoop;
@@ -1710,7 +1712,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		for (IViewReference ref : getViewReferences()) {
+		for (IViewReference ref : viewReferences) {
 			if (!sortedReferences.contains(ref)) {
 				sortedReferences.add(ref);
 			}
