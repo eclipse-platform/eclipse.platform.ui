@@ -1,0 +1,24 @@
+### Eclipse Workspace Patch 1.0
+#P org.eclipse.ui.workbench
+Index: Eclipse UI/org/eclipse/ui/internal/e4/compatibility/ModeledPageLayout.java
+===================================================================
+RCS file: /cvsroot/eclipse/e4/org.eclipse.e4.compatibility/bundles/org.eclipse.ui.workbench/Eclipse UI/org/eclipse/ui/internal/e4/compatibility/ModeledPageLayout.java,v
+retrieving revision 1.38
+diff -u -r1.38 ModeledPageLayout.java
+--- Eclipse UI/org/eclipse/ui/internal/e4/compatibility/ModeledPageLayout.java	25 Nov 2010 14:43:11 -0000	1.38
++++ Eclipse UI/org/eclipse/ui/internal/e4/compatibility/ModeledPageLayout.java	26 Nov 2010 19:29:11 -0000
+@@ -329,8 +329,13 @@
+ 		}
+ 
+ 		MUIElement refModel = findElement(perspModel, refId);
+-		if (refModel instanceof MPart || refModel instanceof MPlaceholder) {
++		if (refModel instanceof MPart) {
+ 			refModel = refModel.getParent();
++		} else if (refModel instanceof MPlaceholder) {
++			MUIElement ref = ((MPlaceholder) refModel).getRef();
++			if (ref instanceof MPart) {
++				refModel = refModel.getParent();
++			}
+ 		}
+ 
+ 		MStackElement viewModel = createViewModel(application, viewId, visible, page, partService,
