@@ -329,8 +329,13 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 
 		MUIElement refModel = findElement(perspModel, refId);
-		if (refModel instanceof MPart || refModel instanceof MPlaceholder) {
+		if (refModel instanceof MPart) {
 			refModel = refModel.getParent();
+		} else if (refModel instanceof MPlaceholder) {
+			MUIElement ref = ((MPlaceholder) refModel).getRef();
+			if (ref instanceof MPart) {
+				refModel = refModel.getParent();
+			}
 		}
 
 		MStackElement viewModel = createViewModel(application, viewId, visible, page, partService,
