@@ -96,7 +96,8 @@ public class StackRenderer extends LazyStackRenderer {
 				// previously active perspective
 				int location = modelService.getElementLocation(stackToActivate);
 				if ((location & EModelService.IN_ACTIVE_PERSPECTIVE) == 0
-						&& (location & EModelService.OUTSIDE_PERSPECTIVE) == 0)
+						&& (location & EModelService.OUTSIDE_PERSPECTIVE) == 0
+						&& (location & EModelService.IN_SHARED_AREA) == 0)
 					return;
 
 				MUIElement selElement = stackToActivate.getSelectedElement();
