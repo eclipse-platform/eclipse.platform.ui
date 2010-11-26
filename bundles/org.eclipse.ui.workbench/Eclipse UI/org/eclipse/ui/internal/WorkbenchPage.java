@@ -552,20 +552,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		final EditorReference ref = new EditorReference(window.getContext(), this, part, input,
 				descriptor, memento);
 		addEditorReference(ref);
-		final IEventBroker broker = (IEventBroker) application.getContext().get(
-				IEventBroker.class.getName());
-		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
-				new EventHandler() {
-					public void handleEvent(Event event) {
-						Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-						if (element == part) {
-							if (part.getContext() != null) {
-								broker.unsubscribe(this);
-								part.getContext().set(EditorReference.class.getName(), ref);
-							}
-						}
-					}
-				});
+		ref.subscribe();
 		return ref;
 	}
 
@@ -1452,20 +1439,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		IEclipseContext partContext = part.getContext();
 		if (partContext == null) {
-			final IEventBroker broker = (IEventBroker) application.getContext().get(
-					IEventBroker.class.getName());
-			broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
-					new EventHandler() {
-						public void handleEvent(Event event) {
-							Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-							if (element == part) {
-								if (part.getContext() != null) {
-									broker.unsubscribe(this);
-									part.getContext().set(ViewReference.class.getName(), ref);
-								}
-							}
-						}
-					});
+			ref.subscribe();
 		} else {
 			partContext.set(ViewReference.class.getName(), ref);
 		}
@@ -1958,6 +1932,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		broker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
+		broker.subscribe(
+				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
+				referenceRemovalEventHandler);
+
 		if (getPerspectiveStack() != null) {
 			MPerspective persp = getPerspectiveStack().getSelectedElement();
 			List<String> newIds = ModeledPageLayout.getIds(persp, ModeledPageLayout.ACTION_SET_TAG);
@@ -3444,4 +3422,48 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return (IPathEditorInput) input;
 		return (IPathEditorInput) Util.getAdapter(input, IPathEditorInput.class);
 	}
+
+	/**
+	 * An event handler for listening to parts and placeholders being
+	 * unrendered.
+	 */
+	private EventHandler referenceRemovalEventHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			if (Boolean.TRUE.equals(event.getProperty(UIEvents.EventTags.NEW_VALUE))) {
+				return;
+			}
+			
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (element instanceof MPlaceholder) {
+				MUIElement ref = ((MPlaceholder) element).getRef();
+				if (ref instanceof MPart) {
+					// find all placeholders for this part
+					List<MPlaceholder> placeholders = modelService.findElements(window,
+							ref.getElementId(), MPlaceholder.class, null,
+							EModelService.IN_ANY_PERSPECTIVE | EModelService.IN_SHARED_AREA
+									| EModelService.OUTSIDE_PERSPECTIVE);
+					for (MPlaceholder placeholder : placeholders) {
+						if (placeholder.getRef() == ref && placeholder.isToBeRendered()) {
+							// if there's a rendered placeholder, return
+							return;
+						}
+					}
+
+					// no rendered placeholders around, unsubscribe
+					ViewReference reference = getViewReference((MPart) ref);
+					if (reference != null) {
+						reference.unsubscribe();
+					}
+				}
+			} else if (element instanceof MPart) {
+				MPart part = (MPart) element;
+				if (CompatibilityEditor.MODEL_ELEMENT_ID.equals(part.getElementId())) {
+					EditorReference reference = getEditorReference(part);
+					if (reference != null) {
+						reference.unsubscribe();
+					}
+				}
+			}
+		}
+	};
 }
