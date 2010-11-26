@@ -125,8 +125,9 @@ public class GradientBackgroundListener implements Listener {
 		} else {
 			if( oldImage == null || oldImage.isDisposed() || oldImage.getBounds().height != size.y || radialGradient || event == null ) {
 				radialGradient = false;
-				int x = 2;
-				int y = size.y;
+				boolean verticalGradient = grad.getVerticalGradient();
+				int x = verticalGradient? 2 : size.x;
+				int y = verticalGradient ? size.y : 2;
 				gradientImage = new Image(control.getDisplay(), x, y);
 				GC gc = new GC(gradientImage);
 				List<Color> colors = new ArrayList<Color>();
@@ -138,7 +139,7 @@ public class GradientBackgroundListener implements Listener {
 					colors.add(color);
 				}
 				fillGradient(gc, new Rectangle(0, 0, x, y), colors,
-						CSSSWTColorHelper.getPercents(grad), true);
+						CSSSWTColorHelper.getPercents(grad), grad.getVerticalGradient());
 				gc.dispose();
 				for (Iterator<Color> iterator = colors.iterator(); iterator
 						.hasNext();) {

@@ -31,6 +31,8 @@ public class Gradient {
 
 	private boolean isLinear = true;
 
+	private boolean vertical = true;
+	
 	/* TODO: enhance Gradient with focus points */
 
 	public void setLinear(boolean linear) {
@@ -55,6 +57,10 @@ public class Gradient {
 		percents.add(percent);
 	}
 
+	public void setVertical(boolean vertical){
+		this.vertical = vertical;
+	}
+	
 	public List getRGBs() {
 		return rgbs;
 	}
@@ -65,5 +71,9 @@ public class Gradient {
 	
 	public List getPercents() {
 		return percents;
+	}
+	
+	public boolean getVerticalGradient() {
+		return vertical;
 	}
 }

@@ -124,6 +124,9 @@ public class CSSSWTColorHelper {
 					RGB rgb = getRGB((CSSPrimitiveValue) value);
 					if (rgb != null) {
 						gradient.addRGB(rgb, (CSSPrimitiveValue) value);
+					} else {
+						//check for vertical gradient
+						gradient.setVertical(!value.getCssText().equals("false"));
 					}
 					break;
 				case CSSPrimitiveValue.CSS_PERCENTAGE:
