@@ -577,6 +577,96 @@ public class BuilderTest extends AbstractBuilderTest {
 	}
 
 	/**
+	 * Tests that changing the dynamic build order during a pre-build notification causes projects
+	 * to be built in the correct order.
+	 * This is a regression test for bug 330194.
+	 */
+	public void testChangeDynamicBuildOrderDuringPreBuild() throws Exception {
+		IWorkspace workspace = getWorkspace();
+		// Create some resource handles
+		final IProject proj1 = workspace.getRoot().getProject("bug_330194_referencer");
+		final IProject proj2 = workspace.getRoot().getProject("bug_330194_referencee");
+		// Disable workspace auto-build
+		setAutoBuilding(false);
+
+		ensureExistsInWorkspace(proj1, false);
+		ensureExistsInWorkspace(proj2, false);
+
+		IProjectDescription desc = proj1.getDescription();
+		desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
+		proj1.setDescription(desc, getMonitor());
+
+		desc = proj2.getDescription();
+		desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build1")});
+		proj2.setDescription(desc, getMonitor());
+
+		// Ensure the builder is instantiated
+		workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+
+		// Add pre-build listener that swap around the dependencies
+		IResourceChangeListener buildListener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				try {
+					IProjectDescription desc1 = proj1.getDescription();
+					IProjectDescription desc2 = proj2.getDescription();
+					// Swap around the references
+					if (desc1.getDynamicReferences().length == 0) {
+						desc1.setDynamicReferences(new IProject[] {proj2});
+						desc2.setDynamicReferences(new IProject[0]);
+					} else {
+						desc1.setDynamicReferences(new IProject[0]);
+						desc2.setDynamicReferences(new IProject[] {proj1});
+					}
+					proj1.setDescription(desc1, getMonitor());
+					proj2.setDescription(desc2, getMonitor());
+				} catch (CoreException e) {
+					fail();
+				}
+			}
+		};
+		try {
+			getWorkspace().addResourceChangeListener(buildListener, IResourceChangeEvent.PRE_BUILD);
+			// Set up a plug-in lifecycle verifier for testing purposes
+			TestBuilder verifier = SortBuilder.getInstance();
+			verifier.reset();
+
+			// FULL_BUILD 1
+			workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+			verifier.addExpectedLifecycleEvent("Build1");
+			verifier.addExpectedLifecycleEvent("Build0");
+			verifier.assertLifecycleEvents("1.0");
+			verifier.reset();
+
+			// FULL_BUILD 2
+			workspace.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+			verifier.addExpectedLifecycleEvent("Build0");
+			verifier.addExpectedLifecycleEvent("Build1");
+			verifier.assertLifecycleEvents("2.0");
+			verifier.reset();
+
+			// AUTO_BUILD
+			setAutoBuilding(true);
+			proj1.touch(getMonitor());
+			waitForBuild();
+			verifier.addExpectedLifecycleEvent("Build1");
+			verifier.addExpectedLifecycleEvent("Build0");
+			verifier.assertLifecycleEvents("3.0");
+			verifier.reset();
+
+			// AUTO_BUILD 2
+			proj1.touch(getMonitor());
+			waitForBuild();
+			verifier.addExpectedLifecycleEvent("Build0");
+			verifier.addExpectedLifecycleEvent("Build1");
+			verifier.assertLifecycleEvents("4.0");
+			verifier.reset();
+
+		} finally {
+			getWorkspace().removeResourceChangeListener(buildListener);
+		}
+	}
+
+	/**
 	 * Ensure that build order is preserved when project is closed/opened.
 	 */
 	public void testCloseOpenProject() {
