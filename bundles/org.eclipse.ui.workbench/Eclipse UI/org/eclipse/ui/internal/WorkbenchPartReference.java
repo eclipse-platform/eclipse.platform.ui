@@ -22,7 +22,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -46,6 +48,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.util.Util;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * 
@@ -179,11 +183,45 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	private MPart part;
 
 	private IEclipseContext windowContext;
+
+	private EventHandler contextEventHandler;
     
     public WorkbenchPartReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part) {
     	this.windowContext = windowContext;
 		this.page = page;
 		this.part = part;
+	}
+
+	private EventHandler createContextEventHandler() {
+		if (contextEventHandler == null) {
+			contextEventHandler = new EventHandler() {
+				public void handleEvent(Event event) {
+					Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+					MPart part = getModel();
+					if (element == part) {
+						if (part.getContext() != null) {
+							part.getContext().set(getClass().getName(), this);
+							unsubscribe();
+						}
+					}
+				}
+			};
+		}
+		return contextEventHandler;
+	}
+
+	public void subscribe() {
+		IEventBroker broker = windowContext.get(IEventBroker.class);
+		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+				createContextEventHandler());
+	}
+
+	public void unsubscribe() {
+		if (contextEventHandler != null) {
+			IEventBroker broker = windowContext.get(IEventBroker.class);
+			broker.unsubscribe(contextEventHandler);
+			contextEventHandler = null;
+		}
 	}
     
     public boolean isDisposed() {

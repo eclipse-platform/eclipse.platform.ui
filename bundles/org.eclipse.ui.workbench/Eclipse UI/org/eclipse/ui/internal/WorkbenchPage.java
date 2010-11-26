@@ -1211,6 +1211,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			legacyWindow.setActivePage(null);
 			partService.removePartListener(e4PartListener);
 			broker.unsubscribe(selectionHandler);
+			broker.unsubscribe(referenceRemovalEventHandler);
 
 			ISelectionService selectionService = getWorkbenchWindow().getSelectionService();
 			for (ISelectionListener listener : selectionListeners) {
