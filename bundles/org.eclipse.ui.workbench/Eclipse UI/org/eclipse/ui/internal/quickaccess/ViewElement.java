@@ -14,11 +14,17 @@ package org.eclipse.ui.internal.quickaccess;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 
 /**
  * @since 3.3
@@ -44,14 +50,28 @@ public class ViewElement extends QuickAccessElement {
 
 	@Override
 	public void execute() {
-		EPartService partService = window.getContext().get(EPartService.class);
 		String id = viewDescriptor.getElementId();
 		if (id != null) {
-			MPart part = partService.findPart(id);
-			if (part == null) {
-				part = partService.createPart(id);
+			if (CompatibilityPart.COMPATIBILITY_VIEW_URI
+					.equals(viewDescriptor.getContributionURI())) {
+				IWorkbenchWindow workbenchWindow = window.getContext().get(IWorkbenchWindow.class);
+				IWorkbenchPage page = workbenchWindow.getActivePage();
+				if (page != null) {
+					try {
+						page.showView(viewDescriptor.getElementId());
+					} catch (PartInitException e) {
+						WorkbenchPlugin.log(e);
+					}
+				}
+			} else {
+				EPartService partService = window.getContext().get(EPartService.class);
+				MPart part = partService.findPart(id);
+				if (part == null) {
+					MPlaceholder placeholder = partService.createSharedPart(id);
+					part = (MPart) placeholder.getRef();
+				}
+				partService.showPart(part, PartState.ACTIVATE);
 			}
-			partService.showPart(part, PartState.ACTIVATE);
 		}
 	}
 
