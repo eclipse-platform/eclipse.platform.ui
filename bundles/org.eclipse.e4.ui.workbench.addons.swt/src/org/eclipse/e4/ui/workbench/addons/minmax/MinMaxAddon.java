@@ -358,7 +358,8 @@ public class MinMaxAddon {
 	void maximizeEA(MPlaceholder sharedAreaRef) {
 		MWindow win = modelService.getTopLevelWindowFor(sharedAreaRef);
 		MPerspective persp = modelService.getActivePerspective(win);
-		List<MPartStack> stacks = modelService.findElements(persp, null, MPartStack.class, null);
+		List<MPartStack> stacks = modelService.findElements(persp, null, MPartStack.class, null,
+				EModelService.PRESENTATION);
 		for (MPartStack theStack : stacks) {
 			if (!theStack.getTags().contains("EditorStack") && theStack.getWidget() != null
 					&& !theStack.getTags().contains(MINIMIZED)) {
@@ -382,7 +383,8 @@ public class MinMaxAddon {
 	void unmaximizeEA(MPlaceholder sharedAreaRef) {
 		MWindow win = modelService.getTopLevelWindowFor(sharedAreaRef);
 		MPerspective persp = modelService.getActivePerspective(win);
-		List<MPartStack> stacks = modelService.findElements(persp, null, MPartStack.class, null);
+		List<MPartStack> stacks = modelService.findElements(win, null, MPartStack.class, null,
+				EModelService.PRESENTATION);
 		for (MPartStack theStack : stacks) {
 			if (!theStack.getTags().contains("EditorStack") && theStack.getWidget() != null
 					&& theStack.getTags().contains(MINIMIZED)

@@ -2348,6 +2348,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 		reader.extendLayout(getExtensionTracker(), desc.getId(), modelLayout);
 
+		// Remove placeholders for parts that exist in the 'global' areas
+		modelService.removeLocalPlaceholders(window, dummyPerspective);
+
 		List<MPart> dirtyParts = new ArrayList<MPart>();
 		// compare all of the parts between the original and the current
 		// perspective to check for dirty parts that will no longer be present
@@ -2623,6 +2626,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (lastPerspective != null) {
 			legacyWindow.firePerspectiveDeactivated(this, lastPerspective);
 		}
+
+		// Remove placeholders for parts that exist in the 'global' areas
+		modelService.removeLocalPlaceholders(window, modelPerspective);
 
 		// add it to the stack
 		perspectives.getChildren().add(modelPerspective);

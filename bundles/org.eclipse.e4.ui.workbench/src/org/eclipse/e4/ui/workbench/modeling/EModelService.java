@@ -45,7 +45,7 @@ public interface EModelService {
 	public static final int UI_LAYOUT = OUTSIDE_PERSPECTIVE | IN_ACTIVE_PERSPECTIVE
 			| IN_SHARED_AREA;
 	public static final int PRESENTATION = OUTSIDE_PERSPECTIVE | IN_ACTIVE_PERSPECTIVE
-			| IN_SHARED_AREA | IN_TRIM;
+			| IN_SHARED_AREA;
 	public static final int ANYWHERE = OUTSIDE_PERSPECTIVE | IN_ANY_PERSPECTIVE | IN_SHARED_AREA
 			| IN_TRIM;
 	public static final int GLOBAL = OUTSIDE_PERSPECTIVE | IN_SHARED_AREA;
@@ -366,4 +366,15 @@ public interface EModelService {
 	 *         </ul>
 	 */
 	public int getElementLocation(MUIElement element);
+
+	/**
+	 * This method ensures that there will never be two placeholders for the same referenced element
+	 * visible in the presentation at the same time. It does this by removing placeholders which are
+	 * contained in any MPerspective if there is a placeholder for the element in any 'shared' area
+	 * (i.e. visible regardless of which perspective is visible.
+	 * 
+	 * @param window
+	 * @param perspective
+	 */
+	public void removeLocalPlaceholders(MWindow window, MPerspective perspective);
 }

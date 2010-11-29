@@ -91,20 +91,25 @@ public class ModelServiceImpl implements EModelService {
 
 		// Check regular containers
 		if (searchRoot instanceof MElementContainer<?>) {
-			if (searchRoot instanceof MPerspectiveStack && (searchFlags & IN_ANY_PERSPECTIVE) == 0) {
-				// Special cases: search only the active perspective or *only* the shared ares
-				if ((searchFlags & IN_ACTIVE_PERSPECTIVE) != 0) {
+			if (searchRoot instanceof MPerspectiveStack) {
+				if ((searchFlags & IN_ANY_PERSPECTIVE) != 0) {
+					// Search *all* the perspectives
+					MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) searchRoot;
+					List<MUIElement> children = container.getChildren();
+					for (MUIElement child : children) {
+						findElementsRecursive(child, id, type, tagsToMatch, elements, searchFlags);
+					}
+				} else if ((searchFlags & IN_ACTIVE_PERSPECTIVE) != 0) {
 					// Only search the currently active perspective, if any
 					MPerspective active = ((MPerspectiveStack) searchRoot).getSelectedElement();
 					if (active != null) {
 						findElementsRecursive(active, id, type, tagsToMatch, elements, searchFlags);
 					}
 				} else if ((searchFlags & IN_SHARED_AREA) != 0) {
-					// skip the perspective but check its shared area
-					List<MArea> sharedAreas = findElements(searchRoot, null, MArea.class, null);
-					if (sharedAreas.size() > 0) {
-						findElementsRecursive(sharedAreas.get(0), id, type, tagsToMatch, elements,
-								searchFlags);
+					// Only recurse through the shared areas
+					List<MArea> areas = findElements(searchRoot, null, MArea.class, null);
+					for (MArea area : areas) {
+						findElementsRecursive(area, id, type, tagsToMatch, elements, searchFlags);
 					}
 				}
 			} else {
@@ -141,7 +146,11 @@ public class ModelServiceImpl implements EModelService {
 		// Search shared elements
 		if (searchRoot instanceof MPlaceholder) {
 			MPlaceholder ph = (MPlaceholder) searchRoot;
-			findElementsRecursive(ph.getRef(), id, type, tagsToMatch, elements, searchFlags);
+
+			// Don't search in shared areas unless the flag is set
+			if (!(ph.getRef() instanceof MArea) || (searchFlags & IN_SHARED_AREA) != 0) {
+				findElementsRecursive(ph.getRef(), id, type, tagsToMatch, elements, searchFlags);
+			}
 		}
 	}
 
@@ -176,7 +185,7 @@ public class ModelServiceImpl implements EModelService {
 	public <T> List<T> findPerspectiveElements(MUIElement searchRoot, String id, Class<T> clazz,
 			List<String> tagsToMatch) {
 		List<T> elements = new ArrayList<T>();
-		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, IN_ACTIVE_PERSPECTIVE);
+		findElementsRecursive(searchRoot, id, clazz, tagsToMatch, elements, PRESENTATION);
 		return elements;
 	}
 
@@ -777,5 +786,42 @@ public class ModelServiceImpl implements EModelService {
 		}
 
 		return NOT_IN_UI;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#removeLocalPlaceholders(org.eclipse.e4
+	 * .ui.model.application.ui.basic.MWindow,
+	 * org.eclipse.e4.ui.model.application.ui.advanced.MPerspective)
+	 */
+	public void removeLocalPlaceholders(MWindow window, MPerspective perspective) {
+		List<MPlaceholder> globals = findElements(window, null, MPlaceholder.class, null,
+				OUTSIDE_PERSPECTIVE | IN_SHARED_AREA);
+		List<MPlaceholder> locals = findElements(perspective, null, MPlaceholder.class, null,
+				IN_ANY_PERSPECTIVE);
+		for (MPlaceholder local : locals) {
+			for (MPlaceholder global : globals) {
+				if (global.getRef() == local.getRef()) {
+					MElementContainer<MUIElement> localParent = local.getParent();
+					local.getParent().getChildren().remove(local);
+					setStackVisibility(localParent);
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param parent
+	 */
+	private void setStackVisibility(MElementContainer<MUIElement> parent) {
+		for (MUIElement child : parent.getChildren()) {
+			if (child.isToBeRendered() && child.isVisible()) {
+				parent.setToBeRendered(true);
+				return;
+			}
+		}
+		parent.setToBeRendered(false);
 	}
 }

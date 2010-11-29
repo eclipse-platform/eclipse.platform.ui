@@ -271,6 +271,8 @@ public class TrimStack {
 			MPerspective persp = (MPerspective) modelService.find(perspId, ps.get(0));
 			if (persp != null) {
 				theStack = (MPartStack) modelService.find(stackId, persp);
+			} else {
+				theStack = (MPartStack) modelService.find(stackId, window);
 			}
 		}
 

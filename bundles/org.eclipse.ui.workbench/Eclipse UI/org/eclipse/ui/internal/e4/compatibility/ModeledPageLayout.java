@@ -66,7 +66,7 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	private MApplication application;
-	private MWindow window;
+	// private MWindow window;
 	private EModelService modelService;
 
 	EPartService partService;
@@ -84,7 +84,7 @@ public class ModeledPageLayout implements IPageLayout {
 			EPartService partService,
 			MPerspective perspModel, IPerspectiveDescriptor descriptor, WorkbenchPage page,
 			boolean createReferences) {
-		this.window = window;
+		// this.window = window;
 		MUIElement winParent = window.getParent();
 		this.application = (MApplication) winParent;
 		this.modelService = modelService;
@@ -323,11 +323,6 @@ public class ModeledPageLayout implements IPageLayout {
 
 	private void insertView(String viewId, int relationship, float ratio,
 			String refId, boolean visible, boolean withStack) {
-		MUIElement existingView = findElement(perspModel, viewId);
-		if (existingView instanceof MPlaceholder) {
-			existingView.getParent().getChildren().remove(existingView);
-		}
-
 		MUIElement refModel = findElement(perspModel, refId);
 		if (refModel instanceof MPart) {
 			refModel = refModel.getParent();
@@ -529,17 +524,12 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	MUIElement findElement(MUIElement toSearch, String id) {
+		List<Object> found = modelService.findElements(toSearch, id, null, null,
+				EModelService.IN_ANY_PERSPECTIVE);
+		if (found.size() > 0)
+			return (MUIElement) found.get(0);
+
 		MUIElement foundElement = modelService.find(id, toSearch);
-		if (foundElement == null) {
-			// if not found in the current perspective model check outside the
-			// perspective
-			// and in the shared area to see if it's 'globally' in the
-			// presentation
-			List<Object> elements = modelService.findElements(window, id, null, null,
-					EModelService.OUTSIDE_PERSPECTIVE | EModelService.IN_SHARED_AREA);
-			if (elements.size() == 1)
-				foundElement = (MUIElement) elements.get(0);
-		}
 		return foundElement;
 	}
 
@@ -574,11 +564,6 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void stackView(String id, String refId, boolean visible) {
-		MUIElement existingView = findElement(perspModel, id);
-		if (existingView instanceof MPlaceholder) {
-			existingView.getParent().getChildren().remove(existingView);
-		}
-
 		MUIElement refModel = findElement(perspModel, refId);
 		if (refModel instanceof MPart || refModel instanceof MPlaceholder) {
 			refModel = refModel.getParent();
