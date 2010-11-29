@@ -1785,9 +1785,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		appContext.set(ICommandService.class.getName(), service);
 		service.readRegistry();
 
-		// TODO Return Types need to be read in
-		// TODO status needs to be read in
-
 		MakeHandlersGo allHandlers = new MakeHandlersGo();
 
 		Command[] cmds = commandManager.getAllCommands();

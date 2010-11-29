@@ -8,6 +8,7 @@ import org.eclipse.core.commands.ITypedParameter;
 import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.commands.common.HandleObject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.bindings.internal.Util;
 
@@ -25,6 +26,11 @@ import org.eclipse.e4.ui.bindings.internal.Util;
  * @since 3.1
  */
 public final class Parameter implements IParameter, ITypedParameter {
+	/**
+	 * The name of the configuration element attribute contain the values. This is used to retrieve
+	 * the executable extension <code>IParameterValues</code>.
+	 */
+	private static final String ATTRIBUTE_VALUES = "values"; //$NON-NLS-1$
 
 	/**
 	 * The constant integer hash code value meaning the hash code has not yet been computed.
@@ -83,6 +89,8 @@ public final class Parameter implements IParameter, ITypedParameter {
 	 */
 	private transient IParameterValues values = null;
 
+	private IConfigurationElement valuesConfigurationElement;
+
 	/**
 	 * Constructs a new instance of <code>Parameter</code> with all of its values pre-defined.
 	 * 
@@ -108,6 +116,7 @@ public final class Parameter implements IParameter, ITypedParameter {
 			throw new NullPointerException("The name of a parameter cannot be null."); //$NON-NLS-1$
 		}
 
+		this.valuesConfigurationElement = values;
 		this.id = id;
 		this.name = name;
 		this.parameterType = parameterType;
@@ -158,12 +167,27 @@ public final class Parameter implements IParameter, ITypedParameter {
 	}
 
 	public final IParameterValues getValues() throws ParameterValuesException {
-		return new IParameterValues() {
-
-			public Map getParameterValues() {
-				return Collections.EMPTY_MAP;
+		if (values == null) {
+			if (valuesConfigurationElement != null) {
+				try {
+					values = (IParameterValues) valuesConfigurationElement
+							.createExecutableExtension(ATTRIBUTE_VALUES);
+				} catch (final CoreException e) {
+					throw new ParameterValuesException("Problem creating parameter values", e); //$NON-NLS-1$
+				} catch (final ClassCastException e) {
+					throw new ParameterValuesException(
+							"Parameter values were not an instance of IParameterValues", e); //$NON-NLS-1$
+				}
+			} else {
+				values = new IParameterValues() {
+					public Map getParameterValues() {
+						return Collections.EMPTY_MAP;
+					}
+				};
 			}
-		};
+		}
+
+		return values;
 	}
 
 	public final int hashCode() {

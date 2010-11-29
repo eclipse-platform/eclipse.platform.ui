@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -31,9 +30,9 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.commands.PersistentState;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.commands.IElementUpdater;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.menus.UIElement;
@@ -94,7 +93,7 @@ public final class CommandService implements ICommandService {
 					"Cannot create a command service with a null manager"); //$NON-NLS-1$
 		}
 		this.commandManager = commandManager;
-		this.commandPersistence = new CommandPersistence(this);
+		this.commandPersistence = new CommandPersistence(commandManager);
 	}
 
 	public final void addExecutionListener(final IExecutionListener listener) {
@@ -187,7 +186,7 @@ public final class CommandService implements ICommandService {
 	}
 
 	public final void readRegistry() {
-		commandPersistence.read();
+		commandPersistence.reRead();
 	}
 
 	public final void removeExecutionListener(final IExecutionListener listener) {

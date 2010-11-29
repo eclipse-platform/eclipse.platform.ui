@@ -17,7 +17,9 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.ParameterType;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.Activator;
@@ -37,6 +39,9 @@ import org.osgi.service.event.EventHandler;
 public class CommandProcessingAddon {
 	@Inject
 	private ECommandService commandService;
+
+	@Inject
+	private CommandManager commandManager;
 
 	@Inject
 	private MApplication application;
@@ -105,8 +110,12 @@ public class CommandProcessingAddon {
 		if (modelParms != null && !modelParms.isEmpty()) {
 			ArrayList<Parameter> parmList = new ArrayList<Parameter>();
 			for (MCommandParameter cmdParm : modelParms) {
-				parmList.add(new Parameter(cmdParm.getElementId(), cmdParm.getName(), null, null,
-						cmdParm.isOptional()));
+				ParameterType parameterType = null;
+				if (cmdParm.getTypeId() != null) {
+					parameterType = commandManager.getParameterType(cmdParm.getTypeId());
+				}
+				parmList.add(new Parameter(cmdParm.getElementId(), cmdParm.getName(), null,
+						parameterType, cmdParm.isOptional()));
 			}
 			parms = parmList.toArray(new Parameter[parmList.size()]);
 		}
