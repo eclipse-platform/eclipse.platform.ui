@@ -369,17 +369,15 @@ public class LocalMetaArea implements ICoreConstants {
 				description.setDynamicReferences(references);
 
 				// Since 3.7 -  Build Configurations
-				IBuildConfiguration[] configs = new IBuildConfiguration[dataIn.readInt()];
-				for (int i = 0; i < configs.length; i++) {
-					String configId = dataIn.readUTF();
-					configs[i] = new BuildConfiguration(target, configId);
-				}
+				String[] configs = new String[dataIn.readInt()];
+				for (int i = 0; i < configs.length; i++)
+					configs[i] = dataIn.readUTF();
 				if (configs.length > 0)
 					// In the future we may decide this is better stored in the 
 					// .project, so only set if configs.length > 0
-					description.setBuildConfigurations(configs);
+					description.setBuildConfigs(configs);
 				// Active configuration Id
-				description.setActiveBuildConfiguration(dataIn.readUTF());
+				description.setActiveBuildConfig(dataIn.readUTF());
 				// Build configuration references?
 				int numBuildConifgsWithRefs = dataIn.readInt();
 				HashMap m = new HashMap(numBuildConifgsWithRefs);
@@ -441,8 +439,8 @@ public class LocalMetaArea implements ICoreConstants {
 			return;
 		final URI projectLocation = desc.getLocationURI();
 		final IProject[] prjRefs = desc.getDynamicReferences(false);
-		final IBuildConfiguration[] buildConfigs = desc.getBuildConfigurations(false);
-		final Map configRefs = desc.getBuildConfigReferences(false);
+		final String[] buildConfigs = desc.configNames;
+		final Map<String, IBuildConfiguration[]> configRefs = desc.getBuildConfigReferences(false);
 		if (projectLocation == null && prjRefs.length == 0 && 
 				buildConfigs.length == 0 && configRefs.isEmpty())
 			return;
@@ -463,7 +461,7 @@ public class LocalMetaArea implements ICoreConstants {
 				// Write out the build configurations
 				dataOut.writeInt(buildConfigs.length);
 				for (int i = 0; i < buildConfigs.length; i++) {
-					dataOut.writeUTF(buildConfigs[i].getId());
+					dataOut.writeUTF(buildConfigs[i]);
 				}
 				// Write active configuration id
 				dataOut.writeUTF(desc.getActiveBuildConfigurationId());
@@ -478,11 +476,11 @@ public class LocalMetaArea implements ICoreConstants {
 					dataOut.writeInt(refs.length);
 					for (int j = 0; j < refs.length; j++) {
 						dataOut.writeUTF(refs[j].getProject().getName());
-						if (refs[j].getId() == null) {
+						if (refs[j].getName() == null) {
 							dataOut.writeBoolean(false);
 						} else {
 							dataOut.writeBoolean(true);
-							dataOut.writeUTF(refs[j].getId());
+							dataOut.writeUTF(refs[j].getName());
 						}
 					}
 				}

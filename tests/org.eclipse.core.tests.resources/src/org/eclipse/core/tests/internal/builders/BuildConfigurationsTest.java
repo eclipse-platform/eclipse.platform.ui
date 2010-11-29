@@ -73,7 +73,7 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 		desc.setBuildSpec(new ICommand[] {command});
 
 		// Create buildConfigs
-		desc.setBuildConfigurations(new IBuildConfiguration[] {getWorkspace().newBuildConfiguration(project.getName(), variant0), getWorkspace().newBuildConfiguration(project.getName(), variant1), getWorkspace().newBuildConfiguration(project.getName(), variant2)});
+		desc.setBuildConfigs(new String[] {variant0, variant1, variant2});
 
 		project.setDescription(desc, getMonitor());
 	}
@@ -132,21 +132,21 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 		ConfigurationBuilder.clearStats();
 		ConfigurationBuilder.clearBuildOrder();
 		IProjectDescription desc = project0.getDescription();
-		desc.setActiveBuildConfiguration(variant0);
+		desc.setActiveBuildConfig(variant0);
 		project0.setDescription(desc, getMonitor());
 		desc = project1.getDescription();
-		desc.setActiveBuildConfiguration(variant0);
+		desc.setActiveBuildConfig(variant0);
 		project1.setDescription(desc, getMonitor());
 
 		// Note: references are not alphabetically ordered to check that references are sorted into a stable order
-		setReferences(project0, variant0, new IBuildConfiguration[] {project0.getBuildConfiguration(variant1), project1.getBuildConfiguration(variant2), project1.getBuildConfiguration(variant0)});
+		setReferences(project0, variant0, new IBuildConfiguration[] {project0.getBuildConfig(variant1), project1.getBuildConfig(variant2), project1.getBuildConfig(variant0)});
 		getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
 
 		assertEquals("1.0", 4, ConfigurationBuilder.buildOrder.size());
-		assertEquals("1.1", project0.getBuildConfiguration(variant1), ConfigurationBuilder.buildOrder.get(0));
-		assertEquals("1.2", project1.getBuildConfiguration(variant0), ConfigurationBuilder.buildOrder.get(1));
-		assertEquals("1.3", project1.getBuildConfiguration(variant2), ConfigurationBuilder.buildOrder.get(2));
-		assertEquals("1.4", project0.getBuildConfiguration(variant0), ConfigurationBuilder.buildOrder.get(3));
+		assertEquals("1.1", project0.getBuildConfig(variant1), ConfigurationBuilder.buildOrder.get(0));
+		assertEquals("1.2", project1.getBuildConfig(variant0), ConfigurationBuilder.buildOrder.get(1));
+		assertEquals("1.3", project1.getBuildConfig(variant2), ConfigurationBuilder.buildOrder.get(2));
+		assertEquals("1.4", project0.getBuildConfig(variant0), ConfigurationBuilder.buildOrder.get(3));
 		checkBuild(2, project0, variant0, true, 1, IncrementalProjectBuilder.FULL_BUILD);
 		checkBuild(3, project0, variant1, true, 1, IncrementalProjectBuilder.FULL_BUILD);
 		checkBuild(4, project0, variant2, false, 0, 0);
@@ -161,8 +161,8 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 		getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
 
 		assertEquals("8.0", 2, ConfigurationBuilder.buildOrder.size());
-		assertEquals("8.1", project1.getBuildConfiguration(variant0), ConfigurationBuilder.buildOrder.get(0));
-		assertEquals("8.2", project1.getBuildConfiguration(variant2), ConfigurationBuilder.buildOrder.get(1));
+		assertEquals("8.1", project1.getBuildConfig(variant0), ConfigurationBuilder.buildOrder.get(0));
+		assertEquals("8.2", project1.getBuildConfig(variant2), ConfigurationBuilder.buildOrder.get(1));
 		checkBuild(9, project0, variant0, false, 1, 0);
 		checkBuild(10, project0, variant1, false, 1, 0);
 		checkBuild(11, project0, variant2, false, 0, 0);
@@ -183,16 +183,16 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 		ConfigurationBuilder.clearStats();
 		ConfigurationBuilder.clearBuildOrder();
 		IProjectDescription desc = project0.getDescription();
-		desc.setActiveBuildConfiguration(variant0);
-		desc.setBuildConfigReferences(variant0, new IBuildConfiguration[] {project1.getBuildConfiguration(variant0)});
+		desc.setActiveBuildConfig(variant0);
+		desc.setBuildConfigReferences(variant0, new IBuildConfiguration[] {project1.getBuildConfig(variant0)});
 		project0.setDescription(desc, getMonitor());
 
 		// close project 1
 		project1.close(getMonitor());
 		// should still be able to build project 0.
-		getWorkspace().build(new IBuildConfiguration[] {project0.getBuildConfiguration(variant0)}, IncrementalProjectBuilder.FULL_BUILD, true, getMonitor());
+		getWorkspace().build(new IBuildConfiguration[] {project0.getBuildConfig(variant0)}, IncrementalProjectBuilder.FULL_BUILD, true, getMonitor());
 		assertEquals("1.0", 1, ConfigurationBuilder.buildOrder.size());
-		assertEquals("1.1", project0.getBuildConfiguration(variant0), ConfigurationBuilder.buildOrder.get(0));
+		assertEquals("1.1", project0.getBuildConfig(variant0), ConfigurationBuilder.buildOrder.get(0));
 		checkBuild(2, project0, variant0, true, 1, IncrementalProjectBuilder.FULL_BUILD);
 
 		// Workspace full build should also build project 0
@@ -200,7 +200,7 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 		ConfigurationBuilder.clearBuildOrder();
 		getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 		assertEquals("1.0", 1, ConfigurationBuilder.buildOrder.size());
-		assertEquals("1.1", project0.getBuildConfiguration(variant0), ConfigurationBuilder.buildOrder.get(0));
+		assertEquals("1.1", project0.getBuildConfig(variant0), ConfigurationBuilder.buildOrder.get(0));
 		checkBuild(2, project0, variant0, true, 1, IncrementalProjectBuilder.FULL_BUILD);
 
 		// re-open project 1
@@ -211,8 +211,8 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 		getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
 
 		assertEquals("8.0", 2, ConfigurationBuilder.buildOrder.size());
-		assertEquals("8.1", project1.getBuildConfiguration(variant0), ConfigurationBuilder.buildOrder.get(0));
-		assertEquals("8.2", project0.getBuildConfiguration(variant0), ConfigurationBuilder.buildOrder.get(1));
+		assertEquals("8.1", project1.getBuildConfig(variant0), ConfigurationBuilder.buildOrder.get(0));
+		assertEquals("8.2", project0.getBuildConfig(variant0), ConfigurationBuilder.buildOrder.get(1));
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 	 * Run an incremental build for the given project variant, and check the behaviour of the build.
 	 */
 	private void incrementalBuild(int testId, IProject project, String variant, boolean shouldBuild, int expectedCount, int expectedTrigger) throws CoreException {
-		project.build(project.getBuildConfiguration(variant), IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		project.build(project.getBuildConfig(variant), IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
 		checkBuild(testId, project, variant, shouldBuild, expectedCount, expectedTrigger);
 	}
 
@@ -247,8 +247,8 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 	 * Clean the specified project variant.
 	 */
 	private void clean(int testId, IProject project, String variant, int expectedCount) throws CoreException {
-		project.build(project.getBuildConfiguration(variant), IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
-		ConfigurationBuilder builder = ConfigurationBuilder.getBuilder(project.getBuildConfiguration(variant));
+		project.build(project.getBuildConfig(variant), IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
+		ConfigurationBuilder builder = ConfigurationBuilder.getBuilder(project.getBuildConfig(variant));
 		assertNotNull(testId + ".0", builder);
 		assertEquals(testId + ".1", expectedCount, builder.buildCount);
 		assertEquals(testId + ".2", IncrementalProjectBuilder.CLEAN_BUILD, builder.triggerForLastBuild);
@@ -259,11 +259,11 @@ public class BuildConfigurationsTest extends AbstractBuilderTest {
 	 */
 	private void checkBuild(int testId, IProject project, String variant, boolean shouldBuild, int expectedCount, int expectedTrigger) throws CoreException {
 		try {
-			project.getBuildConfiguration(variant);
+			project.getBuildConfig(variant);
 		} catch (CoreException e) {
 			fail(testId + ".0");
 		}
-		ConfigurationBuilder builder = ConfigurationBuilder.getBuilder(project.getBuildConfiguration(variant));
+		ConfigurationBuilder builder = ConfigurationBuilder.getBuilder(project.getBuildConfig(variant));
 		if (builder == null) {
 			assertFalse(testId + ".1", shouldBuild);
 			assertEquals(testId + ".2", 0, expectedCount);

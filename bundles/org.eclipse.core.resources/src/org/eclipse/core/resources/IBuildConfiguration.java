@@ -18,15 +18,14 @@ package org.eclipse.core.resources;
  * each other.
  *<p>
  * All projects have at least one build configuration.  By default this
- * has Id {@link #DEFAULT_CONFIG_ID}.  One configuration in the project is defined 
+ * has name {@link #DEFAULT_CONFIG_NAME}.  One configuration in the project is defined 
  * to be 'active'. The active configuration is built by default.  If unset, the
  * active configuration defaults to the first configuration in the project.
  *</p>
  *<p>
- * Build configurations are created with:
- * {@link IWorkspace#newBuildConfiguration(String, String)}, and
- * set on a project using {@link IProjectDescription#setBuildConfigurations(IBuildConfiguration[])}.
- * Build configurations set on Projects must have unique non-null configuration Ids.
+ * Build configurations are created and set on the project description using:
+ * {@link IProjectDescription#setBuildConfigs(String[])}.
+ * Build configurations set on Projects must have unique non-null names.
  *</p>
  *<p>
  * When a project is built, a specific configuration is built. This configuration
@@ -35,8 +34,9 @@ package org.eclipse.core.resources;
  * and work as before.
  *</p>
  *<p>
- * Build configuration can reference other builds configurations.  These references are 
- * set using {@link IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])}.
+ * Build configuration can reference other builds configurations.  These references are created 
+ * using {@link IWorkspace#newBuildConfig(String, String)}, and set on the referencing project
+ * with {@link IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])}.
  * A referenced build configuration may have a <code>null</code> configuration Id which is resolved to the 
  * referenced project's current active build configuration at build time.
  *</p>
@@ -45,9 +45,9 @@ package org.eclipse.core.resources;
  * by the reference graph.
  *</p>
  *
- * @see IWorkspace#newBuildConfiguration(String, String)
- * @see IProjectDescription#setActiveBuildConfiguration(String)
- * @see IProjectDescription#setBuildConfigurations(IBuildConfiguration[])
+ * @see IWorkspace#newBuildConfig(String, String)
+ * @see IProjectDescription#setActiveBuildConfig(String)
+ * @see IProjectDescription#setBuildConfigs(String[])
  * @see IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -58,7 +58,7 @@ public interface IBuildConfiguration {
 	/**
 	 * The Id of the default build configuration
 	 */
-	public static final String DEFAULT_CONFIG_ID = ""; //$NON-NLS-1$
+	public static final String DEFAULT_CONFIG_NAME = ""; //$NON-NLS-1$
 
 	/**
 	 * @return the project that the config is for; never null.
@@ -66,16 +66,16 @@ public interface IBuildConfiguration {
 	public IProject getProject();
 
 	/**
-	 * Returns the Id of this build configuration.  If this {@link IBuildConfiguration}
-	 * is set on a Project, this can never be null.  
+	 * Returns the human readable name of this build configuration.  If this
+	 * {@link IBuildConfiguration} is set on a Project, this can never be null.  
 	 * <p>
 	 * If this IBuildConfiguration is being used as a reference to a build configuration
 	 * in another project, this may be null.  Such build configuration references are
 	 * resolved to the current active configuration at build time.
 	 * </p>
-	 * @return the id of the configuration; or null if this is a reference to the active
+	 * @return the name of the configuration; or null if this is a reference to the active
 	 * configuration
 	 */
-	public String getId();
+	public String getName();
 
 }

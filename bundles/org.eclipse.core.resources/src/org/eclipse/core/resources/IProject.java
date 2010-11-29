@@ -426,7 +426,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * <p>
 	 * If at any point the active configuration is removed from the project, for example
 	 * when updating the list of build configurations, the active build configuration will be set to
-	 * the first build configuration specified by {@link IProjectDescription#setBuildConfigurations(IBuildConfiguration[])}.
+	 * the first build configuration specified by {@link IProjectDescription#setBuildConfigs(String[])}.
 	 * <p>
 	 * If all of the build configurations are removed, the active build configuration will be set to the
 	 * default configuration.
@@ -439,11 +439,11 @@ public interface IProject extends IContainer, IAdaptable {
 	 * </ul>
 	 * @since 3.7
 	 */
-	public IBuildConfiguration getActiveBuildConfiguration() throws CoreException;
+	public IBuildConfiguration getActiveBuildConfig() throws CoreException;
 
 	/**
-	 * Returns the project build configuration with the given id for this project.
-	 * @param configurationId the id of the configuration to get
+	 * Returns the project {@link IBuildConfiguration} with the given name for this project.
+	 * @param configName the id of the configuration to get
 	 * @return a project configuration
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -451,10 +451,10 @@ public interface IProject extends IContainer, IAdaptable {
 	 * <li> This project is not open.</li>
 	 * <li> The configuration does not exist in this project.</li>
 	 * </ul>
-	 * @see #getBuildConfigurations()
+	 * @see #getBuildConfigs()
 	 * @since 3.7
 	 */
-	public IBuildConfiguration getBuildConfiguration(String configurationId) throws CoreException;
+	public IBuildConfiguration getBuildConfig(String configName) throws CoreException;
 
 	/**
 	 * Returns the build configurations for this project. A project always has at
@@ -468,7 +468,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * </ul>
 	 * @since 3.7
 	 */
-	public IBuildConfiguration[] getBuildConfigurations() throws CoreException;
+	public IBuildConfiguration[] getBuildConfigs() throws CoreException;
 
 	/**
 	 * Returns this project's content type matcher. This content type matcher takes 
@@ -606,7 +606,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * <li> This project does not exist.</li>
 	 * <li> This project is not open.</li>
 	 * </ul>
-	 * @see #getReferencedBuildConfigurations(IBuildConfiguration, boolean)
+	 * @see #getReferencedBuildConfigs(String, boolean)
 	 * @see IProjectDescription#getReferencedProjects()
 	 * @see IProjectDescription#getDynamicReferences()
 	 */
@@ -641,7 +641,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * Returns an empty array if there are no references.
 	 * </p>
 	 *
-	 * @param config the configuration to get the references for
+	 * @param configName the configuration to get the references for
 	 * @param includeMissing boolean controls whether unresolved buildConfiguration should 
 	 *        be included in the result
 	 * @return an array of project build configurations
@@ -654,12 +654,12 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IProjectDescription#getBuildConfigReferences(String)
 	 * @since 3.7
 	 */
-	public IBuildConfiguration[] getReferencedBuildConfigurations(IBuildConfiguration config, boolean includeMissing) throws CoreException;
+	public IBuildConfiguration[] getReferencedBuildConfigs(String configName, boolean includeMissing) throws CoreException;
 
 	/**
 	 * Checks whether the project has the specified build configuration.
 	 *
-	 * @param config the configuration
+	 * @param configName the configuration
 	 * @return <code>true</code> if the project has the specified configuration, false otherwise
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -668,7 +668,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * </ul>
 	 * @since 3.7
 	 */
-	public boolean hasBuildConfiguration(IBuildConfiguration config) throws CoreException;
+	public boolean hasBuildConfig(String configName) throws CoreException;
 
 	/** 
 	 * Returns whether the project nature specified by the given

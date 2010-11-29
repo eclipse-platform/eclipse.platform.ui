@@ -963,31 +963,30 @@ public interface IWorkspace extends IAdaptable {
 	public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns a new build configuration for the project, with the given id.  
-	 * The id is an implementation specific unique id for the build configuration in the
+	 * Returns a new build configuration for the project, with the given name.  
+	 * The name is a human readable unique name for the build configuration in the
 	 * project.  The project need not exist.
 	 *<p>
-	 * The new build configuration does not become part of a project
-	 * description until it is installed using
-	 * {@link IProjectDescription#setBuildConfigurations(IBuildConfiguration[])}.
+	 * This API can be used to create {@link IBuildConfiguration}s that will be used as references
+	 * to {@link IBuildConfiguration}s in other projects.  These references are set using
+	 * {@link IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])}
+	 * and may have a <code>null</code> configuration name which will resolve to the referenced
+	 * project's active configuration when the reference is used.
 	 *</p>
 	 *<p>
-	 * This API can be used to create IBuildConfigurations that will be used as references
-	 * to IBuildConfigurations in other projects.  These references are set using
-	 * {@link IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])}
-	 * and may have a <code>null</code> configuration Id which will resolve to the referenced
-	 * project's active configuration when the configuration reference is used.
+	 * Build configuration do not become part of a project
+	 * description until set using {@link IProjectDescription#setBuildConfigs(String[])}.
 	 *</p>
 	 *
 	 * @param projectName the name of the project on which the configuration will exist
-	 * @param configurationId the application specific unique id of the configuration
+	 * @param configName the name of the new build configuration
 	 * @return a build configuration
-	 * @see IProjectDescription#setBuildConfigurations(IBuildConfiguration[])
+	 * @see IProjectDescription#setBuildConfigs(String[])
 	 * @see IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])
 	 * @see IBuildConfiguration
 	 * @since 3.7
 	 */
-	public IBuildConfiguration newBuildConfiguration(String projectName, String configurationId);
+	public IBuildConfiguration newBuildConfig(String projectName, String configName);
 
 	/**
 	 * Creates and returns a new project description for a project with the

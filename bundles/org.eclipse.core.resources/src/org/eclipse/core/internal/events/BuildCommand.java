@@ -64,8 +64,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * The builders for this command if the builder supports multiple configurations 
 	 */
-	private HashMap/*<IBuildConfiguration, IncrementalProjectBuilder>*/ builders;
-
+	private HashMap<IBuildConfiguration, IncrementalProjectBuilder> builders;
 
 	/**
 	 * The triggers that this builder will respond to.  Since build triggers are not 

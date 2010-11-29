@@ -422,7 +422,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		ICommand[] commands = desc.getBuildSpec(false);
 		if (commands.length == 0)
 			return null;
-		IBuildConfiguration[] configs = project.getBuildConfigurations();
+		IBuildConfiguration[] configs = project.getBuildConfigs();
 
 		/* build the new list */
 		ArrayList newInfos = new ArrayList(commands.length * configs.length);
@@ -441,13 +441,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				if (builder == null) {
 					// if the builder was not instantiated, use the old info if any.
 					if (oldInfos != null)
-						info = getBuilderInfo(oldInfos, builderName, supportsConfigs ? config.getId() : null, i);
+						info = getBuilderInfo(oldInfos, builderName, supportsConfigs ? config.getName() : null, i);
 				} else if (!(builder instanceof MissingBuilder)) {
 					ElementTree oldTree = ((InternalBuilder) builder).getLastBuiltTree();
 					//don't persist build state for builders that have no last built state
 					if (oldTree != null) {
 						// if the builder was instantiated, construct a memento with the important info
-						info = new BuilderPersistentInfo(project.getName(), supportsConfigs ? config.getId() : null, builderName, i);
+						info = new BuilderPersistentInfo(project.getName(), supportsConfigs ? config.getName() : null, builderName, i);
 						info.setLastBuildTree(oldTree);
 						info.setInterestingProjects(((InternalBuilder) builder).getInterestingProjects());
 					}
@@ -819,7 +819,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		// get the map of builders to get the last built tree
 		ArrayList infos = getBuildersPersistentInfo(project);
 		if (infos != null) {
-			BuilderPersistentInfo info = getBuilderInfo(infos, builderName, buildConfiguration.getId(), buildSpecIndex);
+			BuilderPersistentInfo info = getBuilderInfo(infos, builderName, buildConfiguration.getName(), buildSpecIndex);
 			if (info != null) {
 				infos.remove(info);
 				ElementTree tree = info.getLastBuiltTree();
