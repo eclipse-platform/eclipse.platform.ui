@@ -55,21 +55,11 @@ public class FileStoreRoot {
 	}
 
 	private IPathVariableManager getManager(IPath workspacePath) {
-		if (workspacePath.segmentCount() > 0) {
-			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace()
-					.getRoot();
-			IPath path = (IPath) workspacePath.clone();
-			while (path.segmentCount() > 0) {
-				IResource resource = workspaceRoot.findMember(path);
-				if (resource != null) {
-					if (path.segmentCount() < workspacePath.segmentCount())
-						resource = ((IContainer) resource).getFile(workspacePath.removeFirstSegments(path.segmentCount()));
-					return resource.getPathVariableManager();
-				}
-				path = path.removeLastSegments(1);
-			}
-		}
-		return ResourcesPlugin.getWorkspace().getPathVariableManager();
+		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IResource resource = workspaceRoot.findMember(workspacePath);
+		if (resource != null)
+			return resource.getPathVariableManager();
+		return workspaceRoot.getFile(workspacePath).getPathVariableManager();
 	}
 
 	/**

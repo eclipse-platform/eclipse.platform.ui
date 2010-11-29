@@ -785,4 +785,24 @@ public class IPathVariableTest extends ResourceTest {
 			}
 		}
 	}
+
+	/**
+	 * Regression test for Bug 328045 where a class cast exception is thrown when
+	 * attempting to get the location of a resource that would live under an 
+	 * existing IFile.
+	 */
+	public void testDiscoverLocationOfInvalidFile() throws CoreException {
+		IPath filep = new Path("someFile");
+		IPath invalidChild = filep.append("invalidChild");
+
+		// Create filep
+		IFile f = project.getFile(filep);
+		ensureExistsInWorkspace(f, true);
+
+		// Get a reference to a child
+		IFile invalidFile = project.getFile(invalidChild);
+
+		// Don't care about the result, just care there's no exception.
+		invalidFile.getLocationURI();
+	}
 }
