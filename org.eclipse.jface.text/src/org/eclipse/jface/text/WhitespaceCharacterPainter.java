@@ -313,13 +313,14 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 */
 	private void drawCharRange(GC gc, int startOffset, int endOffset, int lineOffset, int lineEndOffset) {
 		StyledTextContent content= fTextWidget.getContent();
-		int length= endOffset - startOffset;
-		String drawingRangeText= content.getTextRange(startOffset, length);
 		String lineText= content.getTextRange(lineOffset, lineEndOffset - lineOffset);
+		int startOffsetInLine= startOffset - lineOffset;
+		int endOffsetInLine= endOffset - lineOffset;
+
 		int textBegin= -1;
 		for (int i= 0; i < lineText.length(); ++i) {
 			if (!isWhitespaceCharacter(lineText.charAt(i))) {
-				textBegin= i - (startOffset - lineOffset);
+				textBegin= i;
 				break;
 			}
 		}
@@ -328,7 +329,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		if (!isEmptyLine) {
 			for (int i= lineText.length() - 1; i >= 0; --i) {
 				if (!isWhitespaceCharacter(lineText.charAt(i))) {
-					textEnd= i - (startOffset - lineOffset);
+					textEnd= i;
 					break;
 				}
 			}
@@ -337,12 +338,12 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		StyleRange styleRange= null;
 		Color fg= null;
 		StringBuffer visibleChar= new StringBuffer(10);
-		for (int textOffset= 0; textOffset <= length; ++textOffset) {
+		for (int textOffset= startOffsetInLine; textOffset <= endOffsetInLine; ++textOffset) {
 			int delta= 0;
 			boolean eol= false;
-			if (textOffset < length) {
+			if (textOffset < endOffsetInLine) {
 				delta= 1;
-				char c= drawingRangeText.charAt(textOffset);
+				char c= lineText.charAt(textOffset);
 				switch (c) {
 					case ' ':
 						if (isEmptyLine) {
@@ -409,7 +410,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 						if (fShowCarriageReturn) {
 							visibleChar.append(CARRIAGE_RETURN_SIGN);
 						}
-						if (textOffset >= length - 1 || drawingRangeText.charAt(textOffset + 1) != '\n') {
+						if (textOffset >= endOffsetInLine - 1 || lineText.charAt(textOffset + 1) != '\n') {
 							eol= true;
 							break;
 						}
@@ -426,7 +427,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 				}
 			}
 			if (visibleChar.length() > 0) {
-				int widgetOffset= startOffset + textOffset - visibleChar.length() + delta;
+				int widgetOffset= startOffset + textOffset - startOffsetInLine - visibleChar.length() + delta;
 				if (!eol || !isFoldedLine(content.getLineAtOffset(widgetOffset))) {
 					/*
 					 * Block selection is drawn using alpha and no selection-inverting
