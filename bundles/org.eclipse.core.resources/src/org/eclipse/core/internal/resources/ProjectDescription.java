@@ -175,7 +175,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return projects;
 	}
 
-	public String getActiveBuildConfigurationId() {
+	public String getActiveBuildConfig() {
 		return activeConfiguration;
 	}
 
