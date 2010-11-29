@@ -12,14 +12,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.util.Iterator;
-
-import java.util.Map;
-
-import java.util.HashMap;
-
 import java.io.*;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
@@ -320,15 +316,15 @@ public class LocalMetaArea implements ICoreConstants {
 	 *    ... repeat for remaining references
 	 * since 3.7:
 	 *    int - number of build configurations
-	 *      UTF - configuration id in order
+	 *      UTF - configuration name in order
 	 *      ... repeated for N configurations
 	 *    UTF - active build configuration name
 	 *    int - number of build configurations with refs
-	 *      UTF - build configuration id
+	 *      UTF - build configuration name
 	 *      int - number of referenced configuration
 	 *        UTF - project name
-	 *        bool - hasConfigurationId
-	 *        UTF - configurationId if hasConfigId
+	 *        bool - hasConfigName
+	 *        UTF - configName if hasConfigName
 	 *        ... repeat for number of referenced configurations
 	 *      ... repeat for number of build configurations with references
 	 */
@@ -376,13 +372,13 @@ public class LocalMetaArea implements ICoreConstants {
 					// In the future we may decide this is better stored in the 
 					// .project, so only set if configs.length > 0
 					description.setBuildConfigs(configs);
-				// Active configuration Id
+				// Active configuration name
 				description.setActiveBuildConfig(dataIn.readUTF());
 				// Build configuration references?
 				int numBuildConifgsWithRefs = dataIn.readInt();
-				HashMap m = new HashMap(numBuildConifgsWithRefs);
+				HashMap<String, IBuildConfiguration[]> m = new HashMap<String, IBuildConfiguration[]>(numBuildConifgsWithRefs);
 				for (int i = 0; i < numBuildConifgsWithRefs; i++) {
-					String configId = dataIn.readUTF();
+					String configName = dataIn.readUTF();
 					numRefs = dataIn.readInt();
 					IBuildConfiguration[] refs = new IBuildConfiguration[numRefs];
 					for (int j = 0; j < numRefs; j++) {
@@ -392,7 +388,7 @@ public class LocalMetaArea implements ICoreConstants {
 						else
 							refs[j] = new BuildConfiguration(root.getProject(projName), null);
 					}
-					m.put(configId, refs);
+					m.put(configName, refs);
 				}
 				description.setBuildConfigReferences(m);
 			} finally {
@@ -463,16 +459,15 @@ public class LocalMetaArea implements ICoreConstants {
 				for (int i = 0; i < buildConfigs.length; i++) {
 					dataOut.writeUTF(buildConfigs[i]);
 				}
-				// Write active configuration id
+				// Write active configuration name
 				dataOut.writeUTF(desc.getActiveBuildConfig());
 				// Write out the configuration level references
 				dataOut.writeInt(configRefs.size());
-				for (Iterator it = configRefs.entrySet().iterator(); it.hasNext(); ) {
-					Map.Entry e = (Map.Entry)it.next();
-					String refdId = (String)e.getKey();
-					IBuildConfiguration[] refs = (IBuildConfiguration[])e.getValue();
+				for (Map.Entry<String, IBuildConfiguration[]> e : configRefs.entrySet()) {
+					String refdName = e.getKey();
+					IBuildConfiguration[] refs = e.getValue();
 
-					dataOut.writeUTF(refdId);
+					dataOut.writeUTF(refdName);
 					dataOut.writeInt(refs.length);
 					for (int j = 0; j < refs.length; j++) {
 						dataOut.writeUTF(refs[j].getProject().getName());

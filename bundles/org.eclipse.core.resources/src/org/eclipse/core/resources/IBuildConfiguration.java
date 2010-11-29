@@ -37,7 +37,7 @@ package org.eclipse.core.resources;
  * Build configuration can reference other builds configurations.  These references are created 
  * using {@link IWorkspace#newBuildConfig(String, String)}, and set on the referencing project
  * with {@link IProjectDescription#setBuildConfigReferences(String, IBuildConfiguration[])}.
- * A referenced build configuration may have a <code>null</code> configuration Id which is resolved to the 
+ * A referenced build configuration may have a <code>null</code> configuration name which is resolved to the 
  * referenced project's current active build configuration at build time.
  *</p>
  *<p> 

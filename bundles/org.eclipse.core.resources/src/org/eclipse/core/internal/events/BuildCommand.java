@@ -153,7 +153,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	 * associated with this build command.
 	 */
 	public Object getBuilders() {
-		if (supportsConfigurations())
+		if (supportsConfigs())
 			return builders;
 		return builder;
 	}
@@ -166,7 +166,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	 * @return {@link IncrementalProjectBuilder} corresponding to config
 	 */
 	public IncrementalProjectBuilder getBuilder(IBuildConfiguration config) {
-		if (builders != null && supportsConfigurations())
+		if (builders != null && supportsConfigs())
 			return (IncrementalProjectBuilder) builders.get(config);
 		return builder;
 	}
@@ -199,7 +199,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 		return (triggers & MASK_CONFIGURABLE) != 0;
 	}
 
-	public boolean supportsConfigurations() {
+	public boolean supportsConfigs() {
 		if (!supportsConfigurationsCalculated) {
 			IExtension extension = Platform.getExtensionRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, name);
 			if (extension != null) {
@@ -250,7 +250,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 		Assert.isTrue(builders == null || !builders.containsKey(config));
 		Assert.isTrue(this.builder == null);
 
-		if (supportsConfigurations()) {
+		if (supportsConfigs()) {
 			if (builders == null)
 				builders = new HashMap(1);
 			builders.put(config, builder);

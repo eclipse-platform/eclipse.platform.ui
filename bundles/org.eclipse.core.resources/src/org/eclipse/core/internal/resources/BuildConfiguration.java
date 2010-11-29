@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  *</p>
  *<p>
  * When being used as a reference, core.resources <strong>must</strong> call
- * {@link #getBuildConfiguration()} to dereference the build configuration to the
+ * {@link #getBuildConfig()} to dereference the build configuration to the
  * the actual build configuration on the referenced project.
  *</p>
  */
@@ -46,7 +46,7 @@ public class BuildConfiguration implements IBuildConfiguration {
 	 * @return the concrete build configuration referred to by this IBuildConfiguration
 	 *         when it's being used as a reference
 	 */
-	public IBuildConfiguration getBuildConfiguration() throws CoreException {
+	public IBuildConfiguration getBuildConfig() throws CoreException {
 		return project.getBuildConfig(name);
 	}
 

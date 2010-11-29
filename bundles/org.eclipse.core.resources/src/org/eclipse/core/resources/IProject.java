@@ -443,7 +443,7 @@ public interface IProject extends IContainer, IAdaptable {
 
 	/**
 	 * Returns the project {@link IBuildConfiguration} with the given name for this project.
-	 * @param configName the id of the configuration to get
+	 * @param configName the name of the configuration to get
 	 * @return a project configuration
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>

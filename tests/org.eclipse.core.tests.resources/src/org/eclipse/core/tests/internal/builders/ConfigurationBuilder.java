@@ -54,7 +54,7 @@ public class ConfigurationBuilder extends TestBuilder {
 
 	protected void startupOnInitialize() {
 		super.startupOnInitialize();
-		builders.put(getBuildConfiguration(), this);
+		builders.put(getBuildConfig(), this);
 		buildCount = 0;
 	}
 
@@ -62,7 +62,7 @@ public class ConfigurationBuilder extends TestBuilder {
 		buildCount++;
 		triggerForLastBuild = kind;
 		deltaForLastBuild = getDelta(getProject());
-		buildOrder.add(getBuildConfiguration());
+		buildOrder.add(getBuildConfig());
 		return super.build(kind, args, monitor);
 	}
 

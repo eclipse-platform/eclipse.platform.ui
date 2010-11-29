@@ -280,8 +280,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * @return the build configuration
 	 * @since 3.7
 	 */
-	public final IBuildConfiguration getBuildConfiguration() {
-		return super.getBuildConfiguration();
+	public final IBuildConfiguration getBuildConfig() {
+		return super.getBuildConfig();
 	}
 
 	/**

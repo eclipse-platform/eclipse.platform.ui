@@ -406,7 +406,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * For a project with 3 builders, 2 build configurations and the second
 	 * builder doesn't support configurations.
 	 * The returned List of BuilderInfos is ordered:
-	 * builder_id, config_id,builder_index
+	 * builder_id, config_name,builder_index
 	 * builder_1,  config_1, 1
 	 * builder_1,  config_2, 1
 	 * builder_2,  null,     2
@@ -431,7 +431,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			String builderName = command.getBuilderName();
 
 			// If the builder doesn't support configurations, only 1 delta tree to persist
-			boolean supportsConfigs = command.supportsConfigurations();
+			boolean supportsConfigs = command.supportsConfigs();
 			int numberConfigs = supportsConfigs ? configs.length : 1;
 
 			for (int j = 0; j < numberConfigs; j++) {
@@ -518,11 +518,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			result = initializeBuilder(command.getBuilderName(), buildConfiguration, buildSpecIndex, status);
 			((BuildCommand) command).addBuilder(buildConfiguration, (IncrementalProjectBuilder) result);
 			result.setCommand(command);
-			result.setBuildConfiguration(buildConfiguration);
+			result.setBuildConfig(buildConfiguration);
 			result.startupOnInitialize();
 		}
 		// Ensure the build configuration stays fresh for non-config aware builders
-		result.setBuildConfiguration(buildConfiguration);
+		result.setBuildConfig(buildConfiguration);
 		if (!validateNature(result, command.getBuilderName())) {
 			//skip this builder and null its last built tree because it is invalid
 			//if the nature gets added or re-enabled a full build will be triggered
@@ -534,21 +534,21 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 
 	/**
 	 * Removes the builder persistent info from the map corresponding to the
-	 * given builder name, configuration id and build spec index, or <code>null</code> if not found
+	 * given builder name, configuration name and build spec index, or <code>null</code> if not found
 	 * 
-	 * @param configId or null if the builder doesn't support configurations
+	 * @param configName or null if the builder doesn't support configurations
 	 * @param buildSpecIndex The index in the build spec, or -1 if unknown
 	 */
-	private BuilderPersistentInfo getBuilderInfo(ArrayList infos, String builderName, String configId, int buildSpecIndex) {
+	private BuilderPersistentInfo getBuilderInfo(ArrayList infos, String builderName, String configName, int buildSpecIndex) {
 		//try to match on builder index, but if not match is found, use the builder name and config name
 		//this is because older workspace versions did not store builder infos in build spec order
 		BuilderPersistentInfo nameMatch = null;
 		for (Iterator it = infos.iterator(); it.hasNext();) {
 			BuilderPersistentInfo info = (BuilderPersistentInfo) it.next();
-			// match on name, config id and build spec index if known
-			// Note: the config id may be null for builders that don't support configurations, or old workspaces
+			// match on name, config name and build spec index if known
+			// Note: the config name may be null for builders that don't support configurations, or old workspaces
 			if (info.getBuilderName().equals(builderName) && 
-					(info.getConfigurationId() == null || info.getConfigurationId().equals(configId))) {
+					(info.getConfigName() == null || info.getConfigName().equals(configName))) {
 				//we have found a match on name alone
 				if (nameMatch == null)
 					nameMatch = info;
@@ -1022,7 +1022,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	private String toString(InternalBuilder builder) {
 		String name = builder.getClass().getName();
 		name = name.substring(name.lastIndexOf('.') + 1);
-		return name + "(" + builder.getBuildConfiguration() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return name + "(" + builder.getBuildConfig() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

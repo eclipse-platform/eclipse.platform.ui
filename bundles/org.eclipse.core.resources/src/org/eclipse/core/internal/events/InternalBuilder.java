@@ -142,9 +142,9 @@ public abstract class InternalBuilder {
 	}
 
 	/**
-	 * @see IncrementalProjectBuilder#getBuildConfiguration()
+	 * @see IncrementalProjectBuilder#getBuildConfig()
 	 */
-	protected IBuildConfiguration getBuildConfiguration() {
+	protected IBuildConfiguration getBuildConfig() {
 		return buildConfiguration;
 	}
 
@@ -199,9 +199,9 @@ public abstract class InternalBuilder {
 
 	/**
 	 * Sets the build configuration for which this builder operates.
-	 * @see #getBuildConfiguration()
+	 * @see #getBuildConfig()
 	 */
-	final void setBuildConfiguration(IBuildConfiguration value) {
+	final void setBuildConfig(IBuildConfiguration value) {
 		Assert.isNotNull(value);
 		buildConfiguration = value;
 	}

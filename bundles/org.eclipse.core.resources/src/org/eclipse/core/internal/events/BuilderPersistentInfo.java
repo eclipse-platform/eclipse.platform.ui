@@ -25,15 +25,15 @@ public class BuilderPersistentInfo {
 	protected IProject[] interestingProjects = ICoreConstants.EMPTY_PROJECT_ARRAY;
 	protected ElementTree lastBuildTree;
 	protected String projectName;
-	protected String configId;
+	protected String configName;
 
 	public BuilderPersistentInfo(String projectName, String builderName, int buildSpecIndex) {
 		this(projectName, null, builderName, buildSpecIndex);
 	}
 
-	public BuilderPersistentInfo(String projectName, String configId, String builderName, int buildSpecIndex) {
+	public BuilderPersistentInfo(String projectName, String configName, String builderName, int buildSpecIndex) {
 		this.projectName = projectName;
-		this.configId = configId;
+		this.configName = configName;
 		this.builderName = builderName;
 		this.buildSpecIndex = buildSpecIndex;
 	}
@@ -47,12 +47,12 @@ public class BuilderPersistentInfo {
 	}
 
 	/**
-	 * @return the id of the configuration for which this information refers. 
+	 * @return the name of the configuration for which this information refers. 
 	 * Will return null if the build command doesn't support configurations, or the 
 	 * build persistent info has been loaded from a workspace without configurations.
 	 */
-	public String getConfigurationId() {
-		return configId;
+	public String getConfigName() {
+		return configName;
 	}
 
 	public IProject[] getInterestingProjects() {
@@ -67,8 +67,8 @@ public class BuilderPersistentInfo {
 		return projectName;
 	}
 
-	public void setConfigurationId(String configId) {
-		this.configId = configId;
+	public void setConfigName(String configName) {
+		this.configName = configName;
 	}
 
 	public void setInterestingProjects(IProject[] projects) {

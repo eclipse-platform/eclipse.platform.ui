@@ -666,7 +666,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * <p>
 	 * When there are choices, the choice is made in a reasonably stable way. For
 	 * example, given an arbitrary choice between two project buildConfigs, the one with the
-	 * lower collating project name and build config Id will appear earlier in the list.
+	 * lower collating project name and build config name will appear earlier in the list.
 	 * </p>
 	 * <p>
 	 * When the build configuration reference graph contains cyclic references, it is
@@ -680,11 +680,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 *
 	 * @return result describing the global active build configuration order
 	 */
-	private VertexOrder computeActiveBuildConfigurationOrder() {
+	private VertexOrder computeActiveBuildConfigOrder() {
 		// Determine the full set of accessible active project buildConfigs in the workspace,
 		// and all the accessible project buildConfigs that they reference. This forms a set
 		// of all the project buildConfigs that will be returned.
-		// Order the set in descending alphabetical order of project name then build config Id,
+		// Order the set in descending alphabetical order of project name then build config name,
 		// as a secondary sort applied after sorting based on references, to achieve a stable
 		// ordering.
 		SortedSet allAccessibleBuildConfigs = new TreeSet(new BuildConfigurationComparator());
@@ -751,7 +751,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * <p>
 	 * When there are choices, the choice is made in a reasonably stable way. For
 	 * example, given an arbitrary choice between two project buildConfigs, the one with the
-	 * lower collating project name and build config id will appear earlier in the list.
+	 * lower collating project name and build config name will appear earlier in the list.
 	 * </p>
 	 * <p>
 	 * When the build config reference graph contains cyclic references, it is
@@ -765,7 +765,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 *
 	 * @return result describing the global project build configuration order
 	 */
-	private VertexOrder computeFullBuildConfigurationOrder() {
+	private VertexOrder computeFullBuildConfigOrder() {
 		// Compute the order for all accessible project buildConfigs
 		SortedSet allAccessibleBuildConfigurations = new TreeSet(new BuildConfigurationComparator());
 
@@ -912,7 +912,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * <p>
 	 * When there are choices, the choice is made in a reasonably stable way.
 	 * For example, given an arbitrary choice between two project buildConfigs, the one with
-	 * the lower collating configuration id then configuration id is usually selected.
+	 * the lower collating configuration name is usually selected.
 	 * </p>
 	 * <p>
 	 * When the project reference graph contains cyclic references, it is
@@ -936,7 +936,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public ProjectBuildConfigOrder computeProjectBuildConfigOrder(IBuildConfiguration[] buildConfigs) {
 		// Compute the full project order for all accessible projects
-		VertexOrder fullBuildConfigOrder = computeFullBuildConfigurationOrder();
+		VertexOrder fullBuildConfigOrder = computeFullBuildConfigOrder();
 
 		// Create a filter to remove all project buildConfigs that are not in the list asked for
 		final Set projectConfigSet = new HashSet(buildConfigs.length);
@@ -1587,7 +1587,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 
 			// Add projects not mentioned in the build order to the end, in a sensible reference order
-			configs.addAll(Arrays.asList(vertexOrderToProjectBuildConfigOrder(computeActiveBuildConfigurationOrder()).buildConfigurations));
+			configs.addAll(Arrays.asList(vertexOrderToProjectBuildConfigOrder(computeActiveBuildConfigOrder()).buildConfigurations));
 
 			// Update the cache - Java 5 volatile memory barrier semantics
 			IBuildConfiguration[] bo = new IBuildConfiguration[configs.size()];
@@ -1596,7 +1596,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		} else
 			// use default project build order
 			// computed for all accessible projects in workspace
-			buildOrder = vertexOrderToProjectBuildConfigOrder(computeActiveBuildConfigurationOrder()).buildConfigurations;
+			buildOrder = vertexOrderToProjectBuildConfigOrder(computeActiveBuildConfigOrder()).buildConfigurations;
 
 		return buildOrder;
 	}
@@ -2110,8 +2110,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IWorkspace#newBuildConfig(java.lang.String, java.lang.String)
 	 */
-	public IBuildConfiguration newBuildConfig(String projectName, String configurationId) {
-		return new BuildConfiguration(getRoot().getProject(projectName), configurationId);
+	public IBuildConfiguration newBuildConfig(String projectName, String configName) {
+		return new BuildConfiguration(getRoot().getProject(projectName), configName);
 	}
 
 	/* (non-Javadoc)

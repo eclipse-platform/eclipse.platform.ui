@@ -1791,14 +1791,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * @param project project to fetch builder trees for
 	 * @param trees list of trees to be persisted
 	 * @param builderInfos list of builder infos; one per builder 
-	 * @param configIds configuration id persisted for builder infos above
+	 * @param configNames configuration names persisted for builder infos above
 	 * @param additionalBuilderInfos remaining trees to be persisted for other configurations
-	 * @param additionalConfigIds configuration ids of the remaining per-configuration trees
+	 * @param additionalConfigNames configuration names of the remaining per-configuration trees
 	 * @throws CoreException
 	 */
-	private void getTreesToSave(IProject project, List trees, List builderInfos, List configIds, List additionalBuilderInfos, List additionalConfigIds) throws CoreException {
+	private void getTreesToSave(IProject project, List trees, List builderInfos, List configNames, List additionalBuilderInfos, List additionalConfigNames) throws CoreException {
 		if (project.isOpen()) {
-			String activeConfigId = project.getActiveBuildConfig().getName();
+			String activeConfigName = project.getActiveBuildConfig().getName();
 			List infos = workspace.getBuildManager().createBuildersPersistentInfo(project);
 			if (infos != null) {
 				for (Iterator it = infos.iterator(); it.hasNext();) {
@@ -1809,16 +1809,16 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					if (info.getLastBuiltTree() == null)
 						continue;
 
-					// Add to the correct list of builders info and add to the configuration ids
-					String configId = info.getConfigurationId() == null ? activeConfigId : info.getConfigurationId();
-					if (configId.equals(activeConfigId)) {
+					// Add to the correct list of builders info and add to the configuration names
+					String configName = info.getConfigName() == null ? activeConfigName : info.getConfigName();
+					if (configName.equals(activeConfigName)) {
 						// Serializes the active configurations's build tree 
 						// TODO could probably do better by serializing the 'oldest' tree
 						builderInfos.add(info);
-						configIds.add(configId);
+						configNames.add(configName);
 					} else {
 						additionalBuilderInfos.add(info);
-						additionalConfigIds.add(configId);
+						additionalConfigNames.add(configName);
 					}
 					// Add the builder's tree
 					ElementTree tree = info.getLastBuiltTree();
@@ -1873,14 +1873,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				}
 				monitor.worked(Policy.totalWork * 10 / 100);
 
-				// Get the the builder info and configuration ids, and add all the associated workspace trees in the correct order
+				// Get the the builder info and configuration names, and add all the associated workspace trees in the correct order
 				IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 				List builderInfos = new ArrayList(projects.length * 2);
-				List configIds = new ArrayList(projects.length);
+				List configNames = new ArrayList(projects.length);
 				List additionalBuilderInfos = new ArrayList(projects.length * 2);
-				List additionalConfigIds = new ArrayList(projects.length);
+				List additionalConfigNames = new ArrayList(projects.length);
 				for (int i = 0; i < projects.length; i++)
-					getTreesToSave(projects[i], trees, builderInfos, configIds, additionalBuilderInfos, additionalConfigIds);
+					getTreesToSave(projects[i], trees, builderInfos, configNames, additionalBuilderInfos, additionalConfigNames);
 
 				// Save the version 2 builders info
 				writeBuilderPersistentInfo(output, builderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
@@ -1897,10 +1897,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				// Since 3.7: Save the additional builders info
 				writeBuilderPersistentInfo(output, additionalBuilderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
 
-				// Save the configuration ids for the builders in the order they were saved
-				for (Iterator it = configIds.iterator(); it.hasNext();)
+				// Save the configuration names for the builders in the order they were saved
+				for (Iterator it = configNames.iterator(); it.hasNext();)
 					output.writeUTF((String) it.next());
-				for (Iterator it = additionalConfigIds.iterator(); it.hasNext();)
+				for (Iterator it = additionalConfigNames.iterator(); it.hasNext();)
 					output.writeUTF((String) it.next());
 			} finally {
 				if (!wasImmutable)
@@ -1942,12 +1942,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				List trees = new ArrayList(2);
 				monitor.worked(Policy.totalWork * 10 / 100);
 
-				// Get the the builder info and configuration ids, and add all the associated workspace trees in the correct order
-				List configIds = new ArrayList(5);
+				// Get the the builder info and configuration names, and add all the associated workspace trees in the correct order
+				List configNames = new ArrayList(5);
 				List builderInfos = new ArrayList(5);
-				List additionalConfigIds = new ArrayList(5);
+				List additionalConfigNames = new ArrayList(5);
 				List additionalBuilderInfos = new ArrayList(5);
-				getTreesToSave(project, trees, builderInfos, configIds, additionalBuilderInfos, additionalConfigIds);
+				getTreesToSave(project, trees, builderInfos, configNames, additionalBuilderInfos, additionalConfigNames);
 
 				// Save the version 2 builders info
 				writeBuilderPersistentInfo(output, builderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 20 / 100));
@@ -1964,10 +1964,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				// Since 3.7: Save the builders info and get the workspace trees associated with those builders
 				writeBuilderPersistentInfo(output, additionalBuilderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 20 / 100));
 
-				// Save configuration ids for the builders in the order they were saved
-				for (Iterator it = configIds.iterator(); it.hasNext();)
+				// Save configuration names for the builders in the order they were saved
+				for (Iterator it = configNames.iterator(); it.hasNext();)
 					output.writeUTF((String) it.next());
-				for (Iterator it = additionalConfigIds.iterator(); it.hasNext();)
+				for (Iterator it = additionalConfigNames.iterator(); it.hasNext();)
 					output.writeUTF((String) it.next());
 			} finally {
 				if (output != null)
