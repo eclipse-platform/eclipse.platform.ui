@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sascha Radike - bug 56642
+ *     Martin Oberhuber (Wind River) - [327446] Avoid unnecessary wait-for-build dialog.
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -1063,7 +1064,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static void launchInBackground(final ILaunchConfiguration configuration, final String mode) {
 		final IJobManager jobManager = Job.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-		boolean wait = (jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD).length > 0) || (jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD).length > 0);
+		boolean wait = (jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD).length > 0 && ResourcesPlugin.getWorkspace().isAutoBuilding())
+				|| (jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD).length > 0);
 		String waitPref = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 		if (wait) { // if there are build jobs running, do we wait or not??
 			if (waitPref.equals(MessageDialogWithToggle.PROMPT)) {
