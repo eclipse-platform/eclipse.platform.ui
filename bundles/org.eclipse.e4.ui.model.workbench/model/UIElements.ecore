@@ -46,8 +46,8 @@
         interface="true">
       <eStructuralFeatures xsi:type="ecore:EReference" name="bindingTables" upperBound="-1"
           eType="#//commands/BindingTable" containment="true"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="rootContext" eType="#//commands/BindingContext"
-          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="rootContext" upperBound="-1"
+          eType="#//commands/BindingContext" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Bindings" abstract="true" interface="true">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="bindingContexts" ordered="false"

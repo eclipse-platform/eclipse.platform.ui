@@ -335,7 +335,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__BINDING_TABLES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 4;
 
 	/**
-	 * The feature id for the '<em><b>Root Context</b></em>' containment reference.
+	 * The feature id for the '<em><b>Root Context</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

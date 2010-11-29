@@ -140,14 +140,14 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	protected EList<MBindingTable> bindingTables;
 
 	/**
-	 * The cached value of the '{@link #getRootContext() <em>Root Context</em>}' containment reference.
+	 * The cached value of the '{@link #getRootContext() <em>Root Context</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getRootContext()
 	 * @generated
 	 * @ordered
 	 */
-	protected MBindingContext rootContext;
+	protected EList<MBindingContext> rootContext;
 
 	/**
 	 * The cached value of the '{@link #getDescriptors() <em>Descriptors</em>}' containment reference list.
@@ -322,42 +322,11 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MBindingContext getRootContext() {
+	public List<MBindingContext> getRootContext() {
+		if (rootContext == null) {
+			rootContext = new EObjectContainmentEList<MBindingContext>(MBindingContext.class, this, ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT);
+		}
 		return rootContext;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetRootContext(MBindingContext newRootContext, NotificationChain msgs) {
-		MBindingContext oldRootContext = rootContext;
-		rootContext = newRootContext;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT, oldRootContext, newRootContext);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setRootContext(MBindingContext newRootContext) {
-		if (newRootContext != rootContext) {
-			NotificationChain msgs = null;
-			if (rootContext != null)
-				msgs = ((InternalEObject)rootContext).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT, null, msgs);
-			if (newRootContext != null)
-				msgs = ((InternalEObject)newRootContext).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT, null, msgs);
-			msgs = basicSetRootContext(newRootContext, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT, newRootContext, newRootContext));
 	}
 
 	/**
@@ -471,7 +440,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
 				return ((InternalEList<?>)getBindingTables()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-				return basicSetRootContext(null, msgs);
+				return ((InternalEList<?>)getRootContext()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				return ((InternalEList<?>)getDescriptors()).basicRemove(otherEnd, msgs);
 			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
@@ -559,7 +528,8 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				getBindingTables().addAll((Collection<? extends MBindingTable>)newValue);
 				return;
 			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-				setRootContext((MBindingContext)newValue);
+				getRootContext().clear();
+				getRootContext().addAll((Collection<? extends MBindingContext>)newValue);
 				return;
 			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				getDescriptors().clear();
@@ -621,7 +591,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				getBindingTables().clear();
 				return;
 			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-				setRootContext((MBindingContext)null);
+				getRootContext().clear();
 				return;
 			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				getDescriptors().clear();
@@ -670,7 +640,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			case ApplicationPackageImpl.APPLICATION__BINDING_TABLES:
 				return bindingTables != null && !bindingTables.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__ROOT_CONTEXT:
-				return rootContext != null;
+				return rootContext != null && !rootContext.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__DESCRIPTORS:
 				return descriptors != null && !descriptors.isEmpty();
 			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:

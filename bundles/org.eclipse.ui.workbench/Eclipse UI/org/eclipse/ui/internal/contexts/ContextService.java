@@ -231,7 +231,7 @@ public final class ContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#readRegistry()
 	 */
 	public final void readRegistry() {
-		contextPersistence.read();
+		// contextPersistence.read();
 	}
 
 	/*

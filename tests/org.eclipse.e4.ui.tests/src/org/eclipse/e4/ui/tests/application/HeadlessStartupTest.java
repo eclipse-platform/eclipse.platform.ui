@@ -12,7 +12,6 @@
 package org.eclipse.e4.ui.tests.application;
 
 import junit.framework.TestCase;
-import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -22,11 +21,11 @@ import org.eclipse.e4.core.internal.services.EclipseAdapter;
 import org.eclipse.e4.core.services.adapter.Adapter;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.internal.workbench.ActivePartLookupFunction;
 import org.eclipse.e4.ui.internal.workbench.ExceptionHandler;
 import org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory;
 import org.eclipse.e4.ui.internal.workbench.WorkbenchLogger;
+import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
@@ -83,13 +82,11 @@ public abstract class HeadlessStartupTest extends TestCase {
 						WorkbenchLogger.class, appContext));
 
 		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
+		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
 
 		appContext.set(Adapter.class.getName(),
 				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
-		appContext.set(ContextManager.class.getName(), new ContextManager());
 
-		appContext.set(IServiceConstants.ACTIVE_CONTEXTS,
-				new ActiveContextsFunction());
 		appContext.set(IServiceConstants.ACTIVE_PART,
 				new ActivePartLookupFunction());
 

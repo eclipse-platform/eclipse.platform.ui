@@ -105,7 +105,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_TABLE_CONTAINER__BINDING_TABLES = 0;
 
 	/**
-	 * The feature id for the '<em><b>Root Context</b></em>' containment reference.
+	 * The feature id for the '<em><b>Root Context</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -918,10 +918,10 @@ public class CommandsPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.commands.MBindingTableContainer#getRootContext <em>Root Context</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.commands.MBindingTableContainer#getRootContext <em>Root Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Root Context</em>'.
+	 * @return the meta object for the containment reference list '<em>Root Context</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTableContainer#getRootContext()
 	 * @see #getBindingTableContainer()
 	 * @generated
@@ -929,6 +929,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public EReference getBindingTableContainer_RootContext() {
 		return (EReference)bindingTableContainerEClass.getEStructuralFeatures().get(1);
 	}
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.commands.MBindings <em>Bindings</em>}'.
@@ -1491,7 +1492,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		// Initialize classes and features; add operations and parameters
 		initEClass(bindingTableContainerEClass, MBindingTableContainer.class, "BindingTableContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getBindingTableContainer_BindingTables(), this.getBindingTable(), null, "bindingTables", null, 0, -1, MBindingTableContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getBindingTableContainer_RootContext(), this.getBindingContext(), null, "rootContext", null, 0, 1, MBindingTableContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getBindingTableContainer_RootContext(), this.getBindingContext(), null, "rootContext", null, 0, -1, MBindingTableContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(bindingsEClass, MBindings.class, "Bindings", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getBindings_BindingContexts(), ecorePackage.getEString(), "bindingContexts", null, 0, -1, MBindings.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
@@ -1573,7 +1574,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		public static final EReference BINDING_TABLE_CONTAINER__BINDING_TABLES = eINSTANCE.getBindingTableContainer_BindingTables();
 
 		/**
-		 * The meta object literal for the '<em><b>Root Context</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Root Context</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

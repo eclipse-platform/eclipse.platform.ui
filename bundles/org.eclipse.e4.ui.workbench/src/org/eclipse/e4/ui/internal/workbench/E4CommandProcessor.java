@@ -26,7 +26,6 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MBindingTableContainer;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -51,10 +50,6 @@ public class E4CommandProcessor {
 		final BindingTableManager bindingTables = (BindingTableManager) ContextInjectionFactory
 				.make(BindingTableManager.class, context);
 		context.set(BindingTableManager.class.getName(), bindingTables);
-		MBindingContext root = bindingContainer.getRootContext();
-		if (root == null) {
-			return;
-		}
 		final ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
 		final EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
 		if (cs == null) {
@@ -68,7 +63,6 @@ public class E4CommandProcessor {
 			return;
 		}
 		final ContextManager manager = (ContextManager) context.get(ContextManager.class.getName());
-		defineContexts(null, root, manager);
 		for (MBindingTable bt : bindingContainer.getBindingTables()) {
 			final Context bindingContext = manager.getContext(bt.getBindingContextId());
 			final BindingTable table = new BindingTable(bindingContext);
@@ -212,18 +206,6 @@ public class E4CommandProcessor {
 
 		}
 		return keyBinding;
-	}
-
-	private static void defineContexts(MBindingContext parent, MBindingContext current,
-			ContextManager manager) {
-		Context context = manager.getContext(current.getElementId());
-		if (!context.isDefined()) {
-			context.define(current.getName(), current.getDescription(), parent == null ? null
-					: parent.getElementId());
-		}
-		for (MBindingContext child : current.getChildren()) {
-			defineContexts(current, child, manager);
-		}
 	}
 
 	static void updateBinding(final ECommandService cs, final EBindingService bs,

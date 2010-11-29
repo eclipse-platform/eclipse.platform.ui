@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.services;
 
-import org.eclipse.e4.core.contexts.IContextFunction;
-
-import java.util.Hashtable;
-import org.eclipse.e4.ui.services.EContextService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -43,14 +39,6 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
 		singleton = this;
-
-		//Register functions that will be used as factories for the handler and context services.
-		//We must use this advanced technique because these service implementations need access
-		//to the service they are registered with. More typically context services are registered directly as OSGi services.
-		//Also note these services could be registered lazily using declarative services if needed
-		Hashtable<String, String> props = new Hashtable<String, String>(4);
-		props.put(IContextFunction.SERVICE_CONTEXT_KEY, EContextService.class.getName());
-		contextServiceReg = context.registerService(IContextFunction.class.getName(), new ContextContextFunction(), props);
 	}
 	
 	/*

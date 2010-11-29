@@ -24,7 +24,6 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,8 +34,6 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
@@ -1882,19 +1879,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
-				HashMap<String, String> contextToParent = new HashMap<String, String>();
-				Iterator i = contextManager.getDefinedContextIds().iterator();
-				while (i.hasNext()) {
-					Context c = contextManager.getContext((String) i.next());
-					if (c.isDefined()) {
-						try {
-							contextToParent.put(c.getId(), c.getParentId());
-						} catch (NotDefinedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
 				contextManager.addContextManagerListener(new IContextManagerListener() {
 					public void contextManagerChanged(ContextManagerEvent contextManagerEvent) {
 						if (contextManagerEvent.isContextChanged()) {
@@ -1906,16 +1890,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					}
 				});
 				contextService.readRegistry();
-				Iterator<Entry<String, String>> e = contextToParent.entrySet().iterator();
-				while (e.hasNext()) {
-					Entry<String, String> entry = e.next();
-					Context c = contextManager.getContext(entry.getKey());
-					if (!c.isDefined()) {
-						c.define(entry.getKey(), null, entry.getValue());
-					}
-				}
-				EContextService ecs = (EContextService) e4Context.get(EContextService.class
-						.getName());
+				EContextService ecs = e4Context.get(EContextService.class);
 				ecs.activateContext(IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
 			}
 		});

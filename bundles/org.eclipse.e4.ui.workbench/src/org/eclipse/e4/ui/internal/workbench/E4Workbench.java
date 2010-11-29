@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -21,7 +20,6 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
@@ -167,9 +165,6 @@ public class E4Workbench implements IWorkbench {
 		if (contributionFactory != null) {
 			mainContext.set(IContributionFactory.class.getName(), contributionFactory);
 		}
-		mainContext.set(ContextManager.class.getName(), new ContextManager());
-
-		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
 		mainContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());
 		// EHandlerService comes from a ContextFunction
 		// EContextService comes from a ContextFunction

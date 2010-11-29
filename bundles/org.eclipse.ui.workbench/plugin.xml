@@ -14,6 +14,10 @@
               beforefragment="true"
               class="org.eclipse.ui.internal.CommandToModelProcessor">
         </processor>
+        <processor
+              beforefragment="true"
+              class="org.eclipse.ui.internal.ContextToModelProcessor">
+        </processor>
      </extension>
 
 </plugin>

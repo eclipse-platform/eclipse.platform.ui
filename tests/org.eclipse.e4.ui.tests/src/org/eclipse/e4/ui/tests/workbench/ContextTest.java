@@ -13,8 +13,10 @@ package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
+import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.EContextService;
 
 /**
@@ -24,9 +26,30 @@ public class ContextTest extends TestCase {
 	private static final String WINDOW_ID = "org.eclipse.ui.contexts.window";
 	private static final String DIALOG_ID = "org.eclipse.ui.contexts.dialog";
 	private static final String DIALOG_AND_WINDOW_ID = "org.eclipse.ui.contexts.dialogAndWindow";
+	private IEclipseContext appContext;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		appContext = E4Application.createDefaultContext();
+		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		appContext.dispose();
+	}
 
 	public void testOneContext() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineContexts(appContext);
 
@@ -39,7 +62,6 @@ public class ContextTest extends TestCase {
 	}
 
 	public void testTwoContexts() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineContexts(appContext);
 
@@ -63,7 +85,6 @@ public class ContextTest extends TestCase {
 	}
 
 	public void testTwoContextsBottom() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineContexts(appContext);
 
@@ -96,7 +117,6 @@ public class ContextTest extends TestCase {
 	}
 
 	public void testThreeContexts() throws Exception {
-		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineContexts(appContext);
 
