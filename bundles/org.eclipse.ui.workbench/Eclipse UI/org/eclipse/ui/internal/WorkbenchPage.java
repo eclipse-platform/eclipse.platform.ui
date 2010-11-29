@@ -577,7 +577,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (currentPerspective != null) {
 			List<MPart> placeholders = modelService.findElements(window,
 					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null,
-					EModelService.IN_ACTIVE_PERSPECTIVE | EModelService.OUTSIDE_PERSPECTIVE);
+					EModelService.PRESENTATION);
 			List<EditorReference> visibleReferences = new ArrayList<EditorReference>();
 			for (EditorReference reference : sortedReferences) {
 				for (MPart placeholder : placeholders) {
