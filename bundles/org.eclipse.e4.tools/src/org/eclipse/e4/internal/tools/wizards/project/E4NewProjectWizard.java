@@ -360,7 +360,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			childContext.setName("In Dialogs");
 			rootContext.getChildren().add(childContext);
 			
-			application.setRootContext(rootContext);
+			application.getRootContext().add(rootContext);
 			application.getBindingContexts().add("org.eclipse.ui.contexts.dialogAndWindow");
 			
 			resource.getContents().add((EObject) application);
