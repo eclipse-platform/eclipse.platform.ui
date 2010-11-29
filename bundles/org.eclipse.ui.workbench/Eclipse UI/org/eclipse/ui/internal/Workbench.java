@@ -992,10 +992,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 				for (int i = 0; i < windows.length; i++) {
 					IWorkbenchPage pages[] = windows[i].getPages();
 					for (int j = 0; j < pages.length; j++) {
-						IEditorReference[] references = pages[j].getEditorReferences();
-						for (int k = 0; k < references.length; k++) {
-							IEditorPart editor = references[k].getEditor(false);
-							if (editor != null && !((EditorReference) references[k]).persist()) {
+						List<EditorReference> editorReferences = ((WorkbenchPage) pages[j])
+								.getInternalEditorReferences();
+						for (EditorReference reference : editorReferences) {
+							IEditorPart editor = reference.getEditor(false);
+							if (editor != null && !reference.persist()) {
 								pages[j].closeEditor(editor, false);
 							}
 						}

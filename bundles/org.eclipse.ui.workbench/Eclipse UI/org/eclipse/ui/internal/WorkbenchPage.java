@@ -594,6 +594,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return sortedReferences;
 	}
 
+	public List<EditorReference> getInternalEditorReferences() {
+		return editorReferences;
+	}
+
 	public EditorReference getEditorReference(MPart part) {
 		for (EditorReference ref : editorReferences) {
 			if (ref.getModel() == part) {
