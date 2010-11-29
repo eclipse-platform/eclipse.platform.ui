@@ -421,7 +421,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#build(int, IProgressMonitor)
 	 */
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
-		buildInternal(null, trigger, true, monitor);
+		buildInternal(EMPTY_BUILD_CONFIG_ARRAY, trigger, true, monitor);
 	}
 
 	/*
@@ -436,7 +436,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	/**
 	 * Build the passed in configurations or the whole workspace.
-	 * @param configs to build or null for the whole workspace
+	 * @param configs to build or EMPTY_BUILD_CONFIG_ARRAY for the whole workspace
 	 * @param trigger build trigger
 	 * @param buildReferences transitively build referenced build configurations
 	 */
@@ -453,8 +453,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				try {
 
 					// Calculate the build-order having called the pre-build notification (which may change build order)
-					// If configs == null => This is a full workspace build.
-					if (configs == null) {
+					// If configs == EMPTY_BUILD_CONFIG_ARRAY => This is a full workspace build.
+					IBuildConfiguration[] requestedConfigs = configs;
+					if (configs == EMPTY_BUILD_CONFIG_ARRAY) {
 						if (trigger != IncrementalProjectBuilder.CLEAN_BUILD)
 							configs = getBuildOrder();
 						else {
@@ -484,7 +485,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						configs = order.buildConfigurations;
 					}
 
-					result = getBuildManager().build(configs, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+					result = getBuildManager().build(configs, requestedConfigs, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 				} finally {
 					//must fire POST_BUILD if PRE_BUILD has occurred
 					broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);

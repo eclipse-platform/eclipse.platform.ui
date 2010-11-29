@@ -118,6 +118,7 @@ public interface ICoreConstants {
 	public static final int WORKSPACE_TREE_VERSION_2 = 67305986;
 
 	// helper constants for empty structures
+	public static final IBuildConfiguration[] EMPTY_BUILD_CONFIG_ARRAY = new IBuildConfiguration[0];
 	public static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 	public static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	public static final IFileState[] EMPTY_FILE_STATES = new IFileState[0];

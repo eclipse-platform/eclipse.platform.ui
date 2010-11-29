@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
+import org.eclipse.core.resources.IBuildConfiguration;
+
 import java.util.*;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
@@ -212,13 +214,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		}
 	}
 
-	protected void basicBuild(IBuildConfiguration buildConfiguration, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
+	protected void basicBuild(IBuildConfiguration buildConfiguration, int trigger, IBuildContext context, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
 		try {
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
 				BuildCommand command = (BuildCommand) commands[i];
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
-				IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, i, status);
+				IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, i, status, context);
 				if (builder != null)
 					basicBuild(trigger, builder, command.getArguments(false), status, sub);
 			}
@@ -231,20 +233,20 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Runs all builders on the given project config.
 	 * @return A status indicating if the build succeeded or failed
 	 */
-	private IStatus basicBuild(IBuildConfiguration buildConfiguration, int trigger, IProgressMonitor monitor) {
+	private IStatus basicBuild(IBuildConfiguration buildConfiguration, int trigger, IBuildContext context, IProgressMonitor monitor) {
 		if (!canRun(trigger))
 			return Status.OK_STATUS;
 		try {
 			hookStartBuild(new IBuildConfiguration[] { buildConfiguration }, trigger);
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
-			basicBuild(buildConfiguration, trigger, status, monitor);
+			basicBuild(buildConfiguration, trigger, context, status, monitor);
 			return status;
 		} finally {
 			hookEndBuild(trigger);
 		}
 	}
 
-	private void basicBuild(final IBuildConfiguration buildConfiguration, final int trigger, final MultiStatus status, final IProgressMonitor monitor) {
+	private void basicBuild(final IBuildConfiguration buildConfiguration, final int trigger, final IBuildContext context, final MultiStatus status, final IProgressMonitor monitor) {
 		try {
 			final IProject project = buildConfiguration.getProject();
 			final ICommand[] commands;
@@ -273,7 +275,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				}
 
 				public void run() throws Exception {
-					basicBuild(buildConfiguration, trigger, commands, status, monitor);
+					basicBuild(buildConfiguration, trigger, context, commands, status, monitor);
 				}
 			};
 			SafeRunner.run(code);
@@ -299,7 +301,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 				ICommand command = getCommand(project, builderName, args);
 				try {
-					IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, -1, status);
+					IBuildContext context = new BuildContext(buildConfiguration);
+					IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, -1, status, context);
 					if (builder != null)
 						basicBuild(trigger, builder, args, status, Policy.subMonitorFor(monitor, 1));
 				} catch (CoreException e) {
@@ -317,7 +320,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * Loop the workspace build until no more builders request a rebuild.
 	 */
-	private void basicBuildLoop(IBuildConfiguration[] configs, int trigger, MultiStatus status, IProgressMonitor monitor) {
+	private void basicBuildLoop(IBuildConfiguration[] configs, IBuildConfiguration[] requestedConfigs, int trigger, MultiStatus status, IProgressMonitor monitor) {
 		int projectWork = configs.length;
 		if (projectWork > 0)
 			projectWork = TOTAL_BUILD_WORK / projectWork;
@@ -330,7 +333,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			builtProjects.clear();
 			for (int i = 0; i < configs.length; i++) {
 				if (configs[i].getProject().isAccessible()) {
-					basicBuild(configs[i], trigger, status, Policy.subMonitorFor(monitor, projectWork));
+					IBuildContext context = new BuildContext(configs[i], requestedConfigs, configs);
+					basicBuild(configs[i], trigger, context, status, Policy.subMonitorFor(monitor, projectWork));
 					builtProjects.add(configs[i].getProject());
 				}
 			}
@@ -344,7 +348,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * they are given.
 	 * @return A status indicating if the build succeeded or failed
 	 */
-	public IStatus build(IBuildConfiguration[] configs, int trigger, IProgressMonitor monitor) {
+	public IStatus build(IBuildConfiguration[] configs, IBuildConfiguration[] requestedConfigs, int trigger, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(Messages.events_building_0, TOTAL_BUILD_WORK);
@@ -353,7 +357,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			try {
 				hookStartBuild(configs, trigger);
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, Messages.events_errors, null);
-				basicBuildLoop(configs, trigger, status, monitor);
+				basicBuildLoop(configs, requestedConfigs, trigger, status, monitor);
 				return status;
 			} finally {
 				hookEndBuild(trigger);
@@ -371,8 +375,10 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	public IStatus build(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map args, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
-		if (builderName == null)
-			return basicBuild(buildConfiguration, trigger, monitor);
+		if (builderName == null) {
+			IBuildContext context = new BuildContext(buildConfiguration);
+			return basicBuild(buildConfiguration, trigger, context, monitor);
+		}
 		return basicBuild(buildConfiguration, trigger, builderName, args, monitor);
 	}
 
@@ -530,6 +536,24 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return null;
 		}
 		return (IncrementalProjectBuilder) result;
+	}
+
+	/**
+	 * Returns the builder instance corresponding to the given command, or
+	 * <code>null</code> if the builder was not valid, and sets its context
+	 * to the one supplied.
+	 * 
+	 * @param buildConfiguration The project config this builder corresponds to
+	 * @param command The build command
+	 * @param buildSpecIndex The index of this builder in the build spec, or -1 if
+	 * the index is unknown
+	 * @param status MultiStatus for collecting errors
+	 */
+	private IncrementalProjectBuilder getBuilder(IBuildConfiguration buildConfiguration, ICommand command, int buildSpecIndex, MultiStatus status, IBuildContext context) throws CoreException {
+		InternalBuilder builder = getBuilder(buildConfiguration, command, buildSpecIndex, status);
+		if (builder != null)
+			builder.setContext(context);
+		return (IncrementalProjectBuilder) builder;
 	}
 
 	/**
@@ -1066,10 +1090,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				Set rules = new HashSet();
 				commands = ((Project) project).internalGetDescription().getBuildSpec(false);
 				boolean hasNullBuildRule = false;
+				BuildContext context = new BuildContext(buildConfiguration);
 				for (int i = 0; i < commands.length; i++) {
 					BuildCommand command = (BuildCommand) commands[i];
 					try {
-						IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, i, status);
+						IncrementalProjectBuilder builder = getBuilder(buildConfiguration, command, i, status, context);
 						if (builder != null) {
 							ISchedulingRule builderRule = builder.getRule(trigger, args);
 							if (builderRule != null)
