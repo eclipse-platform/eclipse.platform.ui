@@ -3246,6 +3246,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		final WorkbenchPartReference partReference = compatibilityPart.getReference();
 		MPart model = partReference.getModel();
 
+		SaveablesList modelManager = (SaveablesList) getWorkbenchWindow().getService(
+				ISaveablesLifecycleListener.class);
+		Object postCloseInfo = modelManager.preCloseParts(Collections.singletonList(part), false,
+				getWorkbenchWindow());
+		if (postCloseInfo != null) {
+			modelManager.postClose(postCloseInfo);
+		}
+
 		for (final Object listener : partListenerList.getListeners()) {
 			SafeRunner.run(new SafeRunnable() {
 				public void run() throws Exception {
