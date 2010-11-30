@@ -30,6 +30,10 @@ import org.eclipse.help.internal.server.WebappManager;
 public class HelpServerBinding extends TestCase {
 
 	private int previousMode;
+	// Tests to access the server using it's IP need to be disabled
+	// for testing in the build because a firewall can block this access
+	// To enable these tests for local testing set testUsingIP to true.
+	private final boolean testUsingIP = false;
 
 	protected void setUp() throws Exception {
 		previousMode = BaseHelpSystem.getMode();
@@ -55,7 +59,9 @@ public class HelpServerBinding extends TestCase {
 		WebappManager.stop("help");
 		WebappManager.start("help");
 		assertTrue(canAccessServer("127.0.0.1"));
-		//assertTrue(canAccessServer(getHostIP()));
+		if (testUsingIP) {
+			assertTrue(canAccessServer(getHostIP()));
+		}
 	}	
 
 	public void testWorkbenchBinding() throws Exception {
@@ -63,7 +69,9 @@ public class HelpServerBinding extends TestCase {
 		WebappManager.stop("help");
 		WebappManager.start("help");
 		assertTrue(canAccessServer("127.0.0.1"));
-		//assertFalse(canAccessServer(getHostIP()));
+		if (testUsingIP) {
+		    assertFalse(canAccessServer(getHostIP()));
+		}
 	}	
 	
 	public void testStandaloneBinding() throws Exception {
@@ -71,7 +79,9 @@ public class HelpServerBinding extends TestCase {
 		WebappManager.stop("help");
 		WebappManager.start("help");
 		assertTrue(canAccessServer("127.0.0.1"));
-		//assertTrue(canAccessServer(getHostIP()));
+		if (testUsingIP) {
+		    assertTrue(canAccessServer(getHostIP()));
+		}
 	}	
 	
 	private boolean canAccessServer(String host) throws Exception {
