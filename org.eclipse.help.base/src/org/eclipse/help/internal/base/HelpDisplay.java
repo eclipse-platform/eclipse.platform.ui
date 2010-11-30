@@ -13,9 +13,14 @@ package org.eclipse.help.internal.base;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
+import org.eclipse.help.base.AbstractHelpDisplay;
 import org.eclipse.help.internal.server.WebappManager;
 import org.eclipse.osgi.util.NLS;
 
@@ -26,7 +31,26 @@ import org.eclipse.osgi.util.NLS;
 public class HelpDisplay {
 
 	private String hrefOpenedFromHelpDisplay;
+	private static AbstractHelpDisplay helpDisplay;
+	private static final String HELP_DISPLAY_EXTENSION_ID = "org.eclipse.help.base.display"; //$NON-NLS-1$
+	private static final String HELP_DISPLAY_CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
+	
+	private static class DefaultDisplay extends AbstractHelpDisplay {
+		
+		public String getHelpHome(String hostname, int port, String tab) {
+			String helpURL = getFramesetURL();	
+			if (tab != null) {
+				helpURL += "?tab=" + tab; //$NON-NLS-1$
+			}
+			return helpURL;
+		}
 
+		public String getHelpForTopic(String topic, String hostname, int port) {
+			return getFramesetURL() + "?topic=" + topic; //$NON-NLS-1$			
+		}
+		
+	}
+	
 	/**
 	 * Constructor.
 	 */
@@ -158,29 +182,16 @@ public class HelpDisplay {
 		}
 
 		try {
-			/*
 			if (helpURL == null || helpURL.length() == 0) {
-				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(
-						getFramesetURL());
-			} else if (helpURL.startsWith("tab=") //$NON-NLS-1$
-					|| helpURL.startsWith("toc=") //$NON-NLS-1$
-					|| helpURL.startsWith("topic=") //$NON-NLS-1$
-					|| helpURL.startsWith("contextId=")) { //$NON-NLS-1$
-				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(
-						getFramesetURL() + "?" + helpURL); //$NON-NLS-1$
-			} else {
-				BaseHelpSystem.getHelpBrowser(forceExternal)
-						.displayURL(helpURL);
-			}
-			*/
-			if (helpURL == null || helpURL.length() == 0) {
-				helpURL = getFramesetURL();
-			} else if (helpURL.startsWith("tab=") //$NON-NLS-1$
-					|| helpURL.startsWith("toc=") //$NON-NLS-1$
-					|| helpURL.startsWith("topic=") //$NON-NLS-1$
-					|| helpURL.startsWith("contextId=")) { //$NON-NLS-1$
-				helpURL = getFramesetURL() + "?" + helpURL; //$NON-NLS-1$
-			}
+				helpURL = getHelpDisplay().getHelpHome( WebappManager.getHost(),  WebappManager.getPort(), null);
+			} else if (helpURL.startsWith("tab=")) { //$NON-NLS-1$
+				String tab = helpURL.substring("tab=".length()); //$NON-NLS-1$
+				helpURL = getHelpDisplay().getHelpHome( WebappManager.getHost(),  WebappManager.getPort(), tab);	
+			} else if (helpURL.startsWith("topic=")) { //$NON-NLS-1$
+				String topic = helpURL.substring("topic=".length()); //$NON-NLS-1$
+				helpURL = getHelpDisplay().getHelpForTopic( topic, WebappManager.getHost(),  WebappManager.getPort());	
+			} 
+			
 			BaseHelpSystem.getHelpBrowser(forceExternal)
 						.displayURL(helpURL);
 		} catch (Exception e) {
@@ -202,13 +213,13 @@ public class HelpDisplay {
 	}
 	*/
 
-	private String getBaseURL() {
+	private static String getBaseURL() {
 		return "http://" //$NON-NLS-1$
 				+ WebappManager.getHost() + ":" //$NON-NLS-1$
 				+ WebappManager.getPort() + "/help/"; //$NON-NLS-1$
 	}
 
-	private String getFramesetURL() {
+	private static String getFramesetURL() {
 		return getBaseURL() + "index.jsp"; //$NON-NLS-1$
 	}
 
@@ -260,5 +271,38 @@ public class HelpDisplay {
 	public void setHrefOpenedFromHelpDisplay(String hrefOpenedFromHelpDisplay) {
 		this.hrefOpenedFromHelpDisplay = hrefOpenedFromHelpDisplay;
 	}
+	
+	private static void createHelpDisplay() {
+		IExtensionPoint point = Platform.getExtensionRegistry()
+				.getExtensionPoint(HELP_DISPLAY_EXTENSION_ID );
+		if (point != null) {
+			IExtension[] extensions = point.getExtensions();
+			if (extensions.length != 0) {
+				// We need to pick up the non-default configuration
+				IConfigurationElement[] elements = extensions[0]
+						.getConfigurationElements();
+				if (elements.length == 0) 
+					return;
+				IConfigurationElement displayElement  = elements[0];
+				// Instantiate the help display
+				try {
+					helpDisplay = (AbstractHelpDisplay) (displayElement
+							.createExecutableExtension(HELP_DISPLAY_CLASS_ATTRIBUTE));
+				} catch (CoreException e) {
+					HelpBasePlugin.logStatus(e.getStatus());
+				}
+			}
+		}
+	}
+
+	private static AbstractHelpDisplay getHelpDisplay() {
+    	if (helpDisplay == null) {
+    		createHelpDisplay();
+    	}
+    	if (helpDisplay == null) {
+    		helpDisplay = new DefaultDisplay();
+    	}
+    	return helpDisplay;
+    }
 
 }
