@@ -342,7 +342,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	
 	protected void initializeInBackground(final CompareEditorInput cei, final boolean hadPreviousInput) {
 		// Need to cancel any running jobs associated with the oldInput
-		Job job = new Job(CompareMessages.CompareEditor_0) {
+		Job job = new Job(NLS.bind(CompareMessages.CompareEditor_0, cei.getTitle())) {
 			protected IStatus run(final IProgressMonitor monitor) {
 				final int[] newState = new int[] { ERROR };
 				try {
@@ -366,11 +366,11 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 						newState[0] = CANCELED;
 					Display.getDefault().syncExec(new Runnable() {
 						public void run() {
+							if (fPageBook.isDisposed())
+								return;
 							// we need to register the saveable if we had a previous input or if
 							// there are knownSaveables (which means that the workbench called
 							// getSaveables and got an empty list
-							if (monitor.isCanceled() || fPageBook.isDisposed())
-								return;
 							if (hadPreviousInput || (knownSaveables != null && !isAllSaveablesKnown())) {
 								registerSaveable();
 							}
@@ -448,6 +448,12 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					closeEditor();
 				}
 			} else if (fControl == null && getState() != CREATING_CONTROL) {
+				if (getState() == CANCELED) {
+					// Close the editor when we are canceled, even when compare
+					// result has been already prepared
+					closeEditor();
+					return;
+				}
 				// Set the state in case this method gets called again
 				setState(CREATING_CONTROL);
 				if (getSite().getSelectionProvider() == null)
