@@ -109,8 +109,9 @@ public class SorterTest extends NavigatorTestBase {
 		_viewer.add(newData, file);
 	}
 
+	// The test is disabled until bug 309746 (intermittent test failures) can be fixed
 	// Bug 141724 Allow sorting to be overridden
-	public void testSorterContentOverride() throws Exception {
+	public void DISABLED_testSorterContentOverride() throws Exception {
 		waitForModelObjects();
 
 		INavigatorContentDescriptor desc = _contentService
