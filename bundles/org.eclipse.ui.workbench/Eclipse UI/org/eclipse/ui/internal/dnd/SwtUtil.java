@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dnd;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -80,13 +79,13 @@ public class SwtUtil {
     }
     
     /**
-     * Determines if one control is a child of another. Returns true iff the second
-     * argument is a child of the first (or the same object).
-     * 
-     * @param potentialParent
-     * @param childToTest
-     * @return
-     */
+	 * Determines if one control is a child of another.
+	 * 
+	 * @param potentialParent
+	 * @param childToTest
+	 * @return <code>true</code> if the second argument is a child of the first
+	 *         or the same object, <code>false</code> otherwise
+	 */
     public static boolean isChild(Control potentialParent, Control childToTest) {
         if (childToTest == null) {
             return false;
@@ -100,7 +99,8 @@ public class SwtUtil {
     }
     
     public static boolean isFocusAncestor(Control potentialParent) {
-        Assert.isNotNull(potentialParent);
+		if (potentialParent == null)
+			return false;
         Control focusControl = Display.getCurrent().getFocusControl();
         if (focusControl == null) {
             return false;
@@ -109,13 +109,13 @@ public class SwtUtil {
     }
 
     /**
-     * Finds and returns the most specific SWT control at the given location. 
-     * (Note: this does a DFS on the SWT widget hierarchy, which is slow).
-     * 
-     * @param displayToSearch
-     * @param locationToFind
-     * @return
-     */
+	 * Finds and returns the most specific SWT control at the given location.
+	 * (Note: this does a DFS on the SWT widget hierarchy, which is slow).
+	 * 
+	 * @param displayToSearch
+	 * @param locationToFind
+	 * @return the most specific SWT control at the given location
+	 */
     public static Control findControl(Display displayToSearch,
             Point locationToFind) {
         Shell[] shells = displayToSearch.getShells();
@@ -195,12 +195,13 @@ public class SwtUtil {
     }
     
     /**
-     * Finds the control in the given location
-     * 
-     * @param toSearch
-     * @param locationToFind location (in display coordinates) 
-     * @return
-     */
+	 * Finds the control at the given location.
+	 * 
+	 * @param toSearch
+	 * @param locationToFind
+	 *            location (in display coordinates)
+	 * @return the control at the given location
+	 */
     public static Control findControl(Composite toSearch, Point locationToFind) {
         Control[] children = toSearch.getChildren();
 
@@ -208,13 +209,16 @@ public class SwtUtil {
     }
 
     /**
-     * 
-     * Returns true iff the given rectangle is located in the client area of any
-     * monitor.
-     * 
-     * @param someRectangle a rectangle in display coordinates (not null)
-     * @return true iff the given point can be seen on any monitor
-     */
+	 * 
+	 * Returns true iff the given rectangle is located in the client area of any
+	 * monitor.
+	 * 
+	 * @param display
+	 *            the display
+	 * @param someRectangle
+	 *            a rectangle in display coordinates (not null)
+	 * @return true iff the given point can be seen on any monitor
+	 */
     public static boolean intersectsAnyMonitor(Display display,
             Rectangle someRectangle) {
         Monitor[] monitors = display.getMonitors();
