@@ -111,7 +111,7 @@ public class CommandProcessingAddon {
 			ArrayList<Parameter> parmList = new ArrayList<Parameter>();
 			for (MCommandParameter cmdParm : modelParms) {
 				ParameterType parameterType = null;
-				if (cmdParm.getTypeId() != null) {
+				if (cmdParm.getTypeId() != null && cmdParm.getTypeId().length() > 0) {
 					parameterType = commandManager.getParameterType(cmdParm.getTypeId());
 				}
 				parmList.add(new Parameter(cmdParm.getElementId(), cmdParm.getName(), null,
