@@ -40,18 +40,10 @@ public class BindingServiceImpl implements EBindingService {
 	@Inject
 	private BindingTableManager manager;
 
+	@Inject
 	private ContextManager contextManager;
 
 	private ContextSet contextSet = ContextSet.EMPTY;
-
-	@Inject
-	void setContextManager(ContextManager contextManager) {
-		this.contextManager = contextManager;
-
-		if (contextManager != null && ContextSet.getComparator() == null) {
-			ContextSet.setComparator(new ContextSet.CComp(contextManager));
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
