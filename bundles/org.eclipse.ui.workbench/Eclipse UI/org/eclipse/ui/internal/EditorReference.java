@@ -57,7 +57,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	private EditorSite editorSite;
 	private String descriptorId;
 	private IMemento editorState;
-	private String title;
 
 	EditorReference(IEclipseContext windowContext, IWorkbenchPage page, MPart part,
 			IEditorInput input, EditorDescriptor descriptor, IMemento editorState) {
@@ -91,16 +90,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 		} else {
 			descriptorId = this.descriptor.getId();
 			setImageDescriptor(this.descriptor.getImageDescriptor());
-		}
-
-		if (input == null) {
-			if (this.descriptor == null) {
-				title = Util.safeString(part.getLabel());
-			} else {
-				title = this.descriptor.getLabel();
-			}
-		} else {
-			title = Util.safeString(input.getName());
 		}
 	}
 
@@ -188,7 +177,17 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	}
 
 	public String getTitle() {
-		return title;
+		String label = Util.safeString(getModel().getLabel());
+		if (label.length() == 0) {
+			if (input == null) {
+				if (descriptor != null) {
+					return descriptor.getLabel();
+				}
+			} else {
+				return Util.safeString(input.getName());
+			}
+		}
+		return label;
 	}
 
 	private IEditorInput restoreInput(IMemento editorMem) throws PartInitException {
