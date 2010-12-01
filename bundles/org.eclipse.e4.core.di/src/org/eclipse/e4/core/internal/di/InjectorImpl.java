@@ -175,23 +175,20 @@ public class InjectorImpl implements IInjector {
 			int unresolved = unresolved(actualArgs);
 			if (unresolved == -1) {
 				requestor.setResolvedArgs(actualArgs);
+				requestor.execute();
 			} else {
 				if (requestor.isOptional())
 					requestor.setResolvedArgs(null);
-				else {
-					if (shouldDebug) {
-						StringBuffer tmp = new StringBuffer();
-						tmp.append("Uninjecting object \""); //$NON-NLS-1$
-						tmp.append(object.toString());
-						tmp.append("\": dependency on \""); //$NON-NLS-1$
-						tmp.append(requestor.getDependentObjects()[unresolved].toString());
-						tmp.append("\" is not optional."); //$NON-NLS-1$
-						LogHelper.logError(tmp.toString(), null);
-					}
-					continue; // do not execute requestors with unresolved arguments
+				else if (shouldDebug) {
+					StringBuffer tmp = new StringBuffer();
+					tmp.append("Uninjecting object \""); //$NON-NLS-1$
+					tmp.append(object.toString());
+					tmp.append("\": dependency on \""); //$NON-NLS-1$
+					tmp.append(requestor.getDependentObjects()[unresolved].toString());
+					tmp.append("\" is not optional."); //$NON-NLS-1$
+					LogHelper.logError(tmp.toString(), null);
 				}
 			}
-			requestor.execute();
 		}
 	}
 
