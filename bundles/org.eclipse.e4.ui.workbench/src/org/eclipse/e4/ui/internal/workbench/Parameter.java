@@ -10,7 +10,6 @@ import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.commands.common.HandleObject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.e4.ui.bindings.internal.Util;
 
 /**
  * <p>

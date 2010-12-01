@@ -13,11 +13,13 @@ import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.bindings.BindingServiceAddon;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.internal.ContextSet;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
+import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.bindings.Binding;
@@ -52,18 +54,21 @@ public class BindingLookupTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		IEclipseContext globalContext = Activator.getDefault().getGlobalContext(); 
+		IEclipseContext globalContext = Activator.getDefault()
+				.getGlobalContext();
 		workbenchContext = globalContext.createChild("workbenchContext");
-		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
+		ContextInjectionFactory.make(CommandServiceAddon.class,
+				workbenchContext);
+		ContextInjectionFactory.make(ContextServiceAddon.class, workbenchContext);
+		ContextInjectionFactory.make(BindingServiceAddon.class, workbenchContext);
+		
 		defineCommands(workbenchContext);
 		defineContexts(workbenchContext);
 		defineBindingTables(workbenchContext);
 	}
 
 	private void defineContexts(IEclipseContext context) {
-		ContextManager contextManager = new ContextManager();
-		context.set(ContextManager.class.getName(), contextManager);
-		ContextSet.setComparator(new ContextSet.CComp(contextManager));
+		ContextManager contextManager = context.get(ContextManager.class);
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			Context c = contextManager.getContext(CONTEXTS[i]);
 			c.define(CONTEXTS[i + 1], null, CONTEXTS[i + 2]);
@@ -72,16 +77,11 @@ public class BindingLookupTest extends TestCase {
 		EContextService cs = (EContextService) context
 				.get(EContextService.class.getName());
 		cs.activateContext(ID_DIALOG_AND_WINDOW);
-		context.set(IServiceConstants.ACTIVE_CONTEXTS,
-				new ActiveContextsFunction());
 	}
 
 	private void defineBindingTables(IEclipseContext context) {
-		BindingTableManager btm = (BindingTableManager) ContextInjectionFactory
-				.make(BindingTableManager.class, context);
-		context.set(BindingTableManager.class.getName(), btm);
-		ContextManager cm = (ContextManager) context
-				.get(ContextManager.class.getName());
+		BindingTableManager btm = context.get(BindingTableManager.class);
+		ContextManager cm = context.get(ContextManager.class);
 		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW)));
 		btm.addTable(new BindingTable(cm.getContext(ID_WINDOW)));
 		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG)));
@@ -162,7 +162,8 @@ public class BindingLookupTest extends TestCase {
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
 		c1.activate();
-		EContextService es = (EContextService) c1.get(EContextService.class.getName());
+		EContextService es = (EContextService) c1.get(EContextService.class
+				.getName());
 		es.activateContext(ID_WINDOW);
 
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
@@ -171,7 +172,8 @@ public class BindingLookupTest extends TestCase {
 		bs1.activateBinding(db);
 
 		IEclipseContext c2 = workbenchContext.createChild("c2");
-		EContextService es2 = (EContextService) c2.get(EContextService.class.getName());
+		EContextService es2 = (EContextService) c2.get(EContextService.class
+				.getName());
 		es2.activateContext(ID_DIALOG);
 
 		EBindingService bs2 = (EBindingService) c2.get(EBindingService.class
@@ -196,7 +198,8 @@ public class BindingLookupTest extends TestCase {
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
 		c1.activate();
-		EContextService es = (EContextService) c1.get(EContextService.class.getName());
+		EContextService es = (EContextService) c1.get(EContextService.class
+				.getName());
 		es.activateContext(ID_WINDOW);
 
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
@@ -205,7 +208,8 @@ public class BindingLookupTest extends TestCase {
 		bs1.activateBinding(db);
 
 		IEclipseContext c2 = workbenchContext.createChild("c2");
-		EContextService es2 = (EContextService) c2.get(EContextService.class.getName());
+		EContextService es2 = (EContextService) c2.get(EContextService.class
+				.getName());
 		es2.activateContext(ID_DIALOG);
 
 		EBindingService bs2 = (EBindingService) c2.get(EBindingService.class
@@ -321,7 +325,8 @@ public class BindingLookupTest extends TestCase {
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
 		c1.activate();
-		EContextService es = (EContextService) c1.get(EContextService.class.getName());
+		EContextService es = (EContextService) c1.get(EContextService.class
+				.getName());
 		es.activateContext(ID_WINDOW);
 
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
@@ -330,7 +335,8 @@ public class BindingLookupTest extends TestCase {
 		bs1.activateBinding(db);
 
 		IEclipseContext c2 = workbenchContext.createChild("c2");
-		EContextService es2 = (EContextService) c2.get(EContextService.class.getName());
+		EContextService es2 = (EContextService) c2.get(EContextService.class
+				.getName());
 		es2.activateContext(ID_DIALOG);
 
 		EBindingService bs2 = (EBindingService) c2.get(EBindingService.class
@@ -383,7 +389,8 @@ public class BindingLookupTest extends TestCase {
 
 		IEclipseContext c1 = workbenchContext.createChild("c1");
 		c1.activate();
-		EContextService es = (EContextService) c1.get(EContextService.class.getName());
+		EContextService es = (EContextService) c1.get(EContextService.class
+				.getName());
 		es.activateContext(ID_WINDOW);
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
 				.getName());

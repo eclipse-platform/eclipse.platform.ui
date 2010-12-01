@@ -1850,7 +1850,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			public void runWithException() {
 				Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_COMMANDS;
-				commandManager = (CommandManager) e4Context.get(CommandManager.class.getName());
+				commandManager = e4Context.get(CommandManager.class);
 			}
 		});
 
@@ -1867,7 +1867,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			public void runWithException() {
 				ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
-				contextManager = (ContextManager) e4Context.get(ContextManager.class.getName());
+				contextManager = e4Context.get(ContextManager.class);
 			}
 		});
 
@@ -1889,7 +1889,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 						}
 					}
 				});
-				contextService.readRegistry();
 				EContextService ecs = e4Context.get(EContextService.class);
 				ecs.activateContext(IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
 			}

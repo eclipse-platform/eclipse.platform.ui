@@ -75,7 +75,7 @@
       <key
             commandId="org.eclipse.ui.file.exit"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+X">
+            sequence="CTRL+Q">
       </key>
    </extension>
    <extension

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -334,13 +333,15 @@ public final class BindingService implements IBindingService {
 	 * .ui.commands.ICommandService)
 	 */
 	public void readRegistryAndPreferences(ICommandService commandService) {
-		BindingPersistence reader = new BindingPersistence(manager, commandService);
-		reader.reRead();
-		Iterator i = manager.getActiveBindingsDisregardingContextFlat().iterator();
-		while (i.hasNext()) {
-			Binding binding = (Binding) i.next();
-			addBinding(binding);
-		}
+		// BindingPersistence reader = new BindingPersistence(manager,
+		// commandService);
+		// reader.reRead();
+		// Iterator i =
+		// manager.getActiveBindingsDisregardingContextFlat().iterator();
+		// while (i.hasNext()) {
+		// Binding binding = (Binding) i.next();
+		// addBinding(binding);
+		// }
 	}
 
 	private MCommand findCommand(String id) {

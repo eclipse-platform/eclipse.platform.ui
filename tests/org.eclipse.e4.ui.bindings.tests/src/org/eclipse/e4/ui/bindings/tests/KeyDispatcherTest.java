@@ -13,12 +13,14 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.ui.bindings.BindingServiceAddon;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.internal.ContextSet;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
+import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.bindings.Binding;
@@ -107,15 +109,15 @@ public class KeyDispatcherTest extends TestCase {
 		IEclipseContext globalContext = Activator.getDefault().getGlobalContext(); 
 		workbenchContext = globalContext.createChild("workbenchContext");
 		ContextInjectionFactory.make(CommandServiceAddon.class, workbenchContext);
+		ContextInjectionFactory.make(ContextServiceAddon.class, workbenchContext);
+		ContextInjectionFactory.make(BindingServiceAddon.class, workbenchContext);
 		defineContexts(workbenchContext);
 		defineBindingTables(workbenchContext);
 		defineCommands(workbenchContext);
 	}
 
 	private void defineContexts(IEclipseContext context) {
-		ContextManager contextManager = new ContextManager();
-		context.set(ContextManager.class.getName(), contextManager);
-		ContextSet.setComparator(new ContextSet.CComp(contextManager));
+		ContextManager contextManager = context.get(ContextManager.class);
 		for (int i = 0; i < CONTEXTS.length; i += 3) {
 			Context c = contextManager.getContext(CONTEXTS[i]);
 			c.define(CONTEXTS[i + 1], null, CONTEXTS[i + 2]);
@@ -125,16 +127,12 @@ public class KeyDispatcherTest extends TestCase {
 				.get(EContextService.class.getName());
 		cs.activateContext(ID_DIALOG_AND_WINDOW);
 		cs.activateContext(ID_WINDOW);
-		context.set(IServiceConstants.ACTIVE_CONTEXTS,
-				new ActiveContextsFunction());
 	}
 
 	private void defineBindingTables(IEclipseContext context) {
-		BindingTableManager btm = (BindingTableManager) ContextInjectionFactory
-				.make(BindingTableManager.class, context);
-		context.set(BindingTableManager.class.getName(), btm);
-		ContextManager cm = (ContextManager) context
-				.get(ContextManager.class.getName());
+		BindingTableManager btm = context.get(BindingTableManager.class);
+		ContextManager cm =  context
+				.get(ContextManager.class);
 		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG_AND_WINDOW)));
 		btm.addTable(new BindingTable(cm.getContext(ID_WINDOW)));
 		btm.addTable(new BindingTable(cm.getContext(ID_DIALOG)));

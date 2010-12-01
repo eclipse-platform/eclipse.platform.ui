@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.bindings.BindingServiceAddon;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -55,6 +56,7 @@ public class MMenuItemTest extends TestCase {
 		appContext = E4Application.createDefaultContext();
 		ContextInjectionFactory.make(CommandServiceAddon.class, appContext);
 		ContextInjectionFactory.make(ContextServiceAddon.class, appContext);
+		ContextInjectionFactory.make(BindingServiceAddon.class, appContext);
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
 	}
