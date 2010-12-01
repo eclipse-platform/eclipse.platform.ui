@@ -1921,16 +1921,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		partService.addPartListener(e4PartListener);
 
-		Collection<MPart> parts = partService.getParts();
-		for (MPart part : parts) {
-			if (part.isToBeRendered()) {
-				String uri = part.getContributionURI();
-				if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
-					createViewReferenceForPart(part, part.getElementId());
-				} else if (uri.equals(CompatibilityPart.COMPATIBILITY_EDITOR_URI)) {
-					// TODO compat: we need that editor input back, or we have
-					// squat
-					createEditorReferenceForPart(part, null, part.getElementId(), null);
+		// create editor references for all editors
+		List<MPart> editors = modelService.findElements(window,
+				CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null,
+				EModelService.IN_ANY_PERSPECTIVE | EModelService.OUTSIDE_PERSPECTIVE);
+		for (MPart editor : editors) {
+			createEditorReferenceForPart(editor, null, editor.getElementId(), null);
+		}
+
+		// create view references for rendered view placeholders
+		List<MPlaceholder> placeholders = modelService.findElements(window, null,
+				MPlaceholder.class, null, EModelService.IN_ANY_PERSPECTIVE
+						| EModelService.OUTSIDE_PERSPECTIVE);
+		for (MPlaceholder placeholder : placeholders) {
+			if (placeholder.isToBeRendered()) {
+				MUIElement ref = placeholder.getRef();
+				if (ref instanceof MPart) {
+					MPart part = (MPart) ref;
+					String uri = part.getContributionURI();
+					if (uri.equals(CompatibilityPart.COMPATIBILITY_VIEW_URI)) {
+						createViewReferenceForPart(part, part.getElementId());
+					}
 				}
 			}
 		}
