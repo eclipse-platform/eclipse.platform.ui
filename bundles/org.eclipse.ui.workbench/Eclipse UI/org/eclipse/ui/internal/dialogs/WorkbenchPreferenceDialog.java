@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -22,6 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dnd.SwtUtil;
 
 /**
  * Prefence dialog for the workbench including the ability to load/save
@@ -205,7 +207,9 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			Shell shell = getShell();
 			if ((shell != null) && (!shell.isDisposed())) {
 				shell.open(); // make the dialog visible to properly set the focus
-				selectedPage.getControl().setFocus();
+				Control control = selectedPage.getControl();
+				if (!SwtUtil.isFocusAncestor(control))
+					control.setFocus();
 			}
 		}
 		return super.open();
