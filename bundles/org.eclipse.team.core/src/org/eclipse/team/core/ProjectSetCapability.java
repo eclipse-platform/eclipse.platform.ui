@@ -34,6 +34,13 @@ import org.eclipse.team.internal.core.Messages;
 public abstract class ProjectSetCapability {
 	
 	/**
+	 * Scheme constant (value "scm") indicating the SCM URI.
+	 * 
+	 * @since 3.7
+	 */
+	public static final String SCHEME_SCM = "scm"; //$NON-NLS-1$
+	
+	/**
 	 * Ensure that the provider type is backwards compatible by
 	 * passing the project set serializer to the type if a serializer
 	 * is registered. This is required for repository providers
@@ -303,13 +310,30 @@ public abstract class ProjectSetCapability {
 	
 	/**
 	 * Convert the given URI and projectName to a reference string that can be
-	 * passed to the {@link #addToWorkspace(String[], ProjectSetSerializationContext, IProgressMonitor)}
+	 * passed to the
+	 * {@link #addToWorkspace(String[], ProjectSetSerializationContext, IProgressMonitor)}
 	 * method. The scheme of the provided URI must match the scheme of the
 	 * repository provider type from which this capability was obtained.
-	 * @param uri the uri that identifies the location of the project in the repository.
-	 * @param projectName the name of the project.
-	 * @return the reference string representing a project that can be loaded into the workspace
-	 * or <code>null</code> if the URI and name cannot be translated into a reference string
+	 * <p>
+	 * Since 3.7 SCM URIs are also accepted.
+	 * </p>
+	 * <p>
+	 * The default implementation returns <code>null</code>. Subclasses may
+	 * override.
+	 * </p>
+	 * 
+	 * @see #SCHEME_SCM
+	 * @param uri
+	 *            the URI that identifies the location of the project in the
+	 *            repository.
+	 * @param projectName
+	 *            the name of the project to use. If <code>null</code>, use the
+	 *            project name from the provided SCM URI. If the URI is not an
+	 *            SCM URI or does not contain project name, <code>null</code> is
+	 *            returned.
+	 * @return the reference string representing a project that can be loaded
+	 *         into the workspace or <code>null</code>, if the URI and name
+	 *         cannot be translated into a reference string
 	 * @since 3.2
 	 */
 	public String asReference(URI uri, String projectName) {

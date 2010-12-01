@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
@@ -24,24 +25,36 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 public class CVSURI {
 
-	private static final String SCHEME = "cvs"; //$NON-NLS-1$
+	private static final String SCHEME_CVS = "cvs"; //$NON-NLS-1$
 	private final ICVSRepositoryLocation repository;
 	private final IPath path;
 	private final CVSTag tag;
 	private final String revision;
+	private final String projectName;
 
 	/**
-	 * Convert the given URI to a CVSURI. There are two supported formats: the
-	 * original opaque format and a newer hierarchical format.
+	 * Convert the given URI to a CVSURI. There are three supported formats: the
+	 * original opaque format, a newer hierarchical format and a CVS SCM URL
+	 * format.
+	 * 
+	 * In the last format, as delimiter you can use either colon ':' or, if you
+	 * use a colon for one of the variables (e.g. a windows path), a pipe '|'.
+	 * For more information visit http://maven.apache.org/scm/cvs.html. Please 
+	 * note, that URIs with the pipe separator are currently not supported.
+	 * 
 	 * <ul>
 	 * <li>cvs://[:]method:user[:password]@host:[port]/root/path#project/path[,tagName]</li>
 	 * <li>cvs://_method_user[_password]~host_[port]!root!path/project/path[?<version,branch,date,revision>=tagName]</li>
+	 * <li>scm:cvs<delimiter>method<delimiter>[user[<delimiter>password]@]host[<delimiter>port]<delimiter>/root/path<delimiter>project/path[;project="projectName"][;tag=tagName]</li>
 	 * </ul>
 	 * @param uri the URI
 	 * @return a CVS URI
 	 */
 	public static CVSURI fromUri(URI uri) {
 		try {
+			if (ProjectSetCapability.SCHEME_SCM.equals(uri.getScheme())) {
+				uri = convert(uri);
+			}
 			ICVSRepositoryLocation repository = getRepository(uri);
 			if (repository != null) {
 				IPath path = new Path(null, uri.getPath());
@@ -52,7 +65,8 @@ public class CVSURI {
 				repository = getOldRepository(uri);
 				IPath path = getOldPath(uri);
 				CVSTag tag = getOldTag(uri);
-				return new CVSURI(repository, path, tag);
+				String projectName = getProjectName(uri);
+				return new CVSURI(repository, path, tag, null, projectName);
 			}
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
@@ -60,11 +74,43 @@ public class CVSURI {
 		}
 	}
 
+	private static URI convert(URI uri) {
+		StringBuffer sb = new StringBuffer();
+		String ssp = uri.getSchemeSpecificPart();
+		int i = ssp.lastIndexOf(':');
+		sb.append(ssp.substring(0, i)).append('#');
+		int j = ssp.indexOf(';');
+		if (j != -1) {
+			sb.append(ssp.substring(i + 1, j));
+			String[] params = ssp.substring(j).split(";"); //$NON-NLS-1$
+			String projectName = ""; //$NON-NLS-1$
+			for (int k = 0; k < params.length; k++) {
+				// PDE way of providing tags
+				if (params[k].startsWith("tag=")) { //$NON-NLS-1$
+					sb.append(",version="); //$NON-NLS-1$
+					sb.append(params[k].substring(params[k].indexOf('=') + 1));
+				} else if (params[k].startsWith("version=")) { //$NON-NLS-1$
+					sb.append(',').append(params[k]);
+				} else if (params[k].startsWith("project=")) { //$NON-NLS-1$
+					projectName = params[k].substring(params[k].indexOf('=') + 1);
+				}
+			}
+			sb.append(',').append(projectName); // can be ""
+		} else {
+			sb.append(ssp.substring(i + 1));
+		}
+		return URI.create(sb.toString());
+	}
+
 	private static CVSTag getTag(URI uri) {
 		String query = uri.getQuery();
 		if (query == null)
 			return null;
-		StringTokenizer tokens = new StringTokenizer(query, ","); //$NON-NLS-1$
+		return getTag(query);
+	}
+
+	private static CVSTag getTag(String s) {
+		StringTokenizer tokens = new StringTokenizer(s, ","); //$NON-NLS-1$
 		while (tokens.hasMoreTokens()) {
 			String token = tokens.nextToken();
 			int index = token.indexOf('=');
@@ -116,12 +162,27 @@ public class CVSURI {
 
 	private static ICVSRepositoryLocation getRepository(URI uri) throws CVSException {
 		String authority = uri.getAuthority();
+		if (authority == null)
+			return null;
 		if (authority.indexOf('/') != -1)
 			return null;
 		if (authority.indexOf('!') == -1)
 			return null;
 		authority = decodeAuthority(authority);
 		return CVSRepositoryLocation.fromString(authority);
+	}
+	
+	private static String getProjectName(URI uri) {
+		String f = uri.getFragment();
+		if (f != null) {
+			int i = f.lastIndexOf(',');
+			if (i != -1) {
+				String s = f.substring(i + 1);
+				if (!s.equals("")) //$NON-NLS-1$
+					return s;
+			}
+		}
+		return null;
 	}
 
 	private static CVSTag getOldTag(URI uri) {
@@ -130,6 +191,9 @@ public class CVSURI {
 		if (i == -1) {
 			return CVSTag.DEFAULT;
 		}
+		CVSTag tag = getTag(f.substring(i + 1));
+		if (tag != null)
+			return tag;
 		
 		return CVSTag.DEFAULT;//just use HEAD for now (name, CVSTag.BRANCH);
 	}
@@ -152,10 +216,14 @@ public class CVSURI {
 	}
 	
 	public CVSURI(ICVSRepositoryLocation repository, IPath path, CVSTag tag) {
-		this(repository, path, tag, null);
+		this(repository, path, tag, null, null);
 	}
 	
 	public CVSURI(ICVSRepositoryLocation repository, IPath path, CVSTag tag, String revision) {
+		this(repository, path, tag, revision, null);
+	}
+
+	public CVSURI(ICVSRepositoryLocation repository, IPath path, CVSTag tag, String revision, String projectName) {
 		this.repository = repository;
 		this.path = path;
 		this.tag = tag;
@@ -163,6 +231,7 @@ public class CVSURI {
 			this.revision = revision;
 		else
 			this.revision = null;
+		this.projectName = projectName;
 	}
 
 	public CVSURI append(String name) {
@@ -197,7 +266,15 @@ public class CVSURI {
 					query = query + "," + string; //$NON-NLS-1$
 				}
 			}
-			return new URI(SCHEME, authority, pathString, query, null);
+			if (projectName != null) {
+				String string = "project=" + projectName; //$NON-NLS-1$
+				if (query == null) {
+					query = string;
+				} else {
+					query = query + "," + string; //$NON-NLS-1$
+				}
+			}
+			return new URI(SCHEME_CVS, authority, pathString, query, null);
 		} catch (URISyntaxException e) {
 			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("An error occurred while creating a URI for {0} {1}", repository, path), e); //$NON-NLS-1$
 			throw new IllegalStateException(e.getMessage());
@@ -304,5 +381,9 @@ public class CVSURI {
 
 	public String getRevision() {
 		return revision;
+	}
+
+	public String getProjectName() {
+		return projectName;
 	}
 }

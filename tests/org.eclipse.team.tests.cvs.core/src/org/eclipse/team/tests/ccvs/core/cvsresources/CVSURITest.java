@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProjectSetCapability;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -115,5 +116,138 @@ public class CVSURITest extends EclipseTest {
 		assertEquals(null, cvsUri.getTag());
 		assertEquals(cvsUri.toURI(), uri);
 	}
+
+	// CVS SCM URL tests, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=326926
+	public void testScmUri1() throws CVSException {
+		URI uri = URI.create("scm:cvs:pserver:host.com:/cvsroot/path:module;tag=tag");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), new CVSTag("tag", CVSTag.VERSION));
+
+		String refString = new CVSProjectSetCapability().asReference(uri, "project");
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,module,project,tag", refString);
+	}
+
+	public void testScmUri2() throws CVSException {
+		URI uri = URI.create("scm:cvs:pserver:host.com:/cvsroot/path:module;version=version");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), new CVSTag("version", CVSTag.VERSION));
+
+		String refString = new CVSProjectSetCapability().asReference(uri, "project");
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,module,project,version", refString);
+	}
+
+	public void testScmUri3() throws CVSException {
+		URI uri = URI.create("scm:cvs:pserver:host.com:/cvsroot/path:path/to/module;version=version;project=project1");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("path/to/module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), new CVSTag("version", CVSTag.VERSION));
+
+		String refString = new CVSProjectSetCapability().asReference(uri, "project2");
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,path/to/module,project2,version", refString);
+	}
+
+	public void testScmUri4() throws CVSException {
+		URI uri = URI.create("scm:cvs:pserver:host.com:/cvsroot/path:path/to/module;version=version;project=project1");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("path/to/module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), new CVSTag("version", CVSTag.VERSION));
+
+		String refString = new CVSProjectSetCapability().asReference(uri, null);
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,path/to/module,project1,version", refString);
+	}
+
+	public void testScmUri5() throws CVSException {
+		URI uri = URI.create("scm:cvs:pserver:host.com:/cvsroot/path:path/to/module;project=project1;version=version");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("path/to/module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), new CVSTag("version", CVSTag.VERSION));
+
+		String refString = new CVSProjectSetCapability().asReference(uri, null);
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,path/to/module,project1,version", refString);
+	}
+
+	public void testScmUri6() throws CVSException {
+		URI uri = URI.create("scm:cvs:pserver:host.com:/cvsroot/path:path/to/module;tag=tag");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("path/to/module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), new CVSTag("tag", CVSTag.VERSION));
+
+		String refString = new CVSProjectSetCapability().asReference(uri, null);
+		assertNull(refString);
+	}
+
+	public void testScmUri7() throws CVSException {
+		URI uri = URI.create("scm:cvs:pserver:host.com:/cvsroot/path:path/to/module;version=version");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("path/to/module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), new CVSTag("version", CVSTag.VERSION));
+
+		String refString = new CVSProjectSetCapability().asReference(uri, null);
+		assertNull(refString);
+	}
 	
+	public void testScmUri8() throws CVSException {
+		URI uri = URI.create("scm:cvs:pserver:host.com:/cvsroot/path:path/to/module;project=");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("path/to/module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), CVSTag.DEFAULT);
+
+		String refString = new CVSProjectSetCapability().asReference(uri, null);
+		assertNull(refString);
+	}
+
+	public void testScmUri9() throws CVSException {
+		URI uri = URI.create("scm:cvs:pserver:host.com:/cvsroot/path:path/to/module");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("path/to/module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), CVSTag.DEFAULT);
+
+		String refString = new CVSProjectSetCapability().asReference(uri, "project");
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,path/to/module,project", refString);
+	}
+
+	public void testScmUri10() throws URISyntaxException, CVSException {
+		URI uri = new URI("scm:cvs:pserver:anonymous:@host.com:/cvsroot/path:module");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:anonymous:@host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), CVSTag.DEFAULT);
+
+		String refString = new CVSProjectSetCapability().asReference(uri, "project");
+		assertEquals("1.0,:pserver:anonymous:@host.com:/cvsroot/path,module,project", refString);
+	}
+
+	public void testScmUri11() throws URISyntaxException, CVSException {
+		URI uri = new URI("scm:cvs:pserver:username@host.com:/cvsroot/path:module");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:username@host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), CVSTag.DEFAULT);
+
+		String refString = new CVSProjectSetCapability().asReference(uri, "project");
+		assertEquals("1.0,:pserver:username@host.com:/cvsroot/path,module,project", refString);
+	}
+
 }
