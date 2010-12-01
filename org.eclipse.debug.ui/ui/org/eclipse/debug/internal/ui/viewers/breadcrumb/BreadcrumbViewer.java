@@ -111,7 +111,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
                 int height= fContainer.getClientArea().height;
 
                 if (fGradientBackground == null || fGradientBackground.getBounds().height != height) {
-                    Image image= createGradientImage(height, event.display);
+                    Image image= height == 0 ? null : createGradientImage(height, event.display);
                     fContainer.setBackgroundImage(image);
 
                     if (fGradientBackground != null)
