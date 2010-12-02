@@ -36,7 +36,7 @@ public abstract class ProjectSetCapability {
 	/**
 	 * Scheme constant (value "scm") indicating the SCM URI.
 	 * 
-	 * @since 3.6
+	 * @since 3.7
 	 */
 	public static final String SCHEME_SCM = "scm"; //$NON-NLS-1$
 	
