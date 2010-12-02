@@ -191,7 +191,7 @@ public class SyncInfo implements IAdaptable {
 	 * 
 	 * @param monitor the progress monitor
 	 * @return the author of the revision associated with the local file or <code>null</code>
-	 * @since 3.6
+	 * @since 3.7
 	 */
 	public String getLocalAuthor(IProgressMonitor monitor) {
 		return null;
