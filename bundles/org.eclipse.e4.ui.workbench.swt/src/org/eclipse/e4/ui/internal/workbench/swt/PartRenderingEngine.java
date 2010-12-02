@@ -526,6 +526,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				IEclipseContext lclContext = ctxt.getContext();
 				if (lclContext != null) {
 					lclContext.dispose();
+					ctxt.setContext(null);
 				}
 			}
 		}
@@ -648,10 +649,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			// unset the client object
 			if (element instanceof MContribution) {
+				MContribution contribution = (MContribution) element;
+				Object client = contribution.getObject();
 				IEclipseContext parentContext = renderer.getContext(element);
-				ContextInjectionFactory.uninject(
-						((MContribution) element).getObject(), parentContext);
-				((MContribution) element).setObject(null);
+				if (parentContext != null && client != null) {
+					ContextInjectionFactory.uninject(client, parentContext);
+				}
+				contribution.setObject(null);
 			}
 
 			// dispose the context
