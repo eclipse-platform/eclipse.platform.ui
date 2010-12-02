@@ -1924,7 +1924,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// create editor references for all editors
 		List<MPart> editors = modelService.findElements(window,
 				CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null,
-				EModelService.IN_ANY_PERSPECTIVE | EModelService.OUTSIDE_PERSPECTIVE);
+				EModelService.IN_ANY_PERSPECTIVE | EModelService.OUTSIDE_PERSPECTIVE
+						| EModelService.IN_SHARED_AREA);
 		for (MPart editor : editors) {
 			createEditorReferenceForPart(editor, null, editor.getElementId(), null);
 		}
