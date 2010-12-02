@@ -1798,6 +1798,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (contains(bindingTables, id)) {
 			return;
 		}
+		WorkbenchPlugin.log("Defining a binding table: " + id); //$NON-NLS-1$
 		MBindingTable bt = CommandsFactoryImpl.eINSTANCE.createBindingTable();
 		bt.setBindingContextId(id);
 		bindingTables.add(bt);
