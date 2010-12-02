@@ -10,13 +10,20 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.contexts.debug.ui.legacy;
 
-
 import org.eclipse.e4.core.internal.contexts.debug.ui.ContextsView;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-
 /**
+ * 
+
+   <extension point="org.eclipse.ui.views">
+      <view name="%traceView" icon="$nl$/icons/full/obj16/contexts.gif" category="org.eclipse.debug.ui" class="org.eclipse.e4.core.internal.contexts.debug.ui.legacy.ContextTraceLegacyView" id="org.eclipse.e4.core.contexts.debug.TraceView">
+      </view>
+   </extension>
+   
+   
+
  * The 3.x style wrapper for the context tracing view.
  */
 public class ContextTraceLegacyView extends ViewPart {

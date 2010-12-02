@@ -31,13 +31,13 @@ public class ContextMessages extends NLS {
 	public static String snapshotButton;
 	public static String diffButton;
 	public static String refreshGroup;
-	public static String updateButton;
 	public static String autoUpdateButton;
 	public static String diffDialogTitle;
 	public static String diffDialogMessage;
 	public static String noDiffMsg;
 	public static String contextGCed;
 	public static String targetButtonTooltip;
+	public static String refreshButtonTooltip;
 
 	static {
 		// load message values from bundle file

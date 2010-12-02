@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension point="org.eclipse.ui.views">
-      <view name="%traceView" icon="$nl$/icons/full/obj16/contexts.gif" category="org.eclipse.debug.ui" class="org.eclipse.e4.core.internal.contexts.debug.ui.legacy.ContextTraceLegacyView" id="org.eclipse.e4.core.contexts.debug.TraceView">
-      </view>
+   <extension
+         id="ContextDebug"
+         name="Context Trace and Debug"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+            beforefragment="true"
+            class="org.eclipse.e4.core.internal.contexts.debug.ui.e4.ContextsDebugProcessor">
+      </processor>
    </extension>
 </plugin>
