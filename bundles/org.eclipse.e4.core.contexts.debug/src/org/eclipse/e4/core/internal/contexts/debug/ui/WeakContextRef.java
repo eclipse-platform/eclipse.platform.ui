@@ -15,26 +15,27 @@ import org.eclipse.e4.core.internal.contexts.EclipseContext;
 
 public class WeakContextRef extends WeakReference<EclipseContext> {
 
+	private int hashCode;
+
 	public WeakContextRef(EclipseContext referent) {
 		super(referent);
+		hashCode = referent.hashCode(); // store it in case referent is GCed
 	}
 
 	@Override
 	public boolean equals(Object obj) {
 		if (!WeakContextRef.class.equals(obj.getClass()))
 			return false;
+
 		EclipseContext context1 = get();
 		EclipseContext context2 = ((WeakContextRef) obj).get();
 		if (context1 == null || context2 == null)
-			return super.equals(obj);
+			return hashCode == ((WeakContextRef) obj).hashCode;
 		return context1 == context2;
 	}
 
 	@Override
 	public int hashCode() {
-		EclipseContext context1 = get();
-		if (context1 == null)
-			return super.hashCode();
-		return context1.hashCode();
+		return hashCode;
 	}
 }
