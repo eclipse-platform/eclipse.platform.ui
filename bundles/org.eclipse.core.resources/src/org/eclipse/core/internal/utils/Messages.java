@@ -118,6 +118,7 @@ public class Messages extends NLS {
 	public static String preferences_removeNodeException;
 	public static String preferences_clearNodeException;
 	public static String preferences_saveProblems;
+	public static String preferences_setDerivedException;
 	public static String preferences_syncException;
 
 	public static String projRead_badArguments;

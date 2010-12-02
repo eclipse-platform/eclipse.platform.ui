@@ -56,6 +56,21 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @since 3.6
 	 */
 	public static final int SNAPSHOT_TREE = 1;
+	
+	/** 
+	 * A project preference that indicates whether encodings for resources 
+	 * within the project should be stored in a separate derived preference file.
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This API has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * work or that it will remain the same. Please do not use this API without
+	 * consulting with the Platform Workspace team.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String SEPARATE_DERIVED_ENCODINGS = "separateDerivedEncodings"; //$NON-NLS-1$
 
 	/**
 	 * Invokes the <code>build</code> method of the specified builder 
