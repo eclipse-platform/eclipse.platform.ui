@@ -7,6 +7,8 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Allow multiple debug views and 
+ *     		multiple debug context providers (Bug 327263)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
 
@@ -63,6 +65,20 @@ public class DebugContextManager implements IDebugContextManager {
 		public void addDebugContextListener(IDebugContextListener listener, String partId) {
 		}
 		public void addDebugContextListener(IDebugContextListener listener) {
+		}
+		public void addDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
+			
+		}
+		public void removeDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
+		}
+		
+		public ISelection getActiveContext(String partId, String partSecondaryId) {
+			return null;
+		}
+		public void addPostDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
+		}
+
+		public void removePostDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId) {
 		}
 	};
 	

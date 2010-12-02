@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Allow multiple debug views and 
+ *     		multiple debug context providers (Bug 327263)
  *******************************************************************************/
 package org.eclipse.debug.ui.contexts;
 
@@ -124,4 +126,59 @@ public interface IDebugContextService {
 	 */
 	public void removeDebugContextProvider(IDebugContextProvider provider);
 	
+	/**
+	 * Returns the active context in the specified part of this service's window
+	 * or <code>null</code> if none.
+	 * 
+	 * @param partId part identifier
+	 * @param partSecondaryId part secondary identifier
+	 * @return active context or <code>null</code>
+	 * @since 3.7
+	 */
+	ISelection getActiveContext(String partId, String partSecondaryId);
+	
+	/**
+	 * Registers for the given debug context listener for context notification
+	 * from the specified part in this service's window.
+	 * 
+	 * @param listener debug context listener
+	 * @param partId part identifier
+	 * @param partSecondaryId part secondary identifier
+	 * @since 3.7
+	 */
+	void addDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId);
+	
+	/**
+	 * Unregisters the given debug context listener for context change notification
+	 * from the specified part in this service's window.
+	 * 
+	 * @param listener debug context listener
+	 * @param partId part identifier
+	 * @param partSecondaryId part secondary identifier
+	 * @since 3.7
+	 */
+	void removeDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId);
+	
+	/**
+	 * Registers the given debug context listener for post context change notification
+	 * in the specified part of this service's window. Post listeners are notified of
+	 * context changes after all non-post listeners are notified. 
+	 * 
+	 * @param listener debug context listener
+	 * @param partSecondaryId part secondary identifier
+	 * @param partId part identifier
+	 * @since 3.7
+	 */
+	void addPostDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId);
+	
+	/**
+	 * Unregisters the given debug context listener for post context change notification
+	 * in the specified part of this service's window.
+	 * 
+	 * @param listener debug context listener
+	 * @param partSecondaryId part secondary identifier
+	 * @param partId part identifier
+	 * @since 3.7
+	 */
+	void removePostDebugContextListener(IDebugContextListener listener, String partId, String partSecondaryId);
 }

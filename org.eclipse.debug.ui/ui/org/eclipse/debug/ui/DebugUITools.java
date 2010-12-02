@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,7 +49,9 @@ import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIUtils;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextManager;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
@@ -62,7 +64,9 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -184,10 +188,9 @@ public class DebugUITools {
 	}	
 	
 	/**
-	 * Returns the currently selected element in the 
-	 * debug view of the current workbench page,
-	 * or <code>null</code> if there is no current
-	 * debug context.
+	 * Returns the element of the currently selected context in the 
+	 * active workbench window. Returns <code>null</code> if there is no 
+	 * current debug context.
 	 * <p>
 	 * This method used to return <code>null</code> when called from a non-UI thread,
 	 * but since 3.1, this methods also works when called from a non-UI thread.
@@ -199,19 +202,100 @@ public class DebugUITools {
 	    IWorkbenchWindow activeWindow = SelectedResourceManager.getDefault().getActiveWindow();
 	    if (activeWindow != null) {
 	    	ISelection activeContext = DebugUITools.getDebugContextManager().getContextService(activeWindow).getActiveContext();
-	    	if (activeContext instanceof IStructuredSelection) {
-	    		IStructuredSelection selection = (IStructuredSelection) activeContext;
-	    		if (!selection.isEmpty()) {
-	    			Object firstElement = selection.getFirstElement();
-	    			if (firstElement instanceof IAdaptable) {
-						return (IAdaptable) firstElement;
-					}
-	    		}
-	    	}
+	    	return getDebugContextElementForSelection(activeContext);
 	    }
 	    return null;
 	}
 
+    /**
+     * Returns the currently active context for the given workbench part.
+     * Returns <code>null</code> if there is no current debug context.
+     * </p>
+     * @param site Workbench part site where to look up the active context.
+     * @return the currently active debug context in the given part, or 
+     * <code>null</code>
+     * @since 3.7
+     */
+    public static IAdaptable getPartDebugContext(IWorkbenchPartSite site) {
+        IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
+        String id = null;
+        String secondaryId = null;
+        id = site.getId();
+        if (site instanceof IViewSite) {
+            secondaryId = ((IViewSite)site).getSecondaryId();
+        }
+        ISelection activeContext = service.getActiveContext(id, secondaryId); 
+        return getDebugContextElementForSelection(activeContext);
+    }
+
+    /**
+     * Adds the given debug context listener as a listener to the debug context 
+     * changed events, in the context of the given workbench part.  
+     * <p>
+     * This method is a utility method which ultimately calls 
+     * {@link IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)}
+     * using the part id parameters extracted from the given part parameter. 
+     * </p>
+     * 
+     * @param part Workbench part to get the part ID and part secondary ID from.
+     * @param listener Debug context listener to add.
+     * 
+     * @see IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)
+     * @see IDebugContextManager#addDebugContextListener(IDebugContextListener)
+     * @since 3.7
+     */
+    public static void addPartDebugContextListener(IWorkbenchPartSite site, IDebugContextListener listener) {
+        IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
+        String id = site.getId();
+        String secondaryId = null;
+        if (site instanceof IViewSite) {
+            secondaryId = ((IViewSite)site).getSecondaryId();
+        }
+        service.addDebugContextListener(listener, id, secondaryId);
+    }
+
+    /**
+     * Removes the given debug context listener as a listener to the debug 
+     * context changed events, in the context of the given workbench part.  
+     * <p>
+     * This method is a utility method which ultimately calls 
+     * {@link IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)}
+     * using the part id parameters extracted from the given part parameter. 
+     * </p>
+     * 
+     * @param part Workbench part to get the part ID and part secondary ID from.
+     * @param listener Debug context listener to remove.
+     * 
+     * @see IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)
+     * @see IDebugContextManager#removeDebugContextListener(IDebugContextListener)
+     * @since 3.7
+     */
+    public static void removePartDebugContextListener(IWorkbenchPartSite site, IDebugContextListener listener) {
+        IDebugContextService service = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
+        String id = site.getId();
+        String secondaryId = null;
+        if (site instanceof IViewSite) {
+            secondaryId = ((IViewSite)site).getSecondaryId();
+        }
+        service.removeDebugContextListener(listener, id, secondaryId);
+    }
+    
+    /**
+     * Extracts the first element from the given selection and casts it to IAdaptable.
+     */
+    private static IAdaptable getDebugContextElementForSelection(ISelection activeContext) {
+        if (activeContext instanceof IStructuredSelection) {
+            IStructuredSelection selection = (IStructuredSelection) activeContext;
+            if (!selection.isEmpty()) {
+                Object firstElement = selection.getFirstElement();
+                if (firstElement instanceof IAdaptable) {
+                    return (IAdaptable) firstElement;
+                }
+            }
+        }
+        return null;
+    }
+    
 	/**
 	 * Returns the currently selected resource in the active workbench window,
 	 * or <code>null</code> if none. If an editor is active, the resource adapter

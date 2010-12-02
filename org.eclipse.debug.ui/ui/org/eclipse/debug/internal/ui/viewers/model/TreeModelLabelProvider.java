@@ -264,7 +264,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
 		        updates = new LinkedList();
 		        fPendingUpdates.put(presentation, updates);
 		    }
-		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, fViewer, visibleColumns, fViewer.getPresentationContext()));
+		    updates.add(new LabelUpdate(fViewer.getInput(), elementPath, this, visibleColumns, fViewer.getPresentationContext()));
 		    if (fPendingUpdatesJob != null) {
 		    	fPendingUpdatesJob.cancel();
 		    }
@@ -297,6 +297,22 @@ public class TreeModelLabelProvider extends ColumnLabelProvider
         }
     }
 
+    /**
+     * Sets the element's display information in the viewer.
+     * 
+     * @see ITreeModelLabelProviderTarget#setElementData(TreePath, int, String[], ImageDescriptor[], FontData[], RGB[], RGB[])
+     * @see ITreeModelCheckProviderTarget#setElementChecked(TreePath, boolean, boolean)
+     */
+    protected void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images,
+        FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds, boolean checked, boolean grayed) 
+    {
+        fViewer.setElementData(path, numColumns, labels, images, fontDatas, foregrounds, backgrounds);
+        
+        if (fViewer instanceof ITreeModelCheckProviderTarget)
+            ((ITreeModelCheckProviderTarget) fViewer).setElementChecked(path, checked, grayed);
+    }
+
+    
 	private void startRequests(UIJob updateJob) {
 	    // Avoid calling providers inside a synchronized section.  Instead 
 	    // copy the updates map into a new variable. 

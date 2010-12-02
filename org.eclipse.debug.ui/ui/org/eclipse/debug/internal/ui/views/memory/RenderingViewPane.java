@@ -821,7 +821,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		if (memoryBlock == null)
 		{
 			// get a memory block from current debug context
-			IAdaptable context = DebugUITools.getDebugContext();
+			IAdaptable context = DebugUITools.getPartDebugContext(fParent.getSite());
 			if (context != null)
 			{
 				IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -296,7 +296,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fPresentationContext = new MemoryViewPresentationContext(site, this, null);
 		fTreeViewer = new MemoryViewTreeViewer(parent, style, fPresentationContext);
 		
-		IAdaptable context = DebugUITools.getDebugContext();
+		IAdaptable context = DebugUITools.getPartDebugContext(fParent.getSite());
 		IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 		if (retrieval != null)
 			fTreeViewer.setInput(retrieval);
@@ -307,7 +307,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fParent.getViewSite().getPage().addSelectionListener(this);
 		
 		fDebugContextListener = new TreeViewPaneContextListener();
-		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).addDebugContextListener(fDebugContextListener);
+		DebugUITools.addPartDebugContextListener(fParent.getSite(), fDebugContextListener);
 		
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -342,7 +342,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	 */
 	private void updateRetrieval() {
 		
-		Object context = DebugUITools.getDebugContext();
+		Object context = DebugUITools.getPartDebugContext(fParent.getSite());
 		fRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 	}
 
@@ -367,7 +367,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fParent.getViewSite().getSelectionProvider().removeSelectionChangedListener(this);
 		fParent.getViewSite().getPage().removeSelectionListener(this); 
 		fAddMemoryBlockAction.dispose();
-		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(fDebugContextListener);
+		DebugUITools.removePartDebugContextListener(fParent.getSite(), fDebugContextListener);
 		fEvtHandler.dispose();	
         fPresentationContext.dispose();
 	}

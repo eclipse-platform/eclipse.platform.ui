@@ -288,8 +288,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private class RenderingGoToAddressAction extends GoToAddressAction
 	{
-		public RenderingGoToAddressAction(AbstractBaseTableRendering rendering) {
-			super(rendering);
+		public RenderingGoToAddressAction(IMemoryRenderingContainer container, AbstractBaseTableRendering rendering) {
+			super(container, rendering);
 		}
 		
 		public void run() {
@@ -2038,7 +2038,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	protected void createActions() {
 		
 		fCopyToClipboardAction = new AsyncCopyTableRenderingAction(this, fTableViewer);
-		fGoToAddressAction = new RenderingGoToAddressAction(this);
+		fGoToAddressAction = new RenderingGoToAddressAction(getMemoryRenderingContainer(), this);
 		fResetMemoryBlockAction = new ResetToBaseAddressAction(this);
 		
 		fPrintViewTabAction = new AsyncPrintTableRenderingAction(this, fTableViewer);

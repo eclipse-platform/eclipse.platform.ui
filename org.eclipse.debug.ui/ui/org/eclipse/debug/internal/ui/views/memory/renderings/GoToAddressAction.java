@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.action.Action;
@@ -43,11 +44,13 @@ import org.eclipse.ui.PlatformUI;
  */
 public class GoToAddressAction extends Action
 {
+    private IMemoryRenderingContainer fContainer;
 	private IRepositionableMemoryRendering fRendering;
 	
-	public GoToAddressAction(IRepositionableMemoryRendering rendering)
+	public GoToAddressAction(IMemoryRenderingContainer container, IRepositionableMemoryRendering rendering)
 	{		
 		super(DebugUIMessages.GoToAddressAction_title);
+		fContainer = container;
 		setToolTipText(DebugUIMessages.GoToAddressAction_title);
 		
 		fRendering = rendering;
@@ -166,7 +169,7 @@ public class GoToAddressAction extends Action
 	
 	private void addNewMemoryBlock(String expression, IMemoryBlockRetrievalExtension retrieval)
 	{
-		Object elem = DebugUITools.getDebugContext();
+		Object elem = DebugUITools.getPartDebugContext(fContainer.getMemoryRenderingSite().getSite());
 		
 		if (!(elem instanceof IDebugElement))
 			return;

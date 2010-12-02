@@ -80,6 +80,7 @@
             icon="$nl$/icons/full/eview16/breakpoint_view.gif"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView"
+            allowMultiple="true"
             id="org.eclipse.debug.ui.BreakpointView">
       </view>
       <view
@@ -87,6 +88,7 @@
             icon="$nl$/icons/full/eview16/variable_view.gif"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.variables.VariablesView"
+            allowMultiple="true"
             id="org.eclipse.debug.ui.VariableView">
       </view>
       <view
@@ -94,6 +96,7 @@
             icon="$nl$/icons/full/eview16/watchlist_view.gif"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.expression.ExpressionView"
+            allowMultiple="true"
             id="org.eclipse.debug.ui.ExpressionView">
       </view>
       <view
@@ -101,6 +104,7 @@
             icon="$nl$/icons/full/eview16/register_view.gif"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.registers.RegistersView"
+            allowMultiple="true"
             id="org.eclipse.debug.ui.RegisterView">
       </view>
       <view
@@ -108,6 +112,7 @@
             icon="$nl$/icons/full/eview16/module_view.gif"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.modules.ModulesView"
+            allowMultiple="true"
             id="org.eclipse.debug.ui.ModuleView">
       </view>
       <view

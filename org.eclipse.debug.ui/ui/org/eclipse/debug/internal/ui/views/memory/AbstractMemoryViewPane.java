@@ -115,8 +115,8 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		
 		addListeners();
 		
-		Object context = DebugUITools.getDebugContext();
-		if (context != null)
+		Object context = DebugUITools.getPartDebugContext(fParent.getSite());
+        if (context != null) 
 		{
 			IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 			if (retrieval != null)
@@ -132,7 +132,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	{
 		MemoryViewUtil.getMemoryBlockManager().addListener(this);
 		fParent.getViewSite().getPage().addSelectionListener(this);
-		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).addDebugContextListener(this);
+		DebugUITools.addPartDebugContextListener(fParent.getSite(), this);
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 	
@@ -140,8 +140,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	{
 		MemoryViewUtil.getMemoryBlockManager().removeListener(this);
 		fParent.getViewSite().getPage().removeSelectionListener(this);
-		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
-		
+        DebugUITools.removePartDebugContextListener(fParent.getSite(), this);
 		if (fStackLayout.topControl != null)
 		{
 			CTabFolder old = (CTabFolder)fStackLayout.topControl;

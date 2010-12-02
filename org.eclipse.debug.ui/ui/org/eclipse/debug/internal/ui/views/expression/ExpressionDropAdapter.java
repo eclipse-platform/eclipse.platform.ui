@@ -42,6 +42,7 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Drop Adapter allowing expressions, variables and text to be dropped in the Expression View.
@@ -54,7 +55,8 @@ import org.eclipse.swt.dnd.TransferData;
  */
 public class ExpressionDropAdapter extends ViewerDropAdapter {
 
-	private TransferData fCurrentTransferType = null;
+    private IWorkbenchPartSite fSite;
+    private TransferData fCurrentTransferType = null;
 	private boolean fInsertBefore;
 	private int fDropType;
 	
@@ -67,8 +69,9 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      * Constructor takes the viewer this drop adapter applies to.
      * @param viewer the viewer to add drop to
      */
-    protected ExpressionDropAdapter(TreeModelViewer viewer) {
+    protected ExpressionDropAdapter(IWorkbenchPartSite site, TreeModelViewer viewer) {
         super(viewer);
+        fSite = site;
         setFeedbackEnabled(true);
         setSelectionFeedbackEnabled(false);
         setScrollExpandEnabled(false);
@@ -473,7 +476,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      */
     private IExpression createExpression(String exp) {
         IWatchExpression expression = DebugPlugin.getDefault().getExpressionManager().newWatchExpression(exp);
-        IAdaptable object = DebugUITools.getDebugContext();
+        IAdaptable object = DebugUITools.getPartDebugContext(fSite);
         IDebugElement context = null;
         if (object instanceof IDebugElement) {
             context = (IDebugElement) object;

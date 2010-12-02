@@ -155,7 +155,7 @@ public class ExpressionView extends VariablesView {
      */
     protected void initDragAndDrop(TreeModelViewer viewer) {
         viewer.addDragSupport(DND.DROP_MOVE, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
-        viewer.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(viewer));
+        viewer.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(getSite(), viewer));
     }
     
     /* (non-Javadoc)
@@ -226,7 +226,7 @@ public class ExpressionView extends VariablesView {
     
     // TODO: duplicate code from WatchExpressionAction
     protected IDebugElement getContext() {
-        IAdaptable object = DebugUITools.getDebugContext();
+        IAdaptable object = DebugUITools.getPartDebugContext(getSite());
         IDebugElement context = null;
         if (object instanceof IDebugElement) {
             context = (IDebugElement) object;

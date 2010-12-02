@@ -35,7 +35,6 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	private String[] fLabels;
 	private FontData[] fFontDatas;
 	private TreeModelLabelProvider fProvider;
-	private ITreeModelLabelProviderTarget fTreeViewer;
 	private int fNumColumns; 
 	private IPresentationContext fContext;
 	private Object fViewerInput;
@@ -50,7 +49,7 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	 * @param columnIds column identifiers or <code>null</code>
 	 * @param context presentation context
 	 */
-	public LabelUpdate(Object viewerInput, TreePath elementPath, TreeModelLabelProvider provider, ITreeModelLabelProviderTarget treeViewer, String[] columnIds, IPresentationContext context) {
+	public LabelUpdate(Object viewerInput, TreePath elementPath, TreeModelLabelProvider provider, String[] columnIds, IPresentationContext context) {
 		fContext = context;
 		fViewerInput = viewerInput;
 		fElementPath = elementPath;
@@ -61,7 +60,6 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 			fNumColumns = columnIds.length;
 		}
 		fLabels = new String[fNumColumns];
-		fTreeViewer = treeViewer;
 	}
 
 	/* (non-Javadoc)
@@ -155,9 +153,7 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	 * Applies settings to viewer cell
 	 */
 	public void update() {
-	    fTreeViewer.setElementData(fElementPath, fNumColumns, fLabels, fImageDescriptors, fFontDatas, fForegrounds, fBackgrounds);
-		if (fTreeViewer instanceof ITreeModelCheckProviderTarget)
-			((ITreeModelCheckProviderTarget) fTreeViewer).setElementChecked(fElementPath, fChecked, fGrayed);
+	    fProvider.setElementData(fElementPath, fNumColumns, fLabels, fImageDescriptors, fFontDatas, fForegrounds, fBackgrounds, fChecked, fGrayed);
 
 		fProvider.updateComplete(this);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		 */
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (fAction != null) {
-				IAdaptable context = DebugUITools.getDebugContext();
+				IAdaptable context = getDebugContext();
 				if (context != null) {
 					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 					
@@ -229,7 +229,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 				// get selection from memory view
 				IMemoryBlock memoryBlock = getCurrentMemoryBlock();
 			
-				Object context = DebugUITools.getDebugContext();
+				Object context = getDebugContext();
 				IMemoryBlockRetrieval retrieval =  MemoryViewUtil.getMemoryBlockRetrieval(context);
 				if (retrieval != null) {
 					allMemoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
@@ -299,7 +299,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	}
 
 	private void switchToNext() {		
-		IAdaptable context = DebugUITools.getDebugContext();
+		IAdaptable context = getDebugContext();
 		if (context instanceof IDebugElement) {
 			IDebugElement debugContext = (IDebugElement)context;
 			IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(debugContext);
@@ -407,4 +407,11 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		return label;
 	}
 
+	private IAdaptable getDebugContext() {
+        if (fView != null) {
+            return DebugUITools.getPartDebugContext(fView.getSite());
+        } else {
+            return DebugUITools.getDebugContext();
+        }
+	}
 }

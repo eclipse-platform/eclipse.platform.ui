@@ -2485,7 +2485,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 */
 	protected void createActions() {
 		fCopyToClipboardAction = new CopyTableRenderingToClipboardAction(this, fTableViewer);
-		fGoToAddressAction = new GoToAddressAction(this);
+		fGoToAddressAction = new GoToAddressAction(getMemoryRenderingContainer(), this);
 		fResetMemoryBlockAction = new ResetToBaseAddressAction(this);
 		fPrintViewTabAction = new PrintTableRenderingAction(this, fTableViewer);
 		

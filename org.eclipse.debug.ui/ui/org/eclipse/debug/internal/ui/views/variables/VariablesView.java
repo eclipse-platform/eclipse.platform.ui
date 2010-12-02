@@ -14,6 +14,8 @@
  *     Wind River - Pawel Piech - Fix viewer input race condition (Bug 234908)
  *     Wind River - Anton Leherbauer - Fix selection provider (Bug 254442)
  *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
+ *     Patrick Chuong (Texas Instruments) and Pawel Piech (Wind River) - 
+ *     		Allow multiple debug views and multiple debug context providers (Bug 327263)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
@@ -64,6 +66,7 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -418,7 +421,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public void dispose() {
 		
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
+        DebugUITools.removePartDebugContextListener(getSite(), this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
@@ -696,10 +699,23 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				});
 		
 		variablesViewer.addPostSelectionChangedListener(getTreeSelectionChangedListener());
-		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
+		DebugUITools.addPartDebugContextListener(getSite(), this);
+				
 		return variablesViewer;
 	}
 
+	/**
+	 * Returns the active debug context for this view based on the view's 
+	 * site IDs.
+	 * 
+	 * @since 3.7
+	 */
+	protected ISelection getDebugContext() {
+	    IViewSite site = (IViewSite)getSite();
+		IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(site.getWorkbenchWindow());
+		return contextService.getActiveContext(site.getId(), site.getSecondaryId());
+	}
+	
 	/**
 	 * Returns the presentation context id for this view.
 	 * 
@@ -707,6 +723,15 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected String getPresentationContextId() {
 		return IDebugUIConstants.ID_VARIABLE_VIEW;
+	}	
+	
+	/**
+	 * Returns the presentation context secondary id for this view.
+	 * 
+	 * @return context secondary id.
+	 */
+	protected String getPresentationContextSecondaryId() {
+		return ((IViewSite)getSite()).getSecondaryId();
 	}
 	
 	/**
@@ -1291,7 +1316,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected void becomesVisible() {
 		super.becomesVisible();
-		ISelection selection = DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).getActiveContext();
+		ISelection selection = getDebugContext();
 		contextActivated(selection);
 	}
 

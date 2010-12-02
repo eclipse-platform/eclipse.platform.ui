@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,11 +104,11 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".addMemoryMonitorAction_context"); //$NON-NLS-1$		
 		
-		// listen for context changed
-		DebugUITools.getDebugContextManager().getContextService(site.getSite().getWorkbenchWindow()).addDebugContextListener(this);
+        // listen for context changed
+        DebugUITools.addPartDebugContextListener(fSite.getSite(), this);
 		
 		// get current context
-		fCurrentContext = DebugUITools.getDebugContext();
+		fCurrentContext = DebugUITools.getPartDebugContext(site.getSite());
 		
 		// set up enablement based on current selection
 		updateAction(fCurrentContext);
@@ -127,7 +127,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		{
 			exit = true;
 			
-			Object elem = DebugUITools.getDebugContext();
+			Object elem = fCurrentContext;
 			
 			IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(elem);
 			
@@ -347,7 +347,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		
 		// remove listeners
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-		DebugUITools.getDebugContextManager().getContextService(fSite.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
+		DebugUITools.removePartDebugContextListener(fSite.getSite(), this);
 	}
 	
 	private void addDefaultRenderings(IMemoryBlock memoryBlock)
@@ -422,7 +422,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 	 */
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
-			IAdaptable context = DebugUITools.getDebugContext();
+			IAdaptable context = DebugUITools.getPartDebugContext(fSite.getSite());
 			updateAction(context);
 			fCurrentContext = context;			
 		}
