@@ -243,7 +243,7 @@ public class ContextsView {
 		// refresh button
 		MDirectToolItem toolItem2 = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
 		toolItem2.setIconURI("platform:/plugin/org.eclipse.e4.core.contexts.debug/icons/full/obj16/refresh.gif");
-		toolItem2.setTooltip(ContextMessages.targetButtonTooltip);
+		toolItem2.setTooltip(ContextMessages.refreshButtonTooltip);
 		toolItem2.setContributionURI("platform:/plugin/org.eclipse.e4.core.contexts.debug/org.eclipse.e4.core.internal.contexts.debug.ui.RefreshViewAction");
 		toolBar.getChildren().add(toolItem2);
 	}
