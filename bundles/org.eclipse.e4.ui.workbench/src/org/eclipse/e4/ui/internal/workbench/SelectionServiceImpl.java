@@ -148,12 +148,12 @@ public class SelectionServiceImpl implements ESelectionService {
 			activePart = part;
 			if (isMasterService()) {
 				IEclipseContext partContext = part.getContext();
-				if (partContext != null) {
+				// only notify listeners if the part actually posts selections
+				if (partContext.containsKey(OUT_SELECTION)) {
 					Object selection = partContext.get(OUT_SELECTION);
 					notifyListeners(part, selection);
-
-					track(part);
 				}
+				track(part);
 			} else {
 				IEclipseContext partContext = part.getContext();
 				// only alter if there is something of interest, if a part doesn't post a selection

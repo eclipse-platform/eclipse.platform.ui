@@ -366,7 +366,7 @@ public class ESelectionServiceTest extends TestCase {
 		listener.reset();
 		partService.activate(partB);
 
-		assertEquals(partB, listener.getPart());
+		assertNull(listener.getPart());
 		assertNull(listener.getSelection());
 
 		listener.reset();
@@ -490,7 +490,7 @@ public class ESelectionServiceTest extends TestCase {
 		listener.reset();
 		partService.activate(partB);
 
-		assertEquals(partB, listener.getPart());
+		assertNull(listener.getPart());
 		assertNull(listener.getSelection());
 
 		listener.reset();
