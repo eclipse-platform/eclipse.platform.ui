@@ -51,7 +51,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -62,7 +61,6 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.PreferencePersistence;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * <p>
@@ -483,7 +481,6 @@ public final class BindingPersistence extends PreferencePersistence {
 		List warningsToLog = new ArrayList(1);
 
 		if (preferences != null) {
-			IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 			final IMemento[] preferenceMementos = preferences
 					.getChildren(TAG_KEY_BINDING);
 			int preferenceMementoCount = preferenceMementos.length;
@@ -498,14 +495,7 @@ public final class BindingPersistence extends PreferencePersistence {
 				String viewParameter = null;
 				final Command command;
 				if (commandId != null) {
-					if (viewRegistry.find(commandId) == null) {
-						command = commandService.getCommand(commandId);
-					} else {
-						// we must be able to translate old view commands to the new
-						// parameterized command
-						viewParameter = commandId;
-						command = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
-					}
+					command = commandService.getCommand(commandId);
 				} else {
 					command = null;
 				}
