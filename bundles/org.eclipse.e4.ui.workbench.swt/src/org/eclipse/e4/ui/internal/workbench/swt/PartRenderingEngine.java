@@ -819,6 +819,20 @@ public class PartRenderingEngine implements IPresentationEngine {
 			}
 
 			private void handle(Throwable ex, final IEclipseContext appContext) {
+				try {
+					safeHandle(ex, appContext);
+				} catch (Throwable t) {
+					if (t instanceof ThreadDeath) {
+						throw (ThreadDeath) t;
+					}
+
+					// couldn't handle the exception, print to console
+					t.printStackTrace();
+				}
+			}
+
+			private void safeHandle(Throwable ex,
+					final IEclipseContext appContext) {
 				StatusReporter statusReporter = (StatusReporter) appContext
 						.get(StatusReporter.class.getName());
 				if (statusReporter != null) {
