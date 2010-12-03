@@ -97,15 +97,15 @@ public abstract class Container extends Resource implements IContainer {
 	/* (non-Javadoc)
 	 * @see IContainer#findMember(String)
 	 */
-	public IResource findMember(String name) {
-		return findMember(name, false);
+	public IResource findMember(String memberPath) {
+		return findMember(memberPath, false);
 	}
 
 	/* (non-Javadoc)
 	 * @see IContainer#findMember(String, boolean)
 	 */
-	public IResource findMember(String name, boolean phantom) {
-		IPath childPath = getFullPath().append(name);
+	public IResource findMember(String memberPath, boolean phantom) {
+		IPath childPath = getFullPath().append(memberPath);
 		ResourceInfo info = workspace.getResourceInfo(childPath, phantom, false);
 		return info == null ? null : workspace.newResource(childPath, info.getType());
 	}

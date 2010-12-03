@@ -88,63 +88,87 @@ public interface IContainer extends IResource, IAdaptable {
 	public boolean exists(IPath path);
 
 	/**
-	 * Finds and returns the member resource (project, folder, or file)
-	 * with the given name in this container, or <code>null</code> if no such
-	 * resource exists.
-	 * 
-	 * <p> N.B. Unlike the methods which traffic strictly in resource
+	 * Finds and returns the member resource identified by the given path in
+	 * this container, or <code>null</code> if no such resource exists.
+	 * The supplied path may be absolute or relative; in either case, it is
+	 * interpreted as relative to this resource. Trailing separators and the path's
+	 * device are ignored. If the path is empty this container is returned. Parent
+	 * references in the supplied path are discarded if they go above the workspace
+	 * root.
+	 * <p>
+	 * Note that no attempt is made to exclude team-private member resources
+	 * as with <code>members</code>.
+	 * </p><p>
+	 * N.B. Unlike the methods which traffic strictly in resource
 	 * handles, this method infers the resulting resource's type from the
 	 * resource existing at the calculated path in the workspace.
+	 * </p><p>
+	 * Note that <code>path</code> contains a relative path to the resource
+	 * and all path special characters will be interpreted. Passing an empty string
+	 * will result in returning this {@link IContainer} itself.
 	 * </p>
 	 *
-	 * @param name the string name of the member resource
+	 * @param path the relative path to the member resource, must be a valid path or path segment
 	 * @return the member resource, or <code>null</code> if no such
 	 * 		resource exists
+	 * @see #members()
+	 * @see IPath#isValidPath(String)
+	 * @see IPath#isValidSegment(String)
 	 */
-	public IResource findMember(String name);
+	public IResource findMember(String path);
 
 	/**
-	 * Finds and returns the member resource (project, folder, or file)
-	 * with the given name in this container, or <code>null</code> if 
-	 * there is no such resource.
+	 * Finds and returns the member resource identified by the given path in
+	 * this container, or <code>null</code> if no such resource exists.
+	 * The supplied path may be absolute or relative; in either case, it is
+	 * interpreted as relative to this resource. Trailing separators and the path's
+	 * device are ignored. If the path is empty this container is returned. Parent
+	 * references in the supplied path are discarded if they go above the workspace
+	 * root.
 	 * <p>
 	 * If the <code>includePhantoms</code> argument is <code>false</code>, 
-	 * only a member resource with the given name that exists will be returned.
+	 * only a member resource with the given path that exists will be returned.
 	 * If the <code>includePhantoms</code> argument is <code>true</code>,
 	 * the method also returns a resource if the workspace is keeping track of a
-	 * phantom with that name.
+	 * phantom with that path.
 	 * </p><p>
 	 * Note that no attempt is made to exclude team-private member resources
 	 * as with <code>members</code>.
 	 * </p><p>
 	 * N.B. Unlike the methods which traffic strictly in resource
 	 * handles, this method infers the resulting resource's type from the
-	 * existing resource (or phantom) in the workspace.
+	 * resource (or phantom) existing at the calculated path in the workspace.
+	 * </p><p>
+	 * Note that <code>path</code> contains a relative path to the resource
+	 * and all path special characters will be interpreted. Passing an empty string
+	 * will result in returning this {@link IContainer} itself.
 	 * </p>
 	 *
-	 * @param name the string name of the member resource
+	 * @param path the relative path to the member resource, must be a valid path or path segment
 	 * @param includePhantoms <code>true</code> if phantom resources are
 	 *   of interest; <code>false</code> if phantom resources are not of
 	 *   interest
 	 * @return the member resource, or <code>null</code> if no such
 	 * 		resource exists
-	 * @see #members()
+	 * @see #members(boolean)
 	 * @see IResource#isPhantom()
+	 * @see IPath#isValidPath(String)
+	 * @see IPath#isValidSegment(String)
 	 */
-	public IResource findMember(String name, boolean includePhantoms);
+	public IResource findMember(String path, boolean includePhantoms);
 
 	/**
 	 * Finds and returns the member resource identified by the given path in
 	 * this container, or <code>null</code> if no such resource exists.
 	 * The supplied path may be absolute or relative; in either case, it is
-	 * interpreted as relative to this resource.   Trailing separators and the path's
-	 * device are ignored. If the path is empty this container is returned.  Parent
+	 * interpreted as relative to this resource. Trailing separators and the path's
+	 * device are ignored. If the path is empty this container is returned. Parent
 	 * references in the supplied path are discarded if they go above the workspace
 	 * root.
 	 * <p>
 	 * Note that no attempt is made to exclude team-private member resources
 	 * as with <code>members</code>.
-	 * </p><p> 
+	 * </p><p>
 	 * N.B. Unlike the methods which traffic strictly in resource
 	 * handles, this method infers the resulting resource's type from the
 	 * resource existing at the calculated path in the workspace.
@@ -158,25 +182,25 @@ public interface IContainer extends IResource, IAdaptable {
 
 	/**
 	 * Finds and returns the member resource identified by the given path in
-	 * this container, or <code>null</code> if there is no such resource.
+	 * this container, or <code>null</code> if no such resource exists.
 	 * The supplied path may be absolute or relative; in either case, it is
-	 * interpreted as relative to this resource.  Trailing separators and the path's
-	 * device are ignored.  If the path is empty this container is returned.
-	 * Parent references in the supplied path are discarded if they go above the 
-	 * workspace root.
+	 * interpreted as relative to this resource. Trailing separators and the path's
+	 * device are ignored. If the path is empty this container is returned. Parent
+	 * references in the supplied path are discarded if they go above the workspace
+	 * root.
 	 * <p>
 	 * If the <code>includePhantoms</code> argument is <code>false</code>, 
-	 * only a resource that exists at the given path will be returned.
+	 * only a member resource with the given path that exists will be returned.
 	 * If the <code>includePhantoms</code> argument is <code>true</code>,
-	 * the method also returns a resource if the workspace is keeping track of
-	 * a phantom member resource at the given path.
+	 * the method also returns a resource if the workspace is keeping track of a
+	 * phantom with that path.
 	 * </p><p>
 	 * Note that no attempt is made to exclude team-private member resources
 	 * as with <code>members</code>.
 	 * </p><p>
 	 * N.B. Unlike the methods which traffic strictly in resource
 	 * handles, this method infers the resulting resource's type from the
-	 * existing resource (or phantom) at the calculated path in the workspace.
+	 * resource (or phantom) existing at the calculated path in the workspace.
 	 * </p>
 	 *
 	 * @param path the path of the desired resource
