@@ -29,6 +29,21 @@ public class URIUtilTest extends RuntimeTest {
 		return new TestSuite(URIUtilTest.class);
 	}
 
+	// re-enable once bug 331314 is fixed
+	public void _testBug331314() {
+		File file1 = new File("C:/Folder/FileWithBrackets[]");
+		URI f1 = file1.toURI();
+		URI b1 = file1.getParentFile().toURI();
+		URI r1 = URIUtil.makeRelative(f1, b1);
+		assertFalse("1.0", r1.isAbsolute());
+
+		File file2 = new File("C:/Folder/FileWithoutBrackets");
+		URI f2 = file2.toURI();
+		URI b2 = file2.getParentFile().toURI();
+		URI r2 = URIUtil.makeRelative(f2, b2);
+		assertFalse("2.0", r2.isAbsolute());
+	}
+
 	/**
 	 * Tests for {@link URIUtil#toJarURI(URI, IPath)}.
 	 */
@@ -367,7 +382,7 @@ public class URIUtilTest extends RuntimeTest {
 
 	public void testMakeAbsolute() throws URISyntaxException {
 		URI[][] data = new URI[][] {
-		// simple path
+				// simple path
 				new URI[] {new URI("b"), new URI("file:/a/"), new URI("file:/a/b")}, //
 				new URI[] {new URI("b"), new URI("file:/a"), new URI("file:/a/b")},
 				// common root
@@ -400,7 +415,7 @@ public class URIUtilTest extends RuntimeTest {
 		if (!WINDOWS)
 			return;
 		data = new URI[][] {
-		// simple path
+				// simple path
 				new URI[] {new URI("b"), new URI("file:/c:/a/"), new URI("file:/c:/a/b")}, //
 				new URI[] {new URI("b"), new URI("file:/c:/a"), new URI("file:/c:/a/b")},
 				// common root
@@ -449,7 +464,7 @@ public class URIUtilTest extends RuntimeTest {
 
 	public void testMakeRelative() throws URISyntaxException {
 		URI[][] data = new URI[][] {
-		// simple path
+				// simple path
 				new URI[] {new URI("file:/a/b"), new URI("file:/a/x"), new URI("../b")},
 				// common root
 				new URI[] {new URI("file:/eclipse/plugins/foo.jar"), new URI("file:/eclipse/"), new URI("plugins/foo.jar")},
@@ -472,7 +487,7 @@ public class URIUtilTest extends RuntimeTest {
 		if (!WINDOWS)
 			return;
 		data = new URI[][] {
-		// simple path
+				// simple path
 				new URI[] {new URI("file:/c:/a/b"), new URI("file:/c:/a/x"), new URI("../b")},
 				// common root
 				new URI[] {new URI("file:/c:/eclipse/plugins/foo.jar"), new URI("file:/c:/eclipse/"), new URI("plugins/foo.jar")},
