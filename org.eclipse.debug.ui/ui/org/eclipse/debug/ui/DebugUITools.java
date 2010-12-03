@@ -237,7 +237,7 @@ public class DebugUITools {
      * using the part id parameters extracted from the given part parameter. 
      * </p>
      * 
-     * @param part Workbench part to get the part ID and part secondary ID from.
+     * @param site Workbench part to get the part ID and part secondary ID from.
      * @param listener Debug context listener to add.
      * 
      * @see IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)
@@ -263,7 +263,7 @@ public class DebugUITools {
      * using the part id parameters extracted from the given part parameter. 
      * </p>
      * 
-     * @param part Workbench part to get the part ID and part secondary ID from.
+     * @param site Workbench part to get the part ID and part secondary ID from.
      * @param listener Debug context listener to remove.
      * 
      * @see IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)
