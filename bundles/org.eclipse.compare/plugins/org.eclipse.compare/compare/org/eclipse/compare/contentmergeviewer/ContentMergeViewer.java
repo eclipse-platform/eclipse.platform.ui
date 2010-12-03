@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -1054,7 +1055,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				fAncestorLabel.setImage(ancestorImage);
 			String ancestorLabel = content.getAncestorLabel(input);
 			if (ancestorLabel != null)
-				fAncestorLabel.setText(TextProcessor.process(ancestorLabel));
+				fAncestorLabel.setText(LegacyActionTools.escapeMnemonics(TextProcessor.process(ancestorLabel)));
 		}
 		if (fLeftLabel != null) {
 			Image leftImage = content.getLeftImage(input);
@@ -1062,7 +1063,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				fLeftLabel.setImage(leftImage);
 			String leftLabel = content.getLeftLabel(input);
 			if (leftLabel != null)
-				fLeftLabel.setText(leftLabel);
+				fLeftLabel.setText(LegacyActionTools.escapeMnemonics(leftLabel));
 		}
 		if (fRightLabel != null) {
 			Image rightImage = content.getRightImage(input);
@@ -1070,7 +1071,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				fRightLabel.setImage(rightImage);
 			String rightLabel = content.getRightLabel(input);
 			if (rightLabel != null)
-				fRightLabel.setText(rightLabel);
+				fRightLabel.setText(LegacyActionTools.escapeMnemonics(rightLabel));
 		}
 	}
 		
