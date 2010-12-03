@@ -994,7 +994,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 						for (EditorReference reference : editorReferences) {
 							IEditorPart editor = reference.getEditor(false);
 							if (editor != null && !reference.persist()) {
-								pages[j].closeEditor(editor, false);
+								((WorkbenchPage) pages[j]).closeEditor(reference);
 							}
 						}
 					}

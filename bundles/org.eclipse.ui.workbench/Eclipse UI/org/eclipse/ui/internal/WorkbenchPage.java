@@ -973,9 +973,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return true;
     }
 
+	public boolean closeEditor(IEditorReference editor) {
+		if (getInternalEditorReferences().contains(editor)) {
+			MPart part = ((EditorReference) editor).getModel();
+			hidePart(part, false, false, false, false);
+
+			MElementContainer<MUIElement> parent = part.getParent();
+			if (parent != null) {
+				parent.getChildren().remove(part);
+			}
+			return true;
+		}
+		return false;
+	}
+
 	private boolean hidePart(MPart part, boolean save, boolean confirm, boolean force) {
+		return hidePart(part, save, confirm, force, true);
+	}
+
+	private boolean hidePart(MPart part, boolean save, boolean confirm, boolean force, boolean local) {
 		if (!partService.getParts().contains(part)) {
-			return false;
+			if (local) {
+				return false;
+			}
+			part.setToBeRendered(false);
+			return true;
 		}
 
 		Object clientObject = part.getObject();
