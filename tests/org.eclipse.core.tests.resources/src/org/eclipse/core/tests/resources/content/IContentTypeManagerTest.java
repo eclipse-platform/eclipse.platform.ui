@@ -17,8 +17,8 @@ import junit.framework.*;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
-import org.eclipse.core.runtime.content.XMLContentDescriber;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
+import org.eclipse.core.runtime.content.XMLContentDescriber;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
@@ -529,6 +529,13 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			assertEquals("5.11" + sufix, mytext, description.getContentType());
 			assertEquals("5.12" + sufix, "BAR", description.getProperty(IContentDescription.CHARSET));
 			assertSame("5.13", mytext.getDefaultDescription(), description);
+
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=176354
+			description = getDescriptionFor(finder, "<?xml version=\'1.0\' encoding=\'UTF-8\'?><soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://www.example.org/\" xmlns:ns0=\"http://another.example.org/\"><soapenv:Header /><soapenv:Body><ns0:x /></soapenv:Body></soapenv:Envelope>", "UTF-8", "foo.xml", new QualifiedName[] {IContentDescription.CHARSET}, text);
+			assertNotNull("5.14" + sufix, description);
+			assertEquals("5.15" + sufix, xmlType, description.getContentType());
+			assertEquals("5.16" + sufix, "UTF-8", description.getProperty(IContentDescription.CHARSET));
+			assertEquals("5.17", xmlType.getDefaultDescription().getCharset(), description.getCharset());
 		}
 		assertNotNull("6.0", mytext1);
 		assertEquals("6.1", "BAR", mytext1.getDefaultCharset());
