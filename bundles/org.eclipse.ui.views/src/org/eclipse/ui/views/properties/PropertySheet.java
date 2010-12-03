@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,7 +185,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
         super.dispose();
 
         // remove ourselves as a selection and registry listener
-        getSite().getPage().removeSelectionListener(this);
+        getSite().getPage().removePostSelectionListener(this);
         RegistryFactory.getRegistry().removeListener(this);
         
         currentPart = null;
@@ -244,7 +244,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * Method declared on IViewPart.
      */
     public void init(IViewSite site) throws PartInitException {
-   		site.getPage().addSelectionListener(this);
+   		site.getPage().addPostSelectionListener(this);
    		super.init(site);
     }
 
