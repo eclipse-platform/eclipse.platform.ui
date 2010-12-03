@@ -951,15 +951,15 @@ public class PartServiceImpl implements EPartService {
 				}
 			}
 
+			if (activationCandidate != null) {
+				// activate our candidate
+				activate(activationCandidate);
+			}
+
 			if (toBeRemoved != null) {
 				toBeRemoved.setToBeRendered(false);
 			} else {
 				part.setToBeRendered(false);
-			}
-
-			if (activationCandidate != null) {
-				// activate our candidate
-				activate(activationCandidate);
 			}
 
 			if (parent.getSelectedElement() == toBeRemoved) {
