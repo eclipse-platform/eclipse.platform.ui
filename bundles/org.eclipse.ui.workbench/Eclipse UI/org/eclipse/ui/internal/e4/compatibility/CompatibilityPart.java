@@ -11,10 +11,6 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.e4.ui.workbench.UIEvents;
-
-import org.eclipse.e4.ui.di.Persist;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -22,8 +18,10 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -102,7 +100,15 @@ public abstract class CompatibilityPart {
 
 	@Focus
 	void delegateSetFocus() {
-		wrapped.setFocus();
+		try {
+			wrapped.setFocus();
+		} catch (Exception e) {
+			if (logger != null) {
+				String msg = "Error setting focus to : " + part.getClass().getName(); //$NON-NLS-1$
+				msg += ' ' + part.getLabel();
+				logger.error(e, msg);
+			}
+		}
 	}
 
 	private void invalidate() {

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -126,12 +127,24 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	public void disposeWidget(MUIElement element) {
+
 		if (element.getWidget() instanceof Widget) {
 			Widget curWidget = (Widget) element.getWidget();
 
 			if (curWidget != null && !curWidget.isDisposed()) {
 				unbindWidget(element);
-				curWidget.dispose();
+				try {
+					curWidget.dispose();
+				} catch (Exception e) {
+					Logger logService = context.get(Logger.class);
+					if (logService != null) {
+						String msg = "Error disposing widget for : " + element.getClass().getName(); //$NON-NLS-1$
+						if (element instanceof MUILabel) {
+							msg += ' ' + ((MUILabel) element).getLabel();
+						}
+						logService.error(e, msg);
+					}
+				}
 			}
 		}
 		element.setWidget(null);
