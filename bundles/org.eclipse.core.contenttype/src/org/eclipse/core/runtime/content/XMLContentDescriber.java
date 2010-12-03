@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,10 +186,12 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		if (encodingPos == -1)
 			return null;
 		char quoteChar = '"';
-		int firstQuote = firstLine.indexOf(quoteChar, encodingPos);
-		if (firstQuote == -1) {
+		int firstQuote = firstLine.indexOf('"', encodingPos);
+		int firstApostrophe = firstLine.indexOf('\'', encodingPos);
+		//use apostrophe if there is no quote, or an apostrophe comes first
+		if (firstQuote == -1 || (firstApostrophe != -1 && firstApostrophe < firstQuote)) {
 			quoteChar = '\'';
-			firstQuote = firstLine.indexOf(quoteChar, encodingPos);
+			firstQuote = firstApostrophe;
 		}
 		if (firstQuote == -1 || firstLine.length() == firstQuote + 1)
 			return null;
