@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,10 @@ package org.eclipse.ui.tests.views.properties.tabbed;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.text.IDocument;
+
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -84,7 +86,11 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
         document.set("This is a test");
         textTestsView.getViewer().setSelectedRange(0, 14);
         
-        ITabDescriptor[] tabDescriptors = textTestsView.getTabbedPropertySheetPage().getActiveTabs();
+		ITabDescriptor[] tabDescriptors;
+		do {
+			textTestsView.getSite().getShell().getDisplay().readAndDispatch();
+			tabDescriptors= textTestsView.getTabbedPropertySheetPage().getActiveTabs();
+		} while (tabDescriptors.length == 0);
         /**
          * First tab is "This"
          */
@@ -115,7 +121,12 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 	    document.set("The fifth tab is selected");
 	    textTestsView.getViewer().setSelectedRange(0, 26);
 	    
-	    ITabDescriptor[] tabDescriptors = textTestsView.getTabbedPropertySheetPage().getActiveTabs();
+		ITabDescriptor[] tabDescriptors;
+		do {
+			textTestsView.getSite().getShell().getDisplay().readAndDispatch();
+			tabDescriptors= textTestsView.getTabbedPropertySheetPage().getActiveTabs();
+		} while (tabDescriptors.length == 0);
+
 	    /**
 	     * First tab is "the" and is selected.
 	     */
@@ -155,10 +166,16 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
         document.set("This is a test");
         textTestsView.getViewer().setSelectedRange(0, 14);
 
-        /**
-         * each tab has one section.
-         */
-        TabContents tabContents = textTestsView.getTabbedPropertySheetPage().getCurrentTab();
+		ITabDescriptor[] tabDescriptors;
+		do {
+			textTestsView.getSite().getShell().getDisplay().readAndDispatch();
+			tabDescriptors= textTestsView.getTabbedPropertySheetPage().getActiveTabs();
+		} while (tabDescriptors.length == 0);
+
+		/**
+		 * each tab has one section.
+		 */
+		TabContents tabContents= textTestsView.getTabbedPropertySheetPage().getCurrentTab();
         ISection[] sections = tabContents.getSections();
         assertEquals(1, sections.length);
         assertEquals(TextTestsLabelSection.class, sections[0].getClass());
