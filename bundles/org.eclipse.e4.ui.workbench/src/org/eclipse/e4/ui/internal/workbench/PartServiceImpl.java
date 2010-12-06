@@ -53,6 +53,7 @@ import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.osgi.util.NLS;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -125,6 +126,14 @@ public class PartServiceImpl implements EPartService {
 		// no need to track changes:
 		this.application = application;
 		workbenchWindow = window;
+	}
+
+	private void log(String unidentifiedMessage, String identifiedMessage, String id, Exception e) {
+		if (id == null || id.length() == 0) {
+			logger.error(unidentifiedMessage, e);
+		} else {
+			logger.error(NLS.bind(identifiedMessage, id), e);
+		}
 	}
 
 	@Inject
@@ -493,7 +502,15 @@ public class PartServiceImpl implements EPartService {
 
 		Object object = part.getObject();
 		if (object != null && requiresFocus) {
-			ContextInjectionFactory.invoke(object, Focus.class, part.getContext(), null);
+			try {
+				ContextInjectionFactory.invoke(object, Focus.class, part.getContext());
+			} catch (InjectionException e) {
+				log("Failed to grant focus to part", "Failed to grant focus to part ({0})", //$NON-NLS-1$ //$NON-NLS-2$
+						part.getElementId(), e);
+			} catch (RuntimeException e) {
+				log("Failed to grant focus to part via DI", //$NON-NLS-1$
+						"Failed to grant focus via DI to part ({0})", part.getElementId(), e); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -1014,13 +1031,11 @@ public class PartServiceImpl implements EPartService {
 		try {
 			ContextInjectionFactory.invoke(client, Persist.class, part.getContext());
 		} catch (InjectionException e) {
-			Throwable throwable = e.getCause();
-			if (throwable == null) {
-				logger.error(e.getMessage());
-			} else {
-				logger.error(throwable);
-			}
-			return false;
+			log("Failed to persist contents of part", "Failed to persist contents of part ({0})", //$NON-NLS-1$ //$NON-NLS-2$
+					part.getElementId(), e);
+		} catch (RuntimeException e) {
+			log("Failed to persist contents of part via DI", //$NON-NLS-1$
+					"Failed to persist contents of part ({0}) via DI", part.getElementId(), e); //$NON-NLS-1$
 		}
 		return true;
 	}
