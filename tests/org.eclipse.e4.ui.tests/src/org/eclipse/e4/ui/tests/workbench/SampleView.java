@@ -42,6 +42,8 @@ public class SampleView {
 
 	boolean errorOnWidgetDisposal = false;
 
+	boolean errorOnPreDestroy = false;
+
 	boolean nullParentContext = false;
 
 	/**
@@ -157,6 +159,10 @@ public class SampleView {
 	void preDestroy() {
 		destroyed = true;
 		nullParentContext = context.getParent() == null;
+
+		if (errorOnPreDestroy) {
+			throw new RuntimeException();
+		}
 	}
 
 	public boolean isDestroyed() {

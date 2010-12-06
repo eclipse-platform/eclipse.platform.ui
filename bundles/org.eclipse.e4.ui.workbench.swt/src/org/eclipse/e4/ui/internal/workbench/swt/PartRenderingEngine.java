@@ -653,7 +653,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 				Object client = contribution.getObject();
 				IEclipseContext parentContext = renderer.getContext(element);
 				if (parentContext != null && client != null) {
-					ContextInjectionFactory.uninject(client, parentContext);
+					try {
+						ContextInjectionFactory.uninject(client, parentContext);
+					} catch (Exception e) {
+						if (logger != null) {
+							logger.error(e);
+						}
+					}
 				}
 				contribution.setObject(null);
 			}
