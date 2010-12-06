@@ -1535,6 +1535,31 @@ public class PartRenderingEngineTests extends TestCase {
 		engine.removeGui(part);
 	}
 
+	public void test331795() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getChildren().add(part);
+		window.setSelectedElement(part);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		SampleView view = (SampleView) part.getObject();
+		view.errorOnWidgetDisposal = true;
+
+		part.setToBeRendered(false);
+		assertTrue("The view should have been destroyed", view.isDestroyed());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);

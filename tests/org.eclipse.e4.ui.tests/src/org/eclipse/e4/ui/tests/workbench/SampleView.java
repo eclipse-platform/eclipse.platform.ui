@@ -26,6 +26,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
@@ -37,6 +39,8 @@ public class SampleView {
 	private IEclipseContext context;
 
 	private boolean destroyed = false;
+
+	boolean errorOnWidgetDisposal = false;
 
 	boolean nullParentContext = false;
 
@@ -51,13 +55,21 @@ public class SampleView {
 			final IExtensionRegistry registry) {
 		context = outputContext;
 
+		parent.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (errorOnWidgetDisposal) {
+					throw new RuntimeException();
+				}
+			}
+		});
+
 		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL);
 		viewer.getTree().setData("class", "navigator"); //$NON-NLS-1$ //$NON-NLS-2$
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				outputContext.set(IServiceConstants.SELECTION, event
-						.getSelection());
+				outputContext.set(IServiceConstants.SELECTION,
+						event.getSelection());
 			}
 		});
 		viewer.setContentProvider(new ITreeContentProvider() {
