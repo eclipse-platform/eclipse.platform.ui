@@ -308,9 +308,12 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .ui.handlers.IHandlerActivation)
 	 */
 	public void deactivateHandler(IHandlerActivation activation) {
-		HandlerActivation eActivation = (HandlerActivation) activation;
-		eActivation.participating = false;
-		removeHandlerActivation(eActivation);
+		// null is not allowed, but some people put it anyway :( see bug 326406
+		if (activation != null) {
+			HandlerActivation eActivation = (HandlerActivation) activation;
+			eActivation.participating = false;
+			removeHandlerActivation(eActivation);
+		}
 	}
 
 	/*
