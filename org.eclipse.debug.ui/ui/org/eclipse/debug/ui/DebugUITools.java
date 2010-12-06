@@ -71,6 +71,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+
 /**
  * This class provides utilities for clients of the debug UI.
  * <p>
@@ -208,12 +209,11 @@ public class DebugUITools {
 	}
 
     /**
-     * Returns the currently active context for the given workbench part.
-     * Returns <code>null</code> if there is no current debug context.
-     * </p>
-     * @param site Workbench part site where to look up the active context.
-     * @return the currently active debug context in the given part, or 
-     * <code>null</code>
+     * Returns the currently active context for the given workbench part. Returns <code>null</code>
+     * if there is no current debug context.</p>
+     * 
+     * @param site the part's site where to look up the active context
+     * @return the currently active debug context in the given part, or <code>null</code>
      * @since 3.7
      */
     public static IAdaptable getPartDebugContext(IWorkbenchPartSite site) {
@@ -229,16 +229,16 @@ public class DebugUITools {
     }
 
     /**
-     * Adds the given debug context listener as a listener to the debug context 
-     * changed events, in the context of the given workbench part.  
+     * Adds the given debug context listener as a listener to the debug context changed events, in
+     * the context of the given workbench part.
      * <p>
-     * This method is a utility method which ultimately calls 
+     * This method is a utility method which ultimately calls
      * {@link IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)}
-     * using the part id parameters extracted from the given part parameter. 
+     * using the part id parameters extracted from the given part parameter.
      * </p>
      * 
-     * @param site Workbench part to get the part ID and part secondary ID from.
-     * @param listener Debug context listener to add.
+     * @param site the part's site to get the part ID and part secondary ID from
+     * @param listener Debug context listener to add
      * 
      * @see IDebugContextService#addDebugContextListener(IDebugContextListener, String, String)
      * @see IDebugContextManager#addDebugContextListener(IDebugContextListener)
@@ -255,16 +255,16 @@ public class DebugUITools {
     }
 
     /**
-     * Removes the given debug context listener as a listener to the debug 
-     * context changed events, in the context of the given workbench part.  
+     * Removes the given debug context listener as a listener to the debug context changed events,
+     * in the context of the given workbench part.
      * <p>
-     * This method is a utility method which ultimately calls 
+     * This method is a utility method which ultimately calls
      * {@link IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)}
-     * using the part id parameters extracted from the given part parameter. 
+     * using the part id parameters extracted from the given part parameter.
      * </p>
      * 
-     * @param site Workbench part to get the part ID and part secondary ID from.
-     * @param listener Debug context listener to remove.
+     * @param site the part's site to get the part ID and part secondary ID from
+     * @param listener Debug context listener to remove
      * 
      * @see IDebugContextService#removeDebugContextListener(IDebugContextListener, String, String)
      * @see IDebugContextManager#removeDebugContextListener(IDebugContextListener)
