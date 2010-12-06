@@ -1553,11 +1553,16 @@ public class PartRenderingEngineTests extends TestCase {
 		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
+		assertNotNull(part.getObject());
+		assertNotNull(part.getContext());
+
 		SampleView view = (SampleView) part.getObject();
 		view.errorOnWidgetDisposal = true;
 
 		part.setToBeRendered(false);
 		assertTrue("The view should have been destroyed", view.isDestroyed());
+		assertNull(part.getObject());
+		assertNull(part.getContext());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
