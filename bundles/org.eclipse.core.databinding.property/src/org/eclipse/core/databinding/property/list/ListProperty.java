@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bug 195222
+ *     Ovidio Mallo - bug 331348
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.list;
@@ -33,10 +34,22 @@ import org.eclipse.core.internal.databinding.property.ListPropertyDetailValuesLi
  * @since 1.2
  */
 public abstract class ListProperty implements IListProperty {
+
 	/**
+	 * By default, this method returns <code>Collections.EMPTY_LIST</code> in
+	 * case the source object is <code>null</code>. Otherwise, this method
+	 * delegates to {@link #doGetList(Object)}.
+	 * 
+	 * <p>
+	 * Clients may override this method if they e.g. want to return a specific
+	 * default list in case the source object is <code>null</code>.
+	 * </p>
+	 * 
+	 * @see #doGetList(Object)
+	 * 
 	 * @since 1.3
 	 */
-	public final List getList(Object source) {
+	public List getList(Object source) {
 		if (source == null) {
 			return Collections.EMPTY_LIST;
 		}
@@ -132,8 +145,8 @@ public abstract class ListProperty implements IListProperty {
 	}
 
 	public IObservableList observeDetail(IObservableValue master) {
-		return MasterDetailObservables.detailList(master, listFactory(master
-				.getRealm()), getElementType());
+		return MasterDetailObservables.detailList(master,
+				listFactory(master.getRealm()), getElementType());
 	}
 
 	public final IListProperty values(IValueProperty detailValue) {
