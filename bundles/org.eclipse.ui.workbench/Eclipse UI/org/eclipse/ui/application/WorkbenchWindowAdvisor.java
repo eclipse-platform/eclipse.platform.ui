@@ -134,6 +134,19 @@ public class WorkbenchWindowAdvisor {
         // do nothing
     }
 
+	/**
+	 * Close any empty editor stacks that may have been left open when the
+	 * Workbench Window shut down. May be called from
+	 * {@link #postWindowRestore()} in the subclass but is not called by
+	 * default.
+	 * 
+	 * @since 3.7
+	 */
+	protected void cleanUpEditorArea() {
+		// TODO this might not be relevent to 4.1 but we need the API call
+		// anyway
+	}
+
     /**
      * Opens the introduction componenet.  
      * <p>
