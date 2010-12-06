@@ -1033,9 +1033,11 @@ public class PartServiceImpl implements EPartService {
 		} catch (InjectionException e) {
 			log("Failed to persist contents of part", "Failed to persist contents of part ({0})", //$NON-NLS-1$ //$NON-NLS-2$
 					part.getElementId(), e);
+			return false;
 		} catch (RuntimeException e) {
 			log("Failed to persist contents of part via DI", //$NON-NLS-1$
 					"Failed to persist contents of part ({0}) via DI", part.getElementId(), e); //$NON-NLS-1$
+			return false;
 		}
 		return true;
 	}
