@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.application;
 
+import java.util.ArrayList;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,6 +22,9 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.internal.EditorAreaHelper;
+import org.eclipse.ui.internal.PartStack;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
@@ -133,6 +137,34 @@ public class WorkbenchWindowAdvisor {
     public void postWindowRestore() throws WorkbenchException {
         // do nothing
     }
+
+	/**
+	 * Close any empty editor stacks that may have been left open when the
+	 * Workbench Window shut down. May be called from
+	 * {@link #postWindowRestore()} in the subclass but is not called by
+	 * default.
+	 * 
+	 * @since 3.7
+	 */
+	protected void cleanUpEditorArea() {
+		// close any empty Editor stacks that may have been left open
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=110684
+		if (getWindowConfigurer() != null && getWindowConfigurer().getWindow() != null
+				&& getWindowConfigurer().getWindow().getActivePage() != null) {
+			WorkbenchPage activePage = (WorkbenchPage) getWindowConfigurer().getWindow()
+					.getActivePage();
+			EditorAreaHelper editorAreaHelper = activePage.getEditorPresentation();
+			if (editorAreaHelper != null) {
+				ArrayList workbooks = editorAreaHelper.getWorkbooks();
+				for (int i = 0; i < workbooks.size(); i++) {
+					PartStack editorStack = (PartStack) workbooks.get(i);
+					if (editorStack.getChildren().length == 0) {
+						editorStack.getContainer().remove(editorStack);
+					}
+				}
+			}
+		}
+	}
 
     /**
      * Opens the introduction componenet.  

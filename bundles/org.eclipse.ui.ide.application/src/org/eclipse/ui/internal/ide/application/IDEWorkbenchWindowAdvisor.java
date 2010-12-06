@@ -259,7 +259,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 
 		hookTitleUpdateListeners(configurer);
 	}
-
+	
 	/**
 	 * Hooks the listeners needed on the window
 	 * 
@@ -543,6 +543,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			page.openEditor(new WelcomeEditorInput(
 					welcomePerspectiveInfos[index]), WELCOME_EDITOR_ID, true);
 		}
+		cleanUpEditorArea();
 	}
 
 	/**
