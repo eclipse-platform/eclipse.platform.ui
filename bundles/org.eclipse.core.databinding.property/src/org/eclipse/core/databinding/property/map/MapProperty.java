@@ -8,7 +8,6 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bug 195222
- *     Ovidio Mallo - bug 331348
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.map;
@@ -34,22 +33,10 @@ import org.eclipse.core.internal.databinding.property.MapPropertyDetailValuesMap
  * @since 1.2
  */
 public abstract class MapProperty implements IMapProperty {
-
 	/**
-	 * By default, this method returns <code>Collections.EMPTY_MAP</code> in
-	 * case the source object is <code>null</code>. Otherwise, this method
-	 * delegates to {@link #doGetMap(Object)}.
-	 * 
-	 * <p>
-	 * Clients may override this method if they e.g. want to return a specific
-	 * default map in case the source object is <code>null</code>.
-	 * </p>
-	 * 
-	 * @see #doGetMap(Object)
-	 * 
 	 * @since 1.3
 	 */
-	public Map getMap(Object source) {
+	public final Map getMap(Object source) {
 		if (source == null) {
 			return Collections.EMPTY_MAP;
 		}
@@ -147,8 +134,8 @@ public abstract class MapProperty implements IMapProperty {
 	}
 
 	public IObservableMap observeDetail(IObservableValue master) {
-		return MasterDetailObservables.detailMap(master,
-				mapFactory(master.getRealm()), getKeyType(), getValueType());
+		return MasterDetailObservables.detailMap(master, mapFactory(master
+				.getRealm()), getKeyType(), getValueType());
 	}
 
 	public final IMapProperty values(IValueProperty detailValues) {

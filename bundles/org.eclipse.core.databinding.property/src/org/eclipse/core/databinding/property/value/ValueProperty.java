@@ -8,7 +8,6 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bug 195222
- *     Ovidio Mallo - bug 331348
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.value;
@@ -32,22 +31,10 @@ import org.eclipse.core.internal.databinding.property.ValuePropertyDetailValue;
  * @since 1.2
  */
 public abstract class ValueProperty implements IValueProperty {
-
 	/**
-	 * By default, this method returns <code>null</code> in case the source
-	 * object is itself <code>null</code>. Otherwise, this method delegates to
-	 * {@link #doGetValue(Object)}.
-	 * 
-	 * <p>
-	 * Clients may override this method if they e.g. want to return a specific
-	 * default value in case the source object is <code>null</code>.
-	 * </p>
-	 * 
-	 * @see #doGetValue(Object)
-	 * 
 	 * @since 1.3
 	 */
-	public Object getValue(Object source) {
+	public final Object getValue(Object source) {
 		if (source == null) {
 			return null;
 		}
@@ -121,8 +108,8 @@ public abstract class ValueProperty implements IValueProperty {
 	}
 
 	public IObservableValue observeDetail(IObservableValue master) {
-		return MasterDetailObservables.detailValue(master,
-				valueFactory(master.getRealm()), getValueType());
+		return MasterDetailObservables.detailValue(master, valueFactory(master
+				.getRealm()), getValueType());
 	}
 
 	public final IValueProperty value(IValueProperty detailValue) {
