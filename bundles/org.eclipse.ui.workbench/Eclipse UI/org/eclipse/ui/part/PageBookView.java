@@ -962,6 +962,8 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				if (provider instanceof IPostSelectionProvider) {
 					((IPostSelectionProvider) provider)
 							.removePostSelectionChangedListener(postSelectionListener);
+				} else {
+					provider.removeSelectionChangedListener(postSelectionListener);
 				}
 			}
 		}
@@ -988,6 +990,8 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				if (provider instanceof IPostSelectionProvider) {
 					((IPostSelectionProvider) provider)
 							.addPostSelectionChangedListener(postSelectionListener);
+				} else {
+					provider.addSelectionChangedListener(postSelectionListener);
 				}
 			}
 			// Update action bars.
