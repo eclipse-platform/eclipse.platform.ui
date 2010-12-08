@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,7 +150,7 @@ public final class ContextService implements IContextService {
 	 * @see org.eclipse.ui.contexts.IContextService#deactivateContext(org.eclipse.ui.contexts.IContextActivation)
 	 */
 	public final void deactivateContext(final IContextActivation activation) {
-		if (activation.getContextService() == this) {
+		if (activation != null && activation.getContextService() == this) {
 			contextService.deactivateContext(activation.getContextId());
 			contextAuthority.deactivateContext(activation);
 		}
