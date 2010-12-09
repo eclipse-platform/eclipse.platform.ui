@@ -91,6 +91,7 @@ public class JettyHelpServer extends HelpServer {
 		public void run() {
 			try {
 				JettyConfigurator.stopServer(webappName);
+				port = -1;
 			} catch (Throwable t) {
 				setException(t); 
 			}
