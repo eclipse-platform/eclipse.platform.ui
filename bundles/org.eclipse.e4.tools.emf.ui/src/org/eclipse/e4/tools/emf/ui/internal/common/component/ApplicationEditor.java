@@ -14,39 +14,28 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.property.list.IListProperty;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
-import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.commands.MBindingContext;
-import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
-import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
-import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -58,7 +47,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private Image image;
 	private Image tbrImage;
 	private EMFDataBindingContext context;
-	private Button createRemoveRootContext;
+	// private Button createRemoveRootContext;
 
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
@@ -71,7 +60,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	private IListProperty TRIM_CONTRIBUTIONS = EMFProperties.list(MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS);
 	private IListProperty APPLICATION__CATEGORIES = EMFProperties.list(ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES);
 
-	private IValueProperty BINDING_TABLE_CONTAINER__ROOT_CONTEXT = EMFProperties.value(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
+	private IListProperty BINDING_TABLE_CONTAINER__ROOT_CONTEXT = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 
 	public ApplicationEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
@@ -123,10 +112,6 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		}
 		getMaster().setValue(object);
 
-		if (createRemoveRootContext != null) {
-			createRemoveRootContext.setSelection(((MApplication) object).getRootContext() != null);
-		}
-
 		return composite;
 	}
 
@@ -154,26 +139,6 @@ public class ApplicationEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
 
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.ApplicationEditor_RootContext);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			createRemoveRootContext = new Button(parent, SWT.CHECK);
-			createRemoveRootContext.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MApplication app = (MApplication) getMaster().getValue();
-					if (app.getRootContext() == null) {
-						addContext();
-					} else {
-						removeContext();
-					}
-				}
-			});
-			createRemoveRootContext.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
-		}
-
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
@@ -183,25 +148,28 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		return parent;
 	}
 
-	void removeContext() {
-		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT, null);
-		if (cmd.canExecute()) {
-			getEditingDomain().getCommandStack().execute(cmd);
-		}
-	}
-
-	void addContext() {
-		MBindingContext context = MCommandsFactory.INSTANCE.createBindingContext();
-		Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT, context);
-		if (cmd.canExecute()) {
-			getEditingDomain().getCommandStack().execute(cmd);
-		}
-	}
-
 	@Override
 	public IObservableList getChildList(final Object element) {
 		final WritableList list = new WritableList();
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ADDONS, APPLICATION__ADDONS, element, Messages.ApplicationEditor_Addons) {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ROOT_CONTEXTS, BINDING_TABLE_CONTAINER__ROOT_CONTEXT, element, Messages.ApplicationEditor_RootContexts) {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
+
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element, Messages.ApplicationEditor_BindingTables) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -220,15 +188,6 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_PART_DESCRIPTORS, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, element, Messages.ApplicationEditor_PartDescriptors) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
-
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element, Messages.ApplicationEditor_BindingTables) {
 
 			@Override
 			protected boolean accepted(Object o) {
@@ -284,30 +243,31 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				return true;
 			}
 		});
+		//
+		// MApplication application = (MApplication) element;
+		// if (application.getRootContext() != null) {
+		// list.add(0, application.getRootContext());
+		// }
 
-		MApplication application = (MApplication) element;
-		if (application.getRootContext() != null) {
-			list.add(0, application.getRootContext());
-		}
-
-		BINDING_TABLE_CONTAINER__ROOT_CONTEXT.observe(element).addValueChangeListener(new IValueChangeListener() {
-
-			public void handleValueChange(ValueChangeEvent event) {
-				if (event.diff.getOldValue() != null) {
-					list.remove(event.diff.getOldValue());
-					if (getMaster().getValue() == element) {
-						createRemoveRootContext.setSelection(false);
-					}
-				}
-
-				if (event.diff.getNewValue() != null) {
-					list.add(0, event.diff.getNewValue());
-					if (getMaster().getValue() == element) {
-						createRemoveRootContext.setSelection(true);
-					}
-				}
-			}
-		});
+		// BINDING_TABLE_CONTAINER__ROOT_CONTEXT.observe(element).addValueChangeListener(new
+		// IValueChangeListener() {
+		//
+		// public void handleValueChange(ValueChangeEvent event) {
+		// if (event.diff.getOldValue() != null) {
+		// list.remove(event.diff.getOldValue());
+		// if (getMaster().getValue() == element) {
+		// createRemoveRootContext.setSelection(false);
+		// }
+		// }
+		//
+		// if (event.diff.getNewValue() != null) {
+		// list.add(0, event.diff.getNewValue());
+		// if (getMaster().getValue() == element) {
+		// createRemoveRootContext.setSelection(true);
+		// }
+		// }
+		// }
+		// });
 
 		return list;
 	}

@@ -104,6 +104,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuElemen
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelFragmentsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelImportsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VRootBindingContexts;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VToolBarContributionsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VTrimContributionsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowControlEditor;
@@ -194,6 +195,7 @@ public class ModelEditor {
 	public static final String VIRTUAL_CATEGORIES = ModelEditor.class.getName() + ".VIRTUAL_CATEGORIES"; //$NON-NLS-1$
 	public static final String VIRTUAL_PARAMETERS = ModelEditor.class.getName() + ".VIRTUAL_PARAMETERS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MENUELEMENTS = ModelEditor.class.getName() + ".VIRTUAL_MENUELEMENTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_ROOT_CONTEXTS = ModelEditor.class.getName() + ".VIRTUAL_ROOT_CONTEXTS"; //$NON-NLS-1$
 
 	private Map<EClass, AbstractComponentEditor> editorMap = new HashMap<EClass, AbstractComponentEditor>();
 	private Map<String, AbstractComponentEditor> virtualEditors = new HashMap<String, AbstractComponentEditor>();
@@ -582,6 +584,7 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_CATEGORIES, new VApplicationCategoriesEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_PARAMETERS, new VItemParametersEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_MENUELEMENTS, new VMenuElementsEditor(modelProvider.getEditingDomain(), this));
+		registerVirtualEditor(VIRTUAL_ROOT_CONTEXTS, new VRootBindingContexts(modelProvider.getEditingDomain(), this));
 	}
 
 	private void registerVirtualEditor(String id, AbstractComponentEditor editor) {

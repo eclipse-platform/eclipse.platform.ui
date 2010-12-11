@@ -13,6 +13,7 @@ package org.eclipse.e4.tools.emf.ui.internal;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
+
 	public static String ModelTooling_Common_Up;
 	public static String ModelTooling_Common_Down;
 	public static String ModelTooling_Common_AddEllipsis;
@@ -45,7 +46,7 @@ public class Messages extends NLS {
 	public static String ApplicationEditor_MenuContributions;
 	public static String ApplicationEditor_ToolBarContributions;
 	public static String ApplicationEditor_TrimContributions;
-	public static String ApplicationEditor_RootContext;
+	public static String ApplicationEditor_RootContexts;
 	public static String ApplicationEditor_BindingContexts;
 	public static String ApplicationEditor_Categories;
 
@@ -508,6 +509,11 @@ public class Messages extends NLS {
 	public static String ExpressionIdDialog_Id;
 
 	public static String CommandToStringConverter_None;
+
+	public static String VRootBindingContexts_AddContext;
+	public static String VRootBindingContexts_TreeLabel;
+	public static String VRootBindingContexts_TreeLabelDescription;
+	public static String VRootBindingContexts_Contexts;
 
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
