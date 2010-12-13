@@ -71,5 +71,5 @@ public interface IPropertyManager extends IManager {
 	 * all properties defined for the given resource. In case no properties can 
 	 * be found, returns an empty map. 
 	 */
-	public Map getProperties(IResource resource) throws CoreException;
+	public Map<QualifiedName, String> getProperties(IResource resource) throws CoreException;
 }

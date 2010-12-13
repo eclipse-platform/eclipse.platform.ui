@@ -22,10 +22,10 @@ import org.eclipse.osgi.util.NLS;
 public class PropertyBucket extends Bucket {
 	public static class PropertyEntry extends Entry {
 
-		private final static Comparator COMPARATOR = new Comparator() {
-			public int compare(Object o1, Object o2) {
-				int qualifierComparison = ((String[]) o1)[0].compareTo(((String[]) o2)[0]);
-				return qualifierComparison != 0 ? qualifierComparison : ((String[]) o1)[1].compareTo(((String[]) o2)[1]);
+		private final static Comparator<String[]> COMPARATOR = new Comparator<String[]>() {
+			public int compare(String[] o1, String[] o2) {
+				int qualifierComparison = o1[0].compareTo(o2[0]);
+				return qualifierComparison != 0 ? qualifierComparison : o1[1].compareTo(o2[1]);
 			}
 		};
 		private static final String[][] EMPTY_DATA = new String[0][];
@@ -170,11 +170,11 @@ public class PropertyBucket extends Bucket {
 			return index < 0 ? null : value[index][2];
 		}
 
-		public Object getPropertyName(int i) {
+		public QualifiedName getPropertyName(int i) {
 			return new QualifiedName(this.value[i][0], this.value[i][1]);
 		}
 
-		public Object getPropertyValue(int i) {
+		public String getPropertyValue(int i) {
 			return this.value[i][2];
 		}
 
@@ -210,7 +210,7 @@ public class PropertyBucket extends Bucket {
 	 */
 	private static final byte VERSION = 1;
 
-	private final List qualifierIndex = new ArrayList();
+	private final List<String> qualifierIndex = new ArrayList<String>();
 
 	public PropertyBucket() {
 		super();
@@ -270,7 +270,7 @@ public class PropertyBucket extends Bucket {
 					qualifierIndex.add(properties[j][0]);
 					break;
 				case INDEX :
-					properties[j][0] = (String) qualifierIndex.get(source.readInt());
+					properties[j][0] = qualifierIndex.get(source.readInt());
 					break;
 				default :
 					//if we get here the properties file is corrupt

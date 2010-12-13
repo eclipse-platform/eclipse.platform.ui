@@ -31,7 +31,7 @@ public class PropertyManager2 implements IPropertyManager {
 	private static final int MAX_VALUE_SIZE = 2 * 1024;
 
 	class PropertyCopyVisitor extends Bucket.Visitor {
-		private List changes = new ArrayList();
+		private List<PropertyEntry> changes = new ArrayList<PropertyEntry>();
 		private IPath destination;
 		private IPath source;
 
@@ -49,12 +49,12 @@ public class PropertyManager2 implements IPropertyManager {
 			if (changes.isEmpty())
 				return;
 			// make effective all changes collected
-			Iterator i = changes.iterator();
-			PropertyEntry entry = (PropertyEntry) i.next();
+			Iterator<PropertyEntry> i = changes.iterator();
+			PropertyEntry entry = i.next();
 			tree.loadBucketFor(entry.getPath());
 			bucket.setProperties(entry);
 			while (i.hasNext())
-				bucket.setProperties((PropertyEntry) i.next());
+				bucket.setProperties(i.next());
 			bucket.save();
 		}
 
@@ -111,8 +111,8 @@ public class PropertyManager2 implements IPropertyManager {
 		deleteProperties(target, IResource.DEPTH_INFINITE);
 	}
 
-	public synchronized Map getProperties(IResource target) throws CoreException {
-		final Map result = new HashMap();
+	public synchronized Map<QualifiedName, String> getProperties(IResource target) throws CoreException {
+		final Map<QualifiedName, String> result = new HashMap<QualifiedName, String>();
 		tree.accept(new PropertyBucket.Visitor() {
 			public int visit(Entry entry) {
 				PropertyEntry propertyEntry = (PropertyEntry) entry;
