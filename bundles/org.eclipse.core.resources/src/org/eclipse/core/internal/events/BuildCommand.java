@@ -50,7 +50,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 
 	private static final int ALL_TRIGGERS = MASK_AUTO | MASK_CLEAN | MASK_FULL | MASK_INCREMENTAL;
 
-	protected HashMap arguments = new HashMap(0);
+	protected HashMap<String,String> arguments = new HashMap<String,String>(0);
 
 	/** Have we checked the supports configurations flag */
 	private boolean supportsConfigurationsCalculated;
@@ -139,12 +139,13 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * @see ICommand#getArguments()
 	 */
-	public Map getArguments() {
+	public Map<String,String> getArguments() {
 		return getArguments(true);
 	}
 
-	public Map getArguments(boolean makeCopy) {
-		return arguments == null ? null : (makeCopy ? (Map) arguments.clone() : arguments);
+	@SuppressWarnings("unchecked")
+	public Map<String,String> getArguments(boolean makeCopy) {
+		return arguments == null ? null : (makeCopy ? (Map<String,String>) arguments.clone() : arguments);
 	}
 
 	/**
@@ -217,15 +218,16 @@ public class BuildCommand extends ModelObject implements ICommand {
 	/**
 	 * @see ICommand#setArguments(Map)
 	 */
-	public void setArguments(Map value) {
+	public void setArguments(Map<String,String> value) {
 		// copy parameter for safety's sake
-		arguments = value == null ? null : new HashMap(value);
+		arguments = value == null ? null : new HashMap<String,String>(value);
 	}
 
 	/**
 	 * Set the IncrementalProjectBuilder(s) for this command
 	 * @param value
 	 */
+	@SuppressWarnings("unchecked")
 	public void setBuilders(Object value) {
 		if (value == null) {
 			builder = null;
@@ -234,7 +236,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 			if (value instanceof IncrementalProjectBuilder)
 				builder = (IncrementalProjectBuilder)value;
 			else
-				builders = new HashMap((Map)value);
+				builders = new HashMap<IBuildConfiguration, IncrementalProjectBuilder>((Map<IBuildConfiguration, IncrementalProjectBuilder>)value);
 		}
 	}
 
@@ -252,7 +254,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 
 		if (supportsConfigs()) {
 			if (builders == null)
-				builders = new HashMap(1);
+				builders = new HashMap<IBuildConfiguration, IncrementalProjectBuilder>(1);
 			builders.put(config, builder);
 		} else
 			this.builder = builder;

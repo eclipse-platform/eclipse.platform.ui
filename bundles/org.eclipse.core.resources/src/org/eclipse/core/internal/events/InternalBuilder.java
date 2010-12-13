@@ -62,7 +62,7 @@ public abstract class InternalBuilder {
 	/*
 	 *  @see IncrementalProjectBuilder#build
 	 */
-	protected abstract IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException;
+	protected abstract IProject[] build(int kind, Map<String,String> args, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the value of the callOnEmptyDelta builder extension attribute.

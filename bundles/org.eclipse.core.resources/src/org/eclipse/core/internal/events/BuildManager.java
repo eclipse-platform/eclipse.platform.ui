@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+
 import org.eclipse.core.resources.IBuildConfiguration;
 
 import java.util.*;
@@ -83,7 +86,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		/**
 		 * Log an exception on the first build, and silently do nothing on subsequent builds.
 		 */
-		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) {
+		protected IProject[] build(int kind, Map<String,String> args, IProgressMonitor monitor) {
 			if (!hasBeenBuilt && Policy.DEBUG_BUILD_FAILURE) {
 				hasBeenBuilt = true;
 				String msg = NLS.bind(Messages.events_skippingBuilder, name, getProject().getName());
@@ -98,7 +101,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	//the job for performing background autobuild
 	final AutoBuildJob autoBuildJob;
 	private boolean building = false;
-	private final Set builtProjects = new HashSet();
+	private final Set<IProject> builtProjects = new HashSet<IProject>();
 
 	//the following four fields only apply for the lifetime of a single builder invocation.
 	protected InternalBuilder currentBuilder;
@@ -134,7 +137,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		InternalBuilder.buildManager = this;
 	}
 
-	private void basicBuild(int trigger, IncrementalProjectBuilder builder, Map args, MultiStatus status, IProgressMonitor monitor) {
+	private void basicBuild(int trigger, IncrementalProjectBuilder builder, Map<String,String> args, MultiStatus status, IProgressMonitor monitor) {
 		try {
 			currentBuilder = builder;
 			//clear any old requests to forget built state
@@ -288,7 +291,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Runs the builder with the given name on the given project config.
 	 * @return A status indicating if the build succeeded or failed
 	 */
-	private IStatus basicBuild(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map args, IProgressMonitor monitor) {
+	private IStatus basicBuild(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String,String> args, IProgressMonitor monitor) {
 		final IProject project = buildConfiguration.getProject();
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -373,7 +376,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Runs the builder with the given name on the given project config.
 	 * @return A status indicating if the build succeeded or failed
 	 */
-	public IStatus build(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map args, IProgressMonitor monitor) {
+	public IStatus build(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String,String> args, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		if (builderName == null) {
 			IBuildContext context = new BuildContext(buildConfiguration);
@@ -420,9 +423,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * builder_3,  config_1, 3
 	 *
 	 */
-	public ArrayList createBuildersPersistentInfo(IProject project) throws CoreException {
+	public ArrayList<BuilderPersistentInfo> createBuildersPersistentInfo(IProject project) throws CoreException {
 		/* get the old builders (those not yet instantiated) */
-		ArrayList oldInfos = getBuildersPersistentInfo(project);
+		ArrayList<BuilderPersistentInfo> oldInfos = getBuildersPersistentInfo(project);
 
 		ProjectDescription desc = ((Project) project).internalGetDescription();
 		ICommand[] commands = desc.getBuildSpec(false);
@@ -431,7 +434,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		IBuildConfiguration[] configs = project.getBuildConfigs();
 
 		/* build the new list */
-		ArrayList newInfos = new ArrayList(commands.length * configs.length);
+		ArrayList<BuilderPersistentInfo> newInfos = new ArrayList<BuilderPersistentInfo>(commands.length * configs.length);
 		for (int i = 0; i < commands.length; i++) {
 			BuildCommand command = (BuildCommand)commands[i];
 			String builderName = command.getBuilderName();
@@ -563,12 +566,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * @param configName or null if the builder doesn't support configurations
 	 * @param buildSpecIndex The index in the build spec, or -1 if unknown
 	 */
-	private BuilderPersistentInfo getBuilderInfo(ArrayList infos, String builderName, String configName, int buildSpecIndex) {
+	private BuilderPersistentInfo getBuilderInfo(ArrayList<BuilderPersistentInfo> infos, String builderName, String configName, int buildSpecIndex) {
 		//try to match on builder index, but if not match is found, use the builder name and config name
 		//this is because older workspace versions did not store builder infos in build spec order
 		BuilderPersistentInfo nameMatch = null;
-		for (Iterator it = infos.iterator(); it.hasNext();) {
-			BuilderPersistentInfo info = (BuilderPersistentInfo) it.next();
+		for (Iterator<BuilderPersistentInfo> it = infos.iterator(); it.hasNext();) {
+			BuilderPersistentInfo info = it.next();
 			// match on name, config name and build spec index if known
 			// Note: the config name may be null for builders that don't support configurations, or old workspaces
 			if (info.getBuilderName().equals(builderName) && 
@@ -590,8 +593,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * The list includes entries for all builders that are in the builder spec,
 	 * and that have a last built state but have not been instantiated this session.
 	 */
-	public ArrayList getBuildersPersistentInfo(IProject project) throws CoreException {
-		return (ArrayList) project.getSessionProperty(K_BUILD_LIST);
+	public ArrayList<BuilderPersistentInfo> getBuildersPersistentInfo(IProject project) throws CoreException {
+		return (ArrayList<BuilderPersistentInfo>) project.getSessionProperty(K_BUILD_LIST);
 	}
 
 	/**
@@ -601,7 +604,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * because IProject.build allows a builder to be executed that is not in the
 	 * build spec.
 	 */
-	private ICommand getCommand(IProject project, String builderName, Map args) {
+	private ICommand getCommand(IProject project, String builderName, Map<String, String> args) {
 		ICommand[] buildSpec = ((Project) project).internalGetDescription().getBuildSpec(false);
 		for (int i = 0; i < buildSpec.length; i++)
 			if (buildSpec[i].getBuilderName().equals(builderName))
@@ -679,7 +682,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * Returns the safe runnable instance for invoking a builder
 	 */
-	private ISafeRunnable getSafeRunnable(final int trigger, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
+	private ISafeRunnable getSafeRunnable(final int trigger, final Map<String, String> args, final MultiStatus status, final IProgressMonitor monitor) {
 		return new ISafeRunnable() {
 			public void handleException(Throwable e) {
 				if (e instanceof OperationCanceledException) {
@@ -841,7 +844,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			builder = new MissingBuilder(builderName);
 		}
 		// get the map of builders to get the last built tree
-		ArrayList infos = getBuildersPersistentInfo(project);
+		ArrayList<BuilderPersistentInfo> infos = getBuildersPersistentInfo(project);
 		if (infos != null) {
 			BuilderPersistentInfo info = getBuilderInfo(infos, builderName, buildConfiguration.getName(), buildSpecIndex);
 			if (info != null) {
@@ -1021,7 +1024,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * in the builder spec, and that have a last built state, even if they 
 	 * have not been instantiated this session.
 	 */
-	public void setBuildersPersistentInfo(IProject project, ArrayList list) {
+	public void setBuildersPersistentInfo(IProject project, ArrayList<BuilderPersistentInfo> list) {
 		try {
 			project.setSessionProperty(K_BUILD_LIST, list);
 		} catch (CoreException e) {
@@ -1081,13 +1084,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * Returns the scheduling rule that is required for building the project.
 	 */
-	public ISchedulingRule getRule(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map args) {
+	public ISchedulingRule getRule(IBuildConfiguration buildConfiguration, int trigger, String builderName, Map<String, String> args) {
 		IProject project = buildConfiguration.getProject();
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 		if (builderName == null) {
 			final ICommand[] commands;
 			if (project.isAccessible()) {
-				Set rules = new HashSet();
+				Set<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
 				commands = ((Project) project).internalGetDescription().getBuildSpec(false);
 				boolean hasNullBuildRule = false;
 				BuildContext context = new BuildContext(buildConfiguration);
@@ -1111,7 +1114,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				// Bug 306824 - Builders returning a null rule can't work safely if other builders require a non-null rule
 				// Be pessimistic and fall back to the default build rule (workspace root) in this case.
 				if (!hasNullBuildRule)
-					return new MultiRule((ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]));
+					return new MultiRule(rules.toArray(new ISchedulingRule[rules.size()]));
 			}
 		} else {
 			// Returns the derived resources for the specified builderName

@@ -35,7 +35,7 @@ public interface ICommand {
 	 *		value type : <code>String</code>), or <code>null</code>
 	 * @see #setArguments(Map)
 	 */
-	public Map getArguments();
+	public Map<String,String> getArguments();
 
 	/**
 	 * Returns the name of the builder to run for this command, or
@@ -94,7 +94,7 @@ public interface ICommand {
 	 *   both be of type <code>String</code>), or <code>null</code>
 	 * @see #getArguments()
 	 */
-	public void setArguments(Map args);
+	public void setArguments(Map<String,String> args);
 
 	/**
 	 * Sets the name of the builder to run for this command.

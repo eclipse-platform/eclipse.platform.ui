@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.runtime.IPath;
+
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.EFS;
@@ -51,13 +53,13 @@ import org.eclipse.osgi.util.NLS;
  */
 public class AliasManager implements IManager, ILifecycleListener, IResourceChangeListener {
 	public class AddToCollectionDoit implements Doit {
-		Collection collection;
+		Collection<IResource> collection;
 
 		public void doit(IResource resource) {
 			collection.add(resource);
 		}
 
-		public void setCollection(Collection collection) {
+		public void setCollection(Collection<IResource> collection) {
 			this.collection = collection;
 		}
 	}
@@ -122,7 +124,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		/**
 		 * Map of FileStore->IResource OR FileStore->ArrayList of (IResource)
 		 */
-		private final SortedMap map = new TreeMap(getComparator());
+		private final SortedMap<IFileStore, Object> map = new TreeMap<IFileStore,Object>(getComparator());
 
 		/**
 		 * Adds the given resource to the map, keyed by the given location.
@@ -137,13 +139,14 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			if (oldValue instanceof IResource) {
 				if (resource.equals(oldValue))
 					return false;//duplicate
-				ArrayList newValue = new ArrayList(2);
+				ArrayList<Object> newValue = new ArrayList<Object>(2);
 				newValue.add(oldValue);
 				newValue.add(resource);
 				map.put(location, newValue);
 				return true;
 			}
-			ArrayList list = (ArrayList) oldValue;
+			@SuppressWarnings("unchecked")
+			ArrayList<IResource> list = (ArrayList<IResource>) oldValue;
 			if (list.contains(resource))
 				return false;//duplicate
 			list.add(resource);
@@ -162,7 +165,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		 * given location as a prefix.
 		 */
 		public void matchingPrefixDo(IFileStore prefix, Doit doit) {
-			SortedMap matching;
+			SortedMap<IFileStore, Object> matching;
 			IFileStore prefixParent = prefix.getParent();
 			if (prefixParent != null) {
 				//endPoint is the smallest possible path greater than the prefix that doesn't
@@ -172,14 +175,15 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			} else {
 				matching = map;
 			}
-			for (Iterator it = matching.values().iterator(); it.hasNext();) {
+			for (Iterator<Object> it = matching.values().iterator(); it.hasNext();) {
 				Object value = it.next();
 				if (value == null)
 					return;
 				if (value instanceof List) {
-					Iterator duplicates = ((List) value).iterator();
+					@SuppressWarnings("unchecked")
+					Iterator<IResource> duplicates = ((List<IResource>) value).iterator();
 					while (duplicates.hasNext())
-						doit.doit((IResource) duplicates.next());
+						doit.doit(duplicates.next());
 				} else {
 					doit.doit((IResource) value);
 				}
@@ -195,9 +199,10 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			if (value == null)
 				return;
 			if (value instanceof List) {
-				Iterator duplicates = ((List) value).iterator();
+				@SuppressWarnings("unchecked")
+				Iterator<IResource> duplicates = ((List<IResource>) value).iterator();
 				while (duplicates.hasNext())
-					doit.doit((IResource) duplicates.next());
+					doit.doit(duplicates.next());
 			} else {
 				doit.doit((IResource) value);
 			}
@@ -208,20 +213,21 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		 * whose location overlaps another resource in the map.
 		 */
 		public void overLappingResourcesDo(Doit doit) {
-			Iterator entries = map.entrySet().iterator();
+			Iterator<Map.Entry<IFileStore,Object>> entries = map.entrySet().iterator();
 			IFileStore previousStore = null;
 			IResource previousResource = null;
 			while (entries.hasNext()) {
-				Map.Entry current = (Map.Entry) entries.next();
+				Map.Entry<IFileStore,Object> current = entries.next();
 				//value is either single resource or List of resources
-				IFileStore currentStore = (IFileStore) current.getKey();
+				IFileStore currentStore = current.getKey();
 				IResource currentResource = null;
 				Object value = current.getValue();
 				if (value instanceof List) {
 					//if there are several then they're all overlapping
-					Iterator duplicates = ((List) value).iterator();
+					@SuppressWarnings("unchecked")
+					Iterator<IResource> duplicates = ((List<IResource>) value).iterator();
 					while (duplicates.hasNext())
-						doit.doit(((IResource) duplicates.next()).getProject());
+						doit.doit(duplicates.next().getProject());
 				} else {
 					//value is a single resource
 					currentResource = (IResource) value;
@@ -263,7 +269,8 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 				}
 				return false;
 			}
-			ArrayList list = (ArrayList) oldValue;
+			@SuppressWarnings("unchecked")
+			ArrayList<IResource> list = (ArrayList<IResource>) oldValue;
 			boolean wasRemoved = list.remove(resource);
 			if (list.size() == 0)
 				map.remove(location);
@@ -279,20 +286,20 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	/**
 	 * The set of IProjects that have aliases.
 	 */
-	protected final Set aliasedProjects = new HashSet();
+	protected final Set<IResource> aliasedProjects = new HashSet<IResource>();
 
 	/**
 	 * A temporary set of aliases.  Used during computeAliases, but maintained
 	 * as a field as an optimization to prevent recreating the set.
 	 */
-	protected final HashSet aliases = new HashSet();
+	protected final HashSet<IResource> aliases = new HashSet<IResource>();
 
 	/**
 	 * The set of resources that have had structure changes that might
 	 * invalidate the locations map or aliased projects set.  These will be
 	 * updated incrementally on the next alias request.
 	 */
-	private final Set changedLinks = new HashSet();
+	private final Set<IResource> changedLinks = new HashSet<IResource>();
 
 	/**
 	 * This flag is true when projects have been created or deleted and the
@@ -344,11 +351,10 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			return;
 		if (description.getLocationURI() != null)
 			nonDefaultResourceCount++;
-		HashMap links = description.getLinks();
+		HashMap<IPath,LinkDescription> links = description.getLinks();
 		if (links == null)
 			return;
-		for (Iterator it = links.values().iterator(); it.hasNext();) {
-			LinkDescription linkDesc = (LinkDescription) it.next();
+		for (LinkDescription linkDesc : links.values()) {
 			IResource link = project.findMember(linkDesc.getProjectRelativePath());
 			if (link != null) {
 				try {
@@ -431,20 +437,20 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		int size = aliases.size();
 		if (size == 0)
 			return null;
-		return (IResource[]) aliases.toArray(new IResource[size]);
+		return aliases.toArray(new IResource[size]);
 	}
 
 	/**
 	 * Returns all resources pointing to the given location, or an empty array if there are none.
 	 */
 	public IResource[] findResources(IFileStore location) {
-		final ArrayList/*<IResource>*/ resources = new ArrayList();
+		final ArrayList<IResource> resources = new ArrayList<IResource>();
 		locationsMap.matchingResourcesDo(location, new Doit() {
 			public void doit(IResource resource) {
 				resources.add(resource);
 			}
 		});
-		return (IResource[]) resources.toArray(new IResource[0]);
+		return resources.toArray(new IResource[0]);
 	}
 
 
@@ -486,11 +492,9 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	 * strings, with the extra condition that the path separator is ordered
 	 * before all other characters. (Ex: "/foo" < "/foo/zzz" < "/fooaaa").
 	 */
-	private Comparator getComparator() {
-		return new Comparator() {
-			public int compare(Object o1, Object o2) {
-				IFileStore store1 = (IFileStore) o1;
-				IFileStore store2 = (IFileStore) o2;
+	Comparator<IFileStore> getComparator() {
+		return new Comparator<IFileStore>() {
+			public int compare(IFileStore store1, IFileStore store2) {
 				//scheme takes precedence over all else
 				int compare = compareStringOrNull(store1.getFileSystem().getScheme(), store2.getFileSystem().getScheme());
 				if (compare != 0)
@@ -699,9 +703,10 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		if (aliases.size() == 0)
 			return;
 		FileSystemResourceManager localManager = workspace.getFileSystemManager();
-		HashSet aliasesCopy = (HashSet) aliases.clone();
-		for (Iterator it = aliasesCopy.iterator(); it.hasNext();) {
-			IResource alias = (IResource) it.next();
+		@SuppressWarnings("unchecked")
+		HashSet<IResource> aliasesCopy = (HashSet<IResource>) aliases.clone();
+		for (Iterator<IResource> it = aliasesCopy.iterator(); it.hasNext();) {
+			IResource alias = it.next();
 			monitor.subTask(NLS.bind(Messages.links_updatingDuplicate, alias.getFullPath()));
 			if (alias.getType() == IResource.PROJECT) {
 				if (checkDeletion((Project) alias, location))
@@ -726,8 +731,8 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			buildLocationsMap();
 		} else {
 			//incrementally update location map for changed links
-			for (Iterator it = changedLinks.iterator(); it.hasNext();) {
-				IResource resource = (IResource) it.next();
+			for (Iterator<IResource> it = changedLinks.iterator(); it.hasNext();) {
+				IResource resource = it.next();
 				hadChanges = true;
 				if (!resource.isAccessible())
 					continue;
