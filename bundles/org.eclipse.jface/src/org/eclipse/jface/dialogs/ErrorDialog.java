@@ -195,6 +195,10 @@ public class ErrorDialog extends IconAndMessageDialog {
 
 		if (provider == null)
 			return;
+		
+		if(!provider.validFor(status)){
+			return;
+		}
 
 		Composite supportArea = new Composite(parent, SWT.NONE);
 		provider.createSupportArea(supportArea, status);

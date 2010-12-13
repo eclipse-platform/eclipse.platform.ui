@@ -30,4 +30,19 @@ public abstract class ErrorSupportProvider {
 		 * @return Control
 		 */
 		public abstract Control createSupportArea(Composite parent, IStatus status);
+		
+		/**
+		 * This method is called before
+		 * {@link #createSupportArea(Composite, IStatus)} to check if the
+		 * {@link ErrorSupportProvider} will display any significant
+		 * informations. If not, then it will not be presented at all.
+		 * 
+		 * @param status
+		 *            - {@link IStatus} for which status are will be requested.
+		 * @return true if provider is able to process particular {@link IStatus}
+		 * @since 3.7
+		 */
+		public boolean validFor(IStatus status){
+			return true;
+		}
 }
