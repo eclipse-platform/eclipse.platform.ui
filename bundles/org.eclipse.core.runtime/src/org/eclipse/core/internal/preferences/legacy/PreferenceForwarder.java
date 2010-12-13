@@ -79,7 +79,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	/**
 	 * Adds a property change listener to this preference object.
-	 * Has no affect if the identical listener is already registered.
+	 * Has no effect if the identical listener is already registered.
 	 *
 	 * @param listener a property change listener
 	 */
@@ -132,7 +132,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 
 	/**
 	 * Removes the given listener from this preference object.
-	 * Has no affect if the listener is not registered.
+	 * Has no effect if the listener is not registered.
 	 *
 	 * @param listener a property change listener
 	 */

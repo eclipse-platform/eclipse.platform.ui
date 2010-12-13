@@ -442,7 +442,7 @@ public class Preferences {
 
 	/**
 	 * Adds a property change listener to this preference object.
-	 * Has no affect if the identical listener is already registered.
+	 * Has no effect if the identical listener is already registered.
 	 * <p>
 	 * <em>Note:</em> Depending on the means in which the property
 	 * values changed, the old and new values for the property can 
@@ -458,7 +458,7 @@ public class Preferences {
 
 	/**
 	 * Removes the given listener from this preference object.
-	 * Has no affect if the listener is not registered.
+	 * Has no effect if the listener is not registered.
 	 *
 	 * @param listener a property change listener
 	 */

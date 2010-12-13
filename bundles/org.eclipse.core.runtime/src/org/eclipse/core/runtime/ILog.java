@@ -27,7 +27,7 @@ public interface ILog {
 	/**
 	 * Adds the given log listener to this log.  Subsequently the log listener will
 	 * receive notification of all log events passing through this log.
-	 * This method has no affect if the identical listener is already registered on this log.
+	 * This method has no effect if the identical listener is already registered on this log.
 	 *
 	 * @param listener the listener to add to this log
 	 * @see Platform#addLogListener(ILogListener)
@@ -53,7 +53,7 @@ public interface ILog {
 	/**
 	 * Removes the given log listener to this log.  Subsequently the log listener will
 	 * no longer receive notification of log events passing through this log.  
-	 * This method has no affect if the identical listener is not registered on this log.
+	 * This method has no effect if the identical listener is not registered on this log.
 	 *
 	 * @param listener the listener to remove
 	 * @see Platform#removeLogListener(ILogListener)
