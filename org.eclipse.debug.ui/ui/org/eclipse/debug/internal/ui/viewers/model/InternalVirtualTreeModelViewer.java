@@ -1127,7 +1127,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     
     /**
      * Sets the id's of visible columns, or <code>null</code> to set default columns.
-     * Only effects the current column presentation.
+     * Only affects the current column presentation.
      * 
      * @param ids visible columns
      */

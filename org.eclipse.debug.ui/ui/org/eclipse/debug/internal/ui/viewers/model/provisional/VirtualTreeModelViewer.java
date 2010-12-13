@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
@@ -156,7 +157,7 @@ public class VirtualTreeModelViewer extends InternalVirtualTreeModelViewer {
      * Sets the visible columns for this viewer. Id's correspond to 
      * column identifiers from a column presentation. Use <code>null</code>
      * or an empty collection to display default columns for the current
-     * column presentation. Only effects the current column presentation.
+     * column presentation. Only affects the current column presentation.
      * 
      * @param ids column identifiers or <code>null</code>
      */

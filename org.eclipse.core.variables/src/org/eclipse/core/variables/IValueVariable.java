@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.core.variables;
 
 /**
  * A variable with a value that can be set and retrieved. The context in which
- * a value variable is referenced does not effect the value of the variable.
+ * a value variable is referenced does not affect the value of the variable.
  * A value variable can be contributed by an extension or created programmatically.
  * A contributor may optionally specify an initial value for a variable, or
  * provide a delegate that will initialize the variable with a value.

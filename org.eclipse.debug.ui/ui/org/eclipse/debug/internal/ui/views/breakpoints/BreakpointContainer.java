@@ -306,7 +306,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
         } else {
         	// TODO [pchuong]: There seems to be some kind of problem when the INSERTED flag is used, 
         	//				   there is a additional checkbox added to the end of the tree.
-        	//				   Also the tree seems to have a strange visual affect when using the INSERTED
+        	//				   Also the tree seems to have a strange visual effect when using the INSERTED
         	//				   flag for the child node instead of ADDED flag. Note: all breakpoint delta
         	//				   is using the ADDED flag in this class.
        		rootDelta.addNode(breakpoint, bpIndex, IModelDelta.ADDED|IModelDelta.INSTALL, 0);

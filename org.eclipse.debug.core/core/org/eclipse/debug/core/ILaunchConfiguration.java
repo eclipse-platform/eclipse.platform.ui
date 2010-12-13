@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * working copy does not refer back to this configuration
 	 * as its original launch configuration (the working copy
 	 * will return <code>null</code> for <code>getOriginal()</code>).
-	 * When the working copy is saved it will not effect this
+	 * When the working copy is saved it will not affect this
 	 * launch configuration.
 	 * 
 	 * @param name the name of the copy

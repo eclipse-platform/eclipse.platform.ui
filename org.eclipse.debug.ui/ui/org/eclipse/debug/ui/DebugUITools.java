@@ -572,13 +572,13 @@ public class DebugUITools {
 	 * Saves all dirty editors and builds the workspace according to current
 	 * preference settings, and returns whether a launch should proceed.
 	 * <p>
-	 * The following preferences effect whether dirty editors are saved,
+	 * The following preferences affect whether dirty editors are saved,
 	 * and/or if the user is prompted to save dirty editors:<ul>
 	 * <li>PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * </ul>
-	 * The following preference effects whether a build is performed before
+	 * The following preference affects whether a build is performed before
 	 * launching (if required):<ul>
 	 * <li>PREF_BUILD_BEFORE_LAUNCH</li>
 	 * </ul>
@@ -597,7 +597,7 @@ public class DebugUITools {
 	 * Saves all dirty editors according to current
 	 * preference settings, and returns whether a launch should proceed.
 	 * <p>
-	 * The following preferences effect whether dirty editors are saved,
+	 * The following preferences affect whether dirty editors are saved,
 	 * and/or if the user is prompted to save dirty editors:<ul>
 	 * <li>PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
 	 * <li>PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH</li>
@@ -645,7 +645,7 @@ public class DebugUITools {
 	 * the given configuration in the specified mode, returning the resulting launch
 	 * object.
 	 * <p>
-	 * The following preference effects whether a build is performed before
+	 * The following preference affects whether a build is performed before
 	 * launching (if required):<ul>
 	 * <li>PREF_BUILD_BEFORE_LAUNCH</li>
 	 * </ul>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public interface IMemoryRenderingBindingsProvider {
      * Adds a listener to this binding provider.  The listener will be notified
      * when rendering bindings change.
      * <p>
-     * Has no affect if an identical listener is already registered.
+     * Has no effect if an identical listener is already registered.
      * </p>
      * @param listener listener to add
      */
@@ -71,7 +71,7 @@ public interface IMemoryRenderingBindingsProvider {
     /**
      * Removes a listener from this binding provider.  
      * <p>
-     * Has no affect if an identical listener is not already registered.
+     * Has no effect if an identical listener is not already registered.
      * </p>
      * @param listener listener to remove
      */
