@@ -167,7 +167,6 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 				message, exp);
 		StatusAdapter sa = new StatusAdapter(status);
 		sa.setProperty(IStatusAdapterConstants.TITLE_PROPERTY, title);
-		StatusManager.getManager().handle(sa,
-				StatusManager.SHOW | StatusManager.LOG);
+		StatusManager.getManager().handle(sa, StatusManager.LOG);
 	}
 }
