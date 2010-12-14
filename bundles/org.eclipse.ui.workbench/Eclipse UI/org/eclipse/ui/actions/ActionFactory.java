@@ -23,7 +23,6 @@ import org.eclipse.ui.internal.CloseAllSavedAction;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.NavigationHistoryAction;
-import org.eclipse.ui.internal.OpenPreferencesAction;
 import org.eclipse.ui.internal.SaveAction;
 import org.eclipse.ui.internal.SaveAllAction;
 import org.eclipse.ui.internal.SaveAsAction;
@@ -966,7 +965,8 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
 
-			IWorkbenchAction action = new OpenPreferencesAction(window);
+            WorkbenchCommandAction action = new WorkbenchCommandAction(
+					getCommandId(), window);
             action.setId(getId());
             action.setText(WorkbenchMessages.OpenPreferences_text);
 			action.setToolTipText(WorkbenchMessages.OpenPreferences_toolTip);
