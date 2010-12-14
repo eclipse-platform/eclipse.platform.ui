@@ -29,7 +29,7 @@ public interface IHelpScopeProducer {
 	 * AbstracHelpScope implementations.  Use this method to create
 	 * or load AbstractHelpScopes at runtime.
 	 * 
-	 * @return
+	 * @return an array of the contributed scope handles. May not be <code>null</code>.
 	 */
 	public IScopeHandle[] getScopeHandles();
 }

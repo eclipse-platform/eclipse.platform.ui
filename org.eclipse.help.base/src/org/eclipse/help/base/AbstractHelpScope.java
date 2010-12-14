@@ -61,7 +61,7 @@ public abstract class AbstractHelpScope {
      * if it's target is in scope. May be overridden to exclude more IndexSee elements 
      * from the scope
 	 * @param see
-	 * @return
+	 * @return true if the target is in scope
 	 */
 	public boolean inScope(IIndexSee see) {
 		return hasInScopeChildren(see);
