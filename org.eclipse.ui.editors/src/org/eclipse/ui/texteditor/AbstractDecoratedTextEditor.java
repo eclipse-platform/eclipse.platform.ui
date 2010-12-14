@@ -1525,6 +1525,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			IFile original= (input instanceof IFileEditorInput) ? ((IFileEditorInput) input).getFile() : null;
 			if (original != null)
 				dialog.setOriginalFile(original);
+			else
+				dialog.setOriginalName(input.getName());
 
 			dialog.create();
 
