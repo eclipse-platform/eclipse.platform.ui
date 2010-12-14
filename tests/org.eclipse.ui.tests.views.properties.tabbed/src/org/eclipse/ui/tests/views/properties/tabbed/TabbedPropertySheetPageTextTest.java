@@ -30,10 +30,11 @@ import org.eclipse.ui.views.properties.tabbed.TabContents;
 /**
  * Tests for the text tests view.
  * 
- * @author Anthony Hunter
  * @since 3.4
  */
 public class TabbedPropertySheetPageTextTest extends TestCase {
+
+	private static final long TIME_OUT_TO_GET_ACTIVE_TABS= 30000; // in ms
 
 	private TextTestsView textTestsView;
 
@@ -86,11 +87,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
         document.set("This is a test");
         textTestsView.getViewer().setSelectedRange(0, 14);
         
-		ITabDescriptor[] tabDescriptors;
-		do {
-			textTestsView.getSite().getShell().getDisplay().readAndDispatch();
-			tabDescriptors= textTestsView.getTabbedPropertySheetPage().getActiveTabs();
-		} while (tabDescriptors.length == 0);
+		ITabDescriptor[] tabDescriptors= waitForActiveTabs();
         /**
          * First tab is "This"
          */
@@ -121,11 +118,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 	    document.set("The fifth tab is selected");
 	    textTestsView.getViewer().setSelectedRange(0, 26);
 	    
-		ITabDescriptor[] tabDescriptors;
-		do {
-			textTestsView.getSite().getShell().getDisplay().readAndDispatch();
-			tabDescriptors= textTestsView.getTabbedPropertySheetPage().getActiveTabs();
-		} while (tabDescriptors.length == 0);
+		ITabDescriptor[] tabDescriptors= waitForActiveTabs();
 
 	    /**
 	     * First tab is "the" and is selected.
@@ -156,6 +149,17 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
 				.getSelectedTab().getLabel());
 	}
 
+	private ITabDescriptor[] waitForActiveTabs() {
+		long threshold= System.currentTimeMillis() + TIME_OUT_TO_GET_ACTIVE_TABS;
+		ITabDescriptor[] tabDescriptors;
+		do {
+			textTestsView.getSite().getShell().getDisplay().readAndDispatch();
+			tabDescriptors= textTestsView.getTabbedPropertySheetPage().getActiveTabs();
+		} while (tabDescriptors.length == 0 && System.currentTimeMillis() < threshold);
+		assertTrue("No tab got activated", tabDescriptors.length > 0);
+		return tabDescriptors;
+	}
+
 	/**
 	 * This test makes sure that the list of sections has only one section. The
 	 * TextTestsTabDescriptor returns two sections and one section is always
@@ -166,11 +170,7 @@ public class TabbedPropertySheetPageTextTest extends TestCase {
         document.set("This is a test");
         textTestsView.getViewer().setSelectedRange(0, 14);
 
-		ITabDescriptor[] tabDescriptors;
-		do {
-			textTestsView.getSite().getShell().getDisplay().readAndDispatch();
-			tabDescriptors= textTestsView.getTabbedPropertySheetPage().getActiveTabs();
-		} while (tabDescriptors.length == 0);
+		waitForActiveTabs();
 
 		/**
 		 * each tab has one section.
