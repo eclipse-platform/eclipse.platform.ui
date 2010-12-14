@@ -110,7 +110,7 @@
          <meta.section type="apiinfo"/>
       </appInfo>
       <documentation>
-         A class which implements AbstractScope contains functions to determine which elemements should be displayed when the scope is active. The help UI allows the user to specify any of the predefiend scopes.
+         A class which implements AbstractHelpScope contains functions to determine which elemements should be displayed when the scope is active. The help UI allows the user to specify any of the predefiend scopes.
       </documentation>
    </annotation>
 
