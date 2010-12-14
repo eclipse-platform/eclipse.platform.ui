@@ -448,7 +448,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		SaveablesList saveablesList = (SaveablesList) window
 				.getService(ISaveablesLifecycleListener.class);
 		// prompt for save
-		if (saveablesList.preCloseParts(selectedEditors, true, window) != null) {
+		if (saveablesList.preCloseParts(selectedEditors, true, this, window) != null) {
 			// close all editors
 			for (int i = 0; i < items.length; i++) {
 				Adapter e = (Adapter) items[i].getData();
