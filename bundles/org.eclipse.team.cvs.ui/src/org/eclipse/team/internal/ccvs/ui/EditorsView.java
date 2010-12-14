@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,32 +40,6 @@ public class EditorsView extends ViewPart {
 
 	private Table table;
 	private TableViewer tableViewer;
-
-	class EditorsContentProvider implements IStructuredContentProvider {
-
-		/**
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			return (EditorsInfo[]) inputElement;
-		}
-
-		/**
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		public void dispose() {
-		}
-
-		/**
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		public void inputChanged(
-			Viewer viewer,
-			Object oldInput,
-			Object newInput) {
-		}
-
-	}
 
 	class EditorsLabelProvider implements ITableLabelProvider {
 		/**
@@ -242,7 +216,7 @@ public class EditorsView extends ViewPart {
 		tableViewer = new TableViewer(table);
 		createColumns(table, layout);
 
-		tableViewer.setContentProvider(new EditorsContentProvider());
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setLabelProvider(new EditorsLabelProvider());
 		// set F1 help
         PlatformUI.getWorkbench().getHelpSystem().setHelp(tableViewer.getControl(), IHelpContextIds.CVS_EDITORS_VIEW);
