@@ -344,6 +344,11 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 */
 	public Object preCloseParts(List partsToClose, boolean save,
 			final IWorkbenchWindow window) {
+		return preCloseParts(partsToClose, save, window, window);
+	}
+
+	public Object preCloseParts(List partsToClose, boolean save, IShellProvider shellProvider,
+			final IWorkbenchWindow window) {
 		// reference count (how many occurrences of a model will go away?)
 		PostCloseInfo postCloseInfo = new PostCloseInfo();
 		for (Iterator it = partsToClose.iterator(); it.hasNext();) {
@@ -380,7 +385,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		fillModelsClosing(postCloseInfo.modelsClosing,
 				postCloseInfo.modelsDecrementing);
 		if (save) {
-			boolean canceled = promptForSavingIfNecessary(window,
+			boolean canceled = promptForSavingIfNecessary(shellProvider, window,
 					postCloseInfo.modelsClosing, postCloseInfo.modelsDecrementing, true);
 			if (canceled) {
 				return null;
@@ -397,6 +402,12 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 */
 	private boolean promptForSavingIfNecessary(final IWorkbenchWindow window,
 			Set modelsClosing, Map modelsDecrementing, boolean canCancel) {
+		return promptForSavingIfNecessary(window, window, modelsClosing, modelsDecrementing,
+				canCancel);
+	}
+
+	private boolean promptForSavingIfNecessary(IShellProvider shellProvider,
+			IWorkbenchWindow window, Set modelsClosing, Map modelsDecrementing, boolean canCancel) {
 		List modelsToOptionallySave = new ArrayList();
 		for (Iterator it = modelsDecrementing.keySet().iterator(); it.hasNext();) {
 			Saveable modelDecrementing = (Saveable) it.next();
@@ -405,8 +416,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			}
 		}
 		
-		boolean shouldCancel = modelsToOptionallySave.isEmpty() ? false : promptForSaving(modelsToOptionallySave,
-				window, window, canCancel, true);
+		boolean shouldCancel = modelsToOptionallySave.isEmpty() ? false : promptForSaving(
+				modelsToOptionallySave, shellProvider, window, canCancel, true);
 		
 		if (shouldCancel) {
 			return true;
@@ -419,8 +430,8 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				modelsToSave.add(modelClosing);
 			}
 		}
-		return modelsToSave.isEmpty() ? false : promptForSaving(modelsToSave,
-				window, window, canCancel, false);
+		return modelsToSave.isEmpty() ? false : promptForSaving(modelsToSave, shellProvider,
+				window, canCancel, false);
 	}
 
 	/**
