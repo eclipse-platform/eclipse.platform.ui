@@ -3327,7 +3327,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /*
      * Saves the workbench part.
      */
-    protected boolean savePart(ISaveablePart saveable, IWorkbenchPart part,
+	public boolean savePart(ISaveablePart saveable, IWorkbenchPart part,
             boolean confirm) {
         // Do not certify part do allow editors inside a multipageeditor to
         // call this.
