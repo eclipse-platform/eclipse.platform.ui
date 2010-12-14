@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -136,8 +135,11 @@ public class FastViewBar implements IWindowTrim {
         ToolItem position;
 
         /**
-         * @param panesToDrop the list of ViewPanes to drop at the given position
-         */
+		 * @param panesToDrop
+		 *            the list of ViewPanes to drop at the given position
+		 * @param position
+		 *            the tool item denoting the position
+		 */
         public ViewDropTarget(List panesToDrop, ToolItem position) {
             setTarget(panesToDrop, position);
         }
@@ -526,7 +528,7 @@ public class FastViewBar implements IWindowTrim {
             }
         }
 
-        if (page.isZoomed()) {
+        if (page != null && page.isZoomed()) {
             page.zoomOut();
         }
 
@@ -799,9 +801,6 @@ public class FastViewBar implements IWindowTrim {
         return horizontal;
     }
 
-    /**
-     * @param ref
-     */
     public int getViewSide(IViewReference ref) {
         boolean horizontal = isHorizontal(ref);
 
@@ -829,9 +828,11 @@ public class FastViewBar implements IWindowTrim {
     }
 
     /**
-     * Returns the approximate location where the next fastview icon
-     * will be drawn (display coordinates)
-     */
+	 * Returns the approximate location where the next fast view icon will be
+	 * drawn (display coordinates)
+	 * 
+	 * @return the rectangle
+	 */
     public Rectangle getLocationOfNextIcon() {
         ToolBar control = getToolBar();
 
