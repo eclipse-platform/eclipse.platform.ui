@@ -399,17 +399,18 @@ public class TeamUIPlugin extends AbstractUIPlugin {
     }
 
 	/**
-	 * Returns the standard display to be used. The method first checks, if
-	 * the thread calling this method has an associated display. If so, this
-	 * display is returned. Otherwise the method returns the default display.
+	 * Returns the standard display to be used. The method first checks, if the
+	 * thread calling this method has an associated display. If so, this display
+	 * is returned. Otherwise the method returns the display for this workbench.
+	 * 
 	 * @return the standard display to be used
 	 */
 	public static Display getStandardDisplay() {
-		Display display= Display.getCurrent();
+		Display display = Display.getCurrent();
 		if (display == null) {
-			display= Display.getDefault();
+			display = PlatformUI.getWorkbench().getDisplay();
 		}
-		return display;		
+		return display;
 	}
 	
 	public Image getImage(String key) {
