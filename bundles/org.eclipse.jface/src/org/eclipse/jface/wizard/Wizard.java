@@ -13,17 +13,18 @@ package org.eclipse.jface.wizard;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.runtime.Assert;
-
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Policy;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * An abstract base implementation of a wizard. A typical client subclasses
@@ -188,7 +189,12 @@ public abstract class Wizard implements IWizard {
     public void dispose() {
         // notify pages
         for (int i = 0; i < pages.size(); i++) {
-            ((IWizardPage) pages.get(i)).dispose();
+			try {
+	            ((IWizardPage) pages.get(i)).dispose();
+			} catch (Exception e) {
+				Status status = new Status(IStatus.ERROR, Policy.JFACE, IStatus.ERROR, e.getMessage(), e);
+				Policy.getLog().log(status);
+			}
         }
         // dispose of image
         if (defaultImage != null) {

@@ -21,11 +21,13 @@ public class TheTestWizard extends Wizard {
 	public final String page1Name = "PAGE1";
 	public final String page2Name = "PAGE2";
 	public final String page3Name = "PAGE3";
-	
+	private boolean throwExceptionOnDispose; 
+
 	public TheTestWizard() {
 		super();
 		setNeedsProgressMonitor(true);
 	}
+	
 	
 	/**
 	 * Adding the page to the wizard.
@@ -47,5 +49,21 @@ public class TheTestWizard extends Wizard {
 	public boolean performFinish() {
 		WizardTest.DID_FINISH = true;
 		return true;
+	}
+	
+	/**
+	 * @param throwExceptionOnDispose The throwExceptionOnDispose to set.
+	 */
+	public void setThrowExceptionOnDispose(boolean throwExceptionOnDispose) {
+		this.throwExceptionOnDispose = throwExceptionOnDispose;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if(throwExceptionOnDispose)
+			throw new NullPointerException();
 	}
 }

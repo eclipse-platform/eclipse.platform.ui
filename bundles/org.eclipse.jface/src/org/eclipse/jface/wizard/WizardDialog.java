@@ -18,6 +18,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.IPageChangingListener;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.dialogs.PageChangingEvent;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.HelpEvent;
@@ -38,26 +58,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.IPageChangeProvider;
-import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.IPageChangingListener;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.PageChangedEvent;
-import org.eclipse.jface.dialogs.PageChangingEvent;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * A dialog to show a wizard to the end user.
@@ -856,7 +856,12 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		// inform wizards
 		for (int i = 0; i < createdWizards.size(); i++) {
 			IWizard createdWizard = (IWizard) createdWizards.get(i);
-			createdWizard.dispose();
+			try {
+				createdWizard.dispose();
+			} catch (Exception e) {
+				Status status = new Status(IStatus.ERROR, Policy.JFACE, IStatus.ERROR, e.getMessage(), e);
+				Policy.getLog().log(status);
+			}
 			// Remove this dialog as a parent from the managed wizard.
 			// Note that we do this after calling dispose as the wizard or
 			// its pages may need access to the container during

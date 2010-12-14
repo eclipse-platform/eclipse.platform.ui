@@ -15,11 +15,14 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.IPageChangingListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.PageChangingEvent;
+import org.eclipse.jface.util.ILogger;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
@@ -217,6 +220,44 @@ public class WizardTest extends TestCase {
 		//change to page 3
 		dialog.nextPressed();
 		assertEquals("Page change notified unintentially", false, pageChanged);
+	}
+	
+	
+	public void testWizardDispose() {
+		wizard = new TheTestWizard();
+		wizard.setThrowExceptionOnDispose(true);
+        dialog = new TheTestWizardDialog(null, wizard);
+        dialog.create();
+
+		final boolean logged[] = new boolean[1];
+		Policy.setLog(new ILogger() {
+			public void log(IStatus status) {
+				logged[0] = true;
+			}
+		});
+		dialog.close();
+        
+        assertTrue(logged[0]);
+
+	}
+	
+	public void testWizardPageDispose() {
+		wizard = new TheTestWizard();
+        dialog = new TheTestWizardDialog(null, wizard);
+        dialog.create();
+        wizard.page2.setThrowExceptionOnDispose(true);
+        final boolean logged[] = new boolean[1];
+		Policy.setLog(new ILogger() {
+			public void log(IStatus status) {
+				logged[0] = true;
+			}
+		});
+        dialog.close();
+        
+        assertTrue(logged[0]);
+        assertTrue(wizard.page1.getControl().isDisposed());
+        assertTrue(wizard.page3.getControl().isDisposed());
+
 	}
 	
 	//----------------------------------------------------
