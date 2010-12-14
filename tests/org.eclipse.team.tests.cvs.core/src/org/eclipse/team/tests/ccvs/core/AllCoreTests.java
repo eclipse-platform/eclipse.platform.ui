@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.tests.ccvs.core.cvsresources.AllTestsCVSResources;
 
 /**
@@ -32,10 +31,7 @@ public class AllCoreTests extends EclipseTest {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
-			suite.addTest(AllTestsCVSResources.suite());
-			return new CVSTestSetup(suite);
-		} 
+		suite.addTest(AllTestsCVSResources.suite());
 		return new TestSetup(suite);
 	}
 }
