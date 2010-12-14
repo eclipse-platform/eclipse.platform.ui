@@ -58,10 +58,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A class which contains methods to determine which elemements should be displayed when the scope is active.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.base.AbstractHelpScope:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -105,14 +105,6 @@
    </annotation>
 
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiinfo"/>
-      </appInfo>
-      <documentation>
-         A class which implements AbstractHelpScope contains functions to determine which elemements should be displayed when the scope is active. The help UI allows the user to specify any of the predefiend scopes.
-      </documentation>
-   </annotation>
 
 
    <annotation>
