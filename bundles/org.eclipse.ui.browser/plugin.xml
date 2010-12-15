@@ -109,6 +109,9 @@
          os="linux,aix,hpux,solaris"
          executable="firefox"
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
+         <location>
+            usr/bin/firefox
+         </location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.konqueror"
