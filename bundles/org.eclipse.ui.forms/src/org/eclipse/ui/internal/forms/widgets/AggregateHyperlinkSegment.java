@@ -117,16 +117,15 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 	 * @see org.eclipse.ui.internal.forms.widgets.IHyperlinkSegment#getBounds()
 	 */
 	public Rectangle getBounds() {
-		Rectangle bounds = new Rectangle(Integer.MAX_VALUE, Integer.MAX_VALUE,
-				0, 0);
-		// TODO this is wrong
-		for (int i = 0; i < segments.size(); i++) {
+		if (segments.size() == 0)
+			return new Rectangle(Integer.MAX_VALUE, Integer.MAX_VALUE, 0, 0);
+			
+		IHyperlinkSegment segment0 = (IHyperlinkSegment) segments.get(0);
+		Rectangle bounds = segment0.getBounds();
+		for (int i = 1; i < segments.size(); i++) {
 			IHyperlinkSegment segment = (IHyperlinkSegment) segments.get(i);
 			Rectangle sbounds = segment.getBounds();
-			bounds.x = Math.min(bounds.x, sbounds.x);
-			bounds.y = Math.min(bounds.y, sbounds.y);
-			bounds.width = Math.max(bounds.width, sbounds.width);
-			bounds.height = Math.max(bounds.height, sbounds.height);
+			bounds.add(sbounds);
 		}
 		return bounds;
 	}

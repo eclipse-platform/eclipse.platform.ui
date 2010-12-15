@@ -1596,22 +1596,21 @@ public class FormText extends Canvas {
 
 	private void paintFocusTransfer(IHyperlinkSegment oldLink,
 			IHyperlinkSegment newLink) {
-		GC gc = new GC(this);
-		Color bg = getBackground();
-		Color fg = getForeground();
-		gc.setFont(getFont());
 		if (oldLink != null) {
-			gc.setBackground(bg);
-			gc.setForeground(fg);
-			oldLink.paintFocus(gc, bg, fg, false, null);
+			Rectangle r = oldLink.getBounds();
+			redraw(r.x, r.y, r.width, r.height, true);
+			update();
 		}
 		if (newLink != null) {
-			// ensureVisible(newLink);
+			GC gc = new GC(this);
+			Color bg = getBackground();
+			Color fg = getForeground();
+			gc.setFont(getFont());
 			gc.setBackground(bg);
 			gc.setForeground(fg);
 			newLink.paintFocus(gc, bg, fg, true, null);
+			gc.dispose();
 		}
-		gc.dispose();
 	}
 
 	private void ensureVisible(IFocusSelectable segment) {

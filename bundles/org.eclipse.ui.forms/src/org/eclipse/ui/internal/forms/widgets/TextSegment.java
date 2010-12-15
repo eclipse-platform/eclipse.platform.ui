@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -206,20 +207,16 @@ public class TextSegment extends ParagraphSegment {
 	}
 
 	public Rectangle getBounds() {
-		int x = 0, y = 0;
-		int width = 0, height = 0;
-
-		for (int i = 0; i < areaRectangles.size(); i++) {
+		if (areaRectangles.size() == 0)
+			return new Rectangle(0, 0, 0, 0);
+		
+		AreaRectangle ar0 = (AreaRectangle) areaRectangles.get(0);
+		Rectangle bounds = Geometry.copy(ar0.rect);
+		for (int i = 1; i < areaRectangles.size(); i++) {
 			AreaRectangle ar = (AreaRectangle) areaRectangles.get(i);
-			if (i == 0) {
-				x = ar.rect.x;
-				y = ar.rect.y;
-			} else
-				x = Math.min(ar.rect.x, x);
-			width = Math.max(ar.rect.width, width);
-			height += ar.rect.height;
+			bounds.add(ar.rect);
 		}
-		return new Rectangle(x, y, width, height);
+		return bounds;
 	}
 
 	public boolean advanceLocator(GC gc, int wHint, Locator locator,
