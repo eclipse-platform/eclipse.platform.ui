@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ling Hao - Fix for Bug 284393
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -68,7 +67,7 @@ public class TextHyperlinkSegment extends TextSegment implements
 	}
 	
 	protected void drawText(GC gc, String s, int clipX, int clipY) {
-		gc.drawText(s, clipX, clipY, true);
+		gc.drawText(s, clipX, clipY, false);
 	}
 
 	public String getTooltipText() {

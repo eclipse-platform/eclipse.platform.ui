@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Ling Hao - Fix for Bug 284393
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -153,7 +152,7 @@ public class BulletParagraph extends Paragraph {
 			gc.fillRectangle(x + 1, y, 3, 5);
 			gc.setBackground(bg);
 		} else if (style == TEXT && text != null) {
-			gc.drawText(text, x, y, true);
+			gc.drawText(text, x, y);
 		} else if (style == IMAGE && text != null) {
 			Image image = (Image) resourceTable.get(text);
 			if (image != null)
