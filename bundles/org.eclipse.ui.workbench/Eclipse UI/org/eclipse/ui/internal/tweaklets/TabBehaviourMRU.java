@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.tweaklets;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorInput;
@@ -29,7 +28,6 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
@@ -98,11 +96,10 @@ public class TabBehaviourMRU extends TabBehaviour {
 		};
 		int result = dialog.open();
 		if (result == 0) { // YES
-			ProgressMonitorDialog pmd = new ProgressMonitorJobsDialog(dialog
-					.getShell());
-			pmd.open();
-			dirtyEditor.getEditor(true).doSave(pmd.getProgressMonitor());
-			pmd.close();
+			IEditorPart editor = dirtyEditor.getEditor(true);
+			if (!page.getEditorManager().savePart(editor, editor, false)) {
+				return null;
+			}
 		} else if ((result == 2) || (result == -1)) {
 			return null;
 		}
