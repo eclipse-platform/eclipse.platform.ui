@@ -1155,6 +1155,10 @@
       			id="org.eclipse.ui.views.showView.viewId"
       			name="%command.showView.viewIdParameter"
       			values="org.eclipse.ui.internal.registry.ViewParameterValues" />
+      		<commandParameter
+      			id="org.eclipse.ui.views.showView.secondaryId"
+      			name="%command.showView.secondaryIdParameter"
+      			optional="true"/>
         <commandParameter
               id="org.eclipse.ui.views.showView.makeFast"
               name="%command.showView.makeFastParameter"

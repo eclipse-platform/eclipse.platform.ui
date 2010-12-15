@@ -56,7 +56,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -579,7 +578,7 @@ public final class BindingPersistence extends PreferencePersistence {
 					parameterizedCommand = null;
 				} else if (viewParameter != null) { 
 					HashMap parms = new HashMap();
-					parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
+					parms.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewParameter);
 					parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
 				} else {
 					parameterizedCommand = readParameters(memento,
@@ -942,7 +941,7 @@ public final class BindingPersistence extends PreferencePersistence {
 			parameterizedCommand = null;
 		} else if (viewParameter != null) { 
 			HashMap parms = new HashMap();
-			parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
+			parms.put(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID, viewParameter);
 			parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
 		} else {
 			parameterizedCommand = readParameters(configurationElement,

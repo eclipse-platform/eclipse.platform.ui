@@ -566,6 +566,14 @@ public interface IWorkbenchCommandConstants {
 	public static final String VIEWS_SHOW_VIEW_PARM_ID = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
 
 	/**
+	 * Id for parameter "Secondary Id" in command "Show View" in category "Views"
+	 * (value is <code>"org.eclipse.ui.views.showView.secondaryId"</code>).
+	 * 
+	 * @since 3.7
+	 */
+	public static final String VIEWS_SHOW_VIEW_SECONDARY_ID = "org.eclipse.ui.views.showView.secondaryId"; //$NON-NLS-1$
+
+	/**
 	 * Id for parameter "As Fastview" in command "Show View" in category "Views"
 	 * (value is <code>"org.eclipse.ui.views.showView.makeFast"</code>).
 	 * Optional.
@@ -574,7 +582,7 @@ public interface IWorkbenchCommandConstants {
 	 */
 	public static final String VIEWS_SHOW_VIEW_PARM_FASTVIEW = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
 
-    // Perspectives Category:
+	// Perspectives Category:
 
     /**
      * Id for command "Show Perspective" in category "Perspectives"

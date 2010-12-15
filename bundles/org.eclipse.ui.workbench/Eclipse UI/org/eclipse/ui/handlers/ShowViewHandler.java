@@ -11,7 +11,6 @@
 package org.eclipse.ui.handlers;
 
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -66,15 +65,15 @@ public final class ShowViewHandler extends AbstractHandler {
 				.getActiveWorkbenchWindowChecked(event);
 		// Get the view identifier, if any.
 		final Map parameters = event.getParameters();
-		final Object value = parameters
-				.get(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID);
+		final Object viewId = parameters.get(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID);
+		final Object secondary = parameters.get(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_SECONDARY_ID);
 		makeFast = "true".equals(parameters.get(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_FASTVIEW)); //$NON-NLS-1$
 		
-		if (value == null) {
+		if (viewId == null) {
 			openOther(window);
 		} else {
             try {
-                openView((String) value, window);
+				openView((String) viewId, (String) secondary, window);
             } catch (PartInitException e) {
                 throw new ExecutionException("Part could not be initialized", e); //$NON-NLS-1$
             }
@@ -103,7 +102,7 @@ public final class ShowViewHandler extends AbstractHandler {
 		final IViewDescriptor[] descriptors = dialog.getSelection();
 		for (int i = 0; i < descriptors.length; ++i) {
 			try {
-                openView(descriptors[i].getId(), window);
+				openView(descriptors[i].getId(), null, window);
 			} catch (PartInitException e) {
 				StatusUtil.handleStatus(e.getStatus(),
 						WorkbenchMessages.ShowView_errorTitle
@@ -118,12 +117,13 @@ public final class ShowViewHandler extends AbstractHandler {
 	 * 
 	 * @param viewId
 	 *            The view to open; must not be <code>null</code>
+	 * @param secondaryId
+	 *            an optional secondary id; may be <code>null</code>
 	 * @throws PartInitException
 	 *             If the part could not be initialized.
 	 */
-	private final void openView(final String viewId,
-			final IWorkbenchWindow activeWorkbenchWindow)
-			throws PartInitException {
+	private final void openView(final String viewId, final String secondaryId,
+			final IWorkbenchWindow activeWorkbenchWindow) throws PartInitException {
 
 		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
 		if (activePage == null) {
@@ -137,7 +137,7 @@ public final class ShowViewHandler extends AbstractHandler {
             // If we're making a fast view then use the new mechanism directly
             boolean useNewMinMax = Perspective.useNewMinMax(persp);
             if (useNewMinMax) {
-            	IViewReference ref = persp.getViewReference(viewId, null);
+				IViewReference ref = persp.getViewReference(viewId, secondaryId);
             	if (ref == null)
             		return;
 
@@ -147,10 +147,10 @@ public final class ShowViewHandler extends AbstractHandler {
         		return;
             }
             
-            IViewReference ref = wp.findViewReference(viewId);
+			IViewReference ref = wp.findViewReference(viewId, secondaryId);
             
             if (ref == null) {
-                IViewPart part = wp.showView(viewId, null, IWorkbenchPage.VIEW_CREATE);
+				IViewPart part = wp.showView(viewId, secondaryId, IWorkbenchPage.VIEW_CREATE);
                 ref = (IViewReference)wp.getReference(part); 
             }
             
@@ -159,7 +159,7 @@ public final class ShowViewHandler extends AbstractHandler {
             }
             wp.activate(ref.getPart(true));
         } else {
-            activePage.showView(viewId);
+			activePage.showView(viewId, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
         }
 		
 	}

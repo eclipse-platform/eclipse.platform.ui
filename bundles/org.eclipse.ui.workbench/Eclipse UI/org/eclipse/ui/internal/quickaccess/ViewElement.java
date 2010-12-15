@@ -25,6 +25,9 @@ import org.eclipse.ui.views.IViewDescriptor;
 public class ViewElement extends QuickAccessElement {
 
 	private final IViewDescriptor viewDescriptor;
+	private String secondaryId;
+	private boolean multiInstance;
+	private String contentDescription;
 
 	private String category;
 
@@ -44,19 +47,61 @@ public class ViewElement extends QuickAccessElement {
 		}
 	}
 
+	/**
+	 * @return The primary id of the view
+	 */
+	public String getPrimaryId() {
+
+		return viewDescriptor.getId();
+	}
+
+	/**
+	 * @param secondaryId
+	 *            The secondaryId to set.
+	 */
+	public void setSecondaryId(String secondaryId) {
+		this.secondaryId = secondaryId;
+	}
+
+	/**
+	 * @param multiInstance
+	 *            The multiInstance to set.
+	 */
+	public void setMultiInstance(boolean multiInstance) {
+		this.multiInstance = multiInstance;
+	}
+
+	/**
+	 * @param contentDescription
+	 *            The contentDescription to set.
+	 */
+	public void setContentDescription(String contentDescription) {
+		this.contentDescription = contentDescription;
+	}
+
+	/**
+	 * @return Returns the multiInstance.
+	 */
+	public boolean isMultiInstance() {
+		return multiInstance;
+	}
+
 	public void execute() {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
 		if (activePage != null) {
 			try {
-				activePage.showView(viewDescriptor.getId());
+				activePage.showView(viewDescriptor.getId(), secondaryId,
+						IWorkbenchPage.VIEW_ACTIVATE);
 			} catch (PartInitException e) {
 			}
 		}
 	}
 
 	public String getId() {
-		return viewDescriptor.getId();
+		if(secondaryId ==null)
+			return viewDescriptor.getId();
+		return viewDescriptor.getId() + ':' + secondaryId;
 	}
 
 	public ImageDescriptor getImageDescriptor() {
@@ -64,20 +109,35 @@ public class ViewElement extends QuickAccessElement {
 	}
 
 	public String getLabel() {
-		if (category == null) {
-			return viewDescriptor.getLabel();
+		String label = viewDescriptor.getLabel();
+
+		if (isMultiInstance() && contentDescription != null)
+			label = label + " (" + contentDescription + ')'; //$NON-NLS-1$
+
+		if (category != null) {
+			label = label + separator + category;
 		}
-		return viewDescriptor.getLabel() + separator + category;
+		return label;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((viewDescriptor == null) ? 0 : viewDescriptor.hashCode());
+		result = prime * result + ((secondaryId == null) ? 0 : secondaryId.hashCode());
+		result = prime * result + ((viewDescriptor == null) ? 0 : viewDescriptor.hashCode());
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -85,7 +145,12 @@ public class ViewElement extends QuickAccessElement {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final ViewElement other = (ViewElement) obj;
+		ViewElement other = (ViewElement) obj;
+		if (secondaryId == null) {
+			if (other.secondaryId != null)
+				return false;
+		} else if (!secondaryId.equals(other.secondaryId))
+			return false;
 		if (viewDescriptor == null) {
 			if (other.viewDescriptor != null)
 				return false;
@@ -93,4 +158,5 @@ public class ViewElement extends QuickAccessElement {
 			return false;
 		return true;
 	}
+
 }

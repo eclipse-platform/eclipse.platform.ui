@@ -128,7 +128,6 @@ import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.PluginActionCoolBarContributionItem;
 import org.eclipse.ui.internal.PluginActionSet;
 import org.eclipse.ui.internal.PluginActionSetBuilder;
-import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -1023,7 +1022,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 												getParamID(item));
 							} else if (isShowView(item)) {
 								parameters.put(
-										ShowViewMenu.VIEW_ID_PARM,
+										IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID,
 										getParamID(item));
 							}
 						}
@@ -2365,7 +2364,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					if (isNewWizard(item)) {
 						key = IWorkbenchCommandConstants.FILE_NEW_PARM_WIZARDID;
 					} else if (isShowView(item)) {
-						key = ShowViewMenu.VIEW_ID_PARM;
+						key = IWorkbenchCommandConstants.VIEWS_SHOW_VIEW_PARM_ID;
 					} else if (isShowPerspective(item)) {
 						key = IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE_PARM_ID;
 					}
