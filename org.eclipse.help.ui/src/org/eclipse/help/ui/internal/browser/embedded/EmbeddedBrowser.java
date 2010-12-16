@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpApplication;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.Messages;
@@ -115,8 +116,12 @@ public class EmbeddedBrowser {
 				prefs.putInt(BROWSER_HEIGTH, h);
 				prefs.putBoolean(BROWSER_MAXIMIZED, (shell.getMaximized()));
 				notifyCloseListners();
+				if (HelpApplication.isShutdownOnClose()) {
+					HelpApplication.stopHelp();
+				}
 			}
 		});
+							
 		browser = new Browser(shell, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		initialize(browser);

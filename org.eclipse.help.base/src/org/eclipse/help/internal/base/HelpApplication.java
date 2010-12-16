@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 	private static final int STATE_RUNNING = 1;
 	private static final int STATE_RESTARTING = 2;
 	private static int status = STATE_RUNNING;
+	private static boolean shutdownOnClose = false; // Shutdown help when the embedded browser is closed
 	private File metadata;
 	private FileLock lock;
 
@@ -166,5 +167,13 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 
 	public static boolean isRunning() {
 		return status == STATE_RUNNING;
+	}
+
+	public static boolean isShutdownOnClose() {
+		return shutdownOnClose;
+	}
+
+	public static void setShutdownOnClose(boolean shutdownOnClose) {
+		HelpApplication.shutdownOnClose = shutdownOnClose;
 	}
 }

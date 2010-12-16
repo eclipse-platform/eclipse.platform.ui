@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,8 @@ public class ControlServlet extends HttpServlet {
 	public static final String UPDATE_PLUGIN_ID = "org.eclipse.update.core"; //$NON-NLS-1$
 
 	public static final String CMD_DISPLAYHELP = "displayHelp"; //$NON-NLS-1$
+	
+	public static final String CMD_DISPLAYHELPWINDOW = "displayHelpWindow"; //$NON-NLS-1$
 
 	public static final String CMD_SHUTDOWN = "shutdown"; //$NON-NLS-1$
 
@@ -165,6 +167,11 @@ public class ControlServlet extends HttpServlet {
 		} else if (CMD_DISPLAYHELP.equalsIgnoreCase(command)) {
 			if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
 				displayHelp(req);
+			}
+		} else if (CMD_DISPLAYHELPWINDOW.equalsIgnoreCase(command)) {
+			if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
+				displayHelp(req);
+				HelpApplication.setShutdownOnClose(true);
 			}
 		} else if (CMD_INSTALL.equalsIgnoreCase(command)
 				|| CMD_ENABLE.equalsIgnoreCase(command)
