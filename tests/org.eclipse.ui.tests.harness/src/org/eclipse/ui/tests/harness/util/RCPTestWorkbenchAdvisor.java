@@ -63,6 +63,10 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		// close
 		this.idleBeforeExit = -1;
 	}
+	
+	public RCPTestWorkbenchAdvisor(int idleBeforeExit) {
+		this.idleBeforeExit = idleBeforeExit;
+	}
 
 	/**
 	 * 
