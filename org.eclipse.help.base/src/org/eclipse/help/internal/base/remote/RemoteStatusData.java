@@ -12,17 +12,24 @@ package org.eclipse.help.internal.base.remote;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.base.util.TestConnectionUtility;
 
 public class RemoteStatusData {
-
-
+	
+	private static int TIMEOUT = 60 * 1000;
+	
+	
 	/*
-	 * Convience method to see if any remote help
+	 * Convenience method to see if any remote help
 	 * is down
 	 */
 	public static boolean isAnyRemoteHelpUnavailable()
@@ -30,12 +37,12 @@ public class RemoteStatusData {
 		ArrayList sites = getRemoteSites();
 		if (sites.isEmpty())
 			return false;
+
+		for (int s=0;s<sites.size();s++)
+			if (!isConnected((URL)sites.get(s)))
+				return true;
 		
-		ArrayList badSites = checkSitesConnectivity(sites);
-		if (badSites.isEmpty())
-			return false;
-		
-		return true;
+		return false;
 	}
 
 	/*
@@ -51,15 +58,25 @@ public class RemoteStatusData {
 		ArrayList badSites = new ArrayList();
 		
 		for (int i=0;i<sites.size();i++)
-		{
-			URL baseURL = (URL)sites.get(i);
-			boolean isConnected = TestConnectionUtility.testConnection(baseURL.getHost(), 
-					"" + baseURL.getPort(), baseURL.getPath(), baseURL.getProtocol()); //$NON-NLS-1$
-			
-			if (!isConnected)
-				badSites.add(baseURL);
-		}
+			if (!isConnected((URL)sites.get(i)))
+				badSites.add(sites.get(i));
+		
 		return badSites;
+	}
+	
+	public static boolean isConnected(URL site)
+	{
+		ConnectionCache cache = ConnectionCache.getCache();
+		try{
+			return cache.isConnected(site);
+		}catch(CoreException e)
+		{
+			boolean connected = TestConnectionUtility.testConnection(site.getHost(), 
+					"" + site.getPort(), site.getPath(), site.getProtocol()); //$NON-NLS-1$
+			cache.put(site, connected);
+			cache.resetTimer();
+			return connected;
+		}
 	}
 	
 	/*
@@ -106,4 +123,63 @@ public class RemoteStatusData {
 		}
 		return sites;
 	}
+
+	public static void clearCache() {
+		ConnectionCache.clear();
+	}
+	
+	private static class ConnectionCache
+	{
+		private static ConnectionCache instance;
+		
+		private Hashtable cache;
+		private long start;
+		
+		private ConnectionCache(){
+		
+			cache = new Hashtable();
+			resetTimer();
+		}
+		
+		public void resetTimer()
+		{
+			start = new Date().getTime();
+		}
+		
+		public static ConnectionCache getCache()
+		{
+			if (instance==null || instance.isExpired())
+			{
+				instance = new ConnectionCache();
+			}
+			return instance;
+		}
+		
+		public static void clear()
+		{
+			instance = null;
+		}
+		
+		public boolean isExpired()
+		{
+			long now = new Date().getTime();
+			
+			return (now > start + TIMEOUT);
+		}
+		
+		public boolean isConnected(URL url) throws CoreException
+		{
+			Boolean b = (Boolean)cache.get(url);
+			if (b==null)
+				throw new CoreException(new Status(IStatus.ERROR,HelpBasePlugin.PLUGIN_ID,"Cache Unavailable")); //$NON-NLS-1$
+			
+			return b.booleanValue();
+		}
+		
+		public void put(URL url,boolean connected)
+		{
+			cache.put(url,new Boolean(connected));
+		}
+	}
+
 }

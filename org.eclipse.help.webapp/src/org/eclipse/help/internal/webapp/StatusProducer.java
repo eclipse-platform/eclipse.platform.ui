@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,6 +69,7 @@ public class StatusProducer implements IHelpContentProducer {
 		// Get all remote sites, and subset of non-working sites
 		ArrayList remoteSites = RemoteStatusData.getRemoteSites();
 		ArrayList badSites = RemoteStatusData.checkSitesConnectivity(remoteSites);
+		RemoteStatusData.clearCache();
 
 		// Check to see if there are any enabled remote sites.
 		// If not, return null - default topic not found will display
