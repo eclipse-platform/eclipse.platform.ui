@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,15 +86,20 @@ public abstract class TrayDialog extends Dialog {
 
 	private static boolean dialogHelpAvailable;
 
-	/*
+	/**
 	 * The dialog's tray (null if none).
 	 */
 	private DialogTray tray;
 
-	/*
-	 * The tray's control.
+	/**
+	 * The tray's control (null if none).
 	 */
 	private Control trayControl;
+	
+	/**
+	 * The control that had focus before the tray was opened (null if none).
+	 */
+	private Control nonTrayFocusControl;
 	
 	/*
 	 * The separator to the left of the sash.
@@ -119,6 +124,11 @@ public abstract class TrayDialog extends Dialog {
 	private int shellWidth;
 
 	private ControlAdapter resizeListener;
+
+	/**
+	 * The help button (null if none).
+	 */
+	private ToolItem fHelpButton;
 
 	/**
 	 * Creates a tray dialog instance. Note that the window will have no visual
@@ -149,6 +159,11 @@ public abstract class TrayDialog extends Dialog {
 			throw new IllegalStateException("Tray was not open"); //$NON-NLS-1$
 		}
 		Shell shell = getShell();
+		Control focusControl = shell.getDisplay().getFocusControl();
+		if (isContained(trayControl, focusControl) && nonTrayFocusControl!= null && !nonTrayFocusControl.isDisposed()) {
+			nonTrayFocusControl.setFocus();
+		}
+		nonTrayFocusControl= null;
 		shell.removeControlListener (resizeListener);
 		resizeListener = null;
 		int trayWidth = trayControl.getSize().x + leftSeparator.getSize().x + sash.getSize().x + rightSeparator.getSize().x;
@@ -163,8 +178,31 @@ public abstract class TrayDialog extends Dialog {
 		sash = null;
 		Rectangle bounds = shell.getBounds();
 		shell.setBounds(bounds.x + ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width - trayWidth, bounds.height);
+		if (fHelpButton != null) {
+			fHelpButton.setSelection(false);
+		}
 	}
 	
+	/**
+	 * Returns true if the given Control is a direct or indirect child of
+	 * container.
+	 * 
+	 * @param container
+	 *            the potential parent
+	 * @param control
+	 * @return boolean <code>true</code> if control is a child of container
+	 */
+	private boolean isContained(Control container, Control control) {
+		Composite parent;
+		while ((parent = control.getParent()) != null) {
+			if (parent == container) {
+				return true;
+			}
+			control = parent;
+		}
+		return false;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
 	 */
@@ -238,10 +276,10 @@ public abstract class TrayDialog extends Dialog {
 				cursor.dispose();
 			}
 		});		
-        ToolItem item = new ToolItem(toolBar, SWT.NONE);
-		item.setImage(image);
-		item.setToolTipText(JFaceResources.getString("helpToolTip")); //$NON-NLS-1$
-		item.addSelectionListener(new SelectionAdapter() {
+        fHelpButton = new ToolItem(toolBar, SWT.CHECK);
+		fHelpButton.setImage(image);
+		fHelpButton.setToolTipText(JFaceResources.getString("helpToolTip")); //$NON-NLS-1$
+		fHelpButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
 				helpPressed();
             }
@@ -326,23 +364,30 @@ public abstract class TrayDialog extends Dialog {
 	 * context help behavior (e.g. F1 on Windows). It traverses the widget
 	 * tree upward until it finds a widget that has a help listener on it,
 	 * then invokes a help event on that widget.
+	 * If the help tray is already open, it closes it and doesn't invoke
+	 * any help listener.
 	 */
 	private void helpPressed() {
-    	if (getShell() != null) {
-	    	Control c = getShell().getDisplay().getFocusControl();
-	    	while (c != null) {
-	    		if (c.isListening(SWT.Help)) {
-	    			c.notifyListeners(SWT.Help, new Event());
-	    			break;
-	    		}
-	    		c = c.getParent();
-	    	}
-    	}
+		if (getTray() == null) {
+			if (getShell() != null) {
+				Control c = getShell().getDisplay().getFocusControl();
+				while (c != null) {
+					if (c.isListening(SWT.Help)) {
+						c.notifyListeners(SWT.Help, new Event());
+						break;
+					}
+					c = c.getParent();
+				}
+			}
+
+		} else {
+			closeTray();
+		}
 	}
 	
 	/**
 	 * Constructs the tray's widgets and displays the tray in this dialog. The
-	 * dialog's size will be adjusted to accomodate the tray.
+	 * dialog's size will be adjusted to accommodate the tray.
 	 * 
 	 * @param tray the tray to show in this dialog
 	 * @throws IllegalStateException if the dialog already has a tray open
@@ -360,6 +405,10 @@ public abstract class TrayDialog extends Dialog {
 			throw new UnsupportedOperationException("Trays not supported with custom layouts"); //$NON-NLS-1$
 		}
 		final Shell shell = getShell();
+		Control focusControl = shell.getDisplay().getFocusControl();
+		if (isContained(shell, focusControl)) {
+			nonTrayFocusControl = focusControl;
+		}
 		leftSeparator = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
 		leftSeparator.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		sash = new Sash(shell, SWT.VERTICAL);
@@ -392,6 +441,9 @@ public abstract class TrayDialog extends Dialog {
 		shell.addControlListener (resizeListener);
 		   
 		this.tray = tray;
+		if (fHelpButton != null) {
+			fHelpButton.setSelection(true);
+		}
 	}
 	
 	/**
