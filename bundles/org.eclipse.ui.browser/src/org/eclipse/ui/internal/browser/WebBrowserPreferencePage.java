@@ -7,17 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - Initial API and implementation
+ * Martin Oberhuber (Wind River) - [293159] cyclic link when searching browser
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -418,7 +421,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					public void run(IProgressMonitor monitor) {
 						monitor.beginTask(Messages.searchingTaskName,
 								IProgressMonitor.UNKNOWN);
-						search(rootDir, existingPaths, foundBrowsers, monitor);
+						search(rootDir, existingPaths, foundBrowsers, new HashSet(), monitor);
 						monitor.done();
 					}
 				};
@@ -530,9 +533,19 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 	}
 
 	protected static void search(File directory, List existingPaths,
-			List foundBrowsers, IProgressMonitor monitor) {
+			List foundBrowsers, Set directoriesVisited, IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
+		try {
+			//bug 293159: protect against recursion due to cyclic symbolic link
+			String canonicalPath = directory.getCanonicalPath();
+			if (!directoriesVisited.add(canonicalPath)) {
+				//already been here
+				return;
+			}
+		} catch(IOException ioe) {
+			/*ignore*/
+		}
 
 		monitor.subTask(NLS.bind(Messages.searching,
 				new String[] { Integer.toString(foundBrowsers.size()), directory.getAbsolutePath()}));
@@ -562,7 +575,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		}
 		while (!subDirs.isEmpty()) {
 			File subDir = (File) subDirs.remove(0);
-			search(subDir, existingPaths, foundBrowsers, monitor);
+			search(subDir, existingPaths, foundBrowsers, directoriesVisited, monitor);
 			if (monitor.isCanceled()) {
 				return;
 			}
