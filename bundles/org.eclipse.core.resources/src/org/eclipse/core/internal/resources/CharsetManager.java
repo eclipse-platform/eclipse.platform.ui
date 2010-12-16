@@ -429,7 +429,7 @@ public class CharsetManager implements IManager {
 		try {
 			//TODO once bug 90500 is fixed, should be as simple as this:
 			//			String path = project.getName() + IPath.SEPARATOR + ResourcesPlugin.PI_RESOURCES;
-			//			return node.nodeExists(path) ? node.getBoolean(PREF_SEPARATE_DERIVED_ENCODINGS) : false;
+			//			return node.nodeExists(path) ? node.node(path).getBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, false) : false;
 			// for now, take the long way
 			if (!node.nodeExists(project.getName()))
 				return false;
