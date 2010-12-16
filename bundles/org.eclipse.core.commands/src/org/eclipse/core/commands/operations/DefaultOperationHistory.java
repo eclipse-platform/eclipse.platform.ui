@@ -551,8 +551,8 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		 */
 
 		List filtered = new ArrayList();
-		Iterator iterator = list.iterator();
 		synchronized (undoRedoHistoryLock) {
+			Iterator iterator = list.iterator();
 			while (iterator.hasNext()) {
 				IUndoableOperation operation = (IUndoableOperation) iterator
 						.next();
