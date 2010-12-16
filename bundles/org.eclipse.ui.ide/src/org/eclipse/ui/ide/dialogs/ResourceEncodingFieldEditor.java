@@ -12,12 +12,16 @@ package org.eclipse.ui.ide.dialogs;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
@@ -28,6 +32,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -37,6 +42,8 @@ import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * The ResourceEncodingFieldEditor is a field editor for editing the encoding of
@@ -56,6 +63,8 @@ public final class ResourceEncodingFieldEditor extends
 	private IResource resource;
 
 	private Composite group;
+
+	private Button separateDerivedEncodingsButton = null;
 
 	/**
 	 * Creates a new encoding field editor for setting the encoding on the given
@@ -141,6 +150,36 @@ public final class ResourceEncodingFieldEditor extends
 
 	}
 
+	private boolean getStoredSeparateDerivedEncodingsValue() {
+		// be careful looking up for our node so not to create any nodes as side effect
+		Preferences node = Platform.getPreferencesService().getRootNode()
+				.node(ProjectScope.SCOPE);
+		String projectName = ((IProject) resource).getName();
+		try {
+			//TODO once bug 90500 is fixed, should be as simple as this:
+			//			String path = projectName + IPath.SEPARATOR + ResourcesPlugin.PI_RESOURCES;
+			//			return node.nodeExists(path) ? node.node(path).getBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, false) : false;
+			// for now, take the long way
+			if (!node.nodeExists(projectName))
+				return false;
+			node = node.node(projectName);
+			if (!node.nodeExists(ResourcesPlugin.PI_RESOURCES))
+				return false;
+			node = node.node(ResourcesPlugin.PI_RESOURCES);
+			return node.getBoolean(
+					ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, false);
+		} catch (BackingStoreException e) {
+			// default value
+			return false;
+		}
+	}
+
+	private boolean hasSameSeparateDerivedEncodings() {
+		return (separateDerivedEncodingsButton == null)
+				|| ((separateDerivedEncodingsButton != null) && (separateDerivedEncodingsButton
+						.getSelection() == getStoredSeparateDerivedEncodingsValue()));
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -155,7 +194,9 @@ public final class ResourceEncodingFieldEditor extends
 			encoding = null;
 		}
 		// Don't update if the same thing is selected
-		if (hasSameEncoding(encoding)) {
+		final boolean hasSameEncoding = hasSameEncoding(encoding);
+		final boolean hasSameSeparateDerivedEncodings = hasSameSeparateDerivedEncodings();
+		if (hasSameEncoding && hasSameSeparateDerivedEncodings) {
 			return;
 		}
 
@@ -201,11 +242,21 @@ public final class ResourceEncodingFieldEditor extends
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
-					if (resource instanceof IContainer) {
-						((IContainer) resource).setDefaultCharset(
-								finalEncoding, monitor);
-					} else {
-						((IFile) resource).setCharset(finalEncoding, monitor);
+					if (!hasSameEncoding) {
+						if (resource instanceof IContainer) {
+							((IContainer) resource).setDefaultCharset(
+									finalEncoding, monitor);
+						} else {
+							((IFile) resource).setCharset(finalEncoding,
+									monitor);
+						}
+					}
+					if (!hasSameSeparateDerivedEncodings) {
+						Preferences prefs = new ProjectScope((IProject) resource).getNode(ResourcesPlugin.PI_RESOURCES);
+						if (getStoredSeparateDerivedEncodingsValue())
+							prefs.remove(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS);
+						else
+							prefs.putBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, true);
 					}
 					return Status.OK_STATUS;
 				} catch (CoreException e) {// If there is an error return the
@@ -228,8 +279,8 @@ public final class ResourceEncodingFieldEditor extends
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditor#store()
 	 */
-	public void store() {// Override the store method as we are not using a
-		// preference store
+	public void store() {
+		// Override the store method as we are not using a preference store
 		doStore();
 	}
 
@@ -238,8 +289,8 @@ public final class ResourceEncodingFieldEditor extends
 	 * 
 	 * @see org.eclipse.jface.preference.FieldEditor#load()
 	 */
-	public void load() {// Override the load method as we are not using a
-		// preference store
+	public void load() {
+		// Override the load method as we are not using a preference store
 		setPresentsDefaultValue(false);
 		doLoad();
 	}
@@ -250,9 +301,20 @@ public final class ResourceEncodingFieldEditor extends
 	 * @see org.eclipse.jface.preference.FieldEditor#loadDefault()
 	 */
 	public void loadDefault() {
+		// Override the loadDefault method as we are not using a preference store
 		setPresentsDefaultValue(true);
 		doLoadDefault();
 		refreshValidState();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditor#doLoadDefault()
+	 */
+	protected void doLoadDefault() {
+		super.doLoadDefault();
+		if (separateDerivedEncodingsButton != null)
+			separateDerivedEncodingsButton
+					.setSelection(getStoredSeparateDerivedEncodingsValue());
 	}
 
 	/*
@@ -368,6 +430,17 @@ public final class ResourceEncodingFieldEditor extends
 			layoutData.horizontalSpan = numColumns + 1;
 			label.setLayoutData(layoutData);
 
+		}
+
+		if (resource.getType() == IResource.PROJECT) {
+			separateDerivedEncodingsButton = new Button(group, SWT.CHECK);
+			GridData data = new GridData();
+			data.horizontalSpan = 2;
+			separateDerivedEncodingsButton.setLayoutData(data);
+			separateDerivedEncodingsButton
+					.setText(IDEWorkbenchMessages.ResourceEncodingFieldEditor_SeparateDerivedEncodingsLabel);
+			separateDerivedEncodingsButton
+					.setSelection(getStoredSeparateDerivedEncodingsValue());
 		}
 		return group;
 	}

@@ -898,6 +898,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceEncodingFieldEditor_ErrorStoringMessage;
 	public static String ResourceEncodingFieldEditor_EncodingConflictTitle;
 	public static String ResourceEncodingFieldEditor_EncodingConflictMessage;
+	public static String ResourceEncodingFieldEditor_SeparateDerivedEncodingsLabel;
 
 	public static String ChooseWorkspaceDialog_dialogName;
 	public static String ChooseWorkspaceDialog_dialogTitle;

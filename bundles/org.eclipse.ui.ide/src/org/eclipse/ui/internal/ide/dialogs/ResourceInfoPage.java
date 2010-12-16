@@ -923,8 +923,6 @@ public class ResourceInfoPage extends PropertyPage {
 		if (resource == null)
 			return true;
 
-		encodingEditor.store();
-
 		if (lineDelimiterEditor != null) {
 			lineDelimiterEditor.store();
 		}
@@ -1005,6 +1003,10 @@ public class ResourceInfoPage extends PropertyPage {
 					IDEWorkbenchMessages.InternalError, exception
 							.getLocalizedMessage(), exception.getStatus());
 			return false;
+		} finally {
+			// This must be invoked after the 'derived' property has been set,
+			// because it may influence the place where encoding is stored.
+			encodingEditor.store();
 		}
 		return true;
 	}
