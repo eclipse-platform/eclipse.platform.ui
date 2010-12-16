@@ -316,6 +316,7 @@ public class EmbeddedBrowser {
 	private void initializeStatusBar(Browser browser) {
 		browser.addStatusTextListener(new StatusTextListener() {
 			public void changed(StatusTextEvent event) {
+				event.text = event.text.replaceAll("&","&&"); //$NON-NLS-1$ //$NON-NLS-2$
 				if (!event.text.equals(statusText)) {
 					statusText = event.text;
 					statusBarText.setText(statusText);
