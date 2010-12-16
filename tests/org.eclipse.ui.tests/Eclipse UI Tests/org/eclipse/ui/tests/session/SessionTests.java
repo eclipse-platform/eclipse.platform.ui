@@ -17,6 +17,7 @@ import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.tests.harness.util.TweakletCheckTest;
 import org.eclipse.ui.tests.markers.MarkersViewColumnSizeTest;
 import org.eclipse.ui.tests.statushandlers.StatusHandlerConfigurationSuite;
@@ -46,6 +47,20 @@ public class SessionTests extends TestSuite {
 		addThemeTests();
 		addStatusHandlingTests();
 		addRestoredSessionTest();
+		addWindowlessSessionTest();
+	}
+
+	/**
+	 * 
+	 */
+	private void addWindowlessSessionTest() {
+		// Windowless apps are available only on Cocoa 
+		if(Util.isCocoa()) {
+			Map arguments = new HashMap(2);
+			arguments.put("product", null);
+			arguments.put("testApplication", "org.eclipse.ui.tests.windowLessRcpApplication");
+			addTest(new WorkbenchSessionTest("windowlessSessionTests",WindowlessSessionTest.class, arguments));
+		}
 	}
 
 	/**

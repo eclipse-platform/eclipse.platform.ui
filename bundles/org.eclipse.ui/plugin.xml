@@ -94,6 +94,11 @@
             id="org.eclipse.ui.contexts.actionSet"
             name="%context.actionSet.name">
       </context>
+      <context
+            description="%context.workbench.description"
+            id="org.eclipse.ui.contexts.workbench"
+            name="%context.workbench.name">
+      </context>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">

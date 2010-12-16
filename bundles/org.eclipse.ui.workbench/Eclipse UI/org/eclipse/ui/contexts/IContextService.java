@@ -11,7 +11,6 @@
 package org.eclipse.ui.contexts;
 
 import java.util.Collection;
-
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.expressions.Expression;
@@ -38,6 +37,14 @@ import org.eclipse.ui.services.IServiceWithSources;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IContextService extends IServiceWithSources {
+
+	/**
+	 * The identifier for the context that is active when a workbench is active.
+	 * 
+	 * @since 3.7
+	 * 
+	 */
+	public static final String CONTEXT_ID_WORKBENCH = "org.eclipse.ui.contexts.workbench"; //$NON-NLS-1$
 
 	/**
 	 * The identifier for the context that is active when a shell registered as

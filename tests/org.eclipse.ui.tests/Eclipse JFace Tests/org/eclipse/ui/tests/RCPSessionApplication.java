@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,12 @@ import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
 
 public class RCPSessionApplication implements IApplication {
 	
+	private boolean windowlessApp = false;
+	
 	public Object start(IApplicationContext context) throws Exception {
 		Display display = PlatformUI.createDisplay();
 		try {
-			PlatformUI.createAndRunWorkbench(display, new RCPTestWorkbenchAdvisor());
+			PlatformUI.createAndRunWorkbench(display, new RCPTestWorkbenchAdvisor(windowlessApp));
 		} finally {
 			if (display != null)
 				display.dispose();
@@ -42,4 +44,12 @@ public class RCPSessionApplication implements IApplication {
 			}
 		});
 	}
+	
+	/**
+	 * @param windowlessApp The windowlessApp to set.
+	 */
+	public void setWindowlessApp(boolean windowlessApp) {
+		this.windowlessApp = windowlessApp;
+	}
+	
 }

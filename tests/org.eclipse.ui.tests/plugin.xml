@@ -4314,4 +4314,16 @@
 	      <run class="org.eclipse.ui.tests.RCPSessionApplication"> </run>
 	   </application>
    </extension>
+   <extension
+         id="windowLessRcpApplication"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="org.eclipse.ui.tests.WindowlessRCPApplication">
+         </run>
+      </application>
+   </extension>
 </plugin>

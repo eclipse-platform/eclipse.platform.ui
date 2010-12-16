@@ -50,6 +50,8 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	/** Default value of -1 causes the option to be ignored. */
 	private int idleBeforeExit = -1;
 
+	private boolean windowlessApp = false;
+
 	/**
 	 * Traps whether or not calls to displayAccess in the UI thread resulted in
 	 * an exception. Should be false.
@@ -62,8 +64,15 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		this.idleBeforeExit = -1;
 	}
 
-	public RCPTestWorkbenchAdvisor(int idleBeforeExit) {
-		this.idleBeforeExit = idleBeforeExit;
+	/**
+	 * 
+	 * Enables the RCP application to runwithout a workbench window
+	 * 
+	 * @param runWithoutWindow
+	 * 
+	 */
+	public RCPTestWorkbenchAdvisor(boolean windowlessApp) {
+		this.windowlessApp = windowlessApp;
 	}
 
 	/*
@@ -87,6 +96,12 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 		prefs.setValue(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP,
 				false);
 		prefs.setValue(IWorkbenchPreferenceConstants.SHOW_INTRO, false);
+		
+		if(windowlessApp) {
+			configurer.setSaveAndRestore(true);
+			configurer.setExitOnLastWindowClose(false);
+		}
+		
 	}
 
 	/*

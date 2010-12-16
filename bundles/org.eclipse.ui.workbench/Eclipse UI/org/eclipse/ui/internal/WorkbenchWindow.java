@@ -722,17 +722,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		updateDisabled = true;
 
 		try {
-			// Only do the check if it is OK to close if we are not closing
-			// via the workbench as the workbench will check this itself.
 			Workbench workbench = getWorkbenchImpl();
-			int count = workbench.getWorkbenchWindowCount();
-			// also check for starting - if the first window dies on startup
-			// then we'll need to open a default window.
-			if (!workbench.isStarting()
-					&& !workbench.isClosing()
-					&& count <= 1
-					&& workbench.getWorkbenchConfigurer()
-							.getExitOnLastWindowClose()) {
+			if (shouldCloseWorkbench(workbench)) {
 				windowClosed = workbench.close();
 			} else {
 				if (okToClose()) {
@@ -752,6 +743,38 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		return windowClosed;
+	}
+
+	/**
+	 * 
+	 * Checks and returns whether we should close the workbench when closing
+	 * this window
+	 * 
+	 * @param workbench
+	 * @return <code>true</code>, if the workbench needs to be closed,
+	 *         <code>false</code> otherwise
+	 */
+	private boolean shouldCloseWorkbench(Workbench workbench) {
+
+		// also check for starting - if the first window dies on startup
+		// then we'll need to open a default window.
+
+		if (workbench.isStarting())
+			return false;
+
+		// Only do the check if it is OK to close if we are not closing
+		// via the workbench as the workbench will check this itself.
+		if (workbench.isClosing())
+			return false;
+		
+		int count = workbench.getWorkbenchWindowCount();
+
+		// we have more windows apart from this. Dont' close workbench
+		if(count >1 ) 
+			return false;
+
+		// now do whatever the workbenchconfigurer says ...
+		return workbench.getWorkbenchConfigurer().getExitOnLastWindowClose();
 	}
 
 	/**

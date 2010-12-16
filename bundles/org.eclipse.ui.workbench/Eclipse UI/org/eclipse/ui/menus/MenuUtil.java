@@ -19,6 +19,14 @@ package org.eclipse.ui.menus;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MenuUtil {
+	/**
+	 * 
+	 * Application Menu
+	 * 
+	 * @since 3.7
+	 * 
+	 * */
+	public final static String APPLICATION_MENU = "menu:org.eclipse.ui.application.menu"; //$NON-NLS-1$
 	/** Main Menu */
 	public final static String MAIN_MENU = "menu:org.eclipse.ui.main.menu"; //$NON-NLS-1$
 	/** Main ToolBar (CoolBar) */

@@ -95,6 +95,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TaskBar;
 import org.eclipse.swt.widgets.TaskItem;
@@ -131,6 +132,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -189,6 +191,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
@@ -1554,6 +1557,29 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		});
 
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+
+				activateWorkbenchContext();
+
+			}
+		});
+
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+
+				Menu appMenu = getAppMenu();
+				if (appMenu == null)
+					return;
+
+				createApplicationMenu(appMenu);
+			}
+		});
+
+
+
 		// attempt to restore a previous workbench state
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
@@ -1751,6 +1777,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 						new SaveablesList());
 			}});
 		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				// side effect of getter is initializing
+				getProgressService();
+			}
+		});
+
 		/*
 		 * Phase 1 of the initialization of commands. When this phase completes,
 		 * all the services and managers will exist, and be accessible via the
@@ -2128,13 +2162,30 @@ public final class Workbench extends EventManager implements IWorkbench {
 				super.handleException(e);
 			}
 		});
-		// ensure at least one window was opened
-		if (result[0].isOK() && windowManager.getWindows().length == 0) {
+		// ensure at least one window was opened, only when appMenu isn't there
+		if (shouldReturnNoWindowError(result[0])) {
 			String msg = WorkbenchMessages.Workbench_noWindowsRestored;
 			result[0] = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 					IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
 		}
 		return result[0];
+	}
+
+	private boolean shouldReturnNoWindowError(final IStatus result) {
+		
+		final boolean[] shouldReturn = new boolean[1];
+		// first check for the result & no of windows
+		shouldReturn[0] = result.isOK() && windowManager.getWindows().length == 0;
+		if (shouldReturn[0]) {
+			// if result is ok and there is no window, check for appMenu
+			display.syncExec(new Runnable() {
+				public void run() {
+					// return error if there is no appMenu
+					shouldReturn[0] = display.getAppMenuBar() == null;
+				}
+			});
+		}
+		return shouldReturn[0];
 	}
 
 	/*
@@ -2988,6 +3039,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		((GrabFocus) Tweaklets.get(GrabFocus.KEY)).dispose();
 		
+		deactivateWorkbenchContext();
+
+		disposeApplicationMenu();
+
 		// Bring down all of the services.
 		serviceLocator.dispose();
 
@@ -3008,6 +3063,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			tracker.close();
 		}
 	}
+
 
 	/**
 	 * Cancels the early startup job, if it's still running.
@@ -3709,6 +3765,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private MenuSourceProvider menuSourceProvider;
 
+	private IContextActivation workbenchContext;
+
+	private ApplicationMenuManager applicationMenuMgr;
 
 
 	/**
@@ -3814,6 +3873,41 @@ public final class Workbench extends EventManager implements IWorkbench {
 				return ProgressManagerUtil.getDefaultParent();
 			}
 		};
+	}
+
+	private void createApplicationMenu(Menu appMenu) {
+
+		applicationMenuMgr = new ApplicationMenuManager(appMenu);
+		IMenuService menuService = (IMenuService) serviceLocator.getService(IMenuService.class);
+		menuService.populateContributionManager(applicationMenuMgr, MenuUtil.APPLICATION_MENU);
+		applicationMenuMgr.update(true);
+	}
+
+	private void disposeApplicationMenu() {
+
+		if (applicationMenuMgr == null)
+			return;
+		IMenuService menuService = (IMenuService) serviceLocator.getService(IMenuService.class);
+		menuService.releaseContributions(applicationMenuMgr);
+		applicationMenuMgr.dispose();
+	}
+
+	private void activateWorkbenchContext() {
+		IContextService contextService = (IContextService) serviceLocator
+				.getService(IContextService.class);
+		workbenchContext = contextService.activateContext(IContextService.CONTEXT_ID_WORKBENCH);
+	}
+
+	private void deactivateWorkbenchContext() {
+		if(workbenchContext == null)
+			return;
+		workbenchContext.getContextService().deactivateContext(workbenchContext);
+	}
+
+
+	private Menu getAppMenu() {
+		IWorkbench workbench = getWorkbenchConfigurer().getWorkbench();
+		return workbench.getDisplay().getAppMenuBar();
 	}
 
 }
