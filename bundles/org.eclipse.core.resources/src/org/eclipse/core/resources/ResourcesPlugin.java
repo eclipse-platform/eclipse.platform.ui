@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -281,6 +281,15 @@ public final class ResourcesPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static final String PREF_AUTO_REFRESH = "refresh.enabled"; //$NON-NLS-1$
+
+	/**
+	 * Name of a preference for configuring whether encodings for derived
+	 * resources within the project should be stored in a separate derived
+	 * preference file.
+	 * 
+	 * @since 3.7
+	 */
+	public static final String PREF_SEPARATE_DERIVED_ENCODINGS = "separateDerivedEncodings"; //$NON-NLS-1$
 
 	/**
 	 * The single instance of this plug-in runtime class.
