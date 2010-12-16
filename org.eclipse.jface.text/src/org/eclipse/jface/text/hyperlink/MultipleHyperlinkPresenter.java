@@ -644,16 +644,19 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 		 */
 		protected void showInformationControl(Rectangle subjectArea) {
 			if (fTextViewer instanceof IWidgetTokenOwnerExtension) {
-				if (((IWidgetTokenOwnerExtension) fTextViewer).requestWidgetToken(this, WIDGET_TOKEN_PRIORITY))
+				if (((IWidgetTokenOwnerExtension)fTextViewer).requestWidgetToken(this, WIDGET_TOKEN_PRIORITY)) {
 					super.showInformationControl(subjectArea);
+					fIsControlVisible= true;
+				}
 			} else if (fTextViewer instanceof IWidgetTokenOwner) {
-				if (((IWidgetTokenOwner) fTextViewer).requestWidgetToken(this))
+				if (((IWidgetTokenOwner)fTextViewer).requestWidgetToken(this)) {
 					super.showInformationControl(subjectArea);
+					fIsControlVisible= true;
+				}
 			} else {
 				super.showInformationControl(subjectArea);
+				fIsControlVisible= true;
 			}
-
-			fIsControlVisible= true;
 		}
 
 		/**
