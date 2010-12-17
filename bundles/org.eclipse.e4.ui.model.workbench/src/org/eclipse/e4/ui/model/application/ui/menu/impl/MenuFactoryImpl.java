@@ -10,7 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
-import org.eclipse.e4.ui.model.application.ui.menu.*;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
@@ -20,6 +19,9 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;

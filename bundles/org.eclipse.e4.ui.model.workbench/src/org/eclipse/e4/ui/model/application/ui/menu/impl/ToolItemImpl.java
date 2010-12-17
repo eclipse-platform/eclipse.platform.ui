@@ -137,7 +137,6 @@ public abstract class ToolItemImpl extends ItemImpl implements MToolItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
