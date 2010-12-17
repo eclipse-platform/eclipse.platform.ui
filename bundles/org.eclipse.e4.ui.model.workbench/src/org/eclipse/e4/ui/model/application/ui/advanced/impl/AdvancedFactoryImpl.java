@@ -10,14 +10,15 @@
  */
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
-import org.eclipse.e4.ui.model.application.ui.advanced.*;
-
+import org.eclipse.e4.ui.model.application.ui.advanced.MAdvancedFactory;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
 /**

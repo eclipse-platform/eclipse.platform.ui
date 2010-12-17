@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.model.application.ui.advanced;
 
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
-
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 
 /**
