@@ -20,17 +20,11 @@ import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.impl.ContributionImpl;
 import org.eclipse.e4.ui.model.application.impl.StringToStringMapImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MExpression;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
@@ -42,14 +36,12 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -1023,11 +1015,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				default: return -1;
 			}
 		}
-		if (baseClass == MPartSashContainerElement.class) {
-			switch (derivedFeatureID) {
-				default: return -1;
-			}
-		}
 		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
 				case BasicPackageImpl.PART__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
@@ -1090,11 +1077,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				case UiPackageImpl.CONTEXT__CONTEXT: return BasicPackageImpl.PART__CONTEXT;
 				case UiPackageImpl.CONTEXT__VARIABLES: return BasicPackageImpl.PART__VARIABLES;
 				case UiPackageImpl.CONTEXT__PROPERTIES: return BasicPackageImpl.PART__PROPERTIES;
-				default: return -1;
-			}
-		}
-		if (baseClass == MPartSashContainerElement.class) {
-			switch (baseFeatureID) {
 				default: return -1;
 			}
 		}

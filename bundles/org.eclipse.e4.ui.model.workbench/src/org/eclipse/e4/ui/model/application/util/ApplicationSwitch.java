@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.model.application.util;
 
 import java.util.List;
 import java.util.Map;
-import org.eclipse.e4.ui.model.application.*;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;

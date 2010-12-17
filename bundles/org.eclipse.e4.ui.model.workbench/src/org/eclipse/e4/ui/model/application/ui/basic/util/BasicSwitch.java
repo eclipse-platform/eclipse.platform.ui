@@ -117,10 +117,10 @@ public class BasicSwitch<T1> {
 			case BasicPackageImpl.PART: {
 				MPart part = (MPart)theEObject;
 				T1 result = casePart(part);
+				if (result == null) result = casePartSashContainerElement(part);
 				if (result == null) result = caseStackElement(part);
 				if (result == null) result = caseContribution(part);
 				if (result == null) result = caseContext(part);
-				if (result == null) result = casePartSashContainerElement(part);
 				if (result == null) result = caseUILabel(part);
 				if (result == null) result = caseHandlerContainer(part);
 				if (result == null) result = caseDirtyable(part);
@@ -136,10 +136,10 @@ public class BasicSwitch<T1> {
 				T1 result = caseInputPart(inputPart);
 				if (result == null) result = casePart(inputPart);
 				if (result == null) result = caseInput(inputPart);
+				if (result == null) result = casePartSashContainerElement(inputPart);
 				if (result == null) result = caseStackElement(inputPart);
 				if (result == null) result = caseContribution(inputPart);
 				if (result == null) result = caseContext(inputPart);
-				if (result == null) result = casePartSashContainerElement(inputPart);
 				if (result == null) result = caseUILabel(inputPart);
 				if (result == null) result = caseHandlerContainer(inputPart);
 				if (result == null) result = caseDirtyable(inputPart);
