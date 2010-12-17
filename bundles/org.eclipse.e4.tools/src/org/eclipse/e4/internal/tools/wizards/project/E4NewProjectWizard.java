@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
@@ -345,6 +346,36 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 					.createApplication();
 			
 			application.setElementId("org.eclipse.e4.ide.application");
+			
+			MAddon addon = MApplicationFactory.INSTANCE.createAddon();
+			addon.setElementId("org.eclipse.e4.core.commands.service");
+			addon.setContributionURI("platform:/plugin/org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon");
+			application.getAddons().add(addon);
+			
+			addon = MApplicationFactory.INSTANCE.createAddon();
+			addon.setElementId("org.eclipse.e4.ui.contexts.service");
+			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon");
+			application.getAddons().add(addon);
+			
+			addon = MApplicationFactory.INSTANCE.createAddon();
+			addon.setElementId("org.eclipse.e4.ui.bindings.service");
+			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon");
+			application.getAddons().add(addon);
+			
+			addon = MApplicationFactory.INSTANCE.createAddon();
+			addon.setElementId("org.eclipse.e4.ui.workbench.commands.model");
+			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon");
+			application.getAddons().add(addon);
+			
+			addon = MApplicationFactory.INSTANCE.createAddon();
+			addon.setElementId("org.eclipse.e4.ui.workbench.contexts.model");
+			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon");
+			application.getAddons().add(addon);
+			
+			addon = MApplicationFactory.INSTANCE.createAddon();
+			addon.setElementId("org.eclipse.e4.ui.workbench.bindings.model");
+			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon");
+			application.getAddons().add(addon);
 			
 			MBindingContext rootContext = MCommandsFactory.INSTANCE.createBindingContext();
 			rootContext.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
