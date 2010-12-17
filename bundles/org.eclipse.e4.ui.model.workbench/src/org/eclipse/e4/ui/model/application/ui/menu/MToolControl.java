@@ -22,5 +22,5 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
  * @model
  * @generated
  */
-public interface MToolControl extends MContribution, MToolBarElement, MTrimElement {
+public interface MToolControl extends MToolBarElement, MContribution, MTrimElement {
 } // MToolControl

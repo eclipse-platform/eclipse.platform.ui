@@ -262,8 +262,8 @@ public class MenuSwitch<T1> {
 			case MenuPackageImpl.TOOL_CONTROL: {
 				MToolControl toolControl = (MToolControl)theEObject;
 				T1 result = caseToolControl(toolControl);
-				if (result == null) result = caseContribution(toolControl);
 				if (result == null) result = caseToolBarElement(toolControl);
+				if (result == null) result = caseContribution(toolControl);
 				if (result == null) result = caseTrimElement(toolControl);
 				if (result == null) result = caseUIElement(toolControl);
 				if (result == null) result = caseApplicationElement(toolControl);

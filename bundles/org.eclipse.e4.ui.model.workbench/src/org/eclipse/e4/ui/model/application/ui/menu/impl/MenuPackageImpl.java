@@ -2724,7 +2724,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__ELEMENT_ID = ApplicationPackageImpl.CONTRIBUTION__ELEMENT_ID;
+	public static final int TOOL_CONTROL__ELEMENT_ID = TOOL_BAR_ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -2733,34 +2733,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__TAGS = ApplicationPackageImpl.CONTRIBUTION__TAGS;
-
-	/**
-	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_CONTROL__CONTRIBUTION_URI = ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTION_URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_CONTROL__OBJECT = ApplicationPackageImpl.CONTRIBUTION__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' map.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_CONTROL__PERSISTED_STATE = ApplicationPackageImpl.CONTRIBUTION__PERSISTED_STATE;
+	public static final int TOOL_CONTROL__TAGS = TOOL_BAR_ELEMENT__TAGS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -2769,7 +2742,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__WIDGET = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 0;
+	public static final int TOOL_CONTROL__WIDGET = TOOL_BAR_ELEMENT__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
@@ -2778,7 +2751,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__RENDERER = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 1;
+	public static final int TOOL_CONTROL__RENDERER = TOOL_BAR_ELEMENT__RENDERER;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
@@ -2787,7 +2760,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__TO_BE_RENDERED = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 2;
+	public static final int TOOL_CONTROL__TO_BE_RENDERED = TOOL_BAR_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
@@ -2796,7 +2769,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__ON_TOP = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 3;
+	public static final int TOOL_CONTROL__ON_TOP = TOOL_BAR_ELEMENT__ON_TOP;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -2805,7 +2778,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__VISIBLE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 4;
+	public static final int TOOL_CONTROL__VISIBLE = TOOL_BAR_ELEMENT__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -2814,7 +2787,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__PARENT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 5;
+	public static final int TOOL_CONTROL__PARENT = TOOL_BAR_ELEMENT__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
@@ -2823,7 +2796,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__CONTAINER_DATA = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 6;
+	public static final int TOOL_CONTROL__CONTAINER_DATA = TOOL_BAR_ELEMENT__CONTAINER_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
@@ -2832,7 +2805,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__CUR_SHARED_REF = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 7;
+	public static final int TOOL_CONTROL__CUR_SHARED_REF = TOOL_BAR_ELEMENT__CUR_SHARED_REF;
 
 	/**
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
@@ -2841,7 +2814,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__VISIBLE_WHEN = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 8;
+	public static final int TOOL_CONTROL__VISIBLE_WHEN = TOOL_BAR_ELEMENT__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
@@ -2850,7 +2823,34 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__ACCESSIBILITY_PHRASE = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 9;
+	public static final int TOOL_CONTROL__ACCESSIBILITY_PHRASE = TOOL_BAR_ELEMENT__ACCESSIBILITY_PHRASE;
+
+	/**
+	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_CONTROL__CONTRIBUTION_URI = TOOL_BAR_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_CONTROL__OBJECT = TOOL_BAR_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_CONTROL__PERSISTED_STATE = TOOL_BAR_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Tool Control</em>' class.
@@ -2859,7 +2859,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL_FEATURE_COUNT = ApplicationPackageImpl.CONTRIBUTION_FEATURE_COUNT + 10;
+	public static final int TOOL_CONTROL_FEATURE_COUNT = TOOL_BAR_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
@@ -6257,8 +6257,8 @@ public class MenuPackageImpl extends EPackageImpl {
 		g1 = createEGenericType(theBasicPackage.getTrimElement());
 		toolBarEClass.getEGenericSuperTypes().add(g1);
 		toolBarElementEClass.getESuperTypes().add(theUiPackage.getUIElement());
-		toolControlEClass.getESuperTypes().add(theApplicationPackage.getContribution());
 		toolControlEClass.getESuperTypes().add(this.getToolBarElement());
+		toolControlEClass.getESuperTypes().add(theApplicationPackage.getContribution());
 		toolControlEClass.getESuperTypes().add(theBasicPackage.getTrimElement());
 		handledToolItemEClass.getESuperTypes().add(this.getToolItem());
 		handledToolItemEClass.getESuperTypes().add(this.getHandledItem());

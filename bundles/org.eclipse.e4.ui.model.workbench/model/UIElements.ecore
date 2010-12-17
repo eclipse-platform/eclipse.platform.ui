@@ -272,7 +272,7 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarElement" abstract="true"
           eSuperTypes="#//ui/UIElement"/>
-      <eClassifiers xsi:type="ecore:EClass" name="ToolControl" eSuperTypes="#//Contribution #//ui/menu/ToolBarElement #//ui/basic/TrimElement"/>
+      <eClassifiers xsi:type="ecore:EClass" name="ToolControl" eSuperTypes="#//ui/menu/ToolBarElement #//Contribution #//ui/basic/TrimElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem" eSuperTypes="#//ui/menu/ToolItem #//ui/menu/HandledItem"/>
       <eClassifiers xsi:type="ecore:EClass" name="DirectToolItem" eSuperTypes="#//ui/menu/ToolItem #//Contribution"/>
       <eClassifiers xsi:type="ecore:EClass" name="ToolBarSeparator" eSuperTypes="#//ui/menu/ToolBarElement"/>
