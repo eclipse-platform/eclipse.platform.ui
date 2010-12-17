@@ -29,7 +29,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  * @model
  * @generated
  */
-public interface MKeyBinding extends MKeySequence, MApplicationElement {
+public interface MKeyBinding extends MApplicationElement, MKeySequence {
 	/**
 	 * Returns the value of the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->

@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.impl;
 
+import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
@@ -23,7 +24,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *
  * @generated
  */
-public abstract class ExpressionImpl extends EObjectImpl implements MExpression {
+public abstract class ExpressionImpl extends ApplicationElementImpl implements MExpression {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

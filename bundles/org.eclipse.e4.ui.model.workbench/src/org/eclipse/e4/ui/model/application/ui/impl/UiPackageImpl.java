@@ -87,10 +87,10 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final UiPackageImpl eINSTANCE = org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ContextImpl <em>Context</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MContext <em>Context</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.ContextImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.MContext
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getContext()
 	 * @generated
 	 */
@@ -133,10 +133,10 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int CONTEXT_FEATURE_COUNT = 3;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.DirtyableImpl <em>Dirtyable</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MDirtyable <em>Dirtyable</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.DirtyableImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.MDirtyable
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getDirtyable()
 	 * @generated
 	 */
@@ -161,10 +161,10 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int DIRTYABLE_FEATURE_COUNT = 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.InputImpl <em>Input</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.InputImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.MInput
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getInput()
 	 * @generated
 	 */
@@ -316,10 +316,10 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int UI_ELEMENT_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl <em>UI Label</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MUILabel <em>UI Label</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUILabel()
 	 * @generated
 	 */
@@ -997,13 +997,31 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int EXPRESSION = 9;
 
 	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EXPRESSION__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EXPRESSION__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+
+	/**
 	 * The number of structural features of the '<em>Expression</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int EXPRESSION_FEATURE_COUNT = 0;
+	public static final int EXPRESSION_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.CoreExpressionImpl <em>Core Expression</em>}' class.
@@ -1014,6 +1032,24 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public static final int CORE_EXPRESSION = 10;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CORE_EXPRESSION__ELEMENT_ID = EXPRESSION__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CORE_EXPRESSION__TAGS = EXPRESSION__TAGS;
 
 	/**
 	 * The feature id for the '<em><b>Core Expression Id</b></em>' attribute.
@@ -1871,18 +1907,19 @@ public class UiPackageImpl extends EPackageImpl {
 		g2 = createEGenericType(genericTrimContainerEClass_T);
 		g1.getETypeArguments().add(g2);
 		genericTrimContainerEClass.getEGenericSuperTypes().add(g1);
+		expressionEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		coreExpressionEClass.getESuperTypes().add(this.getExpression());
 
 		// Initialize classes and features; add operations and parameters
-		initEClass(contextEClass, MContext.class, "Context", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(contextEClass, MContext.class, "Context", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContext_Context(), theApplicationPackage.getIEclipseContext(), "context", null, 0, 1, MContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getContext_Variables(), ecorePackage.getEString(), "variables", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
 		initEReference(getContext_Properties(), theApplicationPackage.getStringToStringMap(), null, "properties", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(dirtyableEClass, MDirtyable.class, "Dirtyable", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(dirtyableEClass, MDirtyable.class, "Dirtyable", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getDirtyable_Dirty(), ecorePackage.getEBoolean(), "dirty", null, 0, 1, MDirtyable.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(inputEClass, MInput.class, "Input", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(inputEClass, MInput.class, "Input", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getInput_InputURI(), ecorePackage.getEString(), "inputURI", null, 0, 1, MInput.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(uiElementEClass, MUIElement.class, "UIElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1900,7 +1937,7 @@ public class UiPackageImpl extends EPackageImpl {
 		initEReference(getUIElement_VisibleWhen(), this.getExpression(), null, "visibleWhen", null, 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getUIElement_AccessibilityPhrase(), ecorePackage.getEString(), "accessibilityPhrase", null, 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(uiLabelEClass, MUILabel.class, "UILabel", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(uiLabelEClass, MUILabel.class, "UILabel", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getUILabel_Label(), ecorePackage.getEString(), "label", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getUILabel_IconURI(), ecorePackage.getEString(), "iconURI", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getUILabel_Tooltip(), ecorePackage.getEString(), "tooltip", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1950,10 +1987,10 @@ public class UiPackageImpl extends EPackageImpl {
 	 */
 	public interface Literals {
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.ContextImpl <em>Context</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.MContext <em>Context</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.impl.ContextImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.MContext
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getContext()
 		 * @generated
 		 */
@@ -1984,10 +2021,10 @@ public class UiPackageImpl extends EPackageImpl {
 		public static final EReference CONTEXT__PROPERTIES = eINSTANCE.getContext_Properties();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.DirtyableImpl <em>Dirtyable</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.MDirtyable <em>Dirtyable</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.impl.DirtyableImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.MDirtyable
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getDirtyable()
 		 * @generated
 		 */
@@ -2002,10 +2039,10 @@ public class UiPackageImpl extends EPackageImpl {
 		public static final EAttribute DIRTYABLE__DIRTY = eINSTANCE.getDirtyable_Dirty();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.InputImpl <em>Input</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.impl.InputImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.MInput
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getInput()
 		 * @generated
 		 */
@@ -2110,10 +2147,10 @@ public class UiPackageImpl extends EPackageImpl {
 		public static final EAttribute UI_ELEMENT__ACCESSIBILITY_PHRASE = eINSTANCE.getUIElement_AccessibilityPhrase();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl <em>UI Label</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.MUILabel <em>UI Label</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.impl.UILabelImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.MUILabel
 		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getUILabel()
 		 * @generated
 		 */

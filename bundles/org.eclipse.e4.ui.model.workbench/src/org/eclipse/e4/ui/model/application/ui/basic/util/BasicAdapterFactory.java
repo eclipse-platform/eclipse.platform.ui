@@ -146,16 +146,16 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 				return createApplicationElementAdapter();
 			}
 			@Override
+			public Adapter caseUIElement(MUIElement object) {
+				return createUIElementAdapter();
+			}
+			@Override
 			public Adapter caseContribution(MContribution object) {
 				return createContributionAdapter();
 			}
 			@Override
 			public Adapter caseContext(MContext object) {
 				return createContextAdapter();
-			}
-			@Override
-			public Adapter caseUIElement(MUIElement object) {
-				return createUIElementAdapter();
 			}
 			@Override
 			public Adapter caseUILabel(MUILabel object) {

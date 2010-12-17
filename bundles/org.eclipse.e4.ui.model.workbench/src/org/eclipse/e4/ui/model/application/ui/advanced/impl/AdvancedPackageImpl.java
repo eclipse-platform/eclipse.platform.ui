@@ -99,7 +99,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__ELEMENT_ID = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__ELEMENT_ID;
+	public static final int PLACEHOLDER__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -108,7 +108,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__TAGS = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__TAGS;
+	public static final int PLACEHOLDER__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -117,7 +117,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__WIDGET = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__WIDGET;
+	public static final int PLACEHOLDER__WIDGET = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
@@ -126,7 +126,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__RENDERER = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__RENDERER;
+	public static final int PLACEHOLDER__RENDERER = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
@@ -135,7 +135,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__TO_BE_RENDERED = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__TO_BE_RENDERED;
+	public static final int PLACEHOLDER__TO_BE_RENDERED = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
@@ -144,7 +144,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__ON_TOP = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__ON_TOP;
+	public static final int PLACEHOLDER__ON_TOP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -153,7 +153,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__VISIBLE = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__VISIBLE;
+	public static final int PLACEHOLDER__VISIBLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -162,7 +162,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__PARENT = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__PARENT;
+	public static final int PLACEHOLDER__PARENT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
@@ -171,7 +171,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__CONTAINER_DATA = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__CONTAINER_DATA;
+	public static final int PLACEHOLDER__CONTAINER_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
@@ -180,7 +180,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__CUR_SHARED_REF = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__CUR_SHARED_REF;
+	public static final int PLACEHOLDER__CUR_SHARED_REF = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
@@ -189,7 +189,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__VISIBLE_WHEN = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__VISIBLE_WHEN;
+	public static final int PLACEHOLDER__VISIBLE_WHEN = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
@@ -198,7 +198,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__ACCESSIBILITY_PHRASE = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__ACCESSIBILITY_PHRASE;
+	public static final int PLACEHOLDER__ACCESSIBILITY_PHRASE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Ref</b></em>' reference.
@@ -207,7 +207,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__REF = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 0;
+	public static final int PLACEHOLDER__REF = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of structural features of the '<em>Placeholder</em>' class.
@@ -216,7 +216,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER_FEATURE_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 1;
+	public static final int PLACEHOLDER_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl <em>Perspective</em>}' class.
@@ -1055,6 +1055,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
 		BasicPackageImpl theBasicPackage = (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
 		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 
@@ -1063,6 +1064,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		placeholderEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		placeholderEClass.getESuperTypes().add(theBasicPackage.getPartSashContainerElement());
 		placeholderEClass.getESuperTypes().add(theBasicPackage.getStackElement());
 		EGenericType g1 = createEGenericType(theUiPackage.getElementContainer());

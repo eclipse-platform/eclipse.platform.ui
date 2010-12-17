@@ -88,6 +88,10 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 				return createPartDescriptorContainerAdapter();
 			}
 			@Override
+			public Adapter caseApplicationElement(MApplicationElement object) {
+				return createApplicationElementAdapter();
+			}
+			@Override
 			public Adapter caseUILabel(MUILabel object) {
 				return createUILabelAdapter();
 			}
@@ -98,10 +102,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseBindings(MBindings object) {
 				return createBindingsAdapter();
-			}
-			@Override
-			public Adapter caseApplicationElement(MApplicationElement object) {
-				return createApplicationElementAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {

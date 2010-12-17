@@ -10,6 +10,8 @@
  */
 package org.eclipse.e4.ui.model.application.ui;
 
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -20,5 +22,5 @@ package org.eclipse.e4.ui.model.application.ui;
  * @model abstract="true"
  * @generated
  */
-public interface MExpression {
+public interface MExpression extends MApplicationElement {
 } // MExpression

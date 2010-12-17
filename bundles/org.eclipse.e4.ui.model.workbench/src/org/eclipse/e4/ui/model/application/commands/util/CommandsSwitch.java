@@ -160,8 +160,8 @@ public class CommandsSwitch<T> {
 			case CommandsPackageImpl.KEY_BINDING: {
 				MKeyBinding keyBinding = (MKeyBinding)theEObject;
 				T result = caseKeyBinding(keyBinding);
-				if (result == null) result = caseKeySequence(keyBinding);
 				if (result == null) result = caseApplicationElement(keyBinding);
+				if (result == null) result = caseKeySequence(keyBinding);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

@@ -28,7 +28,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
  * </ul>
  * </p>
  *
- * @model abstract="true"
+ * @model interface="true" abstract="true"
  * @generated
  */
 public interface MContext {

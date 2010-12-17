@@ -39,7 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  * @model
  * @generated
  */
-public interface MPartDescriptor extends MUILabel, MHandlerContainer, MBindings, MApplicationElement {
+public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandlerContainer, MBindings {
 	/**
 	 * Returns the value of the '<em><b>Allow Multiple</b></em>' attribute.
 	 * <!-- begin-user-doc -->

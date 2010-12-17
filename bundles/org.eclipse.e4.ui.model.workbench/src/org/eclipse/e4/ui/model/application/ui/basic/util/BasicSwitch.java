@@ -117,6 +117,7 @@ public class BasicSwitch<T1> {
 			case BasicPackageImpl.PART: {
 				MPart part = (MPart)theEObject;
 				T1 result = casePart(part);
+				if (result == null) result = caseStackElement(part);
 				if (result == null) result = caseContribution(part);
 				if (result == null) result = caseContext(part);
 				if (result == null) result = casePartSashContainerElement(part);
@@ -125,7 +126,6 @@ public class BasicSwitch<T1> {
 				if (result == null) result = caseDirtyable(part);
 				if (result == null) result = caseBindings(part);
 				if (result == null) result = caseWindowElement(part);
-				if (result == null) result = caseStackElement(part);
 				if (result == null) result = caseUIElement(part);
 				if (result == null) result = caseApplicationElement(part);
 				if (result == null) result = defaultCase(theEObject);
@@ -136,6 +136,7 @@ public class BasicSwitch<T1> {
 				T1 result = caseInputPart(inputPart);
 				if (result == null) result = casePart(inputPart);
 				if (result == null) result = caseInput(inputPart);
+				if (result == null) result = caseStackElement(inputPart);
 				if (result == null) result = caseContribution(inputPart);
 				if (result == null) result = caseContext(inputPart);
 				if (result == null) result = casePartSashContainerElement(inputPart);
@@ -144,7 +145,6 @@ public class BasicSwitch<T1> {
 				if (result == null) result = caseDirtyable(inputPart);
 				if (result == null) result = caseBindings(inputPart);
 				if (result == null) result = caseWindowElement(inputPart);
-				if (result == null) result = caseStackElement(inputPart);
 				if (result == null) result = caseUIElement(inputPart);
 				if (result == null) result = caseApplicationElement(inputPart);
 				if (result == null) result = defaultCase(theEObject);

@@ -23,7 +23,7 @@ package org.eclipse.e4.ui.model.application.ui;
  * </ul>
  * </p>
  *
- * @model abstract="true"
+ * @model interface="true" abstract="true"
  * @generated
  */
 public interface MInput {

@@ -171,6 +171,7 @@ public class UiSwitch<T1> {
 			case UiPackageImpl.EXPRESSION: {
 				MExpression expression = (MExpression)theEObject;
 				T1 result = caseExpression(expression);
+				if (result == null) result = caseApplicationElement(expression);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -178,6 +179,7 @@ public class UiSwitch<T1> {
 				MCoreExpression coreExpression = (MCoreExpression)theEObject;
 				T1 result = caseCoreExpression(coreExpression);
 				if (result == null) result = caseExpression(coreExpression);
+				if (result == null) result = caseApplicationElement(coreExpression);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

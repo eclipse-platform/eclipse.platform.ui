@@ -15,7 +15,9 @@ import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
+import org.eclipse.e4.ui.model.application.commands.MKeySequence;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -37,8 +39,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl#getKeySequence <em>Key Sequence</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl#getElementId <em>Element Id</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl#getCommand <em>Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
@@ -46,7 +46,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
+public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBinding {
 	/**
 	 * The default value of the '{@link #getKeySequence() <em>Key Sequence</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -66,36 +66,6 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * @ordered
 	 */
 	protected String keySequence = KEY_SEQUENCE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getElementId()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String ELEMENT_ID_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getElementId() <em>Element Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getElementId()
-	 * @generated
-	 * @ordered
-	 */
-	protected String elementId = ELEMENT_ID_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getTags() <em>Tags</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTags()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<String> tags;
 
 	/**
 	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
@@ -155,39 +125,6 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		keySequence = newKeySequence;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE, oldKeySequence, keySequence));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getElementId() {
-		return elementId;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setElementId(String newElementId) {
-		String oldElementId = elementId;
-		elementId = newElementId;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.KEY_BINDING__ELEMENT_ID, oldElementId, elementId));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public List<String> getTags() {
-		if (tags == null) {
-			tags = new EDataTypeUniqueEList<String>(String.class, this, CommandsPackageImpl.KEY_BINDING__TAGS);
-		}
-		return tags;
 	}
 
 	/**
@@ -264,10 +201,6 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		switch (featureID) {
 			case CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE:
 				return getKeySequence();
-			case CommandsPackageImpl.KEY_BINDING__ELEMENT_ID:
-				return getElementId();
-			case CommandsPackageImpl.KEY_BINDING__TAGS:
-				return getTags();
 			case CommandsPackageImpl.KEY_BINDING__COMMAND:
 				if (resolve) return getCommand();
 				return basicGetCommand();
@@ -288,13 +221,6 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		switch (featureID) {
 			case CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE:
 				setKeySequence((String)newValue);
-				return;
-			case CommandsPackageImpl.KEY_BINDING__ELEMENT_ID:
-				setElementId((String)newValue);
-				return;
-			case CommandsPackageImpl.KEY_BINDING__TAGS:
-				getTags().clear();
-				getTags().addAll((Collection<? extends String>)newValue);
 				return;
 			case CommandsPackageImpl.KEY_BINDING__COMMAND:
 				setCommand((MCommand)newValue);
@@ -318,12 +244,6 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 			case CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE:
 				setKeySequence(KEY_SEQUENCE_EDEFAULT);
 				return;
-			case CommandsPackageImpl.KEY_BINDING__ELEMENT_ID:
-				setElementId(ELEMENT_ID_EDEFAULT);
-				return;
-			case CommandsPackageImpl.KEY_BINDING__TAGS:
-				getTags().clear();
-				return;
 			case CommandsPackageImpl.KEY_BINDING__COMMAND:
 				setCommand((MCommand)null);
 				return;
@@ -344,10 +264,6 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		switch (featureID) {
 			case CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE:
 				return KEY_SEQUENCE_EDEFAULT == null ? keySequence != null : !KEY_SEQUENCE_EDEFAULT.equals(keySequence);
-			case CommandsPackageImpl.KEY_BINDING__ELEMENT_ID:
-				return ELEMENT_ID_EDEFAULT == null ? elementId != null : !ELEMENT_ID_EDEFAULT.equals(elementId);
-			case CommandsPackageImpl.KEY_BINDING__TAGS:
-				return tags != null && !tags.isEmpty();
 			case CommandsPackageImpl.KEY_BINDING__COMMAND:
 				return command != null;
 			case CommandsPackageImpl.KEY_BINDING__PARAMETERS:
@@ -363,10 +279,9 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-		if (baseClass == MApplicationElement.class) {
+		if (baseClass == MKeySequence.class) {
 			switch (derivedFeatureID) {
-				case CommandsPackageImpl.KEY_BINDING__ELEMENT_ID: return ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
-				case CommandsPackageImpl.KEY_BINDING__TAGS: return ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+				case CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE: return CommandsPackageImpl.KEY_SEQUENCE__KEY_SEQUENCE;
 				default: return -1;
 			}
 		}
@@ -380,10 +295,9 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-		if (baseClass == MApplicationElement.class) {
+		if (baseClass == MKeySequence.class) {
 			switch (baseFeatureID) {
-				case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID: return CommandsPackageImpl.KEY_BINDING__ELEMENT_ID;
-				case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS: return CommandsPackageImpl.KEY_BINDING__TAGS;
+				case CommandsPackageImpl.KEY_SEQUENCE__KEY_SEQUENCE: return CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE;
 				default: return -1;
 			}
 		}
@@ -402,10 +316,6 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (keySequence: "); //$NON-NLS-1$
 		result.append(keySequence);
-		result.append(", elementId: "); //$NON-NLS-1$
-		result.append(elementId);
-		result.append(", tags: "); //$NON-NLS-1$
-		result.append(tags);
 		result.append(')');
 		return result.toString();
 	}

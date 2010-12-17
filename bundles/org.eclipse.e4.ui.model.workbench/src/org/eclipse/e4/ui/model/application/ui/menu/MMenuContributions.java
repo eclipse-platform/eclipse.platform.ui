@@ -24,7 +24,7 @@ import java.util.List;
  * </ul>
  * </p>
  *
- * @model abstract="true"
+ * @model interface="true" abstract="true"
  * @generated
  */
 public interface MMenuContributions {

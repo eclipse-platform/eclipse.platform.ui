@@ -99,10 +99,10 @@ public class BasicSwitch<T> {
 			case BasicPackageImpl.PART_DESCRIPTOR: {
 				MPartDescriptor partDescriptor = (MPartDescriptor)theEObject;
 				T result = casePartDescriptor(partDescriptor);
+				if (result == null) result = caseApplicationElement(partDescriptor);
 				if (result == null) result = caseUILabel(partDescriptor);
 				if (result == null) result = caseHandlerContainer(partDescriptor);
 				if (result == null) result = caseBindings(partDescriptor);
-				if (result == null) result = caseApplicationElement(partDescriptor);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

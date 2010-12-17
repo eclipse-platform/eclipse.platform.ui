@@ -518,6 +518,70 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int KEY_SEQUENCE = 9;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl <em>Key Binding</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl
+	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getKeyBinding()
+	 * @generated
+	 */
+	public static final int KEY_BINDING = 8;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int KEY_BINDING__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int KEY_BINDING__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int KEY_BINDING__KEY_SEQUENCE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int KEY_BINDING__COMMAND = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int KEY_BINDING__PARAMETERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Key Binding</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int KEY_BINDING_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
 	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -534,70 +598,6 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int KEY_SEQUENCE_FEATURE_COUNT = 1;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl <em>Key Binding</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.commands.impl.KeyBindingImpl
-	 * @see org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl#getKeyBinding()
-	 * @generated
-	 */
-	public static final int KEY_BINDING = 8;
-
-	/**
-	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int KEY_BINDING__KEY_SEQUENCE = KEY_SEQUENCE__KEY_SEQUENCE;
-
-	/**
-	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int KEY_BINDING__ELEMENT_ID = KEY_SEQUENCE_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int KEY_BINDING__TAGS = KEY_SEQUENCE_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Command</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int KEY_BINDING__COMMAND = KEY_SEQUENCE_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int KEY_BINDING__PARAMETERS = KEY_SEQUENCE_FEATURE_COUNT + 3;
-
-	/**
-	 * The number of structural features of the '<em>Key Binding</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int KEY_BINDING_FEATURE_COUNT = KEY_SEQUENCE_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.commands.impl.ParameterImpl <em>Parameter</em>}' class.
@@ -1484,8 +1484,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 		commandEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		commandParameterEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		handlerEClass.getESuperTypes().add(theApplicationPackage.getContribution());
-		keyBindingEClass.getESuperTypes().add(this.getKeySequence());
 		keyBindingEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
+		keyBindingEClass.getESuperTypes().add(this.getKeySequence());
 		parameterEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		categoryEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 

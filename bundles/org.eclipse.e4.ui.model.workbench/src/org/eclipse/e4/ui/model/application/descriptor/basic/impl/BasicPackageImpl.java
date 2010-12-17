@@ -84,85 +84,13 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR = 0;
 
 	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__LABEL = UiPackageImpl.UI_LABEL__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__ICON_URI = UiPackageImpl.UI_LABEL__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__TOOLTIP = UiPackageImpl.UI_LABEL__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__LOCAL_LABEL = UiPackageImpl.UI_LABEL__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__LOCAL_TOOLTIP = UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__LOCAL_IMAGE = UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__HANDLERS = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_DESCRIPTOR__BINDING_CONTEXTS = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__ELEMENT_ID = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 2;
+	public static final int PART_DESCRIPTOR__ELEMENT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -171,7 +99,79 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__TAGS = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 3;
+	public static final int PART_DESCRIPTOR__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__ICON_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LOCAL_LABEL = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LOCAL_TOOLTIP = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__LOCAL_IMAGE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__HANDLERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__BINDING_CONTEXTS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Allow Multiple</b></em>' attribute.
@@ -180,7 +180,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__ALLOW_MULTIPLE = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 4;
+	public static final int PART_DESCRIPTOR__ALLOW_MULTIPLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Category</b></em>' attribute.
@@ -189,7 +189,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__CATEGORY = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 5;
+	public static final int PART_DESCRIPTOR__CATEGORY = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
@@ -198,7 +198,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__MENUS = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 6;
+	public static final int PART_DESCRIPTOR__MENUS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
@@ -207,7 +207,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__TOOLBAR = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 7;
+	public static final int PART_DESCRIPTOR__TOOLBAR = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
@@ -216,7 +216,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__CLOSEABLE = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 8;
+	public static final int PART_DESCRIPTOR__CLOSEABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Dirtyable</b></em>' attribute.
@@ -225,7 +225,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__DIRTYABLE = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 9;
+	public static final int PART_DESCRIPTOR__DIRTYABLE = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -234,7 +234,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR__CONTRIBUTION_URI = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 10;
+	public static final int PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 14;
 
 	/**
 	 * The number of structural features of the '<em>Part Descriptor</em>' class.
@@ -243,13 +243,13 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR_FEATURE_COUNT = UiPackageImpl.UI_LABEL_FEATURE_COUNT + 11;
+	public static final int PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 15;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorContainerImpl <em>Part Descriptor Container</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer
 	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl#getPartDescriptorContainer()
 	 * @generated
 	 */
@@ -564,9 +564,9 @@ public class BasicPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
 		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
 		CommandsPackageImpl theCommandsPackage = (CommandsPackageImpl)EPackage.Registry.INSTANCE.getEPackage(CommandsPackageImpl.eNS_URI);
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackageImpl.eNS_URI);
 		MenuPackageImpl theMenuPackage = (MenuPackageImpl)EPackage.Registry.INSTANCE.getEPackage(MenuPackageImpl.eNS_URI);
 
 		// Create type parameters
@@ -574,10 +574,10 @@ public class BasicPackageImpl extends EPackageImpl {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		partDescriptorEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 		partDescriptorEClass.getESuperTypes().add(theUiPackage.getUILabel());
 		partDescriptorEClass.getESuperTypes().add(theCommandsPackage.getHandlerContainer());
 		partDescriptorEClass.getESuperTypes().add(theCommandsPackage.getBindings());
-		partDescriptorEClass.getESuperTypes().add(theApplicationPackage.getApplicationElement());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(partDescriptorEClass, MPartDescriptor.class, "PartDescriptor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -589,7 +589,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEAttribute(getPartDescriptor_Dirtyable(), ecorePackage.getEBoolean(), "dirtyable", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPartDescriptor_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPartDescriptorContainer_Descriptors(), this.getPartDescriptor(), null, "descriptors", null, 0, -1, MPartDescriptorContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 	}
 
@@ -673,10 +673,10 @@ public class BasicPackageImpl extends EPackageImpl {
 		public static final EAttribute PART_DESCRIPTOR__CONTRIBUTION_URI = eINSTANCE.getPartDescriptor_ContributionURI();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorContainerImpl <em>Part Descriptor Container</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorContainerImpl
+		 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer
 		 * @see org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl#getPartDescriptorContainer()
 		 * @generated
 		 */
