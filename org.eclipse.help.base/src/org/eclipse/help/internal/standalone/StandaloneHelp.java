@@ -91,6 +91,20 @@ public class StandaloneHelp extends EclipseController {
 	public void displayHelp(String href) throws Exception {
 		sendHelpCommand("displayHelp", new String[]{"href=" + href}); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
+	/**
+	 * @see org.eclipse.help.standalone.Help#displayHelp()
+	 */
+	public void displayHelpWindow() throws Exception {
+		sendHelpCommand("displayHelpWindow", new String[0]); //$NON-NLS-1$
+	}
+
+	/**
+	 * @see org.eclipse.help.standalone.Help#displayHelp(java.lang.String)
+	 */
+	public void displayHelpWindow(String href) throws Exception {
+		sendHelpCommand("displayHelpWindow", new String[]{"href=" + href}); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 	/**
 	 * @return true if commands contained a known command and it was executed
@@ -113,6 +127,13 @@ public class StandaloneHelp extends EclipseController {
 				displayHelp((String) helpCommands.get(1));
 			} else {
 				displayHelp();
+			}
+			return true;
+		} else if ("displayHelpWindow".equalsIgnoreCase(command)) { //$NON-NLS-1$
+			if (helpCommands.size() >= 2) {
+				displayHelpWindow((String) helpCommands.get(1));
+			} else {
+				displayHelpWindow();
 			}
 			return true;
 		} else if (CMD_INSTALL.equalsIgnoreCase(command)

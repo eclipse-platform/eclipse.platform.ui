@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.help.ui.internal.browser.embedded;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpApplication;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -86,7 +87,9 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 	 * @see IBrowser#displayURL(String)
 	 */
 	public synchronized void displayURL(final String url) {
-		close();
+		if (!HelpApplication.isShutdownOnClose()) {
+			close();
+		}
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiDisplayURL(url);
 		} else {
