@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#getToolbar <em>Toolbar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#isCloseable <em>Closeable</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#getDescription <em>Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -103,5 +104,30 @@ public interface MPart extends MPartSashContainerElement, MStackElement, MContri
 	 * @generated
 	 */
 	void setCloseable(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Description</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Description</em>' attribute.
+	 * @see #setDescription(String)
+	 * @model
+	 * @generated
+	 */
+	String getDescription();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#getDescription <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Description</em>' attribute.
+	 * @see #getDescription()
+	 * @generated
+	 */
+	void setDescription(String value);
 
 } // MPart

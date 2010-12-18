@@ -338,6 +338,7 @@
             containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="closeable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
             defaultValueLiteral="false"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="InputPart" eSuperTypes="#//ui/basic/Part #//ui/Input"/>
       <eClassifiers xsi:type="ecore:EClass" name="PartStack">
@@ -432,6 +433,7 @@
             defaultValueLiteral="false"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirtyable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptorContainer" abstract="true"
           interface="true">

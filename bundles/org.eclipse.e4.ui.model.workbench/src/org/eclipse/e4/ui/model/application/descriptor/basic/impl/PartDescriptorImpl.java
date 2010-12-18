@@ -54,6 +54,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#isCloseable <em>Closeable</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#isDirtyable <em>Dirtyable</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getContributionURI <em>Contribution URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.impl.PartDescriptorImpl#getDescription <em>Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -319,6 +320,26 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * @ordered
 	 */
 	protected String contributionURI = CONTRIBUTION_URI_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DESCRIPTION_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDescription() <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected String description = DESCRIPTION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -654,6 +675,27 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDescription(String newDescription) {
+		String oldDescription = description;
+		description = newDescription;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART_DESCRIPTOR__DESCRIPTION, oldDescription, description));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -705,6 +747,8 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 				return isDirtyable();
 			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
 				return getContributionURI();
+			case BasicPackageImpl.PART_DESCRIPTOR__DESCRIPTION:
+				return getDescription();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -766,6 +810,9 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
 				setContributionURI((String)newValue);
 				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__DESCRIPTION:
+				setDescription((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -823,6 +870,9 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
 				setContributionURI(CONTRIBUTION_URI_EDEFAULT);
 				return;
+			case BasicPackageImpl.PART_DESCRIPTOR__DESCRIPTION:
+				setDescription(DESCRIPTION_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -865,6 +915,8 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 				return dirtyable != DIRTYABLE_EDEFAULT;
 			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
 				return CONTRIBUTION_URI_EDEFAULT == null ? contributionURI != null : !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
+			case BasicPackageImpl.PART_DESCRIPTOR__DESCRIPTION:
+				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -969,6 +1021,8 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 		result.append(dirtyable);
 		result.append(", contributionURI: "); //$NON-NLS-1$
 		result.append(contributionURI);
+		result.append(", description: "); //$NON-NLS-1$
+		result.append(description);
 		result.append(')');
 		return result.toString();
 	}

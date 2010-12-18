@@ -33,6 +33,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isCloseable <em>Closeable</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#isDirtyable <em>Dirtyable</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getContributionURI <em>Contribution URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getDescription <em>Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -205,5 +206,30 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * @generated
 	 */
 	void setContributionURI(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Description</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Description</em>' attribute.
+	 * @see #setDescription(String)
+	 * @model
+	 * @generated
+	 */
+	String getDescription();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getDescription <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Description</em>' attribute.
+	 * @see #getDescription()
+	 * @generated
+	 */
+	void setDescription(String value);
 
 } // MPartDescriptor

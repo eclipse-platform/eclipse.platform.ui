@@ -69,6 +69,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getToolbar <em>Toolbar</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#isCloseable <em>Closeable</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getDescription <em>Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -364,6 +365,26 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @ordered
 	 */
 	protected boolean closeable = CLOSEABLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DESCRIPTION_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDescription() <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected String description = DESCRIPTION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -735,6 +756,27 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDescription(String newDescription) {
+		String oldDescription = description;
+		description = newDescription;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__DESCRIPTION, oldDescription, description));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -798,6 +840,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return getToolbar();
 			case BasicPackageImpl.PART__CLOSEABLE:
 				return isCloseable();
+			case BasicPackageImpl.PART__DESCRIPTION:
+				return getDescription();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -869,6 +913,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 			case BasicPackageImpl.PART__CLOSEABLE:
 				setCloseable((Boolean)newValue);
 				return;
+			case BasicPackageImpl.PART__DESCRIPTION:
+				setDescription((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -935,6 +982,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 			case BasicPackageImpl.PART__CLOSEABLE:
 				setCloseable(CLOSEABLE_EDEFAULT);
 				return;
+			case BasicPackageImpl.PART__DESCRIPTION:
+				setDescription(DESCRIPTION_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -983,6 +1033,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return toolbar != null;
 			case BasicPackageImpl.PART__CLOSEABLE:
 				return closeable != CLOSEABLE_EDEFAULT;
+			case BasicPackageImpl.PART__DESCRIPTION:
+				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1153,6 +1205,8 @@ public class PartImpl extends UIElementImpl implements MPart {
 		result.append(bindingContexts);
 		result.append(", closeable: "); //$NON-NLS-1$
 		result.append(closeable);
+		result.append(", description: "); //$NON-NLS-1$
+		result.append(description);
 		result.append(')');
 		return result.toString();
 	}

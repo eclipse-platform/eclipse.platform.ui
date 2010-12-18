@@ -237,13 +237,22 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR__CONTRIBUTION_URI = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 14;
 
 	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_DESCRIPTOR__DESCRIPTION = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 15;
+
+	/**
 	 * The number of structural features of the '<em>Part Descriptor</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 15;
+	public static final int PART_DESCRIPTOR_FEATURE_COUNT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 16;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.
@@ -473,6 +482,20 @@ public class BasicPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor#getDescription()
+	 * @see #getPartDescriptor()
+	 * @generated
+	 */
+	public EAttribute getPartDescriptor_Description() {
+		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(7);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -535,6 +558,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__CLOSEABLE);
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__DIRTYABLE);
 		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__CONTRIBUTION_URI);
+		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__DESCRIPTION);
 
 		partDescriptorContainerEClass = createEClass(PART_DESCRIPTOR_CONTAINER);
 		createEReference(partDescriptorContainerEClass, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
@@ -588,6 +612,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEAttribute(getPartDescriptor_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 		initEAttribute(getPartDescriptor_Dirtyable(), ecorePackage.getEBoolean(), "dirtyable", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPartDescriptor_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getPartDescriptor_Description(), ecorePackage.getEString(), "description", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPartDescriptorContainer_Descriptors(), this.getPartDescriptor(), null, "descriptors", null, 0, -1, MPartDescriptorContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -671,6 +696,14 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute PART_DESCRIPTOR__CONTRIBUTION_URI = eINSTANCE.getPartDescriptor_ContributionURI();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute PART_DESCRIPTOR__DESCRIPTION = eINSTANCE.getPartDescriptor_Description();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptorContainer <em>Part Descriptor Container</em>}' class.

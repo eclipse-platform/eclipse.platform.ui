@@ -581,13 +581,22 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__CLOSEABLE = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 17;
 
 	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__DESCRIPTION = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 18;
+
+	/**
 	 * The number of structural features of the '<em>Part</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PART_FEATURE_COUNT = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 18;
+	public static final int PART_FEATURE_COUNT = PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 19;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -858,6 +867,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int INPUT_PART__CLOSEABLE = PART__CLOSEABLE;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int INPUT_PART__DESCRIPTION = PART__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
@@ -2465,6 +2483,20 @@ public class BasicPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.basic.MPart#getDescription()
+	 * @see #getPart()
+	 * @generated
+	 */
+	public EAttribute getPart_Description() {
+		return (EAttribute)partEClass.getEStructuralFeatures().get(3);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.basic.MInputPart <em>Input Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2724,6 +2756,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		createEReference(partEClass, PART__MENUS);
 		createEReference(partEClass, PART__TOOLBAR);
 		createEAttribute(partEClass, PART__CLOSEABLE);
+		createEAttribute(partEClass, PART__DESCRIPTION);
 
 		inputPartEClass = createEClass(INPUT_PART);
 
@@ -2844,6 +2877,7 @@ public class BasicPackageImpl extends EPackageImpl {
 		initEReference(getPart_Menus(), theMenuPackage.getMenu(), null, "menus", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPart_Toolbar(), theMenuPackage.getToolBar(), null, "toolbar", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getPart_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEAttribute(getPart_Description(), ecorePackage.getEString(), "description", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(inputPartEClass, MInputPart.class, "InputPart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -2920,6 +2954,14 @@ public class BasicPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute PART__CLOSEABLE = eINSTANCE.getPart_Closeable();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute PART__DESCRIPTION = eINSTANCE.getPart_Description();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.basic.impl.InputPartImpl <em>Input Part</em>}' class.
