@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
@@ -145,6 +146,38 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 				return MNEMONICS_EDEFAULT == null ? mnemonics != null : !MNEMONICS_EDEFAULT.equals(mnemonics);
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		if (baseClass == MMenuElement.class) {
+			switch (derivedFeatureID) {
+				case MenuPackageImpl.MENU_ITEM__MNEMONICS: return MenuPackageImpl.MENU_ELEMENT__MNEMONICS;
+				default: return -1;
+			}
+		}
+		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		if (baseClass == MMenuElement.class) {
+			switch (baseFeatureID) {
+				case MenuPackageImpl.MENU_ELEMENT__MNEMONICS: return MenuPackageImpl.MENU_ITEM__MNEMONICS;
+				default: return -1;
+			}
+		}
+		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
 	/**

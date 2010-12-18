@@ -31,6 +31,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getLocalLabel <em>Local Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getLocalImage <em>Local Image</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuElementImpl#getMnemonics <em>Mnemonics</em>}</li>
  * </ul>
  * </p>
  *
@@ -156,6 +157,26 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * @ordered
 	 */
 	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getMnemonics() <em>Mnemonics</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMnemonics()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String MNEMONICS_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getMnemonics() <em>Mnemonics</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMnemonics()
+	 * @generated
+	 * @ordered
+	 */
+	protected String mnemonics = MNEMONICS_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -307,6 +328,27 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getMnemonics() {
+		return mnemonics;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setMnemonics(String newMnemonics) {
+		String oldMnemonics = mnemonics;
+		mnemonics = newMnemonics;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ELEMENT__MNEMONICS, oldMnemonics, mnemonics));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -322,6 +364,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 				return getLocalTooltip();
 			case MenuPackageImpl.MENU_ELEMENT__LOCAL_IMAGE:
 				return getLocalImage();
+			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
+				return getMnemonics();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -351,6 +395,9 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 				return;
 			case MenuPackageImpl.MENU_ELEMENT__LOCAL_IMAGE:
 				setLocalImage(newValue);
+				return;
+			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
+				setMnemonics((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -382,6 +429,9 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 			case MenuPackageImpl.MENU_ELEMENT__LOCAL_IMAGE:
 				setLocalImage(LOCAL_IMAGE_EDEFAULT);
 				return;
+			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
+				setMnemonics(MNEMONICS_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -406,6 +456,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
 			case MenuPackageImpl.MENU_ELEMENT__LOCAL_IMAGE:
 				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
+			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
+				return MNEMONICS_EDEFAULT == null ? mnemonics != null : !MNEMONICS_EDEFAULT.equals(mnemonics);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -474,6 +526,8 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 		result.append(localTooltip);
 		result.append(", localImage: "); //$NON-NLS-1$
 		result.append(localImage);
+		result.append(", mnemonics: "); //$NON-NLS-1$
+		result.append(mnemonics);
 		result.append(')');
 		return result.toString();
 	}

@@ -235,10 +235,10 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
             eType="#//commands/Parameter" containment="true"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="MenuElement" abstract="true" eSuperTypes="#//ui/UIElement #//ui/UILabel"/>
-      <eClassifiers xsi:type="ecore:EClass" name="MenuItem" abstract="true" eSuperTypes="#//ui/menu/Item #//ui/menu/MenuElement">
+      <eClassifiers xsi:type="ecore:EClass" name="MenuElement" abstract="true" eSuperTypes="#//ui/UIElement #//ui/UILabel">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="mnemonics" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="MenuItem" abstract="true" eSuperTypes="#//ui/menu/Item #//ui/menu/MenuElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="MenuSeparator" eSuperTypes="#//ui/menu/MenuElement"/>
       <eClassifiers xsi:type="ecore:EClass" name="Menu">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"

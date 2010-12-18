@@ -295,7 +295,7 @@ public abstract class ModelReconciler {
 	 * Attribute defined by MMenuItems (value is <code>mnemonics</code>).
 	 */
 	public static final String MENUITEM_MNEMONICS_ATTNAME = MenuPackageImpl.eINSTANCE
-			.getMenuItem_Mnemonics().getName();
+			.getMenuElement_Mnemonics().getName();
 
 	/**
 	 * Attribute defined by MTrimContribution (value is <code>parentId</code>).

@@ -718,13 +718,22 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ELEMENT__LOCAL_IMAGE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
+	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__MNEMONICS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
+
+	/**
 	 * The number of structural features of the '<em>Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
+	public static final int MENU_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl <em>Item</em>}' class.
@@ -1116,6 +1125,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_SEPARATOR__LOCAL_IMAGE = MENU_ELEMENT__LOCAL_IMAGE;
 
 	/**
+	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_SEPARATOR__MNEMONICS = MENU_ELEMENT__MNEMONICS;
+
+	/**
 	 * The number of structural features of the '<em>Separator</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1295,6 +1313,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU__LOCAL_IMAGE = MENU_ELEMENT__LOCAL_IMAGE;
+
+	/**
+	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU__MNEMONICS = MENU_ELEMENT__MNEMONICS;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1666,6 +1693,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int POPUP_MENU__LOCAL_IMAGE = MENU__LOCAL_IMAGE;
+
+	/**
+	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int POPUP_MENU__MNEMONICS = MENU__MNEMONICS;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -3677,6 +3713,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int RENDERED_MENU__LOCAL_IMAGE = MENU__LOCAL_IMAGE;
 
 	/**
+	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int RENDERED_MENU__MNEMONICS = MENU__MNEMONICS;
+
+	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4882,6 +4927,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int OPAQUE_MENU_SEPARATOR__LOCAL_IMAGE = MENU_SEPARATOR__LOCAL_IMAGE;
 
 	/**
+	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_MENU_SEPARATOR__MNEMONICS = MENU_SEPARATOR__MNEMONICS;
+
+	/**
 	 * The feature id for the '<em><b>Opaque Item</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5070,6 +5124,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int OPAQUE_MENU__LOCAL_IMAGE = MENU__LOCAL_IMAGE;
+
+	/**
+	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_MENU__MNEMONICS = MENU__MNEMONICS;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -5517,6 +5580,20 @@ public class MenuPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuElement#getMnemonics <em>Mnemonics</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Mnemonics</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuElement#getMnemonics()
+	 * @see #getMenuElement()
+	 * @generated
+	 */
+	public EAttribute getMenuElement_Mnemonics() {
+		return (EAttribute)menuElementEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuItem <em>Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5526,19 +5603,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 */
 	public EClass getMenuItem() {
 		return menuItemEClass;
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MMenuItem#getMnemonics <em>Mnemonics</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Mnemonics</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.menu.MMenuItem#getMnemonics()
-	 * @see #getMenuItem()
-	 * @generated
-	 */
-	public EAttribute getMenuItem_Mnemonics() {
-		return (EAttribute)menuItemEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -6118,9 +6182,9 @@ public class MenuPackageImpl extends EPackageImpl {
 		createEReference(handledItemEClass, HANDLED_ITEM__PARAMETERS);
 
 		menuElementEClass = createEClass(MENU_ELEMENT);
+		createEAttribute(menuElementEClass, MENU_ELEMENT__MNEMONICS);
 
 		menuItemEClass = createEClass(MENU_ITEM);
-		createEAttribute(menuItemEClass, MENU_ITEM__MNEMONICS);
 
 		menuSeparatorEClass = createEClass(MENU_SEPARATOR);
 
@@ -6292,9 +6356,9 @@ public class MenuPackageImpl extends EPackageImpl {
 		initEReference(getHandledItem_Parameters(), theCommandsPackage.getParameter(), null, "parameters", null, 0, -1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(menuElementEClass, MMenuElement.class, "MenuElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getMenuElement_Mnemonics(), ecorePackage.getEString(), "mnemonics", null, 0, 1, MMenuElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(menuItemEClass, MMenuItem.class, "MenuItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getMenuItem_Mnemonics(), ecorePackage.getEString(), "mnemonics", null, 0, 1, MMenuItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(menuSeparatorEClass, MMenuSeparator.class, "MenuSeparator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -6459,6 +6523,14 @@ public class MenuPackageImpl extends EPackageImpl {
 		public static final EClass MENU_ELEMENT = eINSTANCE.getMenuElement();
 
 		/**
+		 * The meta object literal for the '<em><b>Mnemonics</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute MENU_ELEMENT__MNEMONICS = eINSTANCE.getMenuElement_Mnemonics();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl <em>Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6467,14 +6539,6 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass MENU_ITEM = eINSTANCE.getMenuItem();
-
-		/**
-		 * The meta object literal for the '<em><b>Mnemonics</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute MENU_ITEM__MNEMONICS = eINSTANCE.getMenuItem_Mnemonics();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuSeparatorImpl <em>Separator</em>}' class.
