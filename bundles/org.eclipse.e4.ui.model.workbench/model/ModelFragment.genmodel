@@ -3,9 +3,9 @@
     xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="Copyright (c) 2010 BestSolution.at and others.&#xD;&#xA;All rights reserved. This program and the accompanying materials&#xD;&#xA;are made available under the terms of the Eclipse Public License v1.0&#xD;&#xA;which accompanies this distribution, and is available at&#xD;&#xA;http://www.eclipse.org/legal/epl-v10.html&#xD;&#xA;&#xD;&#xA;Contributors:&#xA;     Tom Schindl &lt;tom.schindl@bestsolution.at> - initial API and implementation&#xD;&#xA;     IBM Corporation - initial API and implementation"
     modelDirectory="/org.eclipse.e4.ui.model.workbench/src" modelPluginID="org.eclipse.e4.ui.model.workbench"
-    modelName="ModelFragment" nonNLSMarkers="true" rootExtendsInterface="" suppressEMFTypes="true"
-    suppressEMFMetaData="true" importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0"
-    copyrightFields="false" usedGenPackages="platform:/plugin/org.eclipse.e4.ui.model.workbench/model/UIElements.genmodel#//application"
+    modelName="ModelFragment" nonNLSMarkers="true" rootExtendsInterface="" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container"
+    suppressEMFTypes="true" suppressEMFMetaData="true" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="5.0" copyrightFields="false" usedGenPackages="platform:/plugin/org.eclipse.e4.ui.model.workbench/model/UIElements.genmodel#//application"
     interfaceNamePattern="M{0}">
   <foreignModel>ModelFragment.ecore</foreignModel>
   <genPackages prefix="Fragment" basePackage="org.eclipse.e4.ui.model" disposableProviderFactory="true"
@@ -23,12 +23,7 @@
     <genClasses ecoreClass="ModelFragment.ecore#//StringModelFragment">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ModelFragment.ecore#//StringModelFragment/featurename"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ModelFragment.ecore#//StringModelFragment/parentElementId"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ModelFragment.ecore#//StringModelFragment/listPositionPath"/>
-    </genClasses>
-    <genClasses ecoreClass="ModelFragment.ecore#//StructuralModelFragment">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ModelFragment.ecore#//StructuralModelFragment/feature"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ModelFragment.ecore#//StructuralModelFragment/parentElementId"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ModelFragment.ecore#//StructuralModelFragment/listPositionPath"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ModelFragment.ecore#//StringModelFragment/positionInList"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
