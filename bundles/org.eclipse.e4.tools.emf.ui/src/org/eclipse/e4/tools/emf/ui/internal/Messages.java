@@ -125,6 +125,7 @@ public class Messages extends NLS {
 	public static String MenuEditor_Tooltip;
 	public static String MenuEditor_IconURI;
 	public static String MenuEditor_Children;
+	public static String MenuEditor_Mnemonics;
 
 	public static String MenuItemEditor_Type;
 	public static String MenuItemEditor_Label;
