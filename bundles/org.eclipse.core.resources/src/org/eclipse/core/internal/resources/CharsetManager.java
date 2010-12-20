@@ -17,8 +17,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.osgi.framework.Bundle;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -82,7 +80,7 @@ public class CharsetManager implements IManager {
 							if (project.isAccessible()) {
 								boolean shouldDisableCharsetDeltaJob = next.getValue().booleanValue();
 								// flush prefs for non-derived resources
-								flushPreferences(getPreferences(project, true, false, true), shouldDisableCharsetDeltaJob);
+								flushPreferences(getPreferences(project, false, false, true), shouldDisableCharsetDeltaJob);
 								// flush prefs for derived resources
 								flushPreferences(getPreferences(project, false, true, true), shouldDisableCharsetDeltaJob);
 							}
@@ -238,92 +236,10 @@ public class CharsetManager implements IManager {
 		}
 	}
 
-	private class PreferenceChangeListener implements IEclipsePreferences.IPreferenceChangeListener {
-		public PreferenceChangeListener() {
-		}
-
-		private boolean mergeEncodingPreferences(IProject project) {
-			Preferences projectRegularPrefs = null;
-			Preferences projectDerivedPrefs = getPreferences(project, false, true, true);
-			if (projectDerivedPrefs == null)
-				return false;
-			try {
-				boolean prefsChanged = false;
-				String[] affectedResources;
-				affectedResources = projectDerivedPrefs.keys();
-				for (int i = 0; i < affectedResources.length; i++) {
-					String path = affectedResources[i];
-					String value = projectDerivedPrefs.get(path, null);
-					projectDerivedPrefs.remove(path);
-					// lazy creation of non-derived prefs
-					if (projectRegularPrefs == null)
-						projectRegularPrefs = getPreferences(project, true, false, false);
-					projectRegularPrefs.put(path, value);
-					prefsChanged = true;
-				}
-				return prefsChanged;
-			} catch (BackingStoreException e) {
-				// problems with the project scope... we gonna miss the changes (but will log)
-				String message = Messages.resources_readingEncoding;
-				Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
-				return false;
-			}
-		}
-
-		private boolean splitEncodingPreferences(IProject project) {
-			Preferences projectRegularPrefs = getPreferences(project, false, false, false);
-			Preferences projectDerivedPrefs = null;
-			if (projectRegularPrefs == null)
-				return false;
-			try {
-				boolean prefsChanged = false;
-				String[] affectedResources;
-				affectedResources = projectRegularPrefs.keys();
-				for (int i = 0; i < affectedResources.length; i++) {
-					String path = affectedResources[i];
-					IResource resource = project.findMember(path);
-					if (resource != null) {
-						if (resource.isDerived(IResource.CHECK_ANCESTORS)) {
-							String value = projectRegularPrefs.get(path, null);
-							projectRegularPrefs.remove(path);
-							// lazy creation of derived prefs
-							if (projectDerivedPrefs == null)
-								projectDerivedPrefs = getPreferences(project, true, true, true);
-							projectDerivedPrefs.put(path, value);
-							prefsChanged = true;
-						}
-					}
-				}
-				return prefsChanged;
-			} catch (BackingStoreException e) {
-				// problems with the project scope... we gonna miss the changes (but will log)
-				String message = Messages.resources_readingEncoding;
-				Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
-				return false;
-			}
-		}
-
-		public void preferenceChange(PreferenceChangeEvent event) {
-			if (ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS.equals(event.getKey())) {
-				Preferences prefs = event.getNode();
-				IProject project = workspace.getRoot().getProject(new Path(prefs.absolutePath()).segment(1));
-				if (Boolean.parseBoolean((String) event.getNewValue()))
-					splitEncodingPreferences(project);
-				else
-					mergeEncodingPreferences(project);
-				Map<IProject, Boolean> projectsToSave = new HashMap<IProject, Boolean>();
-				// this is internal change so do not notify charset delta job
-				projectsToSave.put(project, Boolean.TRUE);
-				job.addChanges(projectsToSave);
-			}
-		}
-	}
-
 	private static final String PROJECT_KEY = "<project>"; //$NON-NLS-1$
 	private CharsetDeltaJob charsetListener;
 	CharsetManagerJob job;
 	private IResourceChangeListener resourceChangeListener;
-	private IEclipsePreferences.IPreferenceChangeListener preferenceChangeListener;
 	protected final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 	Workspace workspace;
 
@@ -407,10 +323,6 @@ public class CharsetManager implements IManager {
 		return null;
 	}
 
-	public IEclipsePreferences.IPreferenceChangeListener getPreferenceChangeListener() {
-		return preferenceChangeListener;
-	}
-
 	private String internalGetCharsetFor(IPath resourcePath, Preferences encodingSettings, boolean recurse) {
 		String charset = encodingSettings.get(getKeyFor(resourcePath), null);
 		if (!recurse)
@@ -443,6 +355,38 @@ public class CharsetManager implements IManager {
 			String message = Messages.resources_readingEncoding;
 			Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
 			return false;
+		}
+	}
+
+	protected void mergeEncodingPreferences(IProject project) {
+		Preferences projectRegularPrefs = null;
+		Preferences projectDerivedPrefs = getPreferences(project, false, true, true);
+		if (projectDerivedPrefs == null)
+			return;
+		try {
+			boolean prefsChanged = false;
+			String[] affectedResources;
+			affectedResources = projectDerivedPrefs.keys();
+			for (int i = 0; i < affectedResources.length; i++) {
+				String path = affectedResources[i];
+				String value = projectDerivedPrefs.get(path, null);
+				projectDerivedPrefs.remove(path);
+				// lazy creation of non-derived prefs
+				if (projectRegularPrefs == null)
+					projectRegularPrefs = getPreferences(project, true, false, false);
+				projectRegularPrefs.put(path, value);
+				prefsChanged = true;
+			}
+			if (prefsChanged) {
+				Map<IProject, Boolean> projectsToSave = new HashMap<IProject, Boolean>();
+				// this is internal change so do not notify charset delta job
+				projectsToSave.put(project, Boolean.TRUE);
+				job.addChanges(projectsToSave);
+			}
+		} catch (BackingStoreException e) {
+			// problems with the project scope... we gonna miss the changes (but will log)
+			String message = Messages.resources_readingEncoding;
+			Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
 		}
 	}
 
@@ -486,10 +430,46 @@ public class CharsetManager implements IManager {
 			charsetListener.shutdown();
 	}
 
+	protected void splitEncodingPreferences(IProject project) {
+		Preferences projectRegularPrefs = getPreferences(project, false, false, false);
+		Preferences projectDerivedPrefs = null;
+		if (projectRegularPrefs == null)
+			return;
+		try {
+			boolean prefsChanged = false;
+			String[] affectedResources;
+			affectedResources = projectRegularPrefs.keys();
+			for (int i = 0; i < affectedResources.length; i++) {
+				String path = affectedResources[i];
+				IResource resource = project.findMember(path);
+				if (resource != null) {
+					if (resource.isDerived(IResource.CHECK_ANCESTORS)) {
+						String value = projectRegularPrefs.get(path, null);
+						projectRegularPrefs.remove(path);
+						// lazy creation of derived prefs
+						if (projectDerivedPrefs == null)
+							projectDerivedPrefs = getPreferences(project, true, true, true);
+						projectDerivedPrefs.put(path, value);
+						prefsChanged = true;
+					}
+				}
+			}
+			if (prefsChanged) {
+				Map<IProject, Boolean> projectsToSave = new HashMap<IProject, Boolean>();
+				// this is internal change so do not notify charset delta job
+				projectsToSave.put(project, Boolean.TRUE);
+				job.addChanges(projectsToSave);
+			}
+		} catch (BackingStoreException e) {
+			// problems with the project scope... we gonna miss the changes (but will log)
+			String message = Messages.resources_readingEncoding;
+			Policy.log(new ResourceStatus(IResourceStatus.FAILED_GETTING_CHARSET, project.getFullPath(), message, e));
+		}
+	}
+
 	public void startup(IProgressMonitor monitor) {
 		job = new CharsetManagerJob();
 		resourceChangeListener = new ResourceChangeListener();
-		preferenceChangeListener = new PreferenceChangeListener();
 		workspace.addResourceChangeListener(resourceChangeListener, IResourceChangeEvent.POST_CHANGE);
 		charsetListener = new CharsetDeltaJob(workspace);
 		charsetListener.startup();

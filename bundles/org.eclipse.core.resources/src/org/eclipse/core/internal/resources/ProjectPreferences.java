@@ -305,7 +305,7 @@ public class ProjectPreferences extends EclipsePreferences {
 			// Bug 108066: In case the node had existed before it was updated from
 			// file, the read() operation marks it dirty. Override the dirty flag
 			// since we know that the node is expected to be in sync with the file.
-			projectPrefs.dirty= false;
+			projectPrefs.dirty = false;
 
 			// make sure that we generate the appropriate resource change events
 			// if encoding settings have changed
@@ -342,11 +342,6 @@ public class ProjectPreferences extends EclipsePreferences {
 		// cache the qualifier
 		if (segmentCount > 2)
 			qualifier = getSegment(path, 2);
-
-		if ((segmentCount == 3) && PREFS_REGULAR_QUALIFIER.equals(qualifier)) {
-			Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
-			addPreferenceChangeListener(workspace.getCharsetManager().getPreferenceChangeListener());
-		}
 
 		if (segmentCount != 2)
 			return;
@@ -471,6 +466,19 @@ public class ProjectPreferences extends EclipsePreferences {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
 
+	protected String internalPut(String key, String newValue) {
+		if ((segmentCount == 3) && PREFS_REGULAR_QUALIFIER.equals(qualifier) && (project != null)) {
+			if (ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS.equals(key)) {
+				Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
+				if (Boolean.parseBoolean(newValue))
+					workspace.getCharsetManager().splitEncodingPreferences(project);
+				else
+					workspace.getCharsetManager().mergeEncodingPreferences(project);
+			}
+		}
+		return super.internalPut(key, newValue);
+	}
+
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
 		return loadedNodes.contains(node.absolutePath());
 	}
@@ -530,6 +538,16 @@ public class ProjectPreferences extends EclipsePreferences {
 		// if we are checking existance of a single segment child of /project, base the answer on
 		// whether or not it exists in the workspace.
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(path).exists() || super.nodeExists(path);
+	}
+
+	public void remove(String key) {
+		super.remove(key);
+		if ((segmentCount == 3) && PREFS_REGULAR_QUALIFIER.equals(qualifier) && (project != null)) {
+			if (ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS.equals(key)) {
+				Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
+				workspace.getCharsetManager().mergeEncodingPreferences(project);
+			}
+		}
 	}
 
 	protected void save() throws BackingStoreException {
