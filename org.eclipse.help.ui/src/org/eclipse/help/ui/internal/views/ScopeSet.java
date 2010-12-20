@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.preference.*;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceStore;
 
 /**
  * Federated search scope.
@@ -52,8 +57,8 @@ public class ScopeSet {
 		return false;
 	}
 
-	public ScopeSet(ScopeSet set) {
-		this(set.getName()+"_new"); //$NON-NLS-1$
+	public ScopeSet(ScopeSet set, String name) {
+		this(name); 
 		copyFrom(set);
 	}
 	

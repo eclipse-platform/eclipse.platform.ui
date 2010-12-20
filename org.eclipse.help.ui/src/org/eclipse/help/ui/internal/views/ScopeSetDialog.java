@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -233,7 +235,7 @@ public class ScopeSetDialog extends ListDialog {
 	private void doNew() {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
-		ScopeSet newSet = new ScopeSet(set);
+		ScopeSet newSet = new ScopeSet(set, getDefaultName());
 		String name = getNewName(newSet.getName(), false);
 		if (name!=null) {
 			newSet.setName(name);
@@ -243,6 +245,22 @@ public class ScopeSetDialog extends ListDialog {
 			updateButtons();
 		}
 	}
+	
+	private String getDefaultName() {
+		Set namesInUse = new HashSet();
+		for (int i=0; i<sets.size(); i++) {
+		    ScopeSet set = (ScopeSet)sets.get(i);
+		    namesInUse.add(set.getName().toLowerCase());
+	    }
+		for (int i = 1; i < 1000; i++) {
+			String name = Messages.ScopeSetDialog_defaultName + i; 
+			if (!namesInUse.contains(name.toLowerCase())) {
+				return name;
+			}
+		}
+	    return ""; //$NON-NLS-1$
+	}
+
 
 	private void doEdit() {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();

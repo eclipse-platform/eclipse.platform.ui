@@ -27,7 +27,7 @@ public class HistoryScopeSet extends ScopeSet {
 	}
 
 	public HistoryScopeSet(HistoryScopeSet set) {
-		super(set);
+		super(set, set.getName());
 		setExpression(set.getExpression());
 	}
 	
