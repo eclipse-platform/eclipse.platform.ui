@@ -257,6 +257,7 @@ public final class ResourceEncodingFieldEditor extends
 							prefs.remove(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS);
 						else
 							prefs.putBoolean(ResourcesPlugin.PREF_SEPARATE_DERIVED_ENCODINGS, true);
+						prefs.flush();
 					}
 					return Status.OK_STATUS;
 				} catch (CoreException e) {// If there is an error return the
@@ -266,6 +267,9 @@ public final class ResourceEncodingFieldEditor extends
 									IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorStoringMessage,
 									e.getStatus());
 					return e.getStatus();
+				} catch (BackingStoreException e) {
+					IDEWorkbenchPlugin.log(IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorStoringMessage, e);
+					return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, e.getMessage(), e);
 				}
 			}
 		};
