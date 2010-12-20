@@ -98,7 +98,7 @@ public interface IMarkerDelta {
 	 *		value type : <code>String</code>, <code>Integer</code>, or 
 	 *		<code>Boolean</code>) or <code>null</code>.
 	 */
-	public Map getAttributes();
+	public Map<String, Object> getAttributes();
 
 	/**
 	 * Returns the attributes with the given names.  The result is an array 

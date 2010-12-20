@@ -46,9 +46,9 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 	}
 
 	/**
-	 * Returns an Iterator of UnifiedTreeNode.
+	 * Returns an iterator of this node's children.
 	 */
-	public Iterator getChildren() {
+	public Iterator<UnifiedTreeNode> getChildren() {
 		return tree.getChildren(this);
 	}
 

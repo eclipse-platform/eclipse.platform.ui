@@ -27,7 +27,7 @@ import org.eclipse.osgi.util.NLS;
  * the two will be recorded in the returned status.
  */
 public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
-	protected List affectedResources;
+	protected List<Resource> affectedResources;
 	/**
 	 * Determines how to treat cases where the resource is missing from
 	 * the local file system.  When performing a deletion with force=false,
@@ -49,7 +49,7 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 		String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 		status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message));
 		if (affectedResources == null)
-			affectedResources = new ArrayList(20);
+			affectedResources = new ArrayList<Resource>(20);
 		affectedResources.add(target);
 		resourceChanged = true;
 	}
@@ -76,7 +76,7 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 	 * the local file system, or <code>null</code> if all resources
 	 * are synchronized.
 	 */
-	public List getAffectedResources() {
+	public List<Resource> getAffectedResources() {
 		return affectedResources;
 	}
 

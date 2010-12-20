@@ -366,7 +366,7 @@ public interface IMarker extends IAdaptable {
 	 * <li> This marker does not exist.</li>
 	 * </ul>
 	 */
-	public Map getAttributes() throws CoreException;
+	public Map<String,Object> getAttributes() throws CoreException;
 
 	/**
 	 * Returns the attributes with the given names.  The result is an an array 
@@ -573,5 +573,5 @@ public interface IMarker extends IAdaptable {
 	 * </ul>
 	 * @see IResourceRuleFactory#markerRule(IResource)
 	 */
-	public void setAttributes(Map attributes) throws CoreException;
+	public void setAttributes(Map<String,Object> attributes) throws CoreException;
 }

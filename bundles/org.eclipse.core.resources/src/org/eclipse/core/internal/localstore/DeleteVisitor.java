@@ -27,7 +27,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	protected boolean force;
 	protected boolean keepHistory;
 	protected IProgressMonitor monitor;
-	protected List skipList;
+	protected List<Resource> skipList;
 	protected MultiStatus status;
 
 	/**
@@ -35,7 +35,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	 */
 	private int ticks;
 
-	public DeleteVisitor(List skipList, int flags, IProgressMonitor monitor, int ticks) {
+	public DeleteVisitor(List<Resource> skipList, int flags, IProgressMonitor monitor, int ticks) {
 		this.skipList = skipList;
 		this.ticks = ticks;
 		this.force = (flags & IResource.FORCE) != 0;
@@ -94,8 +94,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	protected boolean isAncestorOfResourceToSkip(IResource resource) {
 		if (skipList == null)
 			return false;
-		for (int i = 0; i < skipList.size(); i++) {
-			IResource target = (IResource) skipList.get(i);
+		for (IResource target : skipList) {
 			if (isAncestor(resource, target))
 				return true;
 		}

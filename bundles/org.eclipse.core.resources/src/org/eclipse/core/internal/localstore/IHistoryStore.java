@@ -69,7 +69,7 @@ public interface IHistoryStore extends IManager {
 	 * @return the set of paths for files that have at least one history entry
 	 *   (element type: <code>IPath</code>)
 	 */
-	public Set allFiles(IPath path, int depth, IProgressMonitor monitor);
+	public Set<IPath> allFiles(IPath path, int depth, IProgressMonitor monitor);
 
 	/**
 	 * Clean this store applying the current policies.

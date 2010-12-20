@@ -104,7 +104,7 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IncrementalProjectBuilder#CLEAN_BUILD
 	 * @see IResourceRuleFactory#buildRule()
 	 */
-	public void build(int kind, String builderName, Map args, IProgressMonitor monitor) throws CoreException;
+	public void build(int kind, String builderName, Map<String,String> args, IProgressMonitor monitor) throws CoreException;
 
 	/** 
 	 * Builds this project. Does nothing if the project is closed.

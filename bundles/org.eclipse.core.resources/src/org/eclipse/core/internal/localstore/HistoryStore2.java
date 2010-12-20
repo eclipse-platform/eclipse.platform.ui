@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.*;
 public class HistoryStore2 implements IHistoryStore {
 
 	class HistoryCopyVisitor extends Bucket.Visitor {
-		private List changes = new ArrayList();
+		private List<HistoryEntry> changes = new ArrayList<HistoryEntry>();
 		private IPath destination;
 		private IPath source;
 
@@ -41,13 +41,13 @@ public class HistoryStore2 implements IHistoryStore {
 			if (changes.isEmpty())
 				return;
 			// make effective all changes collected
-			Iterator i = changes.iterator();
-			HistoryEntry entry = (HistoryEntry) i.next();
+			Iterator<HistoryEntry> i = changes.iterator();
+			HistoryEntry entry = i.next();
 			tree.loadBucketFor(entry.getPath());
 			HistoryBucket bucket = (HistoryBucket) tree.getCurrent();
 			bucket.addBlobs(entry);
 			while (i.hasNext())
-				bucket.addBlobs((HistoryEntry) i.next());
+				bucket.addBlobs(i.next());
 			bucket.save();
 		}
 
@@ -62,7 +62,7 @@ public class HistoryStore2 implements IHistoryStore {
 	}
 
 	private BlobStore blobStore;
-	private Set blobsToRemove = new HashSet();
+	private Set<UniversalUniqueIdentifier> blobsToRemove = new HashSet<UniversalUniqueIdentifier>();
 	final BucketTree tree;
 	private Workspace workspace;
 
@@ -100,8 +100,8 @@ public class HistoryStore2 implements IHistoryStore {
 		return new FileState(this, key, lastModified, uuid);
 	}
 
-	public synchronized Set allFiles(IPath root, int depth, IProgressMonitor monitor) {
-		final Set allFiles = new HashSet();
+	public synchronized Set<IPath> allFiles(IPath root, int depth, IProgressMonitor monitor) {
+		final Set<IPath> allFiles = new HashSet<IPath>();
 		try {
 			tree.accept(new Bucket.Visitor() {
 				public int visit(Entry fileEntry) {
@@ -193,7 +193,7 @@ public class HistoryStore2 implements IHistoryStore {
 			blobStore.deleteBlobs(blobsToRemove);
 			if (Policy.DEBUG_HISTORY)
 				Policy.debug("Time to remove " + blobsToRemove.size() + " unreferenced blobs: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$			
-			blobsToRemove = new HashSet();
+			blobsToRemove = new HashSet<UniversalUniqueIdentifier>();
 		}
 	}
 
@@ -322,7 +322,7 @@ public class HistoryStore2 implements IHistoryStore {
 
 	public synchronized void remove(IPath root, IProgressMonitor monitor) {
 		try {
-			final Set tmpBlobsToRemove = blobsToRemove;
+			final Set<UniversalUniqueIdentifier> tmpBlobsToRemove = blobsToRemove;
 			tree.accept(new Bucket.Visitor() {
 				public int visit(Entry fileEntry) {
 					for (int i = 0; i < fileEntry.getOccurrences(); i++)
@@ -342,7 +342,7 @@ public class HistoryStore2 implements IHistoryStore {
 	 */
 	public synchronized void removeGarbage() {
 		try {
-			final Set tmpBlobsToRemove = blobsToRemove;
+			final Set<UniversalUniqueIdentifier> tmpBlobsToRemove = blobsToRemove;
 			tree.accept(new Bucket.Visitor() {
 				public int visit(Entry fileEntry) {
 					for (int i = 0; i < fileEntry.getOccurrences(); i++)
@@ -352,7 +352,7 @@ public class HistoryStore2 implements IHistoryStore {
 				}
 			}, Path.ROOT, BucketTree.DEPTH_INFINITE);
 			blobStore.deleteBlobs(blobsToRemove);
-			blobsToRemove = new HashSet();
+			blobsToRemove = new HashSet<UniversalUniqueIdentifier>();
 		} catch (Exception e) {
 			String message = Messages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);

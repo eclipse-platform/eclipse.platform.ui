@@ -141,11 +141,11 @@ public abstract class Bucket {
 	static final String INDEXES_DIR_NAME = ".indexes"; //$NON-NLS-1$	
 
 	/**
-	 * Map of the history entries in this bucket. Maps (String -> byte[][]),
+	 * Map of the history entries in this bucket. Maps (String -> byte[][] or String[][]),
 	 * where the key is the path of the object we are storing history for, and
 	 * the value is the history entry data (UUID,timestamp) pairs.
 	 */
-	private final Map entries;
+	private final Map<String,Object> entries;
 	/**
 	 * The file system location of this bucket index file.
 	 */
@@ -160,7 +160,7 @@ public abstract class Bucket {
 	protected String projectName;
 
 	public Bucket() {
-		this.entries = new HashMap();
+		this.entries = new HashMap<String,Object>();
 	}
 
 	/**
@@ -175,9 +175,9 @@ public abstract class Bucket {
 		if (entries.isEmpty())
 			return Visitor.CONTINUE;
 		try {
-			for (Iterator i = entries.entrySet().iterator(); i.hasNext();) {
-				Map.Entry mapEntry = (Map.Entry) i.next();
-				IPath path = new Path((String) mapEntry.getKey());
+			for (Iterator<Map.Entry<String, Object>> i = entries.entrySet().iterator(); i.hasNext();) {
+				Map.Entry<String,Object> mapEntry = i.next();
+				IPath path = new Path(mapEntry.getKey());
 				// check whether the filter applies
 				int matchingSegments = filter.matchingFirstSegments(path);
 				if (!filter.isPrefixOf(path) || path.segmentCount() - matchingSegments > depth)
@@ -345,9 +345,9 @@ public abstract class Bucket {
 			try {
 				destination.write(getVersion());
 				destination.writeInt(entries.size());
-				for (Iterator i = entries.entrySet().iterator(); i.hasNext();) {
-					Map.Entry entry = (Map.Entry) i.next();
-					writeEntryKey(destination, (String) entry.getKey());
+				for (Iterator<Map.Entry<String,Object>> i = entries.entrySet().iterator(); i.hasNext();) {
+					Map.Entry<String,Object> entry = i.next();
+					writeEntryKey(destination, entry.getKey());
 					writeEntryValue(destination, entry.getValue());
 				}
 			} finally {

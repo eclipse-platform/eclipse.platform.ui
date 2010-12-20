@@ -725,7 +725,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @return a map (key type: <code>IProject</code>, value type:
 	 * <code>IProject[]</code>) from project to dangling project references
 	 */
-	public Map getDanglingReferences();
+	public Map<IProject,IProject[]> getDanglingReferences();
 
 	/**
 	 * Returns the workspace description. This object is responsible for

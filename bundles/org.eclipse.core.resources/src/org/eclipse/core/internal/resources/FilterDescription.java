@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -20,7 +19,7 @@ import org.eclipse.core.runtime.*;
  * Class for describing the characteristics of filters that are stored
  * in the project description.
  */
-public class FilterDescription implements IResourceFilterDescription, Comparable {
+public class FilterDescription implements IResourceFilterDescription, Comparable<FilterDescription> {
 
 	private long id;
 
@@ -52,11 +51,9 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 		return (getType() & IResourceFilterDescription.INHERITABLE) != 0;
 	}
 
-	public static LinkedList copy(LinkedList originalDescriptions, IResource resource) {
-		LinkedList copy = new LinkedList();
-		Iterator it = originalDescriptions.iterator();
-		while (it.hasNext()) {
-			FilterDescription desc = (FilterDescription) it.next();
+	public static LinkedList<FilterDescription> copy(LinkedList<FilterDescription> originalDescriptions, IResource resource) {
+		LinkedList<FilterDescription> copy = new LinkedList<FilterDescription>();
+		for (FilterDescription desc : originalDescriptions) {
 			FilterDescription newDesc = new FilterDescription(resource, desc.getType(), desc.getFileInfoMatcherDescription());
 			copy.add(newDesc);
 		}
@@ -118,8 +115,7 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 	/**
 	 * Compare filter descriptions in a way that sorts them topologically by path.
 	 */
-	public int compareTo(Object o) {
-		FilterDescription that = (FilterDescription) o;
+	public int compareTo(FilterDescription that) {
 		IPath path1 = this.getResource().getProjectRelativePath();
 		IPath path2 = that.getResource().getProjectRelativePath();
 		int count1 = path1.segmentCount();

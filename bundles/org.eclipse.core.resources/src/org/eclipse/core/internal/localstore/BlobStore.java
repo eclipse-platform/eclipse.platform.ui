@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.localstore;
 
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Set;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -99,9 +98,9 @@ public class BlobStore {
 	/**
 	 * Delete all of the blobs in the given set.
 	 */
-	public void deleteBlobs(Set set) {
-		for (Iterator i = set.iterator(); i.hasNext();)
-			deleteBlob((UniversalUniqueIdentifier) i.next());
+	public void deleteBlobs(Set<UniversalUniqueIdentifier> set) {
+		for (UniversalUniqueIdentifier id : set)
+			deleteBlob(id);
 	}
 
 	public IFileStore fileFor(UniversalUniqueIdentifier uuid) {

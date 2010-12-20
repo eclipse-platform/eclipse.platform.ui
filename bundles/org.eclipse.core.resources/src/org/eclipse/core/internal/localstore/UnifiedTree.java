@@ -33,7 +33,8 @@ public class UnifiedTree {
 	/** special node to mark the separation of a node's children */
 	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, null, null, false);
 
-	private static final Iterator EMPTY_ITERATOR = Collections.EMPTY_LIST.iterator();
+	@SuppressWarnings("unchecked")
+	private static final Iterator<UnifiedTreeNode> EMPTY_ITERATOR = Collections.EMPTY_LIST.iterator();
 
 	/** special node to mark the beginning of a level in the tree */
 	protected static final UnifiedTreeNode levelMarker = new UnifiedTreeNode(null, null, null, null, false);
@@ -53,7 +54,7 @@ public class UnifiedTree {
 	protected IFileTree fileTree = null;
 
 	/** Spare node objects available for reuse */
-	protected ArrayList freeNodes = new ArrayList();
+	protected ArrayList<UnifiedTreeNode> freeNodes = new ArrayList<UnifiedTreeNode>();
 	/** tree's actual level */
 	protected int level;
 	/** our queue */
@@ -295,7 +296,7 @@ public class UnifiedTree {
 		UnifiedTreeNode node = null;
 		int size = freeNodes.size();
 		if (size > 0) {
-			node = (UnifiedTreeNode) freeNodes.remove(size - 1);
+			node = freeNodes.remove(size - 1);
 			node.reuse(this, resource, store, info, existsWorkspace);
 			return node;
 		}
@@ -303,7 +304,7 @@ public class UnifiedTree {
 		return new UnifiedTreeNode(this, resource, store, info, existsWorkspace);
 	}
 
-	protected Iterator getChildren(UnifiedTreeNode node) {
+	protected Iterator<UnifiedTreeNode> getChildren(UnifiedTreeNode node) {
 		/* if first child is null we need to add node's children to queue */
 		if (node.getFirstChild() == null)
 			addNodeChildrenToQueue(node);
@@ -320,7 +321,7 @@ public class UnifiedTree {
 			return EMPTY_ITERATOR;
 
 		/* create an enumeration with node's children */
-		List result = new ArrayList(10);
+		List<UnifiedTreeNode> result = new ArrayList<UnifiedTreeNode>(10);
 		while (true) {
 			UnifiedTreeNode child = (UnifiedTreeNode) queue.elementAt(index);
 			if (isChildrenMarker(child))
@@ -364,7 +365,7 @@ public class UnifiedTree {
 			queue.reset();
 		//initialize the free nodes list
 		if (freeNodes == null)
-			freeNodes = new ArrayList(100);
+			freeNodes = new ArrayList<UnifiedTreeNode>(100);
 		else
 			freeNodes.clear();
 		addRootToQueue();
@@ -511,6 +512,7 @@ public class UnifiedTree {
 	 * Sorts the given array of strings in place.  This is
 	 * not using the sorting framework to avoid casting overhead.
 	 */
+	@SuppressWarnings("unchecked")
 	protected void quickSort(IFileInfo[] infos, int left, int right) {
 		int originalLeft = left;
 		int originalRight = right;

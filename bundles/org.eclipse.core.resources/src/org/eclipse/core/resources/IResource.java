@@ -1398,7 +1398,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setPersistentProperty(QualifiedName, String)
 	 * @since 3.4
 	 */
-	public Map getPersistentProperties() throws CoreException;
+	public Map<QualifiedName,String> getPersistentProperties() throws CoreException;
 
 	/**
 	 * Returns the value of the persistent property of this resource identified
@@ -1556,7 +1556,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see #setSessionProperty(QualifiedName, Object)
 	 * @since 3.4
 	 */
-	public Map getSessionProperties() throws CoreException;
+	public Map<QualifiedName,Object> getSessionProperties() throws CoreException;
 
 	/**
 	 * Returns the value of the session property of this resource identified

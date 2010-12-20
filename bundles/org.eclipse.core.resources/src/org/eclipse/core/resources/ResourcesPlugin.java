@@ -302,7 +302,7 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	private static Workspace workspace = null;
 
-	private ServiceRegistration workspaceRegistration;
+	private ServiceRegistration<IWorkspace> workspaceRegistration;
 
 	/** 
 	 * Constructs an instance of this plug-in runtime class.
@@ -415,6 +415,6 @@ public final class ResourcesPlugin extends Plugin {
 		IStatus result = workspace.open(null);
 		if (!result.isOK())
 			getLog().log(result);
-		workspaceRegistration = context.registerService(IWorkspace.SERVICE_NAME, workspace, null);
+		workspaceRegistration = context.registerService(IWorkspace.class, workspace, null);
 	}
 }

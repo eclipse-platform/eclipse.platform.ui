@@ -50,22 +50,22 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * located in {@link IResource#HIDDEN} projects won't be added to the result.
 	 * </p>
 	 */
-	protected ArrayList allPathsForLocation(URI inputLocation) {
+	protected ArrayList<IPath> allPathsForLocation(URI inputLocation) {
 		URI canonicalLocation = FileUtil.canonicalURI(inputLocation);
 		// First, try the canonical version of the inputLocation.
 		// If the inputLocation is different from the canonical version, it will be tried second
-		ArrayList results = allPathsForLocationNonCanonical(canonicalLocation);
+		ArrayList<IPath> results = allPathsForLocationNonCanonical(canonicalLocation);
 		if(results.size()==0 && canonicalLocation!=inputLocation) {
 			results = allPathsForLocationNonCanonical(inputLocation);
 		}
 		return results;
 	}
 	
-	private ArrayList allPathsForLocationNonCanonical(URI inputLocation) {
+	private ArrayList<IPath> allPathsForLocationNonCanonical(URI inputLocation) {
 		URI location = inputLocation;
 		final boolean isFileLocation = EFS.SCHEME_FILE.equals(inputLocation.getScheme());
 		final IWorkspaceRoot root = getWorkspace().getRoot();
-		final ArrayList results = new ArrayList();
+		final ArrayList<IPath> results = new ArrayList<IPath>();
 		if (URIUtil.equals(location, root.getLocationURI())) {
 			//there can only be one resource at the workspace root's location
 			results.add(Path.ROOT);
@@ -95,11 +95,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				ProjectDescription description = ((Project) project).internalGetDescription();
 				if (description == null)
 					continue;
-				HashMap links = description.getLinks();
+				HashMap<IPath,LinkDescription> links = description.getLinks();
 				if (links == null)
 					continue;
-				for (Iterator it = links.values().iterator(); it.hasNext();) {
-					LinkDescription link = (LinkDescription) it.next();
+				for (LinkDescription link : links.values()) {
 					IResource resource = project.findMember(link.getProjectRelativePath());
 					IPathVariableManager pathMan = resource == null ? project.getPathVariableManager() : resource.getPathVariableManager();
 					testLocation = pathMan.resolveURI(link.getLocationURI());
@@ -124,7 +123,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return results;
 	}
 
-	private void findLinkedResourcesPaths(URI inputLocation, final ArrayList results) throws CoreException {
+	private void findLinkedResourcesPaths(URI inputLocation, final ArrayList<IPath> results) throws CoreException {
 		IPath suffix = null;
 		IFileStore fileStore = EFS.getStore(inputLocation);
 		while (fileStore != null) {
@@ -194,12 +193,13 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 *        {@link IContainer#INCLUDE_HIDDEN}) indicating which members are of
 	 *        interest
 	 */
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	public IResource[] allResourcesFor(URI location, boolean files, int memberFlags) {
 		ArrayList result = allPathsForLocation(location);
 		int count = 0;
 		for (int i = 0, imax = result.size(); i < imax; i++) {
 			//replace the path in the list with the appropriate resource type
-			IResource resource = resourceFor((IPath) result.get(i), files);
+			IResource resource = resourceFor((IPath)result.get(i), files);
 
 			if (resource == null || (((memberFlags & IContainer.INCLUDE_HIDDEN) == 0) && resource.isHidden(IResource.CHECK_ANCESTORS)) 
 					|| (((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0) && resource.isTeamPrivateMember(IResource.CHECK_ANCESTORS)))
@@ -280,7 +280,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			monitor.beginTask(title, deleteWork + refreshWork);
 			monitor.subTask(""); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.localstore_deleteProblem, null);
-			List skipList = null;
+			List<Resource> skipList = null;
 			UnifiedTree tree = new UnifiedTree(target);
 			if (!force) {
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, refreshWork);
