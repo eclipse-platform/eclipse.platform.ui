@@ -90,35 +90,35 @@ public class DetailComposite extends Composite {
 
 		createSeparator(composite, "General");
 
-		createText(composite, "Title:", "title");
-		createText(composite, "Name:", "name"); // Leads to Aggregate
+		createText(composite, messages.DetailComposite_Title + ":", "title");
+		createText(composite, messages.DetailComposite_Name + ":", "name"); // Leads to Aggregate
 		// "firstName" "middleName"
 		// "lastName"
-		createText(composite, "Company:", "company");
-		createText(composite, "Job Title:", "jobTitle");
-		createText(composite, "Note:", "note");
+		createText(composite, messages.DetailComposite_Company+":", "company");
+		createText(composite, messages.DetailComposite_JobTitle+":", "jobTitle");
+		createText(composite, messages.DetailComposite_Note + ":", "note");
 
 		createVerticalSpace(composite);
 
 		// Business Address
-		createSeparator(composite, "Business Address ");
-		createText(composite, "Street:", "street");
-		createText(composite, "City:", "city");
-		createText(composite, "ZIP:", "zip");
-		createText(composite, "State/Prov:", "state");
-		createText(composite, "Country:", "country");
+		createSeparator(composite, messages.DetailComposite_BusinessAddress + " ");
+		createText(composite, messages.DetailComposite_Street + ":", "street");
+		createText(composite, messages.DetailComposite_City+":", "city");
+		createText(composite, messages.DetailComposite_ZIP +":", "zip");
+		createText(composite, messages.DetailComposite_State +":", "state");
+		createText(composite, messages.DetailComposite_Country+":", "country");
 		createVerticalSpace(composite);
 
 		// Business Phone
-		createSeparator(composite, "Business Phones ");
-		createText(composite, "Phone:", "phone");
-		createText(composite, "Mobile:", "mobile");
+		createSeparator(composite, messages.DetailComposite_BusinessPhones +"Business Phones ");
+		createText(composite, messages.DetailComposite_Phone+":", "phone");
+		createText(composite, messages.DetailComposite_Mobile+":", "mobile");
 		createVerticalSpace(composite);
 
 		// Business Internet
-		createSeparator(composite, "Business Internet");
-		createText(composite, "Email:", "email");
-		createText(composite, "Web Page:", "webPage");
+		createSeparator(composite, messages.DetailComposite_BusinessInternet);
+		createText(composite, messages.DetailComposite_Email + ":", "email");
+		createText(composite, messages.DetailComposite_WebPage+":", "webPage");
 		createVerticalSpace(composite);
 
 		// Bind the image
@@ -237,7 +237,7 @@ public class DetailComposite extends Composite {
 			gridData2.horizontalSpan = 2;
 		} else {
 			gridData2.horizontalSpan = 1;
-			if (labelText.equals("Title:")) {
+			if (labelText.equals(messages.DetailComposite_Title+":")) {
 				// The label image is set with data binding
 				imageLabel = new Label(parent, SWT.NONE);
 				GridData gridData3 = new GridData();
