@@ -635,6 +635,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			ScopeSet set = dialog.getActiveSet();
 			if (set != null)
 				setActiveScopeSet(set);
+			scopeSetManager.save();
 		}
 	}
 

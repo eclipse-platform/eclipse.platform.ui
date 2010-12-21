@@ -143,14 +143,15 @@ public class ScopeSet {
 				// remove the old file, set the new file name,
 				// then save to create the new file
 				oldFile.delete();
-				preferenceStore.setFilename(getFileName(name));
-				try {
-					preferenceStore.save();
-				}
-				catch (IOException e) {
-					String message = Messages.bind(Messages.ScopeSet_errorSaving, name);
-					HelpUIPlugin.logError(message, e);
-				}
+			}
+		}
+		if (preferenceStore != null) {
+			preferenceStore.setFilename(getFileName(name));
+			try {
+				preferenceStore.save();
+			} catch (IOException e) {
+				String message = Messages.bind(Messages.ScopeSet_errorSaving, name);
+				HelpUIPlugin.logError(message, e);
 			}
 		}
 		this.name = name;
