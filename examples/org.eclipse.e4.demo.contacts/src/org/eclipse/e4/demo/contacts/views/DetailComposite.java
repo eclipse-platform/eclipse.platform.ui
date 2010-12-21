@@ -12,6 +12,8 @@
 
 package org.eclipse.e4.demo.contacts.views;
 
+import org.eclipse.e4.ui.services.Translation;
+
 import java.net.URL;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -59,9 +61,12 @@ public class DetailComposite extends Composite {
 	private final WritableValue contactValue = new WritableValue();
 	private final IObservableValue scaledImage;
 
+	private Messages messages;
+	
 	@Inject
-	public DetailComposite(MDirtyable dirtyable, final Composite parent) {
+	public DetailComposite(MDirtyable dirtyable, final Composite parent, @Translation Messages messages) {
 		super(parent, SWT.NONE);
+		this.messages = messages;
 		this.dirtyable = dirtyable;
 
 		parent.getShell().setBackgroundMode(SWT.INHERIT_DEFAULT);

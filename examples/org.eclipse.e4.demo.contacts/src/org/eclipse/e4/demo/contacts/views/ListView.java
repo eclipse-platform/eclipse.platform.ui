@@ -12,6 +12,8 @@
 
 package org.eclipse.e4.demo.contacts.views;
 
+import org.eclipse.e4.ui.services.Translation;
+
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -41,9 +43,11 @@ public class ListView {
 
 	@Inject
 	private ESelectionService selectionService;
+	
+	private Messages messages;
 
 	@Inject
-	public ListView(Composite parent) {
+	public ListView(Composite parent, @Translation Messages messages) {
 		// Table composite (because of TableColumnLayout)
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
@@ -69,14 +73,14 @@ public class ListView {
 		// First name column
 		final TableViewerColumn firstNameColumn = new TableViewerColumn(
 				contactsViewer, SWT.NONE);
-		firstNameColumn.getColumn().setText("First Name");
+		firstNameColumn.getColumn().setText(messages.ListView_FirstName);
 		tableColumnLayout.setColumnData(firstNameColumn.getColumn(),
 				new ColumnWeightData(40));
 
 		// Last name column
 		final TableViewerColumn lastNameColumn = new TableViewerColumn(
 				contactsViewer, SWT.NONE);
-		lastNameColumn.getColumn().setText("Last Name");
+		lastNameColumn.getColumn().setText(messages.ListView_LastName);
 		tableColumnLayout.setColumnData(lastNameColumn.getColumn(),
 				new ColumnWeightData(60));
 
