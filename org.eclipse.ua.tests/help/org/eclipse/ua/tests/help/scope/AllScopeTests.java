@@ -32,5 +32,6 @@ public class AllScopeTests extends TestSuite {
 		addTestSuite(IntersectionTest.class);
 		addTestSuite(ScopeHierarchy.class);
 		addTestSuite(EmptyLeafRemoval.class);
+		addTestSuite(ScopeSetManagerTest.class);
 	}
 }
