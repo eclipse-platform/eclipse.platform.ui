@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.services.ETranslationService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
@@ -64,6 +65,7 @@ public class E4Workbench implements IWorkbench {
 	public E4Workbench(MApplicationElement uiRoot, IEclipseContext applicationContext) {
 		appContext = applicationContext;
 		appContext.set(IWorkbench.class.getName(), this);
+		appContext.set(ETranslationService.class, new TranslationServiceImpl());
 		if (uiRoot instanceof MApplication) {
 			appModel = (MApplication) uiRoot;
 		}
