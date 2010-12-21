@@ -12,24 +12,70 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import org.eclipse.help.ui.internal.*;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ListDialog;
 
 /**
  * Scope dialog for federated search.
  */
-public class ScopeSetDialog extends ListDialog {
+public class ScopeSetDialog extends TrayDialog  {
+	
+	
+	public class NonDefaultFilter extends ViewerFilter {
+
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof ScopeSet && ((ScopeSet)element).isDefault()) {
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	public class ShowAllListener implements SelectionListener {
+
+		public void widgetSelected(SelectionEvent e) {
+			enableTable();
+		}
+
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+
+	}
+
 	private ScopeSetManager manager;
 	private EngineDescriptorManager descManager;
 	private static final int NEW_ID = IDialogConstants.CLIENT_ID + 1;
@@ -41,6 +87,18 @@ public class ScopeSetDialog extends ListDialog {
 	private Button removeButton;
 	private ArrayList sets;
 	private ArrayList operations;
+	private IStructuredContentProvider contentProvider;
+	
+	private Button showAllRadio;
+	private Button showSelectedRadio;
+
+	private ILabelProvider labelProvider;
+	private Object input;
+	private TableViewer viewer;
+    private int widthInChars = 55;
+    private int heightInChars = 15;
+	private ScopeSet initialSelection;
+	private Object[] result;
 	
 	private abstract class PendingOperation {
 		ScopeSet set;
@@ -145,9 +203,13 @@ public class ScopeSetDialog extends ListDialog {
 		this.manager = manager;
 		this.descManager = descManager;
 		this.sets = extractSets(manager.getScopeSets(false));
-		setContentProvider(new ScopeContentProvider());
-		setLabelProvider(new ScopeLabelProvider());
-		setInitialSelections(new Object[] { manager.getActiveSet() });
+		contentProvider = new ScopeContentProvider();
+		labelProvider = new ScopeLabelProvider();
+		setInitialSelections( manager.getActiveSet());
+	}
+	
+	private void setInitialSelections(ScopeSet scopeSet) {
+		initialSelection = scopeSet;
 	}
 	
 	private ArrayList extractSets(ScopeSet[] array) {
@@ -159,17 +221,61 @@ public class ScopeSetDialog extends ListDialog {
 	}
 	
     protected Control createDialogArea(Composite container) {
-    	Composite listContainer = (Composite)super.createDialogArea(container);
-    	PlatformUI.getWorkbench().getHelpSystem().setHelp(listContainer,
+    	Composite innerContainer = (Composite)super.createDialogArea(container);
+    	createRadioButtons(innerContainer);
+    	createTable(innerContainer);
+    	enableTable();
+    	PlatformUI.getWorkbench().getHelpSystem().setHelp(innerContainer,
 		     "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
-    	createEditingButtons(listContainer);
-    	getTableViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+    	createEditingButtons(innerContainer);
+    	viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateButtons();
 			}
 		});
-    	return listContainer;
+    	ViewerFilter[] filters = { new NonDefaultFilter() };
+		viewer.setFilters(filters );
+    	return innerContainer;
     }
+    
+	private void createRadioButtons(Composite parent) {
+		boolean showAll = initialSelection != null  && initialSelection.isDefault();
+		showAllRadio = new Button(parent, SWT.RADIO);
+    	showAllRadio.setText(Messages.ScopeSet_selectAll);
+    	
+    	showSelectedRadio = new Button(parent, SWT.RADIO);
+    	showSelectedRadio.setText(Messages.ScopeSet_selectWorkingSet);
+    	showAllRadio.addSelectionListener(new ShowAllListener());
+    	showAllRadio.setSelection(showAll);
+    	showSelectedRadio.setSelection(!showAll);
+	}
+    
+    private void createTable(Composite parent) {	
+        viewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+        viewer.setContentProvider(contentProvider);
+        viewer.setLabelProvider(labelProvider);
+        viewer.setInput(input);
+        viewer.addDoubleClickListener(new IDoubleClickListener() {
+            public void doubleClick(DoubleClickEvent event) {
+				okPressed();
+            }
+        });
+        if (initialSelection != null) {
+			viewer.setSelection(new StructuredSelection(initialSelection));
+		} 
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.heightHint = convertHeightInCharsToPixels(heightInChars);
+        gd.widthHint = convertWidthInCharsToPixels(widthInChars);
+        Table table = viewer.getTable();
+        table.setLayoutData(gd);
+        table.setFont(parent.getFont());
+    }
+    
+	private void enableTable() {
+		if (viewer != null) {
+		    viewer.getTable().setEnabled(showSelectedRadio.getSelection());
+		}
+	}
     
     private void createEditingButtons(Composite composite) {
 		Composite buttonComposite= new Composite(composite, SWT.RIGHT);
@@ -187,11 +293,11 @@ public class ScopeSetDialog extends ListDialog {
     }
 	
 	public ScopeSet getActiveSet() {
-		Object [] result = getResult();
 		if (result!=null && result.length>0)
 			return (ScopeSet)result[0];
 		return null;
 	}
+	
 	protected void okPressed() {
     	if (operations!=null) {
     		for (int i=0; i<operations.size(); i++) {
@@ -200,8 +306,29 @@ public class ScopeSetDialog extends ListDialog {
     		}
     		operations = null;
     	}
+    	if (showAllRadio.getSelection()) {
+    		setResult(manager.getDefaultScope());
+    	} else {
+            // Build a list of selected children.
+            IStructuredSelection selection = (IStructuredSelection) viewer
+                    .getSelection();
+            setResult(selection.toList());
+    	}
     	super.okPressed();
     }
+	
+	private void setResult(ScopeSet scope) {
+		result = new Object[] { scope };
+	}
+
+	private void setResult(List newResult) {
+		if (newResult == null) {
+			result = null;
+		} else {
+			result = new Object[newResult.size()];
+			newResult.toArray(result);
+		}
+	}
 	
 	protected void cancelPressed() {
     	if (operations!=null) {
@@ -233,7 +360,7 @@ public class ScopeSetDialog extends ListDialog {
 	}
 	
 	private void doNew() {
-		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
+		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		ScopeSet newSet = new ScopeSet(set, getDefaultName());
 		String name = getNewName(newSet.getName(), false);
@@ -241,7 +368,7 @@ public class ScopeSetDialog extends ListDialog {
 			newSet.setName(name);
 			scheduleOperation(new AddOperation(newSet));
 			sets.add(newSet);
-			getTableViewer().refresh();
+			viewer.refresh();
 			updateButtons();
 		}
 	}
@@ -263,7 +390,7 @@ public class ScopeSetDialog extends ListDialog {
 
 
 	private void doEdit() {
-		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
+		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set!=null) {
 			PreferenceManager manager = new ScopePreferenceManager(descManager, set);
@@ -276,7 +403,7 @@ public class ScopeSetDialog extends ListDialog {
 	}
 
 	private void doRename() {
-		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
+		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set!=null) {
 			RenameOperation rop = (RenameOperation)findOperation(set, RenameOperation.class);
@@ -287,7 +414,7 @@ public class ScopeSetDialog extends ListDialog {
 					rop.newName = newName;
 				else 
 					scheduleOperation(new RenameOperation(set, newName));
-				getTableViewer().update(set, null);
+				viewer.update(set, null);
 				updateButtons();
 			}
 		}
@@ -310,16 +437,16 @@ public class ScopeSetDialog extends ListDialog {
 	}
 	
 	private void doRemove() {
-		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
+		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		if (set!=null) {
 			scheduleOperation(new RemoveOperation(set));
 			sets.remove(set);
-			getTableViewer().refresh();
+			viewer.refresh();
 			// Set the selection to the first remaining element
-			Object element = getTableViewer().getElementAt(0);
+			Object element = viewer.getElementAt(0);
 			if (element != null) {
-				getTableViewer().setSelection(new StructuredSelection(element));
+				viewer.setSelection(new StructuredSelection(element));
 			} 
 			updateButtons();
 		}
@@ -332,13 +459,13 @@ public class ScopeSetDialog extends ListDialog {
 	}
 	
 	private void updateButtons() {
-		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
+		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
 		editButton.setEnabled(ssel.isEmpty()==false);
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		boolean editableSet = set!=null && set.isEditable() && !set.isImplicit();
 		removeButton.setEnabled(editableSet);
 		renameButton.setEnabled(editableSet);
-		Button okButton = getOkButton();
+		Button okButton = getButton(IDialogConstants.OK_ID);;
 		if (okButton!=null)
 			okButton.setEnabled(set!=null);
 	}
@@ -354,5 +481,9 @@ public class ScopeSetDialog extends ListDialog {
 			}
 		}
 		return null;
+	}
+
+	public void setInput(ScopeSetManager scopeSetManager) {
+		input = scopeSetManager;	
 	}	
 }

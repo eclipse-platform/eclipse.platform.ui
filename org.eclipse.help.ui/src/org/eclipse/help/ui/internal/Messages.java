@@ -168,6 +168,8 @@ public final class Messages extends NLS {
 	public static String ReusableHelpPart_internalWebBrowserError;
 	public static String ScopeSet_errorLoading;
 	public static String ScopeSet_errorSaving;
+	public static String ScopeSet_selectAll;
+	public static String ScopeSet_selectWorkingSet;
 	public static String IndexInstructions;
 	public static String IndexButton;
 	

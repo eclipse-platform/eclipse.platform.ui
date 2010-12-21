@@ -29,6 +29,8 @@ public class ScopeSetManager {
 
 	private ArrayList sets;
 
+	private ScopeSet defSet;
+
 	public ScopeSetManager() {
 		ensureLocation();
 		loadScopeSets();
@@ -98,7 +100,7 @@ public class ScopeSetManager {
 		IPath location = HelpUIPlugin.getDefault().getStateLocation();
 		location = location.append("scope_sets"); //$NON-NLS-1$
 		File dir = location.toFile();
-		ScopeSet defSet = null;
+		defSet = null;
 		if (dir.exists() && dir.isDirectory()) {
 			File[] files = dir.listFiles(new FilenameFilter() {
 				public boolean accept(File dir, String name) {
@@ -128,8 +130,15 @@ public class ScopeSetManager {
 		if (sets.size() == 1) {
 			activeSet = (ScopeSet) sets.get(0);
 		}
-		if (defSet == null)
-			sets.add(new ScopeSet());
+		if (defSet == null) {
+			defSet = new ScopeSet();
+			sets.add(defSet);
+		}
+
+	}
+	
+	public ScopeSet getDefaultScope() {
+		return defSet;
 	}
 
 	/**
