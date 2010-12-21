@@ -113,7 +113,7 @@ public class ScopeSet {
 			FileInputStream fis = new FileInputStream(file);
 			getPreferenceStore();
 			preferenceStore.load(fis);
-			//when we clone the defult set, we should
+			//when we clone the default set, we should
 			//clear the default marker
 			preferenceStore.setValue(KEY_DEFAULT, false);
 			fis.close();
