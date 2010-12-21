@@ -13,8 +13,8 @@ package org.eclipse.core.internal.localstore;
 
 import java.io.File;
 import java.net.URI;
-import org.eclipse.core.filesystem.*;
-import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -110,9 +110,11 @@ public class FileStoreRoot {
 			location = localRoot;
 		else
 			location = localRoot.append(workspacePath.removeFirstSegments(chop));
-		location = URIUtil.toPath(resource.getPathVariableManager().resolveURI(URIUtil.toURI(location)));
-		//if path is still relative then path variable could not be resolved
-		if (!location.isAbsolute())
+		location = resource.getPathVariableManager().resolvePath(location);
+		
+		// if path is still relative then path variable could not be resolved
+		// if path is null, it means path variable refers to a non-local filesystem
+		if (location == null || !location.isAbsolute())
 			return null;
 		return location;
 	}
