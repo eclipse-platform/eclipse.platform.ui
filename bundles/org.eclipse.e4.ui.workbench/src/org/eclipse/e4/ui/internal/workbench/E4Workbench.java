@@ -65,7 +65,8 @@ public class E4Workbench implements IWorkbench {
 	public E4Workbench(MApplicationElement uiRoot, IEclipseContext applicationContext) {
 		appContext = applicationContext;
 		appContext.set(IWorkbench.class.getName(), this);
-		appContext.set(ETranslationService.class, new TranslationServiceImpl());
+		appContext.set(ETranslationService.class,
+				ContextInjectionFactory.make(TranslationServiceImpl.class, appContext));
 		if (uiRoot instanceof MApplication) {
 			appModel = (MApplication) uiRoot;
 		}
