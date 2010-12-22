@@ -14,9 +14,6 @@ public interface ETranslationService {
 	public <M> M createInstance(Class<M> messages)
 			throws InstantiationException, IllegalAccessException;
 
-	public <M> M createInstance(String locale, Class<M> messages)
-			throws InstantiationException, IllegalAccessException;
-
 	public void setLocale(String locale);
 
 	public String getLocale();

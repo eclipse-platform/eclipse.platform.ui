@@ -11,10 +11,9 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
-import org.eclipse.e4.core.services.translation.MessageFactory;
-
 import java.util.Locale;
 import javax.inject.Inject;
+import org.eclipse.e4.core.services.translation.IMessageFactoryService;
 import org.eclipse.e4.core.services.translation.ITranslationService;
 import org.eclipse.e4.ui.services.ETranslationService;
 
@@ -25,16 +24,14 @@ public class TranslationServiceImpl implements ETranslationService {
 	@Inject
 	private ITranslationService service;
 
+	@Inject
+	private IMessageFactoryService factoryService;
+
 	private String locale = Locale.getDefault().toString();
 
 	public <M> M createInstance(Class<M> messages) throws InstantiationException,
 			IllegalAccessException {
-		return createInstance(locale, messages);
-	}
-
-	public <M> M createInstance(String locale, Class<M> messages) throws InstantiationException,
-			IllegalAccessException {
-		return MessageFactory.createInstance(locale, messages);
+		return factoryService.createInstance(locale, messages);
 	}
 
 	public void setLocale(String locale) {
