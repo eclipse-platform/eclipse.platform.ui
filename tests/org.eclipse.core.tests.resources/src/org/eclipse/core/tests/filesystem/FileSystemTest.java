@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2007 IBM Corporation and others.
+ *  Copyright (c) 2005, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public abstract class FileSystemTest extends CoreTest {
 	public FileSystemTest(String name) {
 		super(name);
 	}
-	
+
 	protected void ensureDoesNotExist(IFileStore store) {
 		try {
 			store.delete(EFS.NONE, getMonitor());
@@ -92,19 +92,40 @@ public abstract class FileSystemTest extends CoreTest {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		//the base file system to be tested is setup here.
-		//to test a different file system implementation, set up
-		//its base directory here.
-		MemoryTree.TREE.deleteAll();
-		baseStore = EFS.getStore(URI.create("mem:/baseStore"));
-		baseStore.mkdir(EFS.NONE, null);
+		doFSSetUp();
 		localFileBaseStore = EFS.getLocalFileSystem().getStore(FileSystemHelper.getRandomLocation(getTempDir()));
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		localFileBaseStore.delete(EFS.NONE, null);
+		doFSTearDown();
+	}
+
+	/**
+	 * The base file system to be tested is setup here. 
+	 * The default implementation sets up in-memory file system (@see MemoryFileSystem).
+	 * <p> 
+	 * Subclasses should override to test a different file system 
+	 * implementation and set up its base directory.
+	 * </p>
+	 */
+	protected void doFSSetUp() throws Exception {
+		MemoryTree.TREE.deleteAll();
+		baseStore = EFS.getStore(URI.create("mem:/baseStore"));
+		baseStore.mkdir(EFS.NONE, null);
+	}
+
+	/**
+	 * Tear down the tested base file system and base directory here. 
+	 * The default implementation tears down in memory file system (@see MemoryFileSystem).
+	 * <p> 
+	 * Subclasses should override to tear down a different file system 
+	 * implementation and its base directory.
+	 * </p>
+	 */
+	protected void doFSTearDown() throws Exception {
 		baseStore.delete(EFS.NONE, null);
 		MemoryTree.TREE.deleteAll();
-		localFileBaseStore.delete(EFS.NONE, null);
 	}
 }
