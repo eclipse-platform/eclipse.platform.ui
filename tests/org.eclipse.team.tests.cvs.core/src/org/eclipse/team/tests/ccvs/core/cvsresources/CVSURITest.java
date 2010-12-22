@@ -187,7 +187,7 @@ public class CVSURITest extends EclipseTest {
 		assertEquals(cvsUri.getTag(), new CVSTag("tag", CVSTag.VERSION));
 
 		String refString = new CVSProjectSetCapability().asReference(uri, null);
-		assertNull(refString);
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,path/to/module,module,tag", refString);
 	}
 
 	public void testScmUri7() throws CVSException {
@@ -199,7 +199,7 @@ public class CVSURITest extends EclipseTest {
 		assertEquals(cvsUri.getTag(), new CVSTag("version", CVSTag.VERSION));
 
 		String refString = new CVSProjectSetCapability().asReference(uri, null);
-		assertNull(refString);
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,path/to/module,module,version", refString);
 	}
 	
 	public void testScmUri8() throws CVSException {
@@ -211,7 +211,7 @@ public class CVSURITest extends EclipseTest {
 		assertEquals(cvsUri.getTag(), CVSTag.DEFAULT);
 
 		String refString = new CVSProjectSetCapability().asReference(uri, null);
-		assertNull(refString);
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,path/to/module,module", refString);
 	}
 
 	public void testScmUri9() throws CVSException {
@@ -249,5 +249,20 @@ public class CVSURITest extends EclipseTest {
 		String refString = new CVSProjectSetCapability().asReference(uri, "project");
 		assertEquals("1.0,:pserver:username@host.com:/cvsroot/path,module,project", refString);
 	}
+	
+	public void testScmUri12() throws URISyntaxException {
+		URI uri = new URI("notScm:cvs:pserver:username@host.com:/cvsroot/path:module");
+		try {
+			new CVSProjectSetCapability().asReference(uri, "project");
+			fail("Expected IllegalArgumentException");
+		} catch (IllegalArgumentException e) {
+		}
+	}
 
+	public void testScmUri13() throws URISyntaxException {
+		URI uri = new URI("scm:cvs:pserver:username@host.com:/cvsroot/path:");
+		String refString = new CVSProjectSetCapability().asReference(uri, null);
+		assertNull(refString);
+	}
+	
 }

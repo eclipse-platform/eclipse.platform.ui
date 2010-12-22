@@ -327,10 +327,10 @@ public abstract class ProjectSetCapability {
 	 *            the URI that identifies the location of the project in the
 	 *            repository.
 	 * @param projectName
-	 *            the name of the project to use. If <code>null</code>, use the
-	 *            project name from the provided SCM URI. If the URI is not an
-	 *            SCM URI or does not contain project name, <code>null</code> is
-	 *            returned.
+	 *            the name of the project to use. If <code>null</code>, use a
+	 *            project name from the provided SCM URI. If the URI does not
+	 *            contain the project name the last segment of the URI's path is
+	 *            used. If this fails, <code>null</code> is returned.
 	 * @return the reference string representing a project that can be loaded
 	 *         into the workspace or <code>null</code>, if the URI and name
 	 *         cannot be translated into a reference string

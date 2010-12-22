@@ -630,11 +630,11 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 			ICVSRepositoryLocation location = cvsURI.getRepository();
 			ICVSFolder folder = cvsURI.toFolder();
 			if (projectName == null) {
-				if (cvsURI.getProjectName() != null) {
-					projectName = cvsURI.getProjectName();
-				} else {
+				projectName = cvsURI.getProjectName();
+				if (projectName == null)
+					projectName = cvsURI.getLastSegment();
+				if (projectName == null)
 					return null;
-				}
 			}
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			return asReference((CVSRepositoryLocation)location, folder, project);
