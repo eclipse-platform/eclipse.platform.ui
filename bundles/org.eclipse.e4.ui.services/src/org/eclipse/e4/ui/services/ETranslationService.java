@@ -11,6 +11,8 @@
 package org.eclipse.e4.ui.services;
 
 public interface ETranslationService {
+	public static final String LANGUAGE_TOPIC = "org/eclipse/e4/ui/workbench/language";
+	
 	public <M> M createInstance(Class<M> messages)
 			throws InstantiationException, IllegalAccessException;
 
