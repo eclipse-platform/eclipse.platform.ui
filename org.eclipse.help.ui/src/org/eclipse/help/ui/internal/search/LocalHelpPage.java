@@ -432,4 +432,14 @@ public class LocalHelpPage extends RootScopePage {
 			}
 		}
 	}
+	
+	protected void performDefaults() {
+		searchAll.setSelection(true);
+		searchSelected.setSelection(false);
+		contentTree.setCheckedElements(new Object[0]);
+		if (criteriaTree != null) {
+		    criteriaTree.setCheckedElements(new Object[0]);
+		}
+		super.performDefaults();
+	}
 }
