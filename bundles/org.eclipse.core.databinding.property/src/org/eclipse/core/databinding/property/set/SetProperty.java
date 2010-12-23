@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bug 195222
+ *     Ovidio Mallo - bug 331348
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.set;
@@ -34,10 +35,22 @@ import org.eclipse.core.internal.databinding.property.SetPropertyDetailValuesMap
  * @since 1.2
  */
 public abstract class SetProperty implements ISetProperty {
+
 	/**
+	 * By default, this method returns <code>Collections.EMPTY_SET</code> in
+	 * case the source object is <code>null</code>. Otherwise, this method
+	 * delegates to {@link #doGetSet(Object)}.
+	 * 
+	 * <p>
+	 * Clients may override this method if they e.g. want to return a specific
+	 * default set in case the source object is <code>null</code>.
+	 * </p>
+	 * 
+	 * @see #doGetSet(Object)
+	 * 
 	 * @since 1.3
 	 */
-	public final Set getSet(Object source) {
+	public Set getSet(Object source) {
 		if (source == null) {
 			return Collections.EMPTY_SET;
 		}
@@ -134,8 +147,8 @@ public abstract class SetProperty implements ISetProperty {
 	}
 
 	public IObservableSet observeDetail(IObservableValue master) {
-		return MasterDetailObservables.detailSet(master, setFactory(master
-				.getRealm()), getElementType());
+		return MasterDetailObservables.detailSet(master,
+				setFactory(master.getRealm()), getElementType());
 	}
 
 	public final IMapProperty values(IValueProperty detailValues) {
