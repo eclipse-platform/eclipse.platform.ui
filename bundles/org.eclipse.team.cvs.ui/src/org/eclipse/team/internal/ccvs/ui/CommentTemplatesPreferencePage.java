@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Maik Schreiber.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    Maik Schreiber - initial API and implementation
- *    IBM - Bug 158656 Unlabeled list when empty
+ *    IBM - ongoing development
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui;
@@ -20,14 +20,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.ui.*;
@@ -242,4 +235,11 @@ public class CommentTemplatesPreferencePage extends PreferencePage implements
 	public void init(IWorkbench workbench) {
 		// Nothing to do
 	}
+
+	protected void performDefaults() {
+		// default: the list of comments is cleaned
+		viewer.getList().removeAll();
+		super.performDefaults();
+	}
+
 }
