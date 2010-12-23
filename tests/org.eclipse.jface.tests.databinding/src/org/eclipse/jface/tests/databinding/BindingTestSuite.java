@@ -17,7 +17,7 @@
  *                    246103, 249992, 256150, 256543, 262269, 175735, 262946,
  *                    255734, 263693, 169876, 266038, 268336, 270461, 271720,
  *                    283204, 281723, 283428
- *     Ovidio Mallo - bugs 237163, 235195, 299619
+ *     Ovidio Mallo - bugs 237163, 235195, 299619, 306611
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -84,6 +84,7 @@ import org.eclipse.core.tests.databinding.validation.MultiValidatorTest;
 import org.eclipse.core.tests.databinding.validation.ValidationStatusTest;
 import org.eclipse.core.tests.internal.databinding.BindingMessagesTest;
 import org.eclipse.core.tests.internal.databinding.BindingStatusTest;
+import org.eclipse.core.tests.internal.databinding.ConverterValuePropertyTest;
 import org.eclipse.core.tests.internal.databinding.IdentityMapTest;
 import org.eclipse.core.tests.internal.databinding.IdentitySetTest;
 import org.eclipse.core.tests.internal.databinding.QueueTest;
@@ -316,6 +317,7 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.core.tests.internal.databinding
 		addTestSuite(BindingMessagesTest.class);
 		addTestSuite(BindingStatusTest.class);
+		addTestSuite(ConverterValuePropertyTest.class);
 		addTestSuite(IdentityMapTest.class);
 		addTestSuite(IdentitySetTest.class);
 		addTestSuite(QueueTest.class);

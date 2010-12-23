@@ -8,16 +8,19 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 263709)
  *     Matthew Hall - bug 264954
+ *     Ovidio Mallo - bug 306611
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
 
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.BindingModelProperty;
 import org.eclipse.core.internal.databinding.BindingTargetProperty;
+import org.eclipse.core.internal.databinding.ConverterValueProperty;
 import org.eclipse.core.internal.databinding.DataBindingContextBindingsProperty;
 import org.eclipse.core.internal.databinding.DataBindingContextValidationStatusProvidersProperty;
 import org.eclipse.core.internal.databinding.ValidationStatusProviderModelsProperty;
@@ -110,5 +113,25 @@ public class BindingProperties {
 	 */
 	public static IListProperty validationStatusProviders() {
 		return new DataBindingContextValidationStatusProvidersProperty();
+	}
+
+	/**
+	 * Returns an {@link IValueProperty} whose value results from applying the
+	 * given {@link IConverter} on the source object of the value property.
+	 * Consequently, the {@link IValueProperty#getValueType() value type} of the
+	 * returned property is the same as the {@link IConverter#getToType() target
+	 * type} of the converter. Setting a value on the property is not supported.
+	 * 
+	 * @param converter
+	 *            The converter to apply to the source object of the value
+	 *            property.
+	 * @return A new instance of a value property whose value is the result of
+	 *         applying the given converter to the source object passed to the
+	 *         value property.
+	 * 
+	 * @since 1.4
+	 */
+	public static IValueProperty convertedValue(IConverter converter) {
+		return new ConverterValueProperty(converter);
 	}
 }
