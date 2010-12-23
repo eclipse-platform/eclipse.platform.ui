@@ -517,6 +517,22 @@ public class Messages extends NLS {
 	public static String VRootBindingContexts_TreeLabelDescription;
 	public static String VRootBindingContexts_Contexts;
 
+	public static String AreaEditor_Label;
+	public static String AreaEditor_Description;
+	public static String AreaEditor_Orientation;
+	public static String AreaEditor_Horizontal;
+	public static String AreaEditor_SelectedElement;
+	public static String AreaEditor_ContainerData;
+	public static String AreaEditor_Controls;
+	public static String AreaEditor_Vertical;
+	public static String AreaEditor_LabelLabel;
+	public static String AreaEditor_Tooltip;
+	public static String AreaEditor_IconURI;
+
+	public static String AreaIconDialogEditor_ShellTitle;
+	public static String AreaIconDialogEditor_DialogTitle;
+	public static String AreaIconDialogEditor_DialogMessage;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

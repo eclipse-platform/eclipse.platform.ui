@@ -176,7 +176,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 					return eclass.getName();
 				}
 			});
-			childrenDropDown.setInput(new EClass[] { AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART });
+			childrenDropDown.setInput(new EClass[] { AdvancedPackageImpl.Literals.PERSPECTIVE_STACK, BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.AREA });
 			childrenDropDown.setSelection(new StructuredSelection(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);

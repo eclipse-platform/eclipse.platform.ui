@@ -16,20 +16,27 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
+import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AreaIconDialogEditor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -65,16 +72,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-public class PartSashContainerEditor extends AbstractComponentEditor {
+public class AreaEditor extends AbstractComponentEditor {
 
 	private Composite composite;
 	private EMFDataBindingContext context;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
+	private IProject project;
 
-	public PartSashContainerEditor(EditingDomain editingDomain, ModelEditor editor) {
+	public AreaEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
 		super(editingDomain, editor);
+		this.project = project;
 	}
 
 	@Override
@@ -123,12 +132,12 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getLabel(Object element) {
-		return Messages.PartSashContainerEditor_Label;
+		return Messages.AreaEditor_Label;
 	}
 
 	@Override
 	public String getDescription(Object element) {
-		return Messages.PartSashContainerEditor_Description;
+		return Messages.AreaEditor_Description;
 	}
 
 	@Override
@@ -194,12 +203,50 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
 
+		ControlFactory.createTextField(parent, Messages.AreaEditor_LabelLabel, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+		ControlFactory.createTextField(parent, Messages.AreaEditor_Tooltip, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP));
 
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartSashContainerEditor_Orientation);
+			l.setText(Messages.AreaEditor_IconURI);
+			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+			final Text t = new Text(parent, SWT.BORDER);
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
+
+			new ImageTooltip(t) {
+
+				@Override
+				protected URI getImageURI() {
+					MUILabel part = (MUILabel) getMaster().getValue();
+					String uri = part.getIconURI();
+					if (uri == null || uri.trim().length() == 0) {
+						return null;
+					}
+					return URI.createURI(part.getIconURI());
+				}
+			};
+
+			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
+			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setText(Messages.ModelTooling_Common_FindEllipsis);
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					AreaIconDialogEditor dialog = new AreaIconDialogEditor(b.getShell(), project, getEditingDomain(), (MPart) getMaster().getValue());
+					dialog.open();
+				}
+			});
+		}
+
+		// ------------------------------------------------------------
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText(Messages.AreaEditor_Orientation);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			ComboViewer viewer = new ComboViewer(parent);
@@ -210,7 +257,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			viewer.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return ((Boolean) element).booleanValue() ? Messages.PartSashContainerEditor_Horizontal : Messages.PartSashContainerEditor_Vertical;
+					return ((Boolean) element).booleanValue() ? Messages.AreaEditor_Horizontal : Messages.AreaEditor_Vertical;
 				}
 			});
 			viewer.setInput(new Boolean[] { Boolean.TRUE, Boolean.FALSE });
@@ -218,12 +265,12 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			context.bindValue(vProp.observe(viewer), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.GENERIC_TILE__HORIZONTAL).observeDetail(getMaster()));
 		}
 
-		ControlFactory.createSelectedElement(parent, this, context, Messages.PartSashContainerEditor_SelectedElement);
+		ControlFactory.createSelectedElement(parent, this, context, Messages.AreaEditor_SelectedElement);
 
 		// ------------------------------------------------------------
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartSashContainerEditor_ContainerData);
+			l.setText(Messages.AreaEditor_ContainerData);
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
@@ -235,7 +282,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 
 		{
 			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartSashContainerEditor_Controls);
+			l.setText(Messages.AreaEditor_Controls);
 			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 			final TableViewer viewer = new TableViewer(parent);
@@ -374,11 +421,12 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		return null;
+		MArea o = (MArea) element;
+		return o.getLabel();
 	}
 
 	@Override
 	public FeaturePath[] getLabelProperties() {
-		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.GENERIC_TILE__HORIZONTAL), FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL), FeaturePath.fromList(UiPackageImpl.Literals.GENERIC_TILE__HORIZONTAL), FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
 	}
 }

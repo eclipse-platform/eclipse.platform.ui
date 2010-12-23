@@ -54,6 +54,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.AreaEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingContextEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.BindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.CategoryEditor;
@@ -654,6 +655,7 @@ public class ModelEditor {
 		registerEditor(BasicPackageImpl.Literals.WINDOW, new WindowEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(BasicPackageImpl.Literals.TRIMMED_WINDOW, new TrimmedWindowEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(BasicPackageImpl.Literals.PART_SASH_CONTAINER, new PartSashContainerEditor(modelProvider.getEditingDomain(), this));
+		registerEditor(AdvancedPackageImpl.Literals.AREA, new AreaEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(BasicPackageImpl.Literals.PART_STACK, new PartStackEditor(modelProvider.getEditingDomain(), this));
 		registerEditor(BasicPackageImpl.Literals.INPUT_PART, new InputPartEditor(modelProvider.getEditingDomain(), this, project));
 		registerEditor(BasicPackageImpl.Literals.TRIM_BAR, new TrimBarEditor(modelProvider.getEditingDomain(), this));
