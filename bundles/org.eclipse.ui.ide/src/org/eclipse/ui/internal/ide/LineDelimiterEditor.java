@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -32,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * A class to handle editing of the Line delimiter preferences in core.
@@ -162,24 +161,31 @@ public class LineDelimiterEditor {
 	 * @return the currently stored encoding
 	 */
 	public String getStoredValue() {
-		IScopeContext[] scopeContext = new IScopeContext[] { getScopeContext() };
-		IEclipsePreferences node = scopeContext[0].getNode(Platform.PI_RUNTIME);
-		return node.get(Platform.PREF_LINE_SEPARATOR, null);
+		Preferences node = getPreferences();
+		try {
+			// be careful looking up for our node so not to create any nodes as side effect
+			if (node.nodeExists(Platform.PI_RUNTIME))
+				return node.node(Platform.PI_RUNTIME).get(
+						Platform.PREF_LINE_SEPARATOR, null);
+		} catch (BackingStoreException e) {
+			// ignore
+		}
+		return null;
 	}
 
 	/**
-	 * Answer the <code>IScopeContext</code> for the receiver, this will be a
-	 * project scope if the receiver is editing project preferences, otherwise
-	 * instance scope.
+	 * Answer the <code>Preferences</code> for the receiver, this will be a
+	 * project preferences if the receiver is editing project preferences, otherwise
+	 * instance preferences.
 	 * 
-	 * @return the scope context
+	 * @return the preferences
 	 */
-	private IScopeContext getScopeContext() {
+	private Preferences getPreferences() {
 		if (project != null) {
-			return new ProjectScope(project);
+			return Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).node(project.getName());
 		}
 
-		return new InstanceScope();
+		return Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE);
 	}
 
 	/**
@@ -264,8 +270,7 @@ public class LineDelimiterEditor {
 			val = (String) lineSeparators.get(choiceCombo.getText());
 		}
 
-		IEclipsePreferences node = getScopeContext().getNode(
-				Platform.PI_RUNTIME);
+		Preferences node = getPreferences().node(Platform.PI_RUNTIME);
 		if (val == null) {
 			node.remove(Platform.PREF_LINE_SEPARATOR);
 		} else {
