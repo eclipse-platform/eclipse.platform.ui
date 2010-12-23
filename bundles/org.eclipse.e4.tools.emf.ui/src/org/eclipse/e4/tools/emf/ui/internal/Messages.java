@@ -533,6 +533,8 @@ public class Messages extends NLS {
 	public static String AreaIconDialogEditor_DialogTitle;
 	public static String AreaIconDialogEditor_DialogMessage;
 
+	public static String ModelEditor_Delete;
+
 	static {
 		NLS.initializeMessages(Messages.class.getName(), Messages.class);
 	}

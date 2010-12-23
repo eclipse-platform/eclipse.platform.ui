@@ -11,7 +11,6 @@
 package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +50,7 @@ import org.eclipse.e4.tools.emf.ui.common.ISelectionProviderService;
 import org.eclipse.e4.tools.emf.ui.common.MemoryTransfer;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
@@ -368,13 +368,25 @@ public class ModelEditor {
 					if (s.getFirstElement() instanceof VirtualEntry<?>) {
 						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActions(s.getFirstElement());
 					} else {
-						EObject o = (EObject) s.getFirstElement();
+						final EObject o = (EObject) s.getFirstElement();
 						AbstractComponentEditor editor = getEditor(o.eClass());
 						if (editor != null) {
-							actions = editor.getActions(s.getFirstElement());
+							actions = new ArrayList<Action>(editor.getActions(s.getFirstElement()));
 						} else {
-							actions = Collections.emptyList();
+							actions = new ArrayList<Action>();
 						}
+
+						if (o.eContainer() != null) {
+							actions.add(new Action(Messages.ModelEditor_Delete) {
+								public void run() {
+									Command cmd = RemoveCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o.eContainer(), o.eContainingFeature(), o);
+									if (cmd.canExecute()) {
+										ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+									}
+								}
+							});
+						}
+
 					}
 
 					for (Action a : actions) {
