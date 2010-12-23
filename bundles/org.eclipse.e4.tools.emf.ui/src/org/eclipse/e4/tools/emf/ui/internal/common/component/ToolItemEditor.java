@@ -17,7 +17,6 @@ import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
@@ -126,7 +125,7 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 	}
 
 	protected void createFormSubTypeForm(Composite parent, EMFDataBindingContext context, final WritableValue master) {
-		IValueProperty textProp = WidgetProperties.text(SWT.Modify);
+		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 		IWidgetValueProperty checkProp = WidgetProperties.selection();
 		IWidgetValueProperty enabled = WidgetProperties.enabled();
 
@@ -158,6 +157,8 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observe(t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL).observeDetail(master));
 		}
+
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 
 		// ------------------------------------------------------------
 		{

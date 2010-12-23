@@ -26,6 +26,7 @@ public class Messages extends NLS {
 	public static String ModelTooling_UIElement_ToBeRendered;
 	public static String ModelTooling_UIElement_Visible;
 	public static String ModelTooling_UIElement_VisibleWhen;
+	public static String ModelTooling_UIElement_AccessibilityPhrase;
 
 	public static String ModelTooling_Context_Variables;
 	public static String ModelTooling_Context_Properties;
