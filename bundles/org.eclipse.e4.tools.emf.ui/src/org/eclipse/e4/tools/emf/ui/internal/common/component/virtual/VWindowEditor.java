@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -31,6 +34,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -53,9 +57,27 @@ public class VWindowEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
+	private List<Action> actions = new ArrayList<Action>();
 
 	public VWindowEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
+		try {
+			actions.add(new Action(Messages.VWindowEditor_AddTrimmedWindow, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Window.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(BasicPackageImpl.Literals.TRIMMED_WINDOW);
+				}
+			});
+			actions.add(new Action(Messages.VWindowEditor_AddWindow, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Window.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(BasicPackageImpl.Literals.WINDOW);
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -175,8 +197,8 @@ public class VWindowEditor extends AbstractComponentEditor {
 				return eclass.getName();
 			}
 		});
-		childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.WINDOW, BasicPackageImpl.Literals.TRIMMED_WINDOW });
-		childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.WINDOW));
+		childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.TRIMMED_WINDOW, BasicPackageImpl.Literals.WINDOW });
+		childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.TRIMMED_WINDOW));
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
@@ -185,15 +207,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
-				EObject handler = EcoreUtil.create(eClass);
-				setElementId(handler);
-
-				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
-
-				if (cmd.canExecute()) {
-					getEditingDomain().getCommandStack().execute(cmd);
-					getEditor().setSelection(handler);
-				}
+				handleAdd(eClass);
 			}
 		});
 
@@ -226,4 +240,22 @@ public class VWindowEditor extends AbstractComponentEditor {
 		return null;
 	}
 
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
+
+	protected void handleAdd(EClass eClass) {
+		EObject handler = EcoreUtil.create(eClass);
+		setElementId(handler);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(handler);
+		}
+	}
 }

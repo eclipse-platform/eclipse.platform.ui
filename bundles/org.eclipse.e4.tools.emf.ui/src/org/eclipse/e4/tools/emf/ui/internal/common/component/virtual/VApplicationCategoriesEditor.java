@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -54,6 +56,17 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 
 	public VApplicationCategoriesEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
+		try {
+			actions.add(new Action(Messages.VApplicationCategoriesEditor_AddCategory, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Category.png"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd();
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -177,15 +190,7 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MCategory command = CommandsFactoryImpl.eINSTANCE.createCategory();
-					setElementId(command);
-
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES, command);
-
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						getEditor().setSelection(command);
-					}
+					handleAdd();
 				}
 			});
 
@@ -213,6 +218,18 @@ public class VApplicationCategoriesEditor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(Object element) {
 		return null;
+	}
+
+	protected void handleAdd() {
+		MCategory command = CommandsFactoryImpl.eINSTANCE.createCategory();
+		setElementId(command);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES, command);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(command);
+		}
 	}
 
 	@Override

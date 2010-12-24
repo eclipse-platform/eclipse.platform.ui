@@ -25,6 +25,7 @@ import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -129,6 +130,10 @@ public abstract class AbstractComponentEditor {
 		}
 
 		return img;
+	}
+
+	protected ImageDescriptor loadSharedDescriptor(Display d, URL path) {
+		return ImageDescriptor.createFromImage(loadSharedImage(d, path));
 	}
 
 	public FeaturePath[] getLabelProperties() {

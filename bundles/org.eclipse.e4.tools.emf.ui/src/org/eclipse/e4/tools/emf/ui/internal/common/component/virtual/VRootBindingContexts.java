@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -54,12 +56,17 @@ public class VRootBindingContexts extends AbstractComponentEditor {
 
 	public VRootBindingContexts(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
-		actions.add(new Action(Messages.VRootBindingContexts_AddContext) {
-			@Override
-			public void run() {
-				handleAddContext();
-			}
-		});
+		try {
+			actions.add(new Action(Messages.VRootBindingContexts_AddContext, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/BindingContext.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddContext();
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -32,6 +35,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -54,9 +58,57 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
+	private List<Action> actions = new ArrayList<Action>();
 
 	public VWindowControlEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
+		try {
+			actions.add(new Action(Messages.VWindowControlEditor_AddPerspectiveStack, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PerspectiveStack.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(AdvancedPackageImpl.Literals.PERSPECTIVE_STACK);
+				}
+			});
+
+			actions.add(new Action(Messages.VWindowControlEditor_AddPartSashContainer, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer_vertical.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
+				}
+			});
+
+			actions.add(new Action(Messages.VWindowControlEditor_AddPartStack, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartStack.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(BasicPackageImpl.Literals.PART_STACK);
+				}
+			});
+
+			actions.add(new Action(Messages.VWindowControlEditor_AddPart, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Part.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(BasicPackageImpl.Literals.PART);
+				}
+			});
+
+			actions.add(new Action(Messages.VWindowControlEditor_AddInputPart, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Part.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(BasicPackageImpl.Literals.PART);
+				}
+			});
+
+			actions.add(new Action(Messages.VWindowControlEditor_AddArea, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Area.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(AdvancedPackageImpl.Literals.AREA);
+				}
+			});
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -187,17 +239,7 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					if (!childrenDropDown.getSelection().isEmpty()) {
 						EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
-
-						EObject eObject = EcoreUtil.create(eClass);
-
-						setElementId(eObject);
-
-						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
-
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-							getEditor().setSelection(eObject);
-						}
+						handleAdd(eClass);
 					}
 				}
 			});
@@ -229,4 +271,23 @@ public class VWindowControlEditor extends AbstractComponentEditor {
 		return null;
 	}
 
+	private void handleAdd(EClass eClass) {
+		EObject eObject = EcoreUtil.create(eClass);
+
+		setElementId(eObject);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(eObject);
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
 }

@@ -148,6 +148,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -166,6 +167,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -212,6 +214,8 @@ public class ModelEditor {
 	private boolean fragment;
 	private Handler clipboardHandler;
 
+	private Image removeIcon;
+
 	@Inject
 	@Optional
 	private IClipboardService clipboardService;
@@ -236,6 +240,7 @@ public class ModelEditor {
 		this.context = context;
 		this.context.set(ModelEditor.class, this);
 		this.obsManager = new ObservablesManager();
+		this.removeIcon = new Image(composite.getDisplay(), ModelEditor.class.getResourceAsStream("/icons/full/obj16/cross.png"));
 
 		registerDefaultEditors();
 		registerVirtualEditors();
@@ -377,7 +382,7 @@ public class ModelEditor {
 						}
 
 						if (o.eContainer() != null) {
-							actions.add(new Action(Messages.ModelEditor_Delete) {
+							actions.add(new Action(Messages.ModelEditor_Delete, ImageDescriptor.createFromImage(removeIcon)) {
 								public void run() {
 									Command cmd = RemoveCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o.eContainer(), o.eContainingFeature(), o);
 									if (cmd.canExecute()) {
@@ -748,6 +753,7 @@ public class ModelEditor {
 	@PreDestroy
 	void dispose() {
 		try {
+			removeIcon.dispose();
 			obsManager.dispose();
 		} catch (Exception e) {
 			// TODO: handle exception

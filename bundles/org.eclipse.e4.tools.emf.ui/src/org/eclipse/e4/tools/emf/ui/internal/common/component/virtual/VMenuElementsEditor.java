@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -33,6 +36,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -55,11 +59,42 @@ public class VMenuElementsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
+	private List<Action> actions = new ArrayList<Action>();
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 
 	public VMenuElementsEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
+		try {
+			actions.add(new Action(Messages.VMenuElementsEditor_AddHandledMenuItem, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/HandledMenuItem.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
+				}
+			});
+			actions.add(new Action(Messages.VMenuElementsEditor_AddMenu, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Menu.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(MenuPackageImpl.Literals.MENU, false);
+				}
+			});
+			actions.add(new Action(Messages.VMenuElementsEditor_AddDirectMenuItem, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/DirectMenuItem.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false);
+				}
+			});
+			actions.add(new Action(Messages.VMenuElementsEditor_AddSeparator, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/MenuSeparator.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd(MenuPackageImpl.Literals.MENU_SEPARATOR, true);
+				}
+			});
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -194,16 +229,7 @@ public class VMenuElementsEditor extends AbstractComponentEditor {
 				if (!childrenDropDown.getSelection().isEmpty()) {
 					Struct struct = (Struct) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
 					EClass eClass = struct.eClass;
-					MMenuElement eObject = (MMenuElement) EcoreUtil.create(eClass);
-
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
-
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						if (!struct.separator) {
-							getEditor().setSelection(eObject);
-						}
-					}
+					handleAdd(eClass, struct.separator);
 				}
 			}
 		});
@@ -245,4 +271,23 @@ public class VMenuElementsEditor extends AbstractComponentEditor {
 		}
 	}
 
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
+
+	protected void handleAdd(EClass eClass, boolean separator) {
+		MMenuElement eObject = (MMenuElement) EcoreUtil.create(eClass);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			if (!separator) {
+				getEditor().setSelection(eObject);
+			}
+		}
+	}
 }

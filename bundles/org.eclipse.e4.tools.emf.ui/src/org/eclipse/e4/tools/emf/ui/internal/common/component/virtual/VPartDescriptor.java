@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -28,6 +31,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -47,9 +51,21 @@ public class VPartDescriptor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
+	private List<Action> actions = new ArrayList<Action>();
 
 	public VPartDescriptor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
+		try {
+			actions.add(new Action(Messages.VPartDescriptor_AddPartDescriptor, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Part.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd();
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -173,15 +189,7 @@ public class VPartDescriptor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MPartDescriptor command = MBasicFactory.INSTANCE.createPartDescriptor();
-					setElementId(command);
-
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, command);
-
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						getEditor().setSelection(command);
-					}
+					handleAdd();
 				}
 			});
 
@@ -209,5 +217,24 @@ public class VPartDescriptor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(Object element) {
 		return null;
+	}
+
+	protected void handleAdd() {
+		MPartDescriptor command = MBasicFactory.INSTANCE.createPartDescriptor();
+		setElementId(command);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS, command);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(command);
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
 	}
 }

@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -28,6 +31,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -49,10 +53,22 @@ public class VCommandEditor extends AbstractComponentEditor {
 	private TableViewer viewer;
 
 	private EStructuralFeature commandsFeature;
+	private List<Action> actions = new ArrayList<Action>();
 
 	public VCommandEditor(EditingDomain editingDomain, ModelEditor editor, EStructuralFeature commandsFeature) {
 		super(editingDomain, editor);
 		this.commandsFeature = commandsFeature;
+		try {
+			actions.add(new Action(Messages.VCommandEditor_AddCommand, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Command.png"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd();
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -176,15 +192,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
-					setElementId(command);
-
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, command);
-
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						getEditor().setSelection(command);
-					}
+					handleAdd();
 				}
 			});
 
@@ -209,9 +217,27 @@ public class VCommandEditor extends AbstractComponentEditor {
 		return parent;
 	}
 
+	protected void handleAdd() {
+		MCommand command = CommandsFactoryImpl.eINSTANCE.createCommand();
+		setElementId(command);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), commandsFeature, command);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(command);
+		}
+	}
+
 	@Override
 	public IObservableList getChildList(Object element) {
 		return null;
 	}
 
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
 }

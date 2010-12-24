@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -54,12 +56,17 @@ public class VApplicationAddons extends AbstractComponentEditor {
 
 	public VApplicationAddons(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
-		actions.add(new Action(Messages.VApplicationAddons_AddAddon) {
-			@Override
-			public void run() {
-				handleAddAddon();
-			}
-		});
+		try {
+			actions.add(new Action(Messages.VApplicationAddons_AddAddon, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Addons.png"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddAddon();
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

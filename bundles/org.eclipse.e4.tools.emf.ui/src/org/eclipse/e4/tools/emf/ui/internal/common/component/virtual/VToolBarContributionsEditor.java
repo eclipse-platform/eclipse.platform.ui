@@ -10,6 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -28,6 +31,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -47,9 +51,21 @@ public class VToolBarContributionsEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
+	private List<Action> actions = new ArrayList<Action>();
 
 	public VToolBarContributionsEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
+		try {
+			actions.add(new Action(Messages.VToolBarContributionsEditor_AddToolBarContribution, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/ToolBarContribution.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAdd();
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -173,15 +189,7 @@ public class VToolBarContributionsEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MToolBarContribution command = MMenuFactory.INSTANCE.createToolBarContribution();
-					setElementId(command);
-
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS, command);
-
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						getEditor().setSelection(command);
-					}
+					handleAdd();
 				}
 			});
 
@@ -208,7 +216,25 @@ public class VToolBarContributionsEditor extends AbstractComponentEditor {
 
 	@Override
 	public IObservableList getChildList(Object element) {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	protected void handleAdd() {
+		MToolBarContribution command = MMenuFactory.INSTANCE.createToolBarContribution();
+		setElementId(command);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS, command);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(command);
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
 	}
 }

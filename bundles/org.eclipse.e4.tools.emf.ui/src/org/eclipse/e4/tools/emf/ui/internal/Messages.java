@@ -225,6 +225,7 @@ public class Messages extends NLS {
 	public static String VBindingTableEditor_Name;
 	public static String VBindingTableEditor_LabelDescription;
 	public static String VBindingTableEditor_BindingTables;
+	public static String VBindingTableEditor_AddBindingTable;
 
 	public static String AddonsEditor_ClassURI;
 	public static String AddonsEditor_TreeLabel;
@@ -356,22 +357,27 @@ public class Messages extends NLS {
 	public static String VApplicationCategoriesEditor_TreeLabel;
 	public static String VApplicationCategoriesEditor_TreeLabelDescription;
 	public static String VApplicationCategoriesEditor_Categories;
+	public static String VApplicationCategoriesEditor_AddCategory;
 
 	public static String VCommandEditor_TreeLabel;
 	public static String VCommandEditor_TreeLabelDescription;
 	public static String VCommandEditor_Commands;
+	public static String VCommandEditor_AddCommand;
 
 	public static String VHandlerEditor_TreeLabel;
 	public static String VHandlerEditor_TreeLabelDescription;
 	public static String VHandlerEditor_Handlers;
+	public static String VHandlerEditor_AddHandler;
 
 	public static String VMenuContributionsEditor_TreeLabel;
 	public static String VMenuContributionsEditor_TreeLabelDescription;
 	public static String VMenuContributionsEditor_MenuContributions;
+	public static String VMenuContributionsEditor_AddMenuContribution;
 
 	public static String VMenuEditor_TreeLabel;
 	public static String VMenuEditor_TreeLabelDescription;
 	public static String VMenuEditor_Menus;
+	public static String VMenuEditor_AddMenuContribution;
 
 	public static String VModelFragmentsEditor_TreeLabel;
 	public static String VModelFragmentsEditor_TreeLabelDescription;
@@ -384,30 +390,45 @@ public class Messages extends NLS {
 	public static String VPartDescriptor_TreeLabel;
 	public static String VPartDescriptor_TreeLabelDescription;
 	public static String VPartDescriptor_Descriptors;
+	public static String VPartDescriptor_AddPartDescriptor;
 
 	public static String VToolBarContributionsEditor_Contributions;
 	public static String VToolBarContributionsEditor_TreeLabelDescription;
 	public static String VToolBarContributionsEditor_TreeLabel;
+	public static String VToolBarContributionsEditor_AddToolBarContribution;
 
 	public static String VTrimContributionsEditor_TreeLabel;
 	public static String VTrimContributionsEditor_TreeLabelDescription;
 	public static String VTrimContributionsEditor_Contributions;
+	public static String VTrimContributionsEditor_AddTrimContribution;
 
 	public static String VWindowControlEditor_TreeLabel;
 	public static String VWindowControlEditor_TreeLabelDescription;
 	public static String VWindowControlEditor_Controls;
+	public static String VWindowControlEditor_AddPerspectiveStack;
+	public static String VWindowControlEditor_AddPartSashContainer;
+	public static String VWindowControlEditor_AddPartStack;
+	public static String VWindowControlEditor_AddPart;
+	public static String VWindowControlEditor_AddInputPart;
+	public static String VWindowControlEditor_AddArea;
 
 	public static String VWindowEditor_TreeLabel;
 	public static String VWindowEditor_TreeLabelDescription;
 	public static String VWindowEditor_Windows;
+	public static String VWindowEditor_AddTrimmedWindow;
+	public static String VWindowEditor_AddWindow;
 
 	public static String VWindowSharedElementsEditor_TreeLabel;
 	public static String VWindowSharedElementsEditor_TreeLabelDescription;
 	public static String VWindowSharedElementsEditor_Controls;
+	public static String VWindowSharedElementsEditor_AddPartSashContainer;
+	public static String VWindowSharedElementsEditor_AddPart;
+	public static String VWindowSharedElementsEditor_AddInputPart;
 
 	public static String VWindowTrimEditor_TreeLabel;
 	public static String VWindowTrimEditor_TreeLabelDescription;
 	public static String VWindowTrimEditor_Controls;
+	public static String VWindowTrimEditor_AddWindowTrim;
 
 	public static String AbstractIconDialog_IconName;
 
@@ -496,6 +517,7 @@ public class Messages extends NLS {
 	public static String VItemParametersEditor_TreeLabel;
 	public static String VItemParametersEditor_TreeLabelDescription;
 	public static String VItemParametersEditor_Parameters;
+	public static String VItemParametersEditor_AddParameter;
 
 	public static String CoreExpressionEditor_TreeLabel;
 	public static String CoreExpressionEditor_TreeLabelDescription;
@@ -504,6 +526,10 @@ public class Messages extends NLS {
 	public static String VMenuElementsEditor_TreeLabel;
 	public static String VMenuElementsEditor_TreeLabelDescription;
 	public static String VMenuElementsEditor_Children;
+	public static String VMenuElementsEditor_AddHandledMenuItem;
+	public static String VMenuElementsEditor_AddMenu;
+	public static String VMenuElementsEditor_AddDirectMenuItem;
+	public static String VMenuElementsEditor_AddSeparator;
 
 	public static String ExpressionIdDialog_ShellTitle;
 	public static String ExpressionIdDialog_DialogTitle;
