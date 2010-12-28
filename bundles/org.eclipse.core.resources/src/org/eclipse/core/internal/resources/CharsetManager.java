@@ -273,16 +273,16 @@ public class CharsetManager implements IManager {
 	public String getCharsetFor(IPath resourcePath, boolean recurse) {
 		Assert.isLegal(resourcePath.segmentCount() >= 1);
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
-		IResource resource = workspace.getRoot().findMember(resourcePath);
-		if (resource != null) {
-			Preferences encodingSettings = getPreferences(project, false, resource.isDerived(IResource.CHECK_ANCESTORS));
-			if (encodingSettings == null)
-				// no preferences found - for performance reasons, short-circuit 
-				// lookup by falling back to workspace's default setting			
-				return recurse ? ResourcesPlugin.getEncoding() : null;
-			return internalGetCharsetFor(resourcePath, encodingSettings, recurse);
-		}
-		return null;
+		
+		Preferences prefs = getPreferences(project, false, false);
+		Preferences derivedPrefs = getPreferences(project, false, true);
+		
+		if (prefs == null && derivedPrefs == null)
+			// no preferences found - for performance reasons, short-circuit 
+			// lookup by falling back to workspace's default setting			
+			return recurse ? ResourcesPlugin.getEncoding() : null;
+		
+		return internalGetCharsetFor(prefs, derivedPrefs, resourcePath, recurse);
 	}
 
 	private String getKeyFor(IPath resourcePath) {
@@ -322,15 +322,30 @@ public class CharsetManager implements IManager {
 		}
 		return null;
 	}
-
-	private String internalGetCharsetFor(IPath resourcePath, Preferences encodingSettings, boolean recurse) {
-		String charset = encodingSettings.get(getKeyFor(resourcePath), null);
+	
+	private String internalGetCharsetFor(Preferences prefs, Preferences derivedPrefs, IPath resourcePath, boolean recurse) {
+		String charset = null;
+		
+		// try to find the encoding in regular and then derived prefs
+		if (prefs != null)
+			charset = prefs.get(getKeyFor(resourcePath), null);
+		// derivedPrefs may be not null, only if #isDerivedEncodingStoredSeparately returns true
+		// so the explicit check against #isDerivedEncodingStoredSeparately is not required
+		if (charset == null && derivedPrefs != null)
+			charset = derivedPrefs.get(getKeyFor(resourcePath), null);
+		
 		if (!recurse)
 			return charset;
+
 		while (charset == null && resourcePath.segmentCount() > 1) {
 			resourcePath = resourcePath.removeLastSegments(1);
-			charset = encodingSettings.get(getKeyFor(resourcePath), null);
+			// try to find the encoding in regular and then derived prefs
+			if (prefs != null)
+				charset = prefs.get(getKeyFor(resourcePath), null);	
+			if (charset == null && derivedPrefs != null)
+				charset = derivedPrefs.get(getKeyFor(resourcePath), null);
 		}
+		
 		// ensure we default to the workspace encoding if none is found
 		return charset == null ? ResourcesPlugin.getEncoding() : charset;
 	}

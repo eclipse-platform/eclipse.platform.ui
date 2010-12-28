@@ -330,6 +330,35 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
+	public void testBug333056() throws CoreException {
+		IProject project = null;
+		try {
+			IWorkspace workspace = getWorkspace();
+			project = workspace.getRoot().getProject("MyProject");
+			ensureExistsInWorkspace(project, true);
+			project.setDefaultCharset("BAR", getMonitor());
+
+			IFolder folder = project.getFolder(getUniqueString());
+			IFile file = folder.getFile(getUniqueString());
+			assertEquals("1.0", "BAR", file.getCharset(true));
+
+			ensureExistsInWorkspace(folder, true);
+			assertEquals("2.0", "BAR", file.getCharset(true));
+
+			folder.setDerived(true, getMonitor());
+			assertEquals("3.0", "BAR", file.getCharset(true));
+
+			setDerivedEncodingStoredSeparately("4.0", project, true);
+			assertEquals("5.0", "BAR", file.getCharset(true));
+		} finally {
+			try {
+				clearAllEncodings(project);
+			} catch (CoreException e) {
+				fail("6.0", e);
+			}
+		}
+	}
+
 	public void testBug186984() {
 		IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject(getUniqueString());
