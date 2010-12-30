@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -46,6 +47,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -75,10 +77,53 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
+	private List<Action> actions = new ArrayList<Action>();
 
 	public PerspectiveEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
 		super(editingDomain, editor);
 		this.project = project;
+		try {
+			actions.add(new Action(Messages.PerspectiveEditor_AddPartSashContainer, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartSashContainer.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
+				}
+			});
+			actions.add(new Action(Messages.PerspectiveEditor_AddPartStack, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartStack.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(BasicPackageImpl.Literals.PART_STACK);
+				}
+			});
+			actions.add(new Action(Messages.PerspectiveEditor_AddPart, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Part.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(BasicPackageImpl.Literals.PART);
+				}
+			});
+			actions.add(new Action(Messages.PerspectiveEditor_AddInputPart, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Part.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(BasicPackageImpl.Literals.INPUT_PART);
+				}
+			});
+			actions.add(new Action(Messages.PerspectiveEditor_AddArea, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Area.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(AdvancedPackageImpl.Literals.AREA);
+				}
+			});
+			actions.add(new Action(Messages.PerspectiveEditor_AddPlaceholder, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Placeholder.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
+				}
+			});
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -340,7 +385,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 					return eclass.getName();
 				}
 			});
-			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.PLACEHOLDER });
+			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER, BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.AREA, AdvancedPackageImpl.Literals.PLACEHOLDER });
 			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
@@ -351,15 +396,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					if (!childrenDropDown.getSelection().isEmpty()) {
 						EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
-						EObject eObject = EcoreUtil.create(eClass);
-						setElementId(eObject);
-
-						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
-
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-							getEditor().setSelection(eObject);
-						}
+						handleAddChild(eClass);
 					}
 				}
 			});
@@ -396,5 +433,24 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 	@Override
 	public IObservableList getChildList(Object element) {
 		return ELEMENT_CONTAINER__CHILDREN.observe(element);
+	}
+
+	protected void handleAddChild(EClass eClass) {
+		EObject eObject = EcoreUtil.create(eClass);
+		setElementId(eObject);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(eObject);
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
 	}
 }

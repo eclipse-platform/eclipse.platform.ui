@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -40,6 +41,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -69,6 +71,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
+	private List<Action> actions = new ArrayList<Action>();
 
 	private static class Struct {
 		private final String label;
@@ -84,6 +87,35 @@ public class ToolBarEditor extends AbstractComponentEditor {
 
 	public ToolBarEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
+		try {
+			actions.add(new Action(Messages.ToolBarEditor_AddHandledToolItem, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/HandledToolItem.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
+				}
+			});
+			actions.add(new Action(Messages.ToolBarEditor_AddDirectToolItem, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/DirectToolItem.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false);
+				}
+			});
+			actions.add(new Action(Messages.ToolBarEditor_AddToolControl, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/ToolControl.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL, false);
+				}
+			});
+			actions.add(new Action(Messages.ToolBarEditor_AddToolBarSeparator, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/ToolBarSeparator.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true);
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -284,17 +316,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 					if (!childrenDropDown.getSelection().isEmpty()) {
 						Struct struct = (Struct) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
 						EClass eClass = struct.eClass;
-						MToolBarElement eObject = (MToolBarElement) EcoreUtil.create(eClass);
-						setElementId(eObject);
-
-						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
-
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-							if (!struct.separator) {
-								getEditor().setSelection(eObject);
-							}
-						}
+						handleAddChild(eClass, struct.separator);
 					}
 				}
 			});
@@ -336,5 +358,26 @@ public class ToolBarEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
+
+	protected void handleAddChild(EClass eClass, boolean separator) {
+		MToolBarElement eObject = (MToolBarElement) EcoreUtil.create(eClass);
+		setElementId(eObject);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			if (!separator) {
+				getEditor().setSelection(eObject);
+			}
+		}
 	}
 }

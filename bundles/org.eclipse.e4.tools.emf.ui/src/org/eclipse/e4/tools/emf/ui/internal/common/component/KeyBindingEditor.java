@@ -12,6 +12,8 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -44,6 +46,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -71,12 +74,24 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 	private EMFDataBindingContext context;
 	private IModelResource resource;
 	private EStackLayout stackLayout;
+	private List<Action> actions = new ArrayList<Action>();
 
 	private IEMFEditListProperty KEY_BINDING__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS);
 
 	public KeyBindingEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource) {
 		super(editingDomain, editor);
 		this.resource = resource;
+		try {
+			actions.add(new Action(Messages.KeyBindingEditor_AddParameter, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Parameter.png"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddParameter();
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -289,14 +304,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MKeyBinding item = (MKeyBinding) getMaster().getValue();
-				MParameter param = MCommandsFactory.INSTANCE.createParameter();
-				setElementId(param);
-
-				Command cmd = AddCommand.create(getEditingDomain(), item, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS, param);
-				if (cmd.canExecute()) {
-					getEditingDomain().getCommandStack().execute(cmd);
-				}
+				handleAddParameter();
 			}
 		});
 
@@ -364,5 +372,23 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 			return new Status(statusCode, "org.eclipse.e4.tools.emf.ui", Messages.KeyBindingEditor_SequenceEmpty); //$NON-NLS-1$
 		}
+	}
+
+	protected void handleAddParameter() {
+		MKeyBinding item = (MKeyBinding) getMaster().getValue();
+		MParameter param = MCommandsFactory.INSTANCE.createParameter();
+		setElementId(param);
+
+		Command cmd = AddCommand.create(getEditingDomain(), item, CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS, param);
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
 	}
 }

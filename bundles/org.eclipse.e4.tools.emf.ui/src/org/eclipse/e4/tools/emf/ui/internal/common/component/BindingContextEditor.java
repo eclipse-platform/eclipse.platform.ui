@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -36,6 +37,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -62,8 +64,21 @@ public class BindingContextEditor extends AbstractComponentEditor {
 	private EStackLayout stackLayout;
 	private IListProperty BINDING_CONTEXT__CHILDREN = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN);
 
+	private List<Action> actions = new ArrayList<Action>();
+
 	public BindingContextEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
+		try {
+			actions.add(new Action(Messages.BindingContextEditor_AddContext, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/BindingContext.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddContext();
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -241,16 +256,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MBindingContext eObject = MCommandsFactory.INSTANCE.createBindingContext();
-				setElementId(eObject);
-
-				Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN, eObject);
-
-				if (cmd.canExecute()) {
-					getEditingDomain().getCommandStack().execute(cmd);
-					getEditor().setSelection(eObject);
-
-				}
+				handleAddContext();
 			}
 		});
 
@@ -279,4 +285,23 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		return BINDING_CONTEXT__CHILDREN.observe(element);
 	}
 
+	protected void handleAddContext() {
+		MBindingContext eObject = MCommandsFactory.INSTANCE.createBindingContext();
+		setElementId(eObject);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN, eObject);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(eObject);
+
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
 }

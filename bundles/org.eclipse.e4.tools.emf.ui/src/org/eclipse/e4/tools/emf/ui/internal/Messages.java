@@ -57,6 +57,7 @@ public class Messages extends NLS {
 	public static String BindingTableEditor_Keybindings;
 	public static String BindingTableEditor_KeySequence;
 	public static String BindingTableEditor_Command;
+	public static String BindingTableEditor_AddKeyBinding;
 
 	public static String CommandEditor_Label;
 	public static String CommandEditor_Description;
@@ -70,6 +71,7 @@ public class Messages extends NLS {
 	public static String CommandEditor_ParameterOptional_Yes;
 	public static String CommandEditor_ParameterId;
 	public static String CommandEditor_Category;
+	public static String CommandEditor_AddCommandParameter;
 
 	public static String DirectMenuItemEditor_Label;
 	public static String DirectMenuItemEditor_Description;
@@ -112,6 +114,7 @@ public class Messages extends NLS {
 	public static String KeyBindingEditor_Parameters;
 	public static String KeyBindingEditor_SequenceNotComplete;
 	public static String KeyBindingEditor_SequenceEmpty;
+	public static String KeyBindingEditor_AddParameter;
 
 	public static String MenuEditor_Label;
 	public static String MenuEditor_Description;
@@ -179,12 +182,21 @@ public class Messages extends NLS {
 	public static String PartSashContainerEditor_SelectedElement;
 	public static String PartSashContainerEditor_Controls;
 	public static String PartSashContainerEditor_ContainerData;
+	public static String PartSashContainerEditor_AddPartSashContainer;
+	public static String PartSashContainerEditor_AddPartStack;
+	public static String PartSashContainerEditor_AddPart;
+	public static String PartSashContainerEditor_AddInputPart;
+	public static String PartSashContainerEditor_AddArea;
+	public static String PartSashContainerEditor_AddPlaceholder;
 
 	public static String PartStackEditor_Label;
 	public static String PartStackEditor_Description;
 	public static String PartStackEditor_SelectedElement;
 	public static String PartStackEditor_Parts;
 	public static String PartStackEditor_ContainerData;
+	public static String PartStackEditor_AddPart;
+	public static String PartStackEditor_AddInputPart;
+	public static String PartStackEditor_AddPlaceholder;
 
 	public static String PerspectiveEditor_Label;
 	public static String PerspectiveEditor_Description;
@@ -193,11 +205,18 @@ public class Messages extends NLS {
 	public static String PerspectiveEditor_Tooltip;
 	public static String PerspectiveEditor_IconURI;
 	public static String PerspectiveEditor_Controls;
+	public static String PerspectiveEditor_AddPartSashContainer;
+	public static String PerspectiveEditor_AddPartStack;
+	public static String PerspectiveEditor_AddPart;
+	public static String PerspectiveEditor_AddInputPart;
+	public static String PerspectiveEditor_AddArea;
+	public static String PerspectiveEditor_AddPlaceholder;
 
 	public static String PerspectiveStackEditor_Perspectives;
 	public static String PerspectiveStackEditor_Label;
 	public static String PerspectiveStackEditor_Description;
 	public static String PerspectiveStackEditor_SelectedElement;
+	public static String PerspectiveStackEditor_AddPerspective;
 
 	public static String PlaceholderEditor_Label;
 	public static String PlaceholderEditor_Descriptor;
@@ -212,6 +231,10 @@ public class Messages extends NLS {
 	public static String ToolBarEditor_DirectToolItem;
 	public static String ToolBarEditor_ToolControl;
 	public static String ToolBarEditor_Separator;
+	public static String ToolBarEditor_AddHandledToolItem;
+	public static String ToolBarEditor_AddDirectToolItem;
+	public static String ToolBarEditor_AddToolControl;
+	public static String ToolBarEditor_AddToolBarSeparator;
 
 	public static String ToolBarSeparatorEditor_Label;
 
@@ -284,6 +307,7 @@ public class Messages extends NLS {
 	public static String BindingContextEditor_Name;
 	public static String BindingContextEditor_Description;
 	public static String BindingContextEditor_Subcontexts;
+	public static String BindingContextEditor_AddContext;
 
 	public static String CommandParameterEditor_TreeLabel;
 	public static String CommandParameterEditor_TreeLabelDescritpion;
@@ -321,6 +345,8 @@ public class Messages extends NLS {
 	public static String TrimBarEditor_TreeLabelDescription;
 	public static String TrimBarEditor_Side;
 	public static String TrimBarEditor_Controls;
+	public static String TrimBarEditor_AddToolBar;
+	public static String TrimBarEditor_AddToolControl;
 
 	public static String TrimContributionEditor_TreeLabel;
 	public static String TrimContributionEditor_TreeLabelDescription;

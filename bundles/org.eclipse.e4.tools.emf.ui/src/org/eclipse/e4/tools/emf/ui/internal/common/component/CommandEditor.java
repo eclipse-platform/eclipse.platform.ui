@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -37,6 +38,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -62,11 +64,23 @@ public class CommandEditor extends AbstractComponentEditor {
 	private Image image;
 	private EMFDataBindingContext context;
 	private EStackLayout stackLayout;
+	private List<Action> actions = new ArrayList<Action>();
 
 	private IEMFEditListProperty COMMAND__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
 
 	public CommandEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
+		try {
+			actions.add(new Action(Messages.CommandEditor_AddCommandParameter, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/CommandParameter.png"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddCommandParameter();
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -296,15 +310,7 @@ public class CommandEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					MCommandParameter param = MCommandsFactory.INSTANCE.createCommandParameter();
-					setElementId(param);
-
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS, param);
-
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						getEditor().setSelection(param);
-					}
+					handleAddCommandParameter();
 				}
 			});
 
@@ -351,4 +357,22 @@ public class CommandEditor extends AbstractComponentEditor {
 		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME) };
 	}
 
+	protected void handleAddCommandParameter() {
+		MCommandParameter param = MCommandsFactory.INSTANCE.createCommandParameter();
+		setElementId(param);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS, param);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(param);
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
 }

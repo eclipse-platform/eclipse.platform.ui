@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -42,6 +43,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -73,10 +75,28 @@ public class TrimBarEditor extends AbstractComponentEditor {
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
+	private List<Action> actions = new ArrayList<Action>();
 
 	public TrimBarEditor(EditingDomain editingDomain, ModelEditor editor) {
 		super(editingDomain, editor);
 		this.editor = editor;
+		try {
+			actions.add(new Action(Messages.TrimBarEditor_AddToolBar, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Toolbar.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(MenuPackageImpl.Literals.TOOL_BAR);
+				}
+			});
+			actions.add(new Action(Messages.TrimBarEditor_AddToolControl, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/ToolControl.gif"))) { //$NON-NLS-1$
+				@Override
+				public void run() {
+					handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL);
+				}
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -284,15 +304,8 @@ public class TrimBarEditor extends AbstractComponentEditor {
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					EObject toolbar = EcoreUtil.create((EClass) ((IStructuredSelection) typeViewer.getSelection()).getFirstElement());
-					setElementId(toolbar);
-
-					Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, toolbar);
-
-					if (cmd.canExecute()) {
-						getEditingDomain().getCommandStack().execute(cmd);
-						editor.setSelection(toolbar);
-					}
+					EClass eClass = (EClass) ((IStructuredSelection) typeViewer.getSelection()).getFirstElement();
+					handleAddChild(eClass);
 				}
 			});
 
@@ -344,4 +357,22 @@ public class TrimBarEditor extends AbstractComponentEditor {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.GENERIC_TRIM_CONTAINER__SIDE), FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
 	}
 
+	protected void handleAddChild(EClass eClass) {
+		EObject toolbar = EcoreUtil.create(eClass);
+		setElementId(toolbar);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, toolbar);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			editor.setSelection(toolbar);
+		}
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
+	}
 }
