@@ -130,6 +130,10 @@ public class Messages extends NLS {
 	public static String MenuEditor_IconURI;
 	public static String MenuEditor_Children;
 	public static String MenuEditor_Mnemonics;
+	public static String MenuEditor_AddHandledMenuItem;
+	public static String MenuEditor_AddMenu;
+	public static String MenuEditor_AddDirectMenuItem;
+	public static String MenuEditor_AddSeparator;
 
 	public static String MenuItemEditor_Type;
 	public static String MenuItemEditor_Label;
@@ -548,14 +552,6 @@ public class Messages extends NLS {
 	public static String CoreExpressionEditor_TreeLabel;
 	public static String CoreExpressionEditor_TreeLabelDescription;
 	public static String CoreExpressionEditor_ExpressionId;
-
-	public static String VMenuElementsEditor_TreeLabel;
-	public static String VMenuElementsEditor_TreeLabelDescription;
-	public static String VMenuElementsEditor_Children;
-	public static String VMenuElementsEditor_AddHandledMenuItem;
-	public static String VMenuElementsEditor_AddMenu;
-	public static String VMenuElementsEditor_AddDirectMenuItem;
-	public static String VMenuElementsEditor_AddSeparator;
 
 	public static String ExpressionIdDialog_ShellTitle;
 	public static String ExpressionIdDialog_DialogTitle;

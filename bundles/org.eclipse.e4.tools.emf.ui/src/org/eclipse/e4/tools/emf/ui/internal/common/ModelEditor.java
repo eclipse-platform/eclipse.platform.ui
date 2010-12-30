@@ -101,7 +101,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEdi
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VItemParametersEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuContributionsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuElementsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelFragmentsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelImportsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
@@ -141,6 +140,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.CommandParameter;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -384,9 +384,16 @@ public class ModelEditor {
 						if (o.eContainer() != null) {
 							actions.add(new Action(Messages.ModelEditor_Delete, ImageDescriptor.createFromImage(removeIcon)) {
 								public void run() {
-									Command cmd = RemoveCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o.eContainer(), o.eContainingFeature(), o);
-									if (cmd.canExecute()) {
-										ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+									if (o.eContainingFeature().isMany()) {
+										Command cmd = RemoveCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o.eContainer(), o.eContainingFeature(), o);
+										if (cmd.canExecute()) {
+											ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+										}
+									} else {
+										Command cmd = SetCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o.eContainer(), o.eContainingFeature(), null);
+										if (cmd.canExecute()) {
+											ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
+										}
 									}
 								}
 							});
@@ -601,7 +608,6 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_MODEL_IMPORTS, new VModelImportsEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_CATEGORIES, new VApplicationCategoriesEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_PARAMETERS, new VItemParametersEditor(modelProvider.getEditingDomain(), this));
-		registerVirtualEditor(VIRTUAL_MENUELEMENTS, new VMenuElementsEditor(modelProvider.getEditingDomain(), this));
 		registerVirtualEditor(VIRTUAL_ROOT_CONTEXTS, new VRootBindingContexts(modelProvider.getEditingDomain(), this));
 	}
 
