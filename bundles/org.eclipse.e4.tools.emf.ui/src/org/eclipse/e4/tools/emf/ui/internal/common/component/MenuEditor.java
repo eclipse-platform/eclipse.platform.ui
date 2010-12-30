@@ -37,6 +37,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EObj
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIconDialogEditor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -495,6 +496,15 @@ public class MenuEditor extends AbstractComponentEditor {
 					@Override
 					public void handleRemove(int index, Object element) {
 						list.remove(element);
+					}
+
+					@Override
+					public void handleMove(int oldIndex, int newIndex, Object element) {
+						if (list.get(0) instanceof MExpression) {
+							oldIndex += 1;
+							newIndex += 1;
+						}
+						list.move(oldIndex, newIndex);
 					}
 
 					@Override
