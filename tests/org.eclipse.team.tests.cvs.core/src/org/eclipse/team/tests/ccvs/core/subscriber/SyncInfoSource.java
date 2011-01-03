@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -19,13 +21,19 @@ import junit.framework.AssertionFailedError;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.provider.Diff;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSSubscriberOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.ConfirmMergedOperation;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
@@ -44,7 +52,11 @@ public class SyncInfoSource {
 	protected List compareSubscribers = new ArrayList();
 	
 	public CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch) {
-		CVSMergeSubscriber subscriber = new CVSMergeSubscriber(new IResource[] { project }, root, branch);
+		return createMergeSubscriber(project, root, branch, false /*default*/);
+	}
+
+	public CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch, boolean isModelSync) {
+		CVSMergeSubscriber subscriber = new CVSMergeSubscriber(new IResource[] { project }, root, branch, isModelSync);
 		mergeSubscribers.add(subscriber);
 		return subscriber;
 	}

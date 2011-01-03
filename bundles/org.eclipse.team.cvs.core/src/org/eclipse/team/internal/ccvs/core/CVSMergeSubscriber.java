@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -119,9 +117,11 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	private List roots;
 	private CVSResourceVariantTree remoteTree;
 	private MergeBaseTree baseTree;
-	
-	public CVSMergeSubscriber(IResource[] roots, CVSTag start, CVSTag end) {		
+	private boolean isModelSync;
+
+	public CVSMergeSubscriber(IResource[] roots, CVSTag start, CVSTag end, boolean isModelSync) {		
 		this(getUniqueId(), roots, start, end);
+		this.isModelSync = isModelSync;
 	}
 
 	private static QualifiedName getUniqueId() {
@@ -212,6 +212,10 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 	
 	public CVSTag getEndTag() {
 		return end;
+	}
+
+	boolean isModelSync() {
+		return isModelSync;
 	}
 
 	/*

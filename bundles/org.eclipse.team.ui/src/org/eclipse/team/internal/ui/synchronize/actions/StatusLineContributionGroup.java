@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionGroup;
 
@@ -78,9 +78,11 @@ public abstract class StatusLineContributionGroup extends ActionGroup {
 
 	protected void updateCounts() {
 		final int total = getChangeCount();
-		final int workspaceConflicting = countFor(SyncInfo.CONFLICTING);
-		final int workspaceOutgoing = countFor(SyncInfo.OUTGOING);
-		final int workspaceIncoming = countFor(SyncInfo.INCOMING);
+		int supportedModes = configuration.getSupportedModes();
+		// count changes only if the given mode is supported
+		final int workspaceConflicting = ((supportedModes & ISynchronizePageConfiguration.CONFLICTING_MODE) != 0) ? countFor(SyncInfo.CONFLICTING) : 0;
+		final int workspaceOutgoing = ((supportedModes & ISynchronizePageConfiguration.OUTGOING_MODE) != 0) ? countFor(SyncInfo.OUTGOING) : 0;
+		final int workspaceIncoming = ((supportedModes & ISynchronizePageConfiguration.INCOMING_MODE) != 0) ? countFor(SyncInfo.INCOMING) : 0; 
 
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -89,9 +91,9 @@ public abstract class StatusLineContributionGroup extends ActionGroup {
 					incoming.setText(new Integer(workspaceIncoming).toString()); 
 					outgoing.setText(new Integer(workspaceOutgoing).toString()); 
 
-					conflicting.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_conflicting })); // 
-					outgoing.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_outgoing })); // 
-					incoming.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_incoming })); // 
+					conflicting.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_conflicting }));
+					outgoing.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_outgoing }));
+					incoming.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_incoming })); 
 				} else {
 					if (total == 1) {
 						totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalSingular, new String[] { Integer.toString(total) })); 

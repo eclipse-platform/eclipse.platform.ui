@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,9 @@ package org.eclipse.team.internal.ccvs.core;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.*;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.core.variants.*;
+import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.variants.IResourceVariant;
 
 public class CVSMergeSyncInfo extends CVSSyncInfo {
 
@@ -35,18 +35,18 @@ public class CVSMergeSyncInfo extends CVSSyncInfo {
 	}
 
 	protected int calculateKind() throws TeamException {
-		// Report merged resources as in-sync
-		if (((CVSMergeSubscriber)getSubscriber()).isMerged(getLocal())) {
-			return IN_SYNC;
-		}
-		
 		int kind = super.calculateKind();
-		
-		// Report outgoing resources as in-sync
-		if((kind & DIRECTION_MASK) == OUTGOING) {
+
+		// Report merged resources as in-sync
+		if ((kind & DIRECTION_MASK) == INCOMING && ((CVSMergeSubscriber)getSubscriber()).isMerged(getLocal())) {
 			return IN_SYNC;
 		}
-		
+
+		// Report outgoing resources as in-sync when models are not shown
+		if((kind & DIRECTION_MASK) == OUTGOING && !((CVSMergeSubscriber)getSubscriber()).isModelSync()) {
+			return IN_SYNC;
+		}
+
 		return kind;
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -76,7 +73,7 @@ public class MergeWizard extends Wizard {
 			if (isShowModelSync()) {
 				ModelMergeParticipant participant = ModelMergeParticipant.getMatchingParticipant(mappings, startTag, endTag);
 				if(participant == null) {
-			    	CVSMergeSubscriber s = new CVSMergeSubscriber(getProjects(resources), startTag, endTag);
+			    	CVSMergeSubscriber s = new CVSMergeSubscriber(getProjects(resources), startTag, endTag, true);
 			    	try {
 						new ModelMergeOperation(getPart(), mappings, s, page.isOnlyPreviewConflicts()).run();
 					} catch (InvocationTargetException e) {
@@ -97,7 +94,7 @@ public class MergeWizard extends Wizard {
 	            }
 				MergeSynchronizeParticipant participant = MergeSynchronizeParticipant.getMatchingParticipant(resources, startTag, endTag);
 				if(participant == null) {
-					CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag);
+					CVSMergeSubscriber s = new CVSMergeSubscriber(resources, startTag, endTag, false);
 					participant = new MergeSynchronizeParticipant(s);
 					TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 				}
@@ -112,7 +109,7 @@ public class MergeWizard extends Wizard {
         // Only do the extra work if the model is a logical model (i.e. not IResource)
         if (!WorkspaceTraversalAction.isLogicalModel(mappings))
             return resources;
-        CVSMergeSubscriber s = new CVSMergeSubscriber(WorkspaceTraversalAction.getProjects(resources), startTag, endTag);
+        CVSMergeSubscriber s = new CVSMergeSubscriber(WorkspaceTraversalAction.getProjects(resources), startTag, endTag, false);
         IResource[] allResources = WorkspaceTraversalAction.getResourcesToCompare(mappings, s);
         s.cancel();
         return allResources;
