@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,17 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import com.ibm.icu.text.Collator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -277,8 +280,17 @@ public class ReplaceRefactoring extends Refactoring {
 
 		RefactoringStatus resultingStatus= new RefactoringStatus();
 
-		Collection allFiles= fMatches.keySet();
-		checkFilesToBeChanged((IFile[]) allFiles.toArray(new IFile[allFiles.size()]), resultingStatus);
+		Collection allFilesSet= fMatches.keySet();
+		IFile[] allFiles= (IFile[]) allFilesSet.toArray(new IFile[allFilesSet.size()]);
+		Arrays.sort(allFiles, new Comparator() {
+			private Collator fCollator= Collator.getInstance();
+			public int compare(Object o1, Object o2) {
+				String p1= ((IFile) o1).getFullPath().toString();
+				String p2= ((IFile) o2).getFullPath().toString();
+				return fCollator.compare(p1, p2);
+			}
+		});
+		checkFilesToBeChanged(allFiles, resultingStatus);
 		if (resultingStatus.hasFatalError()) {
 			return resultingStatus;
 		}
@@ -289,10 +301,9 @@ public class ReplaceRefactoring extends Refactoring {
 		ArrayList matchGroups= new ArrayList();
 		boolean hasChanges= false;
 		try {
-			for (Iterator iterator= fMatches.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry entry= (Map.Entry) iterator.next();
-				IFile file= (IFile) entry.getKey();
-				Collection bucket= (Collection) entry.getValue();
+			for (int i= 0; i < allFiles.length; i++) {
+				IFile file= allFiles[i];
+				Collection bucket= (Collection) fMatches.get(file);
 				if (!bucket.isEmpty()) {
 					try {
 						TextChange change= createFileChange(file, pattern, bucket, resultingStatus, matchGroups);
