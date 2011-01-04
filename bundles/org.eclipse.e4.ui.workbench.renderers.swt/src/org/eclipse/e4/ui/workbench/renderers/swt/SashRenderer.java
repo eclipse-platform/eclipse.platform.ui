@@ -21,6 +21,8 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -97,9 +99,19 @@ public class SashRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(sashWeightHandler);
 	}
 
-	public Object createWidget(MUIElement element, Object parent) {
+	public Object createWidget(final MUIElement element, Object parent) {
 		if (element.getParent() != null) {
 			Rectangle newRect = new Rectangle(0, 0, 0, 0);
+
+			// If my layout's container gets disposed 'unbind' the sash elements
+			if (parent instanceof Composite) {
+				((Composite) parent).addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						element.setWidget(null);
+						element.setRenderer(null);
+					}
+				});
+			}
 			return newRect;
 		}
 
