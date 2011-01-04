@@ -36,10 +36,10 @@ public class ProjectPreferences extends EclipsePreferences {
 
 	class SortedProperties extends Properties {
 
-		class IteratorWrapper implements Enumeration {
-			Iterator iterator;
+		class IteratorWrapper implements Enumeration<Object> {
+			Iterator<Object> iterator;
 
-			public IteratorWrapper(Iterator iterator) {
+			public IteratorWrapper(Iterator<Object> iterator) {
 				this.iterator = iterator;
 			}
 
@@ -57,9 +57,9 @@ public class ProjectPreferences extends EclipsePreferences {
 		/* (non-Javadoc)
 		 * @see java.util.Hashtable#keys()
 		 */
-		public synchronized Enumeration keys() {
-			TreeSet set = new TreeSet();
-			for (Enumeration e = super.keys(); e.hasMoreElements();)
+		public synchronized Enumeration<Object> keys() {
+			TreeSet<Object> set = new TreeSet<Object>();
+			for (Enumeration<Object> e = super.keys(); e.hasMoreElements();)
 				set.add(e.nextElement());
 			return new IteratorWrapper(set.iterator());
 		}
@@ -70,7 +70,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	/**
 	 * Cache which nodes have been loaded from disk
 	 */
-	protected static Set loadedNodes = Collections.synchronizedSet(new HashSet());
+	protected static Set<String> loadedNodes = Collections.synchronizedSet(new HashSet<String>());
 	private IFile file;
 	private boolean initialized = false;
 	/**
@@ -274,8 +274,8 @@ public class ProjectPreferences extends EclipsePreferences {
 	private static void removeLoadedNodes(Preferences node) {
 		String path = node.absolutePath();
 		synchronized (loadedNodes) {
-			for (Iterator i = loadedNodes.iterator(); i.hasNext();) {
-				String key = (String) i.next();
+			for (Iterator<String> i = loadedNodes.iterator(); i.hasNext();) {
+				String key = i.next();
 				if (key.startsWith(path))
 					i.remove();
 			}
@@ -376,13 +376,13 @@ public class ProjectPreferences extends EclipsePreferences {
 		} catch (CoreException e) {
 			return EMPTY_STRING_ARRAY;
 		}
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 		for (int i = 0; i < members.length; i++) {
 			IResource resource = members[i];
 			if (resource.getType() == IResource.FILE && PREFS_FILE_EXTENSION.equals(resource.getFullPath().getFileExtension()))
 				result.add(resource.getFullPath().removeFileExtension().lastSegment());
 		}
-		return (String[]) result.toArray(EMPTY_STRING_ARRAY);
+		return result.toArray(EMPTY_STRING_ARRAY);
 	}
 
 	public void flush() throws BackingStoreException {
