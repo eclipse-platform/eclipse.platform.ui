@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,19 +20,38 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.ui.subscriber.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
+import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
+import org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.internal.ui.synchronize.AbstractSynchronizeModelProvider;
+import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeModelManager;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
+import org.eclipse.team.internal.ui.synchronize.TreeViewerAdvisor;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeManager;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.WorkspaceScope;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPage;
@@ -153,8 +172,8 @@ public class SubscriberParticipantSyncInfoSource extends ParticipantSyncInfoSour
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource#createMergeSubscriber(org.eclipse.core.resources.IProject, org.eclipse.team.internal.ccvs.core.CVSTag, org.eclipse.team.internal.ccvs.core.CVSTag)
 	 */
-	public CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch) {
-		CVSMergeSubscriber mergeSubscriber = super.createMergeSubscriber(project, root, branch);
+	public CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch, boolean isModelSync) {
+		CVSMergeSubscriber mergeSubscriber = super.createMergeSubscriber(project, root, branch, isModelSync);
 		SubscriberParticipant participant = new MergeSynchronizeParticipant(mergeSubscriber);
 		showParticipant(participant);
 		return mergeSubscriber;

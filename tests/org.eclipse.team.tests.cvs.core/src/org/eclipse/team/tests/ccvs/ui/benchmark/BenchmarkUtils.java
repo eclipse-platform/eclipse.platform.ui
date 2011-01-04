@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -333,12 +333,17 @@ public class BenchmarkUtils {
 	 * @param count the number of files to create
 	 * @param meanSize the mean size of file to create (in bytes)
 	 * @param probBinary the probability of a new file being binary as a percentage
+	 * @return the created files
+	 * @throws IOException
+	 * @throws CoreException
 	 */
-	public static void createRandomDeepFiles(SequenceGenerator gen, IContainer root, int count,
+	public static IFile[] createRandomDeepFiles(SequenceGenerator gen, IContainer root, int count,
 		int meanSize, int variance, int probBinary) throws IOException, CoreException  {
+		IFile[] files = new IFile[count];
 		while (count-- > 0) {
-			createUniqueFile(gen, pickRandomDeepContainer(gen, root), meanSize, variance, probBinary);
+			files[count] = createUniqueFile(gen, pickRandomDeepContainer(gen, root), meanSize, variance, probBinary);
 		}
+		return files;
 	}
 
 	/**
