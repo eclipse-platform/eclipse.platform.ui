@@ -69,6 +69,20 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUIConstants {
 
+	
+	public class SearchScopeObserver implements Observer {
+
+		public void update(Observable arg0, Object arg1) {
+			ScopeSet set = scopeSetManager.getActiveSet();
+			scopeSetLink.setText(set.getName());
+			scopeSetManager.setActiveSet(set);
+			scopeSection.layout();
+			if (parent != null)
+				parent.reflow();
+		}
+
+	}
+
 	private ReusableHelpPart parent;
 
 	protected static java.util.List previousSearchQueryData = new java.util.ArrayList(20);
@@ -122,6 +136,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	private JobListener jobListener;
 
 	private boolean searchPending;
+
+	private SearchScopeObserver scopeObserver;
 
 	private class JobListener implements IJobChangeListener, Runnable {
 
@@ -182,7 +198,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	 */
 	public SearchPart(final Composite parent, FormToolkit toolkit) {
 		container = toolkit.createComposite(parent);
-		scopeSetManager = new ScopeSetManager();
+		scopeSetManager = ScopeState.getInstance().getScopeSetManager();
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
@@ -277,6 +293,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		filteringGroup.setLayout(flayout);
 		createScopeSet(scopeSection, toolkit);
 		toolkit.paintBordersFor(filteringGroup);
+		scopeObserver = new SearchScopeObserver();
+		scopeSetManager.addObserver(scopeObserver);
 	}
 	
 	private void createSearchExpressionSection(FormToolkit toolkit) {
@@ -627,15 +645,17 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	
 	private void doChangeScopeSet() {
 		ScopeSetDialog dialog = new ScopeSetDialog(container.getShell(), scopeSetManager, parent
-				.getEngineManager());
+				.getEngineManager(), false);
 		dialog.setInput(scopeSetManager);
 		dialog.create();
 		dialog.getShell().setText(Messages.ScopeSetDialog_wtitle);
 		if (dialog.open() == ScopeSetDialog.OK) {
 			ScopeSet set = dialog.getActiveSet();
-			if (set != null)
+			if (set != null) {
 				setActiveScopeSet(set);
+			}
 			scopeSetManager.save();
+			scopeSetManager.notifyObservers();
 		}
 	}
 
@@ -647,6 +667,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			parent.getEngineManager().deleteObserver(engineObserver);
 			engineObserver = null;
 		}
+
+		if (scopeObserver != null) {
+			ScopeState.getInstance().getScopeSetManager().deleteObserver(scopeObserver);
+		}
+
 		Job.getJobManager().removeJobChangeListener(jobListener);
 		stop();
 		super.dispose();

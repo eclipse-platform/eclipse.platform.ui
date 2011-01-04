@@ -192,10 +192,6 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 			treeViewer.removeFilter(roleFilter);
 	}
 
-	public void refilter() {
-		treeViewer.refresh();
-	}
-
 	private Object[] getChildren(IIndexEntry entry) {
 		/*
 		 * Index entry has two types of children: topics and subentries.

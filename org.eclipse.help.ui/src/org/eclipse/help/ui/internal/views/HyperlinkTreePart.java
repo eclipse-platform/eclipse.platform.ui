@@ -10,7 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.util.Observable;
+import java.util.Observer;
+
 import org.eclipse.help.*;
+import org.eclipse.help.base.AbstractHelpScope;
+import org.eclipse.help.internal.base.scope.ScopeUtils;
+import org.eclipse.help.internal.base.scope.WorkingSetScope;
+import org.eclipse.help.internal.search.federated.LocalHelpScope;
+import org.eclipse.help.internal.workingset.WorkingSet;
+import org.eclipse.help.search.ISearchScope;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -28,6 +37,42 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 
 public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		IHelpPart {
+	
+	public class ScopeObserver implements Observer {
+
+		public void update(Observable o, Object arg) {
+			if (o instanceof ScopeSetManager) {
+				refilter();
+			}
+		}
+	}
+	
+	private class ScopeFilter extends ViewerFilter {
+		
+		public ScopeFilter(AbstractHelpScope scope) {
+			this.scope = scope;
+		}
+		
+		AbstractHelpScope scope;
+
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			if (element instanceof IToc) {
+				return ScopeUtils.showInTree((IToc)element, scope);
+			}
+			if (element instanceof ITopic) {
+				return ScopeUtils.showInTree((ITopic)element, scope);
+			}
+			if (element instanceof IIndexEntry) {
+				return ScopeUtils.showInTree((IIndexEntry)element, scope);
+			}
+			if (element instanceof IIndexSee) {
+				return ScopeUtils.showInTree((IIndexSee)element, scope);
+			}
+			return true;
+		}
+		
+	}
+
 	protected ReusableHelpPart parent;
 
 	private String id;
@@ -39,6 +84,8 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	private TreeItem lastItem;
 
 	private Cursor handCursor;
+
+	private ScopeObserver scopeObserver;
 
 	/**
 	 * @param parent
@@ -181,11 +228,16 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 				treeViewer.getTree().setCursor(null);
 			}
 		});
-		contributeToToolBar(tbm);
+		contributeToToolBar(tbm);	
+		scopeObserver = new ScopeObserver();
+		ScopeState.getInstance().getScopeSetManager().addObserver(scopeObserver);
 	}
 
 	public void dispose() {
 		handCursor.dispose();
+		if (scopeObserver != null) {
+			ScopeState.getInstance().getScopeSetManager().deleteObserver(scopeObserver);
+		}
 		super.dispose();
 	}
 
@@ -236,6 +288,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.parent = parent;
 		this.id = id;
+	    refilter();
 	}
 
 	public String getId() {
@@ -355,5 +408,28 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	private void validateLastItem() {
 		if (lastItem != null && lastItem.isDisposed())
 			lastItem = null;
+	}
+	
+	public void refilter() {
+		ScopeSetManager manager = ScopeState.getInstance().getScopeSetManager();
+		ScopeSet set = manager.getActiveSet();
+		EngineDescriptor[] engineDescriptors = parent.getEngineManager().getDescriptors();
+		ISearchScope scope = null;
+		for (int i = 0; i < engineDescriptors.length; i++) {
+			final EngineDescriptor ed = engineDescriptors[i];
+			if (ed.getEngineTypeId().equals("org.eclipse.help.ui.localSearch") //$NON-NLS-1$
+					&& set.getEngineEnabled(ed) && ed.getEngine() != null) {
+				scope = ed.createSearchScope(set.getPreferenceStore());
+			}
+		}
+		WorkingSet workingSet = null;
+		LocalHelpScope localScope = (LocalHelpScope) scope;
+		workingSet = localScope.getWorkingSet() ;
+		treeViewer.resetFilters();
+		if (workingSet != null) {
+			WorkingSetScope helpScope = new WorkingSetScope(workingSet, set.getName());
+		    treeViewer.addFilter(new ScopeFilter(helpScope));
+		}
+		treeViewer.refresh();
 	}
 }

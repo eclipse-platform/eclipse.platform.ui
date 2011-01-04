@@ -442,4 +442,11 @@ public class LocalHelpPage extends RootScopePage {
 		}
 		super.performDefaults();
 	}
+	
+	protected Label createDescriptionLabel(Composite parent) {
+		if ( getContainer() == null ) {
+			return null;
+		}
+		return super.createDescriptionLabel(parent);
+	}
 }

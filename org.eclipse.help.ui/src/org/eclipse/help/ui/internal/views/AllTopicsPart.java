@@ -274,10 +274,6 @@ public class AllTopicsPart extends HyperlinkTreePart implements IHelpPart {
 			treeViewer.removeFilter(parent.getRoleFilter());
 	}
 
-	public void refilter() {
-		treeViewer.refresh();
-	}
-
 	public void saveState(IMemento memento) {
 	}
 }

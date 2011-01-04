@@ -47,6 +47,7 @@ public final class Messages extends NLS {
 	public static String expression;
 	public static String expression_label;
 	public static String limit_to;
+	public static String ScopeSelect_scope;
 	public static String SeeAlsoPart_search;
 	public static String SeeAlsoPart_allTopics;
 	public static String SeeAlsoPart_goto;

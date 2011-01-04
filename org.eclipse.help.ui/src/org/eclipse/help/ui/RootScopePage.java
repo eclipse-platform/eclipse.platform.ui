@@ -53,6 +53,10 @@ public abstract class RootScopePage extends PreferencePage implements
 
 	private Hashtable disabledStates = new Hashtable();
 
+	private Label spacer;
+
+	private Composite contentContainer;
+
 	/**
 	 * The default constructor.
 	 */
@@ -82,64 +86,68 @@ public abstract class RootScopePage extends PreferencePage implements
 		initializeDefaults(getPreferenceStore());
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 	     "org.eclipse.help.ui.searchScope"); //$NON-NLS-1$
-		Composite container = new Composite(parent, SWT.NULL);
+		contentContainer = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
+		GridData gd;
 		//if (ed.isUserDefined())
-			layout.numColumns = 2;
-		container.setLayout(layout);
-		masterButton = new Button(container, SWT.CHECK);
-		masterButton.setText(Messages.RootScopePage_masterButton); 
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;//ed.isUserDefined() ? 2 : 1;
-		masterButton.setLayoutData(gd);
-		Label spacer = new Label(container, SWT.NULL);
-		gd = new GridData();
-		gd.horizontalSpan = 2;//ed.isUserDefined() ? 2 : 1;
-		spacer.setLayoutData(gd);
-		boolean masterValue = getPreferenceStore().getBoolean(
-				ScopeSet.getMasterKey(ed.getId()));
-		masterButton.setSelection(masterValue);
-		masterButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				masterValueChanged(masterButton.getSelection());
-			}
-		});
-		//if (ed.isUserDefined()) {
-			Label label = new Label(container, SWT.NULL);
+		layout.numColumns = 2;
+		contentContainer.setLayout(layout);		
+		if (isInPreferenceDialog()) {
+			masterButton = new Button(contentContainer, SWT.CHECK);
+			masterButton.setText(Messages.RootScopePage_masterButton);
+			gd = new GridData();
+			gd.horizontalSpan = 2;// ed.isUserDefined() ? 2 : 1;
+			masterButton.setLayoutData(gd);
+
+			spacer = new Label(contentContainer, SWT.NULL);
+			gd = new GridData();
+			gd.horizontalSpan = 2;// ed.isUserDefined() ? 2 : 1;
+			spacer.setLayoutData(gd);
+			boolean masterValue = getPreferenceStore().getBoolean(ScopeSet.getMasterKey(ed.getId()));
+			masterButton.setSelection(masterValue);
+			masterButton.addSelectionListener(new SelectionAdapter() {
+
+				public void widgetSelected(SelectionEvent e) {
+					masterValueChanged(masterButton.getSelection());
+				}
+			});
+
+			Label label = new Label(contentContainer, SWT.NULL);
 			label.setText(Messages.RootScopePage_name);
-			labelText = new Text(container, SWT.BORDER);
+			labelText = new Text(contentContainer, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.widthHint = 200;
 			labelText.setLayoutData(gd);
 			labelText.setEditable(ed.isUserDefined());
-			label = new Label(container, SWT.NULL);
+			label = new Label(contentContainer, SWT.NULL);
 			label.setText(Messages.RootScopePage_desc);
 			gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 			label.setLayoutData(gd);
-			descText = new Text(container, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+			descText = new Text(contentContainer, SWT.BORDER | SWT.MULTI | SWT.WRAP);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			descText.setEditable(ed.isUserDefined());
 			gd.widthHint = 200;
 			gd.heightHint = 48;
 			descText.setLayoutData(gd);
-		//}
-		int ccol = createScopeContents(container);
+		}
+
+		int ccol = createScopeContents(contentContainer);
 		// adjust number of columns if needed
-		if (ccol > layout.numColumns) {
+		if (ccol > layout.numColumns && isInPreferenceDialog()) {
 			layout.numColumns = ccol;
 			gd = (GridData) masterButton.getLayoutData();
 			gd.horizontalSpan = layout.numColumns;
 			gd = (GridData) spacer.getLayoutData();
 			gd.horizontalSpan = layout.numColumns;
-			//if (ed.isUserDefined()) {
-				gd = (GridData) labelText.getLayoutData();
-				gd.horizontalSpan = layout.numColumns - 1;
-				gd = (GridData) descText.getLayoutData();
-				gd.horizontalSpan = layout.numColumns - 1;
-			//}
+
+			gd = (GridData) labelText.getLayoutData();
+			gd.horizontalSpan = layout.numColumns - 1;
+			gd = (GridData) descText.getLayoutData();
+			gd.horizontalSpan = layout.numColumns - 1;
+
 		}
 		updateControls(true);
-		return container;
+		return contentContainer;
 	}
 
 	/**
@@ -157,8 +165,7 @@ public abstract class RootScopePage extends PreferencePage implements
 	}
 
 	private void updateEnableState(boolean enabled) {
-		Composite container = masterButton.getParent();
-		Control[] children = container.getChildren();
+		Control[] children = contentContainer.getChildren();
 
 		boolean first = disabledStates.isEmpty();
 		for (int i = 0; i < children.length; i++) {
@@ -206,6 +213,9 @@ public abstract class RootScopePage extends PreferencePage implements
 	 */
 
 	protected boolean isEngineEnabled() {
+		if (!isInPreferenceDialog()) {
+			return true;
+		}
 		return masterButton.getSelection();
 	}
 
@@ -219,7 +229,7 @@ public abstract class RootScopePage extends PreferencePage implements
 
 	public boolean performOk() {
 		getPreferenceStore().setValue(ScopeSet.getMasterKey(ed.getId()),
-				masterButton.getSelection());
+				isEngineEnabled());
 		if (labelText != null) {
 			ed.setLabel(labelText.getText());
 			ed.setDescription(descText.getText());
@@ -238,16 +248,22 @@ public abstract class RootScopePage extends PreferencePage implements
 	}
 
 	private void updateControls(boolean first) {
-		boolean value = getPreferenceStore().getBoolean(
-				ScopeSet.getMasterKey(ed.getId()));
-		boolean cvalue = masterButton.getSelection();
-		if (value != cvalue) {
-			masterButton.setSelection(value);
-			masterValueChanged(value);
-		} else if (first)
-			masterValueChanged(value);
-		labelText.setText(ed.getLabel());
-		descText.setText(ed.getDescription());
+		if (isInPreferenceDialog()) {
+			boolean value = getPreferenceStore().getBoolean(ScopeSet.getMasterKey(ed.getId()));
+			boolean cvalue = masterButton.getSelection();
+			if (value != cvalue) {
+				masterButton.setSelection(value);
+				masterValueChanged(value);
+			} else if (first) {
+				masterValueChanged(value);
+			}
+			labelText.setText(ed.getLabel());
+			descText.setText(ed.getDescription());
+		}
+	}
+
+	private boolean isInPreferenceDialog() {
+		return getContainer() != null;
 	}
 
 	/**

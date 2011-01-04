@@ -12,6 +12,7 @@ package org.eclipse.help.ui.internal.views;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Observable;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
@@ -20,7 +21,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 /**
  * Manages the scope for the federated search.
  */
-public class ScopeSetManager {
+public class ScopeSetManager extends Observable {
 	private ScopeSet activeSet;
 
 	private ScopeSet lastExplicitSet;
@@ -38,11 +39,13 @@ public class ScopeSetManager {
 
 	public void add(ScopeSet set) {
 		sets.add(set);
+		setChanged();
 	}
 
 	public void remove(ScopeSet set) {
 		sets.remove(set);
 		set.dispose();
+		setChanged();
 	}
 
 	public void setActiveSet(ScopeSet set) {
@@ -52,12 +55,14 @@ public class ScopeSetManager {
 		this.activeSet = set;
 		if (!activeSet.isImplicit())
 			lastExplicitSet = set;
+		setChanged();
 	}
 
 	public boolean restoreLastExplicitSet() {
 		if (activeSet != null && activeSet.isImplicit()
 				&& lastExplicitSet != null) {
 			setActiveSet(lastExplicitSet);
+			setChanged();
 			return true;
 		}
 		return false;

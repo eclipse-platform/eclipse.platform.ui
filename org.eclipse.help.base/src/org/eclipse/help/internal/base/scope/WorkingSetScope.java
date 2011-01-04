@@ -38,15 +38,20 @@ public class WorkingSetScope extends AbstractHelpScope {
 	
 	private static final String UNCATEGORIZED = "Uncategorized"; //$NON-NLS-1$
 	
-	private IHelpWorkingSetManager wSetManager;
 	private WorkingSet workingSet;
 	private AdaptableHelpResource[] elements;
 	private CriterionResource[] criteria;
 	private String name;
-	
+
 	public WorkingSetScope(String scope, IHelpWorkingSetManager manager, String name) {
-		wSetManager = manager;
-		workingSet = wSetManager.getWorkingSet(scope); 
+		workingSet = manager.getWorkingSet(scope); 
+		elements = workingSet.getElements();
+		criteria = workingSet.getCriteria();
+		this.name = name;
+	}
+	
+	public WorkingSetScope(WorkingSet wset, String name) {
+		workingSet = wset;
 		elements = workingSet.getElements();
 		criteria = workingSet.getCriteria();
 		this.name = name;

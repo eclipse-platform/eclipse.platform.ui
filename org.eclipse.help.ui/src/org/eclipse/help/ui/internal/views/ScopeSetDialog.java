@@ -99,6 +99,7 @@ public class ScopeSetDialog extends TrayDialog  {
     private int heightInChars = 15;
 	private ScopeSet initialSelection;
 	private Object[] result;
+	private boolean localOnly;
 	
 	private abstract class PendingOperation {
 		ScopeSet set;
@@ -198,11 +199,12 @@ public class ScopeSetDialog extends TrayDialog  {
 	/**
 	 * @param parent
 	 */
-	public ScopeSetDialog(Shell parent, ScopeSetManager manager, EngineDescriptorManager descManager) {
+	public ScopeSetDialog(Shell parent, ScopeSetManager manager, EngineDescriptorManager descManager, boolean localOnly) {
 		super(parent);
 		this.manager = manager;
 		this.descManager = descManager;
 		this.sets = extractSets(manager.getScopeSets(false));
+		this.localOnly = localOnly;
 		contentProvider = new ScopeContentProvider();
 		labelProvider = new ScopeLabelProvider();
 		setInitialSelections( manager.getActiveSet());
@@ -392,13 +394,22 @@ public class ScopeSetDialog extends TrayDialog  {
 	private void doEdit() {
 		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
-		if (set!=null) {
-			PreferenceManager manager = new ScopePreferenceManager(descManager, set);
-			PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, descManager, set.isEditable());
+		if (set==null) {
+			return;
+		}
+		PreferenceManager manager = new ScopePreferenceManager(descManager, set);
+		
+		if (!localOnly) { 
+		    PreferenceDialog dialog = new ScopePreferenceDialog(getShell(), manager, descManager, set.isEditable());
 			dialog.setPreferenceStore(set.getPreferenceStore());
 			dialog.create();
 			dialog.getShell().setText(NLS.bind(Messages.ScopePreferenceDialog_wtitle, set.getName()));
 			dialog.open();
+		} else {
+			LocalScopeDialog localDialog = new LocalScopeDialog(getShell(), manager, descManager, set); 
+			localDialog.create();
+			localDialog.getShell().setText(NLS.bind(Messages.ScopePreferenceDialog_wtitle, set.getName()));
+			localDialog.open();
 		}
 	}
 

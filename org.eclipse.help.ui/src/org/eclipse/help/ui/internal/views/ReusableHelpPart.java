@@ -753,6 +753,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				IHelpUIConstants.IMAGE_ALL_TOPICS); 
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
+		page.addPart(HV_SCOPE_SELECT, false);
 		page.addPart(HV_TOPIC_TREE, true);
 		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
@@ -790,6 +791,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				Messages.ReusableHelpPart_indexPage_name,
 				IHelpUIConstants.IMAGE_INDEX); 
 		page.setVerticalSpacing(0);
+		page.addPart(HV_SCOPE_SELECT, false);
 		page.addPart(HV_INDEX_TYPEIN, false);
 		page.addPart(HV_INDEX, true);
 		page.addPart(HV_SEE_ALSO, false);
@@ -1169,6 +1171,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			part = new DynamicHelpPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH_RESULT)) {
 			part = new SearchResultsPart(parent, mform.getToolkit(), tbm);
+		} else if (id.equals(HV_SCOPE_SELECT)) {
+			part = new ScopeSelectPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_SEE_ALSO)) {
 			part = new SeeAlsoPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH)) {

@@ -76,10 +76,12 @@ public interface IHelpUIConstants {
 	public static final String HV_INDEX = "index"; //$NON-NLS-1$
 	public static final String HV_INDEX_TYPEIN = "index-typein"; //$NON-NLS-1$
 	public static final String HV_INDEX_PAGE = "index-page"; //$NON-NLS-1$
+	public static final String HV_SCOPE_SELECT = "scope-select"; //$NON-NLS-1$
 
 	static final String ENGINE_EXP_ID = "org.eclipse.help.ui.searchEngine"; //$NON-NLS-1$
 	static final String TAG_ENGINE = "engine"; //$NON-NLS-1$
 	static final String ATT_ID = "id"; //$NON-NLS-1$
+	
 	static final String ATT_LABEL ="label"; //$NON-NLS-1$
 	static final String ATT_ICON = "icon";//$NON-NLS-1$
 	static final String ATT_CLASS = "class";//$NON-NLS-1$
