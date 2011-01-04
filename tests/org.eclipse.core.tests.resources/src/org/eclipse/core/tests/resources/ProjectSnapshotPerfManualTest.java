@@ -7,18 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Francis Lynch (Wind River) - [301563] adapted from RefreshLocalPerformanceTest
+ *     Francis Lynch (Wind River) - [301563] adapted from RefreshLocalPerformanceTest
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Date;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.PerformanceTestRunner;
 
 /**
  * Measure speed of a project "Import with Snapshot" operation compared
@@ -31,19 +30,16 @@ import org.eclipse.core.runtime.Path;
  */
 public class ProjectSnapshotPerfManualTest extends ResourceTest {
 	/** big site default volume (windows) */
-	public static final String bigSiteDevice = "d:";
+	public static final String bigSiteDevice = "c:";
 
 	/** big site initial location. Modify to suit your needs */
-	public static final IPath bigSiteLocation = new Path(bigSiteDevice, "/bigsite");
+	public static final IPath bigSiteLocation = new Path(bigSiteDevice, "/test");
 
 	/** settings directory name */
 	private static final String DIR_NAME = ".settings";
 
 	/** location of refresh snapshot file */
 	private static final String REFRESH_SNAPSHOT_FILE_LOCATION = ".settings/resource-index.zip";
-
-	/** benchmark */
-	public Date startDate;
 
 	public ProjectSnapshotPerfManualTest() {
 		super();
@@ -67,19 +63,6 @@ public class ProjectSnapshotPerfManualTest extends ResourceTest {
 		return result;
 	}
 
-	public String dispTime(long diff) {
-		return String.valueOf(diff);
-	}
-
-	public void startClock() {
-		startDate = new Date();
-	}
-
-	public long stopClock() {
-		Date stopDate = new Date();
-		return stopDate.getTime() - startDate.getTime();
-	}
-
 	// this test should not be in AllTests because it is only a performance test
 	public static Test suite() {
 		TestSuite suite = new TestSuite(ProjectSnapshotPerfManualTest.class.getName());
@@ -98,15 +81,9 @@ public class ProjectSnapshotPerfManualTest extends ResourceTest {
 			return;
 
 		// create common objects
-		IProject project = getWorkspace().getRoot().getProject("MyTestProject");
+		final IProject project = getWorkspace().getRoot().getProject("MyTestProject");
 		IProjectDescription description = getWorkspace().newProjectDescription(project.getName());
 		description.setLocation(bigSiteLocation);
-
-		// performance data
-		long originalOpen = 0;
-		long snapshotOpen = 0;
-		long refreshOnly = 0;
-		long refresh2Open = 0;
 
 		// report the number of files to be refreshed
 		int numberOfFiles = countChildren(bigSiteLocation.toFile());
@@ -116,15 +93,21 @@ public class ProjectSnapshotPerfManualTest extends ResourceTest {
 		project.create(description, null);
 
 		// open the project, timing the initial refresh
-		startClock();
-		project.open(null);
-		originalOpen = stopClock();
+		new PerformanceTestRunner() {
+			protected void test() {
+				try {
+					project.open(null);
+				} catch (CoreException e) {
+					fail("Original open", e);
+				}
+			}
+		}.run(new ProjectSnapshotPerfManualTest("Original open"), 1, 1);
 
 		// dump the snapshot refresh info
 		ensureExistsInWorkspace(project.getFolder(DIR_NAME), true);
 		IPath projPath = project.getLocation();
 		projPath = projPath.append(REFRESH_SNAPSHOT_FILE_LOCATION);
-		URI snapshotLocation = org.eclipse.core.filesystem.URIUtil.toURI(projPath);
+		final URI snapshotLocation = org.eclipse.core.filesystem.URIUtil.toURI(projPath);
 		project.saveSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
 
 		// close and delete project but leave contents
@@ -133,25 +116,38 @@ public class ProjectSnapshotPerfManualTest extends ResourceTest {
 
 		// open the project and import refresh snapshot
 		project.create(description, null);
-		startClock();
-		project.loadSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
-		project.open(IResource.NONE, null);
-		snapshotOpen = stopClock();
+		new PerformanceTestRunner() {
+			protected void test() {
+				try {
+					project.loadSnapshot(IProject.SNAPSHOT_TREE, snapshotLocation, null);
+					project.open(IResource.NONE, null);
+				} catch (CoreException e) {
+					fail("Snapshot open", e);
+				}
+			}
+		}.run(new ProjectSnapshotPerfManualTest("Snapshot open"), 1, 1);
 
 		// now refresh the project, verifying zero resource delta
 		// (except for the creation of .settings/resource-index.zip)
-		startClock();
-		ResourceDeltaVerifier verifier = new ResourceDeltaVerifier();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(verifier);
-		verifier.reset();
-		IFolder settings = project.getFolder(DIR_NAME);
-		IFile snapshot = project.getFile(REFRESH_SNAPSHOT_FILE_LOCATION);
-		verifier.addExpectedChange(settings, IResourceDelta.CHANGED, 0);
-		verifier.addExpectedChange(snapshot, IResourceDelta.ADDED, 0);
-		project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		refreshOnly = stopClock();
-		verifier.verifyDelta(null);
-		assertTrue("2.0 " + verifier.getMessage(), verifier.isDeltaValid());
+		final ResourceDeltaVerifier[] verifier = new ResourceDeltaVerifier[1];
+		new PerformanceTestRunner() {
+			protected void test() {
+				try {
+					verifier[0] = new ResourceDeltaVerifier();
+					ResourcesPlugin.getWorkspace().addResourceChangeListener(verifier[0]);
+					verifier[0].reset();
+					IFolder settings = project.getFolder(DIR_NAME);
+					IFile snapshot = project.getFile(REFRESH_SNAPSHOT_FILE_LOCATION);
+					verifier[0].addExpectedChange(settings, IResourceDelta.CHANGED, 0);
+					verifier[0].addExpectedChange(snapshot, IResourceDelta.ADDED, 0);
+					project.refreshLocal(IResource.DEPTH_INFINITE, null);
+				} catch (CoreException e) {
+					fail("Forced refresh only", e);
+				}
+			}
+		}.run(new ProjectSnapshotPerfManualTest("Forced refresh only"), 1, 1);
+		verifier[0].verifyDelta(null);
+		assertTrue("1.0 " + verifier[0].getMessage(), verifier[0].isDeltaValid());
 
 		// close and delete project but leave contents
 		project.close(null);
@@ -161,17 +157,18 @@ public class ProjectSnapshotPerfManualTest extends ResourceTest {
 
 		// open the project again with standard refresh
 		project.create(description, null);
-		startClock();
-		project.open(null);
-		refresh2Open = stopClock();
+		new PerformanceTestRunner() {
+			protected void test() {
+				try {
+					project.open(null);
+				} catch (CoreException e) {
+					fail("Second refresh open", e);
+				}
+			}
+		}.run(new ProjectSnapshotPerfManualTest("Second refresh open"), 1, 1);
 
 		// delete project to avoid getting content deleted in tearDown()
 		project.close(null);
 		project.delete(false, false, null);
-
-		System.out.println("Original open: " + originalOpen);
-		System.out.println("Snapshot open: " + snapshotOpen);
-		System.out.println("Forced refresh only: " + refreshOnly);
-		System.out.println("Second refresh open: " + refresh2Open);
 	}
 }
