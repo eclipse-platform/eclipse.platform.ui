@@ -66,11 +66,6 @@ public class TextSearchQueryProviderRegistry {
 		return preferedEngine;
 	}
 
-//	private void setPreferredEngineID(String id) {
-//		Preferences prefs= SearchPlugin.getDefault().getPluginPreferences();
-//		prefs.setValue(SearchPreferencePage.TEXT_SEARCH_QUERY_PROVIDER, id);
-//	}
-
 	private TextSearchQueryProvider createFromExtension(final String id) {
 		final TextSearchQueryProvider[] res= new TextSearchQueryProvider[] { null };
 
