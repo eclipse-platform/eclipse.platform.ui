@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,11 @@ package org.eclipse.ui.examples.templateeditor.editors;
 
 import java.io.IOException;
 
+import org.osgi.service.prefs.BackingStoreException;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -104,7 +107,11 @@ public class TemplateEditorUI  {
 	}
 
 	public void savePluginPreferences() {
-		JavaEditorExamplePlugin.getDefault().savePluginPreferences();
+		try {
+			InstanceScope.INSTANCE.getNode(JavaEditorExamplePlugin.PLUGIN_ID).flush();
+		} catch (BackingStoreException e) {
+			JavaEditorExamplePlugin.log(e);
+		}
 	}
 
 }
