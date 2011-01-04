@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,9 +130,9 @@ public class PartServiceImpl implements EPartService {
 
 	private void log(String unidentifiedMessage, String identifiedMessage, String id, Exception e) {
 		if (id == null || id.length() == 0) {
-			logger.error(unidentifiedMessage, e);
+			logger.error(e, unidentifiedMessage);
 		} else {
-			logger.error(NLS.bind(identifiedMessage, id), e);
+			logger.error(e, NLS.bind(identifiedMessage, id));
 		}
 	}
 
