@@ -65,6 +65,7 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -597,7 +598,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				} else {
 					// log exceptions otherwise
 					if (logger != null) {
-						logger.error(e);
+						String message = "Exception occurred while unrendering: {0}"; //$NON-NLS-1$
+						logger.error(e, NLS.bind(message, element));
 					}
 				}
 			}
