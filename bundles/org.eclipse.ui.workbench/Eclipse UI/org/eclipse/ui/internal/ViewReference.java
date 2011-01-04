@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,7 +140,13 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 	public void initialize(IWorkbenchPart part) throws PartInitException {
 		viewSite = new ViewSite(getModel(), part, this, descriptor == null ? null
 				: descriptor.getConfigurationElement());
-		((IViewPart) part).init(viewSite, memento);
+		IViewPart view = (IViewPart) part;
+		view.init(viewSite, memento);
+
+		if (view.getSite() != viewSite || view.getViewSite() != viewSite) {
+			String id = descriptor == null ? getModel().getElementId() : descriptor.getId();
+			throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_siteException, id));
+		}
 	}
 
 	@Override
