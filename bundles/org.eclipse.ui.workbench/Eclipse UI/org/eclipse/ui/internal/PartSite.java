@@ -388,10 +388,14 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		}
 
 		Control control = (Control) model.getWidget();
-		if (control != null) {
+		if (control != null && !control.isDisposed()) {
 			return control.getShell();
 		}
-		return null;
+		// likely means the part has been destroyed, return the parent window's
+		// shell, we don't just arbitrarily return the workbench window's shell
+		// because we may be in a detached window
+		MWindow window = e4Context.get(MWindow.class);
+		return window == null ? getWorkbenchWindow().getShell() : (Shell) window.getWidget();
 	}
 
 	private MWindow getTopLevelModelWindow() {
