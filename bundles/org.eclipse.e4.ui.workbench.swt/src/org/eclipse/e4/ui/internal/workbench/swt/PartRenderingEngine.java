@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
-import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
@@ -102,7 +102,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			// Handle Detached Windows
 			if (parent == null && changedElement instanceof MWindow) {
-				parent = (MElementContainer<?>) ((EObjectImpl) changedElement)
+				parent = (MElementContainer<?>) ((EObject) changedElement)
 						.eContainer();
 			}
 
@@ -546,7 +546,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		Object parent = null;
 		MUIElement parentME = element.getParent();
 		if (parentME == null)
-			parentME = (MUIElement) ((EObjectImpl) element).eContainer();
+			parentME = (MUIElement) ((EObject) element).eContainer();
 		if (parentME != null) {
 			AbstractPartRenderer renderer = getRendererFor(parentME);
 			if (renderer != null) {
@@ -566,7 +566,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		} else if (parentContext == null && element.getParent() != null) {
 			parentContext = getContext(element.getParent());
 		} else if (parentContext == null && element.getParent() == null) {
-			parentContext = getContext((MElementContainer<MUIElement>) ((EObjectImpl) element)
+			parentContext = getContext((MElementContainer<MUIElement>) ((EObject) element)
 					.eContainer());
 		}
 
