@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,6 +110,7 @@ import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
+import org.eclipse.ui.internal.e4.compatibility.SelectionService;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
@@ -140,6 +141,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		public void partActivated(MPart part) {
 			updateActivations(part);
 			firePartActivated(part);
+
+			// update the workbench window's current selection with the active
+			// part's selection
+			SelectionService service = (SelectionService) getWorkbenchWindow()
+					.getSelectionService();
+			service.updateSelection();
 		}
 
 		public void partBroughtToTop(MPart part) {
