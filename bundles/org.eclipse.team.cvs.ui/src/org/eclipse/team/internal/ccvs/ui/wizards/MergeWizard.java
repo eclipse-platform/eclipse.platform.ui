@@ -90,7 +90,7 @@ public class MergeWizard extends Wizard {
 	                resources = getAllResources(startTag, endTag);
 	            } catch (InvocationTargetException e) {
 	                // Log and continue with the original resources
-	                CVSUIPlugin.log(IStatus.ERROR, "An error occurred while detemrining if extra resources should be included in the merge", e.getTargetException()); //$NON-NLS-1$
+	                CVSUIPlugin.log(IStatus.ERROR, "An error occurred while determining if extra resources should be included in the merge", e.getTargetException()); //$NON-NLS-1$
 	            }
 				MergeSynchronizeParticipant participant = MergeSynchronizeParticipant.getMatchingParticipant(resources, startTag, endTag);
 				if(participant == null) {
