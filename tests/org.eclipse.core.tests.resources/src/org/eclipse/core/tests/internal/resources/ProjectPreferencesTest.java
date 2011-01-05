@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,7 @@
 package org.eclipse.core.tests.internal.resources;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
@@ -759,6 +758,73 @@ public class ProjectPreferencesTest extends ResourceTest {
 		}
 
 		assertEquals("5.0", value, project2Node.get(key, null));
+	}
+
+	/**
+	 * Bug 325000 Project properties not sorted on IBM VMs
+	 * Creates property file with various characters on front and verifies that they are written in alphabetical order. 
+	 */
+	public void test_325000() {
+		IProject project1 = getProject(getUniqueString());
+		ensureExistsInWorkspace(new IResource[] {project1}, true);
+		Preferences node = new ProjectScope(project1).getNode(ResourcesPlugin.PI_RESOURCES).node("subnode");
+
+		List<String> keys = new ArrayList<String>();
+		keys.add("z" + getUniqueString());
+		keys.add("a" + getUniqueString());
+		keys.add("1" + getUniqueString());
+		keys.add("z" + getUniqueString());
+		keys.add("_" + getUniqueString());
+		keys.add(getUniqueString());
+		for (String key : keys) {
+			node.put(key, getUniqueString());
+		}
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.0", e);
+		}
+
+		IFile prefsFile = getFileInWorkspace(project1, ResourcesPlugin.PI_RESOURCES);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(prefsFile.getContents()));
+			String currentLine = null;
+			String prevLine = null;
+			while ((currentLine = reader.readLine()) != null) {
+				boolean isUserProperty = false;
+				for (String key : keys) {
+					if (currentLine.contains(key)) {
+						isUserProperty = true;
+						break;
+					}
+				}
+				if (!isUserProperty) {
+					continue;
+				}
+				if (prevLine == null) {
+					prevLine = currentLine;
+					continue;
+				}
+				if (prevLine.compareTo(currentLine) > 0) {
+					fail("1.1");
+				}
+				prevLine = currentLine;
+			}
+		} catch (CoreException e) {
+			fail("1.2", e);
+		} catch (IOException e) {
+			fail("1.3", e);
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					fail("1.4", e);
+				}
+			}
+		}
+
 	}
 
 	public void testProjectOpenClose() {

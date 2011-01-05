@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,22 +36,6 @@ public class ProjectPreferences extends EclipsePreferences {
 
 	class SortedProperties extends Properties {
 
-		class IteratorWrapper implements Enumeration<Object> {
-			Iterator<Object> iterator;
-
-			public IteratorWrapper(Iterator<Object> iterator) {
-				this.iterator = iterator;
-			}
-
-			public boolean hasMoreElements() {
-				return iterator.hasNext();
-			}
-
-			public Object nextElement() {
-				return iterator.next();
-			}
-		}
-
 		private static final long serialVersionUID = 1L;
 
 		/* (non-Javadoc)
@@ -61,7 +45,23 @@ public class ProjectPreferences extends EclipsePreferences {
 			TreeSet<Object> set = new TreeSet<Object>();
 			for (Enumeration<Object> e = super.keys(); e.hasMoreElements();)
 				set.add(e.nextElement());
-			return new IteratorWrapper(set.iterator());
+			return Collections.enumeration(set);
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Hashtable#entrySet()
+		 */
+		public Set<Map.Entry<Object, Object>> entrySet() {
+			TreeSet<Map.Entry<Object, Object>> set = new TreeSet<Map.Entry<Object, Object>>(new Comparator<Map.Entry<Object, Object>>() {
+				public int compare(Map.Entry<Object, Object> e1, Map.Entry<Object, Object> e2) {
+					String s1 = (String) e1.getKey();
+					String s2 = (String) e2.getKey();
+					return s1.compareTo(s2);
+				}
+			});
+			for (Iterator<Map.Entry<Object, Object>> i = super.entrySet().iterator(); i.hasNext();)
+				set.add(i.next());
+			return set;
 		}
 	}
 
