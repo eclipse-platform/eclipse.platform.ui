@@ -26,7 +26,7 @@ public class RcpTestSuite extends TestSuite {
     }
 
     public RcpTestSuite() {
-        addTest(new TestSuite(PlatformUITest.class));
+        addTest(PlatformUITest.suite());
         addTest(new TestSuite(WorkbenchAdvisorTest.class));
         addTest(new TestSuite(WorkbenchConfigurerTest.class));
         addTest(new TestSuite(WorkbenchWindowConfigurerTest.class));
