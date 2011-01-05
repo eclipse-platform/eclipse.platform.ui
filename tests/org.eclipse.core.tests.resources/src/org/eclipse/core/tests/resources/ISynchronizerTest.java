@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2006 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -531,12 +531,7 @@ public class ISynchronizerTest extends ResourceTest {
 		try {
 			fileOutput = new FileOutputStream(file);
 			o1 = new DataOutputStream(fileOutput);
-		} catch (IOException e) {
-			if (fileOutput != null)
-				try {
-					fileOutput.close();
-				} catch (IOException e2) {
-				}
+		} catch (FileNotFoundException e) {
 			fail("1.0", e);
 		}
 		final DataOutputStream output = o1;

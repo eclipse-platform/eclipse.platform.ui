@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -1519,13 +1519,7 @@ public class MarkerTest extends ResourceTest {
 		try {
 			fileOutput = new FileOutputStream(file);
 			o1 = new DataOutputStream(fileOutput);
-		} catch (IOException e) {
-			if (fileOutput != null)
-				try {
-					fileOutput.close();
-				} catch (IOException e2) {
-					// ignore
-				}
+		} catch (FileNotFoundException e) {
 			fail("2.0", e);
 		}
 		final DataOutputStream output = o1;
@@ -1657,13 +1651,7 @@ public class MarkerTest extends ResourceTest {
 		try {
 			fileOutput = new FileOutputStream(file);
 			o1 = new DataOutputStream(fileOutput);
-		} catch (IOException e) {
-			if (fileOutput != null)
-				try {
-					fileOutput.close();
-				} catch (IOException e2) {
-					// ignore
-				}
+		} catch (FileNotFoundException e) {
 			fail("2.0", e);
 		}
 		final DataOutputStream output = o1;
