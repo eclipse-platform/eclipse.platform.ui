@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,7 +132,7 @@ public abstract class UnixFileNatives {
 			StructStat stat = new StructStat();
 			if (stat(name, stat) == 0) {
 				long flags = stat.st_flags;
-				flags |= UnixFileFlags.SF_IMMUTABLE;
+				flags |= UnixFileFlags.UF_IMMUTABLE;
 				code |= chflags(name, (int) flags);
 			}
 		}

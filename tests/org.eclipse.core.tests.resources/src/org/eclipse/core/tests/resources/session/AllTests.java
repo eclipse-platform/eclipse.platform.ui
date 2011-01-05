@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public class AllTests extends TestCase {
 		suite.addTest(TestCreateLinkedResourceInHiddenProject.suite());
 		suite.addTest(Bug_266907.suite());
 		suite.addTest(TestBug297635.suite());
+		suite.addTest(TestBug323833.suite());
 		// this one comes from org.eclipse.core.tests.resources.saveparticipant
 		// comment this out until we have a better solution for running these tests
 		// (keeping their contents inside this plugin as subdirs and dynamically installing

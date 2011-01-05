@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,23 @@ public class Bug_329836 extends ResourceTest {
 		// check that attributes are really set
 		assertTrue("2.0", info.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
 		assertTrue("3.0", info.getAttribute(EFS.ATTRIBUTE_IMMUTABLE));
+
+		// unset EFS.ATTRIBUTE_READ_ONLY which also unsets EFS.IMMUTABLE on Mac
+
+		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
+		try {
+			fileStore.putInfo(info, EFS.SET_ATTRIBUTES, getMonitor());
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+
+		// read the info again
+		info = fileStore.fetchInfo();
+
+		// check that attributes are really unset
+		assertFalse("5.0", info.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+		assertFalse("6.0", info.getAttribute(EFS.ATTRIBUTE_IMMUTABLE));
+
 	}
 
 	public static Test suite() {
