@@ -20,6 +20,13 @@
 	<jsp:param name="script" value="navActions.js"/>
 	<jsp:param name="view" value="search"/>
 
+	<jsp:param name="name"     value="show_all"/>
+	<jsp:param name="tooltip"  value='show_all'/>
+	<jsp:param name="image"    value="show_all.gif"/>
+	<jsp:param name="action"   value="toggleShowAll"/>
+	<jsp:param name="param"    value=""/>
+	<jsp:param name="state"    value="<%=(new ActivitiesData(application, request, response)).getButtonState()%>"/>
+
 	<jsp:param name="name"     value="show_categories"/>
 	<jsp:param name="tooltip"  value='show_categories'/>
 	<jsp:param name="image"    value="show_categories.gif"/>

@@ -25,6 +25,7 @@ import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.base.scope.EnablementScope;
 import org.eclipse.help.internal.base.scope.FilterScope;
 import org.eclipse.help.internal.base.scope.IntersectionScope;
 import org.eclipse.help.internal.base.scope.ScopeRegistry;
@@ -76,6 +77,10 @@ public class RequestScope {
 			if (scope != null) {
 				scopes.add(scope);
 			}
+		}
+		// If not in infocenter mode test whether disabled topics should be displayed
+		if (!HelpSystem.isShared() && HelpBasePlugin.getActivitySupport().isFilteringEnabled()) {
+			scopes.add(new EnablementScope());
 		}
 		// Add filter by search scope if not called from Help View
 		boolean isHelpViewTopic = "/ntopic".equals(req.getServletPath()); //$NON-NLS-1$
