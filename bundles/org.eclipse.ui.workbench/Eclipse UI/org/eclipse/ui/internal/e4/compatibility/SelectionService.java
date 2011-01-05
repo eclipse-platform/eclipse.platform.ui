@@ -221,6 +221,12 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	 * @see org.eclipse.ui.ISelectionService#getSelection()
 	 */
 	public ISelection getSelection() {
+		if (activePart != null) {
+			// get the selection from the active part
+			ISelectionProvider selectionProvider = activePart.getSite().getSelectionProvider();
+			return selectionProvider == null ? null : selectionProvider.getSelection();
+		}
+
 		Object selection = selectionService.getSelection();
 		if (selection == null || selection instanceof ISelection) {
 			return (ISelection) selection;
