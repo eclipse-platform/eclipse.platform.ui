@@ -1439,6 +1439,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public int getWorkbenchWindowCount() {
+		if (windowManager == null) {
+			return 0;
+		}
 		return windowManager.getWindowCount();
 	}
 
@@ -1446,6 +1449,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public IWorkbenchWindow[] getWorkbenchWindows() {
+		if (windowManager == null) {
+			return new IWorkbenchWindow[0];
+		}
 		Window[] windows = windowManager.getWindows();
 		IWorkbenchWindow[] dwindows = new IWorkbenchWindow[windows.length];
 		System.arraycopy(windows, 0, dwindows, 0, windows.length);

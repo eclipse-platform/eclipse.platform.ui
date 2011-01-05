@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -55,12 +54,7 @@ class ExtensionEventHandler implements IRegistryChangeListener {
                     .getExtensionDeltas(WorkbenchPlugin.PI_WORKBENCH);
             IExtension ext;
             IExtensionPoint extPt;
-            IWorkbenchWindow[] win = PlatformUI.getWorkbench()
-                    .getWorkbenchWindows();
-            if (win.length == 0) {
-				return;
-			}
-            Display display = win[0].getShell().getDisplay();
+            Display display =  PlatformUI.getWorkbench().getDisplay();
             if (display == null) {
 				return;
 			}
