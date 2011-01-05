@@ -362,9 +362,7 @@ public class ScopeSetDialog extends TrayDialog  {
 	}
 	
 	private void doNew() {
-		IStructuredSelection ssel = (IStructuredSelection)viewer.getSelection();
-		ScopeSet set = (ScopeSet)ssel.getFirstElement();
-		ScopeSet newSet = new ScopeSet(set, getDefaultName());
+		ScopeSet newSet = new ScopeSet(getDefaultName());
 		String name = getNewName(newSet.getName(), false);
 		if (name!=null) {
 			newSet.setName(name);
