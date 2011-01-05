@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - http://bugs.eclipse.org/326695
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -28,6 +29,7 @@ import org.eclipse.ui.internal.registry.KeywordRegistry;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
+import org.eclipse.ui.model.IWorkbenchAdapter3;
 import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -128,7 +130,8 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
      */
     public Object getAdapter(Class adapter) {
         if (adapter == IWorkbenchAdapter.class
-                || adapter == IWorkbenchAdapter2.class) {
+                || adapter == IWorkbenchAdapter2.class
+                || adapter == IWorkbenchAdapter3.class) {
             return this;
         }
         else if (adapter == IPluginContribution.class) {
