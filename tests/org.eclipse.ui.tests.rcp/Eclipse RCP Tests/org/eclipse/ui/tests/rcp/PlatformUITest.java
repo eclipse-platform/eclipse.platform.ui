@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.rcp;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
@@ -19,6 +20,20 @@ import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
 
 public class PlatformUITest extends TestCase {
+	public static TestSuite suite() {
+		TestSuite suite = new TestSuite();
+		suite.addTest(new PlatformUITest("testEarlyGetWorkbench"));
+		suite.addTest(new PlatformUITest("testCreateDisplay"));
+		suite.addTest(new PlatformUITest("testCreateAndRunWorkbench"));
+		suite.addTest(new PlatformUITest("testCreateAndRunWorkbenchWithExceptionOnStartup"));
+		suite.addTest(new PlatformUITest("testStartupThreading"));
+		suite.addTest(new PlatformUITest("testDisplayAccess_sync"));
+		suite.addTest(new PlatformUITest("testDisplayAccess_async"));
+		suite.addTest(new PlatformUITest("testWithoutDisplayAccess_sync"));
+		suite.addTest(new PlatformUITest("testWithoutDisplayAccess_async"));
+		suite.addTest(new PlatformUITest("testDisplayAccessInUIThreadAllowed"));
+		return suite;
+	}
 
     public PlatformUITest(String testName) {
         super(testName);
