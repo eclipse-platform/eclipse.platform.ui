@@ -10,22 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.ant.internal.launching.AntLaunching;
 import org.eclipse.ant.internal.launching.IAntLaunchingPreferenceConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -38,11 +30,23 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class AntPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
@@ -86,7 +90,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		 * @see org.eclipse.jface.preference.FieldEditor#loadDefault()
 		 */
 		public void loadDefault() {
-			setStringValue(Integer.toString(new DefaultScope().getNode(AntLaunching.getUniqueIdentifier()).getInt(key, defaultvalue)));
+			setStringValue(Integer.toString(DefaultScope.INSTANCE.getNode(AntLaunching.getUniqueIdentifier()).getInt(key, defaultvalue)));
 		}
 	}
 	
@@ -140,7 +144,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 				AntPreferencesMessages.AntPreferencePage_13, 
 				getFieldEditorParent(),
 				20000);
-        int minValue = new DefaultScope().getNode(AntLaunching.getUniqueIdentifier()).getInt(IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, 20000);
+        int minValue = DefaultScope.INSTANCE.getNode(AntLaunching.getUniqueIdentifier()).getInt(IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, 20000);
         int maxValue = 1200000;
         timeout.setValidRange(minValue, maxValue);
         timeout.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
