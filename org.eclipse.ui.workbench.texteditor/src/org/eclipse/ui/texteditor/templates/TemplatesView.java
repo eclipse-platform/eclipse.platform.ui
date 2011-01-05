@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Dakshinamurthy Karra, IBM Corporation and others.
+ * Copyright (c) 2007, 2011 Dakshinamurthy Karra, IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,7 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
  * }
  * </pre></p>
  * <p>
- * <strong>Note:</strong> This plug-in does not contribute this view. Cients that want to
+ * <strong>Note:</strong> This plug-in does not contribute this view. Clients that want to
  * use this view must check whether it is available and if not, contribute this view via
  * extension point using the specified view Id {@link #ID}:
  * <pre>
