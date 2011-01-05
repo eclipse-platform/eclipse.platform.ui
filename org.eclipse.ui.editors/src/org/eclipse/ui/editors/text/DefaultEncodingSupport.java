@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,7 +73,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 
 		fTextEditor= textEditor;
 
-		IEclipsePreferences prefs= new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		IEclipsePreferences prefs= InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 
 		fPreferenceChangeListener= new IPreferenceChangeListener() {
 			public void preferenceChange(PreferenceChangeEvent event) {
@@ -110,7 +110,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 	 * Disposes this encoding support.
 	 */
 	public void dispose() {
-		IEclipsePreferences prefs= new InstanceScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		IEclipsePreferences prefs= InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 		prefs.removePreferenceChangeListener(fPreferenceChangeListener);
 		fTextEditor= null;
 	}
