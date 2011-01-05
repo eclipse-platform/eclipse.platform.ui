@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,31 +12,15 @@
 package org.eclipse.ui.internal;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.preferences.WorkbenchSettingsTransfer;
-import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
-import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * The WorkbenchSettings handles the recording and restoring of workbench
@@ -47,225 +31,11 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  */
 public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 
-	// private static final String WORKBENCH_LAYOUT_PATH =
-	// ".metadata/.plugins/org.eclipse.ui.workbench/workbench.xml";
-	// //$NON-NLS-1$
-
 	/**
 	 * Create a new instance of the receiver.
 	 */
 	public WorkbenchLayoutSettingsTransfer() {
 		super();
-	}
-
-	/**
-	 * Record the sharable workbench state in a document.
-	 * 
-	 * @return {@link XMLMemento}
-	 */
-	public XMLMemento recordSharableWorkbenchState() {
-		XMLMemento memento = XMLMemento
-				.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
-		IStatus status = saveSettings(memento);
-		if (status.getSeverity() != IStatus.OK) {
-			// don't use newWindow as parent because it has not yet been opened
-			// (bug 76724)
-			ErrorDialog.openError(null,
-					WorkbenchMessages.Workbench_problemsSaving,
-					WorkbenchMessages.Workbench_problemsSavingMsg, status);
-		}
-		return memento;
-	}
-
-	/**
-	 * Save the settings to the memento.
-	 * 
-	 * @param memento
-	 * @return IStatus
-	 */
-	private IStatus saveSettings(XMLMemento memento) {
-		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
-				WorkbenchMessages.Workbench_problemsSaving, null);
-
-		// Save the version number.
-		memento.putString(IWorkbenchConstants.TAG_VERSION,
-				Workbench.VERSION_STRING[1]);
-
-		// Save the workbench windows.
-		IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-				.getWorkbenchWindows();
-		for (int nX = 0; nX < windows.length; nX++) {
-			WorkbenchWindow window = (WorkbenchWindow) windows[nX];
-			IMemento childMem = memento
-					.createChild(IWorkbenchConstants.TAG_WINDOW);
-			result.merge(saveState(window, childMem));
-		}
-		return result;
-	}
-
-	/**
-	 * Save the workbench window state.
-	 * 
-	 * @param window
-	 * @param memento
-	 * @return IStatus
-	 */
-	private IStatus saveState(WorkbenchWindow window, IMemento memento) {
-
-		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
-				WorkbenchMessages.WorkbenchWindow_problemsSavingWindow, null);
-
-		IWorkbenchPage activePage = window.getActivePage();
-		if (activePage != null
-				&& activePage.findView(IIntroConstants.INTRO_VIEW_ID) != null) {
-			IMemento introMem = memento
-					.createChild(IWorkbenchConstants.TAG_INTRO);
-			boolean isStandby = getWorkbench()
-					.getIntroManager()
-					.isIntroStandby(getWorkbench().getIntroManager().getIntro());
-			introMem.putString(IWorkbenchConstants.TAG_STANDBY, String
-					.valueOf(isStandby));
-		}
-
-		// Save each page.
-		IWorkbenchPage[] pages = window.getPages();
-		for (int i = 0; i < pages.length; i++) {
-			IWorkbenchPage page = pages[i];
-
-			// Save perspective.
-			IMemento pageMem = memento
-					.createChild(IWorkbenchConstants.TAG_PAGE);
-			pageMem.putString(IWorkbenchConstants.TAG_LABEL, page.getLabel());
-			result.add(saveState((WorkbenchPage) page, pageMem));
-
-			if (page == window.getActivePage()) {
-				pageMem.putString(IWorkbenchConstants.TAG_FOCUS, "true"); //$NON-NLS-1$
-			}
-
-			// Get the input.
-			IAdaptable input = page.getInput();
-			if (input != null) {
-				IPersistableElement persistable = (IPersistableElement) Util
-						.getAdapter(input, IPersistableElement.class);
-				if (persistable == null) {
-					WorkbenchPlugin
-							.log("Unable to save page input: " //$NON-NLS-1$
-									+ input
-									+ ", because it does not adapt to IPersistableElement"); //$NON-NLS-1$
-
-				} else {
-					// Save input.
-					IMemento inputMem = pageMem
-							.createChild(IWorkbenchConstants.TAG_INPUT);
-					inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID,
-							persistable.getFactoryId());
-					persistable.saveState(inputMem);
-				}
-			}
-		}
-
-		return result;
-	}
-
-	/**
-	 * Save the state of the workbench page.
-	 * 
-	 * @param page
-	 * @param pageMem
-	 * @return IStatus
-	 */
-	private IStatus saveState(WorkbenchPage page, IMemento memento) {
-
-		MultiStatus result = new MultiStatus(
-				PlatformUI.PLUGIN_ID,
-				IStatus.OK,
-				NLS
-						.bind(
-								WorkbenchMessages.WorkbenchPage_unableToSavePerspective,
-								page.getLabel()), null);
-
-		saveEditorState( memento);
-
-		// IMemento viewMem =
-		// memento.createChild(IWorkbenchConstants.TAG_VIEWS);
-
-
-		// Create persp block.
-		IMemento perspectiveMemento = memento
-				.createChild(IWorkbenchConstants.TAG_PERSPECTIVES);
-		if (page.getPerspective() != null) {
-			perspectiveMemento.putString(
-					IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE, page
-							.getPerspective().getId());
-		}
-		if (page.getActivePart() != null) {
-			if (page.getActivePart() instanceof IViewPart) {
-
-			} else {
-				perspectiveMemento.putString(
-						IWorkbenchConstants.TAG_ACTIVE_PART, page
-								.getActivePart().getSite().getId());
-			}
-		}
-
-		// Save each perspective in opened order
-
-		return result;
-
-	}
-
-	/**
-	 * Save the editor state. Set it to be the defaults.
-	 * 
-	 * @param memento
-	 */
-	private void saveEditorState(IMemento memento) {
-
-		IMemento editorsMemento = memento
-				.createChild(IWorkbenchConstants.TAG_EDITORS);
-		IMemento editorArea = editorsMemento
-				.createChild(IWorkbenchConstants.TAG_AREA);
-		IMemento info = editorArea.createChild(IWorkbenchConstants.TAG_INFO);
-		IMemento folder = info.createChild(IWorkbenchConstants.TAG_FOLDER);
-		folder.putInteger(IWorkbenchConstants.TAG_EXPANDED,
-				IStackPresentationSite.STATE_RESTORED);
-		IMemento presentation = folder
-				.createChild(IWorkbenchConstants.TAG_PRESENTATION);
-		presentation.putString(IWorkbenchConstants.TAG_ID,
-				getCurrentPresentationClassName());
-
-	}
-
-	/**
-	 * Get the name of the current presentation class name.
-	 * 
-	 * @return String
-	 */
-	private String getCurrentPresentationClassName() {
-
-		// update the current selection (used to look for changes on apply)
-		String currentPresentationFactoryId = PrefUtil.getAPIPreferenceStore()
-				.getString(
-						IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
-		// Workbench.getInstance().getPresentationId();
-
-		AbstractPresentationFactory factory = WorkbenchPlugin.getDefault()
-				.getPresentationFactory(currentPresentationFactoryId);
-
-		if (factory == null)
-			factory = WorkbenchPlugin.getDefault().getPresentationFactory(
-					IWorkbenchConstants.DEFAULT_PRESENTATION_ID);
-		return factory.getClass().getName();
-
-	}
-
-	/**
-	 * Return the workbench we are using.
-	 * 
-	 * @return IWorkbench
-	 */
-	private IWorkbench getWorkbench() {
-		return PlatformUI.getWorkbench();
 	}
 
 	/*
@@ -275,6 +45,7 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	 */
 	public IStatus transferSettings(IPath newWorkspaceRoot) {
 		try {
+			IPath currentLocation = getNewWorkbenchStateLocation(Platform.getLocation());
 			File workspaceFile = createFileAndDirectories(newWorkspaceRoot);
 
 			if (workspaceFile == null)
@@ -283,17 +54,35 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 						WorkbenchPlugin.PI_WORKBENCH,
 						WorkbenchMessages.WorkbenchSettings_CouldNotCreateDirectories);
 
-			FileOutputStream stream = new FileOutputStream(workspaceFile);
-			OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
-			XMLMemento memento = XMLMemento
-					.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
-			IStatus status = saveSettings(memento);
-			if (status.getSeverity() != IStatus.OK)
-				return status;
+			File deltas = new File(currentLocation.toOSString(), "deltas.xml"); //$NON-NLS-1$
+			if (deltas.exists()) {
+				byte[] bytes = new byte[8192];
+				FileInputStream inputStream = new FileInputStream(deltas);
+				FileOutputStream outputStream = new FileOutputStream(new File(workspaceFile,
+						"deltas.xml")); //$NON-NLS-1$
+				int read = inputStream.read(bytes, 0, 8192);
+				while (read != -1) {
+					outputStream.write(bytes, 0, read);
+					read = inputStream.read(bytes, 0, 8192);
+				}
+				inputStream.close();
+				outputStream.close();
+			}
 
-			memento.save(writer);
-			writer.close();
-
+			File workbenchModel = new File(currentLocation.toOSString(), "workbench.xmi"); //$NON-NLS-1$
+			if (workbenchModel.exists()) {
+				byte[] bytes = new byte[8192];
+				FileInputStream inputStream = new FileInputStream(workbenchModel);
+				FileOutputStream outputStream = new FileOutputStream(new File(workspaceFile,
+						"workbench.xmi")); //$NON-NLS-1$
+				int read = inputStream.read(bytes, 0, 8192);
+				while (read != -1) {
+					outputStream.write(bytes, 0, read);
+					read = inputStream.read(bytes, 0, 8192);
+				}
+				inputStream.close();
+				outputStream.close();
+			}
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 					WorkbenchMessages.Workbench_problemsSavingMsg, e);
@@ -312,14 +101,10 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	 *         cannot be created.
 	 */
 	private File createFileAndDirectories(IPath newWorkspaceRoot) {
-		IPath newWorkspaceLocation = getNewWorkbenchStateLocation(
-				newWorkspaceRoot).append(
-				Workbench.DEFAULT_WORKBENCH_STATE_FILENAME);
+		IPath newWorkspaceLocation = getNewWorkbenchStateLocation(newWorkspaceRoot);
 		File workspaceFile = new File(newWorkspaceLocation.toOSString());
-
-		File parent = workspaceFile.getParentFile();
-		if (!parent.exists()) {
-			if (!parent.mkdirs())
+		if (!workspaceFile.exists()) {
+			if (!workspaceFile.mkdirs())
 				return null;
 		}
 
@@ -333,6 +118,16 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 	 */
 	public String getName() {
 		return WorkbenchMessages.WorkbenchLayoutSettings_Name;
+	}
+
+	/**
+	 * Return the workbench settings location for the new root
+	 * 
+	 * @param newWorkspaceRoot
+	 * @return IPath or <code>null</code> if it can't be determined.
+	 */
+	protected IPath getNewWorkbenchStateLocation(IPath newWorkspaceRoot) {
+		return newWorkspaceRoot.append(new Path(".metadata/.plugins/org.eclipse.e4.workbench")); //$NON-NLS-1$
 	}
 
 }
