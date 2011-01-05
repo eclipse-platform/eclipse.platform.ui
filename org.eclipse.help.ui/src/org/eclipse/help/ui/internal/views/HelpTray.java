@@ -79,10 +79,7 @@ public class HelpTray extends DialogTray implements IPageChangedListener {
 					public void handleEvent(Event event) {
 						// close the tray
 						TrayDialog dialog = (TrayDialog)shell.getData();
-						dialog.closeTray();
-						
-						// set focus back to shell
-						shell.setFocus();
+						dialog.closeTray();						
 					}
 				});
 			}

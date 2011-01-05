@@ -433,10 +433,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	 * Used for both dynamic help and to get a useful title
 	 */
 	private String[] computeSearchTerms(Control c) {
-		Composite parent = c.getParent();
+		// Search the control and all ancestors until we find a composite
+		// which we can get a search term from
+		Composite container =  c instanceof Composite ? (Composite)c : c.getParent();
 		SearchTerms searchTerms = new SearchTerms();
-		while (parent != null) {
-			Object data = parent.getData();
+		while (container != null) {
+			Object data = container.getData();
 			if (data instanceof IWizardContainer) {
 				IWizardContainer wc = (IWizardContainer) data;
 				searchTerms.add(wc.getCurrentPage().getTitle());
@@ -481,7 +483,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				searchTerms.add(w.getShell().getText());
 				break;
 			}
-			parent = parent.getParent();
+			container = container.getParent();
 		}
 		return (String[]) searchTerms.toArray();
 	}
