@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -6330,6 +6330,79 @@ public class EPartServiceTest extends TestCase {
 
 	public void testHidePart_Bug327964_False() {
 		testHidePart_Bug327964(false);
+	}
+
+	private void testHidePart_Bug332163(boolean force) {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective1 = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective1);
+		perspectiveStack.setSelectedElement(perspective1);
+
+		MPlaceholder partPlaceholderA1 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		partPlaceholderA1.setRef(part);
+		part.setCurSharedRef(partPlaceholderA1);
+		perspective1.getChildren().add(partPlaceholderA1);
+		perspective1.setSelectedElement(partPlaceholderA1);
+
+		MPerspective perspective2 = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective2);
+
+		MPlaceholder partPlaceholder2 = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		partPlaceholder2.setRef(part);
+		perspective2.getChildren().add(partPlaceholder2);
+		perspective2.setSelectedElement(partPlaceholder2);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		IEclipseContext perspectiveContext1 = perspective1.getContext();
+		IEclipseContext partContext = part.getContext();
+
+		assertEquals(perspectiveContext1, partContext.getParent());
+		assertEquals(partContext, perspectiveContext1.getActiveChild());
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.switchPerspective(perspective2);
+
+		IEclipseContext perspectiveContext2 = perspective2.getContext();
+
+		assertEquals(partContext, perspectiveContext1.getActiveChild());
+		assertEquals(perspectiveContext2, partContext.getParent());
+		assertEquals(partContext, perspectiveContext2.getActiveChild());
+
+		partService.hidePart(part, force);
+
+		assertEquals(perspectiveContext1, partContext.getParent());
+		assertEquals(partContext, perspectiveContext1.getActiveChild());
+		assertNull(
+				"perspective2 doesn't have any parts, it should not have an active child context",
+				perspectiveContext2.getActiveChild());
+	}
+
+	public void testHidePart_Bug332163_True() {
+		testHidePart_Bug332163(true);
+	}
+
+	public void testHidePart_Bug332163_False() {
+		testHidePart_Bug332163(false);
 	}
 
 	public void testHidePart_ActivationHistory01() {

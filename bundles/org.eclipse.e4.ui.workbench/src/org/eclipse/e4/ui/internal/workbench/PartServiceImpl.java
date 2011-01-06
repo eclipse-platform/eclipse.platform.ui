@@ -940,10 +940,10 @@ public class PartServiceImpl implements EPartService {
 				return;
 			}
 
-			IEclipseContext partContext = part.getContext();
+			boolean isActiveChild = isActiveChild(part);
 			MPart activationCandidate = null;
 			// check if we're the active child
-			if (partContext != null && partContext.getParent().getActiveChild() == partContext) {
+			if (isActiveChild) {
 				// get the activation candidate if we are
 				activationCandidate = partActivationHistory.getNextActivationCandidate(getParts(),
 						part);
@@ -968,7 +968,12 @@ public class PartServiceImpl implements EPartService {
 				}
 			}
 
-			if (activationCandidate != null) {
+			if (activationCandidate == null) {
+				// nothing else to activate and we're the active child, deactivate
+				if (isActiveChild) {
+					part.getContext().deactivate();
+				}
+			} else {
 				// activate our candidate
 				activate(activationCandidate);
 			}
@@ -989,6 +994,11 @@ public class PartServiceImpl implements EPartService {
 			// remove ourselves from the activation history also since we're being hidden
 			partActivationHistory.forget(getWindow(), part, toBeRemoved == part);
 		}
+	}
+
+	private boolean isActiveChild(MPart part) {
+		IEclipseContext context = part.getContext();
+		return context != null && context.getParent().getActiveChild() == context;
 	}
 
 	/*

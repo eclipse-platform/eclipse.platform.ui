@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,10 @@
 
 package org.eclipse.e4.ui.tests.application;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -50,6 +53,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	private EventHandler childHandler;
 	private EventHandler activeChildHandler;
 	private EventHandler toBeRenderedHandler;
+
+	private Map<MUIElement, List<MPlaceholder>> renderedPlaceholders = new HashMap<MUIElement, List<MPlaceholder>>();
 
 	private boolean createContributions = true;
 
@@ -287,6 +292,16 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				ref.setCurSharedRef(placeholder);
 				ref.setToBeRendered(true);
 				createGui(ref);
+
+				List<MPlaceholder> placeholders = renderedPlaceholders.get(ref);
+				if (placeholders == null) {
+					placeholders = new ArrayList<MPlaceholder>();
+					renderedPlaceholders.put(ref, placeholders);
+				} else if (placeholders.contains(placeholder)) {
+					return null;
+				}
+
+				placeholders.add(placeholder);
 			}
 		}
 		return null;
@@ -313,7 +328,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		}
 
 		if (element instanceof MPlaceholder) {
-			removeGui(((MPlaceholder) element).getRef());
+			removePlaceholder((MPlaceholder) element);
 		}
 
 		if (element instanceof MContext) {
@@ -330,6 +345,41 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			mcontext.setContext(null);
 			if (context != null) {
 				context.dispose();
+			}
+		}
+	}
+
+	private void removePlaceholder(MPlaceholder placeholder) {
+		MUIElement ref = placeholder.getRef();
+		List<MPlaceholder> placeholders = renderedPlaceholders.get(placeholder
+				.getRef());
+		placeholders.remove(placeholder);
+
+		if (placeholders.isEmpty()) {
+			// no other placeholders around, unrender the element
+			removeGui(ref);
+			renderedPlaceholders.remove(ref);
+		} else {
+			IEclipseContext currentContext = modelService
+					.getContainingContext(placeholder);
+			// find another placeholder to put the element under
+			for (MPlaceholder other : placeholders) {
+				IEclipseContext newParentContext = modelService
+						.getContainingContext(other);
+				if (newParentContext != null) {
+					List<MContext> contextElements = modelService.findElements(
+							ref, null, MContext.class, null);
+					for (MContext contextElement : contextElements) {
+						IEclipseContext context = contextElement.getContext();
+						// this is currently pointing at the placeholder's
+						// containing context, reparent it
+						if (context.getParent() == currentContext) {
+							context.setParent(newParentContext);
+						}
+					}
+					ref.setCurSharedRef(other);
+					break;
+				}
 			}
 		}
 	}
