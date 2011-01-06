@@ -239,7 +239,8 @@ public class SashLayout extends Layout {
 	}
 
 	private void tileSubNodes(Rectangle bounds, MUIElement node) {
-		setRectangle(node, bounds);
+		if (node != root)
+			setRectangle(node, bounds);
 
 		if (!(node instanceof MGenericTile<?>))
 			return;

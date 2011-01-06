@@ -14,11 +14,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -100,7 +97,8 @@ public class SashRenderer extends SWTPartRenderer {
 	}
 
 	public Object createWidget(final MUIElement element, Object parent) {
-		if (element.getParent() != null) {
+		MUIElement elementParent = element.getParent();
+		if (elementParent.getRenderer() == this) {
 			Rectangle newRect = new Rectangle(0, 0, 0, 0);
 
 			// If my layout's container gets disposed 'unbind' the sash elements
@@ -115,11 +113,10 @@ public class SashRenderer extends SWTPartRenderer {
 			return newRect;
 		}
 
-		// Special case...a null parent indicates that this is a 'shared'
-		// element
-		// This means that it *must* have a Composite so it can be reparented
+		// This is a 'root' sash container, create a composite
 		Composite sashComposite = new Composite((Composite) parent, SWT.NONE);
-		sashComposite.setLayout(new SashLayout(sashComposite, null));
+		sashComposite.setLayout(new SashLayout(sashComposite, element));
+
 		return sashComposite;
 	}
 
@@ -135,13 +132,6 @@ public class SashRenderer extends SWTPartRenderer {
 	public void childRendered(MElementContainer<MUIElement> parentElement,
 			MUIElement element) {
 		super.childRendered(parentElement, element);
-
-		// If this is a 'shared' sash then use its child as the 'root'
-		if (parentElement.getWidget() instanceof Composite) {
-			Composite c = (Composite) parentElement.getWidget();
-			SashLayout sl = (SashLayout) c.getLayout();
-			sl.setRootElemenr(element);
-		}
 
 		// Ensure that the element's 'containerInfo' is initialized
 		int weight = getWeight(element);
@@ -177,24 +167,15 @@ public class SashRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public Object getUIContainer(MUIElement element) {
-		// OK, find the first parent that is *not* a sash container
+		// OK, find the 'root' of the sash container
 		MUIElement parentElement = element.getParent();
+		while (parentElement.getRenderer() == this
+				&& !(parentElement.getWidget() instanceof Composite))
+			parentElement = parentElement.getParent();
+
 		if (parentElement.getWidget() instanceof Composite)
 			return parentElement.getWidget();
 
-		MUIElement prevParent = null;
-		while (parentElement instanceof MPartSashContainer
-				&& !(parentElement.getWidget() instanceof Composite)
-				&& !(parentElement instanceof MArea)) {
-			prevParent = parentElement;
-			parentElement = parentElement.getParent();
-		}
-
-		if (parentElement.getRenderer() instanceof AbstractPartRenderer) {
-			AbstractPartRenderer renderer = (AbstractPartRenderer) parentElement
-					.getRenderer();
-			return renderer.getUIContainer(prevParent);
-		}
 		return null;
 	}
 

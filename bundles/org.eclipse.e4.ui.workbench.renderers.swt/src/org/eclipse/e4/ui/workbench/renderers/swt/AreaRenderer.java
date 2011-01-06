@@ -15,7 +15,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
@@ -23,6 +22,7 @@ import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -101,37 +101,12 @@ public class AreaRenderer extends SWTPartRenderer {
 			cti.setImage(getImage(areaModel));
 
 		Composite areaComp = new Composite(ctf, SWT.NONE);
-		SashLayout sl = new SashLayout(areaComp, null);
-		areaComp.setLayout(sl);
+		areaComp.setLayout(new FillLayout());
 		cti.setControl(areaComp);
 
 		ctf.setSelection(cti);
 
 		return ctf;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#childRendered
-	 * (org.eclipse.e4.ui.model.application.ui.MElementContainer,
-	 * org.eclipse.e4.ui.model.application.ui.MUIElement)
-	 */
-	@Override
-	public void childRendered(MElementContainer<MUIElement> parentElement,
-			MUIElement element) {
-		if (!(parentElement.getWidget() instanceof CTabFolder))
-			return;
-
-		super.childRendered(parentElement, element);
-
-		// Reset the 'root' element to the new child (last one in wins)
-		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
-		Composite layoutComp = (Composite) ctf.getItem(0).getControl();
-		SashLayout sl = (SashLayout) layoutComp.getLayout();
-		sl.setRootElemenr(element);
-		layoutComp.layout(true, true);
 	}
 
 	/*
