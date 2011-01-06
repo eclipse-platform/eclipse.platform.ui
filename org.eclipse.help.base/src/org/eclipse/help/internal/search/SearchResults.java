@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,13 +215,19 @@ public class SearchResults implements ISearchHitCollector {
 		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		boolean foundInToc = false;
 		for (int i = 0; i < tocs.length; i++) {
-			ITopic topic = tocs[i].getTopic(href);
+			IToc nextToc = tocs[i];
+			ITopic topic = nextToc.getTopic(href);
 			if (topic != null) {
 				foundInToc = true;
 				if (filter == null || filter.inScope(topic)) {
-					return tocs[i];
+					return nextToc;
 				}
 			} 
+			// Test for href attached to Toc element
+			topic = nextToc.getTopic(null);
+			if (topic != null && href != null && href.equals(topic.getHref())) {
+				return nextToc;
+			}
 		}
 		if (!foundInToc) {
 			// test to pick up files in extradirs
