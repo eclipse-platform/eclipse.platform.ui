@@ -474,9 +474,6 @@ public class ScopeSetDialog extends TrayDialog  {
 		boolean editableSet = set!=null && set.isEditable() && !set.isImplicit();
 		removeButton.setEnabled(editableSet);
 		renameButton.setEnabled(editableSet);
-		Button okButton = getButton(IDialogConstants.OK_ID);;
-		if (okButton!=null)
-			okButton.setEnabled(set!=null);
 	}
 	
 	private PendingOperation findOperation(ScopeSet set, Class type) {
