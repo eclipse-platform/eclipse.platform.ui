@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,8 +181,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @since 3.5
 	 */
 	protected static String getSimpleName(String fileName) {
-		if (fileName.endsWith(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION)) {
-			return fileName.substring(0, fileName.length() - ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.length() - 1);
+		IPath path = new Path(fileName);
+		if(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(path.getFileExtension())) {
+			return path.removeFileExtension().toString();
 		}
 		return fileName;
 	}
