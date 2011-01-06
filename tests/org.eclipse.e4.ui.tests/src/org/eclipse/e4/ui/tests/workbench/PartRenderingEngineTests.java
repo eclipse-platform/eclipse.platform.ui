@@ -1595,6 +1595,24 @@ public class PartRenderingEngineTests extends TestCase {
 		assertNull(part.getContext());
 	}
 
+	public void testBug329079() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setVisible(false);
+		window.getChildren().add(part);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+	}
+
 	public void testRemoveGui_Bug332163() {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
