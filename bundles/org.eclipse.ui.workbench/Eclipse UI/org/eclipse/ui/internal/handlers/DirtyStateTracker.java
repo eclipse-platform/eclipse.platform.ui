@@ -117,6 +117,7 @@ public class DirtyStateTracker implements IPartListener, IWindowListener,
 	 * IWorkbenchWindow)
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
+		register(window);
 	}
 
 	/*
