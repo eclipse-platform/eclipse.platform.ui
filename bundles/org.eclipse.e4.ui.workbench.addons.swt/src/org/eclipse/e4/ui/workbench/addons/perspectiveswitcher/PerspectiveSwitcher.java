@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -275,7 +275,7 @@ public class PerspectiveSwitcher {
 
 		final ToolItem createItem = new ToolItem(psTB, SWT.PUSH);
 		createItem.setImage(getOpenPerspectiveImage(psTB.getDisplay()));
-		createItem.setToolTipText("Open Perspective"); //$NON-NLS-1$
+		createItem.setToolTipText(WorkbenchMessages.OpenPerspectiveDialogAction_tooltip);
 		createItem.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				selectPerspective();
@@ -460,7 +460,7 @@ public class PerspectiveSwitcher {
 
 	private void addCloseItem(final Menu menu) {
 		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-		menuItem.setText("&Close");
+		menuItem.setText(WorkbenchMessages.WorkbenchWindow_close);
 		menuItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				MPerspective persp = (MPerspective) menu.getData();
@@ -482,7 +482,7 @@ public class PerspectiveSwitcher {
 
 	private void addResetItem(final Menu menu) {
 		MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-		menuItem.setText("&Reset");
+		menuItem.setText(WorkbenchMessages.PerspectiveBar_reset);
 		menuItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				final MPerspective persp = (MPerspective) menu.getData();
@@ -501,7 +501,7 @@ public class PerspectiveSwitcher {
 
 	private void addShowTextItem(final Menu menu) {
 		final MenuItem showtextMenuItem = new MenuItem(menu, SWT.CHECK);
-		showtextMenuItem.setText("&Show Text");
+		showtextMenuItem.setText(WorkbenchMessages.PerspectiveBar_showText);
 		showtextMenuItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean preference = showtextMenuItem.getSelection();
