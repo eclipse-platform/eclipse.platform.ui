@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,17 @@
 package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.MarkerViewHandler;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
@@ -39,9 +39,9 @@ public class DeleteHandler extends MarkerViewHandler {
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 
-		MarkerSupportView view = getView(event);
+		final MarkerSupportView view = getView(event);
 		if (view == null)
 			return this;
 
@@ -61,25 +61,18 @@ public class DeleteHandler extends MarkerViewHandler {
 			return view;
 		}
 		
-		WorkspaceJob deleteJob = new WorkspaceJob(IDEWorkbenchMessages.MarkerDeleteHandler_JobTitle){	//See Bug#250807
-				public IStatus runInWorkspace(IProgressMonitor monitor)
-				throws CoreException {
-					monitor.beginTask(IDEWorkbenchMessages.MarkerDeleteHandler_JobMessageLabel, 10*selected.length);
-					try {
-						for (int i = 0; i < selected.length; i++) {
-							if(monitor.isCanceled())return Status.CANCEL_STATUS;
-							selected[i].delete();
-							monitor.worked(10);
-						}
-					} catch (CoreException e) {
-						Policy.handle(e);
-						throw e;
-					}finally{
-						monitor.done();
-					}
-					return Status.OK_STATUS;
-	 			}
-			};
+		WorkspaceJob deleteJob= new WorkspaceJob(IDEWorkbenchMessages.MarkerDeleteHandler_JobTitle) { //See Bug#250807
+			public IStatus runInWorkspace(IProgressMonitor monitor) {
+				monitor.beginTask(IDEWorkbenchMessages.MarkerDeleteHandler_JobMessageLabel, 10 * selected.length);
+				try {
+					IUndoableOperation op= new DeleteMarkersOperation(selected, MarkerMessages.deleteMarkers_operationName);
+					execute(op, MarkerMessages.deleteMarkers_errorMessage, monitor, WorkspaceUndoUtil.getUIInfoAdapter(view.getSite().getShell()));
+				} finally {
+					monitor.done();
+				}
+				return Status.OK_STATUS;
+			}
+		};
 		deleteJob.setUser(true);
 		deleteJob.schedule();
 
