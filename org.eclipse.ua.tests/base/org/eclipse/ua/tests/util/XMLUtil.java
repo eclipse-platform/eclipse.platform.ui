@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,14 +77,14 @@ public class XMLUtil extends Assert {
 			buf.append('<');
 			buf.append(qName);
 			
-			List list = new ArrayList();
+			List<String> list = new ArrayList<String>();
 			for (int i=0;i<attributes.getLength();++i) {
 				list.add(attributes.getQName(i));
 			}
 			Collections.sort(list);
-			Iterator iter = list.iterator();
+			Iterator<String> iter = list.iterator();
 			while (iter.hasNext()) {
-				String name = (String)iter.next();
+				String name = iter.next();
 				buf.append(' ');
 				buf.append(name);
 				buf.append('=');
