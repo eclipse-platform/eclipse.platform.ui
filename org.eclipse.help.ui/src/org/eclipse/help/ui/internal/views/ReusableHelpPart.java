@@ -742,9 +742,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				Messages.ReusableHelpPart_searchPage_name,
 				IHelpUIConstants.IMAGE_HELP_SEARCH);
 		page.setVerticalSpacing(0);
-		page.addPart(HV_SEE_ALSO, false);
 		page.addPart(HV_FSEARCH, false);
 		page.addPart(HV_FSEARCH_RESULT, true);
+		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 
 		// all topics page
@@ -753,9 +753,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				IHelpUIConstants.IMAGE_ALL_TOPICS); 
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
-		page.addPart(HV_SEE_ALSO, false);
 		page.addPart(HV_SCOPE_SELECT, false);
 		page.addPart(HV_TOPIC_TREE, true);
+		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 
 		// bookmarks page
@@ -764,14 +764,14 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				IHelpUIConstants.IMAGE_BOOKMARKS); 
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
-		page.addPart(HV_SEE_ALSO, false);
 		page.addPart(HV_BOOKMARKS_TREE, true);
+		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 		// browser page
 		page = new HelpPartPage(HV_BROWSER_PAGE, null);
 		page.setVerticalSpacing(0);
-		page.addPart(HV_SEE_ALSO, false);
 		page.addPart(HV_BROWSER, true);
+		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 
 		// context help page
