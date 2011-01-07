@@ -145,8 +145,16 @@ public class MarkerMessages extends NLS {
 	public static String marker_statusSelectedCount;
 	public static String errorsAndWarningsSummaryBreakdown;
 
-	public static String deleteMarkers_operationName;
 	public static String deleteMarkers_errorMessage;
+	public static String deleteMarker_operationName;
+	public static String deleteMarkers_operationName;
+	public static String deleteBookmarkMarker_operationName;
+	public static String deleteBookmarkMarkers_operationName;
+	public static String deleteTaskMarker_operationName;
+	public static String deleteTaskMarkers_operationName;
+	public static String deleteProblemMarker_operationName;
+	public static String deleteProblemMarkers_operationName;
+
 
 	public static String deleteCompletedAction_title;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,15 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.views.markers.MarkerSupportView;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 
@@ -42,6 +47,24 @@ public class ProblemsView extends MarkerSupportView {
 		else if (counts[1].intValue() > 0)
 			image= WorkbenchPlugin.getDefault().getSharedImages().getImage(IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEMS_VIEW_WARNING);
 		setTitleImage(image);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getUndoContext()
+	 * @since 3.7
+	 */
+	protected IUndoContext getUndoContext() {
+		return WorkspaceUndoUtil.getProblemsUndoContext();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.ExtendedMarkersView#getDeleteOperationName(org.eclipse.core.resources.IMarker[])
+	 * @since 3.7
+	 */
+	protected String getDeleteOperationName(IMarker[] markers) {
+		Assert.isLegal(markers.length > 0);
+		return markers.length == 1 ? MarkerMessages.deleteProblemMarker_operationName : MarkerMessages.deleteProblemMarkers_operationName;
 	}
 
 }

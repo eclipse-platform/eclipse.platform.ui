@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.ui.internal.ide.undo.MarkerDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
+import org.eclipse.ui.views.markers.internal.MarkerType;
+import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 
 /**
  * An AbstractMarkersOperation represents an undoable operation that affects
@@ -253,16 +255,24 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
 			}
 		}
+
 		if (types != null) {
+			MarkerType bookmarkType= MarkerTypesModel.getInstance().getType(IMarker.BOOKMARK);
+			MarkerType taskType= MarkerTypesModel.getInstance().getType(IMarker.TASK);
+			MarkerType problemType= MarkerTypesModel.getInstance().getType(IMarker.PROBLEM);
+
 			for (int i = 0; i < types.length; i++) {
 				// Marker type could be null if marker did not exist.
 				// This shouldn't happen, but can.
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=158129
 				if (types[i] != null) {
-					if (types[i].equals(IMarker.BOOKMARK)) {
+					MarkerType type= MarkerTypesModel.getInstance().getType(types[i]);
+					if (type.isSubtypeOf(bookmarkType)) {
 						addContext(WorkspaceUndoUtil.getBookmarksUndoContext());
-					} else if (types[i].equals(IMarker.TASK)) {
+					} else if (type.isSubtypeOf(taskType)) {
 						addContext(WorkspaceUndoUtil.getTasksUndoContext());
+					} else if (type.isSubtypeOf(problemType)) {
+						addContext(WorkspaceUndoUtil.getProblemsUndoContext());
 					} else if (types[i] != null) {
 						// type is not known, use the workspace undo context
 						addContext(WorkspaceUndoUtil.getWorkspaceUndoContext());

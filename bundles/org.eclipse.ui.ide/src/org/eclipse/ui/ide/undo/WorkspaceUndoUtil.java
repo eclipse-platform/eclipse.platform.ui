@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.ide.undo;
 
 import java.net.URI;
@@ -50,18 +49,19 @@ import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 import org.eclipse.ui.internal.ide.undo.FileDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
+
 /**
  * WorkspaceUndoUtil defines common utility methods and constants used by
  * clients who create undoable workspace operations.
  * 
  * @since 3.3
- * 
  */
 public class WorkspaceUndoUtil {
 
 	private static ObjectUndoContext tasksUndoContext;
-
 	private static ObjectUndoContext bookmarksUndoContext;
+	private static ObjectUndoContext problemsUndoContext;
+
 
 	/**
 	 * Return the undo context that should be used for workspace-wide operations
@@ -101,6 +101,22 @@ public class WorkspaceUndoUtil {
 			bookmarksUndoContext.addMatch(getWorkspaceUndoContext());
 		}
 		return bookmarksUndoContext;
+	}
+
+	/**
+	 * Return the undo context that should be used for operations involving
+	 * problems.
+	 * 
+	 * @return the problems undo context
+	 * @since 3.7
+	 */
+	public static IUndoContext getProblemsUndoContext() {
+		if (problemsUndoContext == null) {
+			problemsUndoContext = new ObjectUndoContext(new Object(),
+					"Problems Context"); //$NON-NLS-1$
+			problemsUndoContext.addMatch(getWorkspaceUndoContext());
+		}
+		return problemsUndoContext;
 	}
 
 	/**

@@ -65,7 +65,8 @@ public class DeleteHandler extends MarkerViewHandler {
 			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				monitor.beginTask(IDEWorkbenchMessages.MarkerDeleteHandler_JobMessageLabel, 10 * selected.length);
 				try {
-					IUndoableOperation op= new DeleteMarkersOperation(selected, MarkerMessages.deleteMarkers_operationName);
+					IUndoableOperation op= new DeleteMarkersOperation(selected, view.getDeleteOperationName(selected));
+					op.addContext(view.getUndoContext());
 					execute(op, MarkerMessages.deleteMarkers_errorMessage, monitor, WorkspaceUndoUtil.getUIInfoAdapter(view.getSite().getShell()));
 				} finally {
 					monitor.done();

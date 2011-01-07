@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal.views.markers;
 
 import java.util.ArrayList;
@@ -17,8 +16,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.IContext;
@@ -70,17 +72,21 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.operations.RedoActionHandler;
+import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -93,6 +99,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 import com.ibm.icu.text.MessageFormat;
+
 
 /**
  * The ExtendedMarkersView is the internal implementation of the view that shows
@@ -145,6 +152,11 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private IMemento memento;
 	private String[] defaultGeneratorIds = new String[0];
+
+	private UndoActionHandler undoAction;
+
+	private RedoActionHandler redoAction;
+
 
 	/**
 	 * Return a new instance of the receiver.
@@ -393,6 +405,14 @@ public class ExtendedMarkersView extends ViewPart {
 
 		getSite().setSelectionProvider(viewer);
 
+		IUndoContext undoContext= getUndoContext();
+		undoAction= new UndoActionHandler(getSite(), undoContext);
+		undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
+		redoAction= new RedoActionHandler(getSite(), undoContext);
+		redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.UNDO.getId(), undoAction);
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.REDO.getId(), redoAction);
+
 		startView();
 
 	}
@@ -572,6 +592,10 @@ public class ExtendedMarkersView extends ViewPart {
 
 		getSite().getPage().removePostSelectionListener(pageSelectionListener);
 		getSite().getPage().removePartListener(partListener);
+
+		undoAction.dispose();
+		redoAction.dispose();
+
 		super.dispose();
 	}
 
@@ -1714,4 +1738,27 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		
 	}
+
+	/**
+	 * Return the undo context associated with operations performed in this view. By default, return
+	 * the workspace undo context. Subclasses should override if a more specific undo context should
+	 * be used.
+	 *
+	 * @since 3.7
+	 */
+	protected IUndoContext getUndoContext() {
+		return (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+	}
+
+	/**
+	 * Returns the name of the delete operation.
+	 * 
+	 * @param markers the markers to be deleted, must have at least one element
+	 * @since 3.7
+	 */
+	protected String getDeleteOperationName(IMarker[] markers) {
+		Assert.isLegal(markers.length > 0);
+		return markers.length == 1 ? MarkerMessages.deleteMarker_operationName : MarkerMessages.deleteMarkers_operationName;
+	}
+
 }
