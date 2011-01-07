@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public class SampleCriteriaProvider extends AbstractCriteriaProvider {
 	}
 
 	private UserCriteria[] getCriteriaFromLabel(String label) {
-		List criteria = new ArrayList();
+		List<UserCriteria> criteria = new ArrayList<UserCriteria>();
 		if (label == null) {
 			return new UserCriteria[0];
 		}
@@ -48,7 +48,7 @@ public class SampleCriteriaProvider extends AbstractCriteriaProvider {
 		if (label.toLowerCase().indexOf('c') >= 0) {
 			criteria.add( new UserCriteria(CONTAINS_LETTER, "c", true) );
 		}
-		return (UserCriteria[]) criteria.toArray(new UserCriteria[criteria.size()]);
+		return criteria.toArray(new UserCriteria[criteria.size()]);
 	}	
 
 }

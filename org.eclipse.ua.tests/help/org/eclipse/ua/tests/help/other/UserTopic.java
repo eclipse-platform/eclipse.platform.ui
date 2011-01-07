@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,13 +24,13 @@ import org.eclipse.help.IUAElement;
 
 public class UserTopic implements ITopic {
 	
-	private List children = new ArrayList();
+	private List<ITopic> children = new ArrayList<ITopic>();
 	private boolean isEnabled;
 	private String href;
 	private String label;
 
 	public ITopic[] getSubtopics() {
-		return (ITopic[])children.toArray(new ITopic[0]);
+		return children.toArray(new ITopic[0]);
 	}
 
 	public IUAElement[] getChildren() {

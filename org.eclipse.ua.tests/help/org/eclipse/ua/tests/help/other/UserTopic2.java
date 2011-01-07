@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.help.IUAElement;
 
 public class UserTopic2 extends UserTopic implements ITopic2 {
 	
-	private List criteria = new ArrayList();
+	private List<ICriteria> criteria = new ArrayList<ICriteria>();
 
 	public IUAElement[] getChildren() {
 		IUAElement[] criteriaElements = getCriteria();
@@ -40,7 +40,7 @@ public class UserTopic2 extends UserTopic implements ITopic2 {
 	}
 
 	public ICriteria[] getCriteria() {
-		return (ICriteria[])criteria.toArray(new ICriteria[0]);
+		return criteria.toArray(new ICriteria[0]);
 	}
 
 	public String getIcon() {

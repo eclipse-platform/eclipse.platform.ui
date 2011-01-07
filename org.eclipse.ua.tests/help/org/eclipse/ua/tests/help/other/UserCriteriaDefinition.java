@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,14 +21,14 @@ import org.eclipse.help.IUAElement;
 
 public class UserCriteriaDefinition implements ICriteriaDefinition {
 
-	private List children = new ArrayList();
+	private List<ICriterionDefinition> children = new ArrayList<ICriterionDefinition>();
 	
 	public boolean isEnabled(IEvaluationContext context) {
 		return true;
 	}
 
 	public ICriterionDefinition[] getCriterionDefinitions() {
-		return (ICriterionDefinition[]) children.toArray(new ICriterionDefinition[0]);
+		return children.toArray(new ICriterionDefinition[0]);
 	}
 	
 	public void addDefinition(ICriterionDefinition definition) {

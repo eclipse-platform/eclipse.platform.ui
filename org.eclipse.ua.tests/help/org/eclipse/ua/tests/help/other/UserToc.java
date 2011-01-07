@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2009 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.help.IUAElement;
 
 public class UserToc implements IToc {
 	
-	private List children = new ArrayList();
+	private List<ITopic> children = new ArrayList<ITopic>();
 	private boolean isEnabled;
 	private String href;
 	private String label;
@@ -39,7 +39,7 @@ public class UserToc implements IToc {
 	}
 
 	public ITopic[] getTopics() {
-		return (ITopic[])children.toArray(new ITopic[0]);
+		return children.toArray(new ITopic[0]);
 	}
 
 	public IUAElement[] getChildren() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ public class UserCriterionDefinition implements ICriterionDefinition {
 
 	private String id;
 	private String name;
-	private List children = new ArrayList();
+	private List<ICriterionValueDefinition> children = new ArrayList<ICriterionValueDefinition>();
 	
 	public UserCriterionDefinition(String id, String name) {
 		this.id = id;
@@ -55,7 +55,7 @@ public class UserCriterionDefinition implements ICriterionDefinition {
 	}
 
 	public ICriterionValueDefinition[] getCriterionValueDefinitions() {
-		return (ICriterionValueDefinition[]) children.toArray(new ICriterionValueDefinition[0]);
+		return children.toArray(new ICriterionValueDefinition[0]);
 	}
 	
 	public void addValue(ICriterionValueDefinition value) {

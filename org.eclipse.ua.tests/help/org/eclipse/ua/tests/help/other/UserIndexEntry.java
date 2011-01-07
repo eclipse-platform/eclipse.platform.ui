@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,9 +27,9 @@ import org.eclipse.help.IUAElement;
 
 public class UserIndexEntry implements IIndexEntry2 {
 	
-	private List subentries = new ArrayList();	
-	private List sees = new ArrayList();	
-	private List topics = new ArrayList();
+	private List<IIndexEntry> subentries = new ArrayList<IIndexEntry>();	
+	private List<IIndexSee> sees = new ArrayList<IIndexSee>();	
+	private List<ITopic> topics = new ArrayList<ITopic>();
 	private boolean isEnabled;
 	private String keyword;
 
@@ -66,7 +66,7 @@ public class UserIndexEntry implements IIndexEntry2 {
 	}
 
 	public IIndexSee[] getSees() {
-		return (IIndexSee[])sees.toArray(new IIndexSee[0]);
+		return sees.toArray(new IIndexSee[0]);
 	}
 
 	public String getKeyword() {
@@ -74,11 +74,11 @@ public class UserIndexEntry implements IIndexEntry2 {
 	}
 
 	public IIndexEntry[] getSubentries() {
-		return (IIndexEntry[])subentries.toArray(new IIndexEntry[0]);
+		return subentries.toArray(new IIndexEntry[0]);
 	}
 
 	public ITopic[] getTopics() {
-		return (ITopic[])topics.toArray(new ITopic[0]);
+		return topics.toArray(new ITopic[0]);
 	}
 
 }

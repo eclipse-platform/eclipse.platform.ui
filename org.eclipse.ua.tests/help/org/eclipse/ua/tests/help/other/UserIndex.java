@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.help.IUAElement;
 
 public class UserIndex implements IIndex {
 	
-	private List entries = new ArrayList();
+	private List<IIndexEntry> entries = new ArrayList<IIndexEntry>();
 	private boolean enabled;
 	
 	public UserIndex(boolean enabled) {
@@ -41,7 +41,7 @@ public class UserIndex implements IIndex {
 	}
 
 	public IIndexEntry[] getEntries() {
-		return (IIndexEntry[])entries.toArray(new IIndexEntry[0]);
+		return entries.toArray(new IIndexEntry[0]);
 	}
 
 	public boolean isEnabled(IEvaluationContext context) {
