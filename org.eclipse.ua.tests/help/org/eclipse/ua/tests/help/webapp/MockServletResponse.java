@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class MockServletResponse implements HttpServletResponse {
 	
-	private List cookies = new ArrayList();
+	private List<Cookie> cookies = new ArrayList<Cookie>();
 	private String illegalCharactersFound = "";
 
 	public String getCharacterEncoding() {
@@ -93,7 +93,7 @@ public class MockServletResponse implements HttpServletResponse {
 		checkForIllegalCharacters(cookie.getValue());
 		// Replace if it already exists, otherwise set
 		for (int i = 0; i < cookies.size(); i++) {
-			Cookie nextCookie = (Cookie) cookies.get(i);
+			Cookie nextCookie = cookies.get(i);
 			if (nextCookie.getName().equals(cookie.getName())) {
 				cookies.remove(i);
 				cookies.add(cookie);
@@ -115,7 +115,7 @@ public class MockServletResponse implements HttpServletResponse {
 	}
 
 	public Cookie[] getCookies() {
-		return (Cookie[]) cookies.toArray(new Cookie[cookies.size()]);
+		return cookies.toArray(new Cookie[cookies.size()]);
 	}
 
 	public boolean containsHeader(String name) {

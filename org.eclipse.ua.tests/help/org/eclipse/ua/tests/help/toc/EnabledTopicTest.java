@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class EnabledTopicTest extends TestCase {
 		
 		private String label;
 		private boolean isEnabled;
-		private List children = new ArrayList();
+		private List<ITopic> children = new ArrayList<ITopic>();
 
 		public ETopic(String label, boolean isEnabled) {
 			this.label = label; 
@@ -38,7 +38,7 @@ public class EnabledTopicTest extends TestCase {
 		}
 
 		public ITopic[] getSubtopics() {
-			return (ITopic[])children.toArray(new ITopic[children.size()]);
+			return children.toArray(new ITopic[children.size()]);
 		}
 
 		public IUAElement[] getChildren() {
@@ -78,8 +78,8 @@ public class EnabledTopicTest extends TestCase {
 	private class EIndexEntry extends UAElement implements IIndexEntry  {
 		
 		private String keyword;
-		private List topics = new ArrayList();
-		private List subEntries = new ArrayList();
+		private List<ITopic> topics = new ArrayList<ITopic>();
+		private List<IIndexEntry> subEntries = new ArrayList<IIndexEntry>();
 
 		public EIndexEntry(String keyword) {
 			super(keyword);
@@ -99,18 +99,18 @@ public class EnabledTopicTest extends TestCase {
 		}
 
 		public IIndexEntry[] getSubentries() {
-			return (IIndexEntry[])subEntries.toArray(new IIndexEntry[subEntries.size()]);
+			return subEntries.toArray(new IIndexEntry[subEntries.size()]);
 		}
 
 		public ITopic[] getTopics() {
-			return (ITopic[])topics.toArray(new ITopic[topics.size()]);
+			return topics.toArray(new ITopic[topics.size()]);
 		}
 
 		public synchronized IUAElement[] getChildren() {
-			List all = new ArrayList();
+			List<IUAElement> all = new ArrayList<IUAElement>();
 			all.addAll(subEntries);
 			all.addAll(topics);
-			return (IUAElement[])all.toArray(new IUAElement[all.size()]);
+			return all.toArray(new IUAElement[all.size()]);
 		}	
 	}
 	

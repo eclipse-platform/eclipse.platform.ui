@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,8 +87,8 @@ public class TocModelSerializerTest extends TestCase {
 	/**
 	 * Find all the TOC files to use for this test.
 	 */
-	public static Collection getTocFiles() {
-		Collection tocFiles = new ArrayList();
+	public static Collection<TocFile> getTocFiles() {
+		Collection<TocFile> tocFiles = new ArrayList<TocFile>();
 		IExtensionPoint xpt = Platform.getExtensionRegistry().getExtensionPoint(HelpPlugin.PLUGIN_ID, "toc");
 		IExtension[] extensions = xpt.getExtensions();
 		for (int i=0;i<extensions.length;i++) {
