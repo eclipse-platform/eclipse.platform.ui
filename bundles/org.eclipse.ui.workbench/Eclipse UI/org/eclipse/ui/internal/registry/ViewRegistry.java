@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -18,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -37,8 +37,6 @@ import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The central manager for view descriptors.
@@ -254,13 +252,27 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
      * 		   <code>null</code> if the descriptor fails the Expressions check. 
      */
     public IViewDescriptor find(String id) {
-        Iterator itr = views.iterator();
+		IViewDescriptor desc = findInternal(id);
+		if (WorkbenchActivityHelper.restrictUseOf(desc)) {
+			return null;
+		}
+		return desc;
+	}
+
+	/**
+	 * Finds the view descriptor without worrying about activities.
+	 * 
+	 * @param id
+	 *            the ID to search for
+	 * @return the view descriptor, or <code>null</code>
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public IViewDescriptor findInternal(String id) {
+		Iterator itr = views.iterator();
         while (itr.hasNext()) {
             IViewDescriptor desc = (IViewDescriptor) itr.next();
             if (id.equals(desc.getId())) {
-                if (WorkbenchActivityHelper.restrictUseOf(desc)) {
-                    return null;
-                }
                 return desc;
             }
         }

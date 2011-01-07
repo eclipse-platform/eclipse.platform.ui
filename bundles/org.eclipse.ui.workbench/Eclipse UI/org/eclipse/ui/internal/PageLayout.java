@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
@@ -36,6 +35,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -535,8 +535,19 @@ public class PageLayout implements IPageLayout {
         if (partID.equals(ID_EDITOR_AREA)) {
             return editorFolder;
         }
-		IViewDescriptor viewDescriptor = viewFactory.getViewRegistry()
-		        .find(ViewFactory.extractPrimaryId(partID));
+		IViewDescriptor viewDescriptor = null;
+
+		IViewRegistry viewRegistry = viewFactory.getViewRegistry();
+		String primaryId = ViewFactory.extractPrimaryId(partID);
+
+		if (viewRegistry instanceof ViewRegistry) {
+			viewDescriptor = ((ViewRegistry) viewRegistry).findInternal(primaryId);
+			if (viewDescriptor != null && WorkbenchActivityHelper.restrictUseOf(viewDescriptor)) {
+				return null;
+			}
+		} else {
+			viewDescriptor = viewRegistry.find(primaryId);
+		}
 		if (WorkbenchActivityHelper.filterItem(viewDescriptor)) {
 			return null;
 		}
