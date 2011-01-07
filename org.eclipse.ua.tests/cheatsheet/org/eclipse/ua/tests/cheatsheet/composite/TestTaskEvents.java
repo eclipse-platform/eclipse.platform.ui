@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,13 +36,13 @@ public class TestTaskEvents extends TestCase {
 	
 	public class TaskMap {
 		
-		private Map map = new HashMap();
+		private Map<String, TaskCounter> map = new HashMap<String, TaskCounter>();
 		private int eventCount = 0;
 
 		public void put(ICompositeCheatSheetTask task) {
 			final String id = task.getId();
 			if (map.containsKey(id)) {
-				((TaskCounter)map.get(id)).incrementCount();
+				map.get(id).incrementCount();
 			} else {
 				map.put(id, new TaskCounter());
 			}
@@ -52,7 +52,7 @@ public class TestTaskEvents extends TestCase {
 		public int getEventCount(ICompositeCheatSheetTask task) {
 			final String id = task.getId();
 			if (map.containsKey(id)) {
-				 return ((TaskCounter)map.get(id)).getCount();
+				 return map.get(id).getCount();
 			} else {
 				return 0;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,11 +41,11 @@ public class TestStatePersistence extends TestCase {
 	    public int currentItem;
 	    public int button;
 	    public String contentPath;
-	    public List completed;
-	    public List expanded;
-	    public List expandRestore;
-	    public Hashtable subItemCompleted;
-	    public Hashtable subItemSkipped;
+	    public List<String> completed;
+	    public List<String> expanded;
+	    public List<String> expandRestore;
+	    public Hashtable<String, String> subItemCompleted;
+	    public Hashtable<String, String> subItemSkipped;
 	    public CheatSheetManager manager;
 	}
 	
@@ -63,11 +63,11 @@ public class TestStatePersistence extends TestCase {
 		propsToSave.currentItem = 2;
 		propsToSave.id = TEST_ID;
 		propsToSave.contentPath = PATH;
-		propsToSave.completed = new ArrayList();
-		propsToSave.expanded = new ArrayList();
-		propsToSave.expandRestore = new ArrayList();
-		propsToSave.subItemCompleted = new Hashtable();
-		propsToSave.subItemSkipped = new Hashtable();
+		propsToSave.completed = new ArrayList<String>();
+		propsToSave.expanded = new ArrayList<String>();
+		propsToSave.expandRestore = new ArrayList<String>();
+		propsToSave.subItemCompleted = new Hashtable<String, String>();
+		propsToSave.subItemSkipped = new Hashtable<String, String>();
 		CheatSheetElement csElement = new CheatSheetElement(TEST_ID);
 		propsToSave.manager = new CheatSheetManager(csElement);
 	}
@@ -98,12 +98,12 @@ public class TestStatePersistence extends TestCase {
 		result.id = (String)restored.getProperty(IParserTags.ID);
 		result.button = Integer.parseInt(restored.getProperty(IParserTags.BUTTON));
 		result.currentItem = Integer.parseInt(restored.getProperty(IParserTags.CURRENT));
-		result.completed = (ArrayList) restored.get(IParserTags.COMPLETED);
+		result.completed = (ArrayList<String>) restored.get(IParserTags.COMPLETED);
 		result.contentPath = (String) restored.get(IParserTags.CONTENT_URL);
-        result.expanded = (ArrayList) restored.get(IParserTags.EXPANDED);
-        result.expandRestore = (ArrayList) restored.get(IParserTags.EXPANDRESTORE);
-        result.subItemCompleted = (Hashtable) restored.get(IParserTags.SUBITEMCOMPLETED);
-        result.subItemSkipped = (Hashtable) restored.get(IParserTags.SUBITEMSKIPPED);
+        result.expanded = (ArrayList<String>) restored.get(IParserTags.EXPANDED);
+        result.expandRestore = (ArrayList<String>) restored.get(IParserTags.EXPANDRESTORE);
+        result.subItemCompleted = (Hashtable<String, String>) restored.get(IParserTags.SUBITEMCOMPLETED);
+        result.subItemSkipped = (Hashtable<String, String>) restored.get(IParserTags.SUBITEMSKIPPED);
         Hashtable managerData = (Hashtable) restored.get(IParserTags.MANAGERDATA);
 		CheatSheetElement csElement = new CheatSheetElement(id);
         result.manager = new CheatSheetManager(csElement);

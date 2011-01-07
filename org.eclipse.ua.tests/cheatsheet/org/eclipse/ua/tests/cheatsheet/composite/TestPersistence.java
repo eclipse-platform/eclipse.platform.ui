@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,7 +136,7 @@ public class TestPersistence extends TestCase {
      */
     public void testSaveLayoutData() {
     	createCompositeCheatSheet();
-    	Map values = new Hashtable();
+    	Map<String, String> values = new Hashtable<String, String>();
     	values.put("One", "1");
     	values.put("Two", "2");
     	helper.saveCompositeState(model, values);
