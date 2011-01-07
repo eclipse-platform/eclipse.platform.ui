@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,7 +206,10 @@ public class ResourceWorkingSetUpdater implements IWorkingSetUpdater,
 		for (Iterator iter = elements.iterator(); iter.hasNext();) {
 			IAdaptable element = (IAdaptable) iter.next();
 			boolean remove = false;
-			if (element instanceof IResource) {
+			if (element instanceof IProject) {
+				IProject project = (IProject) element;
+				remove = !project.exists();
+			} else if (element instanceof IResource) {
 				IResource resource = (IResource) element;
 				IProject project = resource.getProject();
 				remove = (project != null ? project.isOpen() : true)
