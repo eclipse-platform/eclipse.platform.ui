@@ -267,13 +267,16 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=158129
 				if (types[i] != null) {
 					MarkerType type= MarkerTypesModel.getInstance().getType(types[i]);
-					if (type.isSubtypeOf(bookmarkType)) {
+					if (type == null) {
+						// type is not known, use the workspace undo context
+						addContext(WorkspaceUndoUtil.getWorkspaceUndoContext());
+					} else if (type.isSubtypeOf(bookmarkType)) {
 						addContext(WorkspaceUndoUtil.getBookmarksUndoContext());
 					} else if (type.isSubtypeOf(taskType)) {
 						addContext(WorkspaceUndoUtil.getTasksUndoContext());
 					} else if (type.isSubtypeOf(problemType)) {
 						addContext(WorkspaceUndoUtil.getProblemsUndoContext());
-					} else if (types[i] != null) {
+					} else {
 						// type is not known, use the workspace undo context
 						addContext(WorkspaceUndoUtil.getWorkspaceUndoContext());
 					}
