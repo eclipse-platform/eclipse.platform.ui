@@ -2241,12 +2241,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		// Special handling for external editors (they have no tabs...)
 		if ("org.eclipse.ui.systemExternalEditor".equals(editorId) //$NON-NLS-1$
 				|| "org.eclipse.ui.browser.editorSupport".equals(editorId)) { //$NON-NLS-1$
-			if (input instanceof IPathEditorInput) {
-				IPathEditorInput fileInput = (IPathEditorInput) input;
-				String fullPath = fileInput.getPath().toOSString();
-				Program.launch(fullPath);
-				return null;
+			IPathEditorInput fileInput = getPathEditorInput(input);
+			if (fileInput == null) {
+				throw new PartInitException(WorkbenchMessages.EditorManager_systemEditorError);
 			}
+
+			String fullPath = fileInput.getPath().toOSString();
+			Program.launch(fullPath);
+			return null;
 		}
 
 		if (getWorkbenchWindow().getWorkbench().getEditorRegistry().findEditor(editorId) == null) {
