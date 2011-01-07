@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
+import org.eclipse.help.internal.workingset.AdaptableToc;
 import org.eclipse.help.internal.workingset.WorkingSet;
 import org.eclipse.help.internal.workingset.WorkingSetManager;
 
@@ -125,16 +126,16 @@ public class ExtraDirTest extends TestCase {
 		WorkingSet[] workingSets = null;
 		if (scope != null) {
 			WorkingSetManager wsm = BaseHelpSystem.getWorkingSetManager();
-			List tocs = new ArrayList();
+			List<AdaptableToc> tocs = new ArrayList<AdaptableToc>();
 			StringTokenizer tok = new StringTokenizer(scope, ", \t\n");
 			while (tok.hasMoreTokens()) {
 				tocs.add(wsm.getAdaptableToc(tok.nextToken()));
 			}
-			workingSets = new WorkingSet[] { wsm.createWorkingSet("testWorkingSet", (AdaptableHelpResource[])tocs.toArray(new AdaptableHelpResource[tocs.size()])) };
+			workingSets = new WorkingSet[] { wsm.createWorkingSet("testWorkingSet", tocs.toArray(new AdaptableHelpResource[tocs.size()])) };
 		}
 		
 		// expected hits
-		final Set hrefsToFind = new HashSet();
+		final Set<String> hrefsToFind = new HashSet<String>();
 		if (expectedResults != null) {
 			StringTokenizer tok = new StringTokenizer(expectedResults, ", \t\n");
 			while (tok.hasMoreTokens()) {
@@ -143,7 +144,7 @@ public class ExtraDirTest extends TestCase {
 		}
 
 		// run test
-		final Set unexpectedHrefs = new HashSet();
+		final Set<String> unexpectedHrefs = new HashSet<String>();
 		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList(), Platform.getNL());
 		SearchResults collector = new SearchResults(workingSets, 500, Platform.getNL());
 		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
@@ -168,9 +169,9 @@ public class ExtraDirTest extends TestCase {
 			buf.append("While searching for: " + searchWord + ",\n");
 			if (!hrefsToFind.isEmpty()) {
 				buf.append("Some of the expected results were not found:\n");
-				Iterator iter = hrefsToFind.iterator();
+				Iterator<String> iter = hrefsToFind.iterator();
 				while (iter.hasNext()) {
-					String missedHref = (String)iter.next();
+					String missedHref = iter.next();
 					buf.append(missedHref + "\n");
 				}
 			}
@@ -179,9 +180,9 @@ public class ExtraDirTest extends TestCase {
 					buf.append("\nAlso,\n");
 				}
 				buf.append("Found some unexpected search results:\n");
-				Iterator iter = unexpectedHrefs.iterator();
+				Iterator<String> iter = unexpectedHrefs.iterator();
 				while (iter.hasNext()) {
-			 		String unexpectedHref = (String)iter.next();
+			 		String unexpectedHref = iter.next();
 					buf.append(unexpectedHref + "\n");
 				}
 			}

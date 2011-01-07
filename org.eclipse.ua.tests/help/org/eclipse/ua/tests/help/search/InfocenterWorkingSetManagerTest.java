@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010 IBM Corporation and others.
+ *  Copyright (c) 2010, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(1, resources.length);
-		Set topics = new HashSet();
+		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
 		topics.add(topic1);
         assertTrue(topics.contains(resources[0]));
 		checkCookies(resp);
@@ -100,7 +100,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(2, resources.length);
-		Set topics = new HashSet();
+		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
 		topics.add(topic1);
 		topics.add(topic3);
         assertTrue(topics.contains(resources[0]));
@@ -126,7 +126,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(3, resources.length);
-		Set topics = new HashSet();
+		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
 		topics.add(topic1);
 		topics.add(topic3);
 		topics.add(topic5);
@@ -155,7 +155,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(1, resources.length);
-		Set topics = new HashSet();
+		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
 		topics.add(topic1);
         assertTrue(topics.contains(resources[0]));
 		checkCookies(resp);
@@ -182,7 +182,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(2, resources.length);
-		Set topics = new HashSet();
+		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
 		topics.add(topic1);
 		topics.add(topic3);
         assertTrue(topics.contains(resources[0]));
@@ -213,7 +213,7 @@ public class InfocenterWorkingSetManagerTest extends TestCase {
 		assertEquals(1, readWsets.length);
 		AdaptableHelpResource[] resources = readWsets[0].getElements();
 		assertEquals(3, resources.length);
-		Set topics = new HashSet();
+		Set<AdaptableTopic> topics = new HashSet<AdaptableTopic>();
 		topics.add(topic1);
 		topics.add(topic3);
 		topics.add(topic5);

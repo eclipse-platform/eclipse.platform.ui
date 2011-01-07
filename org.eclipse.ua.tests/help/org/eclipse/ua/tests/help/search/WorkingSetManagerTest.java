@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010 IBM Corporation and others.
+ *  Copyright (c) 2010, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -204,12 +204,12 @@ public class WorkingSetManagerTest extends TestCase {
 
 	private void createWsetWithAllTocs(WorkingSetManager mgr, String name) {
 		WorkingSet wset = new WorkingSet(name);
-		List tocList = new ArrayList();
+		List<AdaptableToc> tocList = new ArrayList<AdaptableToc>();
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
 		for (int i = 0; i < tocs.length; i++) {
 			tocList.add(mgr.getAdaptableToc(tocs[i].getHref()));
 		}
-		wset.setElements((AdaptableHelpResource[]) tocList.toArray(new AdaptableToc[0]));
+		wset.setElements(tocList.toArray(new AdaptableToc[0]));
 		mgr.addWorkingSet(wset);
 	};
 

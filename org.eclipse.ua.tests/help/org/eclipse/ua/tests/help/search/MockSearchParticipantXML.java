@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,15 +22,15 @@ public class MockSearchParticipantXML extends SearchParticipantXML {
 	public static final String DOC_1 = "/org.eclipse.ua.tests/data/help/search/participant_xml_1.xml";
 	public static final String DOC_2 = "/org.eclipse.ua.tests/data/help/search/participant_xml_2.xml";
 	
-	public Set getAllDocuments(String locale) {
-		HashSet set = new HashSet();
+	public Set<String> getAllDocuments(String locale) {
+		HashSet<String> set = new HashSet<String>();
 		set.add(DOC_1 + "?id=xml1" + "?id=xml2");
 		set.add(DOC_2);
 		return set;
 	}
 	
-	public Set getContributingPlugins() {
-		Set result = new HashSet();
+	public Set<String> getContributingPlugins() {
+		Set<String> result = new HashSet<String>();
 		result.add("org.eclipse.ua.tests");
 		return result;
 	}

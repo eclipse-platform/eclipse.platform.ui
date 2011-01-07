@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,8 +46,8 @@ public class SearchTestUtils {
 	 */
 	public static String searchForExpectedResults(String searchWord,
 			String[] hrefs, String nl) {
-		final Set hrefsToFind = new HashSet();
-		final Set unexpectedHrefs = new HashSet();		
+		final Set<String> hrefsToFind = new HashSet<String>();
+		final Set<String> unexpectedHrefs = new HashSet<String>();		
 		hrefsToFind.addAll(Arrays.asList(hrefs));
 		
 		SearchHit[] hits;
@@ -72,9 +72,9 @@ public class SearchTestUtils {
 			buf.append("While searching for: " + searchWord + ",\n");
 			if (!hrefsToFind.isEmpty()) {
 				buf.append("Some of the expected results were not found:\n");
-				Iterator iter = hrefsToFind.iterator();
+				Iterator<String> iter = hrefsToFind.iterator();
 				while (iter.hasNext()) {
-					String missedHref = (String)iter.next();
+					String missedHref = iter.next();
 					buf.append(missedHref + "\n");
 				}
 			}
@@ -83,9 +83,9 @@ public class SearchTestUtils {
 					buf.append("\nAlso,\n");
 				}
 				buf.append("Found some unexpected search results:\n");
-				Iterator iter = unexpectedHrefs.iterator();
+				Iterator<String> iter = unexpectedHrefs.iterator();
 				while (iter.hasNext()) {
-					String unexpectedHref = (String)iter.next();
+					String unexpectedHref = iter.next();
 					buf.append(unexpectedHref + "\n");
 				}
 			}
