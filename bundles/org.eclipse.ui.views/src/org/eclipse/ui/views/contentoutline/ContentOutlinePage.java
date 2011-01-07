@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,8 @@ import org.eclipse.ui.part.Page;
  * <code>createControl</code> to configure the tree viewer with a proper content 
  * provider, label provider, and input element.
  * </p>
+ * <p>Subclasses may provide a hint for constructing the tree viewer
+ * using {@link #getTreeStyle()}.</p>
  * <p>
  * Note that those wanting to use a control other than internally created
  * <code>TreeViewer</code> will need to implement 
@@ -75,10 +77,21 @@ public abstract class ContentOutlinePage extends Page implements
      * @param parent
      */
     public void createControl(Composite parent) {
-        treeViewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL
-                | SWT.V_SCROLL);
+        treeViewer = new TreeViewer(parent, getTreeStyle());
         treeViewer.addSelectionChangedListener(this);
     }
+    
+	/**
+	 * A hint for the styles to use while constructing the TreeViewer.
+	 * <p>Subclasses may override.</p>
+	 * 
+	 * @return the tree styles to use. By default, SWT.MULTI | SWT.H_SCROLL |
+	 *         SWT.V_SCROLL
+	 * @since 3.6
+	 */
+	protected int getTreeStyle() {
+		return SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL;
+	}
 
     /**
      * Fires a selection changed event.
