@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009 IBM Corporation and others.
+ *  Copyright (c) 2009, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public TitleSearchData(ServletContext context, HttpServletRequest request,
 		super(context, request, response);
 }
 
-private List results;
+private List<SearchResult> results;
 private String searchTerm;
 
 public class SearchResult {
@@ -38,7 +38,7 @@ public class SearchResult {
 }
 
 public SearchResult[] getSearchResults() {
-     results = new ArrayList();
+     results = new ArrayList<SearchResult>();
      searchTerm = request.getParameter("searchWord");
      IToc[] tocs = getTocs();
      for (int i = 0; i < tocs.length; i++) {
@@ -47,7 +47,7 @@ public SearchResult[] getSearchResults() {
     		 searchTopic(topics[t]);
     	 }
      }
-     return (SearchResult[]) results.toArray(new SearchResult[results.size()]);
+     return results.toArray(new SearchResult[results.size()]);
 }
 
 private void searchTopic(ITopic topic) {

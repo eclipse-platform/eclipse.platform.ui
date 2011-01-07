@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2007 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -123,7 +123,7 @@ public class IntroModelSerializerTest extends TestCase {
 	 */
 	public static Map getXHTMLFiles(IntroModelRoot model) {
 		Map map = new HashMap();
-		Collection pages = new ArrayList();
+		Collection<AbstractIntroPage> pages = new ArrayList<AbstractIntroPage>();
 		IntroHomePage home = model.getRootPage();
 		if (home.isXHTMLPage()) {
 			pages.add(home);
@@ -134,9 +134,9 @@ public class IntroModelSerializerTest extends TestCase {
 				pages.add(otherPages[i]);
 			}
 		}
-		Iterator iter = pages.iterator();
+		Iterator<AbstractIntroPage> iter = pages.iterator();
 		while (iter.hasNext()) {
-			AbstractIntroPage page = (AbstractIntroPage)iter.next();
+			AbstractIntroPage page = iter.next();
 			BrowserIntroPartImplementation impl = new BrowserIntroPartImplementation();
 			String xhtml = impl.generateXHTMLPage(page, new IIntroContentProviderSite() {
 				public void reflow(IIntroContentProvider provider, boolean incremental) {
