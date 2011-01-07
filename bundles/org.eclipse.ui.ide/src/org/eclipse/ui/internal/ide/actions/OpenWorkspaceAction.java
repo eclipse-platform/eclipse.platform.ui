@@ -10,18 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.actions;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
@@ -112,6 +121,111 @@ public class OpenWorkspaceAction extends Action implements
 	private static final String NEW_LINE = "\n"; //$NON-NLS-1$
 
 	private IWorkbenchWindow window;
+	
+	
+	private IContributionItem[] getContributionItems() {
+		ArrayList list = new ArrayList();
+		final ChooseWorkspaceData data = new ChooseWorkspaceData(Platform
+				.getInstanceLocation().getURL());
+		data.readPersistedData();
+		String current = data.getInitialDefault();
+		String[] workspaces = data.getRecentWorkspaces();
+		for (int i = 0; i < workspaces.length; i++) {
+			if (workspaces[i] != null && !workspaces[i].equals(current)) {
+				list.add(new ActionContributionItem(new WorkspaceMRUAction(
+						workspaces[i], data)));
+			}
+		}
+		if (list.size()>0) {
+			list.add(new Separator());
+		}
+		return (IContributionItem[]) list
+				.toArray(new IContributionItem[list.size()]);
+	}
+	
+	class MenuCreator implements IMenuCreator {
+		ArrayList menus = new ArrayList();
+
+		private MenuManager dropDownMenuMgr;
+
+		/**
+		 * Creates the menu manager for the drop-down.
+		 */
+		private void createDropDownMenuMgr() {
+			if (dropDownMenuMgr == null) {
+				dropDownMenuMgr = new MenuManager();
+				dropDownMenuMgr.setRemoveAllWhenShown(true);
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
+		 */
+		public Menu getMenu(Control parent) {
+			createDropDownMenuMgr();
+			dropDownMenuMgr.addMenuListener(new IMenuListener() {
+				public void menuAboutToShow(IMenuManager manager) {
+					IContributionItem[] items = getContributionItems();
+					for (int i = 0; i < items.length; i++) {
+						manager.add(items[i]);
+					}
+					manager.add(new OpenDialogAction());
+				}
+			});
+			return dropDownMenuMgr.createContextMenu(parent);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+		 */
+		public Menu getMenu(Menu parent) {
+			createDropDownMenuMgr();
+			final Menu menu = new Menu(parent);
+			menu.addListener(SWT.Show, new Listener() {
+				public void handleEvent(Event event) {
+					if (menu.isDisposed()) {
+						return;
+					}
+					MenuItem[] items = menu.getItems();
+					for (int i = 0; i < items.length; i++) {
+						items[i].dispose();
+					}
+					IContributionItem[] contributions = getContributionItems();
+					for (int i = 0; i < contributions.length; i++) {
+						contributions[i].fill(menu, -1);
+					}
+					new ActionContributionItem(new OpenDialogAction()).fill(
+							menu, -1);
+				}
+			});
+			return menu;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.action.IMenuCreator#dispose()
+		 */
+		public void dispose() {
+			if (dropDownMenuMgr != null) {
+				dropDownMenuMgr.dispose();
+				dropDownMenuMgr = null;
+			}
+			if (menus.size()>0) {
+				for (Iterator i = menus.iterator(); i.hasNext();) {
+					Menu m = (Menu) i.next();
+					if (!m.isDisposed()) {
+						m.dispose();
+					}
+				}
+				menus.clear();
+			}
+		}
+	}
 
 	/**
 	 * Set definition for this action and text so that it will be used for File
@@ -133,76 +247,7 @@ public class OpenWorkspaceAction extends Action implements
 		this.window = window;
 		setToolTipText(IDEWorkbenchMessages.OpenWorkspaceAction_toolTip);
 		setActionDefinitionId("org.eclipse.ui.file.openWorkspace"); //$NON-NLS-1$
-		setMenuCreator(new IMenuCreator() {
-			private MenuManager dropDownMenuMgr;
-
-			/**
-			 * Creates the menu manager for the drop-down.
-			 */
-			private void createDropDownMenuMgr() {
-				if (dropDownMenuMgr == null) {
-					dropDownMenuMgr = new MenuManager();
-					final ChooseWorkspaceData data = new ChooseWorkspaceData(
-							Platform.getInstanceLocation().getURL());
-					data.readPersistedData();
-					String current = data.getInitialDefault();
-					String[] workspaces = data.getRecentWorkspaces();
-					for (int i = 0; i < workspaces.length; i++) {
-						if (workspaces[i] != null
-								&& !workspaces[i].equals(current)) {
-							dropDownMenuMgr.add(new WorkspaceMRUAction(
-									workspaces[i], data));
-						}
-					}
-					if (!dropDownMenuMgr.isEmpty())
-						dropDownMenuMgr.add(new Separator());
-					dropDownMenuMgr.add(new OpenDialogAction());
-				}
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
-			 */
-			public Menu getMenu(Control parent) {
-				createDropDownMenuMgr();
-				return dropDownMenuMgr.createContextMenu(parent);
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-			 */
-			public Menu getMenu(Menu parent) {
-				createDropDownMenuMgr();
-				Menu menu = new Menu(parent);
-				IContributionItem[] items = dropDownMenuMgr.getItems();
-				for (int i = 0; i < items.length; i++) {
-					IContributionItem item = items[i];
-					IContributionItem newItem = item;
-					if (item instanceof ActionContributionItem) {
-						newItem = new ActionContributionItem(
-								((ActionContributionItem) item).getAction());
-					}
-					newItem.fill(menu, -1);
-				}
-				return menu;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.IMenuCreator#dispose()
-			 */
-			public void dispose() {
-				if (dropDownMenuMgr != null) {
-					dropDownMenuMgr.dispose();
-					dropDownMenuMgr = null;
-				}
-			}
-		});
+		setMenuCreator(new MenuCreator());
 	}
 
 	/*
