@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,19 +198,17 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			byte[] buffer= new byte[8192];
 			while (true) {
 				int bytesRead= -1;
-				try {
-					bytesRead= stream.read(buffer);
-				} catch (IOException e) {
-				}
+				bytesRead= stream.read(buffer);
 				if (bytesRead == -1)
 					break;
-				try {
-					out.write(buffer, 0, bytesRead);
-				} catch (IOException e) {
-				}
+				out.write(buffer, 0, bytesRead);
 				if (monitor != null)
 					monitor.worked(1);
 			}
+		} catch (IOException ex) {
+			String message= (ex.getMessage() != null ? ex.getMessage() : ""); //$NON-NLS-1$
+			IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, ex);
+			throw new CoreException(s);
 		} finally {
 			try {
 				stream.close();
