@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,7 @@ public class TocManagerTest extends TestCase {
 	
 	public static boolean hasDuplicateContributions(TocContribution[] tocContributions)
 	{
-		HashSet contributionsFound = new HashSet();
+		HashSet<String> contributionsFound = new HashSet<String>();
 		
 		for(int i=0;i<tocContributions.length;i++)
 		{

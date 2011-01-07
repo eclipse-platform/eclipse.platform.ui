@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,7 +97,7 @@ public class ContextServletTest extends TestCase {
 		is.close();
 		assertEquals("context", root.getNodeName());
 		NodeList children = root.getChildNodes();
-		List topics = new ArrayList();
+		List<Node> topics = new ArrayList<Node>();
 		int length = children.getLength();
 		for (int i = 0; i < length; i++) {
 			Node next = children.item(i);
@@ -105,7 +105,7 @@ public class ContextServletTest extends TestCase {
 				topics.add(next);
 			}
 		}
-		return (Element[]) topics.toArray(new Element[topics.size()]);
+		return topics.toArray(new Element[topics.size()]);
 	}
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,7 @@ public class ParallelSearchServletTest extends TestCase {
 		is.close();
 		assertEquals("searchHits", root.getNodeName());
 		NodeList children = root.getChildNodes();
-		List hits = new ArrayList();
+		List<Node> hits = new ArrayList<Node>();
 		int length = children.getLength();
 		for (int i = 0; i < length; i++) {
 			Node next = children.item(i);
@@ -122,7 +122,7 @@ public class ParallelSearchServletTest extends TestCase {
 				hits.add(next);
 			}
 		}
-		return (Node[]) hits.toArray(new Node[hits.size()]);
+		return hits.toArray(new Node[hits.size()]);
 	}
 	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,14 +70,14 @@ public class LoadIndexUsingRemoteHelp extends TestCase {
 	}
 
 	private IIndexEntry[] matchingEntries(IIndex index, String keyword) {
-		List matches = new ArrayList();
+		List<IIndexEntry> matches = new ArrayList<IIndexEntry>();
 		IIndexEntry[] entries = index.getEntries();
 		for (int i = 0; i < entries.length; i++) {
 			if (keyword.equals(entries[i].getKeyword())) {
 				matches.add(entries[i]);
 			}
 		}
-		return (IIndexEntry[]) matches.toArray(new IIndexEntry[matches.size()]);
+		return matches.toArray(new IIndexEntry[matches.size()]);
 	}
 
 }

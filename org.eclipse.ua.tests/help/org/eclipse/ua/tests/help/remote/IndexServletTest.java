@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -102,7 +102,7 @@ public class IndexServletTest extends TestCase {
 	
 	private Element[] findEntryInAllContributions(Node parent, String keyword) {
 		NodeList contributions = parent.getChildNodes();
-		List results = new ArrayList();
+		List<Node> results = new ArrayList<Node>();
 		for (int i = 0; i < contributions.getLength(); i++) {
 			Node next = contributions.item(i);
 			if (next instanceof Element)  {
@@ -112,11 +112,11 @@ public class IndexServletTest extends TestCase {
 			    }
 			}
 		}
-		return (Element[]) results.toArray(new Element[results.size()]);
+		return results.toArray(new Element[results.size()]);
 	} 
 	
 	private void findEntryInIndexContribution(Element parent, String keyword,
-			List results) {
+			List<Node> results) {
 		NodeList indexes = parent.getChildNodes();
 		for (int i = 0; i < indexes.getLength(); i++) {
 			Node next = indexes.item(i);
@@ -130,7 +130,7 @@ public class IndexServletTest extends TestCase {
 	}
 
 	private void findMatchingChildEntry(Element parent, String keyword,
-			List results) {
+			List<Node> results) {
 		NodeList topLevelEntries = parent.getChildNodes();
 		for (int i = 0; i < topLevelEntries.getLength(); i++) {
 			Node next = topLevelEntries.item(i);
