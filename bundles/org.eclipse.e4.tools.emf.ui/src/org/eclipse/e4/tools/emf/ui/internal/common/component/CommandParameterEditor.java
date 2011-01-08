@@ -10,15 +10,15 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -41,27 +41,17 @@ import org.eclipse.swt.widgets.Label;
 
 public class CommandParameterEditor extends AbstractComponentEditor {
 	private Composite composite;
-	private Image image;
 	private EMFDataBindingContext context;
 
 	private EStackLayout stackLayout;
 
-	public CommandParameterEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain, editor);
+	public CommandParameterEditor(EditingDomain editingDomain, ModelEditor editor, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if (image == null) {
-			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/CommandParameter.png")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return image;
+		return createImage(ResourceProvider.IMG_CommandParameter);
 	}
 
 	@Override

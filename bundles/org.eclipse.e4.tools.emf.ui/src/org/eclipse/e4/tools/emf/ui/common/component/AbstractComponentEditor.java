@@ -10,40 +10,25 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.common.component;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractComponentEditor {
 	private EditingDomain editingDomain;
-
-	private static ImageRegistry IMG_REG = new ImageRegistry();
-	// private static Map<Integer, Image> IMAGE_MAP = new HashMap<Integer,
-	// Image>();
-
-	private static final String[] IMAGES = { "/icons/full/obj16/zoom.png", //$NON-NLS-1$
-	"/icons/full/obj16/table_add.png", //$NON-NLS-1$
-	"/icons/full/obj16/table_delete.png", //$NON-NLS-1$
-	"/icons/full/obj16/arrow_up.png", //$NON-NLS-1$
-	"/icons/full/obj16/arrow_down.png" //$NON-NLS-1$
-	};
 
 	private WritableValue master = new WritableValue();
 
@@ -56,10 +41,12 @@ public abstract class AbstractComponentEditor {
 	protected static final int VERTICAL_LIST_WIDGET_INDENT = 10;
 
 	private ModelEditor editor;
+	private final IResourcePool resourcePool;
 
-	public AbstractComponentEditor(EditingDomain editingDomain, ModelEditor editor) {
+	public AbstractComponentEditor(EditingDomain editingDomain, ModelEditor editor, IResourcePool resourcePool) {
 		this.editingDomain = editingDomain;
 		this.editor = editor;
+		this.resourcePool = resourcePool;
 	}
 
 	public EditingDomain getEditingDomain() {
@@ -83,21 +70,12 @@ public abstract class AbstractComponentEditor {
 		}
 	}
 
-	public Image getImage(Display d, int id) {
-		Image img = IMG_REG.get(IMAGES[id]);
-		if (img == null) {
-			try {
-				InputStream in = AbstractComponentEditor.class.getClassLoader().getResourceAsStream(IMAGES[id]);
-				img = new Image(d, in);
-				IMG_REG.put(IMAGES[id], img);
-				in.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	public Image createImage(String key) {
+		return resourcePool.getImageUnchecked(key);
+	}
 
-		return img;
+	public ImageDescriptor createImageDescriptor(String key) {
+		return ImageDescriptor.createFromImage(createImage(key));
 	}
 
 	public abstract Image getImage(Object element, Display display);
@@ -111,30 +89,6 @@ public abstract class AbstractComponentEditor {
 	public abstract Composite getEditor(Composite parent, Object object);
 
 	public abstract IObservableList getChildList(Object element);
-
-	protected Image loadSharedImage(Display d, URL path) {
-		Image img = IMG_REG.get(path.toString());
-		if (img == null) {
-			try {
-				URL url = FileLocator.resolve(path);
-				if (url != null) {
-					InputStream in = url.openStream();
-					img = new Image(d, in);
-					IMG_REG.put(path.toString(), img);
-					in.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return img;
-	}
-
-	protected ImageDescriptor loadSharedDescriptor(Display d, URL path) {
-		return ImageDescriptor.createFromImage(loadSharedImage(d, path));
-	}
 
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] {};

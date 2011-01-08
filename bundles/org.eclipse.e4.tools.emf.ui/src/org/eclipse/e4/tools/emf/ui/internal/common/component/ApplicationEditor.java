@@ -10,15 +10,15 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -44,10 +44,7 @@ import org.eclipse.swt.widgets.Text;
 public class ApplicationEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private Image image;
-	private Image tbrImage;
 	private EMFDataBindingContext context;
-	// private Button createRemoveRootContext;
 
 	private IListProperty HANDLER_CONTAINER__HANDLERS = EMFProperties.list(CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS);
 	private IListProperty BINDING_CONTAINER__BINDINGS = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES);
@@ -62,33 +59,17 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 	private IListProperty BINDING_TABLE_CONTAINER__ROOT_CONTEXT = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 
-	public ApplicationEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain, editor);
+	public ApplicationEditor(EditingDomain editingDomain, ModelEditor editor, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
 			if (((MUIElement) element).isToBeRendered()) {
-				if (image == null) {
-					try {
-						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Application.png")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				return image;
+				return createImage(ResourceProvider.IMG_Application);
 			} else {
-				if (tbrImage == null) {
-					try {
-						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/Application.png")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				return tbrImage;
+				return createImage(ResourceProvider.IMG_Tbr_Application);
 			}
 		}
 		return null;

@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -21,9 +19,11 @@ import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BindingContextSelectionDialog;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
@@ -64,40 +64,25 @@ import org.eclipse.swt.widgets.Text;
 public class BindingTableEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private Image image;
 	private EMFDataBindingContext context;
 
 	private IListProperty BINDING_TABLE__BINDINGS = EMFProperties.list(CommandsPackageImpl.Literals.BINDING_TABLE__BINDINGS);
 	private EStackLayout stackLayout;
 	private List<Action> actions = new ArrayList<Action>();
 
-	public BindingTableEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain, editor);
-		try {
-			actions.add(new Action(Messages.BindingTableEditor_AddKeyBinding, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/KeyBinding.png"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAddKeyBinding();
-				}
-			});
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public BindingTableEditor(EditingDomain editingDomain, ModelEditor editor, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
+		actions.add(new Action(Messages.BindingTableEditor_AddKeyBinding, createImageDescriptor(ResourceProvider.IMG_KeyBinding)) {
+			@Override
+			public void run() {
+				handleAddKeyBinding();
+			}
+		});
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if (image == null) {
-			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/BindingTable.png")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return image;
+		return createImage(ResourceProvider.IMG_BindingTable);
 	}
 
 	@Override
@@ -183,7 +168,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -227,7 +212,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Up);
-			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -254,7 +239,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
-			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -281,7 +266,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_AddEllipsis);
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -292,7 +277,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Remove);
-			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override

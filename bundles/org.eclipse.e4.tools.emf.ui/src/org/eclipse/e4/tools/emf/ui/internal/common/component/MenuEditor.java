@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -30,11 +28,13 @@ import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EClass2EObject;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EObject2EClass;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIconDialogEditor;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
@@ -106,39 +106,33 @@ public class MenuEditor extends AbstractComponentEditor {
 		}
 	}
 
-	public MenuEditor(EditingDomain editingDomain, IProject project, ModelEditor editor) {
-		super(editingDomain, editor);
+	public MenuEditor(EditingDomain editingDomain, IProject project, ModelEditor editor, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
 		this.project = project;
-		try {
-			actions.add(new Action(Messages.MenuEditor_AddHandledMenuItem, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/HandledMenuItem.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAdd(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
-				}
-			});
-			actions.add(new Action(Messages.MenuEditor_AddMenu, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Menu.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAdd(MenuPackageImpl.Literals.MENU, false);
-				}
-			});
-			actions.add(new Action(Messages.MenuEditor_AddDirectMenuItem, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/DirectMenuItem.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAdd(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false);
-				}
-			});
-			actions.add(new Action(Messages.MenuEditor_AddSeparator, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/MenuSeparator.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAdd(MenuPackageImpl.Literals.MENU_SEPARATOR, true);
-				}
-			});
-
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		actions.add(new Action(Messages.MenuEditor_AddHandledMenuItem, createImageDescriptor(ResourceProvider.IMG_MenuItem)) {
+			@Override
+			public void run() {
+				handleAdd(MenuPackageImpl.Literals.HANDLED_MENU_ITEM, false);
+			}
+		});
+		actions.add(new Action(Messages.MenuEditor_AddMenu, createImageDescriptor(ResourceProvider.IMG_Menu)) {
+			@Override
+			public void run() {
+				handleAdd(MenuPackageImpl.Literals.MENU, false);
+			}
+		});
+		actions.add(new Action(Messages.MenuEditor_AddDirectMenuItem, createImageDescriptor(ResourceProvider.IMG_MenuItem)) {
+			@Override
+			public void run() {
+				handleAdd(MenuPackageImpl.Literals.DIRECT_MENU_ITEM, false);
+			}
+		});
+		actions.add(new Action(Messages.MenuEditor_AddSeparator, createImageDescriptor(ResourceProvider.IMG_MenuSeparator)) {
+			@Override
+			public void run() {
+				handleAdd(MenuPackageImpl.Literals.MENU_SEPARATOR, true);
+			}
+		});
 	}
 
 	@Override
@@ -146,19 +140,9 @@ public class MenuEditor extends AbstractComponentEditor {
 		if (element instanceof MUIElement) {
 			MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				try {
-					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Menu.gif")); //$NON-NLS-1$
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return createImage(ResourceProvider.IMG_Menu);
 			} else {
-				try {
-					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/Menu.gif"));//$NON-NLS-1$
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return createImage(ResourceProvider.IMG_Tbr_Menu);
 			}
 		}
 
@@ -289,7 +273,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Up);
-			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -313,7 +297,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
-			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -351,7 +335,7 @@ public class MenuEditor extends AbstractComponentEditor {
 			childrenDropDown.setSelection(new StructuredSelection(defaultStruct));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -366,7 +350,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Remove);
-			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -420,7 +404,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override

@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -21,8 +19,10 @@ import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -68,64 +68,41 @@ import org.eclipse.swt.widgets.Text;
 public class PartStackEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private Image image;
 	private EMFDataBindingContext context;
 
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private StackLayout stackLayout;
-	private Image tbrImage;
 	private List<Action> actions = new ArrayList<Action>();
 
-	public PartStackEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain, editor);
-		try {
-			actions.add(new Action(Messages.PartStackEditor_AddPart, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Part.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAddChild(BasicPackageImpl.Literals.PART);
-				}
-			});
-			actions.add(new Action(Messages.PartStackEditor_AddInputPart, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Part.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAddChild(BasicPackageImpl.Literals.INPUT_PART);
-				}
-			});
-			actions.add(new Action(Messages.PartStackEditor_AddPlaceholder, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Placeholder.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
-				}
-			});
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public PartStackEditor(EditingDomain editingDomain, ModelEditor editor, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
+		actions.add(new Action(Messages.PartStackEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleAddChild(BasicPackageImpl.Literals.PART);
+			}
+		});
+		actions.add(new Action(Messages.PartStackEditor_AddInputPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleAddChild(BasicPackageImpl.Literals.INPUT_PART);
+			}
+		});
+		actions.add(new Action(Messages.PartStackEditor_AddPlaceholder, createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
+			@Override
+			public void run() {
+				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
+			}
+		});
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
 			if (((MUIElement) element).isToBeRendered()) {
-				if (image == null) {
-					try {
-						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/PartStack.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				return image;
+				return createImage(ResourceProvider.IMG_Part);
 			} else {
-				if (tbrImage == null) {
-					try {
-						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/PartStack.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				return tbrImage;
+				return createImage(ResourceProvider.IMG_Tbr_Part);
 			}
 		}
 
@@ -249,7 +226,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Up);
-			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -273,7 +250,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
-			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -309,7 +286,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -321,7 +298,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Remove);
-			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override

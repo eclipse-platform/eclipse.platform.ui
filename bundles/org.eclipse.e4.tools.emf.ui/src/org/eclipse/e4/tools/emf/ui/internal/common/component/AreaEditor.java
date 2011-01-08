@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -22,9 +20,11 @@ import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.AreaIconDialogEditor;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -81,8 +81,8 @@ public class AreaEditor extends AbstractComponentEditor {
 	private EStackLayout stackLayout;
 	private IProject project;
 
-	public AreaEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain, editor);
+	public AreaEditor(EditingDomain editingDomain, ModelEditor editor, IProject project, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
 		this.project = project;
 	}
 
@@ -93,38 +93,18 @@ public class AreaEditor extends AbstractComponentEditor {
 		if (!horizontal) {
 			MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				try {
-					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Area_vertical.gif")); //$NON-NLS-1$	
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return createImage(ResourceProvider.IMG_Area_vertical);
 			} else {
-				try {
-					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/Area_vertical.gif")); //$NON-NLS-1$
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return createImage(ResourceProvider.IMG_Tbr_Area_vertical);
 			}
 		}
 
 		if (horizontal) {
 			MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				try {
-					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Area.gif")); //$NON-NLS-1$
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return createImage(ResourceProvider.IMG_Area);
 			} else {
-				try {
-					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/Area.gif")); //$NON-NLS-1$
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return createImage(ResourceProvider.IMG_Tbr_Area);
 			}
 		}
 		return null;
@@ -232,7 +212,7 @@ public class AreaEditor extends AbstractComponentEditor {
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -307,7 +287,7 @@ public class AreaEditor extends AbstractComponentEditor {
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Up);
-			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -331,7 +311,7 @@ public class AreaEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
-			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -367,7 +347,7 @@ public class AreaEditor extends AbstractComponentEditor {
 			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -389,7 +369,7 @@ public class AreaEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Remove);
-			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override

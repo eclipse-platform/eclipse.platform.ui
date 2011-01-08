@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -29,10 +27,12 @@ import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PartIconDialogEditor;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -71,7 +71,6 @@ import org.eclipse.swt.widgets.Text;
 public class PartEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private Image image;
 	private EMFDataBindingContext context;
 	private IProject project;
 
@@ -80,10 +79,9 @@ public class PartEditor extends AbstractComponentEditor {
 	private IValueProperty PART__TOOLBAR = EMFProperties.value(BasicPackageImpl.Literals.PART__TOOLBAR);
 	private Button createRemoveToolBar;
 	private EStackLayout stackLayout;
-	private Image tbrImage;
 
-	public PartEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain, editor);
+	public PartEditor(EditingDomain editingDomain, ModelEditor editor, IProject project, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
 		this.project = project;
 	}
 
@@ -91,25 +89,9 @@ public class PartEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
 			if (((MUIElement) element).isToBeRendered()) {
-				if (image == null) {
-					try {
-						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Part.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				return image;
+				return createImage(ResourceProvider.IMG_Part);
 			} else {
-				if (tbrImage == null) {
-					try {
-						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/Part.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				return tbrImage;
+				return createImage(ResourceProvider.IMG_Tbr_Part);
 			}
 		}
 
@@ -211,7 +193,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -248,7 +230,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override

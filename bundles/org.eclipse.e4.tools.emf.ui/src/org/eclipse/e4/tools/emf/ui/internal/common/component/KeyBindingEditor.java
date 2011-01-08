@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.Binding;
@@ -27,9 +25,11 @@ import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.KeyBindingCommandSelectionDialog;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.MKeySequence;
@@ -70,7 +70,6 @@ import org.eclipse.swt.widgets.Text;
 public class KeyBindingEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private Image image;
 	private EMFDataBindingContext context;
 	private IModelResource resource;
 	private EStackLayout stackLayout;
@@ -78,34 +77,20 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 	private IEMFEditListProperty KEY_BINDING__PARAMETERS = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.KEY_BINDING__PARAMETERS);
 
-	public KeyBindingEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource) {
-		super(editingDomain, editor);
+	public KeyBindingEditor(EditingDomain editingDomain, ModelEditor editor, IModelResource resource, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
 		this.resource = resource;
-		try {
-			actions.add(new Action(Messages.KeyBindingEditor_AddParameter, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/Parameter.png"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAddParameter();
-				}
-			});
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		actions.add(new Action(Messages.KeyBindingEditor_AddParameter, createImageDescriptor(ResourceProvider.IMG_Parameter)) {
+			@Override
+			public void run() {
+				handleAddParameter();
+			}
+		});
 	}
 
 	@Override
 	public Image getImage(Object element, Display display) {
-		if (image == null) {
-			try {
-				image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/KeyBinding.png")); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return image;
+		return createImage(ResourceProvider.IMG_KeyBinding);
 	}
 
 	@Override
@@ -208,7 +193,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
-			b.setImage(getImage(b.getDisplay(), SEARCH_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -245,7 +230,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Up);
-		b.setImage(getImage(b.getDisplay(), ARROW_UP));
+		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -272,7 +257,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Down);
-		b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -299,7 +284,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_AddEllipsis);
-		b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+		b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -324,7 +309,7 @@ public class KeyBindingEditor extends AbstractComponentEditor {
 			}
 
 		});
-		b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+		b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 
 		ControlFactory.createStringListWidget(parent, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);

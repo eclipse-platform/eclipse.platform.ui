@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.UpdateValueStrategy;
@@ -25,8 +23,10 @@ import org.eclipse.e4.tools.emf.ui.common.ImageTooltip;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuItemIconDialogEditor;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
@@ -64,14 +64,12 @@ import org.eclipse.swt.widgets.Text;
 public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 	private Composite composite;
-	private Image image;
-	private Image tbrImage;
 	private EMFDataBindingContext context;
 	protected IProject project;
 	private EStackLayout stackLayout;
 
-	public MenuItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project) {
-		super(editingDomain, editor);
+	public MenuItemEditor(EditingDomain editingDomain, ModelEditor editor, IProject project, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
 		this.project = project;
 	}
 
@@ -79,25 +77,9 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	public Image getImage(Object element, Display display) {
 		if (element instanceof MUIElement) {
 			if (((MUIElement) element).isToBeRendered()) {
-				if (image == null) {
-					try {
-						image = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/MenuItem.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				return image;
+				return createImage(ResourceProvider.IMG_MenuItem);
 			} else {
-				if (tbrImage == null) {
-					try {
-						tbrImage = loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/MenuItem.gif")); //$NON-NLS-1$
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				return tbrImage;
+				return createImage(ResourceProvider.IMG_Tbr_MenuItem);
 			}
 		}
 
@@ -252,7 +234,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 			};
 
 			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setImage(getImage(t.getDisplay(), SEARCH_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.setText(Messages.ModelTooling_Common_FindEllipsis);
 			b.addSelectionListener(new SelectionAdapter() {

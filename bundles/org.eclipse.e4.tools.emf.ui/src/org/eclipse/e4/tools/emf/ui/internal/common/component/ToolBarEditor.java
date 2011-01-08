@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -21,8 +19,10 @@ import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -85,37 +85,32 @@ public class ToolBarEditor extends AbstractComponentEditor {
 		}
 	}
 
-	public ToolBarEditor(EditingDomain editingDomain, ModelEditor editor) {
-		super(editingDomain, editor);
-		try {
-			actions.add(new Action(Messages.ToolBarEditor_AddHandledToolItem, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/HandledToolItem.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAddChild(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
-				}
-			});
-			actions.add(new Action(Messages.ToolBarEditor_AddDirectToolItem, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/DirectToolItem.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAddChild(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false);
-				}
-			});
-			actions.add(new Action(Messages.ToolBarEditor_AddToolControl, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/ToolControl.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL, false);
-				}
-			});
-			actions.add(new Action(Messages.ToolBarEditor_AddToolBarSeparator, loadSharedDescriptor(Display.getCurrent(), new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/ToolBarSeparator.gif"))) { //$NON-NLS-1$
-				@Override
-				public void run() {
-					handleAddChild(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true);
-				}
-			});
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public ToolBarEditor(EditingDomain editingDomain, ModelEditor editor, IResourcePool resourcePool) {
+		super(editingDomain, editor, resourcePool);
+		actions.add(new Action(Messages.ToolBarEditor_AddHandledToolItem, createImageDescriptor(ResourceProvider.IMG_HandledToolItem)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.HANDLED_TOOL_ITEM, false);
+			}
+		});
+		actions.add(new Action(Messages.ToolBarEditor_AddDirectToolItem, createImageDescriptor(ResourceProvider.IMG_DirectToolItem)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.DIRECT_TOOL_ITEM, false);
+			}
+		});
+		actions.add(new Action(Messages.ToolBarEditor_AddToolControl, createImageDescriptor(ResourceProvider.IMG_ToolControl)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.TOOL_CONTROL, false);
+			}
+		});
+		actions.add(new Action(Messages.ToolBarEditor_AddToolBarSeparator, createImageDescriptor(ResourceProvider.IMG_ToolBarSeparator)) {
+			@Override
+			public void run() {
+				handleAddChild(MenuPackageImpl.Literals.TOOL_BAR_SEPARATOR, true);
+			}
+		});
 	}
 
 	@Override
@@ -123,19 +118,9 @@ public class ToolBarEditor extends AbstractComponentEditor {
 		if (element instanceof MUIElement) {
 			MUIElement uiElement = (MUIElement) element;
 			if (uiElement.isToBeRendered() && uiElement.isVisible()) {
-				try {
-					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/ToolBar.gif"));//$NON-NLS-1$
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return createImage(ResourceProvider.IMG_ToolBar);
 			} else {
-				try {
-					return loadSharedImage(display, new URL("platform:/plugin/org.eclipse.e4.tools.emf.ui/icons/full/modelelements/tbr/ToolBar.gif"));//$NON-NLS-1$
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				return createImage(ResourceProvider.IMG_Tbr_ToolBar);
 			}
 		}
 
@@ -246,7 +231,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 
 			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Up);
-			b.setImage(getImage(b.getDisplay(), ARROW_UP));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -270,7 +255,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Down);
-			b.setImage(getImage(b.getDisplay(), ARROW_DOWN));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -308,7 +293,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 			childrenDropDown.setSelection(new StructuredSelection(defaultStruct));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
-			b.setImage(getImage(b.getDisplay(), TABLE_ADD_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -323,7 +308,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setText(Messages.ModelTooling_Common_Remove);
-			b.setImage(getImage(b.getDisplay(), TABLE_DELETE_IMAGE));
+			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_delete));
 			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 			b.addSelectionListener(new SelectionAdapter() {
 				@Override

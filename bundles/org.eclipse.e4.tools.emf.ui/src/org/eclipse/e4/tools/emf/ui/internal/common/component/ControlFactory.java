@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -189,7 +190,7 @@ public class ControlFactory {
 
 		Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_AddEllipsis);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
+		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_add));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -243,7 +244,7 @@ public class ControlFactory {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Remove);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_DELETE_IMAGE));
+		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_delete));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -286,7 +287,7 @@ public class ControlFactory {
 
 		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_FindEllipsis);
-		b.setImage(editor.getImage(t.getDisplay(), AbstractComponentEditor.SEARCH_IMAGE));
+		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_zoom));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -384,7 +385,7 @@ public class ControlFactory {
 
 		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Add);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_ADD_IMAGE));
+		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_add));
 		gd = new GridData(GridData.FILL, GridData.CENTER, false, false);
 		gd.verticalIndent = vIndent;
 		b.setLayoutData(gd);
@@ -418,7 +419,7 @@ public class ControlFactory {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Up);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_UP));
+		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -445,7 +446,7 @@ public class ControlFactory {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Down);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.ARROW_DOWN));
+		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -472,7 +473,7 @@ public class ControlFactory {
 
 		b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Remove);
-		b.setImage(editor.getImage(b.getDisplay(), AbstractComponentEditor.TABLE_DELETE_IMAGE));
+		b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_delete));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
