@@ -92,7 +92,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__ELEMENT_ID = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__ELEMENT_ID;
+	public static final int PLACEHOLDER__ELEMENT_ID = UiPackageImpl.UI_ELEMENT__ELEMENT_ID;
 
 	/**
 	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
@@ -101,7 +101,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__TAGS = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__TAGS;
+	public static final int PLACEHOLDER__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -110,7 +110,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__WIDGET = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__WIDGET;
+	public static final int PLACEHOLDER__WIDGET = UiPackageImpl.UI_ELEMENT__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
@@ -119,7 +119,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__RENDERER = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__RENDERER;
+	public static final int PLACEHOLDER__RENDERER = UiPackageImpl.UI_ELEMENT__RENDERER;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
@@ -128,7 +128,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__TO_BE_RENDERED = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__TO_BE_RENDERED;
+	public static final int PLACEHOLDER__TO_BE_RENDERED = UiPackageImpl.UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>On Top</b></em>' attribute.
@@ -137,7 +137,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__ON_TOP = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__ON_TOP;
+	public static final int PLACEHOLDER__ON_TOP = UiPackageImpl.UI_ELEMENT__ON_TOP;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -146,7 +146,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__VISIBLE = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__VISIBLE;
+	public static final int PLACEHOLDER__VISIBLE = UiPackageImpl.UI_ELEMENT__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -155,7 +155,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__PARENT = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__PARENT;
+	public static final int PLACEHOLDER__PARENT = UiPackageImpl.UI_ELEMENT__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
@@ -164,7 +164,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__CONTAINER_DATA = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__CONTAINER_DATA;
+	public static final int PLACEHOLDER__CONTAINER_DATA = UiPackageImpl.UI_ELEMENT__CONTAINER_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
@@ -173,7 +173,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__CUR_SHARED_REF = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__CUR_SHARED_REF;
+	public static final int PLACEHOLDER__CUR_SHARED_REF = UiPackageImpl.UI_ELEMENT__CUR_SHARED_REF;
 
 	/**
 	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
@@ -182,7 +182,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__VISIBLE_WHEN = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__VISIBLE_WHEN;
+	public static final int PLACEHOLDER__VISIBLE_WHEN = UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN;
 
 	/**
 	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
@@ -191,7 +191,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__ACCESSIBILITY_PHRASE = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT__ACCESSIBILITY_PHRASE;
+	public static final int PLACEHOLDER__ACCESSIBILITY_PHRASE = UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE;
 
 	/**
 	 * The feature id for the '<em><b>Ref</b></em>' reference.
@@ -200,7 +200,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__REF = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 0;
+	public static final int PLACEHOLDER__REF = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Placeholder</em>' class.
@@ -209,7 +209,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER_FEATURE_COUNT = BasicPackageImpl.PART_SASH_CONTAINER_ELEMENT_FEATURE_COUNT + 1;
+	public static final int PLACEHOLDER_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl <em>Perspective</em>}' class.
@@ -1048,14 +1048,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		BasicPackageImpl theBasicPackage = (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
 		UiPackageImpl theUiPackage = (UiPackageImpl)EPackage.Registry.INSTANCE.getEPackage(UiPackageImpl.eNS_URI);
+		BasicPackageImpl theBasicPackage = (BasicPackageImpl)EPackage.Registry.INSTANCE.getEPackage(BasicPackageImpl.eNS_URI);
 
 		// Create type parameters
 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		placeholderEClass.getESuperTypes().add(theUiPackage.getUIElement());
 		placeholderEClass.getESuperTypes().add(theBasicPackage.getPartSashContainerElement());
 		placeholderEClass.getESuperTypes().add(theBasicPackage.getStackElement());
 		EGenericType g1 = createEGenericType(theUiPackage.getElementContainer());

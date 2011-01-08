@@ -331,7 +331,7 @@
     </eSubpackages>
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
         nsPrefix="basic">
-      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//ui/basic/PartSashContainerElement #//ui/basic/StackElement #//Contribution #//ui/Context #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings #//ui/basic/WindowElement">
+      <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//ui/UIElement #//ui/basic/PartSashContainerElement #//ui/basic/StackElement #//Contribution #//ui/Context #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings #//ui/basic/WindowElement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
@@ -394,7 +394,7 @@
     </eSubpackages>
     <eSubpackages name="advanced" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced"
         nsPrefix="advanced">
-      <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/basic/PartSashContainerElement #//ui/basic/StackElement">
+      <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//ui/UIElement #//ui/basic/PartSashContainerElement #//ui/basic/StackElement">
         <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1"
             eType="#//ui/UIElement"/>
       </eClassifiers>
