@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.core.tests.internal.runtime;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.PlatformLogWriter;
+import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
@@ -231,9 +230,8 @@ public class LogSerializationTest extends RuntimeTest {
 	protected void writeLog(IStatus[] statuses) {
 		if (logFile.exists())
 			logFile.delete();
-		PlatformLogWriter writer = new PlatformLogWriter(InternalPlatform.getDefault().getFrameworkLog());
 		for (int i = 0; i < statuses.length; i++) {
-			writer.logging(statuses[i], "org.eclipse.core.tests.runtime");
+			RuntimeLog.log(statuses[i]);
 		}
 	}
 }

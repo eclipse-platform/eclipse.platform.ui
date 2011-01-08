@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.PerformanceStats.PerformanceListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.framework.log.FrameworkLog;
+import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -45,7 +46,7 @@ public class PerformanceStatsProcessor extends Job {
 	 */
 	private final org.eclipse.core.runtime.ListenerList listeners = new org.eclipse.core.runtime.ListenerList();
 
-	private PlatformLogWriter log;
+	private FrameworkLog log;
 
 	/*
 	 * @see PerformanceStats#addListener
@@ -165,7 +166,7 @@ public class PerformanceStatsProcessor extends Job {
 		//use the platform log if we couldn't create the performance log
 		if (perfLog == null)
 			perfLog = InternalPlatform.getDefault().getFrameworkLog();
-		log = new PlatformLogWriter(perfLog);
+		log = perfLog;
 	}
 
 	/**
@@ -178,7 +179,9 @@ public class PerformanceStatsProcessor extends Job {
 		if (pluginId == null)
 			pluginId = Platform.PI_RUNTIME;
 		String msg = "Performance failure: " + stats.getEvent() + " blame: " + stats.getBlameString() + " context: " + stats.getContext() + " duration: " + elapsed; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		log.logging(new Status(IStatus.WARNING, pluginId, 1, msg, new RuntimeException()), pluginId);
+		Status status = new Status(IStatus.WARNING, pluginId, 1, msg, new RuntimeException());
+		log.log(new FrameworkLogEntry(status, status.getPlugin(), status.getSeverity(), status.getCode(), status.getMessage(), 0, status.getException(), null));
+
 	}
 
 	/*

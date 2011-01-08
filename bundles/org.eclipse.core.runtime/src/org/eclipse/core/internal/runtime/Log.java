@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,17 +13,21 @@ package org.eclipse.core.internal.runtime;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.runtime.*;
+import org.eclipse.equinox.log.*;
 import org.osgi.framework.Bundle;
+import org.osgi.service.log.LogEntry;
 
 /**
  * 
  */
-public class Log implements ILog {
-	Bundle bundle;
-	Set logListeners = new HashSet(5);
+public class Log implements ILog, SynchronousLogListener, LogFilter {
+	final Bundle bundle;
+	private final Logger logger;
+	private final Set logListeners = new HashSet(5);
 
-	public Log(Bundle plugin) {
+	public Log(Bundle plugin, Logger logger) {
 		this.bundle = plugin;
+		this.logger = logger;
 	}
 
 	/**
@@ -52,8 +56,27 @@ public class Log implements ILog {
 	 * @see Plugin#getLog()
 	 */
 	public void log(final IStatus status) {
-		// Log to the platform log first in case a listener throws an error.
-		InternalPlatform.getDefault().log(status);
+		// Log to the logger
+		logger.log(PlatformLogWriter.getLog(status), PlatformLogWriter.getLevel(status), status.getMessage(), status.getException());
+	}
+
+	/**
+	 * Removes the given log listener to this log.  Subsequently the log listener will
+	 * no longer receive notification of log events passing through this log.
+	 *
+	 * @see Platform#removeLogListener(ILogListener)
+	 */
+	public void removeLogListener(ILogListener listener) {
+		synchronized (logListeners) {
+			logListeners.remove(listener);
+		}
+	}
+
+	public void logged(LogEntry entry) {
+		logToListeners(PlatformLogWriter.convertToStatus(entry));
+	}
+
+	private void logToListeners(final IStatus status) {
 		// create array to avoid concurrent access
 		ILogListener[] listeners;
 		synchronized (logListeners) {
@@ -74,15 +97,7 @@ public class Log implements ILog {
 		}
 	}
 
-	/**
-	 * Removes the given log listener to this log.  Subsequently the log listener will
-	 * no longer receive notification of log events passing through this log.
-	 *
-	 * @see Platform#removeLogListener(ILogListener)
-	 */
-	public void removeLogListener(ILogListener listener) {
-		synchronized (logListeners) {
-			logListeners.remove(listener);
-		}
+	public boolean isLoggable(Bundle loggingBundle, String loggerName, int logLevel) {
+		return PlatformLogWriter.EQUINOX_LOGGER_NAME.equals(loggerName) && bundle.getBundleId() == loggingBundle.getBundleId();
 	}
 }

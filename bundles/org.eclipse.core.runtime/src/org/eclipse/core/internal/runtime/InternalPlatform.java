@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.equinox.internal.app.*;
 import org.eclipse.equinox.internal.app.Activator;
+import org.eclipse.equinox.log.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -65,7 +66,6 @@ public final class InternalPlatform {
 	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
 	private static String password = ""; //$NON-NLS-1$
 	private static final String PASSWORD = "-password"; //$NON-NLS-1$
-	private static PlatformLogWriter platformLog = null;
 
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
 
@@ -110,6 +110,8 @@ public final class InternalPlatform {
 	private ServiceTracker preferencesTracker = null;
 	private ServiceTracker userLocation = null;
 	private ServiceTracker groupProviderTracker = null;
+	private ServiceTracker logReaderTracker = null;
+	private ServiceTracker extendedLogTracker = null;
 
 	private IProduct product;
 
@@ -406,10 +408,14 @@ public final class InternalPlatform {
 	 * The system log listener needs to be optional: turned on or off. What about a system property? :-)
 	 */
 	public ILog getLog(Bundle bundle) {
-		ILog result = (ILog) logs.get(bundle);
+		Log result = (Log) logs.get(bundle);
 		if (result != null)
 			return result;
-		result = new Log(bundle);
+		ExtendedLogService logService = (ExtendedLogService) extendedLogTracker.getService();
+		Logger logger = logService == null ? null : logService.getLogger(bundle, PlatformLogWriter.EQUINOX_LOGGER_NAME);
+		result = new Log(bundle, logger);
+		ExtendedLogReaderService logReader = (ExtendedLogReaderService) logReaderTracker.getService();
+		logReader.addLogListener(result, result);
 		logs.put(bundle, result);
 		return result;
 	}
@@ -777,18 +783,16 @@ public final class InternalPlatform {
 	 */
 	public void start(BundleContext runtimeContext) {
 		this.context = runtimeContext;
+		logReaderTracker = new ServiceTracker(context, ExtendedLogReaderService.class.getName(), null);
+		logReaderTracker.open();
+		extendedLogTracker = new ServiceTracker(context, ExtendedLogService.class.getName(), null);
+		extendedLogTracker.open();
 		splashEnded = false;
 		processCommandLine(getEnvironmentInfoService().getNonFrameworkArgs());
 		initializeDebugFlags();
 		initialized = true;
 		getMetaArea();
 		initializeAuthorizationHandler();
-		FrameworkLog log = getFrameworkLog();
-		if (log != null) {
-			platformLog = new PlatformLogWriter(getFrameworkLog());
-			addLogListener(platformLog);
-		} else
-			platformLog = null;
 		startServices();
 
 		// See if need to activate rest of the runtime plugins. Plugins are "gently" activated by touching 
@@ -810,8 +814,6 @@ public final class InternalPlatform {
 	public void stop(BundleContext bundleContext) {
 		assertInitialized();
 		stopServices(); // should be done after preferences shutdown
-		if (platformLog != null)
-			RuntimeLog.removeLogListener(platformLog); // effectively turns the platform logging off
 		initialized = false;
 		closeOSGITrackers();
 		context = null;
@@ -887,6 +889,14 @@ public final class InternalPlatform {
 		if (environmentTracker != null) {
 			environmentTracker.close();
 			environmentTracker = null;
+		}
+		if (logReaderTracker != null) {
+			logReaderTracker.close();
+			logReaderTracker = null;
+		}
+		if (extendedLogTracker != null) {
+			extendedLogTracker.close();
+			extendedLogTracker = null;
 		}
 	}
 
