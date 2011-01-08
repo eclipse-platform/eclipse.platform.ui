@@ -51,6 +51,7 @@ import org.eclipse.e4.tools.emf.ui.common.MemoryTransfer;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.ShadowComposite;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.AddonsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ApplicationEditor;
@@ -168,7 +169,6 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -215,8 +215,6 @@ public class ModelEditor {
 	private boolean fragment;
 	private Handler clipboardHandler;
 
-	private Image removeIcon;
-
 	@Inject
 	@Optional
 	private IClipboardService clipboardService;
@@ -237,14 +235,13 @@ public class ModelEditor {
 
 	private final IResourcePool resourcePool;
 
-	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, IResourcePool resourcePool) {
+	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
 		this.modelProvider = modelProvider;
 		this.project = project;
 		this.context = context;
 		this.context.set(ModelEditor.class, this);
 		this.obsManager = new ObservablesManager();
-		this.removeIcon = new Image(composite.getDisplay(), ModelEditor.class.getResourceAsStream("/icons/full/obj16/cross.png"));
 
 		registerDefaultEditors();
 		registerVirtualEditors();
@@ -386,7 +383,7 @@ public class ModelEditor {
 						}
 
 						if (o.eContainer() != null) {
-							actions.add(new Action(Messages.ModelEditor_Delete, ImageDescriptor.createFromImage(removeIcon)) {
+							actions.add(new Action(Messages.ModelEditor_Delete, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
 								public void run() {
 									if (o.eContainingFeature().isMany()) {
 										Command cmd = RemoveCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o.eContainer(), o.eContainingFeature(), o);
@@ -763,7 +760,6 @@ public class ModelEditor {
 	@PreDestroy
 	void dispose() {
 		try {
-			removeIcon.dispose();
 			obsManager.dispose();
 		} catch (Exception e) {
 			// TODO: handle exception
