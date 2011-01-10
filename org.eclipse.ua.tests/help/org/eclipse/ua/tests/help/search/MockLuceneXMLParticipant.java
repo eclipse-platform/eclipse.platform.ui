@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.help.search.XMLSearchParticipant;
 import org.xml.sax.Attributes;
 
+@SuppressWarnings("deprecation")
 public class MockLuceneXMLParticipant extends XMLSearchParticipant {
 
 	public static final String DOC_1 = "/org.eclipse.ua.tests/data/help/search/lucene_xml_1.xml";

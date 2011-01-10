@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.help.search.ISearchIndex;
 import org.eclipse.help.search.LuceneSearchParticipant;
 
+@SuppressWarnings("deprecation")
 public class MockLuceneParticipant extends LuceneSearchParticipant {
 
 	private static final String DOC_1 = "/org.eclipse.help.base/lucene1.xml";
