@@ -811,6 +811,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (!super.canHandleShellCloseEvent()) {
 			return false;
 		}
+
+		// Ensure that any pending 'Close' event are flushed
+		// before opening any dialogs
+		while (Display.getCurrent().readAndDispatch())
+			;
+
 		// let the advisor or other interested parties
 		// veto the user's explicit request to close the window
 		return fireWindowShellClosing();
