@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,24 @@
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
  
-import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.IMarkerDelta;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchWindow;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointsListener;
@@ -25,17 +37,16 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.IWorkbenchWindow;
+
+import org.eclipse.debug.ui.DebugUITools;
 
 /**
  * Removes all breakpoints from the source (markers) and remove all
  * breakpoints from processes
  */
 public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate implements IBreakpointsListener {
+
+	private Shell fShell;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.selection.AbstractRemoveAllActionDelegate#isEnabled()
@@ -108,18 +119,35 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 			}
 		}  
 		if (proceed) {
-            new Job(ActionMessages.RemoveAllBreakpointsAction_2) { 
-                protected IStatus run(IProgressMonitor monitor) {
-                    try {
-                        breakpointManager.removeBreakpoints(breakpoints, true);
-                    } catch (CoreException e) {
-                        DebugUIPlugin.log(e);
-                        return Status.CANCEL_STATUS;
-                    }
-                    return Status.OK_STATUS;
-                }
-            }.schedule();
+			new Job(ActionMessages.RemoveAllBreakpointsAction_2) {
+				protected IStatus run(IProgressMonitor monitor) {
+					try {
+						DebugUITools.deleteBreakpoints(breakpoints, fShell, monitor);
+					} catch (CoreException e) {
+						DebugUIPlugin.log(e);
+						return Status.CANCEL_STATUS;
+					}
+					return Status.OK_STATUS;
+				}
+			}.schedule();
 		}
 	}
 
+	/*
+	 * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#init(org.eclipse.ui.IViewPart)
+	 * @since 3.7
+	 */
+	public void init(IViewPart view) {
+		super.init(view);
+		fShell= view.getSite().getShell();
+	}
+
+	/*
+	 * @see org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+	 * @since 3.7
+	 */
+	public void init(IWorkbenchWindow window) {
+		super.init(window);
+		fShell= window.getShell();
+	}
 }

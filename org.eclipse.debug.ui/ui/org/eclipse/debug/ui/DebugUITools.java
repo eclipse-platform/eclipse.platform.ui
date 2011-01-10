@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,18 @@ package org.eclipse.debug.ui;
 
 import java.util.Set;
 
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.commands.operations.ObjectUndoContext;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,11 +33,32 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
+
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -39,6 +69,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
@@ -49,27 +80,13 @@ import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIUtils;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
+
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextManager;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.console.IConsole;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 
 /**
@@ -83,6 +100,13 @@ import org.eclipse.ui.handlers.HandlerUtil;
  */
 public class DebugUITools {
 	
+	/**
+	 * The undo context for breakpoints.
+	 * 
+	 * @since 3.7
+	 */
+	private static ObjectUndoContext fgBreakpointsUndoContext;
+
 	/**
 	 * Returns the shared image managed under the given key, or <code>null</code>
 	 * if none.
@@ -206,6 +230,68 @@ public class DebugUITools {
 	    	return getDebugContextElementForSelection(activeContext);
 	    }
 	    return null;
+	}
+
+	/**
+	 * Return the undo context that should be used for operations involving breakpoints.
+	 * 
+	 * @return the undo context for breakpoints
+	 * @since 3.7
+	 */
+	public static synchronized IUndoContext getBreakpointsUndoContext() {
+		if (fgBreakpointsUndoContext == null) {
+			fgBreakpointsUndoContext= new ObjectUndoContext(new Object(), "Breakpoints Context"); //$NON-NLS-1$
+			fgBreakpointsUndoContext.addMatch(WorkspaceUndoUtil.getWorkspaceUndoContext());
+		}
+		return fgBreakpointsUndoContext;
+	}
+
+	/**
+	 * Deletes the given breakpoints using the operation history, which allows to undo the deletion.
+	 * 
+	 * @param breakpoints the breakpoints to delete
+	 * @param shell the shell used for potential user interactions, or <code>null</code> if unknown
+	 * @param progressMonitor the progress monitor
+	 * @throws CoreException if the deletion fails
+	 * @since 3.7
+	 */
+	public static void deleteBreakpoints(IBreakpoint[] breakpoints, final Shell shell, IProgressMonitor progressMonitor) throws CoreException {
+		IMarker[] markers= new IMarker[breakpoints.length];
+		for (int i= 0; i < breakpoints.length; i++) {
+			markers[i]= breakpoints[i].getMarker();
+			if (markers[i] == null)
+				break;
+		}
+
+		// We only offer undo support if all breakpoints have associated markers
+		boolean allowUndo= markers.length == breakpoints.length;
+
+		DebugPlugin.getDefault().getBreakpointManager().removeBreakpoints(breakpoints, !allowUndo);
+
+		if (allowUndo) {
+
+			IAdaptable context= null;
+			if (shell != null) {
+				context= new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						if (adapter == Shell.class)
+							return shell;
+						return null;
+					}
+				};
+			}
+
+			String operationName= markers.length == 1 ? ActionMessages.DeleteBreakpointOperationName : ActionMessages.DeleteBreakpointsOperationName;
+			IUndoableOperation deleteMarkerOperation= new DeleteMarkersOperation(markers, operationName);
+			deleteMarkerOperation.removeContext(WorkspaceUndoUtil.getWorkspaceUndoContext());
+			deleteMarkerOperation.addContext(DebugUITools.getBreakpointsUndoContext());
+			IOperationHistory operationHistory= PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
+			try {
+				operationHistory.execute(deleteMarkerOperation, progressMonitor, context);
+			} catch (ExecutionException e) {
+				throw new CoreException(DebugUIPlugin.newErrorStatus("Exception while deleting breakpoint markers", e)); //$NON-NLS-1$
+			}
+		}
 	}
 
     /**

@@ -1,5 +1,5 @@
 /*****************************************************************
- * Copyright (c) 2009, 2010 Texas Instruments and others
+ * Copyright (c) 2009, 2011 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TreeItem;
+
+import org.eclipse.core.commands.operations.IUndoContext;
+
 import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.LocalSelectionTransfer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.operations.RedoActionHandler;
+import org.eclipse.ui.operations.UndoActionHandler;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -47,33 +81,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelV
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.details.AvailableDetailPanesAction;
+
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.util.LocalSelectionTransfer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * This class implements the breakpoints view.
@@ -97,10 +109,18 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	 */
 	private boolean fFirstInputSet = false;
 	
+	private UndoActionHandler fUndoAction;
+	private RedoActionHandler fRedoAction;
+
+
 	public void dispose() {
 		if (fClipboard != null)
 			fClipboard.dispose();		
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
+
+		fUndoAction.dispose();
+		fRedoAction.dispose();
+
 		super.dispose();
 	}
 	
@@ -225,11 +245,12 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
 
 		fClipboard = new Clipboard(getSite().getShell().getDisplay());
+		IActionBars actionBars= getViewSite().getActionBars();
 		        
 		PasteBreakpointsAction paste = new PasteBreakpointsAction(this);
 		setAction(PASTE_ACTION, paste);
 		paste.setActionDefinitionId(ActionFactory.PASTE.getCommandId());
-        getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.PASTE.getId(), paste);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), paste);
         getViewer().addSelectionChangedListener(paste);
         paste.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 		        
@@ -237,6 +258,14 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		setAction(ACTION_REMOVE_FROM_GROUP, remove);
 		getViewer().addSelectionChangedListener(remove);
 		
+		IUndoContext undoContext= DebugUITools.getBreakpointsUndoContext();
+		fUndoAction= new UndoActionHandler(getSite(), undoContext);
+		fUndoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
+		fRedoAction= new RedoActionHandler(getSite(), undoContext);
+		fRedoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
+		actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), fUndoAction);
+		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), fRedoAction);
+
 	}
 
 	/*

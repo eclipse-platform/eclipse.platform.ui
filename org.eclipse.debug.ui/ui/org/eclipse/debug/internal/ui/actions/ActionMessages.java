@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -103,8 +103,11 @@ public class ActionMessages extends NLS {
 	public static String RemoveBreakpointAction_4;
 	public static String RemoveBreakpointAction_5;
 	public static String RemoveBreakpointAction_6;
-    public static String RemoveBreakpointAction_Exceptions_occurred_attempting_to_remove_a_breakpoint__5;
-    public static String RemoveBreakpointAction_Removing_a_breakpoint_4;
+	public static String RemoveBreakpointAction_Exceptions_occurred_attempting_to_remove_a_breakpoint__5;
+	public static String RemoveBreakpointAction_Removing_a_breakpoint_4;
+	
+	public static String DeleteBreakpointOperationName;
+	public static String DeleteBreakpointsOperationName;
 
 	public static String RetargetRunToLineAction_0;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -21,17 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IMarkerDelta;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -43,6 +34,19 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
@@ -51,8 +55,6 @@ import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IBreakpointImportParticipant;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The breakpoint manager manages all registered breakpoints
@@ -671,6 +673,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * Removed breakpoints
 		 */
 		private List fRemoved = new ArrayList();
+		
+		/**
+		 * Added breakpoints.
+		 * @since 3.7
+		 */
+		private List fAdded= new ArrayList();
+
 		/**
 		 * Changed breakpoints and associated marker deltas
 		 */
@@ -684,6 +693,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		protected void reset() {
 			fMoved.clear();
 			fRemoved.clear();
+			fAdded.clear();
 			fChanged.clear();
 			fChangedDeltas.clear();
 		}
@@ -711,6 +721,13 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			if (!fRemoved.isEmpty()) {
 				try {
 					removeBreakpoints((IBreakpoint[])fRemoved.toArray(new IBreakpoint[fRemoved.size()]), false);
+				} catch (CoreException e) {
+					DebugPlugin.log(e);
+				}
+			}
+			if (!fAdded.isEmpty()) {
+				try {
+					addBreakpoints((IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]), false);
 				} catch (CoreException e) {
 					DebugPlugin.log(e);
 				}
@@ -770,6 +787,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					if (fPostChangMarkersChanged.contains(marker)) {
 						handleChangeBreakpoint(marker, mDelta);
 						fPostChangMarkersChanged.remove(marker);
+					} else if (getBreakpoint(marker) == null) {
+						try {
+							IBreakpoint breakpoint= createBreakpoint(marker);
+							breakpoint.setRegistered(true);
+							fAdded.add(breakpoint);
+						} catch (CoreException e) {
+							DebugPlugin.log(e);
+						}
 					}
 					fPostBuildMarkersAdded.add(marker);
 				}
