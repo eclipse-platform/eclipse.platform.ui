@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -221,6 +221,13 @@ public class CommitCommentArea extends DialogArea {
             // Hyperlink coloring to work. (Presenter needs document object up front)
             sourceViewer.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()));
             sourceViewer.setDocument(document, annotationModel);
+            document.addDocumentListener(new IDocumentListener() {
+				public void documentAboutToBeChanged(DocumentEvent event) {
+				}
+				public void documentChanged(DocumentEvent event) {
+					modifyText(null);
+				}
+			});
             
             fTextField.addTraverseListener(this);
             fTextField.addModifyListener(this);
@@ -272,7 +279,8 @@ public class CommitCommentArea extends DialogArea {
         public void modifyText(ModifyEvent e) {
             final String old = fText;
             fText = fTextField.getText();
-            firePropertyChangeChange(COMMENT_MODIFIED, old, fText);
+            if (!fText.equals(old))
+            	firePropertyChangeChange(COMMENT_MODIFIED, old, fText);
         }
         
         public void keyTraversed(TraverseEvent e) {
