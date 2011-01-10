@@ -2179,6 +2179,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		WorkbenchWindow result = (WorkbenchWindow) createWorkbenchWindow(input, descriptor, window,
 				newWindow);
 		fireWindowOpened(result);
+		result.fireWindowOpened();
 		return result;
 	}
 

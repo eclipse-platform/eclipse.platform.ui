@@ -1159,6 +1159,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		getWindowAdvisor().preWindowOpen();
 	}
 
+	void fireWindowOpened() {
+		// notify the advisor
+		getWindowAdvisor().postWindowOpen();
+	}
+
 	/**
 	 * Notifies interested parties (namely the advisor) that the window has been
 	 * restored from a previously saved state.
