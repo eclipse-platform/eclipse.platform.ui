@@ -131,6 +131,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int ITEM__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ITEM__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -337,6 +346,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int HANDLED_ITEM__TAGS = ITEM__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLED_ITEM__CONTRIBUTOR_URI = ITEM__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -574,6 +592,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ELEMENT__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -762,6 +789,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU_ITEM__TAGS = ITEM__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_ITEM__CONTRIBUTOR_URI = ITEM__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -981,6 +1017,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_SEPARATOR__TAGS = MENU_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_SEPARATOR__CONTRIBUTOR_URI = MENU_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1169,6 +1214,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU__TAGS = MENU_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU__CONTRIBUTOR_URI = MENU_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1388,6 +1442,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_CONTRIBUTION__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MENU_CONTRIBUTION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1549,6 +1612,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int POPUP_MENU__TAGS = MENU__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int POPUP_MENU__CONTRIBUTOR_URI = MENU__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1795,6 +1867,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_MENU_ITEM__TAGS = MENU_ITEM__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_MENU_ITEM__CONTRIBUTOR_URI = MENU_ITEM__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2037,6 +2118,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int HANDLED_MENU_ITEM__TAGS = MENU_ITEM__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLED_MENU_ITEM__CONTRIBUTOR_URI = MENU_ITEM__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -2283,6 +2373,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_ITEM__TAGS = ITEM__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_ITEM__CONTRIBUTOR_URI = ITEM__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2500,6 +2599,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2645,6 +2753,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_ELEMENT__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2770,6 +2887,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TOOL_CONTROL__TAGS = TOOL_BAR_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_CONTROL__CONTRIBUTOR_URI = TOOL_BAR_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -2924,6 +3050,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int HANDLED_TOOL_ITEM__TAGS = TOOL_ITEM__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLED_TOOL_ITEM__CONTRIBUTOR_URI = TOOL_ITEM__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -3170,6 +3305,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_TOOL_ITEM__TAGS = TOOL_ITEM__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DIRECT_TOOL_ITEM__CONTRIBUTOR_URI = TOOL_ITEM__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3414,6 +3558,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_SEPARATOR__TAGS = TOOL_BAR_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR_SEPARATOR__CONTRIBUTOR_URI = TOOL_BAR_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3567,6 +3720,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int RENDERED_MENU__TAGS = MENU__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int RENDERED_MENU__CONTRIBUTOR_URI = MENU__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -3795,6 +3957,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int RENDERED_TOOL_BAR__TAGS = TOOL_BAR__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int RENDERED_TOOL_BAR__CONTRIBUTOR_URI = TOOL_BAR__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3947,6 +4118,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TOOL_BAR_CONTRIBUTION__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TOOL_BAR_CONTRIBUTION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -4140,6 +4320,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TRIM_CONTRIBUTION__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_CONTRIBUTION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4329,6 +4518,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int RENDERED_MENU_ITEM__TAGS = MENU_ITEM__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int RENDERED_MENU_ITEM__CONTRIBUTOR_URI = MENU_ITEM__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -4557,6 +4755,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int OPAQUE_MENU_ITEM__TAGS = MENU_ITEM__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_MENU_ITEM__CONTRIBUTOR_URI = MENU_ITEM__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4783,6 +4990,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int OPAQUE_MENU_SEPARATOR__TAGS = MENU_SEPARATOR__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_MENU_SEPARATOR__CONTRIBUTOR_URI = MENU_SEPARATOR__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4980,6 +5196,15 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int OPAQUE_MENU__TAGS = MENU__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_MENU__CONTRIBUTOR_URI = MENU__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.

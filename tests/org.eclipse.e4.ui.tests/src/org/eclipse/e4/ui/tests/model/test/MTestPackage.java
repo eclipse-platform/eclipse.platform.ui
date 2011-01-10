@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MTestPackage.java,v 1.6 2010/09/21 17:55:23 tschindl Exp $
+ * $Id: MTestPackage.java,v 1.7 2010/11/12 15:56:19 obesedin Exp $
  */
 package org.eclipse.e4.ui.tests.model.test;
 
@@ -80,6 +80,15 @@ public interface MTestPackage extends EPackage {
 	 * @ordered
 	 */
 	int TEST_HARNESS__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Command Name</b></em>' attribute. <!--

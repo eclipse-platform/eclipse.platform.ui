@@ -32,6 +32,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
@@ -42,11 +43,13 @@ import org.eclipse.e4.ui.workbench.IModelResourceHandler;
 import org.eclipse.e4.ui.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
 import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
@@ -188,6 +191,16 @@ public class ResourceHandler implements IModelResourceHandler {
 			resource = resourceSetImpl.getResource(uri, false);
 		}
 
+		String contributorURI = URIHelper.EMFtoPlatform(uri);
+		if (contributorURI != null) {
+			TreeIterator<EObject> it = EcoreUtil.getAllContents(resource.getContents());
+			while (it.hasNext()) {
+				EObject o = it.next();
+				if (o instanceof MApplicationElement) {
+					((MApplicationElement) o).setContributorURI(contributorURI);
+				}
+			}
+		}
 		return resource;
 	}
 

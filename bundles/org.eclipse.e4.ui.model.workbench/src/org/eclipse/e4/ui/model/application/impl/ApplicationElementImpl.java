@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTags <em>Tags</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getContributorURI <em>Contributor URI</em>}</li>
  * </ul>
  * </p>
  *
@@ -64,6 +65,26 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * @ordered
 	 */
 	protected EList<String> tags;
+
+	/**
+	 * The default value of the '{@link #getContributorURI() <em>Contributor URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContributorURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONTRIBUTOR_URI_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContributorURI() <em>Contributor URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContributorURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected String contributorURI = CONTRIBUTOR_URI_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -122,6 +143,26 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getContributorURI() {
+		return contributorURI;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
+	public void setContributorURI(String newContributorURI) {
+		String oldContributorURI = contributorURI;
+		contributorURI = (newContributorURI == null) ? null : newContributorURI.intern();
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI, oldContributorURI, contributorURI));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -129,6 +170,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return getElementId();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
 				return getTags();
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
+				return getContributorURI();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -149,6 +192,9 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				getTags().clear();
 				getTags().addAll((Collection<? extends String>)newValue);
 				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
+				setContributorURI((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -167,6 +213,9 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
 				getTags().clear();
 				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
+				setContributorURI(CONTRIBUTOR_URI_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -183,6 +232,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return ELEMENT_ID_EDEFAULT == null ? elementId != null : !ELEMENT_ID_EDEFAULT.equals(elementId);
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
 				return tags != null && !tags.isEmpty();
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
+				return CONTRIBUTOR_URI_EDEFAULT == null ? contributorURI != null : !CONTRIBUTOR_URI_EDEFAULT.equals(contributorURI);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -201,6 +252,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 		result.append(elementId);
 		result.append(", tags: "); //$NON-NLS-1$
 		result.append(tags);
+		result.append(", contributorURI: "); //$NON-NLS-1$
+		result.append(contributorURI);
 		result.append(')');
 		return result.toString();
 	}

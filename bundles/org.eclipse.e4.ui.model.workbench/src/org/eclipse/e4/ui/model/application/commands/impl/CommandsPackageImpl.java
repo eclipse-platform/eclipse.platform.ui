@@ -179,6 +179,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_CONTEXT__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int BINDING_CONTEXT__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -243,6 +252,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_TABLE__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int BINDING_TABLE__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Binding Context Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -296,6 +314,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int COMMAND__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int COMMAND__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Command Name</b></em>' attribute.
@@ -371,6 +398,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int COMMAND_PARAMETER__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int COMMAND_PARAMETER__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -433,6 +469,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int HANDLER__TAGS = ApplicationPackageImpl.CONTRIBUTION__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int HANDLER__CONTRIBUTOR_URI = ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -546,6 +591,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int KEY_BINDING__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int KEY_BINDING__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -628,6 +682,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int PARAMETER__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PARAMETER__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -681,6 +744,15 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int CATEGORY__TAGS = ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CATEGORY__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.

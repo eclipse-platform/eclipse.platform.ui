@@ -104,6 +104,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PLACEHOLDER__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PLACEHOLDER__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -238,6 +247,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PERSPECTIVE__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -475,6 +493,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE_STACK__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE_STACK__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -618,6 +645,15 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int AREA__TAGS = BasicPackageImpl.PART_SASH_CONTAINER__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AREA__CONTRIBUTOR_URI = BasicPackageImpl.PART_SASH_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.

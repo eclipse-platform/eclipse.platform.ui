@@ -112,6 +112,7 @@ public class ModelAssembler {
 					continue;
 				}
 
+				String contributorURI = URIHelper.constructPlatformURI(contributor);
 				Resource resource;
 				try {
 					resource = resourceSet.getResource(uri, true);
@@ -153,6 +154,8 @@ public class ModelAssembler {
 						while (treeIt.hasNext()) {
 							EObject eObj = treeIt.next();
 							r = (E4XMIResource) eObj.eResource();
+							if (contributorURI != null && (eObj instanceof MApplicationElement))
+								((MApplicationElement) eObj).setContributorURI(contributorURI);
 							applicationResource.setID(eObj, r.getInternalId(eObj));
 						}
 					}

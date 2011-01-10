@@ -212,6 +212,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -498,6 +507,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int INPUT_PART__TAGS = PART__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int INPUT_PART__CONTRIBUTOR_URI = PART__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -797,6 +815,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_STACK__TAGS = UiPackageImpl.GENERIC_STACK__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_STACK__CONTRIBUTOR_URI = UiPackageImpl.GENERIC_STACK__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -930,6 +957,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER__TAGS = UiPackageImpl.GENERIC_TILE__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER__CONTRIBUTOR_URI = UiPackageImpl.GENERIC_TILE__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1074,6 +1110,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int WINDOW__TAGS = UiPackageImpl.ELEMENT_CONTAINER__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1371,6 +1416,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIMMED_WINDOW__TAGS = WINDOW__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMMED_WINDOW__CONTRIBUTOR_URI = WINDOW__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1679,6 +1733,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIM_ELEMENT__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1794,6 +1857,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER_ELEMENT__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1913,6 +1985,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW_ELEMENT__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
 
 	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2028,6 +2109,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_BAR__TAGS = UiPackageImpl.GENERIC_TRIM_CONTAINER__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_BAR__CONTRIBUTOR_URI = UiPackageImpl.GENERIC_TRIM_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -2172,6 +2262,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int STACK_ELEMENT__TAGS = UiPackageImpl.UI_ELEMENT__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STACK_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.

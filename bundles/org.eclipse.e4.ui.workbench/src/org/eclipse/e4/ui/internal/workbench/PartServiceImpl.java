@@ -585,6 +585,7 @@ public class PartServiceImpl implements EPartService {
 		if (descriptor.getToolbar() != null) {
 			part.setToolbar((MToolBar) EcoreUtil.copy((EObject) descriptor.getToolbar()));
 		}
+		part.setContributorURI(descriptor.getContributorURI());
 		part.setCloseable(descriptor.isCloseable());
 		part.setContributionURI(descriptor.getContributionURI());
 		part.setLabel(descriptor.getLabel());
