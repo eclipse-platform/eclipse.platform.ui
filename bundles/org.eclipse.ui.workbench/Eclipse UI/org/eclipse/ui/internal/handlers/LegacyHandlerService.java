@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,7 @@ import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.expressions.AndExpression;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
 
 /**
@@ -485,9 +486,32 @@ public class LegacyHandlerService implements IHandlerService {
 							"Incorrect activeWhen element " + commandId, e); //$NON-NLS-1$
 				}
 			}
-			registerLegacyHandler(eclipseContext, commandId, commandId,
+			Expression enabledWhen = null;
+			final IConfigurationElement[] ewChildren = configElement
+					.getChildren(IWorkbenchRegistryConstants.TAG_ENABLED_WHEN);
+			if (ewChildren.length > 0) {
+				final IConfigurationElement[] subChildren = ewChildren[0].getChildren();
+				if (subChildren.length != 1) {
+					Activator.trace(Policy.DEBUG_CMDS,
+							"Incorrect enableWhen element " + commandId, null); //$NON-NLS-1$
+					continue;
+				}
+				final ElementHandler elementHandler = ElementHandler.getDefault();
+				final ExpressionConverter converter = ExpressionConverter.getDefault();
+				try {
+					enabledWhen = elementHandler.create(converter, subChildren[0]);
+				} catch (CoreException e) {
+					Activator.trace(Policy.DEBUG_CMDS,
+							"Incorrect enableWhen element " + commandId, e); //$NON-NLS-1$
+				}
+			}
+			registerLegacyHandler(
+					eclipseContext,
+					commandId,
+					commandId,
 					new org.eclipse.ui.internal.handlers.HandlerProxy(commandId, configElement,
-							IWorkbenchRegistryConstants.ATT_CLASS), activeWhen);
+							IWorkbenchRegistryConstants.ATT_CLASS, enabledWhen, eclipseContext
+									.get(IEvaluationService.class)), activeWhen);
 		}
 	}
 

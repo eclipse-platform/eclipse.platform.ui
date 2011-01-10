@@ -47,6 +47,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	private ESelectionService selectionService;
 
 	@Inject
+	@Optional
 	@Named("org.eclipse.ui.IWorkbenchPage")
 	private WorkbenchPage page;
 

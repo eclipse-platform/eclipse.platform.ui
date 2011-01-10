@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
 
@@ -74,7 +73,11 @@ public final class EvaluationService implements IEvaluationService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
-		E4Util.message("EvaluationService.dispose: should it do something?"); //$NON-NLS-1$
+		for (EvaluationReference ref : refs) {
+			invalidate(ref, false);
+		}
+		refs.clear();
+		serviceListeners.clear();
 	}
 
 	/*
@@ -110,7 +113,7 @@ public final class EvaluationService implements IEvaluationService {
 	public IEvaluationReference addEvaluationListener(Expression expression,
 			IPropertyChangeListener listener, String property) {
 		EvaluationReference ref = new EvaluationReference(context, expression, listener, property);
-		refs.add(ref);
+		addEvaluationReference(ref);
 		return ref;
 	}
 
@@ -125,6 +128,15 @@ public final class EvaluationService implements IEvaluationService {
 		EvaluationReference eref = (EvaluationReference) ref;
 		refs.add(eref);
 		eref.participating = true;
+		context.runAndTrack(eref);
+	}
+
+	private void invalidate(IEvaluationReference ref, boolean remove) {
+		if (remove) {
+			refs.remove(ref);
+		}
+		EvaluationReference eref = (EvaluationReference) ref;
+		eref.participating = false;
 		eref.evaluate();
 	}
 
@@ -136,10 +148,7 @@ public final class EvaluationService implements IEvaluationService {
 	 * .eclipse.ui.services.IEvaluationReference)
 	 */
 	public void removeEvaluationListener(IEvaluationReference ref) {
-		refs.remove(ref);
-		EvaluationReference eref = (EvaluationReference) ref;
-		eref.participating = false;
-		eref.evaluate();
+		invalidate(ref, true);
 	}
 
 	/*

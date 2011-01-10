@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -481,14 +481,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		});
 
-		try {
-			page = new WorkbenchPage(this, input);
-		} catch (WorkbenchException e) {
-			WorkbenchPlugin.log(e);
-		}
-
 		windowContext.set(IWorkbenchWindow.class.getName(), this);
-		windowContext.set(IWorkbenchPage.class.getName(), page);
 		windowContext.set(IPartService.class, partService);
 
 		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
@@ -503,7 +496,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		fireWindowOpening();
 
+		try {
+			page = new WorkbenchPage(this, input);
+		} catch (WorkbenchException e) {
+			WorkbenchPlugin.log(e);
+		}
+
 		ContextInjectionFactory.inject(page, model.getContext());
+		windowContext.set(IWorkbenchPage.class, page);
 		firePageOpened();
 
 		// Fill the action bars
