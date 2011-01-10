@@ -601,109 +601,13 @@ public class OverviewRuler implements IOverviewRuler {
 
 			cacheAnnotations();
 
-			if (fTextViewer instanceof ITextViewerExtension5)
-				doPaint1(gc);
-			else
-				doPaint(gc);
+			doPaint(gc);
 
 		} finally {
 			gc.dispose();
 		}
 
 		dest.drawImage(fBuffer, 0, 0);
-	}
-
-	/**
-	 * Draws this overview ruler.
-	 *
-	 * @param gc the GC to draw into
-	 */
-	private void doPaint(GC gc) {
-
-		Rectangle r= new Rectangle(0, 0, 0, 0);
-		int yy, hh= ANNOTATION_HEIGHT;
-
-		IDocument document= fTextViewer.getDocument();
-		IRegion visible= fTextViewer.getVisibleRegion();
-
-		StyledText textWidget= fTextViewer.getTextWidget();
-		int maxLines= textWidget.getLineCount();
-
-		Point size= fCanvas.getSize();
-		int writable= JFaceTextUtil.computeLineHeight(textWidget, 0, maxLines, maxLines);
-
-		if (size.y > writable)
-			size.y= Math.max(writable - fHeader.getSize().y, 0);
-
-		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
-			Object annotationType= iterator.next();
-
-			if (skip(annotationType))
-				continue;
-
-			int[] style= new int[] { FilterIterator.PERSISTENT, FilterIterator.TEMPORARY };
-			for (int t=0; t < style.length; t++) {
-				boolean areColorsComputed= false;
-				Color fill= null;
-				Color stroke= null;
-
-				Iterator e= new FilterIterator(annotationType, style[t], fCachedAnnotations.iterator());
-				while (e.hasNext()) {
-					Annotation a= (Annotation) e.next();
-					Position p= fModel.getPosition(a);
-
-					if (p == null || !p.overlapsWith(visible.getOffset(), visible.getLength()))
-						continue;
-
-					int annotationOffset= Math.max(p.getOffset(), visible.getOffset());
-					int annotationEnd= Math.min(p.getOffset() + p.getLength(), visible.getOffset() + visible.getLength());
-					int annotationLength= annotationEnd - annotationOffset;
-
-					try {
-						if (ANNOTATION_HEIGHT_SCALABLE) {
-							int numbersOfLines= document.getNumberOfLines(annotationOffset, annotationLength);
-							// don't count empty trailing lines
-							IRegion lastLine= document.getLineInformationOfOffset(annotationOffset + annotationLength);
-							if (lastLine.getOffset() == annotationOffset + annotationLength) {
-								numbersOfLines -= 2;
-								hh= (numbersOfLines * size.y) / maxLines + ANNOTATION_HEIGHT;
-								if (hh < ANNOTATION_HEIGHT)
-									hh= ANNOTATION_HEIGHT;
-							} else
-								hh= ANNOTATION_HEIGHT;
-						}
-						fAnnotationHeight= hh;
-
-						int startLine= textWidget.getLineAtOffset(annotationOffset - visible.getOffset());
-						yy= Math.min((startLine * size.y) / maxLines, size.y - hh);
-
-						if (!areColorsComputed) {
-							fill= getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
-							stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
-							areColorsComputed= true;
-						}
-
-						if (fill != null) {
-							gc.setBackground(fill);
-							gc.fillRectangle(INSET, yy, size.x-(2*INSET), hh);
-						}
-
-						if (stroke != null) {
-							gc.setForeground(stroke);
-							r.x= INSET;
-							r.y= yy;
-							if (yy + hh == size.y)
-								r.y--;
-							r.width= size.x - (2 * INSET);
-							r.height= hh;
-							gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
-							gc.drawRectangle(r);
-						}
-					} catch (BadLocationException x) {
-					}
-				}
-			}
-		}
 	}
 
 	private void cacheAnnotations() {
@@ -725,19 +629,23 @@ public class OverviewRuler implements IOverviewRuler {
 	}
 
 	/**
-	 * Draws this overview ruler. Uses <code>ITextViewerExtension5</code> for
-	 * its implementation. Will replace <code>doPaint(GC)</code>.
+	 * Draws this overview ruler.
 	 *
 	 * @param gc the GC to draw into
 	 */
-	private void doPaint1(GC gc) {
+	private void doPaint(GC gc) {
 
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		int yy, hh= ANNOTATION_HEIGHT;
 
-		ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 		IDocument document= fTextViewer.getDocument();
 		StyledText textWidget= fTextViewer.getTextWidget();
+		ITextViewerExtension5 extension= null;
+		IRegion visible= null;
+		if (fTextViewer instanceof ITextViewerExtension5)
+			extension= (ITextViewerExtension5) fTextViewer;
+		else
+			visible= fTextViewer.getVisibleRegion(); // legacy support
 
 		int maxLines= textWidget.getLineCount();
 		Point size= fCanvas.getSize();
@@ -764,17 +672,29 @@ public class OverviewRuler implements IOverviewRuler {
 
 					if (p == null)
 						continue;
-
-					IRegion widgetRegion= extension.modelRange2WidgetRange(new Region(p.getOffset(), p.getLength()));
-					if (widgetRegion == null)
+					if (visible != null && !p.overlapsWith(visible.getOffset(), visible.getLength()))
 						continue;
+
+					int annotationOffset= p.getOffset();
+					int annotationLength= p.getLength();
+					IRegion widgetRegion= null;
+					if (visible != null) {
+						annotationOffset= Math.max(p.getOffset(), visible.getOffset());
+						int annotationEnd= Math.min(p.getOffset() + p.getLength(), visible.getOffset() + visible.getLength());
+						annotationLength= annotationEnd - annotationOffset;
+					} else {
+						widgetRegion= extension.modelRange2WidgetRange(new Region(annotationOffset, annotationLength));
+						if (widgetRegion == null)
+							continue;
+					}
+					
 
 					try {
 						if (ANNOTATION_HEIGHT_SCALABLE) {
-							int numbersOfLines= document.getNumberOfLines(p.getOffset(), p.getLength());
+							int numbersOfLines= document.getNumberOfLines(annotationOffset, annotationLength);
 							// don't count empty trailing lines
-							IRegion lastLine= document.getLineInformationOfOffset(p.getOffset() + p.getLength());
-							if (lastLine.getOffset() == p.getOffset() + p.getLength()) {
+							IRegion lastLine= document.getLineInformationOfOffset(annotationOffset + annotationLength);
+							if (lastLine.getOffset() == annotationOffset + annotationLength) {
 								numbersOfLines -= 2;
 								hh= (numbersOfLines * size.y) / maxLines + ANNOTATION_HEIGHT;
 								if (hh < ANNOTATION_HEIGHT)
@@ -784,7 +704,8 @@ public class OverviewRuler implements IOverviewRuler {
 						}
 						fAnnotationHeight= hh;
 
-						int startLine= textWidget.getLineAtOffset(widgetRegion.getOffset());
+						int startOffset= visible != null ? annotationOffset - visible.getOffset() : widgetRegion.getOffset();
+						int startLine= textWidget.getLineAtOffset(startOffset);
 						yy= Math.min((startLine * size.y) / maxLines, size.y - hh);
 
 						if (!areColorsComputed) {
