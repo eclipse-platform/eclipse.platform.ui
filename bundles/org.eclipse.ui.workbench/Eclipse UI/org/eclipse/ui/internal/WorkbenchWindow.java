@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -70,7 +71,6 @@ import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
-import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -103,9 +103,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -224,8 +221,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	ProgressRegion progressRegion = null;
 
 	private List<MTrimElement> workbenchTrimElements = new ArrayList<MTrimElement>();
-
-	private HeapStatus heapStatus;
 
 	/**
 	 * The map of services maintained by the workbench window. These services
@@ -526,7 +521,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		page.setPerspective(perspective);
 		firePageActivated();
 
-		populateTrimContributions();
+		populateTopTrimContributions();
+		populateBottomTrimContributions();
 
 		Shell shell = (Shell) model.getWidget();
 		MMenu mainMenu = model.getMainMenu();
@@ -542,9 +538,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(), model.getContext());
 			shell.setMenuBar(menu);
 		}
-
-		createProgressIndicator(shell);
-		showHeapStatus(getShowHeapStatus());
 
 		eventBroker.subscribe(
 				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
@@ -578,7 +571,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		trimBars.remove(trimBar);
 	}
 
-	void populateTrimContributions() {
+	void populateTopTrimContributions() {
 		if (getTopTrim() != null) {
 			throw new IllegalStateException("The top trim is already set"); //$NON-NLS-1$
 		}
@@ -592,7 +585,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		spacerControl.setElementId("PerspectiveSpacer"); //$NON-NLS-1$
 		spacerControl
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.LayoutModifierToolControl"); //$NON-NLS-1$
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 		spacerControl.getTags().add(TrimBarLayout.SPACER);
 
 		MToolControl searchControl = MenuFactoryImpl.eINSTANCE.createToolControl();
@@ -603,7 +596,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MToolControl glueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		glueControl.setElementId("Search-PS Glue"); //$NON-NLS-1$
 		glueControl
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.LayoutModifierToolControl"); //$NON-NLS-1$
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 		glueControl.getTags().add(TrimBarLayout.GLUE);
 
 		MToolControl switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
@@ -625,6 +618,47 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		// and now add it to the model, start the rendering
 		List<MTrimBar> trimBars = model.getTrimBars();
 		trimBars.add(0, trimBar);
+	}
+
+	void populateBottomTrimContributions() {
+		MTrimBar bottomTrim = modelService.getTrim(model, SideValue.BOTTOM);
+
+		// StatusLine
+		MToolControl slElement = (MToolControl) modelService.find(
+				"org.eclipse.ui.StatusLine", bottomTrim); //$NON-NLS-1$
+		if (slElement == null) {
+			slElement = MenuFactoryImpl.eINSTANCE.createToolControl();
+			slElement.setElementId("org.eclipse.ui.StatusLine"); //$NON-NLS-1$
+			slElement
+					.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
+			bottomTrim.getChildren().add(slElement);
+		}
+		slElement.setToBeRendered(statusLineVisible);
+		slElement.getTags().add(TrimBarLayout.SPACER);
+
+		// Heap Status
+		MToolControl hsElement = (MToolControl) modelService.find(
+				"org.eclipse.ui.HeapStatus", bottomTrim); //$NON-NLS-1$
+		if (hsElement == null) {
+			hsElement = MenuFactoryImpl.eINSTANCE.createToolControl();
+			hsElement.setElementId("org.eclipse.ui.HeapStatus"); //$NON-NLS-1$
+			hsElement
+					.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
+			bottomTrim.getChildren().add(hsElement);
+		}
+		hsElement.setToBeRendered(getShowHeapStatus());
+
+		// Progress Bar
+		MToolControl pbElement = (MToolControl) modelService.find(
+				"org.eclipse.ui.ProgressBar", bottomTrim); //$NON-NLS-1$
+		if (pbElement == null) {
+			pbElement = MenuFactoryImpl.eINSTANCE.createToolControl();
+			pbElement.setElementId("org.eclipse.ui.ProgressBar"); //$NON-NLS-1$
+			pbElement
+					.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.StandardTrim"); //$NON-NLS-1$
+			bottomTrim.getChildren().add(pbElement);
+		}
+		pbElement.setToBeRendered(getWindowConfigurer().getShowProgressIndicator());
 	}
 
 	private MTrimBar getTopTrim() {
@@ -1762,24 +1796,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	/**
-	 * Create the progress indicator for the receiver.
-	 * 
-	 * @param shell
-	 *            the parent shell
-	 */
-	void createProgressIndicator(Shell shell) {
-		if (getWindowConfigurer().getShowProgressIndicator()) {
-			TrimmedPartLayout layout = (TrimmedPartLayout) shell.getLayout();
-			Composite trimComposite = layout.getTrimComposite(shell, SWT.BOTTOM);
-			trimComposite.setLayout(new FillLayout());
-
-			progressRegion = new ProgressRegion();
-			progressRegion.createContents(trimComposite, this);
-		}
-
-	}
-
-	/**
 	 * Returns whether the heap status indicator should be shown.
 	 * 
 	 * @return <code>true</code> to show the heap status indicator,
@@ -1795,31 +1811,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 										+ "/perf/showHeapStatus")).booleanValue(); //$NON-NLS-1$
 	}
 
-	void createHeapStatus(Shell shell) {
-		if (getShowHeapStatus()) {
-			TrimmedPartLayout layout = (TrimmedPartLayout) shell.getLayout();
-			Composite trimComposite = layout.getTrimComposite(shell, SWT.BOTTOM);
-			trimComposite.setLayout(new FillLayout());
-
-			heapStatus = new HeapStatus(trimComposite, PrefUtil.getInternalPreferenceStore());
-		}
-	}
-
 	public void showHeapStatus(boolean show) {
-		if (show) {
-			if (heapStatus == null) {
-				createHeapStatus(getShell());
-
-				TrimmedPartLayout layout = (TrimmedPartLayout) getShell().getLayout();
-				Composite trimComposite = layout.getTrimComposite(getShell(), SWT.BOTTOM);
-				trimComposite.layout();
-			}
-		} else {
-			if (heapStatus != null) {
-				heapStatus.dispose();
-				heapStatus = null;
-			}
-		}
+		MUIElement hsElement = modelService.find(
+				"org.eclipse.ui.HeapStatus", modelService.getTrim(model, SideValue.BOTTOM)); //$NON-NLS-1$
+		if (hsElement != null)
+			hsElement.setToBeRendered(show);
+		getShell().layout(null, SWT.ALL | SWT.CHANGED | SWT.DEFER);
 	}
 
 	/**
@@ -2221,16 +2218,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	public StatusLineManager getStatusLineManager() {
 		if (statusLineManager == null) {
-			Shell shell = (Shell) model.getWidget();
-			if (shell != null) {
-				TrimmedPartLayout layout = (TrimmedPartLayout) shell.getLayout();
-				Composite trimComposite = layout.getTrimComposite(shell, SWT.BOTTOM);
-				trimComposite.setLayout(new FillLayout());
-
-				statusLineManager = new StatusLineManager();
-				Control control = statusLineManager.createControl(trimComposite);
-				control.setSize(control.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-			}
+			statusLineManager = new StatusLineManager();
 		}
 		return statusLineManager;
 	}
