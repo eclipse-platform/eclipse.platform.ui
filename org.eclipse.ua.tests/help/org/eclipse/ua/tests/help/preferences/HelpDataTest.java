@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -92,7 +92,9 @@ public class HelpDataTest extends TestCase {
 			String[][] entry = (String[][])TEST_DATA[i];
 			String file = entry[0][0];
 			List expectedTocOrder = Arrays.asList(entry[1]); 
+			@SuppressWarnings("unchecked")
 			Set expectedHiddenTocs = new HashSet(Arrays.asList(entry[2])); 
+			@SuppressWarnings("unchecked")
 			Set expectedHiddenIndexes = new HashSet(Arrays.asList(entry[3]));
 			URL url = UserAssistanceTestPlugin.getDefault().getBundle().getEntry(file);
 			HelpData data = new HelpData(url);

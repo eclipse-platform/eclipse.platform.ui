@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,7 +148,7 @@ public class ExtensionReorderingTest extends TestCase {
             String attributeValue) {
 
         // find all configs with given attribute and attribute value.
-        Vector elements = new Vector();
+        Vector<IConfigurationElement> elements = new Vector<IConfigurationElement>();
         for (int i = 0; i < configElements.length; i++) {
             String currentAttributeValue = configElements[i]
                 .getAttribute(attributeName);

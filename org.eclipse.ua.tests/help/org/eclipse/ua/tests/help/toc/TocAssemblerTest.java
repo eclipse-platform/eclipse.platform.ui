@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class TocAssemblerTest extends TestCase {
 		return new TestSuite(TocAssemblerTest.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void testAssemble() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		TocContribution b = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/b.xml", true, "en", null, null));
@@ -73,6 +74,7 @@ public class TocAssemblerTest extends TestCase {
 		TocContribution linkTo3 = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/linkTo3.xml", true, "en", null, null));
 		
 		TocAssembler assembler = new TocAssembler();
+		@SuppressWarnings("unchecked")
 		List contributions = new ArrayList(Arrays.asList(new Object[] { linkTo1, linkTo2, linkTo3 }));
 		contributions = assembler.assemble(contributions);
 		assertEquals(3, contributions.size());
@@ -83,6 +85,7 @@ public class TocAssemblerTest extends TestCase {
 		TocContribution b = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/b.xml", true, "en", null, null));
 		TocContribution c = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/c.xml", true, "en", null, null));
 		TocAssembler assembler = new TocAssembler();
+		@SuppressWarnings("unchecked")
 		List contributions = new ArrayList(Arrays.asList(new Object[] { b, c }));
 		contributions = assembler.assemble(contributions);
 		IToc toc =((TocContribution)contributions.get(0)).getToc();

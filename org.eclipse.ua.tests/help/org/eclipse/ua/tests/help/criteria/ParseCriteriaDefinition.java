@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public class ParseCriteriaDefinition extends TestCase {
 		CriteriaDefinitionContribution result_a_b = parser.parse(new CriteriaDefinitionFile(UserAssistanceTestPlugin.getPluginId(), "data/help/criteria/criteria_definition/result_a_b.xml", "en"));
 		
 		CriteriaDefinitionAssembler assembler = new CriteriaDefinitionAssembler();
+		@SuppressWarnings("unchecked")
 		List contributions = new ArrayList(Arrays.asList(new Object[] { a, b }));
 		CriteriaDefinition assembled = assembler.assemble(contributions);
 		

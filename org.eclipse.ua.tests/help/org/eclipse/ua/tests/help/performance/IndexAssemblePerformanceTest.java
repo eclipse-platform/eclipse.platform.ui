@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,6 +72,7 @@ public class IndexAssemblePerformanceTest extends PerformanceTestCase {
 		IndexContribution b = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/performance/index/index2.xml", "en"));
 		IndexContribution c = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/performance/index/index3.xml", "en"));
 		IndexAssembler assembler = new IndexAssembler();
+		@SuppressWarnings("unchecked")
 		List contributions = new ArrayList(Arrays.asList(new Object[] { a, b, c }));
 		Index assembled = assembler.assemble(contributions, Platform.getNL());	
 		assertEquals(100, assembled.getChildren().length);

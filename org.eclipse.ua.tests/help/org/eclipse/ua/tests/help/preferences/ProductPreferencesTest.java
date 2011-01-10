@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2007 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -182,6 +182,7 @@ public class ProductPreferencesTest extends TestCase {
 		for (int i=0;i<GET_VALUE_DATA.length;++i) {
 			String[] data = GET_VALUE_DATA[i];
 			String key = data[0];
+			@SuppressWarnings("unchecked")
 			Set allowableValues = new HashSet(ProductPreferences.tokenize(data[1]));
 			Properties primary = ProductPreferences.loadPropertiesFile(UserAssistanceTestPlugin.getDefault().getBundle().getSymbolicName(), "data/help/preferences/" + data[2]);
 			Properties[] secondary = new Properties[data.length - 3];

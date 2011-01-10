@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2007, 2008 IBM Corporation and others.
+ *  Copyright (c) 2007, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -34,18 +34,19 @@ public class ContentDetectorTest extends TestCase {
 
 	public void testContributorSaveNoNames() {
 		ContentDetectHelper helper = new ContentDetectHelper();
-		helper.saveContributors(new HashSet());
+		helper.saveContributors(new HashSet<String>());
 		assertTrue(helper.getContributors().size() == 0);
 	}
 
 	public void testContributorSaveThreeContributors() {
 		ContentDetectHelper helper = new ContentDetectHelper();
-		HashSet contributors = new HashSet();
+		HashSet<String> contributors = new HashSet<String>();
 		contributors.add("one");
 		contributors.add("two");
 		contributors.add("three");
 		helper.saveContributors(contributors);
-		Set savedContributors = helper.getContributors();
+		@SuppressWarnings("unchecked")
+		Set<String> savedContributors = helper.getContributors();
 		assertTrue(savedContributors.size() == 3);
 		assertTrue(savedContributors.contains("one"));
 		assertTrue(savedContributors.contains("two"));
@@ -54,12 +55,12 @@ public class ContentDetectorTest extends TestCase {
 	
 	public void testForNewContent() {
 		ContentDetectHelper helper = new ContentDetectHelper();
-		HashSet contributors = new HashSet();
+		HashSet<String> contributors = new HashSet<String>();
 		contributors.add("one");
 		contributors.add("two");
 		contributors.add("three");
 		contributors.add("four");
-		Set previous = new HashSet();
+		Set<String> previous = new HashSet<String>();
 		previous.add("five");
 		previous.add("two");
 		previous.add("one");
@@ -95,8 +96,9 @@ public class ContentDetectorTest extends TestCase {
 		assertFalse(detector.isNewContentAvailable());
 		// Make the first extension appear new
 		helper.saveExtensionCount(extensionCount - 1);
-		Set contributors = helper.getContributors();
-		String firstContribution = (String) contributors.iterator().next();
+		@SuppressWarnings("unchecked")
+		Set<String> contributors = helper.getContributors();
+		String firstContribution = contributors.iterator().next();
 		String copyOfFirstContribution = "" + firstContribution;
 		contributors.remove(firstContribution);
 		helper.saveContributors(contributors);

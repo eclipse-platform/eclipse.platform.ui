@@ -48,6 +48,7 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 		return parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), tocFile, true, "en", null, null));
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void assembleToc() throws Exception {
 		TocFileParser parser = new TocFileParser();
 		List<TocContribution> contributions = new ArrayList<TocContribution>();

@@ -178,6 +178,7 @@ public class CheatSheetModelSerializer {
 	/*
 	 * Serializes the given array with the specified indentation.
 	 */
+	@SuppressWarnings("unchecked")
 	public static String serialize(Object[] array, String indent) {
 		StringBuffer buf = new StringBuffer();
 		if (array == null) {
@@ -228,6 +229,7 @@ public class CheatSheetModelSerializer {
 	/*
 	 * Serializes the given List with the specified indentation.
 	 */
+	@SuppressWarnings("unchecked")
 	public static String serialize(List list, String indent) {
 		StringBuffer buf = new StringBuffer();
 		if (list == null) {

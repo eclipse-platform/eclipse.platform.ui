@@ -121,6 +121,7 @@ public class IntroModelSerializerTest extends TestCase {
 	 * mapping of filenames relative to the test plugin to Strings, the
 	 * contents of the XHTML files.
 	 */
+	@SuppressWarnings("unchecked")
 	public static Map getXHTMLFiles(IntroModelRoot model) {
 		Map map = new HashMap();
 		Collection<AbstractIntroPage> pages = new ArrayList<AbstractIntroPage>();

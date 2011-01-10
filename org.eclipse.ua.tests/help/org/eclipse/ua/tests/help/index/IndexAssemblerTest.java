@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ public class IndexAssemblerTest extends TestCase {
 		IndexContribution result_a_b_c = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/result_a_b_c.xml", "en"));
 		
 		IndexAssembler assembler = new IndexAssembler();
+		@SuppressWarnings("unchecked")
 		List contributions = new ArrayList(Arrays.asList(new Object[] { a, b, c }));
 		Index assembled = assembler.assemble(contributions, Platform.getNL());
 		
@@ -65,6 +66,7 @@ public class IndexAssemblerTest extends TestCase {
 		IndexFileParser parser = new IndexFileParser();
 		IndexContribution contrib = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/d.xml", "en"));
 		IndexAssembler assembler = new IndexAssembler();
+		@SuppressWarnings("unchecked")
 		List contributions = new ArrayList(Arrays.asList(new Object[] { contrib }));
 		Index index = assembler.assemble(contributions, Platform.getNL());
 	    IIndexEntry[] children = (IIndexEntry[]) index.getEntries();
@@ -92,6 +94,7 @@ public class IndexAssemblerTest extends TestCase {
 		IndexFileParser parser = new IndexFileParser();
 		IndexContribution contrib = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/hasTitle.xml", "en"));	
 		IndexAssembler assembler = new IndexAssembler();
+		@SuppressWarnings("unchecked")
 		List contributions = new ArrayList(Arrays.asList(new Object[] { contrib }));
 		Index index = assembler.assemble(contributions, Platform.getNL());
 	    IIndexEntry[] children = index.getEntries();

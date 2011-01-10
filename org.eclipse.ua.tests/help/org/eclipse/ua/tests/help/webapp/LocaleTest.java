@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ public class LocaleTest extends TestCase {
 		assertEquals("ab-cd______ef", UrlUtil.cleanLocale("ab-cd\n\r_\"\'_ef"));
 	}
 
+	@SuppressWarnings("unchecked")
 	public void testForced_Locale() {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		MockServletRequest req = new MockServletRequest();
@@ -54,6 +55,7 @@ public class LocaleTest extends TestCase {
 		assertEquals("es", locale);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void testForcedLangOverridesCookies() {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		MockServletRequest req = new MockServletRequest();

@@ -92,6 +92,7 @@ public class TestStatePersistence extends TestCase {
 		helper.saveState(propertiesToSave, propsToSave.manager);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private PropertySet restore(String id) {
 		PropertySet result = new PropertySet();
 		Properties restored = helper.loadState(id);
