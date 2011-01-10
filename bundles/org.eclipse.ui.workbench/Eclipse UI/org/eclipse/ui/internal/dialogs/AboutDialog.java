@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -38,6 +37,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -65,6 +65,7 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
  */
 public class AboutDialog extends TrayDialog {
     private final static int MAX_IMAGE_WIDTH_FOR_TEXT = 250;
+	private final static int TEXT_MARGIN = 5;
 
     private final static int DETAILS_ID = IDialogConstants.CLIENT_ID + 1;
 
@@ -81,6 +82,8 @@ public class AboutDialog extends TrayDialog {
     private StyledText text;
     
     private AboutTextManager aboutTextManager;
+
+	private AboutItem item;
 
     /**
      * Create an instance of the AboutDialog for the given window.
@@ -189,7 +192,7 @@ public class AboutDialog extends TrayDialog {
     protected Control createDialogArea(Composite parent) {
          // brand the about box if there is product info
         Image aboutImage = null;
-        AboutItem item = null;
+		item = null;
         if (product != null) {
             ImageDescriptor imageDescriptor = ProductProperties
                     .getAboutImage(product);
@@ -277,91 +280,44 @@ public class AboutDialog extends TrayDialog {
             topContainerHeightHint = Math.max(topContainerHeightHint, aboutImage.getBounds().height);
         }
         
-        GridData data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.verticalAlignment = GridData.FILL;
-        data.grabExcessHorizontalSpace = true;
-        data.grabExcessVerticalSpace = true;
-        data.heightHint = topContainerHeightHint;
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
         topContainer.setLayoutData(data);
+		// used only to drive initial size so that there are no hints in the
+		// layout data
+		topContainer.setSize(432, topContainerHeightHint);
         
         if (item != null) {
-			final int minWidth = 432;
-			// This value should really be calculated
-        	// from the computeSize(SWT.DEFAULT,
-        	// SWT.DEFAULT) of all the
-        	// children in infoArea excluding the
-        	// wrapped styled text
-        	// There is no easy way to do this.
+			text = new StyledText(topContainer, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
+			configureText(topContainer);
 
-			// A scrolled composite is used instead of a vertical scroll bar on
-			// the styled text, because styled text does not automatically
-			// remove the vertical bar when not needed.
-        	final ScrolledComposite scroller = new ScrolledComposite(topContainer,
-    				SWT.V_SCROLL | SWT.H_SCROLL);
-        	data = new GridData(GridData.FILL_BOTH);
-        	data.widthHint = minWidth;
-    		scroller.setLayoutData(data);
+			// computing trim for later
+			Rectangle rect = text.computeTrim(0, 0, 100, 100);
+			final int xTrim = rect.width - 100;
+			final int yTrim = rect.height - 100;
 
-    		final Composite textComposite = new Composite(scroller, SWT.NONE);
-    		textComposite.setBackground(background);
-    		
-    		layout = new GridLayout();
-    		textComposite.setLayout(layout);
-
-    		text = new StyledText(textComposite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
-
-    		// Don't set caret to 'null' as this causes https://bugs.eclipse.org/293263.
-//    		text.setCaret(null);
-
-            text.setFont(parent.getFont());
-            text.setText(item.getText());
-            text.setCursor(null);
-            text.setBackground(background);
-            text.setForeground(foreground);
-            
-            aboutTextManager = new AboutTextManager(text);
-            aboutTextManager.setItem(item);
-            
-            createTextMenu();
-            
-    		GridData gd = new GridData();
-    		gd.verticalAlignment = GridData.BEGINNING;
-    		gd.horizontalAlignment = GridData.FILL;
-    		gd.grabExcessHorizontalSpace = true;
-    		text.setLayoutData(gd);
-
-    		// Adjust the scrollbar increments
-    		scroller.getHorizontalBar().setIncrement(20);
-    		scroller.getVerticalBar().setIncrement(20);
-
-    		final boolean[] inresize = new boolean[1]; // flag to stop unneccesary
-    		// recursion
-    		textComposite.addControlListener(new ControlAdapter() {
-    			public void controlResized(ControlEvent e) {
-    				if (inresize[0])
-    					return;
-    				inresize[0] = true;
-    				// required because of bugzilla report 4579
-    				textComposite.layout(true);
-    				// required because you want to change the height that the
-    				// scrollbar will scroll over when the width changes.
-    				int width = textComposite.getClientArea().width;
-    				Point p = textComposite.computeSize(width, SWT.DEFAULT);
-    				scroller.setMinSize(minWidth, p.y);
-    				inresize[0] = false;
-    			}
-    		});
-
-    		scroller.setExpandHorizontal(true);
-    		scroller.setExpandVertical(true);
-    		Point p = textComposite.computeSize(minWidth, SWT.DEFAULT);
-    		textComposite.setSize(p.x, p.y);
-    		scroller.setMinWidth(minWidth);
-    		scroller.setMinHeight(p.y);
-
-    		scroller.setContent(textComposite);
-        }
+			topContainer.addControlListener(new ControlAdapter() {
+				public void controlResized(ControlEvent e) {
+					text.setSize(SWT.DEFAULT, SWT.DEFAULT);
+					topContainer.layout(true);
+					// do we need a scroll bar?
+					Point size = text.getSize();
+					int availableHeight = size.y - yTrim;
+					int availableWidth = size.x - xTrim - (2 * TEXT_MARGIN);
+					Point newSize = text.computeSize(availableWidth, SWT.DEFAULT, true);
+					int style = text.getStyle();
+					if (newSize.y > availableHeight) {
+						if ((style & SWT.V_SCROLL) == 0) {
+							recreateWrappedText(topContainer, true);
+						}
+					} else {
+						if ((style & SWT.V_SCROLL) != 0) {
+							recreateWrappedText(topContainer, false);
+						}
+					}
+					topContainer.layout(true);
+				}
+			});
+		}
 
         // horizontal bar
         Label bar = new Label(workArea, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -391,6 +347,47 @@ public class AboutDialog extends TrayDialog {
 
         return workArea;
     }
+
+	void recreateWrappedText(Composite parent, boolean withScrolling) {
+		int style = text.getStyle();
+		if (withScrolling) {
+			style |= SWT.V_SCROLL;
+		} else {
+			style ^= SWT.V_SCROLL;
+		}
+		boolean hasFocus = text.isFocusControl();
+		Point selection = text.getSelection();
+		text.dispose();
+		text = new StyledText(parent, style);
+		configureText(parent);
+		if (hasFocus) {
+			text.setFocus();
+		}
+		text.setSelection(selection);
+	}
+
+	void configureText(final Composite parent) {
+		// Don't set caret to 'null' as this causes
+		// https://bugs.eclipse.org/293263.
+		// text.setCaret(null);
+		Color background = JFaceColors.getBannerBackground(parent.getDisplay());
+		Color foreground = JFaceColors.getBannerForeground(parent.getDisplay());
+
+		text.setFont(parent.getFont());
+		text.setText(item.getText());
+		text.setCursor(null);
+		text.setBackground(background);
+		text.setForeground(foreground);
+		text.setMargins(TEXT_MARGIN, TEXT_MARGIN, TEXT_MARGIN, 0);
+
+		aboutTextManager = new AboutTextManager(text);
+		aboutTextManager.setItem(item);
+
+		createTextMenu();
+
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		text.setLayoutData(gd);
+	}
 
     /**
 	 * Create the context menu for the text widget.
