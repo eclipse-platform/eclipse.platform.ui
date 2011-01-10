@@ -18,12 +18,9 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -78,38 +75,6 @@ import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider;
  * @since 3.2
  */
 public class RefactoringHistoryControl extends Composite implements IRefactoringHistoryControl {
-
-	/** Label for the refactoring history tree viewer */
-	protected final class RefactoringHistoryLabel extends CLabel {
-
-		/**
-		 * Creates a new refactoring history label.
-		 *
-		 * @param parent
-		 *            the parent control
-		 * @param style
-		 *            the style
-		 */
-		public RefactoringHistoryLabel(final Composite parent, final int style) {
-			super(parent, style);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public Point computeSize(final int wHint, final int hHint, final boolean changed) {
-			return super.computeSize(wHint, Math.max(24, hHint), changed);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		public Color getForeground() {
-			if (isEnabled())
-				return super.getForeground();
-			return getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		}
-	}
 
 	/** Checkbox tree viewer for the refactoring history */
 	protected final class RefactoringHistoryTreeViewer extends CheckboxTreeViewer {
@@ -377,7 +342,6 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		layout.verticalSpacing= 2;
 		leftPane.setLayout(layout);
 		fHistoryPane= new CompareViewerPane(leftPane, SWT.BORDER | SWT.FLAT);
-		fHistoryPane.setTopLeft(new RefactoringHistoryLabel(fHistoryPane, SWT.NONE));
 		fHistoryPane.setText(getHistoryPaneText());
 		fHistoryPane.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL));
 		fHistoryViewer= createHistoryViewer(fHistoryPane);
