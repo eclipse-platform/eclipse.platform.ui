@@ -2355,8 +2355,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		if (activate) {
 			partService.activate(editor);
+		} else {
+			updateActiveEditorSources(editor);
 		}
-
 
 		return compatibilityEditor.getEditor();
     }
