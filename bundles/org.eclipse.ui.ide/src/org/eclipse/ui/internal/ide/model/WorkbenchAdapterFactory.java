@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - http://bugs.eclipse.org/333590
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.model;
 
@@ -21,6 +22,8 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.IWorkbenchAdapter2;
+import org.eclipse.ui.model.IWorkbenchAdapter3;
 
 /**
  * Dispenses adapters for various core objects.
@@ -81,7 +84,9 @@ public class WorkbenchAdapterFactory implements IAdapterFactory {
         if (adapterType.isInstance(o)) {
             return o;
         }
-        if (adapterType == IWorkbenchAdapter.class) {
+        if (adapterType == IWorkbenchAdapter.class
+                || adapterType == IWorkbenchAdapter2.class
+                || adapterType == IWorkbenchAdapter3.class) {
             return getWorkbenchElement(o);
         }
         if (adapterType == IPersistableElement.class) {
@@ -111,8 +116,10 @@ public class WorkbenchAdapterFactory implements IAdapterFactory {
      * @return the collection of adapter types
      */
     public Class[] getAdapterList() {
-        return new Class[] { IWorkbenchAdapter.class, IElementFactory.class,
-                IPersistableElement.class, IActionFilter.class, IUndoContext.class };
+        return new Class[] { IWorkbenchAdapter.class, IWorkbenchAdapter2.class,
+                IWorkbenchAdapter3.class, IElementFactory.class,
+                IPersistableElement.class, IActionFilter.class,
+                IUndoContext.class };
     }
 
     /**
