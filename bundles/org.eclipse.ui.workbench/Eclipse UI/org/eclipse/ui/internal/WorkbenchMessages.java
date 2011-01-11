@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -488,6 +488,7 @@ public class WorkbenchMessages extends NLS {
 
 	public static String FilteredPreferenceDialog_PreferenceSaveFailed;
 	public static String FilteredPreferenceDialog_Resize;
+	public static String FilteredPreferenceDialog_FilterToolTip;
 	
 	public static String FileExtension_fileTypeMessage;
 	public static String FileExtension_fileTypeLabel;
