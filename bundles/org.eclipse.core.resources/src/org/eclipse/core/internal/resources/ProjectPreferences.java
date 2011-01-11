@@ -343,21 +343,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		if (segmentCount > 2)
 			qualifier = getSegment(path, 2);
 
-		if (segmentCount != 2)
-			return;
-
-		// else segmentCount == 2 so we initialize the children
-		if (initialized)
-			return;
-		try {
-			synchronized (this) {
-				String[] names = computeChildren();
-				for (int i = 0; i < names.length; i++)
-					addChild(names[i], null);
-			}
-		} finally {
-			initialized = true;
-		}
+		initialize();
 	}
 
 	/*
@@ -479,6 +465,29 @@ public class ProjectPreferences extends EclipsePreferences {
 		return super.internalPut(key, newValue);
 	}
 
+	protected void initialize() {
+		if (segmentCount != 2)
+			return;
+
+		// if already initialized, then skip this initialization
+		if (initialized)
+			return;
+
+		// initialize the children only if project is opened
+		if (project.isOpen()) {
+			try {
+				synchronized (this) {
+					String[] names = computeChildren();
+					for (int i = 0; i < names.length; i++)
+						addChild(names[i], null);
+				}
+			} finally {
+				// mark as initialized so that subsequent project opening will not initialize preferences again
+				initialized = true;
+			}
+		}
+	}
+
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
 		return loadedNodes.contains(node.absolutePath());
 	}
@@ -513,9 +522,6 @@ public class ProjectPreferences extends EclipsePreferences {
 			FileUtil.safeClose(input);
 		}
 		convertFromProperties(this, fromDisk, true);
-	}
-
-	protected void loaded() {
 		loadedNodes.add(absolutePath());
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@
  *     Broadcom Corporation - build configurations and references
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-import java.util.LinkedHashSet;
 
 import java.net.URI;
 import java.util.*;
@@ -1158,6 +1156,8 @@ public class Project extends Container implements IProject {
 						}
 					}
 				}
+				//initialize this project preferences
+				((ProjectPreferences) Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).node(getName())).initialize();
 				//creation of this project may affect overlapping resources
 				workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_INFINITE, monitor);
 			} catch (OperationCanceledException e) {
