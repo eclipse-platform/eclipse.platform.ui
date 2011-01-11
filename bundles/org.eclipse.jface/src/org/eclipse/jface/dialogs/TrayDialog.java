@@ -158,7 +158,7 @@ public abstract class TrayDialog extends Dialog {
 		if (getTray() == null) {
 			throw new IllegalStateException("Tray was not open"); //$NON-NLS-1$
 		}
-		Shell shell = getShell();
+		final Shell shell = getShell();
 		Control focusControl = shell.getDisplay().getFocusControl();
 		if (isContained(trayControl, focusControl) && nonTrayFocusControl!= null && !nonTrayFocusControl.isDisposed()) {
 			nonTrayFocusControl.setFocus();
@@ -166,7 +166,7 @@ public abstract class TrayDialog extends Dialog {
 		nonTrayFocusControl= null;
 		shell.removeControlListener (resizeListener);
 		resizeListener = null;
-		int trayWidth = trayControl.getSize().x + leftSeparator.getSize().x + sash.getSize().x + rightSeparator.getSize().x;
+		final int trayWidth = trayControl.getSize().x + leftSeparator.getSize().x + sash.getSize().x + rightSeparator.getSize().x;
 		trayControl.dispose();
 		trayControl = null;
 		tray = null;
@@ -176,8 +176,17 @@ public abstract class TrayDialog extends Dialog {
 		rightSeparator = null;
 		sash.dispose();
 		sash = null;
-		Rectangle bounds = shell.getBounds();
-		shell.setBounds(bounds.x + ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width - trayWidth, bounds.height);
+		final Rectangle bounds = shell.getBounds();
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=333684
+		// It's possible that we are closing the tray because we are in the middle
+		// of closing the entire dialog.  We don't want to set the bounds while in
+		// the middle of tearing down the widgetry.
+		shell.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				if (!shell.isDisposed())
+					shell.setBounds(bounds.x + ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width - trayWidth, bounds.height);
+			}
+		});
 		if (fHelpButton != null) {
 			fHelpButton.setSelection(false);
 		}
