@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -973,6 +973,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private IExtensionTracker tracker;
 
+	private void firePageClosed() {
+		pageListeners.firePageClosed(page);
+	}
+
 	private void firePageOpened() {
 		pageListeners.firePageOpened(page);
 	}
@@ -1417,6 +1421,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					.getService(IContextService.class);
 			contextService.unregisterShell(getShell());
 
+			firePageClosed();
 			fireWindowClosed();
 
 			// time to wipe our our populate
@@ -1595,6 +1600,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public void setActivePage(final IWorkbenchPage in) {
 		if (getActivePage() != in) {
+			if (in == null) {
+				firePageClosed();
+			}
+
 			page = (WorkbenchPage) in;
 			model.getContext().set(IWorkbenchPage.class, page);
 			partService.setPage(page);
