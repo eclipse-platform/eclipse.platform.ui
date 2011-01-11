@@ -105,6 +105,7 @@ import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityView;
@@ -218,6 +219,77 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	}
 
+	/**
+	 * Calculates the action sets to show for the given part and editor
+	 * 
+	 * @param part
+	 *            the active part, may be <code>null</code>
+	 * @param editor
+	 *            the current editor, may be <code>null</code>, may be the
+	 *            active part
+	 * @return the action sets that are applicable to the given part and editor
+	 */
+	private ArrayList<IActionSetDescriptor> calculateActionSets(IWorkbenchPart part,
+			IEditorPart editor) {
+		ArrayList<IActionSetDescriptor> newActionSets = new ArrayList<IActionSetDescriptor>();
+		if (part != null) {
+			IActionSetDescriptor[] partActionSets = WorkbenchPlugin.getDefault()
+					.getActionSetRegistry().getActionSetsFor(part.getSite().getId());
+			for (IActionSetDescriptor partActionSet : partActionSets) {
+				newActionSets.add(partActionSet);
+			}
+		}
+		if (editor != null && editor != part) {
+			IActionSetDescriptor[] editorActionSets = WorkbenchPlugin.getDefault()
+					.getActionSetRegistry().getActionSetsFor(editor.getSite().getId());
+			for (IActionSetDescriptor editorActionSet : editorActionSets) {
+				newActionSets.add(editorActionSet);
+			}
+		}
+		return newActionSets;
+	}
+
+	/**
+	 * Updates the actions we are showing for the active part and current
+	 * editor.
+	 * 
+	 * @param newActionSets
+	 *            the action sets to show
+	 */
+	private void updateActionSets(ArrayList<IActionSetDescriptor> newActionSets) {
+		if (oldActionSets.equals(newActionSets)) {
+			return;
+		}
+
+		WorkbenchWindow workbenchWindow = (WorkbenchWindow) getWorkbenchWindow();
+		IContextService service = (IContextService) workbenchWindow
+				.getService(
+				IContextService.class);
+		try {
+			service.deferUpdates(true);
+
+			// show the new
+			for (IActionSetDescriptor newActionSet : newActionSets) {
+				actionSets.showAction(newActionSet);
+			}
+
+			// hide the old
+			for (IActionSetDescriptor oldActionSet : oldActionSets) {
+				actionSets.hideAction(oldActionSet);
+			}
+
+			oldActionSets = newActionSets;
+		} finally {
+			service.deferUpdates(false);
+		}
+
+		if (getPerspective() != null) {
+			workbenchWindow.updateActionSets();
+			workbenchWindow.firePerspectiveChanged(WorkbenchPage.this, getPerspective(),
+					CHANGE_ACTION_SET_SHOW);
+		}
+	}
+
 	private IWorkbenchPart getWorkbenchPart(MPart part) {
 		if (part != null) {
 			Object clientObject = part.getObject();
@@ -235,6 +307,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		window.getContext().set(ISources.ACTIVE_EDITOR_NAME, editor);
 		window.getContext().set(ISources.ACTIVE_EDITOR_INPUT_NAME,
 				editor == null ? null : editor.getEditorInput());
+
+		updateActionSets(calculateActionSets(getWorkbenchPart(part), editor));
 	}
 
 	private void updateShowInSources(MPart part) {
@@ -349,7 +423,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private IActionBars actionBars;
     
     private ActionSetManager actionSets;
-    
+
+    /**
+     * The action sets that were last requested to be shown.
+     */
+	private ArrayList<IActionSetDescriptor> oldActionSets = new ArrayList<IActionSetDescriptor>();
 
     private NavigationHistory navigationHistory = new NavigationHistory(this);
     
