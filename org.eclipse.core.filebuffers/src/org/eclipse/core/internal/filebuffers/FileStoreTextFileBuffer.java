@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn <jamesblackburn+eclipse@gmail.com> - [implementation] FileStoreTextFileBuffer eats IOException on external file save - https://bugs.eclipse.org/333660
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
@@ -199,8 +200,10 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			while (true) {
 				int bytesRead= -1;
 				bytesRead= stream.read(buffer);
-				if (bytesRead == -1)
+				if (bytesRead == -1) {
+					out.close();
 					break;
+				}
 				out.write(buffer, 0, bytesRead);
 				if (monitor != null)
 					monitor.worked(1);
@@ -488,6 +491,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 
 				out.write(bytes, 0, bytesLength);
 				out.flush();
+				out.close();
 			} catch (IOException x) {
 				IStatus s= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, x.getLocalizedMessage(), x);
 				throw new CoreException(s);
