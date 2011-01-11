@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Oakland Software Incorporated and others
+ * Copyright (c) 2008, 2011 Oakland Software Incorporated and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.core.internal.net.proxy.unix;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -198,32 +199,35 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		return null;
 	}
 
-	private synchronized String getEnv(String env) {
-		String cmd[] = { "/bin/sh", //$NON-NLS-1$
-				"-c", //$NON-NLS-1$
-				"env | grep -i proxy" }; //$NON-NLS-1$
-		Properties props = new Properties();
-		Process proc = null;
+	private static String getEnv(String env) {
 		try {
-			proc = Runtime.getRuntime().exec(cmd);
-			props.load(proc.getInputStream());
-			proc.waitFor();
-		} catch (IOException e) {
-			Activator.logError(
-					"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
-		} catch (IllegalArgumentException e) {
-			Activator.logError(
-					"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
-		} catch (InterruptedException e) {
-			Activator.logError(
-					"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
-		} finally {
-			if (proc != null) {
-				proc.destroy();
+			Method m = System.class.getMethod(
+					"getenv", new Class[] { String.class }); //$NON-NLS-1$
+			return (String) m.invoke(null, new Object[] { env });
+		} catch (Throwable t) {
+			// Fall-back to running 'env' directly. Warning this is very slow...
+			// up to 200ms
+			String cmd[] = { "/bin/sh", //$NON-NLS-1$
+					"-c", //$NON-NLS-1$
+					"env | grep -i proxy" }; //$NON-NLS-1$
+			Properties props = new Properties();
+			Process proc = null;
+			try {
+				proc = Runtime.getRuntime().exec(cmd);
+				props.load(proc.getInputStream());
+			} catch (IOException e) {
+				Activator.logError(
+						"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
+			} catch (IllegalArgumentException e) {
+				Activator.logError(
+						"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
+			} finally {
+				if (proc != null) {
+					proc.destroy();
+				}
 			}
+			return props.getProperty(env);
 		}
-
-		return props.getProperty(env);
 	}
 
 	private static void loadGnomeLib() {
