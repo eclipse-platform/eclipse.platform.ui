@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - Bug 326695
  *******************************************************************************/
 package org.eclipse.ui.model;
 
@@ -17,11 +18,15 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -40,7 +45,7 @@ import org.eclipse.ui.internal.util.Util;
  * on the labels and icons of adaptable objects.
  */
 public class WorkbenchLabelProvider extends LabelProvider implements
-        IColorProvider, IFontProvider {
+        IColorProvider, IFontProvider, IStyledLabelProvider {
 
     /**
      * Returns a workbench label provider that is hooked up to the decorator
@@ -143,6 +148,19 @@ public class WorkbenchLabelProvider extends LabelProvider implements
     }
 
 	/**
+	 * Returns the implementation of IWorkbenchAdapter3 for the given object.
+	 * 
+	 * @param o
+	 *            the object to look up.
+	 * @return IWorkbenchAdapter3 or<code>null</code> if the adapter is not
+	 *         defined or the object is not adaptable.
+	 * @since 3.7
+	 */
+	protected final IWorkbenchAdapter3 getAdapter3(Object o) {
+		return (IWorkbenchAdapter3) Util.getAdapter(o, IWorkbenchAdapter3.class);
+	}
+
+	/**
 	 * Lazy load the resource manager
 	 * 
 	 * @return The resource manager, create one if necessary
@@ -175,6 +193,50 @@ public class WorkbenchLabelProvider extends LabelProvider implements
 
 		return (Image) getResourceManager().get(descriptor);
     }
+
+	/**
+	 * The default implementation of this returns the styled text label for the
+	 * given element.
+	 * 
+	 * @param element
+	 *            the element to evaluate the styled string for
+	 * 
+	 * @return the styled string.
+	 * 
+	 * @since 3.7
+	 */
+    public StyledString getStyledText(Object element) {
+        IWorkbenchAdapter3 adapter = getAdapter3(element);
+		if (adapter == null) {
+			// If adapter class doesn't implement IWorkbenchAdapter3 than use
+			// StyledString with text of element. Since the output of getText is
+			// already decorated, so we don't need to call decorateText again
+			// here.
+			return new StyledString(getText(element));
+		}
+		StyledString styledString = adapter.getStyledText(element);
+		// Now, re-use any existing decorateText implementation, to decorate
+		// this styledString.
+		String decorated = decorateText(styledString.getString(), element);
+		Styler styler = getDecorationStyle(element);
+		return StyledCellLabelProvider.styleDecoratedString(decorated, styler, styledString);
+    }
+
+	/**
+	 * Sets the {@link StyledString.Styler} to be used for string decorations.
+	 * By default the {@link StyledString#DECORATIONS_STYLER decoration style}.
+	 * Clients can override.
+	 * 
+	 * @param element
+	 *            the element that has been decorated
+	 * 
+	 * @return return the decoration style
+	 * 
+	 * @since 3.7
+	 */
+	protected Styler getDecorationStyle(Object element) {
+		return StyledString.DECORATIONS_STYLER;
+	}
 
     /* (non-Javadoc)
      * Method declared on ILabelProvider

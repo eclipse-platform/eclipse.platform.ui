@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - Bug 326695
  *******************************************************************************/
 package org.eclipse.ui.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
@@ -21,7 +23,7 @@ import org.eclipse.swt.graphics.RGB;
  * @since 3.0
  */
 public abstract class WorkbenchAdapter implements IWorkbenchAdapter,
-        IWorkbenchAdapter2 {
+        IWorkbenchAdapter2, IWorkbenchAdapter3 {
     /**
      * The empty list of children.
      */
@@ -82,5 +84,19 @@ public abstract class WorkbenchAdapter implements IWorkbenchAdapter,
      */
     public FontData getFont(Object element) {
         return null;
+    }
+
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter3</code> method
+	 * returns the {@link StyledString} which wraps the label of the element.
+	 * Subclasses may override.
+	 * 
+	 * @return Return the {@link StyledString} which wraps the label of the
+	 *         element.
+	 * 
+	 * @since 3.7
+	 */
+	public StyledString getStyledText(Object object) {
+		return new StyledString(getLabel(object));
     }
 }
