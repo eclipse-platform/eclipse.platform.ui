@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,9 @@ public interface IConstants{
   public static final  String RSA="RSA"; //$NON-NLS-1$
   
   public static final int SSH_DEFAULT_PORT=22;
+  public static final String SSH_DEFAULT_HOME=".ssh"; //$NON-NLS-1$
+  public static final String SSH_OLD_DEFAULT_WIN32_HOME="ssh"; //$NON-NLS-1$
+  public static final String SYSTEM_PROPERTY_USER_HOME="user.home"; //$NON-NLS-1$
   
   public final String PREF_USE_PROXY="proxyEnabled"; //$NON-NLS-1$
   public final String PREF_PROXY_TYPE="proxyType"; //$NON-NLS-1$
@@ -47,6 +50,7 @@ public interface IConstants{
   public final String PREF_PROXY_AUTH="proxyAuth"; //$NON-NLS-1$
 
   public final String PREF_HAS_MIGRATED_SSH2_PREFS="org.eclipse.jsch.core.hasMigratedSsh2Preferences"; //$NON-NLS-1$
+  public final String PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME="org.eclipse.jsch.core.hasChangedDefaultWin32SshHome"; //$NON-NLS-1$
   
   public static final String PREF_PREFERRED_AUTHENTICATION_METHODS="CVSSSH2PreferencePage.PREF_AUTH_METHODS"; //$NON-NLS-1$
   public static final String PREF_PREFERRED_AUTHENTICATION_METHODS_ORDER="CVSSSH2PreferencePage.PREF_AUTH_METHODS_ORDER"; //$NON-NLS-1$
