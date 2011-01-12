@@ -36,7 +36,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer{
   public void initializeDefaultPreferences(){
     IEclipsePreferences defaultNode=DefaultScope.INSTANCE
         .getNode(JSchCorePlugin.ID);
-    defaultNode.put(IConstants.KEY_SSH2HOME, SSH_HOME_DEFAULT);
+    if(SSH_HOME_DEFAULT!=null)
+      defaultNode.put(IConstants.KEY_SSH2HOME, SSH_HOME_DEFAULT);
     defaultNode.put(IConstants.KEY_PRIVATEKEY, IConstants.PRIVATE_KEYS_DEFAULT);
     Utils.migrateSSH2Preferences();
     changeDefaultWin32SshHome();
