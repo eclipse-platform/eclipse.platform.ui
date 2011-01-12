@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,103 +171,202 @@ public interface IDialogConstants {
     // button labels
     /**
      * The label for OK buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.OK_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String OK_LABEL = JFaceResources.getString("ok"); //$NON-NLS-1$
+    public String OK_LABEL = JFaceResources.getString(IDialogLabelKeys.OK_LABEL_KEY); 
 
     /**
      * The label for cancel buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String CANCEL_LABEL = JFaceResources.getString("cancel"); //$NON-NLS-1$
+    public String CANCEL_LABEL = JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY);
 
     /**
      * The label for yes buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.YES_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String YES_LABEL = JFaceResources.getString("yes"); //$NON-NLS-1$
-
+    public String YES_LABEL = JFaceResources.getString(IDialogLabelKeys.YES_LABEL_KEY);
     /**
      * The label for no buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.NO_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String NO_LABEL = JFaceResources.getString("no"); //$NON-NLS-1$
+    public String NO_LABEL = JFaceResources.getString(IDialogLabelKeys.NO_LABEL_KEY);
 
     /**
      * The label for not to all buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.NO_TO_ALL_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String NO_TO_ALL_LABEL = JFaceResources.getString("notoall"); //$NON-NLS-1$
+    public String NO_TO_ALL_LABEL = JFaceResources.getString(IDialogLabelKeys.NO_TO_ALL_LABEL_KEY);
 
     /**
      * The label for yes to all buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.YES_TO_ALL_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String YES_TO_ALL_LABEL = JFaceResources.getString("yestoall"); //$NON-NLS-1$
+    public String YES_TO_ALL_LABEL = JFaceResources.getString(IDialogLabelKeys.YES_TO_ALL_LABEL_KEY);
 
     /**
      * The label for skip buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.SKIP_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String SKIP_LABEL = JFaceResources.getString("skip"); //$NON-NLS-1$
+    public String SKIP_LABEL = JFaceResources.getString(IDialogLabelKeys.SKIP_LABEL_KEY);
 
     /**
      * The label for stop buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.STOP_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String STOP_LABEL = JFaceResources.getString("stop"); //$NON-NLS-1$
+    public String STOP_LABEL = JFaceResources.getString(IDialogLabelKeys.STOP_LABEL_KEY);
 
     /**
      * The label for abort buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.ABORT_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String ABORT_LABEL = JFaceResources.getString("abort"); //$NON-NLS-1$
+    public String ABORT_LABEL = JFaceResources.getString(IDialogLabelKeys.ABORT_LABEL_KEY);
 
     /**
      * The label for retry buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.RETRY_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String RETRY_LABEL = JFaceResources.getString("retry"); //$NON-NLS-1$
+    public String RETRY_LABEL = JFaceResources.getString(IDialogLabelKeys.RETRY_LABEL_KEY);
 
     /**
      * The label for ignore buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.IGNORE_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String IGNORE_LABEL = JFaceResources.getString("ignore"); //$NON-NLS-1$
+    public String IGNORE_LABEL = JFaceResources.getString(IDialogLabelKeys.IGNORE_LABEL_KEY);
 
     /**
      * The label for proceed buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.PROCEED_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String PROCEED_LABEL = JFaceResources.getString("proceed"); //$NON-NLS-1$
+    public String PROCEED_LABEL = JFaceResources.getString(IDialogLabelKeys.PROCEED_LABEL_KEY);
 
     /**
      * The label for open buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.OPEN_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String OPEN_LABEL = JFaceResources.getString("open"); //$NON-NLS-1$
+    public String OPEN_LABEL = JFaceResources.getString(IDialogLabelKeys.OPEN_LABEL_KEY);
 
     /**
      * The label for close buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.CLOSE_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String CLOSE_LABEL = JFaceResources.getString("close"); //$NON-NLS-1$
+    public String CLOSE_LABEL = JFaceResources.getString(IDialogLabelKeys.CLOSE_LABEL_KEY);
 
     /**
      * The label for show details buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.SHOW_DETAILS_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String SHOW_DETAILS_LABEL = JFaceResources.getString("showDetails"); //$NON-NLS-1$
+    public String SHOW_DETAILS_LABEL = JFaceResources.getString(IDialogLabelKeys.SHOW_DETAILS_LABEL_KEY);
 
     /**
      * The label for hide details buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.HIDE_DETAILS_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String HIDE_DETAILS_LABEL = JFaceResources.getString("hideDetails"); //$NON-NLS-1$
+    public String HIDE_DETAILS_LABEL = JFaceResources.getString(IDialogLabelKeys.HIDE_DETAILS_LABEL_KEY);
 
     /**
      * The label for back buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.BACK_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String BACK_LABEL = JFaceResources.getString("backButton"); //$NON-NLS-1$
+    public String BACK_LABEL = JFaceResources.getString(IDialogLabelKeys.BACK_LABEL_KEY);
 
     /**
      * The label for next buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.NEXT_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String NEXT_LABEL = JFaceResources.getString("nextButton"); //$NON-NLS-1$
+    public String NEXT_LABEL = JFaceResources.getString(IDialogLabelKeys.NEXT_LABEL_KEY);
 
     /**
      * The label for finish buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.FINISH_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String FINISH_LABEL = JFaceResources.getString("finish"); //$NON-NLS-1$
+    public String FINISH_LABEL = JFaceResources.getString(IDialogLabelKeys.FINISH_LABEL_KEY);
 
     /**
      * The label for help buttons.
+     * Using this static label string provides optimum performance by looking
+     * up the label only once when JFace is initialized.  However, clients that 
+     * wish to support multiple locales in one system should instead use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.HELP_LABEL_KEY)</code>
+     * so that a locale other than the default may be consulted.
      */
-    public String HELP_LABEL = JFaceResources.getString("help"); //$NON-NLS-1$
+    public String HELP_LABEL = JFaceResources.getString(IDialogLabelKeys.HELP_LABEL_KEY);
 
     // Margins, spacings, and sizes
     /**
