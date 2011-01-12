@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -14,6 +15,7 @@ import java.io.*;
 import org.eclipse.core.internal.localstore.Bucket.Visitor;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -139,24 +141,15 @@ public class BucketTree {
 		if (!versionFile.getParentFile().exists())
 			versionFile.getParentFile().mkdirs();
 		FileOutputStream stream = null;
-		boolean failed = false;
 		try {
 			stream = new FileOutputStream(versionFile);
 			stream.write(current.getVersion());
+			stream.close();
 		} catch (IOException e) {
-			failed = true;
 			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath()); 
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				if (!failed) {
-					String message = NLS.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
-					throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
-				}
-			}
+			FileUtil.safeClose(stream);
 		}
 	}
 

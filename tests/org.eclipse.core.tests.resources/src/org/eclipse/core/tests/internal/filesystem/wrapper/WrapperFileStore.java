@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2008 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.internal.filesystem.wrapper;
 
@@ -28,6 +29,19 @@ public class WrapperFileStore extends FileStore {
 		this.baseStore = baseStore;
 	}
 
+	public static IFileStore newInstance(Class<? extends WrapperFileStore> clazz, IFileStore baseStore) {
+		try {
+			return clazz.getConstructor(IFileStore.class).newInstance(baseStore);
+		} catch (Exception e) {
+			// Test infrastructure failure...
+			throw new Error(e);
+		}
+	}
+
+	protected IFileStore createNewWrappedStore(IFileStore store) {
+		return newInstance(getClass(), store);
+	}
+
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
 		return baseStore.childInfos(options, monitor);
 	}
@@ -40,7 +54,7 @@ public class WrapperFileStore extends FileStore {
 		IFileStore[] childStores = baseStore.childStores(options, monitor);
 		for (int i = 0; i < childStores.length; i++)
 			// replace ordinary file store with wrapper version
-			childStores[i] = new WrapperFileStore(childStores[i]);
+			childStores[i] = createNewWrappedStore(childStores[i]);
 		return childStores;
 	}
 
@@ -73,15 +87,15 @@ public class WrapperFileStore extends FileStore {
 	}
 
 	public IFileStore getChild(IPath path) {
-		return new WrapperFileStore(baseStore.getChild(path));
+		return createNewWrappedStore(baseStore.getChild(path));
 	}
-	
+
 	public IFileStore getFileStore(IPath path) {
-		return new WrapperFileStore(baseStore.getFileStore(path));
+		return createNewWrappedStore(baseStore.getFileStore(path));
 	}
 
 	public IFileStore getChild(String name) {
-		return new WrapperFileStore(baseStore.getChild(name));
+		return createNewWrappedStore(baseStore.getChild(name));
 	}
 
 	public IFileSystem getFileSystem() {
@@ -94,7 +108,7 @@ public class WrapperFileStore extends FileStore {
 
 	public IFileStore getParent() {
 		IFileStore baseParent = baseStore.getParent();
-		return baseParent == null ? null : new WrapperFileStore(baseParent);
+		return baseParent == null ? null : createNewWrappedStore(baseParent);
 	}
 
 	public int hashCode() {

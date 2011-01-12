@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
+ * James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -175,25 +176,25 @@ public class FileUtil {
 	 * Closes a stream and ignores any resulting exception. This is useful
 	 * when doing stream cleanup in a finally block where secondary exceptions
 	 * are not worth logging.
+	 *
+	 *<p>
+	 * <strong>WARNING:</strong>
+	 * If the API contract requires notifying clients of I/O problems, then you <strong>must</strong>
+	 * explicitly close() output streams outside of safeClose().
+	 * Some OutputStreams will defer an IOException from write() to close().  So
+	 * while the writes may 'succeed', ignoring the IOExcpetion will result in silent
+	 * data loss.
+	 * </p>
+	 * <p>
+	 * This method should only be used as a fail-safe to ensure resources are not
+	 * leaked.
+	 * </p>
+	 * See also: https://bugs.eclipse.org/bugs/show_bug.cgi?id=332543
 	 */
-	public static void safeClose(InputStream in) {
+	public static void safeClose(Closeable stream) {
 		try {
-			if (in != null)
-				in.close();
-		} catch (IOException e) {
-			//ignore
-		}
-	}
-
-	/**
-	 * Closes a stream and ignores any resulting exception. This is useful
-	 * when doing stream cleanup in a finally block where secondary exceptions
-	 * are not worth logging.
-	 */
-	public static void safeClose(OutputStream out) {
-		try {
-			if (out != null)
-				out.close();
+			if (stream != null)
+				stream.close();
 		} catch (IOException e) {
 			//ignore
 		}
@@ -233,9 +234,12 @@ public class FileUtil {
 						String msg = NLS.bind(Messages.localstore_failedReadDuringWrite, path);
 						throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(path), msg, e);
 					}
-					if (bytesRead == -1)
-						break;
 					try {
+						if (bytesRead == -1) {
+							// Bug 332543 - ensure we don't ignore failures on close()
+							destination.close();
+							break;
+						}
 						destination.write(buffer, 0, bytesRead);
 					} catch (IOException e) {
 						String msg = NLS.bind(Messages.localstore_couldNotWrite, path);

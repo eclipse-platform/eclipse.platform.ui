@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import org.eclipse.core.internal.localstore.IHistoryStore;
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -53,23 +53,15 @@ public class FileState extends PlatformObject implements IFileState {
 		// tries to obtain a description for the file contents
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		InputStream contents = new BufferedInputStream(getContents());
-		boolean failed = false;
 		try {
 			IContentDescription description = contentTypeManager.getDescriptionFor(contents, getName(), new QualifiedName[] {IContentDescription.CHARSET});
+			contents.close();
 			return description == null ? null : description.getCharset();
 		} catch (IOException e) {
-			failed = true;
 			String message = NLS.bind(Messages.history_errorContentDescription, getFullPath());		
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 		} finally {
-			try {
-				contents.close();
-			} catch (IOException e) {
-				if (!failed) {
-					String message = NLS.bind(Messages.history_errorContentDescription, getFullPath());		
-					throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
-				}
-			}
+			FileUtil.safeClose(contents);
 		}
 	}
 

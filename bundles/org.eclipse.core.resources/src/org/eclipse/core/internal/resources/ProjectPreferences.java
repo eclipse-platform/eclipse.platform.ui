@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River) - [108066] Project prefs marked dirty on read
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -600,16 +601,13 @@ public class ProjectPreferences extends EclipsePreferences {
 			ByteArrayOutputStream output = new ByteArrayOutputStream();
 			try {
 				table.store(output, null);
+				output.close();
 			} catch (IOException e) {
 				String message = NLS.bind(Messages.preferences_saveProblems, absolutePath());
 				log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e));
 				throw new BackingStoreException(message);
 			} finally {
-				try {
-					output.close();
-				} catch (IOException e) {
-					// ignore
-				}
+				FileUtil.safeClose(output);
 			}
 			final InputStream input = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
 			IWorkspaceRunnable operation = new IWorkspaceRunnable() {

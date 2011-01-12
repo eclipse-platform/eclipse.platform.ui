@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  * Markus Schorn (Wind River) - [306575] Save snapshot location with project
+ * James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -155,9 +156,9 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		try {
 			file = new SafeFileOutputStream(location.toOSString(), tempPath);
 			write(object, file);
+			file.close();
 		} finally {
-			if (file != null)
-				file.close();
+			FileUtil.safeClose(file);
 		}
 	}
 
@@ -170,8 +171,10 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			write(object, writer);
 			writer.flush();
 			writer.close();
+			if (writer.checkError())
+				throw new IOException();
 		} finally {
-			output.close();
+			FileUtil.safeClose(output);
 		}
 	}
 

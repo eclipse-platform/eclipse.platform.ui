@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.filesystem.provider;
 
@@ -76,9 +77,11 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 						String msg = NLS.bind(Messages.failedReadDuringWrite, path);
 						Policy.error(EFS.ERROR_READ, msg, e);
 					}
-					if (bytesRead == -1)
-						break;
 					try {
+						if (bytesRead == -1) {
+							destination.close();
+							break;
+						}
 						destination.write(buffer, 0, bytesRead);
 					} catch (IOException e) {
 						String msg = NLS.bind(Messages.couldNotWrite, path);

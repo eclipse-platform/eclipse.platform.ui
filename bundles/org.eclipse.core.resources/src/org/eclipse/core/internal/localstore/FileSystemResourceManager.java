@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [210664] descriptionChanged(): ignore LF style
  *     Martin Oberhuber (Wind River) - [233939] findFilesForLocation() with symlinks
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -1091,17 +1092,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		try {
 			out = fileStore.openOutputStream(EFS.NONE, null);
 			new ModelObjectWriter().write(desc, out);
+			out.close();
 		} catch (IOException e) {
 			String msg = NLS.bind(Messages.resources_writeMeta, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), msg, e);
 		} finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					// ignore failure to close stream
-				}
-			}
+			FileUtil.safeClose(out);
 		}
 		//for backwards compatibility, ensure the old .prj file is deleted
 		getWorkspace().getMetaArea().clearOldDescription(target);

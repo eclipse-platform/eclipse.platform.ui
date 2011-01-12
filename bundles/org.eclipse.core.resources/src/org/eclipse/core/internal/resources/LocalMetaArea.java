@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Francis Lynch (Wind River) - [301563] Save and load tree snapshots
- * Broadcom Corporation - build configurations and references
+ * Broadcom Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -19,8 +19,7 @@ import java.util.Map;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -480,8 +479,9 @@ public class LocalMetaArea implements ICoreConstants {
 					}
 				}
 				output.succeed();
-			} finally {
 				dataOut.close();
+			} finally {
+				FileUtil.safeClose(dataOut);
 			}
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_exSaveProjectLocation, target.getName());

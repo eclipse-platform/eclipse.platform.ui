@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
 import java.io.*;
+import org.eclipse.core.internal.utils.FileUtil;
 
 /**
  * Appends data, in chunks, to a file. Each chunk is defined by the moment
@@ -63,9 +65,10 @@ public class SafeChunkyOutputStream extends FilterOutputStream {
 	public void succeed() throws IOException {
 		try {
 			endChunk();
+			close();
 		} finally {
 			isOpen = false;
-			close();
+			FileUtil.safeClose(this);
 		}
 	}
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
@@ -59,6 +60,7 @@ public class AllTests extends TestCase {
 		suite.addTest(Bug_288315.suite());
 		suite.addTest(Bug_329836.suite());
 		suite.addTest(Bug_331445.suite());
+		suite.addTest(Bug_332543.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
 		suite.addTest(IProjectTest.suite());

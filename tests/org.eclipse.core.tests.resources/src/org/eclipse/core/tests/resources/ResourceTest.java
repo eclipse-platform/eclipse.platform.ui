@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -773,6 +774,7 @@ public abstract class ResourceTest extends CoreTest {
 			try {
 				os = new FileOutputStream(osFile);
 				os.write(newContent.getBytes("UTF8"));
+				os.close();
 			} finally {
 				FileUtil.safeClose(os);
 			}

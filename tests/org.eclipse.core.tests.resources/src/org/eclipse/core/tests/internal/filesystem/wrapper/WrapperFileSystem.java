@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.internal.filesystem.wrapper;
 
@@ -22,25 +23,48 @@ import org.eclipse.core.tests.resources.ResourceTest;
 /**
  * A simple file system implementation that acts as a wrapper around the
  * local file system.
+ * <p>
+ * Also allows tests to inject a custom FileStore template class (derived from 
+ * {@link WrapperFileStore}). Tests can use {@link #setCustomFileStore(Class)}
+ * to override default {@link WrapperFileStore} behaviour.
+ * </p>
  */
 public class WrapperFileSystem extends FileSystem {
 
-	private static final IFileStore NULL_ROOT = EFS.getNullFileSystem().getStore(Path.ROOT);
+	protected static final IFileStore NULL_ROOT = EFS.getNullFileSystem().getStore(Path.ROOT);
 
 	private static final String SCHEME_WRAPPED = "wrapped";
 
-	private static WrapperFileSystem instance;
+	private static volatile WrapperFileSystem instance;
+
+	/** Custom file-store wrapper */
+	private static volatile Class<? extends WrapperFileStore> customFS = WrapperFileStore.class;
 
 	public static URI getBasicURI(URI wrappedURI) {
 		Assert.isLegal(SCHEME_WRAPPED.equals(wrappedURI.getScheme()));
 		return URI.create(wrappedURI.getQuery());
 	}
 
-	public static WrapperFileSystem getInstance() {
-		WrapperFileSystem tmpInstance = instance;
-		if (tmpInstance != null)
-			return tmpInstance;
+	public static synchronized WrapperFileSystem getInstance() {
+		if (instance != null)
+			return instance;
 		return instance = new WrapperFileSystem();
+	}
+
+	/**
+	 * Use fs as the WrapperFileStore to use in this filesystem.
+	 * Allows tests to easily override existing IFileStore behaviour.
+	 * By extending {@link WrapperFileStore} conditions difficult to simulate
+	 * on the LocalFileSystem can be provoked.
+	 * 
+	 * @param fs filestore, or null to use default {@link WrapperFileStore}
+	 *        based implementation.
+	 */
+	public static void setCustomFileStore(Class<? extends WrapperFileStore> fs) {
+		if (fs == null)
+			customFS = WrapperFileStore.class;
+		else
+			customFS = fs;
 	}
 
 	public static URI getWrappedURI(URI baseURI) {
@@ -69,6 +93,6 @@ public class WrapperFileSystem extends FileSystem {
 			CoreTest.log(ResourceTest.PI_RESOURCES_TESTS, e);
 			return NULL_ROOT;
 		}
-		return new WrapperFileStore(baseStore);
+		return WrapperFileStore.newInstance(customFS, baseStore);
 	}
 }

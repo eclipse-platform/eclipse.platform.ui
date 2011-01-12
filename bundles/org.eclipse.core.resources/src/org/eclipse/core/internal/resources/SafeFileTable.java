@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.Properties;
 import java.util.Set;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -80,8 +82,9 @@ public class SafeFileTable {
 			FileOutputStream output = new FileOutputStream(target);
 			try {
 				table.store(output, "safe table"); //$NON-NLS-1$
-			} finally {
 				output.close();
+			} finally {
+				FileUtil.safeClose(output);
 			}
 		} catch (IOException e) {
 			String message = Messages.resources_exSafeSave;
