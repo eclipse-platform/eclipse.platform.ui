@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,8 +81,11 @@ public class ScopeSelectPart extends AbstractFormPart implements IHelpPart  {
 		dialog.getShell().setText(Messages.ScopeSetDialog_wtitle);
 		if (dialog.open() == ScopeSetDialog.OK) {
 			ScopeSet set = dialog.getActiveSet();
-			if (set != null)
+			if (set != null) {
 				setActiveScopeSet(set);
+			}
+			scopeSetManager.save();
+			scopeSetManager.notifyObservers();
 		}
 	}
 	
