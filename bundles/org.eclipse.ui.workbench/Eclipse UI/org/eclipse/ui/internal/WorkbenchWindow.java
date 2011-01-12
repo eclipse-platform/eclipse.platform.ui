@@ -31,6 +31,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -40,6 +41,7 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -196,6 +198,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	@Inject
 	private IEventBroker eventBroker;
 
+	@Inject
+	private IExtensionRegistry extensionRegistry;
+
 	private WorkbenchPage page;
 
 	private WorkbenchWindowAdvisor windowAdvisor;
@@ -222,6 +227,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private List<MTrimElement> workbenchTrimElements = new ArrayList<MTrimElement>();
 
+	private Map<MToolControl, IConfigurationElement> iceMap = new HashMap<MToolControl, IConfigurationElement>();
+
+	public IConfigurationElement getICEFor(MToolControl mtc) {
+		return iceMap.get(mtc);
+	}
 	/**
 	 * The map of services maintained by the workbench window. These services
 	 * are initialized during workbench window during the
@@ -620,9 +630,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		trimBars.add(0, trimBar);
 	}
 
-	void populateBottomTrimContributions() {
-		MTrimBar bottomTrim = modelService.getTrim(model, SideValue.BOTTOM);
-
+	private void populateStandardTrim(MTrimBar bottomTrim) {
 		// StatusLine
 		MToolControl slElement = (MToolControl) modelService.find(
 				"org.eclipse.ui.StatusLine", bottomTrim); //$NON-NLS-1$
@@ -659,6 +667,111 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			bottomTrim.getChildren().add(pbElement);
 		}
 		pbElement.setToBeRendered(getWindowConfigurer().getShowProgressIndicator());
+	}
+
+	private void populateTrimContributions(MTrimBar bottomTrim) {
+		// Part 1: Add groups
+		IConfigurationElement[] exts = extensionRegistry
+				.getConfigurationElementsFor("org.eclipse.ui.menus"); //$NON-NLS-1$
+		List<IConfigurationElement> items = new ArrayList<IConfigurationElement>();
+		for (IConfigurationElement ice : exts) {
+			if ("group".equals(ice.getName()) || "widget".equals(ice.getName())) { //$NON-NLS-1$ //$NON-NLS-2$
+				items.add(ice);
+			}
+		}
+
+		if (items.size() == 0)
+			return;
+
+		// Iterate over the items until they've all been placed or unril
+		// an iteration doesn't place anything
+		List<IConfigurationElement> handledElements = new ArrayList<IConfigurationElement>();
+		handledElements.add(items.get(0)); // Hack!! startup seeding
+		MUIElement createdTrim = null;
+		while (items.size() > 0 && handledElements.size() > 0) {
+			handledElements.clear();
+
+			for (IConfigurationElement item : items) {
+				String id = item.getAttribute("id"); //$NON-NLS-1$
+				String classSpec = item.getAttribute("class"); //$NON-NLS-1$
+				//boolean sepVisible = "true".equals(item.getAttribute("separatorsVisible")); //$NON-NLS-1$ //$NON-NLS-2$
+				IConfigurationElement[] locs = item.getChildren("location"); //$NON-NLS-1$
+				for (IConfigurationElement loc : locs) {
+					IConfigurationElement[] bars = loc.getChildren("bar"); //$NON-NLS-1$
+					if (bars.length > 0) {
+						IConfigurationElement bar = bars[0];
+						boolean isTrim = "trim".equals(bar.getAttribute("type")); //$NON-NLS-1$//$NON-NLS-2$
+						if (isTrim) {
+							String path = bar.getAttribute("path"); //$NON-NLS-1$
+							if (path != null && path.length() > 0) {
+								createdTrim = addTrimElement(bottomTrim, item, id, false, path,
+										classSpec);
+							} else {
+								IConfigurationElement[] orders = loc.getChildren("order"); //$NON-NLS-1$
+								if (orders.length > 0) {
+									boolean isBefore = "before".equals(orders[0].getAttribute("position")); //$NON-NLS-1$//$NON-NLS-2$
+									String relTo = orders[0].getAttribute("relativeTo"); //$NON-NLS-1$
+									if ("status".equals(relTo)) //$NON-NLS-1$
+										relTo = "org.eclipse.ui.StatusLine"; //$NON-NLS-1$
+
+									createdTrim = addTrimElement(bottomTrim, item, id, isBefore,
+											relTo, classSpec);
+								}
+							}
+
+							if (createdTrim != null) {
+								handledElements.add(item);
+							}
+						}
+					}
+				}
+			}
+
+			items.removeAll(handledElements);
+		}
+	}
+
+	private MToolControl addTrimElement(MTrimBar bottomTrim, IConfigurationElement ice, String id,
+			boolean isBefore,
+			String relTo, String classSpec) {
+		// is it already in the trim ?
+		MUIElement existingTrim = modelService.find(id, bottomTrim);
+		if (existingTrim != null) {
+			iceMap.put((MToolControl) existingTrim, ice);
+			return (MToolControl) existingTrim;
+		}
+
+		// Ok, create one but only if we can site it correctly
+		int insertIndex = bottomTrim.getChildren().size();
+		if (relTo != null) {
+			MUIElement foundRel = modelService.find(relTo, bottomTrim);
+			if (foundRel == null)
+				return null;
+			insertIndex = bottomTrim.getChildren().indexOf(foundRel);
+			if (!isBefore)
+				insertIndex++;
+		}
+
+		MToolControl newTrimElement = MenuFactoryImpl.eINSTANCE.createToolControl();
+		newTrimElement.setElementId(id);
+		newTrimElement.setToBeRendered(classSpec != null);
+		if (classSpec != null) {
+			newTrimElement
+					.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.LegacyTrim"); //$NON-NLS-1$
+		}
+		newTrimElement.setContributorURI(URIHelper.constructPlatformURI(ice.getContributor()));
+
+		iceMap.put(newTrimElement, ice);
+		bottomTrim.getChildren().add(insertIndex, newTrimElement);
+
+		return newTrimElement;
+	}
+
+	void populateBottomTrimContributions() {
+		MTrimBar bottomTrim = modelService.getTrim(model, SideValue.BOTTOM);
+
+		populateStandardTrim(bottomTrim);
+		populateTrimContributions(bottomTrim);
 	}
 
 	private MTrimBar getTopTrim() {
