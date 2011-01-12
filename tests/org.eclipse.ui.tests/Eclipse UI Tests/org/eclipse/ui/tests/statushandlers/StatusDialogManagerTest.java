@@ -624,10 +624,10 @@ public class StatusDialogManagerTest extends TestCase {
 			int i = 0;
 
 			public String getMessage() {
-				if (i == 0) {
+				i++;
+				if (i == 1) {
 					throw new RuntimeException("the bomb!");
 				}
-				i++;
 				return super.getMessage();
 				
 			}
