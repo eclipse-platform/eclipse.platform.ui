@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.workbench.texteditor">
+<schema targetNamespace="org.eclipse.ui.workbench.texteditor" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="spellingEngine" name="Spelling Engine"/>
@@ -11,6 +11,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="engine" minOccurs="1" maxOccurs="unbounded"/>
@@ -92,7 +97,7 @@
                   an implementation of &lt;code&gt;org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock&lt;/code&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jdt.ui.text.folding.IJavaFoldingPreferenceBlock"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -130,14 +135,6 @@
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
