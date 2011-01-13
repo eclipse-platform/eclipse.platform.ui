@@ -36,10 +36,8 @@ package org.eclipse.jface.dialogs;
 import org.eclipse.jface.resource.JFaceResources;
 
 /**
- * IDialogConstants is the interface for common dialog strings and ids
- * used throughout JFace.
- * It is recommended that you use these labels and ids whereever 
- * for consistency with the JFace dialogs.
+ * IDialogConstants is the interface for common dialog strings and ids used throughout JFace. It is
+ * recommended that you use these labels and ids wherever for consistency with the JFace dialogs.
  */
 public interface IDialogConstants {
     // button ids
