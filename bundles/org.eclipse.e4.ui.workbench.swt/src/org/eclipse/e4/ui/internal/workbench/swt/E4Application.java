@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
@@ -35,6 +36,8 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+import org.eclipse.e4.core.services.translation.TranslationService;
+import org.eclipse.e4.core.services.translation.TranslationProviderFactory;
 import org.eclipse.e4.ui.internal.workbench.ActiveChildLookupFunction;
 import org.eclipse.e4.ui.internal.workbench.ActivePartLookupFunction;
 import org.eclipse.e4.ui.internal.workbench.DefaultLoggerProvider;
@@ -428,6 +431,15 @@ public class E4Application implements IApplication {
 		appContext
 				.set(Logger.class.getName(), ContextInjectionFactory.make(
 						WorkbenchLogger.class, appContext));
+
+		// translation
+		String locale = Locale.getDefault().toString();
+		appContext.set(TranslationService.LOCALE, locale);
+		TranslationService bundleTranslationProvider = TranslationProviderFactory
+				.bundleTranslationService(appContext);
+		appContext.set(TranslationService.class,
+				bundleTranslationProvider);
+
 		appContext.set(Adapter.class.getName(),
 				ContextInjectionFactory.make(EclipseAdapter.class, appContext));
 
