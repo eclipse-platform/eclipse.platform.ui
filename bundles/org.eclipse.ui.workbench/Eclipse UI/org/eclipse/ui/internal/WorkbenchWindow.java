@@ -1670,10 +1670,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		final StatusLineManager manager = getStatusLineManager();
 
 		// Temporary Hack for bug 330106, remove when bug 334093 is fixed
-		MTrimBar bottomTrim = modelService.getTrim(model, SideValue.BOTTOM);
-		MUIElement sl = modelService.find("org.eclipse.ui.StatusLine", bottomTrim); //$NON-NLS-1$
-		boolean progressHack = sl == null || sl.getWidget() == null;
-
+		boolean progressHack = manager.getControl() == null;
 		if (manager == null || progressHack) {
 			runnable.run(new NullProgressMonitor());
 		} else {
