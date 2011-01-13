@@ -28,10 +28,10 @@ package org.eclipse.jface.dialogs;
 public interface IDialogLabelKeys {
 
     /**
-     * The key used to retrieve the label for OK buttons.
-     * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.OK_LABEL_KEY)</code>
-     * to retrieve the label dynamically when using multiple locales.
+     * The key used to retrieve the label for OK buttons. Clients should use the pattern
+     * <code>JFaceResources.getString(IDialogLabelKeys.OK_LABEL_KEY)</code> to retrieve the label
+     * dynamically when using multiple locales.
+     * 
      * @since 3.7
      */
     public String OK_LABEL_KEY = "ok"; //$NON-NLS-1$
@@ -39,7 +39,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for cancel buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.CANCEL_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.CANCEL_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -48,7 +48,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for yes buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.YES_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.YES_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -57,7 +57,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for no buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.NO_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.NO_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -66,7 +66,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for no to all buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.NO_TO_ALL_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.NO_TO_ALL_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -75,7 +75,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for yes to all buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.YES_TO_ALL_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.YES_TO_ALL_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -84,7 +84,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for skip buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.SKIP_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.SKIP_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -93,7 +93,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for stop buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.STOP_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.STOP_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -102,7 +102,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for abort buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.ABORT_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.ABORT_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -111,7 +111,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for retry buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.RETRY_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.RETRY_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -120,7 +120,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for ignore buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.IGNORE_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.IGNORE_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -129,7 +129,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for proceed buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.PROCEED_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.PROCEED_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -138,7 +138,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for open buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.OPEN_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.OPEN_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -147,7 +147,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for close buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.CLOSE_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.CLOSE_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -156,7 +156,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for show details buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.SHOW_DETAILS_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.SHOW_DETAILS_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -165,7 +165,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for hide details buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.HIDE_DETAILS_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.HIDE_DETAILS_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -174,7 +174,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for back buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.BACK_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.BACK_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -183,7 +183,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for next buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.NEXT_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.NEXT_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -192,7 +192,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for finish buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.FINISH_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.FINISH_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
@@ -201,7 +201,7 @@ public interface IDialogLabelKeys {
     /**
      * The key used to retrieve the label for help buttons.
      * Clients should use the pattern
-     * <code>JFaceResources.getString(IDialogConstants.HELP_LABEL_KEY)</code>
+     * <code>JFaceResources.getString(IDialogLabelKeys.HELP_LABEL_KEY)</code>
      * to retrieve the label dynamically when using multiple locales.
      * @since 3.7
      */
