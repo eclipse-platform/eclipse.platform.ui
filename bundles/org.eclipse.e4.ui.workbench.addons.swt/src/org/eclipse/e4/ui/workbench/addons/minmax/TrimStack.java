@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,11 +50,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.osgi.service.event.EventHandler;
 
 /**
@@ -64,6 +67,16 @@ public class TrimStack {
 	private static Image restoreImage;
 
 	private ToolBar trimStackTB;
+
+	/**
+	 * The context menu for this trim stack's items.
+	 */
+	private Menu trimStackMenu;
+
+	/**
+	 * The underlying tab item that has been selected.
+	 */
+	private CTabItem selectedTabItem;
 	private boolean isShowing = false;
 	private MPartStack theStack;
 	private Composite hostPane;
@@ -236,6 +249,19 @@ public class TrimStack {
 				orientation = SWT.VERTICAL;
 		}
 		trimStackTB = new ToolBar(parent, orientation | SWT.FLAT | SWT.WRAP);
+		trimStackTB.addListener(SWT.MenuDetect, new Listener() {
+			public void handleEvent(Event event) {
+				// remap the coordinate relative to the control
+				Point point = trimStackTB.getDisplay().map(null, trimStackTB,
+						new Point(event.x, event.y));
+				// get the selected item in question
+				ToolItem item = trimStackTB.getItem(point);
+				if (item != null) {
+					selectedTabItem = (CTabItem) item.getData();
+				}
+			}
+		});
+		createPopupMenu();
 
 		ToolItem restoreBtn = new ToolItem(trimStackTB, SWT.PUSH);
 		restoreBtn.setImage(getRestoreImage(parent.getDisplay()));
@@ -353,6 +379,27 @@ public class TrimStack {
 		if (trimStackTB != null && !trimStackTB.isDisposed())
 			trimStackTB.dispose();
 		trimStackTB = null;
+	}
+
+	/**
+	 * Create the popup menu that will appear when a minimized part has been selected by the cursor.
+	 */
+	private void createPopupMenu() {
+		trimStackMenu = new Menu(trimStackTB);
+		trimStackTB.setMenu(trimStackMenu);
+
+		MenuItem closeItem = new MenuItem(trimStackMenu, SWT.NONE);
+		closeItem.setText(WorkbenchMessages.WorkbenchWindow_close);
+		closeItem.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				MUIElement element = (MUIElement) selectedTabItem
+						.getData(AbstractPartRenderer.OWNING_ME);
+				if (element instanceof MPlaceholder) {
+					element = ((MPlaceholder) element).getRef();
+				}
+				partService.hidePart((MPart) element);
+			}
+		});
 	}
 
 	@Execute
