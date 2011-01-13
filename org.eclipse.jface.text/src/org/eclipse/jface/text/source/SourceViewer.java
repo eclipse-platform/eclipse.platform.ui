@@ -205,7 +205,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				} finally {
 					textWidget.setSize(originalSize); // also resets scroll bar values
 				}
-				return arrowHeights;
 			}
 			return arrowHeights;
 		}
