@@ -258,17 +258,22 @@ public class DebugUITools {
 	public static void deleteBreakpoints(IBreakpoint[] breakpoints, final Shell shell, IProgressMonitor progressMonitor) throws CoreException {
 		IMarker[] markers= new IMarker[breakpoints.length];
 		for (int i= 0; i < breakpoints.length; i++) {
+			if (!breakpoints[i].isRegistered())
+				break;
 			markers[i]= breakpoints[i].getMarker();
 			if (markers[i] == null)
 				break;
 		}
 
-		// We only offer undo support if all breakpoints have associated markers
+		// We only offer undo support if all breakpoints are registered and have associated markers
 		boolean allowUndo= markers.length == breakpoints.length;
 
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpoints(breakpoints, !allowUndo);
 
 		if (allowUndo) {
+
+			for (int i= 0; i < markers.length; i++)
+				markers[i].setAttribute(DebugPlugin.ATTR_BREAKPOINT_IS_DELETED, true);
 
 			IAdaptable context= null;
 			if (shell != null) {

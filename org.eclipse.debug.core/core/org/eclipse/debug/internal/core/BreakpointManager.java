@@ -727,6 +727,17 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			}
 			if (!fAdded.isEmpty()) {
 				try {
+					IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
+						public void run(IProgressMonitor monitor) throws CoreException {
+							Iterator iter= fAdded.iterator();
+							while (iter.hasNext()) {
+								IBreakpoint breakpoint= (IBreakpoint)iter.next();
+								breakpoint.getMarker().setAttribute(DebugPlugin.ATTR_BREAKPOINT_IS_DELETED, false);
+								breakpoint.setRegistered(true);
+							}
+						}
+					};
+					getWorkspace().run(runnable, null, 0, null);
 					addBreakpoints((IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]), false);
 				} catch (CoreException e) {
 					DebugPlugin.log(e);
@@ -787,11 +798,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					if (fPostChangMarkersChanged.contains(marker)) {
 						handleChangeBreakpoint(marker, mDelta);
 						fPostChangMarkersChanged.remove(marker);
-					} else if (getBreakpoint(marker) == null) {
+					} else if (marker.getAttribute(DebugPlugin.ATTR_BREAKPOINT_IS_DELETED, false) && getBreakpoint(marker) == null) {
 						try {
-							IBreakpoint breakpoint= createBreakpoint(marker);
-							breakpoint.setRegistered(true);
-							fAdded.add(breakpoint);
+							fAdded.add(createBreakpoint(marker));
 						} catch (CoreException e) {
 							DebugPlugin.log(e);
 						}

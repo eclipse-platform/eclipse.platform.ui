@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,17 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.ResourcesPlugin;
+import com.ibm.icu.text.MessageFormat;
+
+import org.osgi.framework.BundleContext;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import org.eclipse.osgi.service.environment.Constants;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -44,6 +52,11 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IDropToFrame;
@@ -67,14 +80,6 @@ import org.eclipse.debug.internal.core.Preferences;
 import org.eclipse.debug.internal.core.StepFilterManager;
 import org.eclipse.debug.internal.core.commands.CommandAdapterFactory;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-import org.eclipse.osgi.service.environment.Constants;
-import org.osgi.framework.BundleContext;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * There is one instance of the debug plug-in available from
@@ -285,6 +290,17 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.7
 	 */
 	public static final String PREF_DELETE_CONFIGS_ON_PROJECT_DELETE = DebugPlugin.getUniqueIdentifier() + ".PREF_DELETE_CONFIGS_ON_PROJECT_DELETE"; //$NON-NLS-1$
+
+	/**
+	 * Deleted breakpoint marker attribute (value
+	 * <code>"org.eclipse.debug.core.breakpointIsDeleted"</code>). The attribute is a
+	 * <code>boolean</code> corresponding to the deleted state of a breakpoint.
+	 * 
+	 * @see org.eclipse.core.resources.IMarker#getAttribute(String, boolean)
+	 * @since 3.7
+	 */
+	public static final String ATTR_BREAKPOINT_IS_DELETED= DebugPlugin.getUniqueIdentifier() + ".breakpointIsDeleted"; //$NON-NLS-1$
+
 
 	
 	/**
