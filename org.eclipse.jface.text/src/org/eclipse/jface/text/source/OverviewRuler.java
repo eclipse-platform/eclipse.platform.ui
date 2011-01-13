@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ScrollBar;
 
 import org.eclipse.jface.util.Util;
 
@@ -307,6 +308,70 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 	}
 
+	/**
+	 * Container for cached widget infos.
+	 * 
+	 * @since 3.7
+	 */
+	static class WidgetInfos {
+		/**
+		 * the text widget line count
+		 */
+		int maxLines;
+		/**
+		 * the height of the vertical scrollbar thumb
+		 */
+		int thumbHeight;
+		/**
+		 * the visible lines of the text widget
+		 */
+		double visibleLines;
+		/**
+		 * the invisible lines of the text widget
+		 */
+		double invisibleLines;
+		/**
+		 * the bounds of {@link OverviewRuler#fCanvas}
+		 */
+		Rectangle bounds;
+		/**
+		 * the writable area in the text widget (height of all lines in pixels)
+		 */
+		int writable;
+	
+		/**
+		 * Initializes the widget infos.
+		 * 
+		 * @param textWidget the text widget
+		 * @param canvas the overview ruler canvas
+		 */
+		public WidgetInfos(StyledText textWidget, Canvas canvas) {
+			maxLines= textWidget.getLineCount();
+			bounds= canvas.getBounds();
+			writable= JFaceTextUtil.computeLineHeight(textWidget, 0, maxLines, maxLines);
+			
+			ScrollBar verticalBar= textWidget.getVerticalBar();
+			thumbHeight= verticalBar != null ? Math.max(Math.min(bounds.height, verticalBar.getThumbBounds().height), 0) : 0;
+			
+	        int partialTopIndex= JFaceTextUtil.getPartialTopIndex(textWidget);
+	        int topLineHeight= textWidget.getLineHeight(textWidget.getOffsetAtLine(partialTopIndex));
+	        int topLinePixel= textWidget.getLinePixel(partialTopIndex);
+	        double topIndex= partialTopIndex - (double) topLinePixel / topLineHeight;
+	        
+	        int partialBottomIndex= JFaceTextUtil.getPartialBottomIndex(textWidget);
+	        int bottomLineHeight= textWidget.getLineHeight(textWidget.getOffsetAtLine(partialBottomIndex));
+	        int bottomLinePixel= textWidget.getLinePixel(partialBottomIndex);
+	        double bottomIndex= partialBottomIndex - ((double) bottomLinePixel - textWidget.getClientArea().height) / bottomLineHeight;
+			
+	        visibleLines= bottomIndex - topIndex;
+	        invisibleLines= maxLines - visibleLines;
+		}
+	}
+
+	private static final boolean DEBUG_DRAW= false;
+	private static final boolean DEBUG_COMPUTE_Y= false;
+	private static final boolean DEBUG_TO_DOCUMENT_LINE_NUMBER= false;
+	
 	/**
 	 * <code>true</code> if we're on a Mac, where "new GC(canvas)" is expensive.
 	 * @see <a href="https://bugs.eclipse.org/298936">bug 298936</a>
@@ -647,12 +712,8 @@ public class OverviewRuler implements IOverviewRuler {
 		else
 			visible= fTextViewer.getVisibleRegion(); // legacy support
 
-		int maxLines= textWidget.getLineCount();
-		Point size= fCanvas.getSize();
-		int writable= JFaceTextUtil.computeLineHeight(textWidget, 0, maxLines, maxLines);
-		if (size.y > writable)
-			size.y= Math.max(writable - fHeader.getSize().y, 0);
-
+		WidgetInfos infos= null;
+		
 		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
 			Object annotationType= iterator.next();
 
@@ -688,26 +749,31 @@ public class OverviewRuler implements IOverviewRuler {
 							continue;
 					}
 					
+					if (infos == null) {
+						infos= new WidgetInfos(textWidget, fCanvas);
+						r.x= INSET;
+						r.width= infos.bounds.width - (2 * INSET);
+					}
 
 					try {
+						int startOffset= visible != null ? annotationOffset - visible.getOffset() : widgetRegion.getOffset();
+						int startLine= textWidget.getLineAtOffset(startOffset);
+						
+						yy= computeY(startLine, infos);
+						
 						if (ANNOTATION_HEIGHT_SCALABLE) {
 							int numbersOfLines= document.getNumberOfLines(annotationOffset, annotationLength);
 							// don't count empty trailing lines
 							IRegion lastLine= document.getLineInformationOfOffset(annotationOffset + annotationLength);
 							if (lastLine.getOffset() == annotationOffset + annotationLength) {
 								numbersOfLines -= 2;
-								hh= (numbersOfLines * size.y) / maxLines + ANNOTATION_HEIGHT;
-								if (hh < ANNOTATION_HEIGHT)
-									hh= ANNOTATION_HEIGHT;
+								int yy2= computeY(startLine + numbersOfLines, infos);
+								hh= Math.max(yy2 - yy, ANNOTATION_HEIGHT);
 							} else
 								hh= ANNOTATION_HEIGHT;
 						}
 						fAnnotationHeight= hh;
-
-						int startOffset= visible != null ? annotationOffset - visible.getOffset() : widgetRegion.getOffset();
-						int startLine= textWidget.getLineAtOffset(startOffset);
-						yy= Math.min((startLine * size.y) / maxLines, size.y - hh);
-
+						
 						if (!areColorsComputed) {
 							fill= getFillColor(annotationType, style[t] == FilterIterator.TEMPORARY);
 							stroke= getStrokeColor(annotationType, style[t] == FilterIterator.TEMPORARY);
@@ -716,16 +782,14 @@ public class OverviewRuler implements IOverviewRuler {
 
 						if (fill != null) {
 							gc.setBackground(fill);
-							gc.fillRectangle(INSET, yy, size.x-(2*INSET), hh);
+							gc.fillRectangle(INSET, yy, infos.bounds.x-(2*INSET), hh);
 						}
 
 						if (stroke != null) {
 							gc.setForeground(stroke);
-							r.x= INSET;
 							r.y= yy;
-							if (yy + hh == size.y)
+							if (yy + hh == infos.bounds.height)
 								r.y--;
-							r.width= size.x - (2 * INSET);
 							r.height= hh;
 							gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 							gc.drawRectangle(r);
@@ -735,6 +799,62 @@ public class OverviewRuler implements IOverviewRuler {
 				}
 			}
 		}
+		
+		if (DEBUG_DRAW) {
+			// draw debugging guides (boundaries):
+			if (infos == null)
+				infos= new WidgetInfos(textWidget, fCanvas);
+			gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_DARK_MAGENTA));
+			yy= infos.thumbHeight / 2;
+			gc.drawLine(0, yy, infos.bounds.x/2, yy);
+			yy= infos.bounds.height - infos.thumbHeight / 2;
+			gc.drawLine(0, yy, infos.bounds.x/2, yy);
+			
+			gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_BLUE));
+			yy= 0;
+			gc.drawLine(0, yy, infos.bounds.x/2, yy);
+			yy= infos.bounds.height - 1;
+			gc.drawLine(0, yy, infos.bounds.x/2, yy);
+		}
+	}
+
+	/**
+	 * Computes and returns the y location of the given startLine.
+	 * 
+	 * @param startLine the start line
+	 * @param infos the cached widget infos
+	 * @return the vertical position of the given startLine in the overview ruler
+	 * @since 3.7
+	 */
+	private int computeY(int startLine, WidgetInfos infos) {
+		// this is the inverse of #toLineNumbers(int)
+		
+		int yy;
+		if (infos.bounds.height > infos.writable || infos.invisibleLines <= 0) { // too few lines for relative positions: align annotations with textWidget lines
+			yy = Math.max(0, (2 * startLine + 1) * infos.writable / (infos.maxLines * 2) - infos.bounds.y);
+			if (DEBUG_COMPUTE_Y)
+				System.out.println("static: " + yy); //$NON-NLS-1$
+			
+		} else if (startLine + 1 < infos.visibleLines / 2) { // before middle of first page: map to area from 0 to thumbHeight/2
+			yy= (int) (startLine * infos.thumbHeight / infos.visibleLines); // == startLine * (thumbHeight / 2) / (visibleLines / 2);
+			if (DEBUG_COMPUTE_Y)
+				System.out.println("start:  " + yy); //$NON-NLS-1$
+			
+		} else if (infos.maxLines - infos.visibleLines / 2 <= startLine) { // after middle of last page: map to area from canvasHeight-1 - thumbHeight/2 to canvasHeight-1
+			yy= (int) (infos.bounds.height-1 - (double)infos.thumbHeight / 2 + (startLine - (infos.maxLines - infos.visibleLines / 2) + 1) * infos.thumbHeight / infos.visibleLines);
+			if (DEBUG_COMPUTE_Y)
+				System.out.println("end:    " + yy); //$NON-NLS-1$
+			
+		} else {
+			yy= (int) ((double)infos.thumbHeight/2 + (startLine + 1 - infos.visibleLines / 2) * (infos.bounds.height - infos.thumbHeight) / infos.invisibleLines);
+			if (DEBUG_COMPUTE_Y)
+				System.out.println("middle: " + yy); //$NON-NLS-1$
+		}
+		// center of rectangle should be at the calculated position:
+		yy-= ANNOTATION_HEIGHT / 2;
+		// cap at start/end:
+		yy= Math.max(0, Math.min(yy, infos.bounds.height-1 - ANNOTATION_HEIGHT));
+		return yy;
 	}
 
 	/*
@@ -783,28 +903,48 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @return the corresponding document lines
 	 */
 	private int[] toLineNumbers(int y_coordinate) {
-
-		StyledText textWidget=  fTextViewer.getTextWidget();
-		int maxLines= textWidget.getContent().getLineCount();
-
-		int rulerLength= fCanvas.getSize().y;
-		int writable= JFaceTextUtil.computeLineHeight(textWidget, 0, maxLines, maxLines);
-
-		if (rulerLength > writable)
-			rulerLength= Math.max(writable - fHeader.getSize().y, 0);
-
-		if (y_coordinate >= writable || y_coordinate >= rulerLength)
+		// this is the inverse of #computeY(int, WidgetInfos)
+		
+		WidgetInfos infos= new WidgetInfos(fTextViewer.getTextWidget(), fCanvas);
+		
+		if (y_coordinate >= infos.writable || y_coordinate >= infos.bounds.height || y_coordinate < 0)
 			return new int[] {-1, -1};
-
+		
 		int[] lines= new int[2];
-
-		int pixel0= Math.max(y_coordinate - 1, 0);
-		int pixel1= Math.min(rulerLength, y_coordinate + 1);
-		rulerLength= Math.max(rulerLength, 1);
-
-		lines[0]= (pixel0 * maxLines) / rulerLength;
-		lines[1]= (pixel1 * maxLines) / rulerLength;
-
+		
+		// the "+ 1" below accounts for the offset of the hot spot in typical mouse cursors
+		int pixel0= Math.max(y_coordinate - ANNOTATION_HEIGHT / 2 + 1, 0);
+		int pixel1= Math.min(infos.bounds.height, y_coordinate + ANNOTATION_HEIGHT / 2 + 1);
+		
+		if (infos.bounds.height > infos.writable || infos.invisibleLines <= 0) { // too few lines for relative positions: align annotations with textWidget lines
+//			yy = Math.max(0, (2 * startLine + 1) * infos.writable / (infos.maxLines * 2) - infos.bounds.y);
+			lines[0]= (int) ((pixel0 + infos.bounds.y) * infos.maxLines / (double)infos.writable);
+			lines[1]= (int) ((pixel1 + infos.bounds.y) * infos.maxLines / (double)infos.writable);
+			if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
+				System.out.println("static y: " + y_coordinate + " => [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			
+		} else if (y_coordinate < infos.thumbHeight / 2) { // before middle of first page: map to area from 0 to thumbHeight/2
+//			yy= (int) (startLine * infos.thumbHeight / infos.visibleLines);
+			lines[0] = (int) (pixel0 * infos.visibleLines / infos.thumbHeight);
+			lines[1] = (int) (pixel1 * infos.visibleLines / infos.thumbHeight);
+			if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
+				System.out.println("start  y: " + y_coordinate + " => [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			
+		} else if (infos.bounds.height - 1 - infos.thumbHeight / 2 < y_coordinate) { // after middle of last page: map to area from canvasHeight-1 - thumbHeight/2 to canvasHeight-1
+//			yy= (int) (infos.bounds.height-1 - (double)infos.thumbHeight / 2 + (startLine - (infos.maxLines - infos.visibleLines / 2) + 1) * infos.thumbHeight / infos.visibleLines);
+			lines[0] = (int) ((pixel0 - (infos.bounds.height-1) + (double)infos.thumbHeight / 2) * infos.visibleLines / infos.thumbHeight - 1 + (infos.maxLines - infos.visibleLines / 2));
+			lines[1] = (int) ((pixel1 - (infos.bounds.height-1) + (double)infos.thumbHeight / 2) * infos.visibleLines / infos.thumbHeight - 1 + (infos.maxLines - infos.visibleLines / 2));
+			if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
+				System.out.println("end    y: " + y_coordinate + " => [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			
+		} else {
+//			yy= (int) ((double)infos.thumbHeight/2 + (startLine + 1 - infos.visibleLines / 2) * (infos.bounds.height - infos.thumbHeight) / infos.invisibleLines);
+			lines[0]= (int) ((pixel0 - (double)infos.thumbHeight/2) * infos.invisibleLines / (infos.bounds.height - infos.thumbHeight) - 1 + infos.visibleLines / 2);
+			lines[1]= (int) ((pixel1 - (double)infos.thumbHeight/2) * infos.invisibleLines / (infos.bounds.height - infos.thumbHeight) - 1 + infos.visibleLines / 2);
+			if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
+				System.out.println("middle y: " + y_coordinate + " => [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}
+		
 		if (fTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
 			lines[0]= extension.widgetLine2ModelLine(lines[0]);
@@ -818,7 +958,17 @@ public class OverviewRuler implements IOverviewRuler {
 			} catch (BadLocationException x) {
 			}
 		}
+		
+		if (y_coordinate < ANNOTATION_HEIGHT && y_coordinate < infos.bounds.y)
+			lines[0]= 0;
+		
+		if (lines[0] < 0)
+			lines[0]= 0;
+		if (lines[1] > infos.maxLines)
+			lines[1]= infos.maxLines;
 
+		if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
+			System.out.println("result: [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return lines;
 	}
 
