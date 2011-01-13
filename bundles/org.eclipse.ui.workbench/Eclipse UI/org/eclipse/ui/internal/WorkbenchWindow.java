@@ -1668,7 +1668,13 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public void run(final boolean fork, boolean cancelable, final IRunnableWithProgress runnable)
 			throws InvocationTargetException, InterruptedException {
 		final StatusLineManager manager = getStatusLineManager();
-		if (manager == null) {
+
+		// Temporary Hack for bug 330106, remove when bug 334093 is fixed
+		MTrimBar bottomTrim = modelService.getTrim(model, SideValue.BOTTOM);
+		MUIElement sl = modelService.find("org.eclipse.ui.StatusLine", bottomTrim); //$NON-NLS-1$
+		boolean progressHack = sl == null || sl.getWidget() == null;
+
+		if (manager == null || progressHack) {
 			runnable.run(new NullProgressMonitor());
 		} else {
 			boolean wasCancelEnabled = manager.isCancelEnabled();
