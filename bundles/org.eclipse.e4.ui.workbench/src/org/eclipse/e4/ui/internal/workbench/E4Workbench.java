@@ -22,13 +22,11 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.IExceptionHandler;
@@ -191,18 +189,6 @@ public class E4Workbench implements IWorkbench {
 						handler.setObject(cf.create(handler.getContributionURI(), context));
 					}
 					hs.activateHandler(commandId, handler.getObject());
-				}
-			}
-		}
-		if (me instanceof MBindings) {
-			MContext contextModel = (MContext) me;
-			MBindings container = (MBindings) me;
-			List<String> bindingContexts = container.getBindingContexts();
-			IEclipseContext context = contextModel.getContext();
-			if (context != null && !bindingContexts.isEmpty()) {
-				EContextService cs = (EContextService) context.get(EContextService.class.getName());
-				for (String id : bindingContexts) {
-					cs.activateContext(id);
 				}
 			}
 		}

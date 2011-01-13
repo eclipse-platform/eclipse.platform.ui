@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.workbench.swt.util;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -22,6 +23,7 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
@@ -30,9 +32,14 @@ import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
+import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -66,10 +73,36 @@ public class BindingProcessingAddon {
 
 	private EventHandler additionHandler;
 
+	private EventHandler contextHandler;
+
 	@PostConstruct
 	public void init() {
 		defineBindingTables();
+		activateContexts(application);
 		registerModelListeners();
+	}
+
+	private void activateContexts(Object me) {
+		if (me instanceof MBindings) {
+			MContext contextModel = (MContext) me;
+			MBindings container = (MBindings) me;
+			List<String> bindingContexts = container.getBindingContexts();
+			IEclipseContext context = contextModel.getContext();
+			if (context != null && !bindingContexts.isEmpty()) {
+				EContextService cs = context.get(EContextService.class);
+				for (String id : bindingContexts) {
+					cs.activateContext(id);
+				}
+			}
+		}
+		if (me instanceof MElementContainer) {
+			List<MUIElement> children = ((MElementContainer) me).getChildren();
+			Iterator<MUIElement> i = children.iterator();
+			while (i.hasNext()) {
+				MUIElement e = i.next();
+				activateContexts(e);
+			}
+		}
 	}
 
 	private void defineBindingTables() {
@@ -280,6 +313,21 @@ public class BindingProcessingAddon {
 				UIEvents.KeyBinding.PARAMETERS), additionHandler);
 		broker.subscribe(UIEvents.buildTopic(UIEvents.KeySequence.TOPIC,
 				UIEvents.KeySequence.KEYSEQUENCE), additionHandler);
+
+		contextHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				Object elementObj = event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				Object newObj = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+				if (UIEvents.EventTypes.SET.equals(event
+						.getProperty(UIEvents.EventTags.TYPE))
+						&& newObj instanceof IEclipseContext) {
+					activateContexts(elementObj);
+				}
+			}
+		};
+		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC,
+				UIEvents.Context.CONTEXT), contextHandler);
 	}
 
 	private void unregsiterModelListeners() {
@@ -288,5 +336,6 @@ public class BindingProcessingAddon {
 		broker.unsubscribe(additionHandler);
 		broker.unsubscribe(additionHandler);
 		broker.unsubscribe(additionHandler);
+		broker.unsubscribe(contextHandler);
 	}
 }
