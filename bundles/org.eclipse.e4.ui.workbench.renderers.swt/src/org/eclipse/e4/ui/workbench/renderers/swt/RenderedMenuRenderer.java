@@ -75,7 +75,7 @@ public class RenderedMenuRenderer extends SWTPartRenderer {
 	}
 
 	private void setItemText(MMenu model, MenuItem item) {
-		String text = model.getLabel();
+		String text = model.getLocalizedLabel();
 		if (text == null) {
 			text = ""; //$NON-NLS-1$
 		}

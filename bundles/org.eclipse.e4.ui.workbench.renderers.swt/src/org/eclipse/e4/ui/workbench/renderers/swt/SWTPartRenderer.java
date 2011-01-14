@@ -140,7 +140,8 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 					if (logService != null) {
 						String msg = "Error disposing widget for : " + element.getClass().getName(); //$NON-NLS-1$
 						if (element instanceof MUILabel) {
-							msg += ' ' + ((MUILabel) element).getLabel();
+							msg += ' ' + ((MUILabel) element)
+									.getLocalizedLabel();
 						}
 						logService.error(e, msg);
 					}
@@ -159,7 +160,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			((Control) widget).getAccessible().addAccessibleListener(
 					new AccessibleAdapter() {
 						public void getName(AccessibleEvent e) {
-							e.result = ((MUILabel) me).getLabel();
+							e.result = ((MUILabel) me).getLocalizedLabel();
 						}
 					});
 		}

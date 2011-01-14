@@ -325,9 +325,9 @@ public class StackRenderer extends LazyStackRenderer {
 		cti = new CTabItem(ctf, createFlags, index);
 
 		cti.setData(OWNING_ME, element);
-		cti.setText(getLabel(part, part.getLabel()));
+		cti.setText(getLabel(part, part.getLocalizedLabel()));
 		cti.setImage(getImage(part));
-		cti.setToolTipText(part.getTooltip());
+		cti.setToolTipText(part.getLocalizedTooltip());
 		if (element.getWidget() != null) {
 			// The part might have a widget but may not yet have been placed
 			// under this stack, check this

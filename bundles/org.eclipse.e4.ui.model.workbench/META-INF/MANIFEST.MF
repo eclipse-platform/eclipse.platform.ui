@@ -8,7 +8,8 @@ Bundle-Activator: org.eclipse.e4.ui.model.application.impl.MWorkbenchModelActiva
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.eclipse.e4.ui.model.application;
+Export-Package: org.eclipse.e4.ui.model;x-friends:="org.eclipse.e4.ui.workbench,org.eclipse.e4.ui.workbench.swt,org.eclipse.ui.workbench",
+ org.eclipse.e4.ui.model.application;
   x-friends:="org.eclipse.e4.ui.workbench,
    org.eclipse.e4.ui.workbench.addons.swt,
    org.eclipse.e4.ui.workbench.renderers.swt,
@@ -87,7 +88,7 @@ Export-Package: org.eclipse.e4.ui.model.application;
  org.eclipse.e4.ui.model.fragment;x-friends:="org.eclipse.e4.ui.workbench",
  org.eclipse.e4.ui.model.fragment.impl;x-friends:="org.eclipse.e4.ui.workbench",
  org.eclipse.e4.ui.model.fragment.util;x-internal:=true,
- org.eclipse.e4.ui.model.internal;x-internal:=true
+ org.eclipse.e4.ui.model.internal;x-friends:="org.eclipse.e4.ui.workbench"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,

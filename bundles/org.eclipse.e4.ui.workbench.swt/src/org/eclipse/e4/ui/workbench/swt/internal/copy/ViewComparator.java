@@ -44,13 +44,13 @@ public class ViewComparator extends ViewerComparator {
 
 		String str1;
 		if (e1 instanceof MPartDescriptor)
-			str1 = ((MPartDescriptor) e1).getLabel();
+			str1 = ((MPartDescriptor) e1).getLocalizedLabel();
 		else
 			str1 = e1.toString();
 
 		String str2;
 		if (e2 instanceof MPartDescriptor)
-			str2 = ((MPartDescriptor) e2).getLabel();
+			str2 = ((MPartDescriptor) e2).getLocalizedLabel();
 		else
 			str2 = e2.toString();
 		if (str1 == null)

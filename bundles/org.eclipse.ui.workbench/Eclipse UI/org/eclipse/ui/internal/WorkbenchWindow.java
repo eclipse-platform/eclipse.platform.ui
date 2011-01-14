@@ -457,7 +457,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				LabelProvider labelProvider = new LabelProvider() {
 					@Override
 					public String getText(Object element) {
-						return ((MPart) element).getLabel();
+						return ((MPart) element).getLocalizedLabel();
 					}
 				};
 				List<MPart> parts = new ArrayList<MPart>(dirtyParts);

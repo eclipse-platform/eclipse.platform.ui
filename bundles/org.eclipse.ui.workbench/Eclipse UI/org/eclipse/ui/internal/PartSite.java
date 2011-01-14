@@ -326,7 +326,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getRegisteredName()
 	 */
 	public String getRegisteredName() {
-		return element == null ? model.getLabel() : element
+		return element == null ? model.getLocalizedLabel() : element
 				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 

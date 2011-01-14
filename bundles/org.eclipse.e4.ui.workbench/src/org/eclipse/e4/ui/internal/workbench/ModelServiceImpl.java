@@ -18,7 +18,6 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -39,6 +38,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
@@ -213,24 +213,7 @@ public class ModelServiceImpl implements EModelService {
 	 * .model .application.MUIElement)
 	 */
 	public IEclipseContext getContainingContext(MUIElement element) {
-		MUIElement curParent = null;
-		if (element.getCurSharedRef() != null)
-			curParent = element.getCurSharedRef().getParent();
-		else
-			curParent = (MUIElement) ((EObject) element).eContainer();
-
-		while (curParent != null) {
-			if (curParent instanceof MContext) {
-				return ((MContext) curParent).getContext();
-			}
-
-			if (curParent.getCurSharedRef() != null)
-				curParent = curParent.getCurSharedRef().getParent();
-			else
-				curParent = (MUIElement) ((EObject) curParent).eContainer();
-		}
-
-		return null;
+		return ModelUtils.getContainingContext(element);
 	}
 
 	/*

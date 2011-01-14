@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -87,7 +88,7 @@ public class ViewElement extends QuickAccessElement {
 
 	@Override
 	public String getLabel() {
-		return viewDescriptor.getLabel();
+		return LocalizationHelper.getLocalized(viewDescriptor.getLabel(), viewDescriptor, window.getContext());
 	}
 
 	public int hashCode() {

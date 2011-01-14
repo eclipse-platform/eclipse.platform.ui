@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestHarnessImpl.java,v 1.8 2010/11/05 01:32:58 pwebster Exp $
+ * $Id: TestHarnessImpl.java,v 1.9 2010/11/12 15:56:19 obesedin Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
@@ -80,9 +80,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getTooltip <em>Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getLocalLabel <em>Local Label</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#getLocalImage <em>Local Image</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.tests.model.test.impl.TestHarnessImpl#isDirty <em>Dirty</em>}</li>
  * </ul>
  * </p>
@@ -463,60 +460,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_LABEL_EDEFAULT = null;
-	/**
-	 * The cached value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localLabel = LOCAL_LABEL_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_TOOLTIP_EDEFAULT = null;
-	/**
-	 * The cached value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localTooltip = LOCAL_TOOLTIP_EDEFAULT;
-	/**
-	 * The default value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object LOCAL_IMAGE_EDEFAULT = null;
-	/**
-	 * The cached value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
 	/**
 	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1154,6 +1097,28 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalizedLabel() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalizedTooltip() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * @generated
 	 */
@@ -1278,12 +1243,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return getIconURI();
 			case MTestPackage.TEST_HARNESS__TOOLTIP:
 				return getTooltip();
-			case MTestPackage.TEST_HARNESS__LOCAL_LABEL:
-				return getLocalLabel();
-			case MTestPackage.TEST_HARNESS__LOCAL_TOOLTIP:
-				return getLocalTooltip();
-			case MTestPackage.TEST_HARNESS__LOCAL_IMAGE:
-				return getLocalImage();
 			case MTestPackage.TEST_HARNESS__DIRTY:
 				return isDirty();
 		}
@@ -1385,15 +1344,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__TOOLTIP:
 				setTooltip((String)newValue);
 				return;
-			case MTestPackage.TEST_HARNESS__LOCAL_LABEL:
-				setLocalLabel((String)newValue);
-				return;
-			case MTestPackage.TEST_HARNESS__LOCAL_TOOLTIP:
-				setLocalTooltip((String)newValue);
-				return;
-			case MTestPackage.TEST_HARNESS__LOCAL_IMAGE:
-				setLocalImage(newValue);
-				return;
 			case MTestPackage.TEST_HARNESS__DIRTY:
 				setDirty((Boolean)newValue);
 				return;
@@ -1492,15 +1442,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			case MTestPackage.TEST_HARNESS__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
-			case MTestPackage.TEST_HARNESS__LOCAL_LABEL:
-				setLocalLabel(LOCAL_LABEL_EDEFAULT);
-				return;
-			case MTestPackage.TEST_HARNESS__LOCAL_TOOLTIP:
-				setLocalTooltip(LOCAL_TOOLTIP_EDEFAULT);
-				return;
-			case MTestPackage.TEST_HARNESS__LOCAL_IMAGE:
-				setLocalImage(LOCAL_IMAGE_EDEFAULT);
-				return;
 			case MTestPackage.TEST_HARNESS__DIRTY:
 				setDirty(DIRTY_EDEFAULT);
 				return;
@@ -1571,12 +1512,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case MTestPackage.TEST_HARNESS__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case MTestPackage.TEST_HARNESS__LOCAL_LABEL:
-				return LOCAL_LABEL_EDEFAULT == null ? localLabel != null : !LOCAL_LABEL_EDEFAULT.equals(localLabel);
-			case MTestPackage.TEST_HARNESS__LOCAL_TOOLTIP:
-				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
-			case MTestPackage.TEST_HARNESS__LOCAL_IMAGE:
-				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
 			case MTestPackage.TEST_HARNESS__DIRTY:
 				return dirty != DIRTY_EDEFAULT;
 		}
@@ -1654,9 +1589,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				case MTestPackage.TEST_HARNESS__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case MTestPackage.TEST_HARNESS__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case MTestPackage.TEST_HARNESS__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				case MTestPackage.TEST_HARNESS__LOCAL_LABEL: return UiPackageImpl.UI_LABEL__LOCAL_LABEL;
-				case MTestPackage.TEST_HARNESS__LOCAL_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
-				case MTestPackage.TEST_HARNESS__LOCAL_IMAGE: return UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -1740,9 +1672,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 				case UiPackageImpl.UI_LABEL__LABEL: return MTestPackage.TEST_HARNESS__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return MTestPackage.TEST_HARNESS__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return MTestPackage.TEST_HARNESS__TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_LABEL: return MTestPackage.TEST_HARNESS__LOCAL_LABEL;
-				case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP: return MTestPackage.TEST_HARNESS__LOCAL_TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_IMAGE: return MTestPackage.TEST_HARNESS__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -1802,12 +1731,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 		result.append(iconURI);
 		result.append(", tooltip: ");
 		result.append(tooltip);
-		result.append(", localLabel: ");
-		result.append(localLabel);
-		result.append(", localTooltip: ");
-		result.append(localTooltip);
-		result.append(", localImage: ");
-		result.append(localImage);
 		result.append(", dirty: ");
 		result.append(dirty);
 		result.append(')');

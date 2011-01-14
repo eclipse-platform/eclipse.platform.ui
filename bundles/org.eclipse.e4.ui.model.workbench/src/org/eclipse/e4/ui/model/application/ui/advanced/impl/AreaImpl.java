@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.advanced.impl;
 
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.PartSashContainerImpl;
@@ -28,9 +29,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getTooltip <em>Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLocalLabel <em>Local Label</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.AreaImpl#getLocalImage <em>Local Image</em>}</li>
  * </ul>
  * </p>
  *
@@ -96,66 +94,6 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_LABEL_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localLabel = LOCAL_LABEL_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_TOOLTIP_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localTooltip = LOCAL_TOOLTIP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object LOCAL_IMAGE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -242,64 +180,17 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
 	 */
-	public String getLocalLabel() {
-		return localLabel;
+	public String getLocalizedLabel() {
+		return LocalizationHelper.getLocalizedLabel(this);
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
 	 */
-	public void setLocalLabel(String newLocalLabel) {
-		String oldLocalLabel = localLabel;
-		localLabel = newLocalLabel;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.AREA__LOCAL_LABEL, oldLocalLabel, localLabel));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getLocalTooltip() {
-		return localTooltip;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalTooltip(String newLocalTooltip) {
-		String oldLocalTooltip = localTooltip;
-		localTooltip = newLocalTooltip;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.AREA__LOCAL_TOOLTIP, oldLocalTooltip, localTooltip));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Object getLocalImage() {
-		return localImage;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalImage(Object newLocalImage) {
-		Object oldLocalImage = localImage;
-		localImage = newLocalImage;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.AREA__LOCAL_IMAGE, oldLocalImage, localImage));
+	public String getLocalizedTooltip() {
+		return LocalizationHelper.getLocalizedTooltip(this);
 	}
 
 	/**
@@ -316,12 +207,6 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 				return getIconURI();
 			case AdvancedPackageImpl.AREA__TOOLTIP:
 				return getTooltip();
-			case AdvancedPackageImpl.AREA__LOCAL_LABEL:
-				return getLocalLabel();
-			case AdvancedPackageImpl.AREA__LOCAL_TOOLTIP:
-				return getLocalTooltip();
-			case AdvancedPackageImpl.AREA__LOCAL_IMAGE:
-				return getLocalImage();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -342,15 +227,6 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 				return;
 			case AdvancedPackageImpl.AREA__TOOLTIP:
 				setTooltip((String)newValue);
-				return;
-			case AdvancedPackageImpl.AREA__LOCAL_LABEL:
-				setLocalLabel((String)newValue);
-				return;
-			case AdvancedPackageImpl.AREA__LOCAL_TOOLTIP:
-				setLocalTooltip((String)newValue);
-				return;
-			case AdvancedPackageImpl.AREA__LOCAL_IMAGE:
-				setLocalImage(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -373,15 +249,6 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 			case AdvancedPackageImpl.AREA__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
-			case AdvancedPackageImpl.AREA__LOCAL_LABEL:
-				setLocalLabel(LOCAL_LABEL_EDEFAULT);
-				return;
-			case AdvancedPackageImpl.AREA__LOCAL_TOOLTIP:
-				setLocalTooltip(LOCAL_TOOLTIP_EDEFAULT);
-				return;
-			case AdvancedPackageImpl.AREA__LOCAL_IMAGE:
-				setLocalImage(LOCAL_IMAGE_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -400,12 +267,6 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case AdvancedPackageImpl.AREA__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case AdvancedPackageImpl.AREA__LOCAL_LABEL:
-				return LOCAL_LABEL_EDEFAULT == null ? localLabel != null : !LOCAL_LABEL_EDEFAULT.equals(localLabel);
-			case AdvancedPackageImpl.AREA__LOCAL_TOOLTIP:
-				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
-			case AdvancedPackageImpl.AREA__LOCAL_IMAGE:
-				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -422,9 +283,6 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 				case AdvancedPackageImpl.AREA__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case AdvancedPackageImpl.AREA__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case AdvancedPackageImpl.AREA__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				case AdvancedPackageImpl.AREA__LOCAL_LABEL: return UiPackageImpl.UI_LABEL__LOCAL_LABEL;
-				case AdvancedPackageImpl.AREA__LOCAL_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
-				case AdvancedPackageImpl.AREA__LOCAL_IMAGE: return UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -443,9 +301,6 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 				case UiPackageImpl.UI_LABEL__LABEL: return AdvancedPackageImpl.AREA__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return AdvancedPackageImpl.AREA__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return AdvancedPackageImpl.AREA__TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_LABEL: return AdvancedPackageImpl.AREA__LOCAL_LABEL;
-				case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP: return AdvancedPackageImpl.AREA__LOCAL_TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_IMAGE: return AdvancedPackageImpl.AREA__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -468,12 +323,6 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
 		result.append(tooltip);
-		result.append(", localLabel: "); //$NON-NLS-1$
-		result.append(localLabel);
-		result.append(", localTooltip: "); //$NON-NLS-1$
-		result.append(localTooltip);
-		result.append(", localImage: "); //$NON-NLS-1$
-		result.append(localImage);
 		result.append(')');
 		return result.toString();
 	}

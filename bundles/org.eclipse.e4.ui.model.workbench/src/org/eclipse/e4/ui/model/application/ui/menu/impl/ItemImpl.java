@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -29,9 +30,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getTooltip <em>Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getLocalLabel <em>Local Label</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getLocalImage <em>Local Image</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#isSelected <em>Selected</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.menu.impl.ItemImpl#getType <em>Type</em>}</li>
@@ -100,66 +98,6 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_LABEL_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localLabel = LOCAL_LABEL_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_TOOLTIP_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localTooltip = LOCAL_TOOLTIP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object LOCAL_IMAGE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
@@ -308,69 +246,6 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getLocalLabel() {
-		return localLabel;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalLabel(String newLocalLabel) {
-		String oldLocalLabel = localLabel;
-		localLabel = newLocalLabel;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.ITEM__LOCAL_LABEL, oldLocalLabel, localLabel));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getLocalTooltip() {
-		return localTooltip;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalTooltip(String newLocalTooltip) {
-		String oldLocalTooltip = localTooltip;
-		localTooltip = newLocalTooltip;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.ITEM__LOCAL_TOOLTIP, oldLocalTooltip, localTooltip));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Object getLocalImage() {
-		return localImage;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalImage(Object newLocalImage) {
-		Object oldLocalImage = localImage;
-		localImage = newLocalImage;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.ITEM__LOCAL_IMAGE, oldLocalImage, localImage));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -432,6 +307,22 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 */
+	public String getLocalizedLabel() {
+		return LocalizationHelper.getLocalizedLabel(this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
+	public String getLocalizedTooltip() {
+		return LocalizationHelper.getLocalizedTooltip(this);		
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -443,12 +334,6 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 				return getIconURI();
 			case MenuPackageImpl.ITEM__TOOLTIP:
 				return getTooltip();
-			case MenuPackageImpl.ITEM__LOCAL_LABEL:
-				return getLocalLabel();
-			case MenuPackageImpl.ITEM__LOCAL_TOOLTIP:
-				return getLocalTooltip();
-			case MenuPackageImpl.ITEM__LOCAL_IMAGE:
-				return getLocalImage();
 			case MenuPackageImpl.ITEM__ENABLED:
 				return isEnabled();
 			case MenuPackageImpl.ITEM__SELECTED:
@@ -475,15 +360,6 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 				return;
 			case MenuPackageImpl.ITEM__TOOLTIP:
 				setTooltip((String)newValue);
-				return;
-			case MenuPackageImpl.ITEM__LOCAL_LABEL:
-				setLocalLabel((String)newValue);
-				return;
-			case MenuPackageImpl.ITEM__LOCAL_TOOLTIP:
-				setLocalTooltip((String)newValue);
-				return;
-			case MenuPackageImpl.ITEM__LOCAL_IMAGE:
-				setLocalImage(newValue);
 				return;
 			case MenuPackageImpl.ITEM__ENABLED:
 				setEnabled((Boolean)newValue);
@@ -515,15 +391,6 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 			case MenuPackageImpl.ITEM__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
-			case MenuPackageImpl.ITEM__LOCAL_LABEL:
-				setLocalLabel(LOCAL_LABEL_EDEFAULT);
-				return;
-			case MenuPackageImpl.ITEM__LOCAL_TOOLTIP:
-				setLocalTooltip(LOCAL_TOOLTIP_EDEFAULT);
-				return;
-			case MenuPackageImpl.ITEM__LOCAL_IMAGE:
-				setLocalImage(LOCAL_IMAGE_EDEFAULT);
-				return;
 			case MenuPackageImpl.ITEM__ENABLED:
 				setEnabled(ENABLED_EDEFAULT);
 				return;
@@ -551,12 +418,6 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case MenuPackageImpl.ITEM__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case MenuPackageImpl.ITEM__LOCAL_LABEL:
-				return LOCAL_LABEL_EDEFAULT == null ? localLabel != null : !LOCAL_LABEL_EDEFAULT.equals(localLabel);
-			case MenuPackageImpl.ITEM__LOCAL_TOOLTIP:
-				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
-			case MenuPackageImpl.ITEM__LOCAL_IMAGE:
-				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
 			case MenuPackageImpl.ITEM__ENABLED:
 				return enabled != ENABLED_EDEFAULT;
 			case MenuPackageImpl.ITEM__SELECTED:
@@ -579,9 +440,6 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 				case MenuPackageImpl.ITEM__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case MenuPackageImpl.ITEM__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case MenuPackageImpl.ITEM__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				case MenuPackageImpl.ITEM__LOCAL_LABEL: return UiPackageImpl.UI_LABEL__LOCAL_LABEL;
-				case MenuPackageImpl.ITEM__LOCAL_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
-				case MenuPackageImpl.ITEM__LOCAL_IMAGE: return UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -600,9 +458,6 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 				case UiPackageImpl.UI_LABEL__LABEL: return MenuPackageImpl.ITEM__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return MenuPackageImpl.ITEM__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return MenuPackageImpl.ITEM__TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_LABEL: return MenuPackageImpl.ITEM__LOCAL_LABEL;
-				case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP: return MenuPackageImpl.ITEM__LOCAL_TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_IMAGE: return MenuPackageImpl.ITEM__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -625,12 +480,6 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
 		result.append(tooltip);
-		result.append(", localLabel: "); //$NON-NLS-1$
-		result.append(localLabel);
-		result.append(", localTooltip: "); //$NON-NLS-1$
-		result.append(localTooltip);
-		result.append(", localImage: "); //$NON-NLS-1$
-		result.append(localImage);
 		result.append(", enabled: "); //$NON-NLS-1$
 		result.append(enabled);
 		result.append(", selected: "); //$NON-NLS-1$

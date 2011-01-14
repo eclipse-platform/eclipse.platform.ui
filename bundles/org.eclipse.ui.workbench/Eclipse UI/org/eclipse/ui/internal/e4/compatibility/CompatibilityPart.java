@@ -105,7 +105,7 @@ public abstract class CompatibilityPart {
 		} catch (Exception e) {
 			if (logger != null) {
 				String msg = "Error setting focus to : " + part.getClass().getName(); //$NON-NLS-1$
-				msg += ' ' + part.getLabel();
+				msg += ' ' + part.getLocalizedLabel();
 				logger.error(e, msg);
 			}
 		}

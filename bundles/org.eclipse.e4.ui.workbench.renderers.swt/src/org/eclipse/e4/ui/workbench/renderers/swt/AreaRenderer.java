@@ -55,11 +55,11 @@ public class AreaRenderer extends SWTPartRenderer {
 			String attName = (String) event
 					.getProperty(UIEvents.EventTags.ATTNAME);
 			if (UIEvents.UILabel.LABEL.equals(attName)) {
-				areaItem.setText(areaModel.getLabel());
+				areaItem.setText(areaModel.getLocalizedLabel());
 			} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
 				areaItem.setImage(getImage(areaModel));
 			} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
-				areaItem.setToolTipText(areaModel.getTooltip());
+				areaItem.setToolTipText(areaModel.getLocalizedTooltip());
 			}
 		}
 	};
@@ -94,9 +94,9 @@ public class AreaRenderer extends SWTPartRenderer {
 
 		CTabItem cti = new CTabItem(ctf, SWT.NONE);
 		if (areaModel.getLabel() != null)
-			cti.setText(areaModel.getLabel());
+			cti.setText(areaModel.getLocalizedLabel());
 		if (areaModel.getTooltip() != null)
-			cti.setToolTipText(areaModel.getTooltip());
+			cti.setToolTipText(areaModel.getLocalizedTooltip());
 		if (areaModel.getIconURI() != null)
 			cti.setImage(getImage(areaModel));
 

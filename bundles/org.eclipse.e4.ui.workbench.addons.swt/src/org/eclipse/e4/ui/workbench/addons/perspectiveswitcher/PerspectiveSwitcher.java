@@ -322,14 +322,14 @@ public class PerspectiveSwitcher {
 			if (desc != null) {
 				psItem.setImage(desc.createImage(false));
 				foundImage = true;
-				psItem.setToolTipText(persp.getLabel());
+				psItem.setToolTipText(persp.getLocalizedLabel());
 			}
 		}
 		if (!foundImage
 				|| PrefUtil.getAPIPreferenceStore().getBoolean(
 						IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR)) {
-			psItem.setText(persp.getLabel());
-			psItem.setToolTipText(persp.getTooltip());
+			psItem.setText(persp.getLocalizedLabel());
+			psItem.setToolTipText(persp.getLocalizedTooltip());
 		}
 
 		psItem.setSelection(persp == persp.getParent().getSelectedElement());
@@ -490,7 +490,7 @@ public class PerspectiveSwitcher {
 					return;
 				IWorkbenchPage page = persp.getContext().get(IWorkbenchPage.class);
 				String message = NLS.bind(WorkbenchMessages.ResetPerspective_message,
-						persp.getLabel());
+						persp.getLocalizedLabel());
 				if (MessageDialog.openConfirm(page.getWorkbenchWindow().getShell(),
 						WorkbenchMessages.ResetPerspective_title, message)) {
 					page.resetPerspective();
@@ -526,13 +526,13 @@ public class PerspectiveSwitcher {
 			if (persp != null)
 				if (showText) {
 					if (persp.getLabel() != null)
-						items[i].setText(persp.getLabel());
-					items[i].setToolTipText(persp.getTooltip());
+						items[i].setText(persp.getLocalizedLabel());
+					items[i].setToolTipText(persp.getLocalizedTooltip());
 				} else {
 					Image image = items[i].getImage();
 					if (image != null) {
 						items[i].setText("");
-						items[i].setToolTipText(persp.getLabel());
+						items[i].setToolTipText(persp.getLocalizedLabel());
 					}
 				}
 		}

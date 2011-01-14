@@ -257,40 +257,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int ITEM__TOOLTIP = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int ITEM__LOCAL_LABEL = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int ITEM__LOCAL_TOOLTIP = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int ITEM__LOCAL_IMAGE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 5;
-
-	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ITEM__ENABLED = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
+	public static final int ITEM__ENABLED = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
@@ -299,7 +272,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ITEM__SELECTED = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 7;
+	public static final int ITEM__SELECTED = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -308,7 +281,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ITEM__TYPE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 8;
+	public static final int ITEM__TYPE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of structural features of the '<em>Item</em>' class.
@@ -317,7 +290,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ITEM_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 9;
+	public static final int ITEM_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.HandledItemImpl <em>Handled Item</em>}' class.
@@ -472,33 +445,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int HANDLED_ITEM__TOOLTIP = ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_ITEM__LOCAL_LABEL = ITEM__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_ITEM__LOCAL_TOOLTIP = ITEM__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_ITEM__LOCAL_IMAGE = ITEM__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -718,40 +664,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ELEMENT__TOOLTIP = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_ELEMENT__LOCAL_LABEL = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_ELEMENT__LOCAL_TOOLTIP = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_ELEMENT__LOCAL_IMAGE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 5;
-
-	/**
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_ELEMENT__MNEMONICS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 6;
+	public static final int MENU_ELEMENT__MNEMONICS = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of structural features of the '<em>Element</em>' class.
@@ -760,7 +679,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 7;
+	public static final int MENU_ELEMENT_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.MenuItemImpl <em>Item</em>}' class.
@@ -915,33 +834,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU_ITEM__TOOLTIP = ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_ITEM__LOCAL_LABEL = ITEM__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_ITEM__LOCAL_TOOLTIP = ITEM__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_ITEM__LOCAL_IMAGE = ITEM__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -1143,33 +1035,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_SEPARATOR__TOOLTIP = MENU_ELEMENT__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_SEPARATOR__LOCAL_LABEL = MENU_ELEMENT__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_SEPARATOR__LOCAL_TOOLTIP = MENU_ELEMENT__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU_SEPARATOR__LOCAL_IMAGE = MENU_ELEMENT__LOCAL_IMAGE;
-
-	/**
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1340,33 +1205,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int MENU__TOOLTIP = MENU_ELEMENT__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU__LOCAL_LABEL = MENU_ELEMENT__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU__LOCAL_TOOLTIP = MENU_ELEMENT__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int MENU__LOCAL_IMAGE = MENU_ELEMENT__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
@@ -1740,33 +1578,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int POPUP_MENU__TOOLTIP = MENU__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int POPUP_MENU__LOCAL_LABEL = MENU__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int POPUP_MENU__LOCAL_TOOLTIP = MENU__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int POPUP_MENU__LOCAL_IMAGE = MENU__LOCAL_IMAGE;
-
-	/**
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1991,33 +1802,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int DIRECT_MENU_ITEM__TOOLTIP = MENU_ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_MENU_ITEM__LOCAL_LABEL = MENU_ITEM__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_MENU_ITEM__LOCAL_TOOLTIP = MENU_ITEM__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_MENU_ITEM__LOCAL_IMAGE = MENU_ITEM__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -2246,33 +2030,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_MENU_ITEM__TOOLTIP = MENU_ITEM__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_MENU_ITEM__LOCAL_LABEL = MENU_ITEM__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_MENU_ITEM__LOCAL_TOOLTIP = MENU_ITEM__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_MENU_ITEM__LOCAL_IMAGE = MENU_ITEM__LOCAL_IMAGE;
-
-	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2497,33 +2254,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TOOL_ITEM__TOOLTIP = ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_ITEM__LOCAL_LABEL = ITEM__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_ITEM__LOCAL_TOOLTIP = ITEM__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TOOL_ITEM__LOCAL_IMAGE = ITEM__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -3178,33 +2908,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_TOOL_ITEM__TOOLTIP = TOOL_ITEM__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_TOOL_ITEM__LOCAL_LABEL = TOOL_ITEM__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_TOOL_ITEM__LOCAL_TOOLTIP = TOOL_ITEM__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int HANDLED_TOOL_ITEM__LOCAL_IMAGE = TOOL_ITEM__LOCAL_IMAGE;
-
-	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3429,33 +3132,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int DIRECT_TOOL_ITEM__TOOLTIP = TOOL_ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_TOOL_ITEM__LOCAL_LABEL = TOOL_ITEM__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_TOOL_ITEM__LOCAL_TOOLTIP = TOOL_ITEM__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int DIRECT_TOOL_ITEM__LOCAL_IMAGE = TOOL_ITEM__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -3846,33 +3522,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int RENDERED_MENU__TOOLTIP = MENU__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int RENDERED_MENU__LOCAL_LABEL = MENU__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int RENDERED_MENU__LOCAL_TOOLTIP = MENU__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int RENDERED_MENU__LOCAL_IMAGE = MENU__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
@@ -4646,33 +4295,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int RENDERED_MENU_ITEM__TOOLTIP = MENU_ITEM__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int RENDERED_MENU_ITEM__LOCAL_LABEL = MENU_ITEM__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int RENDERED_MENU_ITEM__LOCAL_TOOLTIP = MENU_ITEM__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int RENDERED_MENU_ITEM__LOCAL_IMAGE = MENU_ITEM__LOCAL_IMAGE;
-
-	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4879,33 +4501,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int OPAQUE_MENU_ITEM__TOOLTIP = MENU_ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int OPAQUE_MENU_ITEM__LOCAL_LABEL = MENU_ITEM__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int OPAQUE_MENU_ITEM__LOCAL_TOOLTIP = MENU_ITEM__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int OPAQUE_MENU_ITEM__LOCAL_IMAGE = MENU_ITEM__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -5116,33 +4711,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int OPAQUE_MENU_SEPARATOR__TOOLTIP = MENU_SEPARATOR__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int OPAQUE_MENU_SEPARATOR__LOCAL_LABEL = MENU_SEPARATOR__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int OPAQUE_MENU_SEPARATOR__LOCAL_TOOLTIP = MENU_SEPARATOR__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int OPAQUE_MENU_SEPARATOR__LOCAL_IMAGE = MENU_SEPARATOR__LOCAL_IMAGE;
-
-	/**
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5322,33 +4890,6 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int OPAQUE_MENU__TOOLTIP = MENU__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int OPAQUE_MENU__LOCAL_LABEL = MENU__LOCAL_LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int OPAQUE_MENU__LOCAL_TOOLTIP = MENU__LOCAL_TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int OPAQUE_MENU__LOCAL_IMAGE = MENU__LOCAL_IMAGE;
 
 	/**
 	 * The feature id for the '<em><b>Mnemonics</b></em>' attribute.

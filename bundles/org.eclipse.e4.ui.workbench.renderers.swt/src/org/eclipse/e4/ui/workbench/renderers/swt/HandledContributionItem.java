@@ -223,7 +223,7 @@ public class HandledContributionItem extends ContributionItem {
 
 	private void updateMenuItem() {
 		MenuItem item = (MenuItem) widget;
-		String text = model.getLabel();
+		String text = model.getLocalizedLabel();
 		ParameterizedCommand parmCmd = model.getWbCommand();
 		String keyBindingText = null;
 		if (parmCmd != null) {
@@ -255,13 +255,13 @@ public class HandledContributionItem extends ContributionItem {
 
 	private void updateToolItem() {
 		ToolItem item = (ToolItem) widget;
-		final String text = model.getLabel();
+		final String text = model.getLocalizedLabel();
 		if (text != null) {
 			item.setText(text);
 		} else {
 			item.setText(""); //$NON-NLS-1$
 		}
-		final String tooltip = model.getTooltip();
+		final String tooltip = model.getLocalizedTooltip();
 		item.setToolTipText(tooltip);
 		item.setSelection(model.isSelected());
 		item.setEnabled(model.isEnabled());

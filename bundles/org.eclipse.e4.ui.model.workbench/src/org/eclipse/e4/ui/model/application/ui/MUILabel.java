@@ -22,9 +22,6 @@ package org.eclipse.e4.ui.model.application.ui;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getTooltip <em>Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalLabel <em>Local Label</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalTooltip <em>Local Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalImage <em>Local Image</em>}</li>
  * </ul>
  * </p>
  *
@@ -108,78 +105,19 @@ public interface MUILabel {
 	void setTooltip(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Local Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Local Label</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Local Label</em>' attribute.
-	 * @see #setLocalLabel(String)
-	 * @model transient="true"
+	 * @model kind="operation"
 	 * @generated
 	 */
-	String getLocalLabel();
+	String getLocalizedLabel();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalLabel <em>Local Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Local Label</em>' attribute.
-	 * @see #getLocalLabel()
+	 * @model kind="operation"
 	 * @generated
 	 */
-	void setLocalLabel(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Local Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Local Tooltip</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Local Tooltip</em>' attribute.
-	 * @see #setLocalTooltip(String)
-	 * @model transient="true"
-	 * @generated
-	 */
-	String getLocalTooltip();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalTooltip <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Local Tooltip</em>' attribute.
-	 * @see #getLocalTooltip()
-	 * @generated
-	 */
-	void setLocalTooltip(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Local Image</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Local Image</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Local Image</em>' attribute.
-	 * @see #setLocalImage(Object)
-	 * @model transient="true"
-	 * @generated
-	 */
-	Object getLocalImage();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.MUILabel#getLocalImage <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Local Image</em>' attribute.
-	 * @see #getLocalImage()
-	 * @generated
-	 */
-	void setLocalImage(Object value);
+	String getLocalizedTooltip();
 
 } // MUILabel

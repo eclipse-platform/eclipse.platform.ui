@@ -376,7 +376,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		});
 
 		if (wbwModel.getLabel() != null)
-			wbwShell.setText(wbwModel.getLabel());
+			wbwShell.setText(wbwModel.getLocalizedLabel());
 
 		wbwShell.setImage(getImage(wbwModel));
 		// TODO: This should be added to the model, see bug 308494
@@ -608,7 +608,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			tableViewer.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return ((MPart) element).getLabel();
+					return ((MPart) element).getLocalizedLabel();
 				}
 			});
 			tableViewer.setContentProvider(ArrayContentProvider.getInstance());

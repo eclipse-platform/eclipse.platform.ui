@@ -102,8 +102,8 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 		} else if (element instanceof String) {
 			Image image = imageMap.get(FOLDER_ICON);
 			if (image == null) {
-				image = JFaceResources.getImageRegistry().getDescriptor(
-						FOLDER_ICON).createImage();
+				image = JFaceResources.getImageRegistry()
+						.getDescriptor(FOLDER_ICON).createImage();
 				imageMap.put(FOLDER_ICON, image);
 			}
 			return image;
@@ -121,7 +121,7 @@ public class ViewLabelProvider extends ColumnLabelProvider {
 		if (element instanceof String) {
 			label = (String) element;
 		} else if (element instanceof MPartDescriptor) {
-			label = ((MPartDescriptor) element).getLabel();
+			label = ((MPartDescriptor) element).getLocalizedLabel();
 		}
 		return label;
 	}

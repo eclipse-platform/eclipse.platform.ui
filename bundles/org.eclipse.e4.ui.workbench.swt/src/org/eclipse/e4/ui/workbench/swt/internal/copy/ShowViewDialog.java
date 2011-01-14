@@ -11,12 +11,12 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal.copy;
 
-import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.jface.dialogs.Dialog;
@@ -182,7 +182,7 @@ public class ShowViewDialog extends Dialog implements
 	 *            the parent <code>Composite</code>.
 	 */
 	private void createFilteredTreeViewer(Composite parent) {
-		PatternFilter filter = new ViewPatternFilter();
+		PatternFilter filter = new ViewPatternFilter(context);
 		int styleBits = SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		filteredTree = new FilteredTree(parent, styleBits, filter, true);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(
@@ -357,8 +357,12 @@ public class ShowViewDialog extends Dialog implements
 	public void selectionChanged(SelectionChangedEvent event) {
 		updateSelection(event);
 		updateButtons();
-		String tooltip = (viewDescs.length > 0) ? viewDescs[0].getTooltip()
-				: "";
+		String tooltip = "";
+		if (viewDescs.length > 0) {
+			tooltip = viewDescs[0].getTooltip();
+			tooltip = LocalizationHelper.getLocalized(tooltip, viewDescs[0],
+					context);
+		}
 		boolean hasTooltip = (tooltip == null) ? false : tooltip.length() > 0;
 		descriptionHint.setVisible(viewDescs.length == 1 && hasTooltip);
 	}
@@ -411,6 +415,8 @@ public class ShowViewDialog extends Dialog implements
 				Object o = selection.getFirstElement();
 				if (o instanceof MPartDescriptor) {
 					String description = ((MPartDescriptor) o).getTooltip();
+					description = LocalizationHelper.getLocalized(description,
+							(MPartDescriptor) o, context);
 					if (description != null && description.length() == 0)
 						description = WorkbenchSWTMessages.ShowView_noDesc;
 					popUp(description);

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
-import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
-
 import java.util.HashMap;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -24,6 +22,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -199,7 +198,7 @@ public abstract class MenuItemRenderer extends SWTPartRenderer {
 	}
 
 	protected void setItemText(MMenuItem model, MenuItem item) {
-		String text = model.getLabel();
+		String text = model.getLocalizedLabel();
 		if (text == null) {
 			text = ""; //$NON-NLS-1$
 		}

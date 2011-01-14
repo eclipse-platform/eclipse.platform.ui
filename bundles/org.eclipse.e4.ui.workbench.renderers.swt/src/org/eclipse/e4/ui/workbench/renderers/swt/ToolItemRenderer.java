@@ -167,7 +167,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	}
 
 	private void setItemText(MToolItem model, ToolItem item) {
-		String text = model.getLabel();
+		String text = model.getLocalizedLabel();
 		if (model instanceof MHandledItem) {
 			MHandledItem handledItem = (MHandledItem) model;
 			IEclipseContext context = getContext(model);
@@ -192,7 +192,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	}
 
 	private String getToolTipText(MItem item) {
-		String text = item.getTooltip();
+		String text = item.getLocalizedTooltip();
 		if (item instanceof MHandledItem) {
 			MHandledItem handledItem = (MHandledItem) item;
 			IEclipseContext context = getContext(item);
@@ -242,7 +242,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 
 		ToolItem newItem = new ToolItem((ToolBar) parent, flags, addIndex);
 		if (itemModel.getLabel() != null)
-			newItem.setText(itemModel.getLabel());
+			newItem.setText(itemModel.getLocalizedLabel());
 
 		newItem.setToolTipText(getToolTipText(itemModel));
 

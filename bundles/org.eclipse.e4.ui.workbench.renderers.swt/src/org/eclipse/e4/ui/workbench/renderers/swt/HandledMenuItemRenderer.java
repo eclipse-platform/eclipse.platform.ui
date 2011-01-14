@@ -94,7 +94,7 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 	}
 
 	protected void setItemText(MMenuItem model, MenuItem item) {
-		String text = model.getLabel();
+		String text = model.getLocalizedLabel();
 		if (model instanceof MHandledItem) {
 			MHandledItem handledItem = (MHandledItem) model;
 			IEclipseContext context = getContext(model);

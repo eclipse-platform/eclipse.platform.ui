@@ -171,13 +171,14 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	public String getName() {
 		IEditorPart editor = getEditor(false);
 		if (input == null) {
-			return editor == null ? getModel().getLabel() : editor.getEditorInput().getName();
+			return editor == null ? getModel().getLocalizedLabel() : editor.getEditorInput()
+					.getName();
 		}
 		return editor == null ? input.getName() : editor.getEditorInput().getName();
 	}
 
 	public String getTitle() {
-		String label = Util.safeString(getModel().getLabel());
+		String label = Util.safeString(getModel().getLocalizedLabel());
 		if (label.length() == 0) {
 			if (input == null) {
 				if (descriptor != null) {

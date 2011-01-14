@@ -750,7 +750,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 	private String getText(MMenu menuModel) {
-		String text = menuModel.getLabel();
+		String text = menuModel.getLocalizedLabel();
 		if (text == null || text.length() == 0) {
 			return NO_LABEL;
 		}

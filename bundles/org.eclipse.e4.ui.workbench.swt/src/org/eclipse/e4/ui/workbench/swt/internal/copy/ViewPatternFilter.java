@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal.copy;
 
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -18,11 +20,14 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class ViewPatternFilter extends PatternFilter {
 
+	private IEclipseContext context;
+
 	/**
 	 * Create a new instance of a ViewPatternFilter
 	 */
-	public ViewPatternFilter() {
+	public ViewPatternFilter(IEclipseContext context) {
 		super();
+		this.context = context;
 	}
 
 	/*
@@ -51,7 +56,8 @@ public class ViewPatternFilter extends PatternFilter {
 		String text = null;
 		if (element instanceof MPartDescriptor) {
 			MPartDescriptor desc = (MPartDescriptor) element;
-			text = desc.getLabel();
+			text = LocalizationHelper.getLocalized(desc.getLabel(), desc,
+					context);
 			if (wordMatches(text)) {
 				return true;
 			}

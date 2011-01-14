@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
@@ -61,9 +62,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getTooltip <em>Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLocalLabel <em>Local Label</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLocalTooltip <em>Local Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getLocalImage <em>Local Image</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#isDirty <em>Dirty</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl#getBindingContexts <em>Binding Contexts</em>}</li>
@@ -226,66 +224,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_LABEL_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalLabel() <em>Local Label</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalLabel()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localLabel = LOCAL_LABEL_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String LOCAL_TOOLTIP_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalTooltip() <em>Local Tooltip</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalTooltip()
-	 * @generated
-	 * @ordered
-	 */
-	protected String localTooltip = LOCAL_TOOLTIP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object LOCAL_IMAGE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getLocalImage() <em>Local Image</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getLocalImage()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object localImage = LOCAL_IMAGE_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
@@ -573,69 +511,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getLocalLabel() {
-		return localLabel;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalLabel(String newLocalLabel) {
-		String oldLocalLabel = localLabel;
-		localLabel = newLocalLabel;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__LOCAL_LABEL, oldLocalLabel, localLabel));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getLocalTooltip() {
-		return localTooltip;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalTooltip(String newLocalTooltip) {
-		String oldLocalTooltip = localTooltip;
-		localTooltip = newLocalTooltip;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__LOCAL_TOOLTIP, oldLocalTooltip, localTooltip));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Object getLocalImage() {
-		return localImage;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setLocalImage(Object newLocalImage) {
-		Object oldLocalImage = localImage;
-		localImage = newLocalImage;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, BasicPackageImpl.PART__LOCAL_IMAGE, oldLocalImage, localImage));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public List<MHandler> getHandlers() {
 		if (handlers == null) {
 			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, BasicPackageImpl.PART__HANDLERS);
@@ -776,6 +651,22 @@ public class PartImpl extends UIElementImpl implements MPart {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 */
+	public String getLocalizedLabel() {
+		return LocalizationHelper.getLocalizedLabel(this);		
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
+	public String getLocalizedTooltip() {
+		return LocalizationHelper.getLocalizedTooltip(this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -823,12 +714,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return getIconURI();
 			case BasicPackageImpl.PART__TOOLTIP:
 				return getTooltip();
-			case BasicPackageImpl.PART__LOCAL_LABEL:
-				return getLocalLabel();
-			case BasicPackageImpl.PART__LOCAL_TOOLTIP:
-				return getLocalTooltip();
-			case BasicPackageImpl.PART__LOCAL_IMAGE:
-				return getLocalImage();
 			case BasicPackageImpl.PART__HANDLERS:
 				return getHandlers();
 			case BasicPackageImpl.PART__DIRTY:
@@ -883,15 +768,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return;
 			case BasicPackageImpl.PART__TOOLTIP:
 				setTooltip((String)newValue);
-				return;
-			case BasicPackageImpl.PART__LOCAL_LABEL:
-				setLocalLabel((String)newValue);
-				return;
-			case BasicPackageImpl.PART__LOCAL_TOOLTIP:
-				setLocalTooltip((String)newValue);
-				return;
-			case BasicPackageImpl.PART__LOCAL_IMAGE:
-				setLocalImage(newValue);
 				return;
 			case BasicPackageImpl.PART__HANDLERS:
 				getHandlers().clear();
@@ -956,15 +832,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 			case BasicPackageImpl.PART__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
-			case BasicPackageImpl.PART__LOCAL_LABEL:
-				setLocalLabel(LOCAL_LABEL_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__LOCAL_TOOLTIP:
-				setLocalTooltip(LOCAL_TOOLTIP_EDEFAULT);
-				return;
-			case BasicPackageImpl.PART__LOCAL_IMAGE:
-				setLocalImage(LOCAL_IMAGE_EDEFAULT);
-				return;
 			case BasicPackageImpl.PART__HANDLERS:
 				getHandlers().clear();
 				return;
@@ -1016,12 +883,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case BasicPackageImpl.PART__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case BasicPackageImpl.PART__LOCAL_LABEL:
-				return LOCAL_LABEL_EDEFAULT == null ? localLabel != null : !LOCAL_LABEL_EDEFAULT.equals(localLabel);
-			case BasicPackageImpl.PART__LOCAL_TOOLTIP:
-				return LOCAL_TOOLTIP_EDEFAULT == null ? localTooltip != null : !LOCAL_TOOLTIP_EDEFAULT.equals(localTooltip);
-			case BasicPackageImpl.PART__LOCAL_IMAGE:
-				return LOCAL_IMAGE_EDEFAULT == null ? localImage != null : !LOCAL_IMAGE_EDEFAULT.equals(localImage);
 			case BasicPackageImpl.PART__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
 			case BasicPackageImpl.PART__DIRTY:
@@ -1078,9 +939,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				case BasicPackageImpl.PART__LABEL: return UiPackageImpl.UI_LABEL__LABEL;
 				case BasicPackageImpl.PART__ICON_URI: return UiPackageImpl.UI_LABEL__ICON_URI;
 				case BasicPackageImpl.PART__TOOLTIP: return UiPackageImpl.UI_LABEL__TOOLTIP;
-				case BasicPackageImpl.PART__LOCAL_LABEL: return UiPackageImpl.UI_LABEL__LOCAL_LABEL;
-				case BasicPackageImpl.PART__LOCAL_TOOLTIP: return UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP;
-				case BasicPackageImpl.PART__LOCAL_IMAGE: return UiPackageImpl.UI_LABEL__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -1148,9 +1006,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 				case UiPackageImpl.UI_LABEL__LABEL: return BasicPackageImpl.PART__LABEL;
 				case UiPackageImpl.UI_LABEL__ICON_URI: return BasicPackageImpl.PART__ICON_URI;
 				case UiPackageImpl.UI_LABEL__TOOLTIP: return BasicPackageImpl.PART__TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_LABEL: return BasicPackageImpl.PART__LOCAL_LABEL;
-				case UiPackageImpl.UI_LABEL__LOCAL_TOOLTIP: return BasicPackageImpl.PART__LOCAL_TOOLTIP;
-				case UiPackageImpl.UI_LABEL__LOCAL_IMAGE: return BasicPackageImpl.PART__LOCAL_IMAGE;
 				default: return -1;
 			}
 		}
@@ -1204,12 +1059,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
 		result.append(tooltip);
-		result.append(", localLabel: "); //$NON-NLS-1$
-		result.append(localLabel);
-		result.append(", localTooltip: "); //$NON-NLS-1$
-		result.append(localTooltip);
-		result.append(", localImage: "); //$NON-NLS-1$
-		result.append(localImage);
 		result.append(", dirty: "); //$NON-NLS-1$
 		result.append(dirty);
 		result.append(", bindingContexts: "); //$NON-NLS-1$

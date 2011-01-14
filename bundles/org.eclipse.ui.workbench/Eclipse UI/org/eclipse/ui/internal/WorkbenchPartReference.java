@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,6 +22,8 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -357,7 +356,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getTitle()
 	 */
 	public String getTitle() {
-		String title = legacyPart == null ? part.getLabel() : legacyPart.getTitle();
+		String title = legacyPart == null ? part.getLocalizedLabel() : legacyPart.getTitle();
 		return Util.safeString(title);
 	}
 
@@ -367,7 +366,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getTitleToolTip()
 	 */
 	public String getTitleToolTip() {
-		String toolTip = part.getTooltip();
+		String toolTip = part.getLocalizedTooltip();
 		return Util.safeString(toolTip);
 	}
 
@@ -637,7 +636,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getPartName()
 	 */
 	public String getPartName() {
-		return part.getLabel();
+		return part.getLocalizedLabel();
 	}
 
 	/*
