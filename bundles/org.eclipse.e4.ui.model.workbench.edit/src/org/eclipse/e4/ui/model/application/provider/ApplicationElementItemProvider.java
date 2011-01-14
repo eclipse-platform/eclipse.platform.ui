@@ -66,6 +66,7 @@ public class ApplicationElementItemProvider
 
 			addElementIdPropertyDescriptor(object);
 			addTagsPropertyDescriptor(object);
+			addContributorURIPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -115,6 +116,28 @@ public class ApplicationElementItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Contributor URI feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addContributorURIPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ApplicationElement_contributorURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_contributorURI_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__CONTRIBUTOR_URI,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns ApplicationElement.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -153,6 +176,7 @@ public class ApplicationElementItemProvider
 		switch (notification.getFeatureID(MApplicationElement.class)) {
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__ELEMENT_ID:
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__TAGS:
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

@@ -78,9 +78,9 @@ public class MenuItemItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_MenuItem_mnemonics_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_MenuItem_mnemonics_feature", "_UI_MenuItem_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 MenuPackageImpl.Literals.MENU_ITEM__MNEMONICS,
+				 getString("_UI_MenuElement_mnemonics_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_MenuElement_mnemonics_feature", "_UI_MenuElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS,
 				 true,
 				 false,
 				 false,

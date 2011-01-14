@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.provider.ApplicationElementItemProvider;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 import org.eclipse.emf.common.notify.AdapterFactory;
@@ -40,7 +41,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class KeyBindingItemProvider
-	extends ItemProviderAdapter
+	extends ApplicationElementItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -69,8 +70,6 @@ public class KeyBindingItemProvider
 			super.getPropertyDescriptors(object);
 
 			addKeySequencePropertyDescriptor(object);
-			addElementIdPropertyDescriptor(object);
-			addTagsPropertyDescriptor(object);
 			addCommandPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
@@ -90,50 +89,6 @@ public class KeyBindingItemProvider
 				 getString("_UI_KeySequence_keySequence_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_KeySequence_keySequence_feature", "_UI_KeySequence_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 CommandsPackageImpl.Literals.KEY_SEQUENCE__KEY_SEQUENCE,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Element Id feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addElementIdPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_elementId_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_elementId_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Tags feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addTagsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS,
 				 true,
 				 false,
 				 false,
@@ -213,7 +168,7 @@ public class KeyBindingItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MKeyBinding)object).getKeySequence();
+		String label = ((MKeyBinding)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_KeyBinding_type") : //$NON-NLS-1$
 			getString("_UI_KeyBinding_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
@@ -232,8 +187,6 @@ public class KeyBindingItemProvider
 
 		switch (notification.getFeatureID(MKeyBinding.class)) {
 			case CommandsPackageImpl.KEY_BINDING__KEY_SEQUENCE:
-			case CommandsPackageImpl.KEY_BINDING__ELEMENT_ID:
-			case CommandsPackageImpl.KEY_BINDING__TAGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case CommandsPackageImpl.KEY_BINDING__PARAMETERS:

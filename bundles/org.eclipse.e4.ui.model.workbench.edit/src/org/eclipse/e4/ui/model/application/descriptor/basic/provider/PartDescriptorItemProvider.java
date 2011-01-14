@@ -17,8 +17,10 @@ import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.provider.ApplicationElementItemProvider;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
+import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.model.application.ui.provider.UILabelItemProvider;
 import org.eclipse.emf.common.notify.AdapterFactory;
@@ -42,7 +44,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class PartDescriptorItemProvider
-	extends UILabelItemProvider
+	extends ApplicationElementItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -70,16 +72,153 @@ public class PartDescriptorItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addLabelPropertyDescriptor(object);
+			addIconURIPropertyDescriptor(object);
+			addTooltipPropertyDescriptor(object);
+			addLocalLabelPropertyDescriptor(object);
+			addLocalTooltipPropertyDescriptor(object);
+			addLocalImagePropertyDescriptor(object);
 			addBindingContextsPropertyDescriptor(object);
-			addElementIdPropertyDescriptor(object);
-			addTagsPropertyDescriptor(object);
 			addAllowMultiplePropertyDescriptor(object);
 			addCategoryPropertyDescriptor(object);
 			addCloseablePropertyDescriptor(object);
 			addDirtyablePropertyDescriptor(object);
 			addContributionURIPropertyDescriptor(object);
+			addDescriptionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
+	}
+
+	/**
+	 * This adds a property descriptor for the Label feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addLabelPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_label_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_label_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__LABEL,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Icon URI feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIconURIPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_iconURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_iconURI_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__ICON_URI,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Tooltip feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addTooltipPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_tooltip_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_tooltip_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__TOOLTIP,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Local Label feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addLocalLabelPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_localLabel_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_localLabel_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__LOCAL_LABEL,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Local Tooltip feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addLocalTooltipPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_localTooltip_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_localTooltip_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__LOCAL_TOOLTIP,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Local Image feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addLocalImagePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_UILabel_localImage_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_localImage_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 UiPackageImpl.Literals.UI_LABEL__LOCAL_IMAGE,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
 	}
 
 	/**
@@ -96,50 +235,6 @@ public class PartDescriptorItemProvider
 				 getString("_UI_Bindings_bindingContexts_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_Bindings_bindingContexts_feature", "_UI_Bindings_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Element Id feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addElementIdPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_elementId_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_elementId_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Tags feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addTagsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_ApplicationElement_tags_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_ApplicationElement_tags_feature", "_UI_ApplicationElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS,
 				 true,
 				 false,
 				 false,
@@ -259,6 +354,28 @@ public class PartDescriptorItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Description feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDescriptionPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_PartDescriptor_description_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_PartDescriptor_description_feature", "_UI_PartDescriptor_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 BasicPackageImpl.Literals.PART_DESCRIPTOR__DESCRIPTION,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -327,14 +444,19 @@ public class PartDescriptorItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MPartDescriptor.class)) {
+			case BasicPackageImpl.PART_DESCRIPTOR__LABEL:
+			case BasicPackageImpl.PART_DESCRIPTOR__ICON_URI:
+			case BasicPackageImpl.PART_DESCRIPTOR__TOOLTIP:
+			case BasicPackageImpl.PART_DESCRIPTOR__LOCAL_LABEL:
+			case BasicPackageImpl.PART_DESCRIPTOR__LOCAL_TOOLTIP:
+			case BasicPackageImpl.PART_DESCRIPTOR__LOCAL_IMAGE:
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
-			case BasicPackageImpl.PART_DESCRIPTOR__ELEMENT_ID:
-			case BasicPackageImpl.PART_DESCRIPTOR__TAGS:
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 			case BasicPackageImpl.PART_DESCRIPTOR__CATEGORY:
 			case BasicPackageImpl.PART_DESCRIPTOR__CLOSEABLE:
 			case BasicPackageImpl.PART_DESCRIPTOR__DIRTYABLE:
 			case BasicPackageImpl.PART_DESCRIPTOR__CONTRIBUTION_URI:
+			case BasicPackageImpl.PART_DESCRIPTOR__DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__HANDLERS:

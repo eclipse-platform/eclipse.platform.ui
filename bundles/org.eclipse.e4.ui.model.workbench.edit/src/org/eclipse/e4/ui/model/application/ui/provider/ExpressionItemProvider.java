@@ -13,7 +13,9 @@ package org.eclipse.e4.ui.model.application.ui.provider;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.e4.ui.model.application.provider.ApplicationElementItemProvider;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;
@@ -32,7 +34,7 @@ import org.eclipse.emf.edit.provider.ItemProviderAdapter;
  * @generated
  */
 public class ExpressionItemProvider
-	extends ItemProviderAdapter
+	extends ApplicationElementItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -72,7 +74,10 @@ public class ExpressionItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		return getString("_UI_Expression_type"); //$NON-NLS-1$
+		String label = ((MExpression)object).getElementId();
+		return label == null || label.length() == 0 ?
+			getString("_UI_Expression_type") : //$NON-NLS-1$
+			getString("_UI_Expression_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

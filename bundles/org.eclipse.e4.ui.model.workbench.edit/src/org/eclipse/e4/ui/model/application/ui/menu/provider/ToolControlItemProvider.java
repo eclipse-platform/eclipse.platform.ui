@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.model.application.ui.menu.provider;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.provider.ContributionItemProvider;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 import org.eclipse.e4.ui.model.application.ui.MUiFactory;
@@ -40,7 +41,7 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
  * @generated
  */
 public class ToolControlItemProvider
-	extends ContributionItemProvider
+	extends ToolBarElementItemProvider
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -68,96 +69,27 @@ public class ToolControlItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addToBeRenderedPropertyDescriptor(object);
-			addOnTopPropertyDescriptor(object);
-			addVisiblePropertyDescriptor(object);
-			addContainerDataPropertyDescriptor(object);
-			addCurSharedRefPropertyDescriptor(object);
-			addAccessibilityPhrasePropertyDescriptor(object);
+			addContributionURIPropertyDescriptor(object);
+			addObjectPropertyDescriptor(object);
+			addPersistedStatePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the To Be Rendered feature.
+	 * This adds a property descriptor for the Contribution URI feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addToBeRenderedPropertyDescriptor(Object object) {
+	protected void addContributionURIPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_UIElement_toBeRendered_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_toBeRendered_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the On Top feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addOnTopPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_onTop_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_onTop_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_ELEMENT__ON_TOP,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Visible feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addVisiblePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_visible_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_visible_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_ELEMENT__VISIBLE,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Container Data feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addContainerDataPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_containerData_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_containerData_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA,
+				 getString("_UI_Contribution_contributionURI_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_contributionURI_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI,
 				 true,
 				 false,
 				 false,
@@ -167,41 +99,19 @@ public class ToolControlItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Cur Shared Ref feature.
+	 * This adds a property descriptor for the Object feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addCurSharedRefPropertyDescriptor(Object object) {
+	protected void addObjectPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_UIElement_curSharedRef_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_curSharedRef_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_ELEMENT__CUR_SHARED_REF,
-				 true,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Accessibility Phrase feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addAccessibilityPhrasePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UIElement_accessibilityPhrase_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UIElement_accessibilityPhrase_feature", "_UI_UIElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE,
+				 getString("_UI_Contribution_object_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_object_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT,
 				 true,
 				 false,
 				 false,
@@ -211,33 +121,25 @@ public class ToolControlItemProvider
 	}
 
 	/**
-	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
-	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
-	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
+	 * This adds a property descriptor for the Persisted State feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
-		if (childrenFeatures == null) {
-			super.getChildrenFeatures(object);
-			childrenFeatures.add(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN);
-		}
-		return childrenFeatures;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EStructuralFeature getChildFeature(Object object, Object child) {
-		// Check the type of the specified child object and return the proper feature to use for
-		// adding (see {@link AddCommand}) it as a child.
-
-		return super.getChildFeature(object, child);
+	protected void addPersistedStatePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Contribution_persistedState_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_Contribution_persistedState_feature", "_UI_Contribution_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE,
+				 true,
+				 false,
+				 false,
+				 null,
+				 null,
+				 null));
 	}
 
 	/**
@@ -277,17 +179,10 @@ public class ToolControlItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MToolControl.class)) {
-			case MenuPackageImpl.TOOL_CONTROL__WIDGET:
-			case MenuPackageImpl.TOOL_CONTROL__RENDERER:
-			case MenuPackageImpl.TOOL_CONTROL__TO_BE_RENDERED:
-			case MenuPackageImpl.TOOL_CONTROL__ON_TOP:
-			case MenuPackageImpl.TOOL_CONTROL__VISIBLE:
-			case MenuPackageImpl.TOOL_CONTROL__CONTAINER_DATA:
-			case MenuPackageImpl.TOOL_CONTROL__ACCESSIBILITY_PHRASE:
+			case MenuPackageImpl.TOOL_CONTROL__CONTRIBUTION_URI:
+			case MenuPackageImpl.TOOL_CONTROL__OBJECT:
+			case MenuPackageImpl.TOOL_CONTROL__PERSISTED_STATE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
-			case MenuPackageImpl.TOOL_CONTROL__VISIBLE_WHEN:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
 		super.notifyChanged(notification);
@@ -303,22 +198,6 @@ public class ToolControlItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN,
-				 MUiFactory.INSTANCE.createCoreExpression()));
-	}
-
-	/**
-	 * Return the resource locator for this item provider's resources.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public ResourceLocator getResourceLocator() {
-		return UIElementsEditPlugin.INSTANCE;
 	}
 
 }

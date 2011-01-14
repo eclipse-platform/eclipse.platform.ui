@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 IBM Corporation and others.
+ * Copyright (c) 2009,2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -109,6 +109,7 @@ public class UIEvents {
 		public static final String CATEGORY = "category"; //$NON-NLS-1$
 		public static final String CLOSEABLE = "closeable"; //$NON-NLS-1$
 		public static final String CONTRIBUTIONURI = "contributionURI"; //$NON-NLS-1$
+		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 		public static final String DIRTYABLE = "dirtyable"; //$NON-NLS-1$
 		public static final String MENUS = "menus"; //$NON-NLS-1$
 		public static final String TOOLBAR = "toolbar"; //$NON-NLS-1$
@@ -128,6 +129,7 @@ public class UIEvents {
 
 	public static interface ApplicationElement {
 		public static final String TOPIC = UITopicBase + "/application/ApplicationElement"; //$NON-NLS-1$
+		public static final String CONTRIBUTORURI = "contributorURI"; //$NON-NLS-1$
 		public static final String ELEMENTID = "elementId"; //$NON-NLS-1$
 		public static final String TAGS = "tags"; //$NON-NLS-1$
 	}
@@ -158,6 +160,7 @@ public class UIEvents {
 	public static interface Part {
 		public static final String TOPIC = UITopicBase + "/basic/Part"; //$NON-NLS-1$
 		public static final String CLOSEABLE = "closeable"; //$NON-NLS-1$
+		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 		public static final String MENUS = "menus"; //$NON-NLS-1$
 		public static final String TOOLBAR = "toolbar"; //$NON-NLS-1$
 	}
@@ -271,8 +274,8 @@ public class UIEvents {
 		public static final String MENUCONTRIBUTIONS = "menuContributions"; //$NON-NLS-1$
 	}
 
-	public static interface MenuItem {
-		public static final String TOPIC = UITopicBase + "/menu/MenuItem"; //$NON-NLS-1$
+	public static interface MenuElement {
+		public static final String TOPIC = UITopicBase + "/menu/MenuElement"; //$NON-NLS-1$
 		public static final String MNEMONICS = "mnemonics"; //$NON-NLS-1$
 	}
 

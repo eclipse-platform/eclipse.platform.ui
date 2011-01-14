@@ -131,7 +131,7 @@ public class CoreExpressionItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MCoreExpression)object).getCoreExpressionId();
+		String label = ((MCoreExpression)object).getElementId();
 		return label == null || label.length() == 0 ?
 			getString("_UI_CoreExpression_type") : //$NON-NLS-1$
 			getString("_UI_CoreExpression_type") + " " + label; //$NON-NLS-1$ //$NON-NLS-2$

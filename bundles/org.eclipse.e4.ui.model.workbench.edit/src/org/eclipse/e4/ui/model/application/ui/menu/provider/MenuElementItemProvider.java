@@ -72,6 +72,7 @@ public class MenuElementItemProvider
 			addLocalLabelPropertyDescriptor(object);
 			addLocalTooltipPropertyDescriptor(object);
 			addLocalImagePropertyDescriptor(object);
+			addMnemonicsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -209,6 +210,28 @@ public class MenuElementItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Mnemonics feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addMnemonicsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_MenuElement_mnemonics_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_MenuElement_mnemonics_feature", "_UI_MenuElement_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -240,6 +263,7 @@ public class MenuElementItemProvider
 			case MenuPackageImpl.MENU_ELEMENT__LOCAL_LABEL:
 			case MenuPackageImpl.MENU_ELEMENT__LOCAL_TOOLTIP:
 			case MenuPackageImpl.MENU_ELEMENT__LOCAL_IMAGE:
+			case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}
