@@ -26,7 +26,9 @@ import org.eclipse.team.tests.ccvs.core.EclipseTest;
 public class PreferenceInitializerTest extends EclipseTest {
 
 	private boolean PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME_value = false;
+	private boolean PREF_HAS_MIGRATED_SSH2_PREFS_value = false;
 	private String KEY_SSH2HOME_value = null;
+	private String KEY_PRIVATEKEY_value = null;
 
 	protected void setUp() throws Exception {
 		if (!Platform.getOS().equals(Platform.OS_WIN32))
@@ -38,7 +40,10 @@ public class PreferenceInitializerTest extends EclipseTest {
 				.getNode(JSchCorePlugin.ID);
 		PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME_value = preferences.getBoolean(
 				IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME, false);
+		PREF_HAS_MIGRATED_SSH2_PREFS_value = preferences.getBoolean(
+				IConstants.PREF_HAS_MIGRATED_SSH2_PREFS, false);
 		KEY_SSH2HOME_value = preferences.get(IConstants.KEY_SSH2HOME, null);
+		KEY_PRIVATEKEY_value = preferences.get(IConstants.KEY_PRIVATEKEY, null);
 	}
 
 	protected void tearDown() throws Exception {
@@ -52,24 +57,25 @@ public class PreferenceInitializerTest extends EclipseTest {
 		preferences.putBoolean(
 				IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME,
 				PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME_value);
+		preferences.putBoolean(IConstants.PREF_HAS_MIGRATED_SSH2_PREFS,
+				PREF_HAS_MIGRATED_SSH2_PREFS_value);
 		if (KEY_SSH2HOME_value != null)
 			preferences.put(IConstants.KEY_SSH2HOME, KEY_SSH2HOME_value);
 		else
 			preferences.remove(IConstants.KEY_SSH2HOME);
+		if (KEY_PRIVATEKEY_value != null)
+			preferences.put(IConstants.KEY_PRIVATEKEY, KEY_PRIVATEKEY_value);
+		else
+			preferences.remove(IConstants.KEY_PRIVATEKEY);
 	}
 
-	public void testChangeDefaultWin32SshHome() {
+	public void testChangeDefaultWin32SshHomeOldWorkspace() {
 		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return;
 
-		String userHome = System
-				.getProperty(IConstants.SYSTEM_PROPERTY_USER_HOME);
-
-		String oldDefaultWin32SshHome = null;
-		if (userHome != null) {
-			oldDefaultWin32SshHome = userHome + File.separator
-					+ IConstants.SSH_OLD_DEFAULT_WIN32_HOME;
-			File file = new File(oldDefaultWin32SshHome);
+		if (PreferenceInitializer.SSH_OLD_WIN32_HOME_DEFAULT != null) {
+			File file = new File(
+					PreferenceInitializer.SSH_OLD_WIN32_HOME_DEFAULT);
 			if (!file.exists()) {
 				file.mkdir();
 			}
@@ -78,11 +84,16 @@ public class PreferenceInitializerTest extends EclipseTest {
 		IEclipsePreferences preferences = InstanceScope.INSTANCE
 				.getNode(JSchCorePlugin.ID);
 		preferences.remove(IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME);
+		// this value indicates that this is an old workspace
+		preferences.putBoolean(IConstants.PREF_HAS_MIGRATED_SSH2_PREFS, true);
 		preferences.remove(IConstants.KEY_SSH2HOME);
 
 		// verify that the preference is not set
 		assertFalse(preferences.getBoolean(
 				IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME, false));
+		// verify if this is an old workspace
+		assertTrue(preferences.getBoolean(
+				IConstants.PREF_HAS_MIGRATED_SSH2_PREFS, false));
 
 		PreferenceInitializer preferenceInitializer = new PreferenceInitializer();
 		preferenceInitializer.initializeDefaultPreferences();
@@ -90,8 +101,43 @@ public class PreferenceInitializerTest extends EclipseTest {
 		// verify that the preference is set now
 		assertTrue(preferences.getBoolean(
 				IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME, false));
-		assertEquals(oldDefaultWin32SshHome,
+		assertEquals(PreferenceInitializer.SSH_OLD_WIN32_HOME_DEFAULT,
 				preferences.get(IConstants.KEY_SSH2HOME, null));
+	}
+
+	public void testDontChangeDefaultWin32SshHomeNewWorkspace() {
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+
+		if (PreferenceInitializer.SSH_OLD_WIN32_HOME_DEFAULT != null) {
+			File file = new File(
+					PreferenceInitializer.SSH_OLD_WIN32_HOME_DEFAULT);
+			if (!file.exists()) {
+				file.mkdir();
+			}
+		}
+
+		IEclipsePreferences preferences = InstanceScope.INSTANCE
+				.getNode(JSchCorePlugin.ID);
+		preferences.remove(IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME);
+		// this value indicates that this is a new workspace
+		preferences.remove(IConstants.PREF_HAS_MIGRATED_SSH2_PREFS);
+		preferences.remove(IConstants.KEY_SSH2HOME);
+
+		// verify that the preference is not set
+		assertFalse(preferences.getBoolean(
+				IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME, false));
+		// verify if this is a new workspace
+		assertFalse(preferences.getBoolean(
+				IConstants.PREF_HAS_MIGRATED_SSH2_PREFS, false));
+
+		PreferenceInitializer preferenceInitializer = new PreferenceInitializer();
+		preferenceInitializer.initializeDefaultPreferences();
+
+		// verify that the preference is set now
+		assertTrue(preferences.getBoolean(
+				IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME, false));
+		assertNull(preferences.get(IConstants.KEY_SSH2HOME, null));
 	}
 
 	public static Test suite() {

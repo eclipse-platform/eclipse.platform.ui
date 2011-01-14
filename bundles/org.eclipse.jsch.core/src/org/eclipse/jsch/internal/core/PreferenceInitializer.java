@@ -25,9 +25,14 @@ import org.osgi.service.prefs.BackingStoreException;
 public class PreferenceInitializer extends AbstractPreferenceInitializer{
 
   public static String SSH_HOME_DEFAULT=null;
+
+  public static String SSH_OLD_WIN32_HOME_DEFAULT=null;
+
   static{
     SSH_HOME_DEFAULT=System.getProperty(IConstants.SYSTEM_PROPERTY_USER_HOME);
     if(SSH_HOME_DEFAULT!=null){
+      SSH_OLD_WIN32_HOME_DEFAULT=SSH_HOME_DEFAULT+File.separator
+          +IConstants.SSH_OLD_DEFAULT_WIN32_HOME;
       SSH_HOME_DEFAULT=SSH_HOME_DEFAULT+File.separator
           +IConstants.SSH_DEFAULT_HOME;
     }
@@ -39,8 +44,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer{
     if(SSH_HOME_DEFAULT!=null)
       defaultNode.put(IConstants.KEY_SSH2HOME, SSH_HOME_DEFAULT);
     defaultNode.put(IConstants.KEY_PRIVATEKEY, IConstants.PRIVATE_KEYS_DEFAULT);
-    Utils.migrateSSH2Preferences();
     changeDefaultWin32SshHome();
+    Utils.migrateSSH2Preferences();
   }
 
   private void changeDefaultWin32SshHome(){
@@ -49,28 +54,31 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer{
 
     IEclipsePreferences preferences=InstanceScope.INSTANCE
         .getNode(JSchCorePlugin.ID);
-    boolean verified=preferences.getBoolean(
+
+    // flag to check if the win32 default ssh home was alrady changed
+    boolean defaultWin32SshHomeChanged=preferences.getBoolean(
         IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME, false);
-    if(!verified){
+
+    // flag to check if it is an existing workspace
+    boolean oldWorkspace=preferences.getBoolean(
+        IConstants.PREF_HAS_MIGRATED_SSH2_PREFS, false);
+
+    if(!defaultWin32SshHomeChanged){
       if(null==preferences.get(IConstants.KEY_SSH2HOME, null)){
-        String userHome=System
-            .getProperty(IConstants.SYSTEM_PROPERTY_USER_HOME);
-        if(userHome!=null){
-          String oldSshHome=userHome+File.separator
-              +IConstants.SSH_OLD_DEFAULT_WIN32_HOME;
-          File file=new File(oldSshHome);
-          if(file.exists())
-            preferences.put(IConstants.KEY_SSH2HOME, oldSshHome);
+        if(SSH_OLD_WIN32_HOME_DEFAULT!=null
+            &&new File(SSH_OLD_WIN32_HOME_DEFAULT).exists()&&oldWorkspace){
+          preferences.put(IConstants.KEY_SSH2HOME, SSH_OLD_WIN32_HOME_DEFAULT);
         }
-        preferences.putBoolean(
-            IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME, true);
-        try{
-          preferences.flush();
-        }
-        catch(BackingStoreException e){
-          JSchCorePlugin.log(new Status(IStatus.INFO, JSchCorePlugin.ID,
-              "Could not flush preferences.", e)); //$NON-NLS-1$
-        }
+      }
+
+      preferences.putBoolean(
+          IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME, true);
+      try{
+        preferences.flush();
+      }
+      catch(BackingStoreException e){
+        JSchCorePlugin.log(new Status(IStatus.INFO, JSchCorePlugin.ID,
+            "Could not flush preferences.", e)); //$NON-NLS-1$
       }
     }
   }
