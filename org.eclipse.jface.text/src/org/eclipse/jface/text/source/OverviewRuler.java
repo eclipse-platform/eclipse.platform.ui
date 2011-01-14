@@ -782,7 +782,7 @@ public class OverviewRuler implements IOverviewRuler {
 
 						if (fill != null) {
 							gc.setBackground(fill);
-							gc.fillRectangle(INSET, yy, infos.bounds.x-(2*INSET), hh);
+							gc.fillRectangle(INSET, yy, infos.bounds.width-(2*INSET), hh);
 						}
 
 						if (stroke != null) {
@@ -845,8 +845,8 @@ public class OverviewRuler implements IOverviewRuler {
 			if (DEBUG_COMPUTE_Y)
 				System.out.println("end:    " + yy); //$NON-NLS-1$
 			
-		} else {
-			yy= (int) ((double)infos.thumbHeight/2 + (startLine + 1 - infos.visibleLines / 2) * (infos.bounds.height - infos.thumbHeight) / infos.invisibleLines);
+		} else { // middle of text: map to area from thumbHeight/2 to (canvasHeight-1 - thumbHeight/2)
+			yy= (int) ((double)infos.thumbHeight/2 + (startLine + 1 - infos.visibleLines / 2) * (infos.bounds.height-1 - infos.thumbHeight) / infos.invisibleLines);
 			if (DEBUG_COMPUTE_Y)
 				System.out.println("middle: " + yy); //$NON-NLS-1$
 		}
@@ -900,9 +900,11 @@ public class OverviewRuler implements IOverviewRuler {
 	 * of the document.
 	 *
 	 * @param y_coordinate the y-coordinate
-	 * @return the corresponding document lines
+	 * @param annotationRect <code>true</code> to only consider the position of a drawn annotation rectangle,
+	 * 	<code>false</code> to consider the whole line
+	 * @return the corresponding document lines as {firstLine, lastLine}, or {-1, -1} if no lines correspond to the y-coordinate 
 	 */
-	private int[] toLineNumbers(int y_coordinate) {
+	private int[] toLineNumbers(int y_coordinate, boolean annotationRect) {
 		// this is the inverse of #computeY(int, WidgetInfos)
 		
 		WidgetInfos infos= new WidgetInfos(fTextViewer.getTextWidget(), fCanvas);
@@ -910,40 +912,67 @@ public class OverviewRuler implements IOverviewRuler {
 		if (y_coordinate >= infos.writable || y_coordinate >= infos.bounds.height || y_coordinate < 0)
 			return new int[] {-1, -1};
 		
-		int[] lines= new int[2];
+		if (annotationRect && ANNOTATION_HEIGHT >= infos.bounds.height / infos.maxLines)
+			annotationRect= false;
 		
-		// the "+ 1" below accounts for the offset of the hot spot in typical mouse cursors
-		int pixel0= Math.max(y_coordinate - ANNOTATION_HEIGHT / 2 + 1, 0);
-		int pixel1= Math.min(infos.bounds.height, y_coordinate + ANNOTATION_HEIGHT / 2 + 1);
+		int[] lines= new int[2];
+		int[] pixels;
+
+		int pixelEnd= Math.min(infos.bounds.height, y_coordinate + ANNOTATION_HEIGHT / 2 + 1);
+		if (annotationRect) {
+			pixels= new int[] { pixelEnd };
+		} else {
+			int pixelStart= Math.max(y_coordinate - ANNOTATION_HEIGHT / 2 + 1, 0);
+			pixels= new int[] { pixelStart, pixelEnd };
+		}
 		
 		if (infos.bounds.height > infos.writable || infos.invisibleLines <= 0) { // too few lines for relative positions: align annotations with textWidget lines
 //			yy = Math.max(0, (2 * startLine + 1) * infos.writable / (infos.maxLines * 2) - infos.bounds.y);
-			lines[0]= (int) ((pixel0 + infos.bounds.y) * infos.maxLines / (double)infos.writable);
-			lines[1]= (int) ((pixel1 + infos.bounds.y) * infos.maxLines / (double)infos.writable);
+			for (int i= 0; i < pixels.length; i++)
+				lines[i]= (int) ((pixels[i] + infos.bounds.y) * infos.maxLines / (double)infos.writable);
 			if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
 				System.out.println("static y: " + y_coordinate + " => [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
 		} else if (y_coordinate < infos.thumbHeight / 2) { // before middle of first page: map to area from 0 to thumbHeight/2
 //			yy= (int) (startLine * infos.thumbHeight / infos.visibleLines);
-			lines[0] = (int) (pixel0 * infos.visibleLines / infos.thumbHeight);
-			lines[1] = (int) (pixel1 * infos.visibleLines / infos.thumbHeight);
+			for (int i= 0; i < pixels.length; i++)
+				lines[i] = (int) (pixels[i] * infos.visibleLines / infos.thumbHeight);
 			if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
 				System.out.println("start  y: " + y_coordinate + " => [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
 		} else if (infos.bounds.height - 1 - infos.thumbHeight / 2 < y_coordinate) { // after middle of last page: map to area from canvasHeight-1 - thumbHeight/2 to canvasHeight-1
 //			yy= (int) (infos.bounds.height-1 - (double)infos.thumbHeight / 2 + (startLine - (infos.maxLines - infos.visibleLines / 2) + 1) * infos.thumbHeight / infos.visibleLines);
-			lines[0] = (int) ((pixel0 - (infos.bounds.height-1) + (double)infos.thumbHeight / 2) * infos.visibleLines / infos.thumbHeight - 1 + (infos.maxLines - infos.visibleLines / 2));
-			lines[1] = (int) ((pixel1 - (infos.bounds.height-1) + (double)infos.thumbHeight / 2) * infos.visibleLines / infos.thumbHeight - 1 + (infos.maxLines - infos.visibleLines / 2));
+			for (int i= 0; i < pixels.length; i++)
+				lines[i] = (int) ((pixels[i] - (infos.bounds.height-1) + (double)infos.thumbHeight / 2) * infos.visibleLines / infos.thumbHeight - 1 + (infos.maxLines - infos.visibleLines / 2));
 			if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
 				System.out.println("end    y: " + y_coordinate + " => [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			
-		} else {
-//			yy= (int) ((double)infos.thumbHeight/2 + (startLine + 1 - infos.visibleLines / 2) * (infos.bounds.height - infos.thumbHeight) / infos.invisibleLines);
-			lines[0]= (int) ((pixel0 - (double)infos.thumbHeight/2) * infos.invisibleLines / (infos.bounds.height - infos.thumbHeight) - 1 + infos.visibleLines / 2);
-			lines[1]= (int) ((pixel1 - (double)infos.thumbHeight/2) * infos.invisibleLines / (infos.bounds.height - infos.thumbHeight) - 1 + infos.visibleLines / 2);
+		} else { // middle of text: map to area from thumbHeight/2 to (canvasHeight-1 - thumbHeight/2)
+//			yy= (int) ((double)infos.thumbHeight/2 + (startLine + 1 - infos.visibleLines / 2) * (infos.bounds.height-1 - infos.thumbHeight) / infos.invisibleLines);
+			for (int i= 0; i < pixels.length; i++)
+				lines[i]= (int) ((pixels[i] - (double)infos.thumbHeight/2) * infos.invisibleLines / (infos.bounds.height-1 - infos.thumbHeight) - 1 + infos.visibleLines / 2);
 			if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
 				System.out.println("middle y: " + y_coordinate + " => [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
+		
+		if (y_coordinate < ANNOTATION_HEIGHT && y_coordinate < infos.bounds.y)
+			lines[0]= 0;
+		else if (lines[0] < 0)
+			lines[0]= 0;
+		
+		if (annotationRect) {
+			int y0= computeY(lines[0], infos);
+			if (y_coordinate < y0 || y0 + ANNOTATION_HEIGHT < y_coordinate) {
+				lines[0]= -1;
+				lines[1]= -1;
+				return lines;
+			} else {
+				lines[1]= lines[0];
+			}
+		}
+		
+		if (lines[1] > infos.maxLines)
+			lines[1]= infos.maxLines;
 		
 		if (fTextViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
@@ -959,14 +988,6 @@ public class OverviewRuler implements IOverviewRuler {
 			}
 		}
 		
-		if (y_coordinate < ANNOTATION_HEIGHT && y_coordinate < infos.bounds.y)
-			lines[0]= 0;
-		
-		if (lines[0] < 0)
-			lines[0]= 0;
-		if (lines[1] > infos.maxLines)
-			lines[1]= infos.maxLines;
-
 		if (DEBUG_TO_DOCUMENT_LINE_NUMBER)
 			System.out.println("result: [" + lines[0] + ", " + lines[1] + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return lines;
@@ -1057,7 +1078,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	private void handleMouseDown(MouseEvent event) {
 		if (fTextViewer != null) {
-			int[] lines= toLineNumbers(event.y);
+			int[] lines= toLineNumbers(event.y, false);
 			Position p= getAnnotationPosition(lines);
 			if (p == null && event.button == 1) {
 				try {
@@ -1082,7 +1103,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	private void handleMouseMove(MouseEvent event) {
 		if (fTextViewer != null) {
-			int[] lines= toLineNumbers(event.y);
+			int[] lines= toLineNumbers(event.y, true);
 			Position p= getAnnotationPosition(lines);
 			Cursor cursor= (p != null ? fHitDetectionCursor : null);
 			if (cursor != fLastCursor) {
@@ -1336,7 +1357,7 @@ public class OverviewRuler implements IOverviewRuler {
 		if (fTextViewer == null || y_coordinate == -1)
 			return -1;
 
-		int[] lineNumbers= toLineNumbers(y_coordinate);
+		int[] lineNumbers= toLineNumbers(y_coordinate, false);
 		int bestLine= findBestMatchingLineNumber(lineNumbers);
 		if (bestLine == -1 && lineNumbers.length > 0)
 			return lineNumbers[0];
@@ -1361,7 +1382,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#hasAnnotation(int)
 	 */
 	public boolean hasAnnotation(int y) {
-		return findBestMatchingLineNumber(toLineNumbers(y)) != -1;
+		return findBestMatchingLineNumber(toLineNumbers(y, true)) != -1;
 	}
 
 	/*
