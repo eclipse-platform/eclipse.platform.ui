@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -418,7 +418,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		for (int i = 0; i < engineDescriptors.length; i++) {
 			final EngineDescriptor ed = engineDescriptors[i];
 			if (ed.getEngineTypeId().equals("org.eclipse.help.ui.localSearch") //$NON-NLS-1$
-					&& set.getEngineEnabled(ed) && ed.getEngine() != null) {
+				  && ed.getEngine() != null) {
 				scope = ed.createSearchScope(set.getPreferenceStore());
 			}
 		}
