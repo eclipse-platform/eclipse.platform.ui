@@ -235,6 +235,34 @@ public class EModelServiceTest extends TestCase {
 		assertEquals(windowA, application.getSelectedElement());
 	}
 
+	public void testBringToTop_Bug334411() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		application.setContext(applicationContext);
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		detachedWindow.setToBeRendered(false);
+		window.getWindows().add(detachedWindow);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setToBeRendered(false);
+		detachedWindow.getChildren().add(part);
+
+		getEngine().createGui(window);
+
+		assertEquals(window, application.getSelectedElement());
+
+		EModelService modelService = applicationContext
+				.get(EModelService.class);
+		modelService.bringToTop(part);
+		assertTrue(part.isToBeRendered());
+		assertTrue(detachedWindow.isToBeRendered());
+	}
+
 	public void testGetElementLocation_Bug331062_01() {
 		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
 				.createPerspective();

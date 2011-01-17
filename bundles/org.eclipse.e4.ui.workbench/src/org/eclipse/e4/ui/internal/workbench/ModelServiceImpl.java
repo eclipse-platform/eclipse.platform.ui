@@ -41,6 +41,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -262,7 +264,20 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 
-		if (parent != null) {
+		if (parent == null && element instanceof MWindow) {
+			// no parent but is a window, could be a detached window then
+			parent = (MUIElement) ((EObject) element).eContainer();
+			if (parent != null) {
+				// Force the element to be rendered
+				if (!element.isToBeRendered()) {
+					element.setToBeRendered(true);
+				}
+
+				if (window != parent) {
+					showElementInWindow(window, parent);
+				}
+			}
+		} else if (parent != null) {
 			// Force the element to be rendered
 			if (!element.isToBeRendered())
 				element.setToBeRendered(true);
@@ -519,9 +534,39 @@ public class ModelServiceImpl implements EModelService {
 			MWindow window = getTopLevelWindowFor(persp);
 			IPresentationEngine renderingEngine = persp.getContext().get(IPresentationEngine.class);
 			renderingEngine.createGui(newWindow, window.getWidget(), persp.getContext());
+			
+			newWindow.getContext().set(IWindowCloseHandler.class.getName(),
+					new IWindowCloseHandler() {
+						public boolean close(MWindow window) {
+							closeDetachedWindow(window);
+							// return false since the close request has been handled
+							return false;
+						}
+					});
 		} else if (curParent instanceof MWindow) {
 			((MWindow) curParent).getWindows().add(newWindow);
 		}
+	}
+
+	private void closeDetachedWindow(MWindow window) {
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		List<MPart> parts = findElements(window, null, MPart.class, null);
+		// this saves one part at a time, not ideal but better than not saving
+		// at all
+		for (MPart part : parts) {
+			if (!partService.savePart(part, true)) {
+				return;
+			}
+		}
+
+		// hide every part individually, following 3.x behaviour
+		for (MPart part : parts) {
+			partService.hidePart(part);
+		}
+
+		// finally unrender the window itself
+		window.setToBeRendered(false);
 	}
 
 	/**
