@@ -60,14 +60,17 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer{
         IConstants.PREF_HAS_CHANGED_DEFAULT_WIN32_SSH_HOME, false);
 
     // flag to check if it is an existing workspace
-    boolean oldWorkspace=preferences.getBoolean(
-        IConstants.PREF_HAS_MIGRATED_SSH2_PREFS, false);
+    // TODO bug 334508 needs to be fixed to determine that we are on an existing workspace
+    boolean existingWorkspace=true;
 
     if(!defaultWin32SshHomeChanged){
       if(null==preferences.get(IConstants.KEY_SSH2HOME, null)){
         if(SSH_OLD_WIN32_HOME_DEFAULT!=null
-            &&new File(SSH_OLD_WIN32_HOME_DEFAULT).exists()&&oldWorkspace){
-          preferences.put(IConstants.KEY_SSH2HOME, SSH_OLD_WIN32_HOME_DEFAULT);
+            &&new File(SSH_OLD_WIN32_HOME_DEFAULT).exists()){
+          if(!(SSH_HOME_DEFAULT!=null&&new File(SSH_HOME_DEFAULT).exists())
+              ||existingWorkspace)
+            preferences
+                .put(IConstants.KEY_SSH2HOME, SSH_OLD_WIN32_HOME_DEFAULT);
         }
       }
 

@@ -105,7 +105,7 @@ public class PreferenceInitializerTest extends EclipseTest {
 				preferences.get(IConstants.KEY_SSH2HOME, null));
 	}
 
-	public void testDontChangeDefaultWin32SshHomeNewWorkspace() {
+	public void _testDontChangeDefaultWin32SshHomeNewWorkspace() {
 		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return;
 
