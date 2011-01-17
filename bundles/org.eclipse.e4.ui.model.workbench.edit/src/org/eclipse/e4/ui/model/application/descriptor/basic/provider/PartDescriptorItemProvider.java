@@ -75,9 +75,6 @@ public class PartDescriptorItemProvider
 			addLabelPropertyDescriptor(object);
 			addIconURIPropertyDescriptor(object);
 			addTooltipPropertyDescriptor(object);
-			addLocalLabelPropertyDescriptor(object);
-			addLocalTooltipPropertyDescriptor(object);
-			addLocalImagePropertyDescriptor(object);
 			addBindingContextsPropertyDescriptor(object);
 			addAllowMultiplePropertyDescriptor(object);
 			addCategoryPropertyDescriptor(object);
@@ -147,72 +144,6 @@ public class PartDescriptorItemProvider
 				 getString("_UI_UILabel_tooltip_feature"), //$NON-NLS-1$
 				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_tooltip_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				 UiPackageImpl.Literals.UI_LABEL__TOOLTIP,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Local Label feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addLocalLabelPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UILabel_localLabel_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_localLabel_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_LABEL__LOCAL_LABEL,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Local Tooltip feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addLocalTooltipPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UILabel_localTooltip_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_localTooltip_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_LABEL__LOCAL_TOOLTIP,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Local Image feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addLocalImagePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_UILabel_localImage_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_UILabel_localImage_feature", "_UI_UILabel_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 UiPackageImpl.Literals.UI_LABEL__LOCAL_IMAGE,
 				 true,
 				 false,
 				 false,
@@ -447,9 +378,6 @@ public class PartDescriptorItemProvider
 			case BasicPackageImpl.PART_DESCRIPTOR__LABEL:
 			case BasicPackageImpl.PART_DESCRIPTOR__ICON_URI:
 			case BasicPackageImpl.PART_DESCRIPTOR__TOOLTIP:
-			case BasicPackageImpl.PART_DESCRIPTOR__LOCAL_LABEL:
-			case BasicPackageImpl.PART_DESCRIPTOR__LOCAL_TOOLTIP:
-			case BasicPackageImpl.PART_DESCRIPTOR__LOCAL_IMAGE:
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 			case BasicPackageImpl.PART_DESCRIPTOR__CATEGORY:
