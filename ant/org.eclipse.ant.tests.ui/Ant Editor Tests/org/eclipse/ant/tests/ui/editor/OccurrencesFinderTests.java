@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,10 +45,11 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
 	private void propertyOccurences(AntEditor editor, int offset) throws BadLocationException {
 		OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
 		List positions= finder.perform();
+		assertNotNull("Expecting a position listing", positions);
 		assertTrue("7 positions should have been found; found: " + positions.size(), positions.size() == 7);
 		assertContainsPosition(positions, offset, 8);
-		offset = getOffsetWithinLine(editor, 34, 21);
-		assertContainsPosition(positions, offset, 8);
+		int newoffset = getOffsetWithinLine(editor, 34, 21);
+		assertContainsPosition(positions, newoffset, 8);
 	}
     
     public void testFromPropertyLocation() throws PartInitException, BadLocationException {
@@ -83,9 +84,10 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
             AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true);
             //from property name
             int offset = getOffsetWithinLine(editor, 39, 20);
-            editor.selectAndReveal(offset, 0);
+            editor.selectAndReveal(offset, 50);
             OccurrencesFinder finder= getOccurrencesFinder(editor, offset);
      		List positions= finder.perform();
+     		assertNotNull("Expecting a position listing", positions);
      		assertTrue("3 positions should have been found; found: " + positions.size(), positions.size() == 3);
      		assertContainsPosition(positions, offset, 15);
      		offset = getOffsetWithinLine(editor, 40, 20);
@@ -93,9 +95,10 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
      		
      		 //from echo text
      		offset = getOffsetWithinLine(editor, 40, 20);
-     		editor.selectAndReveal(offset, 0);
+     		editor.selectAndReveal(offset, 10);
             finder= getOccurrencesFinder(editor, offset);
      		positions= finder.perform();
+     		assertNotNull("Expecting a position listing", positions);
      		assertTrue("3 positions should have been found; found: " + positions.size(), positions.size() == 3);
      		assertContainsPosition(positions, offset, 15);
      		offset = getOffsetWithinLine(editor, 39, 20);
@@ -124,8 +127,8 @@ public class OccurrencesFinderTests extends AbstractAntUITest {
 		List positions= finder.perform();
 		assertTrue("6 positions should have been found; found: " + positions.size(), positions.size() == 6);
 		assertContainsPosition(positions, offset, 7);
-		offset = getOffsetWithinLine(editor, 19, 32);
-		assertContainsPosition(positions, offset, 7);
+		int newoffset = getOffsetWithinLine(editor, 19, 32);
+		assertContainsPosition(positions, newoffset, 7);
 	}
     
     public void testFromMacrodefAttributeRef() throws PartInitException, BadLocationException {
