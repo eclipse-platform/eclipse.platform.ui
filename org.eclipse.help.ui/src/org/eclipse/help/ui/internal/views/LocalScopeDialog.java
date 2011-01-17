@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -36,6 +37,10 @@ public class LocalScopeDialog extends TrayDialog {
 		this.scopeSet = set;
 	}
 	
+	protected boolean isResizable() {
+		return true;
+	}
+	
 	protected Control createDialogArea(Composite parent) {
 		EngineDescriptor localSearchDesc = null;
 		for (int i = 0; localSearchDesc == null && i < descManager.getDescriptors().length; i++) {
@@ -50,7 +55,10 @@ public class LocalScopeDialog extends TrayDialog {
     	localHelpPage.setDescription(localSearchDesc.getDescription());
     	localHelpPage.setPreferenceStore(preferenceStore);
     	localHelpPage.createControl(parent);
-		return localHelpPage.getControl();
+		Control helpPageControl = localHelpPage.getControl();
+		GridData layoutData = new GridData(GridData.FILL_BOTH);
+		helpPageControl.setLayoutData(layoutData);
+		return helpPageControl;
 	}
 	
 	protected void okPressed() {
