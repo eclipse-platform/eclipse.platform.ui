@@ -314,13 +314,18 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart findPart(String id) {
-		List<MPart> parts = modelService.findElements(workbenchWindow, id, MPart.class, null,
-				EModelService.IN_ACTIVE_PERSPECTIVE);
+		List<MPart> parts = getParts(MPart.class, id);
 		return parts.size() > 0 ? parts.get(0) : null;
 	}
 
+	private <T> List<T> getParts(Class<T> cls, String id) {
+		return modelService.findElements(workbenchWindow, id, cls, null,
+				EModelService.OUTSIDE_PERSPECTIVE | EModelService.IN_ACTIVE_PERSPECTIVE
+						| EModelService.IN_SHARED_AREA);
+	}
+
 	public Collection<MPart> getParts() {
-		return modelService.findElements(getContainer(), null, MPart.class, null);
+		return getParts(MPart.class, null);
 	}
 
 	public boolean isPartVisible(MPart part) {
@@ -1087,16 +1092,12 @@ public class PartServiceImpl implements EPartService {
 		return true;
 	}
 
-	private Collection<MInputPart> getInputParts() {
-		return modelService.findElements(getContainer(), null, MInputPart.class, null);
-	}
-
 	public Collection<MInputPart> getInputParts(String inputUri) {
 		Assert.isNotNull(inputUri, "Input uri must not be null"); //$NON-NLS-1$
 
 		Collection<MInputPart> rv = new ArrayList<MInputPart>();
 
-		for (MInputPart p : getInputParts()) {
+		for (MInputPart p : getParts(MInputPart.class, null)) {
 			if (inputUri.equals(p.getInputURI())) {
 				rv.add(p);
 			}

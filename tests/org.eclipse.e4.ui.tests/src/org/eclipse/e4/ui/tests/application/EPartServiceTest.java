@@ -664,6 +664,184 @@ public class EPartServiceTest extends TestCase {
 		}
 	}
 
+	public void testGetParts_Bug334559_01() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspective.getWindows().add(detachedWindow);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		detachedWindow.getChildren().add(partB);
+		detachedWindow.setSelectedElement(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		detachedWindow.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		Collection<MPart> parts = partService.getParts();
+		assertEquals(3, parts.size());
+		assertTrue(parts.contains(partA));
+		assertTrue(parts.contains(partB));
+		assertTrue(parts.contains(partC));
+	}
+
+	public void testGetParts_Bug334559_02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspective.getWindows().add(detachedWindow);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		detachedWindow.getChildren().add(partB);
+		detachedWindow.setSelectedElement(partB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		detachedWindow.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		Collection<MPart> parts = partService.getParts();
+		assertEquals(3, parts.size());
+		assertTrue(parts.contains(partA));
+		assertTrue(parts.contains(partB));
+		assertTrue(parts.contains(partC));
+	}
+
+	public void testGetInputParts_Bug334559_01() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MInputPart partA = BasicFactoryImpl.eINSTANCE.createInputPart();
+		partA.setInputURI("http://www.eclipse.org");
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspective.getWindows().add(detachedWindow);
+
+		MInputPart partB = BasicFactoryImpl.eINSTANCE.createInputPart();
+		partB.setInputURI("http://www.eclipse.org");
+		detachedWindow.getChildren().add(partB);
+		detachedWindow.setSelectedElement(partB);
+
+		MInputPart partC = BasicFactoryImpl.eINSTANCE.createInputPart();
+		partC.setInputURI("http://www.eclipse.org");
+		detachedWindow.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		Collection<MInputPart> parts = partService
+				.getInputParts("http://www.eclipse.org");
+		assertEquals(3, parts.size());
+		assertTrue(parts.contains(partA));
+		assertTrue(parts.contains(partB));
+		assertTrue(parts.contains(partC));
+	}
+
+	public void testGetInputParts_Bug334559_02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MInputPart partA = BasicFactoryImpl.eINSTANCE.createInputPart();
+		partA.setInputURI("http://www.eclipse.org");
+		window.getChildren().add(partA);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspective.getWindows().add(detachedWindow);
+
+		MInputPart partB = BasicFactoryImpl.eINSTANCE.createInputPart();
+		partB.setInputURI("http://www.eclipse.org");
+		detachedWindow.getChildren().add(partB);
+		detachedWindow.setSelectedElement(partB);
+
+		MInputPart partC = BasicFactoryImpl.eINSTANCE.createInputPart();
+		partC.setInputURI("http://www.eclipse.org");
+		detachedWindow.getChildren().add(partC);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		Collection<MInputPart> parts = partService
+				.getInputParts("http://www.eclipse.org");
+		assertEquals(3, parts.size());
+		assertTrue(parts.contains(partA));
+		assertTrue(parts.contains(partB));
+		assertTrue(parts.contains(partC));
+	}
+
 	public void testGetInputParts() {
 		final String uri1 = "file:///a.txt";
 		final String uri2 = "file:///b.txt";
