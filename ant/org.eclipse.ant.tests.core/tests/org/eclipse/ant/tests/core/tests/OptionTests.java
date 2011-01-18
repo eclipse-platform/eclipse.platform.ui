@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2011 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -25,10 +25,10 @@ import org.eclipse.core.runtime.CoreException;
 
 public class OptionTests extends AbstractAntTest {
 	
-	protected static final String UNKNOWN_ARG = "Unknown argument: ";
-	protected static final String START_OF_HELP = "ant [options] [target [target2 [target3] ...]]";
-	protected static final String VERSION = "Apache Ant(TM) version 1.8.2 compiled on December 20 2010";
-	protected static final String PLUGIN_VERSION = "org.apache.ant_1.8.2";
+	protected static final String UNKNOWN_ARG= "Unknown argument: ";
+	protected static final String START_OF_HELP= "ant [options] [target [target2 [target3] ...]]";
+	protected static final String VERSION= "Apache Ant version 1.7.1 compiled on June 27 2008";
+	protected static final String PLUGIN_VERSION= "org.apache.ant_1.7.1";
 	 
 	public OptionTests(String name) {
 		super(name);
@@ -58,7 +58,7 @@ public class OptionTests extends AbstractAntTest {
 	public void testVersion() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-version"});
 		assertTrue("One message should have been logged", AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
-		assertEquals("Version is incorrect: ", VERSION, getLastMessageLogged());
+		assertTrue("Version is incorrect", VERSION.equals(getLastMessageLogged()));
 	}
 	
 	/**
@@ -578,9 +578,8 @@ public class OptionTests extends AbstractAntTest {
 		} finally {
 			restorePreferenceDefaults();
 		}
-		//we are looking for the ant.home entry
-		List messages = AntTestChecker.getDefault().getMessages();
-		String msg = (String)messages.get(17);
+		
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(15);
 		//msg depends on whether self hosting testing or build testing
 		assertTrue("Message incorrect: " + msg, checkAntHomeMessage(msg));
 	}

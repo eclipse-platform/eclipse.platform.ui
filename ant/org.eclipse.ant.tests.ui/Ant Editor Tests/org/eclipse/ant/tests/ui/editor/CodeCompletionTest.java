@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2011 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -259,10 +259,10 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	processor.setColumnNumber(columnNumber);
     	processor.setCursorPosition(lineOffset + columnNumber);
     	proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "", "depends");
-    	assertTrue(proposals.length == 7);
+    	assertTrue(proposals.length == 6);
     	assertContains("main", proposals);
-    	//XXX why do we not want a valid proposal?
-    	/*assertDoesNotContain("pretest", proposals);*/
+    	assertDoesNotContain("pretest", proposals);
+    	
     }
     
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,6 @@ import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelperRepository;
 import org.apache.tools.ant.RuntimeConfigurable;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
@@ -177,6 +176,7 @@ public class AntModel implements IAntModel {
     
     public AntModel(IDocument document, IProblemRequestor problemRequestor, LocationProvider locationProvider, boolean resolveLexicalInfo, boolean resolvePositionInfo, boolean resolveTaskInfo) {
         init(document, problemRequestor, locationProvider);
+        
         fHasLexicalInfo= resolveLexicalInfo;
         fHasPositionInfo= resolvePositionInfo;
         fHasTaskInfo= resolveTaskInfo;
@@ -194,29 +194,6 @@ public class AntModel implements IAntModel {
         }
         fgInstanceCount++;
         DecayCodeCompletionDataStructuresThread.cancel();
-        ProjectHelper helper = getProjectHelper();
-    	if(helper == null) {
-    		ProjectHelperRepository.getInstance().registerProjectHelper(ProjectHelper.class);
-    	}
-    }
-    
-    /**
-     * Searches the collection of registered {@link org.apache.tools.ant.ProjectHelper}s to see if we have one
-     * registered already.
-     * 
-     * @return the {@link ProjectHelper} from our implementation of <code>null</code> if we have not registered one yet
-     * @since 3.7
-     * @see ProjectHelperRepository
-     */
-    ProjectHelper getProjectHelper() {
-    	Iterator helpers = ProjectHelperRepository.getInstance().getHelpers();
-    	while(helpers.hasNext()) {
-			org.apache.tools.ant.ProjectHelper helper = (org.apache.tools.ant.ProjectHelper) helpers.next();
-			if(helper instanceof ProjectHelper) {
-				return (ProjectHelper) helper;
-			}
-		}
-    	return null;
     }
     
     /* (non-Javadoc)
@@ -377,9 +354,8 @@ public class AntModel implements IAntModel {
         }
         project.setUserProperty("ant.file", filePath); //$NON-NLS-1$
         project.setUserProperty("ant.version", Main.getAntVersion()); //$NON-NLS-1$
-        
-        ProjectHelper projectHelper = getProjectHelper();
-        ProjectHelper.setAntModel(this);
+
+        ProjectHelper projectHelper= new ProjectHelper(this);
         projectHelper.setBuildFile(file);
         project.addReference("ant.projectHelper", projectHelper); //$NON-NLS-1$
         return projectHelper;
