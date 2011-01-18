@@ -110,7 +110,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 			boolean menuChild = parent instanceof MMenu;
 
 			// If the parent isn't displayed who cares?
-			if (parent == null || parent.getWidget() == null || menuChild)
+			if (!(parent instanceof MApplication)
+					&& (parent == null || parent.getWidget() == null || menuChild))
 				return;
 
 			if (changedElement.isToBeRendered()) {

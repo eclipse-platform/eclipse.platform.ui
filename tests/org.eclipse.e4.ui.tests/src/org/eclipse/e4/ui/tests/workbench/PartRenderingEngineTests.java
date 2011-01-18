@@ -1681,6 +1681,60 @@ public class PartRenderingEngineTests extends TestCase {
 				perspectiveContext2.getActiveChild());
 	}
 
+	public void testBug334644_01() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		window.setToBeRendered(false);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(application);
+
+		assertNull("No widget for an unrendered window", window.getWidget());
+		assertNull("No context for an unrendered window", window.getContext());
+
+		window.setToBeRendered(true);
+
+		assertNotNull("Rendered window should have a widget",
+				window.getWidget());
+		assertNotNull("Rendered window should have a context",
+				window.getContext());
+	}
+
+	public void testBug334644_02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		window.setToBeRendered(true);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull("Rendered window should have a widget",
+				window.getWidget());
+		assertNotNull("Rendered window should have a context",
+				window.getContext());
+
+		window.setToBeRendered(false);
+
+		assertNull("No widget for an unrendered window", window.getWidget());
+		assertNull("No context for an unrendered window", window.getContext());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
