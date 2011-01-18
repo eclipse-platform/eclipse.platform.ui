@@ -2193,9 +2193,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage.
      */
     public boolean isEditorAreaVisible() {
-		// FIXME compat isEditorAreaVisible
-		E4Util.unsupported("isEditorAreaVisible"); //$NON-NLS-1$
-		return true;
+		MPerspective perspective = getPerspectiveStack().getSelectedElement();
+		MUIElement find = modelService.find(IPageLayout.ID_EDITOR_AREA, perspective);
+		return find == null ? false : find.isVisible() && find.isToBeRendered();
     }
 
 	/*
@@ -2687,9 +2687,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#setEditorAreaVisible(boolean)
 	 */
 	public void setEditorAreaVisible(boolean showEditorArea) {
-		// FIXME compat setEditorAreaVisible
-		E4Util.unsupported("setEditorAreaVisible"); //$NON-NLS-1$
-
+		MPerspective perspective = getPerspectiveStack().getSelectedElement();
+		MUIElement find = modelService.find(IPageLayout.ID_EDITOR_AREA, perspective);
+		if (find != null) {
+			if (showEditorArea) {
+				// make sure it's been rendered if it hasn't been
+				find.setToBeRendered(true);
+			}
+			find.setVisible(showEditorArea);
+		}
 	}
 
     
