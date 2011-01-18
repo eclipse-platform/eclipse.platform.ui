@@ -632,13 +632,10 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 				return;
 			}
 
-			HashMap currentState = new HashMap();
-			int sources = updateSelection(currentState);
-			sources |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
-			currentState.put(
+			fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE,
 					ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME,
 					id);
-			fireSourceChanged(sources, currentState);
+
 			lastPerspectiveId = id;
 		}
 

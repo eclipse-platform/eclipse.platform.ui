@@ -31,9 +31,12 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -90,6 +93,40 @@ public class EvaluationServiceTest extends UITestCase {
 		}
 	}
 
+	public void testBug334524() throws Exception {
+		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
+		IPerspectiveDescriptor resourecePerspective = registry.findPerspectiveWithId("org.eclipse.ui.resourcePerspective");
+		IPerspectiveDescriptor javaPerspective = registry.findPerspectiveWithId("org.eclipse.jdt.ui.JavaPerspective");
+		String viewId = "org.eclipse.ui.tests.SelectionProviderView";
+		
+		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchPage activePage = window.getActivePage();
+		
+		// show view in resource perspective
+		activePage.setPerspective(resourecePerspective);
+		SelectionProviderView view = (SelectionProviderView) activePage.showView(viewId);
+		processEvents();
+		
+		// show view in java perspective
+		activePage.setPerspective(javaPerspective);
+		activePage.showView(viewId);
+		processEvents();
+		
+		// now set the selection
+		IStructuredSelection selection = new StructuredSelection(new String("testing selection")); 
+		view.setSelection(selection);
+		processEvents();
+		
+		// switch perspective & check selection
+		activePage.setPerspective(resourecePerspective);
+		processEvents();
+		
+		IEvaluationService service = (IEvaluationService) window.getService(IEvaluationService.class);
+		Object currentSelection = service.getCurrentState().getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		assertEquals(selection, currentSelection);
+		
+	}
+	
 	public void testBasicService() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IEvaluationService service = (IEvaluationService) window
