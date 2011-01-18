@@ -1735,6 +1735,68 @@ public class PartRenderingEngineTests extends TestCase {
 		assertNull("No context for an unrendered window", window.getContext());
 	}
 
+	public void testRemoveGui_Bug334577_01() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspective.getWindows().add(detachedWindow);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(detachedWindow.getContext());
+		assertNotNull(detachedWindow.getWidget());
+
+		perspective.setToBeRendered(false);
+
+		assertNull(detachedWindow.getContext());
+		assertNull(detachedWindow.getWidget());
+	}
+
+	public void testRemoveGui_Bug334577_02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.getWindows().add(detachedWindow);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(detachedWindow.getContext());
+		assertNotNull(detachedWindow.getWidget());
+
+		window.setToBeRendered(false);
+
+		assertNull(detachedWindow.getContext());
+		assertNull(detachedWindow.getWidget());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);

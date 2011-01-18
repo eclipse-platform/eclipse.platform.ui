@@ -48,6 +48,7 @@ import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
@@ -645,6 +646,18 @@ public class PartRenderingEngine implements IPresentationEngine {
 						&& children.contains(selectedElement)) {
 					// now remove the selected element
 					removeGui(selectedElement);
+				}
+			}
+
+			if (element instanceof MPerspective) {
+				MPerspective perspective = (MPerspective) element;
+				for (MWindow subWindow : perspective.getWindows()) {
+					removeGui(subWindow);
+				}
+			} else if (element instanceof MWindow) {
+				MWindow window = (MWindow) element;
+				for (MWindow subWindow : window.getWindows()) {
+					removeGui(subWindow);
 				}
 			}
 
