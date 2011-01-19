@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 303889
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
 
+import com.ibm.icu.text.Bidi;
 import com.ibm.icu.text.MessageFormat;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -936,6 +938,23 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		return checkCommandLineLocale(); //Use the default value if there is nothing specified
 	}
 	
+    /**
+	 * Check whether workbench translation is loaded in bidi languages
+	 * @return boolean
+	 */
+	private boolean checkBidiSDK_NLSPacks() {
+		//Check if the user installed the nls packs for bidi 
+		String loadingWorkbench = WorkbenchMessages.Startup_Loading_Workbench;
+		if (loadingWorkbench != null) {
+			boolean isBidi = Bidi.requiresBidi(loadingWorkbench.toCharArray(), 0,
+					loadingWorkbench.length());
+			if (isBidi) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Check to see if the command line parameter for -nl
 	 * has been set. If so imply the orientation from this 
@@ -956,15 +975,17 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		
 		//Check if the user property is set. If not do not
 		//rely on the vm.
-		if(System.getProperty(NL_USER_PROPERTY) == null) {
+		if (System.getProperty(NL_USER_PROPERTY) == null && !checkBidiSDK_NLSPacks()) {
 			return SWT.NONE;
 		}
-		
+		if (System.getProperty(NL_USER_PROPERTY) == null && checkBidiSDK_NLSPacks()) {
+			return SWT.RIGHT_TO_LEFT;
+		}
 		Locale locale = Locale.getDefault();
 		String lang = locale.getLanguage();
 
-		if ("iw".equals(lang) || "he".equals(lang) || "ar".equals(lang) ||  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				"fa".equals(lang) || "ur".equals(lang)) { //$NON-NLS-1$ //$NON-NLS-2$ 
+		if (("iw".equals(lang) || "he".equals(lang) || "ar".equals(lang) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"fa".equals(lang) || "ur".equals(lang)) && checkBidiSDK_NLSPacks()) { //$NON-NLS-1$ //$NON-NLS-2$ 
 			return SWT.RIGHT_TO_LEFT;
 		}
 			
