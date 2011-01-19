@@ -506,12 +506,24 @@ public class ModelServiceImpl implements EModelService {
 	public void detach(MPartSashContainerElement element, int x, int y, int width, int height) {
 		// Determine the correct parent for the new window
 		MUIElement curParent = element.getParent();
-		while (curParent != null && !(curParent instanceof MPerspective)
-				&& !(curParent instanceof MWindow))
-			curParent = curParent.getParent();
+		MUIElement current = element;
+		MWindow window = getTopLevelWindowFor(element);
+		while (!(curParent instanceof MPerspective) && !(curParent instanceof MWindow)) {
+			if (curParent == null) {
+				// no parent, maybe we're being represented by a placeholder
+				current = findPlaceholderFor(window, current);
+				if (current == null) {
+					return; // log??
+				}
 
-		if (curParent == null)
-			return; // log??
+				curParent = current.getParent();
+				if (curParent == null) {
+					return; // log??
+				}
+			}
+			current = curParent;
+			curParent = current.getParent();
+		}
 
 		MTrimmedWindow newWindow = BasicFactoryImpl.INSTANCE.createTrimmedWindow();
 
@@ -529,7 +541,6 @@ public class ModelServiceImpl implements EModelService {
 			MPerspective persp = (MPerspective) curParent;
 			persp.getWindows().add(newWindow);
 
-			MWindow window = getTopLevelWindowFor(persp);
 			IPresentationEngine renderingEngine = persp.getContext().get(IPresentationEngine.class);
 			renderingEngine.createGui(newWindow, window.getWidget(), persp.getContext());
 		} else if (curParent instanceof MWindow) {
@@ -542,9 +553,6 @@ public class ModelServiceImpl implements EModelService {
 	 * @return
 	 */
 	private MWindowElement wrapElementForWindow(MPartSashContainerElement element) {
-		if (element instanceof MWindowElement)
-			return (MWindowElement) element;
-
 		if (element instanceof MPlaceholder) {
 			MUIElement ref = ((MPlaceholder) element).getRef();
 			if (ref instanceof MPart) {
@@ -552,6 +560,12 @@ public class ModelServiceImpl implements EModelService {
 				newPS.getChildren().add((MPlaceholder) element);
 				return newPS;
 			}
+		} else if (element instanceof MPart) {
+			MPartStack newPS = MBasicFactory.INSTANCE.createPartStack();
+			newPS.getChildren().add((MPart) element);
+			return newPS;
+		} else if (element instanceof MWindowElement) {
+			return (MWindowElement) element;
 		}
 		return null;
 	}
