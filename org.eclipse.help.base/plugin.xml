@@ -22,6 +22,7 @@
    <extension-point id="searchParticipant" name="%help_search_participant_extension_point_name" schema="schema/searchParticipant.exsd"/>
    <extension-point id="scope" name="%help_scope_extension_point_name" schema="schema/scope.exsd"/>
    <extension-point id="display" name="%help_display_extension_point_name" schema="schema/display.exsd"/>
+   <extension-point id="searchProcessor" name="%search_processor_extension_point_name" schema="schema/searchProcessor.exsd"/>
 
 <!-- Stand-alone infocenter application -->
    <extension

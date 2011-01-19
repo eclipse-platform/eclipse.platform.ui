@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +32,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.QueryTooComplexException;
 import org.eclipse.help.internal.search.SearchHit;
+import org.eclipse.help.internal.search.SearchManager;
 import org.eclipse.help.internal.search.SearchProgressMonitor;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
@@ -43,8 +43,11 @@ import org.eclipse.help.internal.workingset.AdaptableSelectedTopic;
 import org.eclipse.help.internal.workingset.AdaptableToc;
 import org.eclipse.help.internal.workingset.AdaptableTopic;
 import org.eclipse.help.internal.workingset.WorkingSet;
+import org.eclipse.help.search.AbstractSearchProcessor;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.search.ISearchEngineResult2;
+import org.eclipse.help.search.ISearchResult;
+import org.eclipse.help.search.SearchProcessorInfo;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -71,6 +74,9 @@ public class SearchData extends ActivitiesData {
 	// QueryException if any
 	private QueryTooComplexException queryException = null;
 
+	// List of alternate search terms
+	private List altList = new ArrayList();
+
 	/**
 	 * Constructs the xml data for the search results page.
 	 * 
@@ -91,9 +97,34 @@ public class SearchData extends ActivitiesData {
 			workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
 			saveWorkingSet(workingSetName);
 		} 
-
+		
 		// try loading search results or get the indexing progress info.
 		if (isSearchRequest() && !isScopeRequest()) {
+
+			AbstractSearchProcessor processors[] = SearchManager.getSearchProcessors();
+			for (int p=0;p<processors.length;p++)
+			{
+				SearchProcessorInfo result = 
+					processors[p].preSearch(searchWord);
+				if (result!=null)
+				{
+					String alternates[] = result.getAlternateTerms();
+					if (alternates!=null)
+					{
+						for (int a=0;a<alternates.length;a++)
+						{
+							altList.add(
+									"<div><a target=\"_self\" href=\"./searchView.jsp?searchWord="+alternates[a]+"\">"+ //$NON-NLS-1$ //$NON-NLS-2$
+									alternates[a]+
+									"</a></div>"); //$NON-NLS-1$
+						}
+					}
+					String query = result.getQuery();
+					if (query!=null)
+						searchWord = query;
+				}
+			}
+			
 			loadSearchResults();
 			if (queryException != null) {
 				return;
@@ -106,9 +137,26 @@ public class SearchData extends ActivitiesData {
 						break;
 					}
 				}
+				
+				ISearchResult results[] = SearchManager.convertHitsToResults(hits);
+				boolean reset= false;
+				for (int p=0;p<processors.length;p++)
+				{
+					ISearchResult tmp[] = processors[p].postSearch(searchWord,results);
+					if (tmp!=null)
+					{
+						reset = true;
+						results = tmp;
+					}
+				}
+				if (reset)
+					hits = SearchManager.convertResultsToHits(results);
+				
+				
 			}
 		}
 	}
+
 
 	/**
 	 * Returns true when there is a search request
@@ -562,6 +610,22 @@ public class SearchData extends ActivitiesData {
 	    return NLS.bind(ServletResources.getString("matchesInScope", request), "" + getResultsCount(), scope); //$NON-NLS-1$ //$NON-NLS-2$		
 	}
 
+	public String getPreProcessorResults()
+	{
+		if (altList==null || altList.isEmpty())
+			return ""; //$NON-NLS-1$
+
+		StringBuffer result = new StringBuffer();
+		
+		result.append(ServletResources.getString("AlternateSearchQueries", request)); //$NON-NLS-1$
+		result.append("<ul>"); //$NON-NLS-1$
+		for (int a=0;a<altList.size();a++)
+			result.append("<li>"+(String)altList.get(a)+"</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+		result.append("</ul>"); //$NON-NLS-1$
+		
+		return result.toString();
+	}
+	
 	/*
 	 * Filters out results that help doesn't know how to open (i.e. those hits
 	 * that implement ISearchEngineResult2 and canOpen() returns true.

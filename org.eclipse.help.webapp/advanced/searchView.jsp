@@ -90,6 +90,15 @@ function onShow() {
 <body dir="<%=direction%>">
 
 <%
+	String preResults = data.getPreProcessorResults();
+
+	if (!preResults.equals(""))
+	{
+		out.write(preResults);
+		out.write("<HR/>");
+	}
+
+
 if (!data.isSearchRequest()) {
 	out.write(ServletResources.getString("doSearch", request));
 } else if (data.getQueryExceptionMessage()!=null) {

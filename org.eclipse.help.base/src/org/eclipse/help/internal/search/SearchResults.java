@@ -139,6 +139,11 @@ public class SearchResults implements ISearchHitCollector {
 				.toArray(new SearchHit[searchHitList.size()]);
 
 	}
+	
+	public void setHits(SearchHit hits[])
+	{
+		searchHits = hits;
+	}
 	/**
 	 * Finds a topic within a scope
 	 */

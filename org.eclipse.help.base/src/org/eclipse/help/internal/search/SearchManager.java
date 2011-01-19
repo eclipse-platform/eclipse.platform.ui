@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
@@ -26,6 +29,8 @@ import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.base.remote.RemoteSearchManager;
 import org.eclipse.help.internal.search.federated.FederatedSearchEntry;
 import org.eclipse.help.internal.search.federated.FederatedSearchJob;
+import org.eclipse.help.search.AbstractSearchProcessor;
+import org.eclipse.help.search.ISearchResult;
 
 /*
  * Manages both local and remote searching, as well as merging of results.
@@ -161,6 +166,81 @@ public class SearchManager {
 	public void close() {
 		localManager.close();
 	}
+	
+	/*
+	 * Gets the list of registered search processors
+	 */
+	public static AbstractSearchProcessor[] getSearchProcessors()
+	{
+		IConfigurationElement[] configs = 
+			Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.help.base.searchProcessor"); //$NON-NLS-1$
+		
+		ArrayList processors = new ArrayList();
+		
+		for (int c=0;c<configs.length;c++)
+		{
+			try {
+				processors.add(
+						configs[c].createExecutableExtension("class"));//$NON-NLS-1$
+			} catch (CoreException e) {} 
+		}
+		
+		return (AbstractSearchProcessor[])processors.toArray(new AbstractSearchProcessor[processors.size()]);
+	}
+	
+	/*
+	 * Convert Lucene SearchHits to ISearchResults
+	 */
+	public static ISearchResult[] convertHitsToResults(SearchHit hits[]) {
+
+		ISearchResult results[] = new ISearchResult[hits.length];
+		for (int r=0;r<results.length;r++)
+		{
+			SearchResult result = new SearchResult();
+			if (hits[r].getHref()!=null)
+				result.setHref(hits[r].getHref());
+			if (hits[r].getId()!=null)
+				result.setId(hits[r].getId());
+			if (hits[r].getParticipantId()!=null)
+				result.setParticipantId(hits[r].getParticipantId());
+			if (hits[r].getDescription()!=null)
+				result.setDescription(hits[r].getDescription());
+			if (hits[r].getLabel()!=null)
+				result.setLabel(hits[r].getLabel());
+			if (hits[r].getSummary()!=null)
+				result.setSummary(hits[r].getSummary());
+			if (hits[r].getToc()!=null)
+				result.setToc(hits[r].getToc());
+			if (hits[r].getIconURL()!=null)
+				result.setIcon(hits[r].getIconURL());
+			result.setScore(hits[r].getScore());
+			result.setPotentialHit(hits[r].isPotentialHit());
+			results[r] = result;
+		}
+		return results;
+	}
+
+	/*
+	 * Convert ISearchResults to SearchHits
+	 */
+	public static SearchHit[] convertResultsToHits(ISearchResult[] results) {
+
+		SearchHit hits[] = new SearchHit[results.length];
+		for (int r=0;r<results.length;r++)
+		{
+			hits[r] = new SearchHit(
+					results[r].getHref(),
+					results[r].getLabel(),
+					results[r].getSummary(),
+					results[r].getScore(),
+					results[r].getToc(),
+					results[r].getId(),
+					results[r].getParticipantId(),
+					results[r].isPotentialHit());
+		}
+		return hits;
+	}	
+	
 	
 	/*
 	 * Buffers hits, and only sends them off to the wrapped collector

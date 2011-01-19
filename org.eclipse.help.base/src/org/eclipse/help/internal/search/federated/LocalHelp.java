@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.help.internal.search.federated;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.internal.HelpPlugin;
@@ -25,6 +27,8 @@ import org.eclipse.help.search.*;
 public class LocalHelp implements ISearchEngine2 {
 	private static final int MAX_HITS = 500;
 
+	private List altList;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -37,6 +41,26 @@ public class LocalHelp implements ISearchEngine2 {
 			final ISearchEngineResultCollector collector,
 			IProgressMonitor monitor) throws CoreException {
 
+		AbstractSearchProcessor processors[] = SearchManager.getSearchProcessors();
+		altList = new ArrayList();
+		for (int p=0;p<processors.length;p++)
+		{
+			SearchProcessorInfo result = 
+				processors[p].preSearch(query);
+			if (result!=null)
+			{
+				String alternates[] = result.getAlternateTerms();
+				if (alternates!=null)
+					for (int a=0;a<alternates.length;a++)
+						altList.add(alternates[a]);
+
+				String modQuery = result.getQuery();
+				if (modQuery!=null)
+					query = modQuery;
+			}
+		}
+		
+		
 		SearchQuery searchQuery = new SearchQuery();
 		searchQuery.setSearchWord(query);
 		WorkingSet[] workingSets = null;
@@ -53,6 +77,25 @@ public class LocalHelp implements ISearchEngine2 {
 		}
 		BaseHelpSystem.getSearchManager().search(searchQuery, localResults,
 				monitor);
+
+		ISearchResult results[] = SearchManager.convertHitsToResults(localResults.getSearchHits());
+		boolean reset = false;
+		for (int p=0;p<processors.length;p++)
+		{
+			ISearchResult tmp[] = processors[p].postSearch(query,results);
+			if (tmp!=null)
+			{
+				reset = true;
+				results = tmp;
+			}
+		}
+		
+		if (reset)
+		{
+			SearchHit hits[] = SearchManager.convertResultsToHits(results);
+			localResults.setHits(hits);
+		}
+
 		postResults(localResults, collector, localScope.getCapabilityFiltered());
 	}
 
@@ -95,6 +138,10 @@ public class LocalHelp implements ISearchEngine2 {
 		return null;
 	}
 	
+	public List getAlternates()
+	{
+		return altList;
+	}
 	
 	public boolean open(String id) {
 		int sep = id.indexOf('/');

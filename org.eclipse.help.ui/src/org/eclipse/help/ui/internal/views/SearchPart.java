@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.views;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -25,6 +26,7 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.search.federated.FederatedSearchEntry;
 import org.eclipse.help.internal.search.federated.FederatedSearchJob;
+import org.eclipse.help.internal.search.federated.LocalHelp;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.search.ISearchEngineResultCollector;
 import org.eclipse.help.search.ISearchScope;
@@ -52,6 +54,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
@@ -139,6 +142,12 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 
 	private SearchScopeObserver scopeObserver;
 
+	private Section alternateQuerySection;
+
+	private FormToolkit toolkit;
+
+	private Composite alternateQueryComposite;
+
 	private class JobListener implements IJobChangeListener, Runnable {
 
 		private boolean searchInProgress = false;
@@ -197,6 +206,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	 * @param style
 	 */
 	public SearchPart(final Composite parent, FormToolkit toolkit) {
+		this.toolkit = toolkit;
 		container = toolkit.createComposite(parent);
 		scopeSetManager = ScopeState.getInstance().getScopeSetManager();
 		TableWrapLayout layout = new TableWrapLayout();
@@ -259,6 +269,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		createScopeSection(toolkit);
 		
 		createRemoteStatusLink(toolkit);
+		
+//		createAlternateQueriesSection(toolkit);
+		
 		toolkit.paintBordersFor(container);
 		jobListener = new JobListener();
 		Job.getJobManager().addJobChangeListener(jobListener);
@@ -350,6 +363,29 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		td.colspan = 2;
 		td.align = TableWrapData.FILL;
 		remoteStatusLink.setLayoutData(td);
+	}	
+	
+	private void createAlternateQueriesSection(FormToolkit toolkit){
+
+		TableWrapData td = new TableWrapData();
+		td.colspan = 2;
+		td.align = TableWrapData.FILL;
+
+		container.setMenu(new Menu(container));
+		
+		alternateQuerySection = toolkit.createSection(container, Section.TWISTIE | Section.COMPACT
+				| Section.LEFT_TEXT_CLIENT_ALIGNMENT);
+		alternateQuerySection.setLayoutData(td);
+		alternateQuerySection.setText(Messages.AlternateQueries);
+		
+		alternateQueryComposite = toolkit.createComposite(alternateQuerySection);
+		alternateQuerySection.setClient(alternateQueryComposite);
+		TableWrapLayout flayout = new TableWrapLayout();
+		flayout.numColumns = 1;
+		alternateQueryComposite.setLayout(flayout);
+		alternateQuerySection.setExpanded(true);
+
+//		alternateQuerySection.setVisible(false);
 	}
 	
 	private void createAdvancedLink(Composite parent, FormToolkit toolkit) {
@@ -604,6 +640,34 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 
 					public void accept(ISearchEngineResult[] searchResults) {
 						results.add(ed, searchResults);
+						if (ed.getEngine() instanceof LocalHelp)
+						{
+							container.getDisplay().asyncExec(new Thread(){
+								public void run(){
+									if (alternateQuerySection!=null)
+									{
+										alternateQuerySection.dispose();
+										alternateQuerySection = null;
+									}
+									List alts = ((LocalHelp)ed.getEngine()).getAlternates();
+									if (!alts.isEmpty())
+									{
+										createAlternateQueriesSection(toolkit);
+										for (int b=0;b<alts.size();b++)
+										{
+											Hyperlink link = toolkit.createHyperlink(alternateQueryComposite, (String)alts.get(b), SWT.NONE);
+											link.addHyperlinkListener(new HyperlinkAdapter(){
+												public void linkActivated(HyperlinkEvent e) {
+
+													searchWordCombo.setText(((Hyperlink)e.getSource()).getText());
+													doSearch(((Hyperlink)e.getSource()).getText());
+												}
+											});
+										}
+									}									
+								}
+							});
+						}						
 					}
 
 					public void error(IStatus status) {
