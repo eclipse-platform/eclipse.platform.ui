@@ -1902,8 +1902,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		MPerspective perspective = getCurrentPerspective();
 		if (perspective != null) {
 			List<MPlaceholder> placeholders = modelService.findElements(window, null,
-					MPlaceholder.class, null, EModelService.IN_ACTIVE_PERSPECTIVE
-							| EModelService.OUTSIDE_PERSPECTIVE);
+					MPlaceholder.class, null, EModelService.PRESENTATION);
 			List<IViewReference> visibleReferences = new ArrayList<IViewReference>();
 			for (ViewReference reference : viewReferences) {
 				for (MPlaceholder placeholder : placeholders) {
