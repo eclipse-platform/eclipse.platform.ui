@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
-import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -534,39 +532,9 @@ public class ModelServiceImpl implements EModelService {
 			MWindow window = getTopLevelWindowFor(persp);
 			IPresentationEngine renderingEngine = persp.getContext().get(IPresentationEngine.class);
 			renderingEngine.createGui(newWindow, window.getWidget(), persp.getContext());
-			
-			newWindow.getContext().set(IWindowCloseHandler.class.getName(),
-					new IWindowCloseHandler() {
-						public boolean close(MWindow window) {
-							closeDetachedWindow(window);
-							// return false since the close request has been handled
-							return false;
-						}
-					});
 		} else if (curParent instanceof MWindow) {
 			((MWindow) curParent).getWindows().add(newWindow);
 		}
-	}
-
-	private void closeDetachedWindow(MWindow window) {
-		EPartService partService = (EPartService) window.getContext().get(
-				EPartService.class.getName());
-		List<MPart> parts = findElements(window, null, MPart.class, null);
-		// this saves one part at a time, not ideal but better than not saving
-		// at all
-		for (MPart part : parts) {
-			if (!partService.savePart(part, true)) {
-				return;
-			}
-		}
-
-		// hide every part individually, following 3.x behaviour
-		for (MPart part : parts) {
-			partService.hidePart(part);
-		}
-
-		// finally unrender the window itself
-		window.setToBeRendered(false);
 	}
 
 	/**

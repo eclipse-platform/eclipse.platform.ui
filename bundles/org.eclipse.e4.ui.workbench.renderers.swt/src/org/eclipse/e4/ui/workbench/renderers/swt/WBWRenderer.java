@@ -158,6 +158,28 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 	}
 
+	private void closeDetachedWindow(MWindow window) {
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		List<MPart> parts = modelService.findElements(window, null,
+				MPart.class, null);
+		// this saves one part at a time, not ideal but better than not saving
+		// at all
+		for (MPart part : parts) {
+			if (!partService.savePart(part, true)) {
+				return;
+			}
+		}
+
+		// hide every part individually, following 3.x behaviour
+		for (MPart part : parts) {
+			partService.hidePart(part);
+		}
+
+		// finally unrender the window itself
+		window.setToBeRendered(false);
+	}
+
 	@PostConstruct
 	public void init() {
 		shellUpdater = new EventHandler() {
@@ -332,14 +354,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		// Add the shell into the WBW's context
 		localContext.set(Shell.class.getName(), wbwShell);
 		localContext.set(E4Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
-		localContext.set(IWindowCloseHandler.class.getName(),
-				new IWindowCloseHandler() {
-					public boolean close(MWindow window) {
-						EPartService partService = (EPartService) window
-								.getContext().get(EPartService.class.getName());
-						return partService.saveAll(true);
-					}
-				});
+		setCloseHandler(wbwModel);
 		localContext.set(IShellProvider.class.getName(), new IShellProvider() {
 			public Shell getShell() {
 				return wbwShell;
@@ -383,6 +398,30 @@ public class WBWRenderer extends SWTPartRenderer {
 		wbwShell.setImages(Window.getDefaultImages());
 
 		return newWidget;
+	}
+
+	private void setCloseHandler(MWindow window) {
+		IEclipseContext context = window.getContext();
+		// no direct model parent, must be a detached window
+		if (window.getParent() == null) {
+			context.set(IWindowCloseHandler.class.getName(),
+					new IWindowCloseHandler() {
+						public boolean close(MWindow window) {
+							closeDetachedWindow(window);
+							return false;
+						}
+					});
+		} else {
+			context.set(IWindowCloseHandler.class.getName(),
+					new IWindowCloseHandler() {
+						public boolean close(MWindow window) {
+							EPartService partService = (EPartService) window
+									.getContext().get(
+											EPartService.class.getName());
+							return partService.saveAll(true);
+						}
+					});
+		}
 	}
 
 	@Override
