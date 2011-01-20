@@ -55,12 +55,12 @@ import org.eclipse.ui.texteditor.*;
  */
 public class CommitCommentArea extends DialogArea {
 
-    private class TextBox implements ModifyListener, TraverseListener, FocusListener, Observer {
+    private class TextBox implements ModifyListener, TraverseListener, FocusListener, Observer, IDocumentListener {
         
         private final StyledText fTextField; // updated only by modify events
         private final String fMessage;
-        
         private String fText;
+        private IDocument fDocument;
         
         public TextBox(Composite composite, String message, String initialText) {
             
@@ -86,8 +86,8 @@ public class CommitCommentArea extends DialogArea {
     		
             support.install(EditorsUI.getPreferenceStore());
             
-            final IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getService(IHandlerService.class);
-            final IHandlerActivation handlerActivation= installQuickFixActionHandler(handlerService, sourceViewer);
+            final IHandlerService handlerService = (IHandlerService)PlatformUI.getWorkbench().getService(IHandlerService.class);
+            final IHandlerActivation handlerActivation = installQuickFixActionHandler(handlerService, sourceViewer);
             
             final TextViewerAction cutAction = new TextViewerAction(sourceViewer, ITextOperationTarget.CUT);
             cutAction.setText(CVSUIMessages.CommitCommentArea_7);
@@ -215,20 +215,13 @@ public class CommitCommentArea extends DialogArea {
 			
 			});
             
-            Document document = new Document(initialText);
+            fDocument = new Document(initialText);
 
             // NOTE: Configuration must be applied before the document is set in order for
             // Hyperlink coloring to work. (Presenter needs document object up front)
             sourceViewer.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()));
-            sourceViewer.setDocument(document, annotationModel);
-            document.addDocumentListener(new IDocumentListener() {
-				public void documentAboutToBeChanged(DocumentEvent event) {
-				}
-				public void documentChanged(DocumentEvent event) {
-					modifyText(null);
-				}
-			});
-            
+            sourceViewer.setDocument(fDocument, annotationModel);
+            fDocument.addDocumentListener(this);
             fTextField.addTraverseListener(this);
             fTextField.addModifyListener(this);
             fTextField.addFocusListener(this);
@@ -296,10 +289,12 @@ public class CommitCommentArea extends DialogArea {
                 return;
             
             fTextField.removeModifyListener(this);
+            fDocument.removeDocumentListener(this);
             try {
                 fTextField.setText(fText);
             } finally {
                 fTextField.addModifyListener(this);
+                fDocument.addDocumentListener(this);
             }
         }
         
@@ -309,11 +304,13 @@ public class CommitCommentArea extends DialogArea {
                 return;
             
             fTextField.removeModifyListener(this);
+            fDocument.removeDocumentListener(this);
             try {
                 fTextField.setText(fMessage);
                 fTextField.selectAll();
             } finally {
                 fTextField.addModifyListener(this);
+                fDocument.addDocumentListener(this);
             }
         }
         
@@ -342,7 +339,14 @@ public class CommitCommentArea extends DialogArea {
         public void setFocus() {
             fTextField.setFocus();
         }
-    }
+
+        public void documentAboutToBeChanged(DocumentEvent event) {
+        }
+
+        public void documentChanged(DocumentEvent event) {
+        	modifyText(null);
+        }
+	}
     
     private static class ComboBox extends Observable implements SelectionListener, FocusListener {
         
