@@ -23,7 +23,7 @@ public class SearchProcessorInfo {
 	private String query = null;
 	
 	/**
-	 * After {@link AbstractSearchProcessor#preSearch(String, String)} is called, 
+	 * After {@link AbstractSearchProcessor#preSearch(String)} is called, 
 	 * this method can be used to change the search query used.
 	 * 
 	 * @return new search query String, or <code>null</code> for no change.
@@ -43,7 +43,7 @@ public class SearchProcessorInfo {
 	}
 
 	/** 
-	 * After {@link AbstractSearchProcessor#preSearch(String, String)} is called, 
+	 * After {@link AbstractSearchProcessor#preSearch(String)} is called, 
 	 * this method can be used to return an array of alternative search terms
 	 * a user may wish to consider.
 	 * 

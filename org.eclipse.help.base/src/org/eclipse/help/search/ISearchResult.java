@@ -25,70 +25,70 @@ public interface ISearchResult {
 	/**
 	 * Get the href of this search result topic
 	 * 
-	 * @return
+	 * @return the href of this search result topic
 	 */
 	public String getHref();
 	
 	/**
 	 * Get the description of this search result topic
 	 * 
-	 * @return
+	 * @return the description of this search result topic
 	 */
 	public String getDescription();
 	
 	/**
 	 * Gets a summary of this search result
 	 * 
-	 * @return
+	 * @return a summary of this search result
 	 */
 	public String getSummary();
 	
 	/**
 	 * Gets the label for this search result
 	 * 
-	 * @return
+	 * @return the label for this search result
 	 */
 	public String getLabel();
 
 	/**
 	 * Gets the ID
 	 * 
-	 * @return
+	 * @return the ID
 	 */
 	public String getId();
 	
 	/**
 	 * Gets the participant ID
 	 * 
-	 * @return
+	 * @return the participant ID
 	 */
 	public String getParticipantId();
 	
 	/**
 	 * Gets the Icon for this topic
 	 * 
-	 * @return
+	 * @return the Icon for this topic
 	 */
 	public URL getIcon();
 	
 	/**
 	 * Gets the score float value associated with this search result
 	 * 
-	 * @return
+	 * @return the score float value associated with this search result
 	 */
 	public float getScore();
 
 	/**
 	 * Gets the IToc parent of this result
 	 * 
-	 * @return
+	 * @return the IToc parent of this result
 	 */
 	public IToc getToc();
 	
 	/**
 	 * Returns whether the result a potential hit
 	 * 
-	 * @return
+	 * @return <code>true</code> if the result a potential hit, <code>false</code> otherwise
 	 */
 	public boolean isPotentialHit();
 }
