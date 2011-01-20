@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.lucene.analysis.*;
 /**
@@ -27,8 +29,21 @@ public class Analyzer_en extends Analyzer {
 	 * Reader.
 	 */
 	public final TokenStream tokenStream(String fieldName, Reader reader) {
-		return new PorterStemFilter(new StopFilter(new LowerCaseAndDigitsTokenizer(reader), STOP_WORDS));
+		return new PorterStemFilter(new StopFilter(false, new LowerCaseAndDigitsTokenizer(reader), getStopWords(), false));
 	}
+	
+	private Set stopWords;
+	
+	private Set getStopWords() {
+		if ( stopWords == null ) {
+			stopWords = new HashSet();
+			for (int i = 0; i < STOP_WORDS.length; i++) {
+			    stopWords.add(STOP_WORDS[i]);
+			}
+		}
+		return stopWords;
+	}
+	
 	/**
 	 * Array of English stop words. Differs from StandardAnalyzer's default stop
 	 * words by not having "for", "if", and "this" that are java keywords.

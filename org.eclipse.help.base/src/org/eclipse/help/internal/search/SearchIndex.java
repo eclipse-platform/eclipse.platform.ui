@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,12 +37,13 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
+import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.NIOFSDirectory;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -79,6 +80,8 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 	private IndexWriter iw;
 
 	private File indexDir;
+	
+	private Directory luceneDirectory;
 
 	private String locale;
 
@@ -155,10 +158,15 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 		this.analyzerDescriptor = analyzerDesc;
 		this.tocManager = tocManager;
 		this.indexDir = indexDir;
+		
 		this.relativePath = relativePath;
 		// System.out.println("Index for a relative path: "+relativePath);
 		inconsistencyFile = new File(indexDir.getParentFile(), locale + ".inconsistent"); //$NON-NLS-1$
 		htmlSearchParticipant = new HTMLSearchParticipant(indexDir.getAbsolutePath());
+		try {
+			luceneDirectory = new NIOFSDirectory(indexDir);
+		} catch (IOException e) {
+		}
 		if (!exists()) {
 			try {
 				if (tryLock()) {
@@ -189,11 +197,11 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 	public IStatus addDocument(String name, URL url) {
 		try {
 			Document doc = new Document();
-			doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.UN_TOKENIZED));
+			doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.NOT_ANALYZED));
 			addExtraFields(doc);
 			String pluginId = LocalSearchManager.getPluginId(name);
 			if (relativePath != null) {
-				doc.add(new Field(FIELD_INDEX_ID, relativePath, Field.Store.YES, Field.Index.UN_TOKENIZED));
+				doc.add(new Field(FIELD_INDEX_ID, relativePath, Field.Store.YES, Field.Index.NOT_ANALYZED));
 			}
 			// check for the explicit search participant.
 			SearchParticipant participant = null;
@@ -268,9 +276,9 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 			indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
-			iw = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(), create);
+			MaxFieldLength max = new MaxFieldLength(1000000);
+			iw = new IndexWriter(luceneDirectory, analyzerDescriptor.getAnalyzer(), create, max);
 			iw.setMergeFactor(20);
-			iw.setMaxFieldLength(1000000);
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at beginAddBatch.", e); //$NON-NLS-1$
@@ -289,7 +297,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 			indexedDocs = new HelpProperties(INDEXED_DOCS_FILE, indexDir);
 			indexedDocs.restore();
 			setInconsistent(true);
-			ir = IndexReader.open(indexDir);
+			ir = IndexReader.open(luceneDirectory, false);
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
@@ -305,7 +313,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 			if (ir != null) {
 				ir.close();
 			}
-			ir = IndexReader.open(indexDir);
+			ir = IndexReader.open(luceneDirectory, false);
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
@@ -451,7 +459,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 				String indexId = (String) indexIds.get(i);
 				String indexPath = (String) indexPaths.get(i);
 				try {
-					dirList.add(FSDirectory.getDirectory(indexPath, false));
+					dirList.add(new NIOFSDirectory(new File(indexPath)));
 				} catch (IOException ioe) {
 					HelpBasePlugin
 							.logError(
@@ -497,7 +505,8 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 		}
 		Directory[] luceneDirs = (Directory[]) dirList.toArray(new Directory[dirList.size()]);
 		try {
-			iw.addIndexes(luceneDirs);
+			iw.addIndexesNoOptimize(luceneDirs);
+			iw.optimize();
 		} catch (IOException ioe) {
 			HelpBasePlugin.logError("Merging search indexes failed.", ioe); //$NON-NLS-1$
 			return new HashMap();
@@ -615,8 +624,8 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 				if (searcher == null) {
 					openSearcher();
 				}
-				Hits hits = searcher.search(luceneQuery);
-				collector.addHits(LocalSearchManager.asList(hits), highlightTerms);
+				TopDocs topDocs = searcher.search(luceneQuery, null, 1000);
+				collector.addHits(LocalSearchManager.asList(topDocs, searcher), highlightTerms);	
 			}
 		} catch (BooleanQuery.TooManyClauses tmc) {
 			collector.addQTCException(new QueryTooComplexException());
@@ -774,7 +783,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 	public void openSearcher() throws IOException {
 		synchronized (searcherCreateLock) {
 			if (searcher == null) {
-				searcher = new IndexSearcher(indexDir.getAbsolutePath());
+				searcher = new IndexSearcher(luceneDirectory, false);
 			}
 		}
 	}
@@ -870,8 +879,9 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 	 */
 	private void cleanOldIndex() {
 		IndexWriter cleaner = null;
+		MaxFieldLength max = new MaxFieldLength(10000);
 		try {
-			cleaner = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(), true);
+			cleaner = new IndexWriter(luceneDirectory, analyzerDescriptor.getAnalyzer(), true, max);
 		} catch (IOException ioe) {
 		} finally {
 			try {

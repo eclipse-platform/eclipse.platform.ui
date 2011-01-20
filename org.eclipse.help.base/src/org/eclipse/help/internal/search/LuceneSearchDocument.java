@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,8 @@ public class LuceneSearchDocument implements ISearchDocument {
 	}
 
 	public void setTitle(String title) {
-		doc.add(new Field("title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
-		doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
+		doc.add(new Field("title", title, Field.Store.NO, Field.Index.ANALYZED)); //$NON-NLS-1$
+		doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.ANALYZED)); //$NON-NLS-1$
 		doc.add(new Field("raw_title", title, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 	}
 

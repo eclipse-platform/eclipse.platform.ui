@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.search.Hits;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.TopDocs;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
@@ -143,19 +144,22 @@ public class LocalSearchManager {
 	}
 
 	/**
-	 * Converts the given Hits object into a List of raw SearchHits.
+	 * Converts the given TopDocs object into a List of raw SearchHits.
 	 * Hits objects are immutable and can't be instantiated from outside
 	 * Lucene.
+	 * @param searcher 
 	 * 
-	 * @param hits the Hits object to convert
+	 * @param hits the TopDocs object to convert
 	 * @return a List of raw SearchHits
 	 */
-	public static List asList(Hits hits) {
-		List list = new ArrayList(hits.length());
-		for (int i=0;i<hits.length();++i) {
+
+	public static List asList(TopDocs topDocs, IndexSearcher searcher) {
+		List list = new ArrayList(topDocs.totalHits);
+		
+		for (int i=0; i<topDocs.totalHits; ++i) {
 			try {
-				Document doc = hits.doc(i);
-				float score = hits.score(i);
+				Document doc = searcher.doc(topDocs.scoreDocs[i].doc); 
+				float score = topDocs.scoreDocs[i].score;
 				String href = doc.get("name"); //$NON-NLS-1$
 				String summary = doc.get("summary");			 //$NON-NLS-1$
 				String id = doc.get("id"); //$NON-NLS-1$
@@ -705,4 +709,5 @@ public class LocalSearchManager {
 			}
 		}
 	}
+
 }

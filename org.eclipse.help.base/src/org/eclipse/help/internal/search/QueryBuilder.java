@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 
 import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.tokenattributes.TermAttribute;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.eclipse.help.internal.base.*;
@@ -243,14 +244,18 @@ public class QueryBuilder {
 		List words = new ArrayList(1);
 		Reader reader = new StringReader(text);
 		TokenStream tStream = analyzer.tokenStream(fieldName, reader);
-		Token tok;
+		
+		TermAttribute termAttribute = (TermAttribute) tStream.getAttribute(TermAttribute.class);
+
 		try {
-			while (null != (tok = tStream.next())) {
-				words.add(tok.termText());
+			while (tStream.incrementToken()) {
+				String term = termAttribute.term();
+				words.add(term);
 			}
 			reader.close();
 		} catch (IOException ioe) {
 		}
+		
 		return words;
 	}
 	/**
