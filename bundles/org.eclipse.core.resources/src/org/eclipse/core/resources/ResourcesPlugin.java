@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.core.internal.preferences.PreferencesService;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.*;
@@ -95,7 +98,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * @since 3.2
 	 */
 	public static final String PT_MODEL_PROVIDERS = "modelProviders"; //$NON-NLS-1$
-	
+
 	/**
 	 * Simple identifier constant (value <code>"variableProviders"</code>)
 	 * for the variable providers extension point.
@@ -119,15 +122,15 @@ public final class ResourcesPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static final Object FAMILY_AUTO_BUILD = new Object();
-	
+
 	/**
 	 * Constant identifying the job family identifier for the background auto-refresh job.
 	 * 
 	 * @see IJobManager#join(Object, IProgressMonitor)
 	 * @since 3.1
 	 */
-	public static final Object FAMILY_AUTO_REFRESH = new Object();	
-	
+	public static final Object FAMILY_AUTO_REFRESH = new Object();
+
 	/**
 	 * Constant identifying the job family identifier for a background build job. All clients
 	 * that schedule background jobs for performing builds should include this job
@@ -149,7 +152,7 @@ public final class ResourcesPlugin extends Plugin {
 	 * @since 3.4
 	 */
 	public static final Object FAMILY_MANUAL_REFRESH = new Object();
-	
+
 	/**
 	 * Name of a preference indicating the encoding to use when reading text 
 	 * files in the workspace.  The value is a string, and may 
@@ -412,9 +415,25 @@ public final class ResourcesPlugin extends Plugin {
 		// make it easier to debug cases where open() is failing.
 		workspace = new Workspace();
 		PlatformURLResourceConnection.startup(workspace.getRoot().getLocation());
+		initializePreferenceLookupOrder();
 		IStatus result = workspace.open(null);
 		if (!result.isOK())
 			getLog().log(result);
 		workspaceRegistration = context.registerService(IWorkspace.class, workspace, null);
+	}
+
+	/*
+	 * Add the project scope to the preference service's default look-up order so 
+	 * people get it for free
+	 */
+	private void initializePreferenceLookupOrder() {
+		PreferencesService service = PreferencesService.getDefault();
+		String[] original = service.getDefaultDefaultLookupOrder();
+		List<String> newOrder = new ArrayList<String>();
+		// put the project scope first on the list
+		newOrder.add(ProjectScope.SCOPE);
+		for (String entry : original)
+			newOrder.add(entry);
+		service.setDefaultDefaultLookupOrder(newOrder.toArray(new String[newOrder.size()]));
 	}
 }
