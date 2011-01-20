@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import org.osgi.service.prefs.BackingStoreException;
+
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+
 import org.eclipse.debug.core.DebugPlugin;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Convenience class to facilitate using the new {@link IEclipsePreferences} story
@@ -25,7 +27,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public final class Preferences {
 
-	static final IScopeContext[] contexts = new IScopeContext[] {new DefaultScope(), new InstanceScope()}; 
+	static final IScopeContext[] contexts= new IScopeContext[] { DefaultScope.INSTANCE, InstanceScope.INSTANCE };
 	
 	static final int DEFAULT_CONTEXT = 0;
 	static final int INSTANCE_CONTEXT = 1;
