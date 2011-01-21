@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -375,13 +375,14 @@ public class PrintData extends RequestData {
 	private String getContent(String href, String locale) {
 		InputStream in = HelpSystem.getHelpContent(href, locale);
 		StringBuffer buf = new StringBuffer();
+		InputStream rawInput=null;
 		if (in != null) {
 			try {
 				String charset = HTMLDocParser.getCharsetFromHTML(in);
 				if (charset == null) {
 					charset = "UTF-8"; //$NON-NLS-1$
 				}
-				InputStream rawInput = HelpSystem.getHelpContent(href, locale);
+				rawInput = HelpSystem.getHelpContent(href, locale);
 				boolean filter = BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER;
 				in = DynamicXHTMLProcessor.process(href, rawInput, locale, filter);
 
@@ -403,6 +404,11 @@ public class PrintData extends RequestData {
 			finally {
 				try {
 					in.close();
+				}
+				catch (Exception e) {}
+				try {
+
+					rawInput.close();
 				}
 				catch (Exception e) {}
 			}
