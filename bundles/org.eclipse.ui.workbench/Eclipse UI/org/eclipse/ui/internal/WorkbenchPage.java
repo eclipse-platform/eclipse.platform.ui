@@ -161,7 +161,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			Object client = part.getObject();
 			if (client instanceof CompatibilityPart) {
 				PartSite site = (PartSite) ((CompatibilityPart) client).getPart().getSite();
-				site.deactivateActionBars(true);
+				// if it's an editor, we only want to disable the actions
+				site.deactivateActionBars(site instanceof ViewSite);
 			}
 
 			((WorkbenchWindow) getWorkbenchWindow()).getStatusLineManager().update(false);
@@ -178,7 +179,43 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	ArrayList<MPart> activationList = new ArrayList<MPart>();
 
+	/**
+	 * Deactivate the last editor's action bars if another type of editor has
+	 * been activated.
+	 * 
+	 * @param part
+	 *            the part that is being activated
+	 */
+	private void deactivateLastEditor(MPart part) {
+		Object client = part.getObject();
+		// we only care if the currently activated part is an editor
+		if (client instanceof CompatibilityEditor) {
+			// find another editor that was last activated
+			for (MPart previouslyActive : activationList) {
+				if (previouslyActive != part) {
+					Object object = previouslyActive.getObject();
+					if (object instanceof CompatibilityEditor) {
+						EditorSite site = (EditorSite) ((CompatibilityEditor) object).getPart()
+								.getSite();
+						String lastId = site.getId();
+						String activeId = ((CompatibilityEditor) client).getPart().getSite()
+								.getId();
+						// if not the same, hide the other editor's action bars
+						if (lastId != null && !lastId.equals(activeId)) {
+							site.deactivateActionBars(true);
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	private void updateActivations(MPart part) {
+		if (activationList.size() > 1) {
+			deactivateLastEditor(part);
+		}
+
 		activationList.remove(part);
 		activationList.add(0, part);
 		updateActivePartSources(part);
