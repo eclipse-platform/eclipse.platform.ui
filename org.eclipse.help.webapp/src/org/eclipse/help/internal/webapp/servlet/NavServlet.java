@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class NavServlet extends HttpServlet {
 	private static final String XHTML_3 = "</body>\n</html>"; //$NON-NLS-1$
 
 	private static final IFilter filters[] = new IFilter[]{
-		new FramesetFilter(), new InjectionFilter(), new BreadcrumbsFilter(), 
+		new FramesetFilter(), new InjectionFilter(false), new BreadcrumbsFilter(), 
 		new ShowInTocFilter(), new ExtraFilters() };
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

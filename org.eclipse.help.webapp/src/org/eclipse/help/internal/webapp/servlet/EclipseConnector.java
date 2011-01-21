@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.remote.RemoteHelpInputStream;
 import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
@@ -55,12 +56,12 @@ public class EclipseConnector {
 			+ "<body><p>\n"; //$NON-NLS-1$
 	private static final String errorPageEnd = "</p></body></html>"; //$NON-NLS-1$
 	private static final IFilter allFilters[] = new IFilter[] {
-			new HighlightFilter(), new FramesetFilter(), new InjectionFilter(),
+			new HighlightFilter(), new FramesetFilter(), new InjectionFilter(false),
 			new DynamicXHTMLFilter(), new BreadcrumbsFilter(), new PluginsRootFilter(),
 			new ShowInTocFilter(), new ExtraFilters() };
 
 	private static final IFilter errorPageFilters[] = new IFilter[] {
-			new FramesetFilter(), new InjectionFilter(),
+			new FramesetFilter(), new InjectionFilter(false),
 			new DynamicXHTMLFilter() };
 
 	private ServletContext context;
@@ -182,7 +183,14 @@ public class EclipseConnector {
 			IFilter filters[] = pageNotFound ? errorPageFilters : allFilters;
 			if (isProcessingRequired(resp.getContentType())) {
 				for (int i = 0; i < filters.length; i++) {
-					out = filters[i].filter(req, out);
+					// condition for enabling remote css 
+					if((filters[i] instanceof InjectionFilter) && is instanceof RemoteHelpInputStream){
+						InjectionFilter ifilter = new InjectionFilter(true);
+						out=ifilter.filter(req, out);
+					}
+					else{
+						out = filters[i].filter(req, out);
+					}
 				}
 			}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,12 @@ public class InjectionFilter implements IFilter {
 	private final String NAV_CSS   = "nav_css"; //$NON-NLS-1$
 	private final String NARROW_CSS = "narrow_css"; //$NON-NLS-1$
 	private final String DISABLED_CSS = "disabled_css"; //$NON-NLS-1$
+	private final String REMOTE_CSS = "remote_css"; //$NON-NLS-1$
+	private boolean isRemote;
+	
+	public InjectionFilter( boolean isRemote ) {
+		this.isRemote = isRemote;
+	}
 	
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
@@ -68,9 +74,13 @@ public class InjectionFilter implements IFilter {
 		} else {
 			CssUtil.addCssFiles(TOPIC_CSS, cssIncludes);
 		}
+		if(isRemote){
+			CssUtil.addCssFiles(REMOTE_CSS, cssIncludes);
+		}
 		
-		boolean enabled = isUnfiltered || isNav || HelpBasePlugin.getActivitySupport().isRoleEnabled(
-				pathInfo);
+		boolean enabled = isUnfiltered || isNav 
+		    || HelpBasePlugin.getActivitySupport().isRoleEnabled(pathInfo)
+		    || isRemote;
 		if ("/ntopic".equals(req.getServletPath())) { //$NON-NLS-1$
 			addNarrow = true;
 			CssUtil.addCssFiles(NARROW_CSS, cssIncludes);
