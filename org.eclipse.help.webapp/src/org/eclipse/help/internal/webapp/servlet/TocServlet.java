@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,13 +41,19 @@ public class TocServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Map responseByLocale;
 	private DocumentWriter writer;
-
+	private static boolean clearCache;
+	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		BaseHelpSystem.checkMode();
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
+		
+		if (clearCache){
+			responseByLocale = new WeakHashMap();
+			clearCache = false;
+		}
 		
 		if (responseByLocale == null) {
 			responseByLocale = new WeakHashMap();
@@ -96,5 +102,10 @@ public class TocServlet extends HttpServlet {
 		}
 		buf.append("</tocContributions>\n"); //$NON-NLS-1$
 		return buf.toString();
+	}
+	
+	public static void clearCache()
+	{
+		clearCache = true;
 	}
 }
