@@ -92,6 +92,7 @@ public final class Messages extends NLS {
 	public static String NewDialog_wtitle;
 	public static String RenameDialog_label;
 	public static String RenameDialog_validationError;
+	public static String RenameDialog_emptyName;
 	public static String EngineResultSection_progress2;
 	public static String EngineResultSection_canceling;
 	public static String EngineResultSection_progressError;

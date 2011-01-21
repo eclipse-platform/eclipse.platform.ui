@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,22 +116,33 @@ public class RenameDialog extends SelectionStatusDialog {
 			if((isCaseSensitive && text.equals(oldNames.get(i))) ||
 					(!isCaseSensitive && text.equalsIgnoreCase(oldNames.get(i).toString()))){
 				if (setStatus) {
-				    status =  new Status(
-						IStatus.ERROR,
-						HelpUIPlugin.PLUGIN_ID,
-						IStatus.ERROR,
-						Messages.RenameDialog_validationError, 
-						null);
-				    updateStatus(status);
+					setErrorStatus(Messages.RenameDialog_validationError);
 				}
 				okButton.setEnabled(false);
 				return;
 			}
 		}
+		if (text.length() == 0 ) {
+			if (setStatus) {
+				setErrorStatus(Messages.RenameDialog_emptyName);
+			}
+			okButton.setEnabled(false);
+			return;
+		}
 		okButton.setEnabled(true);
 		if (setStatus) {
 		    setOkStatus();
 		}
+	}
+
+	private void setErrorStatus(String errorMessage) {
+		status =  new Status(
+			IStatus.ERROR,
+			HelpUIPlugin.PLUGIN_ID,
+			IStatus.ERROR,
+			errorMessage, 
+			null);
+		updateStatus(status);
 	}
 
 	private void setOkStatus() {
