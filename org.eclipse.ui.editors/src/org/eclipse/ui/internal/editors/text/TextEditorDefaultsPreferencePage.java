@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,6 @@ import java.util.Set;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -1138,7 +1136,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		return checkBox;
 	}
 
-	Button addCheckBoxWithLink(Composite parent, final Preference preference, final Domain domain, int indentation, SelectionListener listener) {
+	Button addCheckBoxWithLink(Composite parent, final Preference preference, final Domain domain, int indentation, final SelectionListener listener) {
 		GridData gd= new GridData(GridData.FILL, GridData.FILL, true, false);
 		gd.horizontalSpan= 3;
 		gd.horizontalIndent= indentation;
@@ -1170,21 +1168,15 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Link link= new Link(composite, SWT.NONE);
 		link.setText(preference.getName());
 		link.setLayoutData(gd);
-		if (listener != null) {
-			link.addSelectionListener(listener);
-		}
 
 		// toggle checkbox when user clicks unlinked text in link:
 		final boolean[] linkSelected= { false };
 		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				linkSelected[0]= true;
-			}
-		});
-		//Focus listener is required when the link opens a dialog
-		link.addFocusListener(new FocusAdapter() {
-			public void focusLost(FocusEvent e) {
-				linkSelected[0]= true;
+				if (listener != null) {
+					listener.widgetSelected(e);
+				}
 			}
 		});
 		link.addMouseListener(new MouseAdapter() {
