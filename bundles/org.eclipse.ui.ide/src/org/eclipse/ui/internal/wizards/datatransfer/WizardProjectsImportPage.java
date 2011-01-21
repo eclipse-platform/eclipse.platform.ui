@@ -426,7 +426,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		copyCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				copyFiles = copyCheckbox.getSelection();
-				updateProjectsList(directoryPathField.getText().trim());
 			}
 		});
 	}
