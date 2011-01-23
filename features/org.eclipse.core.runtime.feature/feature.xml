@@ -3,7 +3,9 @@
       id="org.eclipse.core.runtime.feature"
       label="%featureName"
       version="1.0.0.qualifier"
-      provider-name="%providerName">
+      provider-name="%providerName"
+      license-feature="org.eclipse.license"
+      license-feature-version="1.0.0.qualifier"> 
 
    <description url="http://www.example.com/description">
       [Enter Feature Description here.]
