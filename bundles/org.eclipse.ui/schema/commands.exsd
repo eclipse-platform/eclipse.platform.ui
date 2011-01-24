@@ -7,7 +7,7 @@
       </appinfo>
       <documentation>
          &lt;p&gt;
-The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. A command is an abstract representation of some semantic behaviour, but not it&apos;s actual implementation.  This allows different developers to contribute specific behaviour for their individual parts.  For example, there might be a &quot;paste&quot; command with one implementation in an editor and a different implementation in an explorer widget.  These implementations are called handlers.  Commands can also be viewed as declarative function pointers, or signal handlers.
+The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to declare commands and command categories, using the &lt;code&gt;command&lt;/code&gt; and &lt;code&gt;category&lt;/code&gt; elements. A command is an abstract representation of some semantic behaviour, but not its actual implementation.  This allows different developers to contribute specific behaviour for their individual parts.  For example, there might be a &quot;paste&quot; command with one implementation in an editor and a different implementation in an explorer widget.  These implementations are called handlers.  Commands can also be viewed as declarative function pointers, or signal handlers.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -851,7 +851,7 @@ There are a few default implementations of handler states that may be useful to 
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2000, 2007 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

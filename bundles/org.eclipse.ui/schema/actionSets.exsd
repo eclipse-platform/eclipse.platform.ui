@@ -304,7 +304,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
          <attribute name="allowLabelUpdate" type="boolean">
             <annotation>
                <documentation>
-                  optional attribute indicating whether the retarget action allows the handler to override it&apos;s label and tooltip. Only applies if &lt;samp&gt;retarget&lt;/samp&gt; attribute is true.
+                  optional attribute indicating whether the retarget action allows the handler to override its label and tooltip. Only applies if &lt;samp&gt;retarget&lt;/samp&gt; attribute is true.
                </documentation>
             </annotation>
          </attribute>
@@ -597,7 +597,7 @@ extensions are also added automatically to the window.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2007 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

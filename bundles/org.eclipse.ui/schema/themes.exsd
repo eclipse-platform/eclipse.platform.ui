@@ -546,7 +546,7 @@ Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&
    <element name="categoryPresentationBinding">
       <annotation>
          <documentation>
-            This element allows a category to be bound to a specific presentation as described by the &lt;code&gt;org.eclipse.ui.presentationFactory&lt;/code&gt; extension point.  If a category has any presentation bindings then it (and it&apos;s children) is only configurable by the user if it is bound to the active presentation.  This is useful for removing unused items from user consideration.
+            This element allows a category to be bound to a specific presentation as described by the &lt;code&gt;org.eclipse.ui.presentationFactory&lt;/code&gt; extension point.  If a category has any presentation bindings then it (and its children) is only configurable by the user if it is bound to the active presentation.  This is useful for removing unused items from user consideration.
          </documentation>
       </annotation>
       <complexType>
@@ -687,7 +687,7 @@ Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2003, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2003, 2011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

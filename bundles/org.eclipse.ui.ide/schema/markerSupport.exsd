@@ -73,7 +73,7 @@
                   The scope of the filter. One of 
 ON_ANY: any item in the workbench
 ON_SELECTED_ONLY: on the currently selected item
-ON_SELECTED_AND_CHILDREN: on the currently selected item and it&apos;s children
+ON_SELECTED_AND_CHILDREN: on the currently selected item and its children
 ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the selection
                </documentation>
             </annotation>
@@ -89,6 +89,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                   </enumeration>
                </restriction>
             </simpleType>
+            
          </attribute>
          <attribute name="onDescription" type="string">
             <annotation>
@@ -242,7 +243,7 @@ It is generally recommended that a markerAttributeGrouping is defined as a child
 
 Top level markerGroupings are assumed to belong to the problems content generator.
 
-A markerGrouping is usually specified as the child of a markerContentGenerator. It is recommended that a markerContentGenerator defines it&apos;s own markerGroupings if possible.
+A markerGrouping is usually specified as the child of a markerContentGenerator. It is recommended that a markerContentGenerator defines its own markerGroupings if possible.
 
 Note that only the problems view supported markerGroupings pre 3.4.
 
@@ -517,7 +518,7 @@ This attribute is optional if this is defined as a child element of a markerGrou
 One of 
 ON_ANY: any item in the workbench
 ON_SELECTED_ONLY: on the currently selected item
-ON_SELECTED_AND_CHILDREN: on the currently selected item and it&apos;s children
+ON_SELECTED_AND_CHILDREN: on the currently selected item and its children
 ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the selection.
 If this value is not set the value is ON_ANY
                </documentation>
@@ -590,7 +591,7 @@ If this value is not set the value is ON_ANY
          <meta.section type="examples"/>
       </appinfo>
       <documentation>
-         The following is an example of a problem filter definition in the marker support. This example only shows java warnings on the selected element and it&apos;s children and filters out those with the String NON-NLS
+         The following is an example of a problem filter definition in the marker support. This example only shows java warnings on the selected element and its children and filters out those with the String NON-NLS
 &lt;p&gt;
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.ui.ide.markerSupport&quot;&gt;
@@ -626,7 +627,7 @@ If this value is not set the value is ON_ANY
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2005, 2007 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005, 2011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
