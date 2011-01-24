@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -471,10 +471,10 @@ public final class HippieCompletionEngine {
 		}
 
 		/**
-		 * We always calculate the next to see if it's available...
+		 * We always calculate the next to see if it's available.
 		 * 
-		 * @return true if the next token to be returned is not null (we always pre-calculate
-		 *         things)
+		 * @return <code>true</code> if the next token to be returned is not null (we always
+		 *         pre-calculate things)
 		 */
 		public boolean hasNext() {
 			return fNext != null;
