@@ -51,7 +51,7 @@
          <attribute name="readOnly" type="boolean">
             <annotation>
                <documentation>
-                  Specifies whether this variable is read only. When true, this variable&apos;s value will always be derived from the extension and cannot be edited by the user. When false, this variable&apos;s value will be initialized from any &lt;code&gt;initialValue&lt;/code&gt; attribtue or initializer class, and can be modified by the user. Once a read-write variable is modified, it&apos;s value is persisted and overrides any value specified by an extension&apos;s &lt;code&gt;initialValue&lt;/code&gt; or initializer class. When unspecified, the value of this attribute is &lt;code&gt;false&lt;/code&gt;. This attribute was added in the 3.3 release.
+                  Specifies whether this variable is read only. When true, this variable&apos;s value will always be derived from the extension and cannot be edited by the user. When false, this variable&apos;s value will be initialized from any &lt;code&gt;initialValue&lt;/code&gt; attribtue or initializer class, and can be modified by the user. Once a read-write variable is modified, its value is persisted and overrides any value specified by an extension&apos;s &lt;code&gt;initialValue&lt;/code&gt; or initializer class. When unspecified, the value of this attribute is &lt;code&gt;false&lt;/code&gt;. This attribute was added in the 3.3 release.
                </documentation>
             </annotation>
          </attribute>
@@ -145,7 +145,7 @@ used to initialize the value the first time it&apos;s requested.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2003, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2003, 2011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
