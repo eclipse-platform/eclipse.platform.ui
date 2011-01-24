@@ -173,7 +173,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    if (!fStack.isEmpty()) {
 	        tos = (IConsole) fStack.get(0);
 	    }
-	    if (tos != null && !tos.equals(fActiveConsole)) {
+	    if (tos != null && !tos.equals(fActiveConsole) && fActive) {
 	        deactivateParticipants(tos);
 	    }
 	    if (fActiveConsole != null && !fActiveConsole.equals(tos)) {
