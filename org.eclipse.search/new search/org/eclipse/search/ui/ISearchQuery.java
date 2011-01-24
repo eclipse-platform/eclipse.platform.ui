@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,18 +12,18 @@ package org.eclipse.search.ui;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+
 /**
- * Represents a particular search query (in a Java example, a query might
- * be "find all occurrences of 'foo' in workspace"). When it's run method is
- * called, the query places any results it finds in the
- * <code>ISearchResult</code> that can be accessed via getSearchResult().
- * Note that <code>getSearchResult</code> may be called at any time, even
- * before the <code>run()</code> method has been called. An empty search
- * result should be returned in that case.
+ * Represents a particular search query (in a Java example, a query might be
+ * "find all occurrences of 'foo' in workspace"). When its run method is called, the query places
+ * any results it finds in the <code>ISearchResult</code> that can be accessed via
+ * getSearchResult(). Note that <code>getSearchResult</code> may be called at any time, even before
+ * the <code>run()</code> method has been called. An empty search result should be returned in that
+ * case.
  * <p>
  * Clients may implement this interface.
  * </p>
- *
+ * 
  * @since 3.0
  */
 public interface ISearchQuery {

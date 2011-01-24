@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,17 +300,20 @@ public interface IFileBufferManager {
 	void removeFileBufferListener(IFileBufferListener listener);
 
 	/**
-	 * Validates the state of the given file buffers and tries to bring the
-	 * buffer's underlying file into a state in which it can be modified. File
-	 * buffers which do not support state validation are left untouched.
+	 * Validates the state of the given file buffers and tries to bring the buffer's underlying file
+	 * into a state in which it can be modified. File buffers which do not support state validation
+	 * are left untouched.
 	 * <p>
-	 * In case of a single file buffer, {@link IFileBuffer#validateState(IProgressMonitor, Object)} should be used.
+	 * In case of a single file buffer, {@link IFileBuffer#validateState(IProgressMonitor, Object)}
+	 * should be used.
 	 * </p>
-	 *
+	 * 
 	 * @param fileBuffers the file buffers to validate
-	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not
+	 *            desired
 	 * @param computationContext the context in which the validation is performed, e.g., a SWT shell
-	 * @exception CoreException if the underlying file can not be accessed to it's state cannot be changed
+	 * @exception CoreException if the underlying file can not be accessed or its state cannot be
+	 *                changed
 	 * @since 3.1
 	 */
 	void validateState(IFileBuffer[] fileBuffers, IProgressMonitor monitor, Object computationContext) throws CoreException;
