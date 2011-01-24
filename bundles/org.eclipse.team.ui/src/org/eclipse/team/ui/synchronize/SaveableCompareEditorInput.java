@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -239,8 +239,9 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	}
 
 	/**
-	 * Method called from {@link #prepareInput(IProgressMonitor)} to obtain the input.
-	 * It's purpose is to ensure that the input is an instance of {@link ICompareInput}.
+	 * Method called from {@link #prepareInput(IProgressMonitor)} to obtain the input. Its purpose
+	 * is to ensure that the input is an instance of {@link ICompareInput}.
+	 * 
 	 * @param monitor a progress monitor
 	 * @return the compare input
 	 * @throws InvocationTargetException
