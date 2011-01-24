@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * Concrete implementation of a build configuration.
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.CoreException;
  * the actual build configuration on the referenced project.
  *</p>
  */
-public class BuildConfiguration implements IBuildConfiguration {
+public class BuildConfiguration extends PlatformObject implements IBuildConfiguration {
 
 	/** Project on which this build configuration is set */
 	private final IProject project;
@@ -119,6 +120,13 @@ public class BuildConfiguration implements IBuildConfiguration {
 		else
 			result.append(" [active]"); //$NON-NLS-1$
 		return result.toString();
+	}
+
+	@Override
+	public Object getAdapter(Class adapter) {
+		if (adapter.isInstance(project))
+			return project;
+		return super.getAdapter(adapter);
 	}
 
 }

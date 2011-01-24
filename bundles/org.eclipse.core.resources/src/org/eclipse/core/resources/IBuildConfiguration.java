@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import org.eclipse.core.runtime.IAdaptable;
+
 
 /**
  * Build Configurations provide a mechanism for orthogonal configuration specific
@@ -53,7 +55,7 @@ package org.eclipse.core.resources;
  * @noextend This interface is not intended to be extended by clients.
  * @since 3.7
  */
-public interface IBuildConfiguration {
+public interface IBuildConfiguration extends IAdaptable {
 
 	/**
 	 * The Id of the default build configuration
