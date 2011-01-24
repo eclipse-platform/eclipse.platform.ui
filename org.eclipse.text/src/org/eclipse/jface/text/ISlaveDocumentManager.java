@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,13 +89,14 @@ public interface ISlaveDocumentManager {
 	boolean isSlaveDocument(IDocument document);
 
 	/**
-	 * Sets the given slave document's auto expand mode. In auto expand mode, a
-	 * slave document is automatically adapted to reflect all changes applied to it's master document.
-	 * Assume a master document contains 30 lines and the slave is defined to contain the lines 11-20.
-	 * In auto expand mode, when the master document is changed at line 8, the slave document is expanded
-	 * to contain the lines 8-20.<p>
+	 * Sets the given slave document's auto expand mode. In auto expand mode, a slave document is
+	 * automatically adapted to reflect all changes applied to its master document. Assume a master
+	 * document contains 30 lines and the slave is defined to contain the lines 11-20. In auto
+	 * expand mode, when the master document is changed at line 8, the slave document is expanded to
+	 * contain the lines 8-20.
+	 * <p>
 	 * This call is without effect if the given document is unknown to this slave document manager.
-	 *
+	 * 
 	 * @param slave the slave whose auto expand mode should be set
 	 * @param autoExpand <code>true</code> for auto expand, <code>false</code> otherwise
 	 */

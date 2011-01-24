@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -356,8 +356,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 			result.add(treeElement);
 		else {
 			Collection listChildren= (Collection) checkedStateStore.get(treeElement);
-			//if it is not in the store then it and it's children are not
-			// interesting
+			//if it is not in the store then it and its children are not interesting
 			if (listChildren == null)
 				return;
 			result.addAll(listChildren);
