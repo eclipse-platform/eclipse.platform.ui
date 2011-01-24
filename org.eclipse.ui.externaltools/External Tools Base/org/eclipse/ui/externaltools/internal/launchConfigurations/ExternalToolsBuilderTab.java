@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
+
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.externaltools.internal.launchConfigurations.ExternalToolsCoreUtil;
@@ -387,25 +390,33 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
         fVariables.setEnabled(haveOutputFile);
         fAppend.setEnabled(haveOutputFile);
     }
-
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
         if (fCreateBuildScheduleComponent) {
-        	StringBuffer buffer= new StringBuffer();
+        	HashSet kinds = new HashSet(4);
     		if (afterClean.getSelection()) {
-    			buffer.append(IExternalToolConstants.BUILD_TYPE_FULL).append(',');
+    			kinds.add(IExternalToolConstants.BUILD_TYPE_FULL);
     		} 
-    		if (manualBuild.getSelection()){
-    			buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL).append(','); 
+    		if(manualBuild.getSelection()){
+    			kinds.add(IExternalToolConstants.BUILD_TYPE_FULL);
+    			kinds.add(IExternalToolConstants.BUILD_TYPE_INCREMENTAL); 
     		} 
     		if (autoBuildButton.getSelection()) {
-    			buffer.append(IExternalToolConstants.BUILD_TYPE_AUTO).append(',');
+    			kinds.add(IExternalToolConstants.BUILD_TYPE_AUTO);
     		}
     		
     		if (fDuringClean.getSelection()) {
-    			buffer.append(IExternalToolConstants.BUILD_TYPE_CLEAN);
+    			kinds.add(IExternalToolConstants.BUILD_TYPE_CLEAN);
+    		}
+    		StringBuffer buffer= new StringBuffer();
+    		for(Iterator i = kinds.iterator(); i.hasNext();) {
+    			buffer.append(i.next());
+    			if(i.hasNext()) {
+    				buffer.append(',');
+    			}
     		}
     		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
         }
