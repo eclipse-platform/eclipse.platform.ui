@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -244,11 +245,11 @@ public class MarkerTest extends ResourceTest {
 			fail("1.0", e);
 		}
 
-		java.util.Comparator c = new java.util.Comparator() {
-			public int compare(Object o1, Object o2) {
+		java.util.Comparator<IMarker> c = new java.util.Comparator<IMarker>() {
+			public int compare(IMarker o1, IMarker o2) {
 				try {
-					String name1 = (String) ((IMarker) o1).getAttribute(IMarker.MESSAGE);
-					String name2 = (String) ((IMarker) o2).getAttribute(IMarker.MESSAGE);
+					String name1 = (String) o1.getAttribute(IMarker.MESSAGE);
+					String name2 = (String) o2.getAttribute(IMarker.MESSAGE);
 					if (name1 == null)
 						name1 = "";
 					if (name2 == null)
@@ -269,7 +270,7 @@ public class MarkerTest extends ResourceTest {
 		display(start, stop);
 	}
 
-	protected void addChildren(ArrayList result, IPath root, int breadth, int depth) {
+	protected void addChildren(ArrayList<String> result, IPath root, int breadth, int depth) {
 		for (int i = 1; i < breadth + 1; i++) {
 			IPath child = root.append(i + "");
 			if (depth == 0) {
@@ -316,10 +317,10 @@ public class MarkerTest extends ResourceTest {
 		}
 	}
 
-	protected void assertEquals(String message, Map map, Object[] keys, Object[] values) {
+	protected void assertEquals(String message, Map<String, ? extends Object> map, Object[] keys, Object[] values) {
 		assertEquals(message, keys.length, values.length);
 		assertEquals(message, keys.length, map.size());
-		for (Iterator i = map.keySet().iterator(); i.hasNext();) {
+		for (Iterator<String> i = map.keySet().iterator(); i.hasNext();) {
 			Object key = i.next();
 			Object value = map.get(key);
 			boolean found = false;
@@ -345,10 +346,10 @@ public class MarkerTest extends ResourceTest {
 	}
 
 	public IResource[] createLargeHierarchy() {
-		ArrayList result = new ArrayList();
+		ArrayList<String> result = new ArrayList<String>();
 		result.add("/");
 		new MarkerTest().addChildren(result, Path.ROOT, 3, 4);
-		String[] names = (String[]) result.toArray(new String[result.size()]);
+		String[] names = result.toArray(new String[result.size()]);
 		IResource[] created = buildResources(getWorkspace().getRoot(), names);
 		ensureExistsInWorkspace(created, true);
 		return created;
@@ -638,7 +639,7 @@ public class MarkerTest extends ResourceTest {
 		}
 
 		// add more markers and do a search on all marker types
-		Vector allMarkers = new Vector(markers.length * 3);
+		Vector<IMarker> allMarkers = new Vector<IMarker>(markers.length * 3);
 		for (int i = 0; i < markers.length; i++)
 			allMarkers.add(markers[i]);
 		try {
@@ -657,13 +658,13 @@ public class MarkerTest extends ResourceTest {
 			allMarkers.add(markers[i]);
 		try {
 			IMarker[] found = getWorkspace().getRoot().findMarkers(null, false, IResource.DEPTH_INFINITE);
-			assertEquals("3.2", (IMarker[]) allMarkers.toArray(new IMarker[allMarkers.size()]), found);
+			assertEquals("3.2", allMarkers.toArray(new IMarker[allMarkers.size()]), found);
 		} catch (CoreException e) {
 			fail("3.3", e);
 		}
 		try {
 			IMarker[] found = getWorkspace().getRoot().findMarkers(IMarker.MARKER, true, IResource.DEPTH_INFINITE);
-			assertEquals("3.4", (IMarker[]) allMarkers.toArray(new IMarker[allMarkers.size()]), found);
+			assertEquals("3.4", allMarkers.toArray(new IMarker[allMarkers.size()]), found);
 		} catch (CoreException e) {
 			fail("3.5", e);
 		}
@@ -737,7 +738,7 @@ public class MarkerTest extends ResourceTest {
 			file = project.getFile("foo.txt");
 			file.create(getRandomContents(), true, null);
 			IMarker marker = file.createMarker(IMarker.PROBLEM);
-			marker.setAttributes(new HashMap());
+			marker.setAttributes(new HashMap<String, String>());
 			marker.setAttribute(IMarker.SEVERITY, testValue);
 			Object value = marker.getAttribute(IMarker.SEVERITY);
 			assertEquals("1.0." + file.getFullPath(), value, testValue);
@@ -1072,7 +1073,7 @@ public class MarkerTest extends ResourceTest {
 
 		try {
 			// create markers on all the non-project resources 
-			final Hashtable table = new Hashtable(1);
+			final Hashtable<IResource, IMarker> table = new Hashtable<IResource, IMarker>(1);
 			final int[] count = new int[1];
 			count[0] = 0;
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
@@ -1424,7 +1425,7 @@ public class MarkerTest extends ResourceTest {
 
 		try {
 			// create markers on all the resources
-			final Hashtable table = new Hashtable(1);
+			final Hashtable<IResource, IMarker> table = new Hashtable<IResource, IMarker>(1);
 			final int[] count = new int[1];
 			count[0] = 0;
 			IWorkspaceRunnable body = new IWorkspaceRunnable() {
@@ -1469,7 +1470,7 @@ public class MarkerTest extends ResourceTest {
 					IPath path = new Path(name.substring(0, name.length() - 4)).makeAbsolute();
 					path = path.append(resource.getFullPath().removeFirstSegments(1));
 					IResource oldResource = ((Workspace) getWorkspace()).newResource(path, resource.getType());
-					IMarker marker = (IMarker) table.get(oldResource);
+					IMarker marker = table.get(oldResource);
 					assertNotNull("2.1." + oldResource.getFullPath(), marker);
 					assertTrue("2.2." + oldResource.getFullPath(), listener.checkChanges(oldResource, null, new IMarker[] {marker}, null));
 					IMarker[] markers = resource.findMarkers(null, true, IResource.DEPTH_ZERO);
@@ -1523,7 +1524,7 @@ public class MarkerTest extends ResourceTest {
 			fail("2.0", e);
 		}
 		final DataOutputStream output = o1;
-		final List list = new ArrayList(5);
+		final List<String> list = new ArrayList<String>(5);
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(final IResource resource) {
 				try {
@@ -1614,7 +1615,7 @@ public class MarkerTest extends ResourceTest {
 
 		// create the markers on the resources. create both transient
 		// and persistent markers.
-		final ArrayList persistentMarkers = new ArrayList();
+		final ArrayList<IMarker> persistentMarkers = new ArrayList<IMarker>();
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) throws CoreException {
 				IMarker marker = resource.createMarker(IMarker.PROBLEM);
@@ -1642,7 +1643,7 @@ public class MarkerTest extends ResourceTest {
 		}
 
 		final MarkerManager manager = ((Workspace) getWorkspace()).getMarkerManager();
-		IMarker[] expected = (IMarker[]) persistentMarkers.toArray(new IMarker[persistentMarkers.size()]);
+		IMarker[] expected = persistentMarkers.toArray(new IMarker[persistentMarkers.size()]);
 
 		// write all the markers to the output stream
 		File file = Platform.getLocation().append(".testmarkers").toFile();
@@ -1655,7 +1656,7 @@ public class MarkerTest extends ResourceTest {
 			fail("2.0", e);
 		}
 		final DataOutputStream output = o1;
-		final List list = new ArrayList(5);
+		final List<String> list = new ArrayList<String>(5);
 		visitor = new IResourceVisitor() {
 			public boolean visit(final IResource resource) {
 				try {
@@ -1836,7 +1837,7 @@ public class MarkerTest extends ResourceTest {
 				assertEquals("3.1." + resource.getFullPath(), values, found);
 				values[1] = new Integer(5);
 				marker.setAttribute(IMarker.SEVERITY, values[1]);
-				Map all = marker.getAttributes();
+				Map<String, ? extends Object> all = marker.getAttributes();
 				assertEquals("3.2." + resource.getFullPath(), all, keys, values);
 			} catch (CoreException e) {
 				fail("3.2." + resource.getFullPath(), e);
@@ -1912,7 +1913,7 @@ public class MarkerTest extends ResourceTest {
 				// expected
 			}
 			try {
-				HashMap attributes = new HashMap();
+				HashMap<String, String> attributes = new HashMap<String, String>();
 				attributes.put(IMarker.MESSAGE, "Hello");
 				marker.setAttributes(attributes);
 				fail("5.3");
@@ -1981,7 +1982,7 @@ public class MarkerTest extends ResourceTest {
 				assertEquals("3.1." + resource.getFullPath(), values, found);
 				values[1] = new Integer(5);
 				marker.setAttribute(IMarker.SEVERITY, values[1]);
-				Map all = marker.getAttributes();
+				Map<String, ? extends Object> all = marker.getAttributes();
 				assertEquals("3.2." + resource.getFullPath(), all, keys, values);
 			} catch (CoreException e) {
 				fail("3.2." + resource.getFullPath(), e);
