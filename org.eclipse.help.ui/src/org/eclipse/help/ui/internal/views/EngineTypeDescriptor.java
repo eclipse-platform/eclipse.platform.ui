@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class EngineTypeDescriptor {
 		image = HelpUIResources.getImage(IHelpUIConstants.IMAGE_HELP_SEARCH);
 		return image;
 	}
+	
 	public String getDescription() {
 		String desc = null;
 		IConfigurationElement [] children = config.getChildren(IHelpUIConstants.TAG_DESC);
@@ -71,13 +72,15 @@ public class EngineTypeDescriptor {
 			desc = children[0].getValue();
 		return desc;
 	}
+	
 	public ImageDescriptor getImageDescriptor() {
 		ImageDescriptor desc=null;
 		String icon = config.getAttribute(IHelpUIConstants.ATT_ICON);
+		String bundleId = config.getContributor().getName();
 		if (icon!=null)
-			desc = HelpUIResources.getImageDescriptor(icon);
+			desc = HelpUIResources.getImageDescriptor(bundleId, icon);
 		else
-			desc = HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_HELP_SEARCH);
+			desc = HelpUIResources.getImageDescriptor(bundleId, IHelpUIConstants.IMAGE_HELP_SEARCH);
 		return desc;
 	}
 	public RootScopePage createRootPage(String scopeSetName) {
