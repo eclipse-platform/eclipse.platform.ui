@@ -1078,7 +1078,9 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	private void handleMouseDown(MouseEvent event) {
 		if (fTextViewer != null) {
-			int[] lines= toLineNumbers(event.y, false);
+			int[] lines= toLineNumbers(event.y, true);
+			if (lines[0] == -1)
+				lines= toLineNumbers(event.y, false);
 			Position p= getAnnotationPosition(lines);
 			if (p == null && event.button == 1) {
 				try {
@@ -1357,7 +1359,9 @@ public class OverviewRuler implements IOverviewRuler {
 		if (fTextViewer == null || y_coordinate == -1)
 			return -1;
 
-		int[] lineNumbers= toLineNumbers(y_coordinate, false);
+		int[] lineNumbers= toLineNumbers(y_coordinate, true);
+		if (lineNumbers[0] == -1)
+			lineNumbers= toLineNumbers(y_coordinate, false);
 		int bestLine= findBestMatchingLineNumber(lineNumbers);
 		if (bestLine == -1 && lineNumbers.length > 0)
 			return lineNumbers[0];
