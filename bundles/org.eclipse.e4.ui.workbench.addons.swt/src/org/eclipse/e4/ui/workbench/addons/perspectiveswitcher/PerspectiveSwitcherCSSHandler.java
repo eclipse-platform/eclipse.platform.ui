@@ -11,7 +11,7 @@ package org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
-import org.eclipse.e4.ui.model.application.impl.ContributionImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.ToolControlImpl;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSValue;
@@ -26,8 +26,8 @@ public class PerspectiveSwitcherCSSHandler extends AbstractCSSPropertySWTHandler
 			String pseudo, CSSEngine engine) throws Exception {
 
 		Object obj = control.getData("modelElement");
-		if (obj instanceof ContributionImpl) {
-			Object bar = ((ContributionImpl) obj).getObject();
+		if (obj instanceof ToolControlImpl) {
+			Object bar = ((ToolControlImpl) obj).getObject();
 			if (bar != null && bar instanceof PerspectiveSwitcher) {
 				Color borderColor = null;
 				Color curveColor = null;
