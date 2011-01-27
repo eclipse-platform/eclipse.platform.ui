@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.renderers.swt.SashLayout;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -106,6 +107,20 @@ public class CleanupAddon {
 										.getParent();
 								if (parentContainer != null) {
 									int index = parentContainer.getChildren().indexOf(container);
+
+									// Magic check, are we unwrapping a sash container
+									if (theChild instanceof MPartSashContainer) {
+										if (container.getWidget() instanceof Composite) {
+											Composite theComp = (Composite) container.getWidget();
+											Object tmp = theChild.getWidget();
+											theChild.setWidget(theComp);
+											theComp.setLayout(new SashLayout(theComp, theChild));
+											theComp.setData(AbstractPartRenderer.OWNING_ME,
+													theChild);
+											container.setWidget(tmp);
+										}
+									}
+
 									theChild.setContainerData(container.getContainerData());
 									container.getChildren().remove(theChild);
 									parentContainer.getChildren().add(index, theChild);
