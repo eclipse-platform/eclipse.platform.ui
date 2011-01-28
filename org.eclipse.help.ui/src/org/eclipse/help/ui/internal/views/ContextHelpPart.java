@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -301,6 +301,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (DefaultHelpUI.isOpeningHelpView()) {
 			return;
 		}
+
 		if (checkForRecentExplicitActivation(isExplicitRequest)) {
 			return;
 		}
@@ -309,15 +310,25 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		lastContext = context;
 		lastPart = part;
 		if (provider!= null && (context==null || ((context instanceof Context) && IWorkbenchHelpContextIds.MISSING.equals(((Context)context).getId())))) {
+			if (HelpPlugin.DEBUG_CONTEXT) {
+			    System.out.println("Getting context from provider"); //$NON-NLS-1$
+		    }
 			lastContext = provider.getContext(c);
 		}
 		updateSearchExpression();
 
 		String helpText;
-		if (lastContext!=null)
+		if (lastContext!=null) {
 			helpText = formatHelpContext(lastContext);
-		else
+			if (HelpPlugin.DEBUG_CONTEXT) {
+			    System.out.println("Context Activation, context =  " + lastContext.getText()); //$NON-NLS-1$
+		    }
+		} else {
+			if (HelpPlugin.DEBUG_CONTEXT) {
+			    System.out.println("Context Activation on control"); //$NON-NLS-1$
+		    }
 			helpText = createContextHelp(c);
+		}
 		updateTitle(c);
 		updateDescription(helpText);
 		if (RelatedTopicsPart.isUseDynamicHelp()) {

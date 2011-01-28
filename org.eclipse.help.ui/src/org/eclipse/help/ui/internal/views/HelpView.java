@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.*;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
@@ -134,6 +135,15 @@ public class HelpView extends ViewPart implements IPartListener2,
 				reusableHelpPart.update(part, c);
 			if (part instanceof IPageChangeProvider)
 				installPageListener(part);
+		} else {
+			if (HelpPlugin.DEBUG_CONTEXT) {
+				if (c == null) {
+				    System.out.println("Context: focus control is null " ); //$NON-NLS-1$			  
+				}
+				if (!c.isVisible()) {
+				    System.out.println("Context: focus control not visible " ); //$NON-NLS-1$
+				}
+		    }
 		}
 	}
 
@@ -212,6 +222,9 @@ public class HelpView extends ViewPart implements IPartListener2,
 			hook(true, partRef);
 			selectionChanged(null);
 		} else {
+			if (HelpPlugin.DEBUG_CONTEXT) {
+			    System.out.println("Help View: activation of " + partRef.getPartName() + " part"); //$NON-NLS-1$ //$NON-NLS-2$
+		    }
 			handlePartActivation(partRef);
 		}
 	}
