@@ -347,6 +347,9 @@ public abstract class AbstractNewClassPage extends WizardPage {
 
 		public Object convert(Object fromObject) {
 			IPackageFragmentRoot f = (IPackageFragmentRoot) fromObject;
+			if( f == null ) {
+				return "";
+			}
 			return f.getPath().makeRelative().toString();
 		}
 	}
