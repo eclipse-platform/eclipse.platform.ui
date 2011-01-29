@@ -16,20 +16,24 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.common.command.CompoundCommand;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
@@ -70,11 +74,28 @@ public class XMIModelResource implements IModelResource {
 		return list;
 	}
 
-	public void replaceRoot(EObject eobject) {
+	public void replaceRoot(EObject eObject) {
+		E4XMIResource resource = (E4XMIResource) eObject.eResource();
+		Map<EObject, String> idMap = new HashMap<EObject, String>();
+		idMap.put(eObject, resource.getID(eObject));
+
+		TreeIterator<EObject> it = EcoreUtil.getAllContents(eObject, true);
+		while (it.hasNext()) {
+			EObject o = it.next();
+			resource = (E4XMIResource) o.eResource();
+			idMap.put(o, resource.getID(o));
+		}
+
+		resource = (E4XMIResource) ((EObject) list.get(0)).eResource();
+
 		Command cmdRemove = new RemoveCommand(getEditingDomain(), resource.getContents(), list.get(0));
-		Command cmdAdd = new AddCommand(getEditingDomain(), resource.getContents(), eobject);
+		Command cmdAdd = new AddCommand(getEditingDomain(), resource.getContents(), eObject);
 		CompoundCommand cmd = new CompoundCommand(Arrays.asList(cmdRemove, cmdAdd));
 		getEditingDomain().getCommandStack().execute(cmd);
+
+		for (Entry<EObject, String> e : idMap.entrySet()) {
+			resource.setID(e.getKey(), e.getValue());
+		}
 	}
 
 	public EditingDomain getEditingDomain() {

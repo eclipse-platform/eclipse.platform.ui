@@ -7,10 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
@@ -34,7 +33,7 @@ public class EMFDocumentResourceMediator {
 				}
 
 				String doc = document.get();
-				XMIResourceImpl res = new XMIResourceImpl();
+				E4XMIResource res = new E4XMIResource();
 				try {
 					res.load(new InputSource(new StringReader(doc)), null);
 					modelResource.replaceRoot(res.getContents().get(0));
@@ -80,8 +79,8 @@ public class EMFDocumentResourceMediator {
 	}
 
 	private String toXMI(EObject root) {
-		XMIResourceImpl resource = new XMIResourceImpl();
-		resource.getContents().add(EcoreUtil.copy(root));
+		E4XMIResource resource = (E4XMIResource) root.eResource();
+		// resource.getContents().add(EcoreUtil.copy(root));
 		StringWriter writer = new StringWriter();
 		try {
 			resource.save(writer, null);
