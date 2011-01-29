@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Shell;
 public class HandlerCommandSelectionDialog extends AbstractCommandSelectionDialog {
 	private MHandler handler;
 
-	public HandlerCommandSelectionDialog(Shell parentShell, MHandler handler, IModelResource resource) {
-		super(parentShell, resource);
+	public HandlerCommandSelectionDialog(Shell parentShell, MHandler handler, IModelResource resource, Messages Messages) {
+		super(parentShell, resource, Messages);
 		this.handler = handler;
 	}
 

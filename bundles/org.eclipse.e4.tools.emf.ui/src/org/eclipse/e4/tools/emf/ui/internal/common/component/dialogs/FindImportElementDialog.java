@@ -57,11 +57,13 @@ public class FindImportElementDialog extends TitleAreaDialog {
 	private EObject element;
 	private AbstractComponentEditor editor;
 	private TableViewer viewer;
+	private Messages Messages;
 
-	public FindImportElementDialog(Shell parentShell, AbstractComponentEditor editor, EObject element) {
+	public FindImportElementDialog(Shell parentShell, AbstractComponentEditor editor, EObject element, Messages Messages) {
 		super(parentShell);
 		this.element = element;
 		this.editor = editor;
+		this.Messages = Messages;
 	}
 
 	@Override

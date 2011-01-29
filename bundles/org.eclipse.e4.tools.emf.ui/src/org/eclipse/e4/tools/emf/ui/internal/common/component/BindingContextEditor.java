@@ -12,17 +12,16 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.e4.tools.emf.ui.common.EStackLayout;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
-import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
@@ -36,7 +35,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
-import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -65,8 +63,13 @@ public class BindingContextEditor extends AbstractComponentEditor {
 
 	private List<Action> actions = new ArrayList<Action>();
 
-	public BindingContextEditor(EditingDomain editingDomain, ModelEditor editor, IResourcePool resourcePool) {
-		super(editingDomain, editor, resourcePool);
+	@Inject
+	public BindingContextEditor() {
+		super();
+	}
+
+	@PostConstruct
+	void init() {
 		actions.add(new Action(Messages.BindingContextEditor_AddContext, createImageDescriptor(ResourceProvider.IMG_BindingContext)) {
 			@Override
 			public void run() {
@@ -147,7 +150,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		}
 
 		if (isImport) {
-			ControlFactory.createFindImport(parent, this, context);
+			ControlFactory.createFindImport(parent, Messages, this, context);
 			return parent;
 		}
 
@@ -166,7 +169,7 @@ public class BindingContextEditor extends AbstractComponentEditor {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 300;
 		viewer.getControl().setLayoutData(gd);
-		viewer.setLabelProvider(new ComponentLabelProvider(getEditor()));
+		viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 
 		IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN);
 		viewer.setInput(prop.observeDetail(master));

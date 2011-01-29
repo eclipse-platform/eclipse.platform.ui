@@ -10,16 +10,14 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
-import org.eclipse.core.resources.IProject;
+import javax.inject.Inject;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
-import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
-import org.eclipse.e4.tools.services.IResourcePool;
-import org.eclipse.emf.edit.domain.EditingDomain;
 
 public class RenderedMenuEditor extends MenuEditor {
 
-	public RenderedMenuEditor(EditingDomain editingDomain, IProject project, ModelEditor editor, IResourcePool resourcePool) {
-		super(editingDomain, project, editor, resourcePool);
+	@Inject
+	public RenderedMenuEditor() {
+		super();
 	}
 
 	@Override

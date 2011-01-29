@@ -12,11 +12,14 @@ package org.eclipse.e4.tools.emf.ui.common.component;
 
 import java.util.Collections;
 import java.util.List;
+import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.Util;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.services.IResourcePool;
+import org.eclipse.e4.tools.services.Translation;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EObject;
@@ -28,8 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractComponentEditor {
-	private EditingDomain editingDomain;
-
 	private WritableValue master = new WritableValue();
 
 	public static final int SEARCH_IMAGE = 0;
@@ -40,14 +41,16 @@ public abstract class AbstractComponentEditor {
 
 	protected static final int VERTICAL_LIST_WIDGET_INDENT = 10;
 
+	@Inject
+	private EditingDomain editingDomain;
+	@Inject
 	private ModelEditor editor;
-	private final IResourcePool resourcePool;
+	@Inject
+	private IResourcePool resourcePool;
 
-	public AbstractComponentEditor(EditingDomain editingDomain, ModelEditor editor, IResourcePool resourcePool) {
-		this.editingDomain = editingDomain;
-		this.editor = editor;
-		this.resourcePool = resourcePool;
-	}
+	@Inject
+	@Translation
+	protected Messages Messages;
 
 	public EditingDomain getEditingDomain() {
 		return editingDomain;

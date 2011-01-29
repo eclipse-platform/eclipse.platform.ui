@@ -10,580 +10,576 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal;
 
-import org.eclipse.osgi.util.NLS;
-
-public class Messages extends NLS {
-
-	public static String ModelTooling_Common_Up;
-	public static String ModelTooling_Common_Down;
-	public static String ModelTooling_Common_AddEllipsis;
-	public static String ModelTooling_Common_Add;
-	public static String ModelTooling_Common_Remove;
-	public static String ModelTooling_Common_Id;
-	public static String ModelTooling_Common_RefId;
-	public static String ModelTooling_Common_FindEllipsis;
-
-	public static String ModelTooling_UIElement_ToBeRendered;
-	public static String ModelTooling_UIElement_Visible;
-	public static String ModelTooling_UIElement_VisibleWhen;
-	public static String ModelTooling_UIElement_AccessibilityPhrase;
-
-	public static String ModelTooling_Context_Variables;
-	public static String ModelTooling_Context_Properties;
-
-	public static String ModelTooling_ApplicationElement_Tags;
-	public static String ModelTooling_Contribution_PersistedState;
-
-	public static String AbstractCommandSelectionDialog_Label_CommandId;
-
-	public static String ApplicationEditor_Label;
-	public static String ApplicationEditor_Description;
-	public static String ApplicationEditor_Handlers;
-	public static String ApplicationEditor_PartDescriptors;
-	public static String ApplicationEditor_BindingTables;
-	public static String ApplicationEditor_Commands;
-	public static String ApplicationEditor_Windows;
-	public static String ApplicationEditor_Addons;
-	public static String ApplicationEditor_MenuContributions;
-	public static String ApplicationEditor_ToolBarContributions;
-	public static String ApplicationEditor_TrimContributions;
-	public static String ApplicationEditor_RootContexts;
-	public static String ApplicationEditor_BindingContexts;
-	public static String ApplicationEditor_Categories;
-
-	public static String BindingTableEditor_Label;
-	public static String BindingTableEditor_Description;
-	public static String BindingTableEditor_ContextId;
-	public static String BindingTableEditor_Keybindings;
-	public static String BindingTableEditor_KeySequence;
-	public static String BindingTableEditor_Command;
-	public static String BindingTableEditor_AddKeyBinding;
-
-	public static String CommandEditor_Label;
-	public static String CommandEditor_Description;
-	public static String CommandEditor_Name;
-	public static String CommandEditor_LabelDescription;
-	public static String CommandEditor_Parameters;
-	public static String CommandEditor_ParameterName;
-	public static String CommandEditor_ParameterTypeId;
-	public static String CommandEditor_ParameterOptional;
-	public static String CommandEditor_ParameterOptional_No;
-	public static String CommandEditor_ParameterOptional_Yes;
-	public static String CommandEditor_ParameterId;
-	public static String CommandEditor_Category;
-	public static String CommandEditor_AddCommandParameter;
-
-	public static String DirectMenuItemEditor_Label;
-	public static String DirectMenuItemEditor_Description;
-	public static String DirectMenuItemEditor_ClassURI;
-
-	public static String ControlFactory_Key;
-	public static String ControlFactory_Value;
-	public static String ControlFactory_KeyValueShellTitle;
-
-	public static String DirectToolItemEditor_ClassURI;
-	public static String DirectToolItemEditor_Label;
-	public static String DirectToolItemEditor_Description;
-
-	public static String HandledMenuItemEditor_Label;
-	public static String HandledMenuItemEditor_Description;
-	public static String HandledMenuItemEditor_Command;
-	public static String HandledMenuItemEditor_Parameters;
-	public static String HandledMenuItemEditor_Tag;
-	public static String HandledMenuItemEditor_Value;
-
-	public static String HandledToolItemEditor_Command;
-	public static String HandledToolItemEditor_Parameters;
-	public static String HandledToolItemEditor_ParametersName;
-	public static String HandledToolItemEditor_ParametersValue;
-	public static String HandledToolItemEditor_Label;
-	public static String HandledToolItemEditor_Description;
-
-	public static String HandlerEditor_Label;
-	public static String HandlerEditor_Description;
-	public static String HandlerEditor_Command;
-	public static String HandlerEditor_ClassURI;
-
-	public static String InputPartEditor_Label;
-	public static String InputPartEditor_InputURI;
-
-	public static String KeyBindingEditor_Label;
-	public static String KeyBindingEditor_Description;
-	public static String KeyBindingEditor_Sequence;
-	public static String KeyBindingEditor_Command;
-	public static String KeyBindingEditor_Parameters;
-	public static String KeyBindingEditor_SequenceNotComplete;
-	public static String KeyBindingEditor_SequenceEmpty;
-	public static String KeyBindingEditor_AddParameter;
-
-	public static String MenuEditor_Label;
-	public static String MenuEditor_Description;
-	public static String MenuEditor_MenuItems;
-	public static String MenuEditor_MenuItemType;
-	public static String MenuEditor_MenuItemItemType;
-	public static String MenuEditor_HandledMenuItem;
-	public static String MenuEditor_Separator;
-	public static String MenuEditor_Menu;
-	public static String MenuEditor_DirectMenuItem;
-	public static String MenuEditor_LabelLabel;
-	public static String MenuEditor_Tooltip;
-	public static String MenuEditor_IconURI;
-	public static String MenuEditor_Children;
-	public static String MenuEditor_Mnemonics;
-	public static String MenuEditor_AddHandledMenuItem;
-	public static String MenuEditor_AddMenu;
-	public static String MenuEditor_AddDirectMenuItem;
-	public static String MenuEditor_AddSeparator;
-
-	public static String MenuItemEditor_Type;
-	public static String MenuItemEditor_Label;
-	public static String MenuItemEditor_Tooltip;
-	public static String MenuItemEditor_IconURI;
-	public static String MenuEditor_MainMenu;
-	public static String MenuItemEditor_Enabled;
-	public static String MenuItemEditor_Selected;
-	public static String MenuItemEditor_Mnemonics;
-	public static String MenuItemEditor_NoExpression;
-
-	public static String MenuSeparatorEditor_Label;
-
-	public static String PartDescriptorEditor_Label;
-	public static String PartDescriptorEditor_Descriptor;
-	public static String PartDescriptorEditor_LabelLabel;
-	public static String PartDescriptorEditor_Tooltip;
-	public static String PartDescriptorEditor_IconURI;
-	public static String PartDescriptorEditor_ClassURI;
-	public static String PartDescriptorEditor_Dirtyable;
-	public static String PartDescriptorEditor_Closeable;
-	public static String PartDescriptorEditor_Multiple;
-	public static String PartDescriptorEditor_Category;
-	public static String PartDescriptorEditor_Variables;
-	public static String PartDescriptorEditor_Properties;
-	public static String PartDescriptorEditor_PropertiesKey;
-	public static String PartDescriptorEditor_PropertiesValue;
-	public static String PartDescriptorEditor_Menus;
-	public static String PartDescriptorEditor_Handlers;
-	public static String PartDescriptorEditor_ContainerData;
-
-	public static String PartEditor_Label;
-	public static String PartEditor_Description;
-	public static String PartEditor_LabelLabel;
-	public static String PartEditor_Tooltip;
-	public static String PartEditor_IconURI;
-	public static String PartEditor_ClassURI;
-	public static String PartEditor_Closeable;
-	public static String PartEditor_Menus;
-	public static String PartEditor_Handlers;
-	public static String PartEditor_ContainerData;
-	public static String PartEditor_ToolBar;
-	public static String PartEditor_BindingContexts;
-
-	public static String PartSashContainerEditor_Label;
-	public static String PartSashContainerEditor_Description;
-	public static String PartSashContainerEditor_Orientation;
-	public static String PartSashContainerEditor_Vertical;
-	public static String PartSashContainerEditor_Horizontal;
-	public static String PartSashContainerEditor_SelectedElement;
-	public static String PartSashContainerEditor_Controls;
-	public static String PartSashContainerEditor_ContainerData;
-	public static String PartSashContainerEditor_AddPartSashContainer;
-	public static String PartSashContainerEditor_AddPartStack;
-	public static String PartSashContainerEditor_AddPart;
-	public static String PartSashContainerEditor_AddInputPart;
-	public static String PartSashContainerEditor_AddArea;
-	public static String PartSashContainerEditor_AddPlaceholder;
-
-	public static String PartStackEditor_Label;
-	public static String PartStackEditor_Description;
-	public static String PartStackEditor_SelectedElement;
-	public static String PartStackEditor_Parts;
-	public static String PartStackEditor_ContainerData;
-	public static String PartStackEditor_AddPart;
-	public static String PartStackEditor_AddInputPart;
-	public static String PartStackEditor_AddPlaceholder;
-
-	public static String PerspectiveEditor_Label;
-	public static String PerspectiveEditor_Description;
-	public static String PerspectiveEditor_LabelLabel;
-	public static String PerspectiveEditor_SelectedElement;
-	public static String PerspectiveEditor_Tooltip;
-	public static String PerspectiveEditor_IconURI;
-	public static String PerspectiveEditor_Controls;
-	public static String PerspectiveEditor_AddPartSashContainer;
-	public static String PerspectiveEditor_AddPartStack;
-	public static String PerspectiveEditor_AddPart;
-	public static String PerspectiveEditor_AddInputPart;
-	public static String PerspectiveEditor_AddArea;
-	public static String PerspectiveEditor_AddPlaceholder;
-
-	public static String PerspectiveStackEditor_Perspectives;
-	public static String PerspectiveStackEditor_Label;
-	public static String PerspectiveStackEditor_Description;
-	public static String PerspectiveStackEditor_SelectedElement;
-	public static String PerspectiveStackEditor_AddPerspective;
-
-	public static String PlaceholderEditor_Label;
-	public static String PlaceholderEditor_Descriptor;
-	public static String PlaceholderEditor_Reference;
-
-	public static String ToolBarEditor_Label;
-	public static String ToolBarEditor_Description;
-	public static String ToolBarEditor_ToolbarItems;
-	public static String ToolBarEditor_ToolbarItemsType;
-	public static String ToolBarEditor_ToolbarItemsItemType;
-	public static String ToolBarEditor_HandledToolItem;
-	public static String ToolBarEditor_DirectToolItem;
-	public static String ToolBarEditor_ToolControl;
-	public static String ToolBarEditor_Separator;
-	public static String ToolBarEditor_AddHandledToolItem;
-	public static String ToolBarEditor_AddDirectToolItem;
-	public static String ToolBarEditor_AddToolControl;
-	public static String ToolBarEditor_AddToolBarSeparator;
-
-	public static String ToolBarSeparatorEditor_Label;
-
-	public static String ToolControlEditor_Label;
-	public static String ToolControlEditor_Description;
-	public static String ToolControlEditor_ClassURI;
-
-	public static String VBindingTableEditor_Label;
-	public static String VBindingTableEditor_Description;
-	public static String VBindingTableEditor_Contexts;
-	public static String VBindingTableEditor_Name;
-	public static String VBindingTableEditor_LabelDescription;
-	public static String VBindingTableEditor_BindingTables;
-	public static String VBindingTableEditor_AddBindingTable;
-
-	public static String AddonsEditor_ClassURI;
-	public static String AddonsEditor_TreeLabel;
-	public static String AddonsEditor_TreeLabelDescription;
-	public static String AddonsEditor_Tags;
-
-	public static String ContributionClassDialog_DialogMessage;
-	public static String ContributionClassDialog_DialogTitle;
-	public static String ContributionClassDialog_Label_Classname;
-	public static String ContributionClassDialog_ShellTitle;
-
-	public static String MenuContributionEditor_MenuItems;
-	public static String MenuContributionEditor_MenuItemType;
-	public static String MenuContributionEditor_MenuItemItemType;
-	public static String MenuContributionEditor_HandledMenuItem;
-	public static String MenuContributionEditor_Separator;
-	public static String MenuContributionEditor_Menu;
-	public static String MenuContributionEditor_DirectMenuItem;
-	public static String MenuContributionEditor_ParentId;
-	public static String MenuContributionEditor_Position;
-	public static String MenuContributionEditor_TreeLabel;
-	public static String MenuContributionEditor_TreeLabelDescription;
-
-	public static String ModelFragmentsEditor_ModelFragments;
-	public static String ModelFragmentsEditor_Label;
-	public static String ModelFragmentsEditor_Description;
-	public static String ModelFragmentsEditor_Imports;
-
-	public static String StringModelFragment_Label;
-	public static String StringModelFragment_Description;
-	public static String StringModelFragment_Featurename;
-	public static String StringModelFragment_ParentId;
-	public static String StringModelFragment_PositionInList;
-	public static String StringModelFragment_Elements;
-
-	public static String FeatureSelectionDialog_Filter;
-	public static String FeatureSelectionDialog_ShellTitle;
-	public static String FeatureSelectionDialog_DialogTitle;
-	public static String FeatureSelectionDialog_DialogMessage;
-
-	public static String CategoryEditor_TreeLabel;
-	public static String CategoryEditor_TreeLabelDescriptor;
-	public static String CategoryEditor_Name;
-	public static String CategoryEditor_Description;
-	public static String CategoryEditor_Tags;
-
-	public static String CommandCategorySelectionDialog_LabelCategoryId;
-
-	public static String BindingContextSelectionDialog_LabelContextId;
-
-	public static String ComponentLabelProvider_invisible;
-	public static String ComponentLabelProvider_notrendered;
-
-	public static String BindingContextEditor_TreeLabel;
-	public static String BindingContextEditor_TreeLabelDescription;
-	public static String BindingContextEditor_Name;
-	public static String BindingContextEditor_Description;
-	public static String BindingContextEditor_Subcontexts;
-	public static String BindingContextEditor_AddContext;
-
-	public static String CommandParameterEditor_TreeLabel;
-	public static String CommandParameterEditor_TreeLabelDescritpion;
-	public static String CommandParameterEditor_Name;
-	public static String CommandParameterEditor_TypeId;
-	public static String CommandParameterEditor_Optional;
-
-	public static String ParameterEditor_TreeLabel;
-	public static String ParameterEditor_TreeLabelDescription;
-	public static String ParameterEditor_Name;
-	public static String ParameterEditor_Value;
-
-	public static String PopupMenuEditor_TreeLabel;
-	public static String PopupMenuEditor_TreeLabelDescription;
-
-	public static String RenderedMenuEditor_TreeLabel;
-
-	public static String RenderedMenuItem_TreeLabel;
-	public static String RenderedMenuItem_TreeLabelDescription;
-
-	public static String RenderedToolBarEditor_TreeLabel;
-
-	public static String ToolBarContributionEditor_TreeLabel;
-	public static String ToolBarContributionEditor_TreeLabelDescription;
-
-	public static String ToolItemEditor_Type;
-	public static String ToolItemEditor_Label;
-	public static String ToolItemEditor_ToolTip;
-	public static String ToolItemEditor_IconURI;
-	public static String ToolItemEditor_Enabled;
-	public static String ToolItemEditor_Selected;
-	public static String ToolItemEditor_NoExpression;
-
-	public static String TrimBarEditor_TreeLabel;
-	public static String TrimBarEditor_TreeLabelDescription;
-	public static String TrimBarEditor_Side;
-	public static String TrimBarEditor_Controls;
-	public static String TrimBarEditor_AddToolBar;
-	public static String TrimBarEditor_AddToolControl;
-
-	public static String TrimContributionEditor_TreeLabel;
-	public static String TrimContributionEditor_TreeLabelDescription;
-	public static String TrimContributionEditor_ParentId;
-	public static String TrimContributionEditor_Position;
-	public static String TrimContributionEditor_Controls;
-
-	public static String TrimmedWindowEditor_TrimBars;
-	public static String TrimmedWindowEditor_TreeLabel;
-
-	public static String WindowEditor_AddMainMenu;
-	public static String WindowEditor_TreeLabel;
-	public static String WindowEditor_TreeLabelDescription;
-	public static String WindowEditor_X;
-	public static String WindowEditor_Y;
-	public static String WindowEditor_Width;
-	public static String WindowEditor_Height;
-	public static String WindowEditor_Label;
-	public static String WindowEditor_Tooltip;
-	public static String WindowEditor_IconURI;
-	public static String WindowEditor_MainMenu;
-	public static String WindowEditor_SelectedElement;
-	public static String WindowEditor_BindingContexts;
-	public static String WindowEditor_Handlers;
-	public static String WindowEditor_Windows;
-	public static String WindowEditor_Controls;
-	public static String WindowEditor_SharedElements;
-
-	public static String VApplicationAddons_AddAddon;
-	public static String VApplicationAddons_TreeLabel;
-	public static String VApplicationAddons_TreeLabelDescription;
-	public static String VApplicationAddons_Commands;
-
-	public static String VApplicationCategoriesEditor_TreeLabel;
-	public static String VApplicationCategoriesEditor_TreeLabelDescription;
-	public static String VApplicationCategoriesEditor_Categories;
-	public static String VApplicationCategoriesEditor_AddCategory;
-
-	public static String VCommandEditor_TreeLabel;
-	public static String VCommandEditor_TreeLabelDescription;
-	public static String VCommandEditor_Commands;
-	public static String VCommandEditor_AddCommand;
-
-	public static String VHandlerEditor_TreeLabel;
-	public static String VHandlerEditor_TreeLabelDescription;
-	public static String VHandlerEditor_Handlers;
-	public static String VHandlerEditor_AddHandler;
-
-	public static String VMenuContributionsEditor_TreeLabel;
-	public static String VMenuContributionsEditor_TreeLabelDescription;
-	public static String VMenuContributionsEditor_MenuContributions;
-	public static String VMenuContributionsEditor_AddMenuContribution;
-
-	public static String VMenuEditor_TreeLabel;
-	public static String VMenuEditor_TreeLabelDescription;
-	public static String VMenuEditor_Menus;
-	public static String VMenuEditor_AddMenuContribution;
-
-	public static String VModelFragmentsEditor_TreeLabel;
-	public static String VModelFragmentsEditor_TreeLabelDescription;
-	public static String VModelFragmentsEditor_Fragments;
-
-	public static String VModelImportsEditor_TreeLabel;
-	public static String VModelImportsEditor_TreeLabelDescription;
-	public static String VModelImportsEditor_Imports;
-
-	public static String VPartDescriptor_TreeLabel;
-	public static String VPartDescriptor_TreeLabelDescription;
-	public static String VPartDescriptor_Descriptors;
-	public static String VPartDescriptor_AddPartDescriptor;
-
-	public static String VToolBarContributionsEditor_Contributions;
-	public static String VToolBarContributionsEditor_TreeLabelDescription;
-	public static String VToolBarContributionsEditor_TreeLabel;
-	public static String VToolBarContributionsEditor_AddToolBarContribution;
-
-	public static String VTrimContributionsEditor_TreeLabel;
-	public static String VTrimContributionsEditor_TreeLabelDescription;
-	public static String VTrimContributionsEditor_Contributions;
-	public static String VTrimContributionsEditor_AddTrimContribution;
-
-	public static String VWindowControlEditor_TreeLabel;
-	public static String VWindowControlEditor_TreeLabelDescription;
-	public static String VWindowControlEditor_Controls;
-	public static String VWindowControlEditor_AddPerspectiveStack;
-	public static String VWindowControlEditor_AddPartSashContainer;
-	public static String VWindowControlEditor_AddPartStack;
-	public static String VWindowControlEditor_AddPart;
-	public static String VWindowControlEditor_AddInputPart;
-	public static String VWindowControlEditor_AddArea;
-
-	public static String VWindowEditor_TreeLabel;
-	public static String VWindowEditor_TreeLabelDescription;
-	public static String VWindowEditor_Windows;
-	public static String VWindowEditor_AddTrimmedWindow;
-	public static String VWindowEditor_AddWindow;
-
-	public static String VWindowSharedElementsEditor_TreeLabel;
-	public static String VWindowSharedElementsEditor_TreeLabelDescription;
-	public static String VWindowSharedElementsEditor_Controls;
-	public static String VWindowSharedElementsEditor_AddPartSashContainer;
-	public static String VWindowSharedElementsEditor_AddPart;
-	public static String VWindowSharedElementsEditor_AddInputPart;
-
-	public static String VWindowTrimEditor_TreeLabel;
-	public static String VWindowTrimEditor_TreeLabelDescription;
-	public static String VWindowTrimEditor_Controls;
-	public static String VWindowTrimEditor_AddWindowTrim;
-
-	public static String AbstractIconDialog_IconName;
-
-	public static String BindingContextSelectionDialog_ShellTitle;
-	public static String BindingContextSelectionDialog_Title;
-	public static String BindingContextSelectionDialog_Message;
-	public static String BindingContextSelectionDialog_NoIdReference;
-
-	public static String CommandCategorySelectionDialog_ShellTitle;
-	public static String CommandCategorySelectionDialog_Title;
-	public static String CommandCategorySelectionDialog_Message;
-
-	public static String FindImportElementDialog_ShellTitle;
-	public static String FindImportElementDialog_Title;
-	public static String FindImportElementDialog_Message;
-	public static String FindImportElementDialog_Search;
-	public static String FindImportElementDialog_ClearCache;
-	public static String FindImportElementDialog_NoIdReference;
-	public static String FindImportElementDialog_noId;
-
-	public static String FindParentReferenceElementDialog_ShellTitle;
-	public static String FindParentReferenceElementDialog_Title;
-	public static String FindParentReferenceElementDialog_Message;
-	public static String FindParentReferenceElementDialog_ContainerType;
-	public static String FindParentReferenceElementDialog_Search;
-	public static String FindParentReferenceElementDialog_NoId;
-	public static String FindParentReferenceElementDialog_ClearCache;
-	public static String FindParentReferenceElementDialog_NoReferenceId;
-
-	public static String HandledMenuItemCommandSelectionDialog_ShellTitle;
-	public static String HandledMenuItemCommandSelectionDialog_DialogTitle;
-	public static String HandledMenuItemCommandSelectionDialog_DialogMessage;
-
-	public static String HandledToolItemCommandSelectionDialog_ShellTitle;
-	public static String HandledToolItemCommandSelectionDialog_DialogTitle;
-	public static String HandledToolItemCommandSelectionDialog_DialogMessage;
-
-	public static String HandlerCommandSelectionDialog_ShellTitle;
-	public static String HandlerCommandSelectionDialog_DialogTitle;
-	public static String HandlerCommandSelectionDialog_DialogMessage;
-
-	public static String KeyBindingCommandSelectionDialog_ShellTitle;
-	public static String KeyBindingCommandSelectionDialog_DialogTitle;
-	public static String KeyBindingCommandSelectionDialog_DialogMessage;
-
-	public static String MenuIconDialogEditor_ShellTitle;
-	public static String MenuIconDialogEditor_DialogTitle;
-	public static String MenuIconDialogEditor_DialogMessage;
-
-	public static String MenuItemIconDialogEditor_ShellTitle;
-	public static String MenuItemIconDialogEditor_DialogTitle;
-	public static String MenuItemIconDialogEditor_DialogMessage;
-
-	public static String PartDescriptorIconDialogEditor_ShellTitle;
-	public static String PartDescriptorIconDialogEditor_DialogTitle;
-	public static String PartDescriptorIconDialogEditor_DialogMessage;
-
-	public static String PartIconDialogEditor_ShellTitle;
-	public static String PartIconDialogEditor_DialogTitle;
-	public static String PartIconDialogEditor_DialogMessage;
-
-	public static String PerspectiveIconDialogEditor_ShellTitle;
-	public static String PerspectiveIconDialogEditor_DialogTitle;
-	public static String PerspectiveIconDialogEditor_DialogMessage;
-
-	public static String SharedElementsDialog_ShellTitle;
-	public static String SharedElementsDialog_Title;
-	public static String SharedElementsDialog_Message;
-	public static String SharedElementsDialog_Name;
-
-	public static String ToolItemIconDialogEditor_ShellTitle;
-	public static String ToolItemIconDialogEditor_DialogTitle;
-	public static String ToolItemIconDialogEditor_DialogMessage;
-
-	public static String WindowIconDialogEditor_ShellTitle;
-	public static String WindowIconDialogEditor_DialogTitle;
-	public static String WindowIconDialogEditor_DialogMessage;
-
-	public static String ImageTooltip_UnknownError;
-	public static String ImageTooltip_FileNotFound;
-	public static String ImageTooltip_Icon;
-	public static String ImageTooltip_Name;
-	public static String ImageTooltip_Dimension;
-	public static String ImageTooltip_FileSize;
-
-	public static String VItemParametersEditor_TreeLabel;
-	public static String VItemParametersEditor_TreeLabelDescription;
-	public static String VItemParametersEditor_Parameters;
-	public static String VItemParametersEditor_AddParameter;
-
-	public static String CoreExpressionEditor_TreeLabel;
-	public static String CoreExpressionEditor_TreeLabelDescription;
-	public static String CoreExpressionEditor_ExpressionId;
-
-	public static String ExpressionIdDialog_ShellTitle;
-	public static String ExpressionIdDialog_DialogTitle;
-	public static String ExpressionIdDialog_DialogMessage;
-	public static String ExpressionIdDialog_Id;
-
-	public static String CommandToStringConverter_None;
-
-	public static String VRootBindingContexts_AddContext;
-	public static String VRootBindingContexts_TreeLabel;
-	public static String VRootBindingContexts_TreeLabelDescription;
-	public static String VRootBindingContexts_Contexts;
-
-	public static String AreaEditor_Label;
-	public static String AreaEditor_Description;
-	public static String AreaEditor_Orientation;
-	public static String AreaEditor_Horizontal;
-	public static String AreaEditor_SelectedElement;
-	public static String AreaEditor_ContainerData;
-	public static String AreaEditor_Controls;
-	public static String AreaEditor_Vertical;
-	public static String AreaEditor_LabelLabel;
-	public static String AreaEditor_Tooltip;
-	public static String AreaEditor_IconURI;
-
-	public static String AreaIconDialogEditor_ShellTitle;
-	public static String AreaIconDialogEditor_DialogTitle;
-	public static String AreaIconDialogEditor_DialogMessage;
-
-	public static String ModelEditor_Delete;
-
-	static {
-		NLS.initializeMessages(Messages.class.getName(), Messages.class);
-	}
+public class Messages {
+
+	public String ModelTooling_Common_Up;
+	public String ModelTooling_Common_Down;
+	public String ModelTooling_Common_AddEllipsis;
+	public String ModelTooling_Common_Add;
+	public String ModelTooling_Common_Remove;
+	public String ModelTooling_Common_Id;
+	public String ModelTooling_Common_RefId;
+	public String ModelTooling_Common_FindEllipsis;
+
+	public String ModelTooling_UIElement_ToBeRendered;
+	public String ModelTooling_UIElement_Visible;
+	public String ModelTooling_UIElement_VisibleWhen;
+	public String ModelTooling_UIElement_AccessibilityPhrase;
+
+	public String ModelTooling_Context_Variables;
+	public String ModelTooling_Context_Properties;
+
+	public String ModelTooling_ApplicationElement_Tags;
+	public String ModelTooling_Contribution_PersistedState;
+
+	public String AbstractCommandSelectionDialog_Label_CommandId;
+
+	public String ApplicationEditor_Label;
+	public String ApplicationEditor_Description;
+	public String ApplicationEditor_Handlers;
+	public String ApplicationEditor_PartDescriptors;
+	public String ApplicationEditor_BindingTables;
+	public String ApplicationEditor_Commands;
+	public String ApplicationEditor_Windows;
+	public String ApplicationEditor_Addons;
+	public String ApplicationEditor_MenuContributions;
+	public String ApplicationEditor_ToolBarContributions;
+	public String ApplicationEditor_TrimContributions;
+	public String ApplicationEditor_RootContexts;
+	public String ApplicationEditor_BindingContexts;
+	public String ApplicationEditor_Categories;
+
+	public String BindingTableEditor_Label;
+	public String BindingTableEditor_Description;
+	public String BindingTableEditor_ContextId;
+	public String BindingTableEditor_Keybindings;
+	public String BindingTableEditor_KeySequence;
+	public String BindingTableEditor_Command;
+	public String BindingTableEditor_AddKeyBinding;
+
+	public String CommandEditor_Label;
+	public String CommandEditor_Description;
+	public String CommandEditor_Name;
+	public String CommandEditor_LabelDescription;
+	public String CommandEditor_Parameters;
+	public String CommandEditor_ParameterName;
+	public String CommandEditor_ParameterTypeId;
+	public String CommandEditor_ParameterOptional;
+	public String CommandEditor_ParameterOptional_No;
+	public String CommandEditor_ParameterOptional_Yes;
+	public String CommandEditor_ParameterId;
+	public String CommandEditor_Category;
+	public String CommandEditor_AddCommandParameter;
+
+	public String DirectMenuItemEditor_Label;
+	public String DirectMenuItemEditor_Description;
+	public String DirectMenuItemEditor_ClassURI;
+
+	public String ControlFactory_Key;
+	public String ControlFactory_Value;
+	public String ControlFactory_KeyValueShellTitle;
+
+	public String DirectToolItemEditor_ClassURI;
+	public String DirectToolItemEditor_Label;
+	public String DirectToolItemEditor_Description;
+
+	public String HandledMenuItemEditor_Label;
+	public String HandledMenuItemEditor_Description;
+	public String HandledMenuItemEditor_Command;
+	public String HandledMenuItemEditor_Parameters;
+	public String HandledMenuItemEditor_Tag;
+	public String HandledMenuItemEditor_Value;
+
+	public String HandledToolItemEditor_Command;
+	public String HandledToolItemEditor_Parameters;
+	public String HandledToolItemEditor_ParametersName;
+	public String HandledToolItemEditor_ParametersValue;
+	public String HandledToolItemEditor_Label;
+	public String HandledToolItemEditor_Description;
+
+	public String HandlerEditor_Label;
+	public String HandlerEditor_Description;
+	public String HandlerEditor_Command;
+	public String HandlerEditor_ClassURI;
+
+	public String InputPartEditor_Label;
+	public String InputPartEditor_InputURI;
+
+	public String KeyBindingEditor_Label;
+	public String KeyBindingEditor_Description;
+	public String KeyBindingEditor_Sequence;
+	public String KeyBindingEditor_Command;
+	public String KeyBindingEditor_Parameters;
+	public String KeyBindingEditor_SequenceNotComplete;
+	public String KeyBindingEditor_SequenceEmpty;
+	public String KeyBindingEditor_AddParameter;
+
+	public String MenuEditor_Label;
+	public String MenuEditor_Description;
+	public String MenuEditor_MenuItems;
+	public String MenuEditor_MenuItemType;
+	public String MenuEditor_MenuItemItemType;
+	public String MenuEditor_HandledMenuItem;
+	public String MenuEditor_Separator;
+	public String MenuEditor_Menu;
+	public String MenuEditor_DirectMenuItem;
+	public String MenuEditor_LabelLabel;
+	public String MenuEditor_Tooltip;
+	public String MenuEditor_IconURI;
+	public String MenuEditor_Children;
+	public String MenuEditor_Mnemonics;
+	public String MenuEditor_AddHandledMenuItem;
+	public String MenuEditor_AddMenu;
+	public String MenuEditor_AddDirectMenuItem;
+	public String MenuEditor_AddSeparator;
+
+	public String MenuItemEditor_Type;
+	public String MenuItemEditor_Label;
+	public String MenuItemEditor_Tooltip;
+	public String MenuItemEditor_IconURI;
+	public String MenuEditor_MainMenu;
+	public String MenuItemEditor_Enabled;
+	public String MenuItemEditor_Selected;
+	public String MenuItemEditor_Mnemonics;
+	public String MenuItemEditor_NoExpression;
+
+	public String MenuSeparatorEditor_Label;
+
+	public String PartDescriptorEditor_Label;
+	public String PartDescriptorEditor_Descriptor;
+	public String PartDescriptorEditor_LabelLabel;
+	public String PartDescriptorEditor_Tooltip;
+	public String PartDescriptorEditor_IconURI;
+	public String PartDescriptorEditor_ClassURI;
+	public String PartDescriptorEditor_Dirtyable;
+	public String PartDescriptorEditor_Closeable;
+	public String PartDescriptorEditor_Multiple;
+	public String PartDescriptorEditor_Category;
+	public String PartDescriptorEditor_Variables;
+	public String PartDescriptorEditor_Properties;
+	public String PartDescriptorEditor_PropertiesKey;
+	public String PartDescriptorEditor_PropertiesValue;
+	public String PartDescriptorEditor_Menus;
+	public String PartDescriptorEditor_Handlers;
+	public String PartDescriptorEditor_ContainerData;
+
+	public String PartEditor_Label;
+	public String PartEditor_Description;
+	public String PartEditor_LabelLabel;
+	public String PartEditor_Tooltip;
+	public String PartEditor_IconURI;
+	public String PartEditor_ClassURI;
+	public String PartEditor_Closeable;
+	public String PartEditor_Menus;
+	public String PartEditor_Handlers;
+	public String PartEditor_ContainerData;
+	public String PartEditor_ToolBar;
+	public String PartEditor_BindingContexts;
+
+	public String PartSashContainerEditor_Label;
+	public String PartSashContainerEditor_Description;
+	public String PartSashContainerEditor_Orientation;
+	public String PartSashContainerEditor_Vertical;
+	public String PartSashContainerEditor_Horizontal;
+	public String PartSashContainerEditor_SelectedElement;
+	public String PartSashContainerEditor_Controls;
+	public String PartSashContainerEditor_ContainerData;
+	public String PartSashContainerEditor_AddPartSashContainer;
+	public String PartSashContainerEditor_AddPartStack;
+	public String PartSashContainerEditor_AddPart;
+	public String PartSashContainerEditor_AddInputPart;
+	public String PartSashContainerEditor_AddArea;
+	public String PartSashContainerEditor_AddPlaceholder;
+
+	public String PartStackEditor_Label;
+	public String PartStackEditor_Description;
+	public String PartStackEditor_SelectedElement;
+	public String PartStackEditor_Parts;
+	public String PartStackEditor_ContainerData;
+	public String PartStackEditor_AddPart;
+	public String PartStackEditor_AddInputPart;
+	public String PartStackEditor_AddPlaceholder;
+
+	public String PerspectiveEditor_Label;
+	public String PerspectiveEditor_Description;
+	public String PerspectiveEditor_LabelLabel;
+	public String PerspectiveEditor_SelectedElement;
+	public String PerspectiveEditor_Tooltip;
+	public String PerspectiveEditor_IconURI;
+	public String PerspectiveEditor_Controls;
+	public String PerspectiveEditor_AddPartSashContainer;
+	public String PerspectiveEditor_AddPartStack;
+	public String PerspectiveEditor_AddPart;
+	public String PerspectiveEditor_AddInputPart;
+	public String PerspectiveEditor_AddArea;
+	public String PerspectiveEditor_AddPlaceholder;
+
+	public String PerspectiveStackEditor_Perspectives;
+	public String PerspectiveStackEditor_Label;
+	public String PerspectiveStackEditor_Description;
+	public String PerspectiveStackEditor_SelectedElement;
+	public String PerspectiveStackEditor_AddPerspective;
+
+	public String PlaceholderEditor_Label;
+	public String PlaceholderEditor_Descriptor;
+	public String PlaceholderEditor_Reference;
+
+	public String ToolBarEditor_Label;
+	public String ToolBarEditor_Description;
+	public String ToolBarEditor_ToolbarItems;
+	public String ToolBarEditor_ToolbarItemsType;
+	public String ToolBarEditor_ToolbarItemsItemType;
+	public String ToolBarEditor_HandledToolItem;
+	public String ToolBarEditor_DirectToolItem;
+	public String ToolBarEditor_ToolControl;
+	public String ToolBarEditor_Separator;
+	public String ToolBarEditor_AddHandledToolItem;
+	public String ToolBarEditor_AddDirectToolItem;
+	public String ToolBarEditor_AddToolControl;
+	public String ToolBarEditor_AddToolBarSeparator;
+
+	public String ToolBarSeparatorEditor_Label;
+
+	public String ToolControlEditor_Label;
+	public String ToolControlEditor_Description;
+	public String ToolControlEditor_ClassURI;
+
+	public String VBindingTableEditor_Label;
+	public String VBindingTableEditor_Description;
+	public String VBindingTableEditor_Contexts;
+	public String VBindingTableEditor_Name;
+	public String VBindingTableEditor_LabelDescription;
+	public String VBindingTableEditor_BindingTables;
+	public String VBindingTableEditor_AddBindingTable;
+
+	public String AddonsEditor_ClassURI;
+	public String AddonsEditor_TreeLabel;
+	public String AddonsEditor_TreeLabelDescription;
+	public String AddonsEditor_Tags;
+
+	public String ContributionClassDialog_DialogMessage;
+	public String ContributionClassDialog_DialogTitle;
+	public String ContributionClassDialog_Label_Classname;
+	public String ContributionClassDialog_ShellTitle;
+
+	public String MenuContributionEditor_MenuItems;
+	public String MenuContributionEditor_MenuItemType;
+	public String MenuContributionEditor_MenuItemItemType;
+	public String MenuContributionEditor_HandledMenuItem;
+	public String MenuContributionEditor_Separator;
+	public String MenuContributionEditor_Menu;
+	public String MenuContributionEditor_DirectMenuItem;
+	public String MenuContributionEditor_ParentId;
+	public String MenuContributionEditor_Position;
+	public String MenuContributionEditor_TreeLabel;
+	public String MenuContributionEditor_TreeLabelDescription;
+
+	public String ModelFragmentsEditor_ModelFragments;
+	public String ModelFragmentsEditor_Label;
+	public String ModelFragmentsEditor_Description;
+	public String ModelFragmentsEditor_Imports;
+
+	public String StringModelFragment_Label;
+	public String StringModelFragment_Description;
+	public String StringModelFragment_Featurename;
+	public String StringModelFragment_ParentId;
+	public String StringModelFragment_PositionInList;
+	public String StringModelFragment_Elements;
+
+	public String FeatureSelectionDialog_Filter;
+	public String FeatureSelectionDialog_ShellTitle;
+	public String FeatureSelectionDialog_DialogTitle;
+	public String FeatureSelectionDialog_DialogMessage;
+
+	public String CategoryEditor_TreeLabel;
+	public String CategoryEditor_TreeLabelDescriptor;
+	public String CategoryEditor_Name;
+	public String CategoryEditor_Description;
+	public String CategoryEditor_Tags;
+
+	public String CommandCategorySelectionDialog_LabelCategoryId;
+
+	public String BindingContextSelectionDialog_LabelContextId;
+
+	public String ComponentLabelProvider_invisible;
+	public String ComponentLabelProvider_notrendered;
+
+	public String BindingContextEditor_TreeLabel;
+	public String BindingContextEditor_TreeLabelDescription;
+	public String BindingContextEditor_Name;
+	public String BindingContextEditor_Description;
+	public String BindingContextEditor_Subcontexts;
+	public String BindingContextEditor_AddContext;
+
+	public String CommandParameterEditor_TreeLabel;
+	public String CommandParameterEditor_TreeLabelDescritpion;
+	public String CommandParameterEditor_Name;
+	public String CommandParameterEditor_TypeId;
+	public String CommandParameterEditor_Optional;
+
+	public String ParameterEditor_TreeLabel;
+	public String ParameterEditor_TreeLabelDescription;
+	public String ParameterEditor_Name;
+	public String ParameterEditor_Value;
+
+	public String PopupMenuEditor_TreeLabel;
+	public String PopupMenuEditor_TreeLabelDescription;
+
+	public String RenderedMenuEditor_TreeLabel;
+
+	public String RenderedMenuItem_TreeLabel;
+	public String RenderedMenuItem_TreeLabelDescription;
+
+	public String RenderedToolBarEditor_TreeLabel;
+
+	public String ToolBarContributionEditor_TreeLabel;
+	public String ToolBarContributionEditor_TreeLabelDescription;
+
+	public String ToolItemEditor_Type;
+	public String ToolItemEditor_Label;
+	public String ToolItemEditor_ToolTip;
+	public String ToolItemEditor_IconURI;
+	public String ToolItemEditor_Enabled;
+	public String ToolItemEditor_Selected;
+	public String ToolItemEditor_NoExpression;
+
+	public String TrimBarEditor_TreeLabel;
+	public String TrimBarEditor_TreeLabelDescription;
+	public String TrimBarEditor_Side;
+	public String TrimBarEditor_Controls;
+	public String TrimBarEditor_AddToolBar;
+	public String TrimBarEditor_AddToolControl;
+
+	public String TrimContributionEditor_TreeLabel;
+	public String TrimContributionEditor_TreeLabelDescription;
+	public String TrimContributionEditor_ParentId;
+	public String TrimContributionEditor_Position;
+	public String TrimContributionEditor_Controls;
+
+	public String TrimmedWindowEditor_TrimBars;
+	public String TrimmedWindowEditor_TreeLabel;
+
+	public String WindowEditor_AddMainMenu;
+	public String WindowEditor_TreeLabel;
+	public String WindowEditor_TreeLabelDescription;
+	public String WindowEditor_X;
+	public String WindowEditor_Y;
+	public String WindowEditor_Width;
+	public String WindowEditor_Height;
+	public String WindowEditor_Label;
+	public String WindowEditor_Tooltip;
+	public String WindowEditor_IconURI;
+	public String WindowEditor_MainMenu;
+	public String WindowEditor_SelectedElement;
+	public String WindowEditor_BindingContexts;
+	public String WindowEditor_Handlers;
+	public String WindowEditor_Windows;
+	public String WindowEditor_Controls;
+	public String WindowEditor_SharedElements;
+
+	public String VApplicationAddons_AddAddon;
+	public String VApplicationAddons_TreeLabel;
+	public String VApplicationAddons_TreeLabelDescription;
+	public String VApplicationAddons_Commands;
+
+	public String VApplicationCategoriesEditor_TreeLabel;
+	public String VApplicationCategoriesEditor_TreeLabelDescription;
+	public String VApplicationCategoriesEditor_Categories;
+	public String VApplicationCategoriesEditor_AddCategory;
+
+	public String VCommandEditor_TreeLabel;
+	public String VCommandEditor_TreeLabelDescription;
+	public String VCommandEditor_Commands;
+	public String VCommandEditor_AddCommand;
+
+	public String VHandlerEditor_TreeLabel;
+	public String VHandlerEditor_TreeLabelDescription;
+	public String VHandlerEditor_Handlers;
+	public String VHandlerEditor_AddHandler;
+
+	public String VMenuContributionsEditor_TreeLabel;
+	public String VMenuContributionsEditor_TreeLabelDescription;
+	public String VMenuContributionsEditor_MenuContributions;
+	public String VMenuContributionsEditor_AddMenuContribution;
+
+	public String VMenuEditor_TreeLabel;
+	public String VMenuEditor_TreeLabelDescription;
+	public String VMenuEditor_Menus;
+	public String VMenuEditor_AddMenuContribution;
+
+	public String VModelFragmentsEditor_TreeLabel;
+	public String VModelFragmentsEditor_TreeLabelDescription;
+	public String VModelFragmentsEditor_Fragments;
+
+	public String VModelImportsEditor_TreeLabel;
+	public String VModelImportsEditor_TreeLabelDescription;
+	public String VModelImportsEditor_Imports;
+
+	public String VPartDescriptor_TreeLabel;
+	public String VPartDescriptor_TreeLabelDescription;
+	public String VPartDescriptor_Descriptors;
+	public String VPartDescriptor_AddPartDescriptor;
+
+	public String VToolBarContributionsEditor_Contributions;
+	public String VToolBarContributionsEditor_TreeLabelDescription;
+	public String VToolBarContributionsEditor_TreeLabel;
+	public String VToolBarContributionsEditor_AddToolBarContribution;
+
+	public String VTrimContributionsEditor_TreeLabel;
+	public String VTrimContributionsEditor_TreeLabelDescription;
+	public String VTrimContributionsEditor_Contributions;
+	public String VTrimContributionsEditor_AddTrimContribution;
+
+	public String VWindowControlEditor_TreeLabel;
+	public String VWindowControlEditor_TreeLabelDescription;
+	public String VWindowControlEditor_Controls;
+	public String VWindowControlEditor_AddPerspectiveStack;
+	public String VWindowControlEditor_AddPartSashContainer;
+	public String VWindowControlEditor_AddPartStack;
+	public String VWindowControlEditor_AddPart;
+	public String VWindowControlEditor_AddInputPart;
+	public String VWindowControlEditor_AddArea;
+
+	public String VWindowEditor_TreeLabel;
+	public String VWindowEditor_TreeLabelDescription;
+	public String VWindowEditor_Windows;
+	public String VWindowEditor_AddTrimmedWindow;
+	public String VWindowEditor_AddWindow;
+
+	public String VWindowSharedElementsEditor_TreeLabel;
+	public String VWindowSharedElementsEditor_TreeLabelDescription;
+	public String VWindowSharedElementsEditor_Controls;
+	public String VWindowSharedElementsEditor_AddPartSashContainer;
+	public String VWindowSharedElementsEditor_AddPart;
+	public String VWindowSharedElementsEditor_AddInputPart;
+
+	public String VWindowTrimEditor_TreeLabel;
+	public String VWindowTrimEditor_TreeLabelDescription;
+	public String VWindowTrimEditor_Controls;
+	public String VWindowTrimEditor_AddWindowTrim;
+
+	public String AbstractIconDialog_IconName;
+
+	public String BindingContextSelectionDialog_ShellTitle;
+	public String BindingContextSelectionDialog_Title;
+	public String BindingContextSelectionDialog_Message;
+	public String BindingContextSelectionDialog_NoIdReference;
+
+	public String CommandCategorySelectionDialog_ShellTitle;
+	public String CommandCategorySelectionDialog_Title;
+	public String CommandCategorySelectionDialog_Message;
+
+	public String FindImportElementDialog_ShellTitle;
+	public String FindImportElementDialog_Title;
+	public String FindImportElementDialog_Message;
+	public String FindImportElementDialog_Search;
+	public String FindImportElementDialog_ClearCache;
+	public String FindImportElementDialog_NoIdReference;
+	public String FindImportElementDialog_noId;
+
+	public String FindParentReferenceElementDialog_ShellTitle;
+	public String FindParentReferenceElementDialog_Title;
+	public String FindParentReferenceElementDialog_Message;
+	public String FindParentReferenceElementDialog_ContainerType;
+	public String FindParentReferenceElementDialog_Search;
+	public String FindParentReferenceElementDialog_NoId;
+	public String FindParentReferenceElementDialog_ClearCache;
+	public String FindParentReferenceElementDialog_NoReferenceId;
+
+	public String HandledMenuItemCommandSelectionDialog_ShellTitle;
+	public String HandledMenuItemCommandSelectionDialog_DialogTitle;
+	public String HandledMenuItemCommandSelectionDialog_DialogMessage;
+
+	public String HandledToolItemCommandSelectionDialog_ShellTitle;
+	public String HandledToolItemCommandSelectionDialog_DialogTitle;
+	public String HandledToolItemCommandSelectionDialog_DialogMessage;
+
+	public String HandlerCommandSelectionDialog_ShellTitle;
+	public String HandlerCommandSelectionDialog_DialogTitle;
+	public String HandlerCommandSelectionDialog_DialogMessage;
+
+	public String KeyBindingCommandSelectionDialog_ShellTitle;
+	public String KeyBindingCommandSelectionDialog_DialogTitle;
+	public String KeyBindingCommandSelectionDialog_DialogMessage;
+
+	public String MenuIconDialogEditor_ShellTitle;
+	public String MenuIconDialogEditor_DialogTitle;
+	public String MenuIconDialogEditor_DialogMessage;
+
+	public String MenuItemIconDialogEditor_ShellTitle;
+	public String MenuItemIconDialogEditor_DialogTitle;
+	public String MenuItemIconDialogEditor_DialogMessage;
+
+	public String PartDescriptorIconDialogEditor_ShellTitle;
+	public String PartDescriptorIconDialogEditor_DialogTitle;
+	public String PartDescriptorIconDialogEditor_DialogMessage;
+
+	public String PartIconDialogEditor_ShellTitle;
+	public String PartIconDialogEditor_DialogTitle;
+	public String PartIconDialogEditor_DialogMessage;
+
+	public String PerspectiveIconDialogEditor_ShellTitle;
+	public String PerspectiveIconDialogEditor_DialogTitle;
+	public String PerspectiveIconDialogEditor_DialogMessage;
+
+	public String SharedElementsDialog_ShellTitle;
+	public String SharedElementsDialog_Title;
+	public String SharedElementsDialog_Message;
+	public String SharedElementsDialog_Name;
+
+	public String ToolItemIconDialogEditor_ShellTitle;
+	public String ToolItemIconDialogEditor_DialogTitle;
+	public String ToolItemIconDialogEditor_DialogMessage;
+
+	public String WindowIconDialogEditor_ShellTitle;
+	public String WindowIconDialogEditor_DialogTitle;
+	public String WindowIconDialogEditor_DialogMessage;
+
+	public String ImageTooltip_UnknownError;
+	public String ImageTooltip_FileNotFound;
+	public String ImageTooltip_Icon;
+	public String ImageTooltip_Name;
+	public String ImageTooltip_Dimension;
+	public String ImageTooltip_FileSize;
+
+	public String VItemParametersEditor_TreeLabel;
+	public String VItemParametersEditor_TreeLabelDescription;
+	public String VItemParametersEditor_Parameters;
+	public String VItemParametersEditor_AddParameter;
+
+	public String CoreExpressionEditor_TreeLabel;
+	public String CoreExpressionEditor_TreeLabelDescription;
+	public String CoreExpressionEditor_ExpressionId;
+
+	public String ExpressionIdDialog_ShellTitle;
+	public String ExpressionIdDialog_DialogTitle;
+	public String ExpressionIdDialog_DialogMessage;
+	public String ExpressionIdDialog_Id;
+
+	public String CommandToStringConverter_None;
+
+	public String VRootBindingContexts_AddContext;
+	public String VRootBindingContexts_TreeLabel;
+	public String VRootBindingContexts_TreeLabelDescription;
+	public String VRootBindingContexts_Contexts;
+
+	public String AreaEditor_Label;
+	public String AreaEditor_Description;
+	public String AreaEditor_Orientation;
+	public String AreaEditor_Horizontal;
+	public String AreaEditor_SelectedElement;
+	public String AreaEditor_ContainerData;
+	public String AreaEditor_Controls;
+	public String AreaEditor_Vertical;
+	public String AreaEditor_LabelLabel;
+	public String AreaEditor_Tooltip;
+	public String AreaEditor_IconURI;
+
+	public String AreaIconDialogEditor_ShellTitle;
+	public String AreaIconDialogEditor_DialogTitle;
+	public String AreaIconDialogEditor_DialogMessage;
+
+	public String ModelEditor_Delete;
+	public String ModelEditor_Form;
+	public String ModelEditor_XMI;
 }

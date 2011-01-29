@@ -18,9 +18,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
 public class CommandToStringConverter extends Converter {
+	private Messages Messages;
 
-	public CommandToStringConverter() {
+	public CommandToStringConverter(Messages Messages) {
 		super(MCommand.class, String.class);
+		this.Messages = Messages;
 	}
 
 	public Object convert(Object fromObject) {

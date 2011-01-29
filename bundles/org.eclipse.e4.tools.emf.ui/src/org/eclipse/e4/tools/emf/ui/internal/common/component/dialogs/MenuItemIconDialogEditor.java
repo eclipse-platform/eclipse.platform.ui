@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.Shell;
 
 public class MenuItemIconDialogEditor extends AbstractIconDialog {
 
-	public MenuItemIconDialogEditor(Shell parentShell, IProject project, EditingDomain editingDomain, MMenuItem element) {
-		super(parentShell, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI);
+	public MenuItemIconDialogEditor(Shell parentShell, IProject project, EditingDomain editingDomain, MMenuItem element, Messages Messages) {
+		super(parentShell, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI, Messages);
 	}
 
 	@Override

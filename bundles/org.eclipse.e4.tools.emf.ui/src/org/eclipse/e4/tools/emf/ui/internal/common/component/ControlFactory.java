@@ -80,7 +80,7 @@ import org.eclipse.swt.widgets.Text;
 public class ControlFactory {
 	public static void createXMIId(Composite parent, AbstractComponentEditor editor) {
 		Label l = new Label(parent, SWT.NONE);
-		l.setText("XMI:ID");
+		l.setText("XMI:ID"); //$NON-NLS-1$
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 		final Text t = new Text(parent, SWT.BORDER);
@@ -106,7 +106,7 @@ public class ControlFactory {
 		});
 	}
 
-	public static void createMapProperties(Composite parent, final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
+	public static void createMapProperties(Composite parent, final Messages Messages, final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
 		GridData gd = new GridData(GridData.END, GridData.BEGINNING, false, false);
@@ -273,7 +273,7 @@ public class ControlFactory {
 
 	}
 
-	public static void createFindImport(Composite parent, final AbstractComponentEditor editor, EMFDataBindingContext context) {
+	public static void createFindImport(Composite parent, final Messages Messages, final AbstractComponentEditor editor, EMFDataBindingContext context) {
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
 		Label l = new Label(parent, SWT.NONE);
@@ -291,7 +291,7 @@ public class ControlFactory {
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FindImportElementDialog dialog = new FindImportElementDialog(b.getShell(), editor, (EObject) editor.getMaster().getValue());
+				FindImportElementDialog dialog = new FindImportElementDialog(b.getShell(), editor, (EObject) editor.getMaster().getValue(), Messages);
 				dialog.open();
 			}
 		});
@@ -363,7 +363,7 @@ public class ControlFactory {
 		});
 	}
 
-	public static void createStringListWidget(Composite parent, final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
+	public static void createStringListWidget(Composite parent, Messages Messages, final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText(label);
 		GridData gd = new GridData(GridData.END, GridData.BEGINNING, false, false);

@@ -33,10 +33,11 @@ import org.eclipse.swt.widgets.Label;
 
 public abstract class ImageTooltip extends ToolTip {
 	private Image image;
+	private Messages Messages;
 
-	public ImageTooltip(Control control) {
+	public ImageTooltip(Control control, Messages Messages) {
 		super(control);
-
+		this.Messages = Messages;
 	}
 
 	@Override

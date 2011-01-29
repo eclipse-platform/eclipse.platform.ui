@@ -88,6 +88,9 @@ public class ResourceProvider extends AbstractBundleResourceProvider {
 	public static final String IMG_Obj16_table_add = "IMG_org.eclipse.e4.tools.emf.ui.obj16.table_add"; //$NON-NLS-1$
 	public static final String IMG_Obj16_table_delete = "IMG_org.eclipse.e4.tools.emf.ui.obj16.table_delete"; //$NON-NLS-1$
 	public static final String IMG_Obj16_zoom = "IMG_org.eclipse.e4.tools.emf.ui.obj16.zoom"; //$NON-NLS-1$
+	public static final String IMG_Obj16_application_form = "IMG_org.eclipse.e4.tools.emf.ui.obj16.application_form"; //$NON-NLS-1$
+	public static final String IMG_Obj16_chart_organisation = "IMG_org.eclipse.e4.tools.emf.ui.obj16.chart_organisation"; //$NON-NLS-1$
+	public static final String IMG_Obj16_error_obj = "IMG_org.eclipse.e4.tools.emf.ui.obj16.error_obj"; //$NON-NLS-1$
 
 	public static final String IMG_Wizban16_fieldrefact_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.fieldrefact_wiz"; //$NON-NLS-1$
 	public static final String IMG_Wizban16_import_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.import_wiz"; //$NON-NLS-1$

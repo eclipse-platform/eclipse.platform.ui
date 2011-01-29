@@ -12,20 +12,29 @@ package org.eclipse.e4.tools.emf.ui.common;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 
 public interface IModelResource {
 	public IObservableList getRoot();
+
 	public boolean isSaveable();
+
 	public IStatus save();
+
 	public EditingDomain getEditingDomain();
+
 	public boolean isDirty();
-	
+
+	public void replaceRoot(EObject eobject);
+
 	public void addModelListener(ModelListener listener);
+
 	public void removeModelListener(ModelListener listener);
-	
+
 	public interface ModelListener {
 		public void dirtyChanged();
+
 		public void commandStackChanged();
 	}
 }

@@ -11,21 +11,27 @@
 package org.eclipse.e4.tools.emf.ui.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
 import org.eclipse.emf.common.command.BasicCommandStack;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.command.CommandStackListener;
+import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.databinding.edit.EMFEditProperties;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.edit.command.AddCommand;
+import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
@@ -35,6 +41,7 @@ public class XMIModelResource implements IModelResource {
 	private Resource resource;
 	private List<ModelListener> listeners = new ArrayList<IModelResource.ModelListener>();
 	private boolean dirty;
+	private IObservableList list;
 
 	public XMIModelResource(URI uri) {
 		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
@@ -54,9 +61,20 @@ public class XMIModelResource implements IModelResource {
 	}
 
 	public IObservableList getRoot() {
-		WritableList list = new WritableList();
-		list.add(resource.getContents().get(0));
+		if (list != null) {
+			return list;
+		}
+
+		list = EMFEditProperties.resource(getEditingDomain()).observe(resource);
+
 		return list;
+	}
+
+	public void replaceRoot(EObject eobject) {
+		Command cmdRemove = new RemoveCommand(getEditingDomain(), resource.getContents(), list.get(0));
+		Command cmdAdd = new AddCommand(getEditingDomain(), resource.getContents(), eobject);
+		CompoundCommand cmd = new CompoundCommand(Arrays.asList(cmdRemove, cmdAdd));
+		getEditingDomain().getCommandStack().execute(cmd);
 	}
 
 	public EditingDomain getEditingDomain() {

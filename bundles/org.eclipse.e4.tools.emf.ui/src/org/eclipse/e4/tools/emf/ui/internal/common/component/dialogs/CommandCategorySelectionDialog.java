@@ -53,11 +53,13 @@ public class CommandCategorySelectionDialog extends TitleAreaDialog {
 	private IModelResource resource;
 	private TableViewer viewer;
 	private MCommand command;
+	private Messages Messages;
 
-	public CommandCategorySelectionDialog(Shell parentShell, IModelResource resource, MCommand command) {
+	public CommandCategorySelectionDialog(Shell parentShell, IModelResource resource, MCommand command, Messages Messages) {
 		super(parentShell);
 		this.resource = resource;
 		this.command = command;
+		this.Messages = Messages;
 	}
 
 	@Override

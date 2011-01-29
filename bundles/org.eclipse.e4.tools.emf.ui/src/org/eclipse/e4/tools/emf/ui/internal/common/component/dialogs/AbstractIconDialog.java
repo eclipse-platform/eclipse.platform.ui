@@ -64,12 +64,15 @@ public abstract class AbstractIconDialog extends TitleAreaDialog {
 	private EditingDomain editingDomain;
 	private Map<IFile, Image> icons = Collections.synchronizedMap(new HashMap<IFile, Image>());
 
-	public AbstractIconDialog(Shell parentShell, IProject project, EditingDomain editingDomain, MApplicationElement element, EStructuralFeature feature) {
+	protected Messages Messages;
+
+	public AbstractIconDialog(Shell parentShell, IProject project, EditingDomain editingDomain, MApplicationElement element, EStructuralFeature feature, Messages Messages) {
 		super(parentShell);
 		this.editingDomain = editingDomain;
 		this.element = element;
 		this.feature = feature;
 		this.project = project;
+		this.Messages = Messages;
 	}
 
 	protected abstract String getShellTitle();

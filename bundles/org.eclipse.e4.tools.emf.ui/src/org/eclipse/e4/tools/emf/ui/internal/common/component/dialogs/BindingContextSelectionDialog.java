@@ -50,10 +50,12 @@ public class BindingContextSelectionDialog extends TitleAreaDialog {
 	private IModelResource resource;
 	private TableViewer viewer;
 	private String selectedId;
+	private Messages Messages;
 
-	public BindingContextSelectionDialog(Shell parentShell, IModelResource resource) {
+	public BindingContextSelectionDialog(Shell parentShell, IModelResource resource, Messages Messages) {
 		super(parentShell);
 		this.resource = resource;
+		this.Messages = Messages;
 	}
 
 	public String getSelectedId() {

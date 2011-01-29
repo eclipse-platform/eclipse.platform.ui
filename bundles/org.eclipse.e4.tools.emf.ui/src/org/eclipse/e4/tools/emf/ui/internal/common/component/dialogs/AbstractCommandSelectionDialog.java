@@ -51,10 +51,12 @@ import org.eclipse.swt.widgets.Text;
 public abstract class AbstractCommandSelectionDialog extends TitleAreaDialog {
 	private IModelResource resource;
 	private TableViewer viewer;
+	protected Messages Messages;
 
-	public AbstractCommandSelectionDialog(Shell parentShell, IModelResource resource) {
+	public AbstractCommandSelectionDialog(Shell parentShell, IModelResource resource, Messages Messages) {
 		super(parentShell);
 		this.resource = resource;
+		this.Messages = Messages;
 	}
 
 	protected abstract String getShellTitle();

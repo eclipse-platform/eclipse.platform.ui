@@ -23,8 +23,8 @@ import org.eclipse.swt.widgets.Shell;
 public class KeyBindingCommandSelectionDialog extends AbstractCommandSelectionDialog {
 	private MKeyBinding binding;
 
-	public KeyBindingCommandSelectionDialog(Shell parentShell, MKeyBinding binding, IModelResource resource) {
-		super(parentShell, resource);
+	public KeyBindingCommandSelectionDialog(Shell parentShell, MKeyBinding binding, IModelResource resource, Messages Messages) {
+		super(parentShell, resource, Messages);
 		this.binding = binding;
 	}
 

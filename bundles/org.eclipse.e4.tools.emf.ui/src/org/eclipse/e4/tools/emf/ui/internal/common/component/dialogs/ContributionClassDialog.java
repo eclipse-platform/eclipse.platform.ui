@@ -57,13 +57,15 @@ public class ContributionClassDialog extends TitleAreaDialog {
 	private EditingDomain editingDomain;
 	private TableViewer viewer;
 	private EStructuralFeature feature;
+	private Messages Messages;
 
-	public ContributionClassDialog(Shell parentShell, IProject project, EditingDomain editingDomain, MApplicationElement contribution, EStructuralFeature feature) {
+	public ContributionClassDialog(Shell parentShell, IProject project, EditingDomain editingDomain, MApplicationElement contribution, EStructuralFeature feature, Messages Messages) {
 		super(parentShell);
 		this.project = project;
 		this.contribution = contribution;
 		this.editingDomain = editingDomain;
 		this.feature = feature;
+		this.Messages = Messages;
 	}
 
 	@Override

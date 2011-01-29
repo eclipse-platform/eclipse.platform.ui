@@ -58,11 +58,13 @@ public class FeatureSelectionDialog extends TitleAreaDialog {
 	private TreeViewer viewer;
 	private MStringModelFragment fragment;
 	private EditingDomain editingDomain;
+	private Messages Messages;
 
-	public FeatureSelectionDialog(Shell parentShell, EditingDomain editingDomain, MStringModelFragment fragment) {
+	public FeatureSelectionDialog(Shell parentShell, EditingDomain editingDomain, MStringModelFragment fragment, Messages Messages) {
 		super(parentShell);
 		this.fragment = fragment;
 		this.editingDomain = editingDomain;
+		this.Messages = Messages;
 	}
 
 	@Override

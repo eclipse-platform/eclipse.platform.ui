@@ -33,6 +33,8 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 
 	private Font font;
 
+	private Messages Messages;
+
 	private static Styler NOT_RENDERED_STYLER = new Styler() {
 		{
 			JFaceResources.getColorRegistry().put(NOT_RENDERED_KEY, new RGB(200, 200, 200));
@@ -44,8 +46,9 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 		}
 	};
 
-	public ComponentLabelProvider(ModelEditor editor) {
+	public ComponentLabelProvider(ModelEditor editor, Messages Messages) {
 		this.editor = editor;
+		this.Messages = Messages;
 	}
 
 	@Override

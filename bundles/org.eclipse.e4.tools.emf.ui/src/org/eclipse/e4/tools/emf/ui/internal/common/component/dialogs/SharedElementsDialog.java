@@ -61,12 +61,14 @@ public class SharedElementsDialog extends TitleAreaDialog {
 	private MPlaceholder placeholder;
 	private IModelResource resource;
 	private ModelEditor editor;
+	private Messages Messages;
 
-	public SharedElementsDialog(Shell parentShell, ModelEditor editor, MPlaceholder placeholder, IModelResource resource) {
+	public SharedElementsDialog(Shell parentShell, ModelEditor editor, MPlaceholder placeholder, IModelResource resource, Messages Messages) {
 		super(parentShell);
 		this.editor = editor;
 		this.placeholder = placeholder;
 		this.resource = resource;
+		this.Messages = Messages;
 	}
 
 	@Override

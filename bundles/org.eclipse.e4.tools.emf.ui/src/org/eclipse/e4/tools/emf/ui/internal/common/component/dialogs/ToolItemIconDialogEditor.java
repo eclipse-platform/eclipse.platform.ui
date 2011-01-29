@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.Shell;
 
 public class ToolItemIconDialogEditor extends AbstractIconDialog {
 
-	public ToolItemIconDialogEditor(Shell parentShell, IProject project, EditingDomain editingDomain, MToolItem element) {
-		super(parentShell, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI);
+	public ToolItemIconDialogEditor(Shell parentShell, IProject project, EditingDomain editingDomain, MToolItem element, Messages Messages) {
+		super(parentShell, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI, Messages);
 	}
 
 	@Override

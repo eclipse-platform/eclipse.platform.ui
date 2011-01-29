@@ -19,8 +19,8 @@ import org.eclipse.swt.widgets.Shell;
 
 public class PerspectiveIconDialogEditor extends AbstractIconDialog {
 
-	public PerspectiveIconDialogEditor(Shell parentShell, IProject project, EditingDomain editingDomain, MPerspective element) {
-		super(parentShell, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI);
+	public PerspectiveIconDialogEditor(Shell parentShell, IProject project, EditingDomain editingDomain, MPerspective element, Messages Messages) {
+		super(parentShell, project, editingDomain, element, UiPackageImpl.Literals.UI_LABEL__ICON_URI, Messages);
 	}
 
 	@Override

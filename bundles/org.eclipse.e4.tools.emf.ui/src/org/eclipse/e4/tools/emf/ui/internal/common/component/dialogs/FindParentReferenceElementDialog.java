@@ -68,11 +68,13 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 	private MStringModelFragment fragment;
 	private AbstractComponentEditor editor;
 	private TableViewer viewer;
+	private Messages Messages;
 
-	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor, MStringModelFragment fragment) {
+	public FindParentReferenceElementDialog(Shell parentShell, AbstractComponentEditor editor, MStringModelFragment fragment, Messages Messages) {
 		super(parentShell);
 		this.fragment = fragment;
 		this.editor = editor;
+		this.Messages = Messages;
 	}
 
 	@Override

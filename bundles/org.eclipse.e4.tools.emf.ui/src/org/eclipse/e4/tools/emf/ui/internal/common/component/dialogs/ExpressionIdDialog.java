@@ -52,13 +52,15 @@ public class ExpressionIdDialog extends TitleAreaDialog {
 	private EditingDomain domain;
 	private MCoreExpression expression;
 	private boolean liveModel;
+	private Messages Messages;
 
-	public ExpressionIdDialog(Shell parentShell, IExtensionLookup lookup, MCoreExpression expression, EditingDomain domain, boolean liveModel) {
+	public ExpressionIdDialog(Shell parentShell, IExtensionLookup lookup, MCoreExpression expression, EditingDomain domain, boolean liveModel, Messages Messages) {
 		super(parentShell);
 		this.lookup = lookup;
 		this.expression = expression;
 		this.domain = domain;
 		this.liveModel = liveModel;
+		this.Messages = Messages;
 	}
 
 	@Override
