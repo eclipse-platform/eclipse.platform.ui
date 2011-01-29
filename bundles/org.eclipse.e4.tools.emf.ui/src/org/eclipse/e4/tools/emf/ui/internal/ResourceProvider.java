@@ -1,10 +1,8 @@
 package org.eclipse.e4.tools.emf.ui.internal;
 
-import org.eclipse.e4.tools.services.AbstractBundleResourceProvider;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.e4.tools.services.BasicResourceProvider;
 
-public class ResourceProvider extends AbstractBundleResourceProvider {
+public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Addons = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.Addons"; //$NON-NLS-1$
 	public static final String IMG_Application = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.Application"; //$NON-NLS-1$
 	public static final String IMG_Area_vertical = "IMG_org.eclipse.e4.tools.emf.ui.modelelements.Area_vertical"; //$NON-NLS-1$
@@ -98,12 +96,9 @@ public class ResourceProvider extends AbstractBundleResourceProvider {
 	public static final String IMG_Wizban16_newexp_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.newexp_wiz"; //$NON-NLS-1$
 	public static final String IMG_Wizban16_typerefact_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.typerefact_wiz"; //$NON-NLS-1$
 
-	public Image getFont(Display display, String key) {
-		return null;
-	}
-
-	public Image getColor(Display display, String key) {
-		return null;
-	}
-
+	public static final String COLOR_XML_COMMENT = "COLOR_org.eclipse.e4.tools.emf.ui.XML_COMMENT"; //$NON-NLS-1$
+	public static final String COLOR_PROC_INSTR = "COLOR_org.eclipse.e4.tools.emf.ui.PROC_INSTR"; //$NON-NLS-1$
+	public static final String COLOR_STRING = "COLOR_org.eclipse.e4.tools.emf.ui.STRING"; //$NON-NLS-1$
+	public static final String COLOR_DEFAULT = "COLOR_org.eclipse.e4.tools.emf.ui.DEFAULT"; //$NON-NLS-1$
+	public static final String COLOR_TAG = "COLOR_org.eclipse.e4.tools.emf.ui.TAG"; //$NON-NLS-1$	
 }

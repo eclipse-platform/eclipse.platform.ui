@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.xml;
 
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -20,8 +22,8 @@ import org.eclipse.jface.text.rules.WhitespaceRule;
 
 public class XMLTagScanner extends RuleBasedScanner {
 
-	public XMLTagScanner(ColorManager manager) {
-		IToken string = new Token(new TextAttribute(manager.getColor(IXMLColorConstants.STRING)));
+	public XMLTagScanner(IResourcePool pool) {
+		IToken string = new Token(new TextAttribute(pool.getColorUnchecked(ResourceProvider.COLOR_STRING)));
 
 		IRule[] rules = new IRule[3];
 

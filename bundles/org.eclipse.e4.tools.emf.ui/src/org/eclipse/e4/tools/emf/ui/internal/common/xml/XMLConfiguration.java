@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.xml;
 
+import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.TextAttribute;
@@ -24,10 +26,10 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 	private XMLDoubleClickStrategy doubleClickStrategy;
 	private XMLTagScanner tagScanner;
 	private XMLScanner scanner;
-	private ColorManager colorManager;
+	private IResourcePool pool;
 
-	public XMLConfiguration(ColorManager colorManager) {
-		this.colorManager = colorManager;
+	public XMLConfiguration(IResourcePool pool) {
+		this.pool = pool;
 	}
 
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
@@ -42,16 +44,16 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 
 	protected XMLScanner getXMLScanner() {
 		if (scanner == null) {
-			scanner = new XMLScanner(colorManager);
-			scanner.setDefaultReturnToken(new Token(new TextAttribute(colorManager.getColor(IXMLColorConstants.DEFAULT))));
+			scanner = new XMLScanner(pool);
+			scanner.setDefaultReturnToken(new Token(new TextAttribute(pool.getColorUnchecked(ResourceProvider.COLOR_DEFAULT))));
 		}
 		return scanner;
 	}
 
 	protected XMLTagScanner getXMLTagScanner() {
 		if (tagScanner == null) {
-			tagScanner = new XMLTagScanner(colorManager);
-			tagScanner.setDefaultReturnToken(new Token(new TextAttribute(colorManager.getColor(IXMLColorConstants.TAG))));
+			tagScanner = new XMLTagScanner(pool);
+			tagScanner.setDefaultReturnToken(new Token(new TextAttribute(pool.getColorUnchecked(ResourceProvider.COLOR_TAG))));
 		}
 		return tagScanner;
 	}
@@ -67,7 +69,7 @@ public class XMLConfiguration extends SourceViewerConfiguration {
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
-		NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(colorManager.getColor(IXMLColorConstants.XML_COMMENT)));
+		NonRuleBasedDamagerRepairer ndr = new NonRuleBasedDamagerRepairer(new TextAttribute(pool.getColorUnchecked(ResourceProvider.COLOR_XML_COMMENT)));
 		reconciler.setDamager(ndr, XMLPartitionScanner.XML_COMMENT);
 		reconciler.setRepairer(ndr, XMLPartitionScanner.XML_COMMENT);
 

@@ -115,7 +115,6 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEdit
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.AnnotationAccess;
-import org.eclipse.e4.tools.emf.ui.internal.common.xml.ColorManager;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.XMLConfiguration;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.XMLPartitionScanner;
@@ -324,10 +323,9 @@ public class ModelEditor {
 
 		final AnnotationModel model = new AnnotationModel();
 		VerticalRuler verticalRuler = new VerticalRuler(VERTICAL_RULER_WIDTH, new AnnotationAccess(resourcePool));
-		ColorManager colorManager = new ColorManager();
 		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
 		SourceViewer viewer = new SourceViewer(composite, verticalRuler, styles);
-		viewer.configure(new XMLConfiguration(colorManager));
+		viewer.configure(new XMLConfiguration(resourcePool));
 		viewer.setEditable(project != null);
 
 		final IDocument document = emfDocumentProvider.getDocument();
