@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public interface ISaveablePart2 extends ISaveablePart {
 	
 	/**
 	 * Standard return code constant (value 3) indicating that the default
-	 * behavior for prompting the user to save will be use.
+	 * behavior for prompting the user to save will be used.
 	 */
 	public static final int DEFAULT = 3;
 		
