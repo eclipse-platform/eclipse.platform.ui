@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -49,6 +50,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
@@ -614,7 +617,16 @@ public class QuickAccessDialog extends PopupDialog {
 	}
 
 	protected Point getDefaultSize() {
-		return new Point(350, 420);
+		GC gc = new GC(table);
+		FontMetrics fontMetrics = gc.getFontMetrics();
+		gc.dispose();
+		int x = Dialog.convertHorizontalDLUsToPixels(fontMetrics, 300);
+		if (x < 350)
+			x = 350;
+		int y = Dialog.convertVerticalDLUsToPixels(fontMetrics, 270);
+		if (y < 420)
+			y = 420;
+		return new Point(x, y);
 	}
 
 	protected Point getDefaultLocation(Point initialSize) {
