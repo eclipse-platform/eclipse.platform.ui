@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 package org.eclipse.ui.internal;
 
 
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -96,7 +97,16 @@ public class ViewPane extends PartPane {
         protected void update(boolean force, boolean recursive) {
             super.update(force, recursive);
 
-            boolean hasMenu = !isEmpty();
+			boolean hasMenu = false;
+			IContributionItem[] items = getItems();
+			for (int i = 0; i < items.length; i++) {
+				if (items[i].isVisible() && !items[i].isSeparator() && !items[i].isGroupMarker()) {
+		            // only show the menu if we have visible items that aren't separators or group markers
+					hasMenu = true;
+					break;
+				}
+			}
+
             if (hasMenu != hadViewMenu) {
                 hadViewMenu = hasMenu;
                 firePropertyChange(IPresentablePart.PROP_PANE_MENU);
@@ -401,19 +411,13 @@ public class ViewPane extends PartPane {
         return !page.isFixedLayout();
     }
 
-    /**
-     * Return if there should be a view menu at all.
-     * There is no view menu if there is no menu manager,
-     * no pull down button or if the receiver is an
-     * inactive fast view.
-     */
+	/**
+	 * Returns whether there should be a view menu or not. There should not be a
+	 * view menu if there is no menu manager or the manager itself has no
+	 * visible items that are not separators or group markers.
+	 */
     public boolean hasViewMenu() {
-
-        if (isvMenuMgr != null) {
-            return !isvMenuMgr.isEmpty();
-        }
-
-        return false;
+		return isvMenuMgr != null && hadViewMenu;
     }
 
     public void showViewMenu(Point location) {
