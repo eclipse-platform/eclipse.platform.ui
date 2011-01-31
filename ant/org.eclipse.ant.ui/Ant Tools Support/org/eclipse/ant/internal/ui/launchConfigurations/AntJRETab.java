@@ -243,7 +243,12 @@ public class AntJRETab extends JavaJRETab {
 		try {
 			IJavaProject project = JavaRuntime.getJavaProject(config);
 			if(project != null) {
-				return JavaRuntime.getVMInstall(project);
+				IVMInstall vm = JavaRuntime.getVMInstall(project);
+				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=335860
+				//if the project does not have a JRE on the build path, return the workspace default JRE
+				if(vm != null) {
+					return vm;
+				}
 			}
 			return JavaRuntime.getDefaultVMInstall();
 		} catch (CoreException e) {
