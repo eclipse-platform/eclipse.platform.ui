@@ -12,6 +12,7 @@
  *     Brad Reynolds - bug 147515
  *     Sebastian Fuchs <spacehorst@gmail.com> - bug 243848
  *     Matthew Hall - bugs 208858, 213145, 243848
+ *     Ovidio Mallo - bug 332367
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
@@ -125,9 +127,9 @@ public class WritableList extends ObservableList {
 	public Object set(int index, Object element) {
 		checkRealm();
 		Object oldElement = wrappedList.set(index, element);
-		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
-				false, oldElement), Diffs.createListDiffEntry(index, true,
-				element)));
+		fireListChange(Diffs.createListDiff(
+				Diffs.createListDiffEntry(index, false, oldElement),
+				Diffs.createListDiffEntry(index, true, element)));
 		return oldElement;
 	}
 
@@ -147,9 +149,9 @@ public class WritableList extends ObservableList {
 			return wrappedList.get(oldIndex);
 		Object element = wrappedList.remove(oldIndex);
 		wrappedList.add(newIndex, element);
-		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(oldIndex,
-				false, element), Diffs.createListDiffEntry(newIndex, true,
-				element)));
+		fireListChange(Diffs.createListDiff(
+				Diffs.createListDiffEntry(oldIndex, false, element),
+				Diffs.createListDiffEntry(newIndex, true, element)));
 		return element;
 	}
 
@@ -259,15 +261,19 @@ public class WritableList extends ObservableList {
 
 	public void clear() {
 		checkRealm();
-		List entries = new ArrayList();
-		for (Iterator it = wrappedList.iterator(); it.hasNext();) {
-			Object element = it.next();
-			// always report 0 as the remove index
-			entries.add(Diffs.createListDiffEntry(0, false, element));
-			it.remove();
+		// We remove the elements from back to front which is typically much
+		// faster on common list implementations like ArrayList.
+		ListDiffEntry[] entries = new ListDiffEntry[wrappedList.size()];
+		int entryIndex = 0;
+		for (ListIterator it = wrappedList.listIterator(wrappedList.size()); it
+				.hasPrevious();) {
+			int elementIndex = it.previousIndex();
+			Object element = it.previous();
+			entries[entryIndex++] = Diffs.createListDiffEntry(elementIndex,
+					false, element);
 		}
-		fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
-				.toArray(new ListDiffEntry[entries.size()])));
+		wrappedList.clear();
+		fireListChange(Diffs.createListDiff(entries));
 	}
 
 	/**

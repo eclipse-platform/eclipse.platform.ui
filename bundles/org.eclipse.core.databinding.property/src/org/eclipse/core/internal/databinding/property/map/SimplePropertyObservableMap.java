@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bugs 265561, 262287, 268203, 268688, 301774, 303847
+ *     Ovidio Mallo - bug 332367
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.map;
@@ -184,8 +185,8 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 			getterCalled();
 			checkForComodification();
 
-			MapDiff diff = Diffs.createMapDiffSingleRemove(last.getKey(), last
-					.getValue());
+			MapDiff diff = Diffs.createMapDiffSingleRemove(last.getKey(),
+					last.getValue());
 			updateMap(map, diff);
 
 			iterator.remove(); // stay in sync
@@ -279,6 +280,17 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 		updateMap(map, diff);
 
 		return oldValue;
+	}
+
+	public void clear() {
+		getterCalled();
+
+		Map map = getMap();
+		if (map.isEmpty())
+			return;
+
+		MapDiff diff = Diffs.createMapDiffRemoveAll(new HashMap(map));
+		updateMap(map, diff);
 	}
 
 	public Collection values() {
