@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2007 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *  Martin Oberhuber (Wind River) - [335864] ResourceAttributeTest fails on Win7
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -302,7 +303,7 @@ public class ResourceAttributeTest extends ResourceTest {
 
 		// create a link to the target file and add it to the workspace,
 		// the resource in the workspace should have symbolic link attribute set
-		mkLink(project.getLocation().toFile(), "link", "target");
+		createSymLink(project.getLocation().toFile(), "link", "target", false);
 		ensureExistsInWorkspace(link, true);
 		assertTrue("5.0", link.getResourceAttributes().isSymbolicLink());
 
@@ -333,21 +334,6 @@ public class ResourceAttributeTest extends ResourceTest {
 			project.delete(true, getMonitor());
 		} catch (CoreException e) {
 			fail("7.0", e);
-		}
-	}
-
-	private void mkLink(java.io.File basedir, String src, String tgt) {
-		String[] envp = {};
-		try {
-			Process p;
-			String[] cmd = {"ln", "-s", tgt, src};
-			p = Runtime.getRuntime().exec(cmd, envp, basedir);
-			int exitcode = p.waitFor();
-			assertEquals(exitcode, 0);
-		} catch (IOException e) {
-			fail("mkLink", e);
-		} catch (InterruptedException e) {
-			fail("mkLink", e);
 		}
 	}
 }
