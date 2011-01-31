@@ -60,4 +60,7 @@ public class SystemMenuMove extends MenuManager {
         super.update(force, recursive);
     }
 
+	public void update() {
+		update(false, false);
+	}
 }
