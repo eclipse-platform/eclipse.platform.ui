@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,7 +61,7 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 	 */
 	private void processString(String buildFileName) {
 		IFile buildFile = AntUtil.getFileForLocation(buildFileName, null);
-		if (!acceptBuildFile(buildFile.getName())) {
+		if (!AntUtil.isKnownAntFile(buildFile)) {
 			return;
 		}
 		String name = buildFile.getFullPath().toString();
@@ -75,18 +75,6 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 		}
 		AntProjectNode project = new AntProjectNodeProxy(name);
 		view.addProject(project);
-	}
-	
-	/**
-	 * Returns if the given build file name is known as a build file
-	 * @param name
-	 * @return true if the name of the build file is known as a build file, false otherwise
-	 */
-	boolean acceptBuildFile(String name) {
-		if(name != null) {
-			return name.toLowerCase().endsWith(".xml") || AntUtil.isKnownBuildfileName(name); //$NON-NLS-1$
-		}
-		return false;
 	}
 	
 	/* (non-Javadoc)
