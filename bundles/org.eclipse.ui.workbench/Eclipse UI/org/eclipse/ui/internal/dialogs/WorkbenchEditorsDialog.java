@@ -617,8 +617,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
             return;
         }
 
-        saveDialogSettings();
-
         Adapter selection = (Adapter) items[0].getData();
         //It would be better to activate before closing the
         //dialog but it does not work when the editor is in other
@@ -626,6 +624,11 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         super.okPressed();
         selection.activate();
     }
+
+	public boolean close() {
+		saveDialogSettings();
+		return super.close();
+	}
 
     /**
      * Saves the dialog settings.
