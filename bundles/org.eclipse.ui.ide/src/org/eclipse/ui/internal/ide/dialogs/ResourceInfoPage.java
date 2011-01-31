@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
@@ -416,36 +415,31 @@ public class ResourceInfoPage extends PropertyPage {
 				setPermissionsSelection(previousPermissionsValue);
 			}
 		}
-		encodingEditor = new ResourceEncodingFieldEditor(
-				getFieldEditorLabel(resource), composite, resource);
-		encodingEditor.setPage(this);
-		encodingEditor.load();
+		//We can't save and load the preferences for closed project
+		if (resource.getProject().isOpen()) {
+			encodingEditor = new ResourceEncodingFieldEditor(
+					getFieldEditorLabel(resource), composite, resource);
+			encodingEditor.setPage(this);
+			encodingEditor.load();
 
-		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-			 */
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FieldEditor.IS_VALID)) {
-					setValid(encodingEditor.isValid());
+			encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+				 */
+				public void propertyChange(PropertyChangeEvent event) {
+					if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+						setValid(encodingEditor.isValid());
+					}
 				}
+			});
 
+			if (resource.getType() == IResource.PROJECT) {
+				lineDelimiterEditor = new LineDelimiterEditor(composite, resource
+						.getProject());
+				lineDelimiterEditor.doLoad();
 			}
-		});
-
-		
-		if (resource.getType() == IResource.PROJECT) {
-			lineDelimiterEditor = new LineDelimiterEditor(composite, resource
-					.getProject());
-			lineDelimiterEditor.doLoad();
-		}
-		
-		//We can't save the preferences for close
-		if (resource.getType() == IResource.PROJECT && !((IProject)resource).isOpen()){
-			encodingEditor.setEnabled(false, composite);
-			lineDelimiterEditor.setEnabled(false);
 		}
 		
 		Dialog.applyDialogFont(composite);
@@ -904,7 +898,9 @@ public class ResourceInfoPage extends PropertyPage {
 			setPermissionsSelection(defaultPermissionValues);
 		}
 
-		encodingEditor.loadDefault();
+		if (encodingEditor != null) {
+			encodingEditor.loadDefault();
+		}
 
 		if (lineDelimiterEditor != null) {
 			lineDelimiterEditor.loadDefault();
@@ -1006,7 +1002,9 @@ public class ResourceInfoPage extends PropertyPage {
 		} finally {
 			// This must be invoked after the 'derived' property has been set,
 			// because it may influence the place where encoding is stored.
-			encodingEditor.store();
+			if (encodingEditor != null) {
+				encodingEditor.store();
+			}
 		}
 		return true;
 	}

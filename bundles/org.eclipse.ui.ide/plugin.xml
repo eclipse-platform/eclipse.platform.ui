@@ -702,6 +702,10 @@
             id="org.eclipse.ui.propertypages.project.reference"
             name="%PropertyPages.project.reference"
             >
+         <filter
+               name="open"
+               value="true">
+         </filter>
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IProject"/>
          </enabledWhen>
@@ -711,6 +715,10 @@
             class="org.eclipse.ui.internal.ide.dialogs.ResourceFilterPage"
             id="org.eclipse.ui.propertypages.resource.filters"
             name="%PropertyPages.resource.filters">
+         <filter
+               name="open"
+               value="true">
+         </filter>
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IResource">
             	<instanceof value="org.eclipse.core.resources.IContainer"/>
@@ -741,6 +749,10 @@
             class="org.eclipse.ui.internal.ide.dialogs.ProjectLinkedResourcePage"
             id="org.eclipse.ui.propertypages.project.linkedResourcesPage"
             name="%linked_resources">
+         <filter
+               name="open"
+               value="true">
+         </filter>
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IProject"/>
          </enabledWhen>
