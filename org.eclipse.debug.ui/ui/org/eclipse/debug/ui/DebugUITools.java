@@ -141,8 +141,10 @@ public class DebugUITools {
 	}
 		
 	/**
-	 * Returns the default image descriptor for the given element
-	 * or <code>null</code> if none is defined.
+	 * Returns the default image descriptor for the given element.
+	 * 
+	 * @param element the element
+	 * @return the image descriptor or <code>null</code> if none
 	 */
 	public static ImageDescriptor getDefaultImageDescriptor(Object element) {
 		String imageKey= getDefaultImageKey(element);
@@ -257,16 +259,17 @@ public class DebugUITools {
 	 */
 	public static void deleteBreakpoints(IBreakpoint[] breakpoints, final Shell shell, IProgressMonitor progressMonitor) throws CoreException {
 		IMarker[] markers= new IMarker[breakpoints.length];
-		for (int i= 0; i < breakpoints.length; i++) {
-			if (!breakpoints[i].isRegistered())
+		int markerCount;
+		for (markerCount= 0; markerCount < breakpoints.length; markerCount++) {
+			if (!breakpoints[markerCount].isRegistered())
 				break;
-			markers[i]= breakpoints[i].getMarker();
-			if (markers[i] == null)
+			markers[markerCount]= breakpoints[markerCount].getMarker();
+			if (markers[markerCount] == null)
 				break;
 		}
 
 		// We only offer undo support if all breakpoints are registered and have associated markers
-		boolean allowUndo= markers.length == breakpoints.length;
+		boolean allowUndo= markerCount == breakpoints.length;
 
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpoints(breakpoints, !allowUndo);
 
@@ -372,8 +375,11 @@ public class DebugUITools {
     }
     
     /**
-     * Extracts the first element from the given selection and casts it to IAdaptable.
-     */
+	 * Extracts the first element from the given selection and casts it to IAdaptable.
+	 * 
+	 * @param activeContext the selection
+	 * @return an adaptable
+	 */
     private static IAdaptable getDebugContextElementForSelection(ISelection activeContext) {
         if (activeContext instanceof IStructuredSelection) {
             IStructuredSelection selection = (IStructuredSelection) activeContext;
@@ -919,13 +925,13 @@ public class DebugUITools {
 	}
 	
 	/**
-	 * Returns the launch group that the given launch configuration belongs
-	 * to, for the specified mode, or <code>null</code> if none.
+	 * Returns the launch group that the given launch configuration belongs to, for the specified
+	 * mode, or <code>null</code> if none.
 	 * 
-	 * @param configuration
-	 * @param mode
-	 * @return the launch group the given launch configuration belongs to, for
-	 * the specified mode, or <code>null</code> if none
+	 * @param configuration the launch configuration
+	 * @param mode the mode
+	 * @return the launch group the given launch configuration belongs to, for the specified mode,
+	 *         or <code>null</code> if none
 	 * @since 3.0
 	 */
 	public static ILaunchGroup getLaunchGroup(ILaunchConfiguration configuration, String mode) {
