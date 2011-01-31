@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -626,8 +626,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
             return;
         }
 
-        saveDialogSettings();
-
         Adapter selection = (Adapter) items[0].getData();
         //It would be better to activate before closing the
         //dialog but it does not work when the editor is in other
@@ -635,6 +633,11 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         super.okPressed();
         selection.activate();
     }
+
+	public boolean close() {
+		saveDialogSettings();
+		return super.close();
+	}
 
     /**
      * Saves the dialog settings.
