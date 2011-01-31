@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Red Hat Incorporated - loadProjectDescription(InputStream)
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
- *     Broadcom Corporation - build configurations and references
+ *     Broadcom Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -95,7 +96,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected final IWorkspaceRoot defaultRoot = new WorkspaceRoot(Path.ROOT, this);
 	protected WorkspacePreferences description;
 	protected FileSystemResourceManager fileSystemManager;
-	protected final HashSet lifecycleListeners = new HashSet(10);
+	protected final CopyOnWriteArrayList<ILifecycleListener> lifecycleListeners = new CopyOnWriteArrayList<ILifecycleListener>();
 	protected LocalMetaArea localMetaArea;
 	/**
 	 * Helper class for performing validation of resource names and locations.
@@ -325,7 +326,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * remove lifecycle listeners.
 	 */
 	public void addLifecycleListener(ILifecycleListener listener) {
-		lifecycleListeners.add(listener);
+		lifecycleListeners.addIfAbsent(listener);
 	}
 
 	/* (non-Javadoc)
@@ -386,10 +387,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * internal listeners.
 	 */
 	protected void broadcastEvent(LifecycleEvent event) throws CoreException {
-		for (Iterator it = lifecycleListeners.iterator(); it.hasNext();) {
-			ILifecycleListener listener = (ILifecycleListener) it.next();
+		for (ILifecycleListener listener : lifecycleListeners)
 			listener.handleEvent(event);
-		}
 	}
 
 	public void broadcastPostChange() {
