@@ -12,7 +12,6 @@
 
 package org.eclipse.ui.internal;
 
-import com.ibm.icu.text.Bidi;
 import com.ibm.icu.text.MessageFormat;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -939,20 +938,26 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	}
 	
     /**
-	 * Check whether workbench translation is loaded in bidi languages
-	 * @return boolean
+	 * Check whether the workbench messages are in a Bidi language. This method
+	 * will return <code>null</code> if it is unable to determine message
+	 * properties.
 	 */
-	private boolean checkBidiSDK_NLSPacks() {
-		//Check if the user installed the nls packs for bidi 
-		String loadingWorkbench = WorkbenchMessages.Startup_Loading_Workbench;
-		if (loadingWorkbench != null) {
-			boolean isBidi = Bidi.requiresBidi(loadingWorkbench.toCharArray(), 0,
-					loadingWorkbench.length());
-			if (isBidi) {
-				return true;
-			}
+	private Boolean isBidiMessageText() {
+		// Check if the user installed the NLS packs for bidi
+		String message = WorkbenchMessages.Startup_Loading_Workbench;
+		if (message == null)
+			return null;
+
+		try {
+			// use qualified class name to avoid import statement
+			// and premature attempt to resolve class reference
+			boolean isBidi = com.ibm.icu.text.Bidi.requiresBidi(message.toCharArray(), 0,
+					message.length());
+			return new Boolean(isBidi);
+		} catch (NoClassDefFoundError e) {
+			// the ICU Base bundle used in place of ICU?
+			return null;
 		}
-		return false;
 	}
 
 	/**
@@ -972,23 +977,23 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @see SWT#RIGHT_TO_LEFT
 	 */
 	private int checkCommandLineLocale() {
-		
-		//Check if the user property is set. If not do not
-		//rely on the vm.
-		if (System.getProperty(NL_USER_PROPERTY) == null && !checkBidiSDK_NLSPacks()) {
-			return SWT.NONE;
+		// Check if the user property is set. If not, do not rely on the VM.
+		if (System.getProperty(NL_USER_PROPERTY) == null) {
+			Boolean needRTL = isBidiMessageText();
+			if (needRTL != null && needRTL.booleanValue())
+				return SWT.RIGHT_TO_LEFT;
+		} else {
+			String lang = Locale.getDefault().getLanguage();
+			boolean bidiLangauage = "iw".equals(lang) || "he".equals(lang) || "ar".equals(lang) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					"fa".equals(lang) || "ur".equals(lang); //$NON-NLS-1$ //$NON-NLS-2$
+			if (bidiLangauage) {
+				Boolean needRTL = isBidiMessageText();
+				if (needRTL == null)
+					return SWT.RIGHT_TO_LEFT;
+				if (needRTL.booleanValue())
+					return SWT.RIGHT_TO_LEFT;
+			}
 		}
-		if (System.getProperty(NL_USER_PROPERTY) == null && checkBidiSDK_NLSPacks()) {
-			return SWT.RIGHT_TO_LEFT;
-		}
-		Locale locale = Locale.getDefault();
-		String lang = locale.getLanguage();
-
-		if (("iw".equals(lang) || "he".equals(lang) || "ar".equals(lang) || //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				"fa".equals(lang) || "ur".equals(lang)) && checkBidiSDK_NLSPacks()) { //$NON-NLS-1$ //$NON-NLS-2$ 
-			return SWT.RIGHT_TO_LEFT;
-		}
-			
 		return SWT.NONE;
 	}
 
