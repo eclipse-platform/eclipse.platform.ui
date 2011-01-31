@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
@@ -42,13 +43,15 @@ public class PerspectiveProvider extends QuickAccessProvider {
 		if (cachedElements == null) {
 			IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench()
 					.getPerspectiveRegistry().getPerspectives();
-			cachedElements = new QuickAccessElement[perspectives.length];
 			for (int i = 0; i < perspectives.length; i++) {
-				PerspectiveElement perspectiveElement = new PerspectiveElement(
-						perspectives[i], this);
-				cachedElements[i] = perspectiveElement;
-				idToElement.put(perspectiveElement.getId(), perspectiveElement);
+				if (!WorkbenchActivityHelper.filterItem(perspectives[i])) {
+					PerspectiveElement perspectiveElement = new PerspectiveElement(perspectives[i],
+							this);
+					idToElement.put(perspectiveElement.getId(), perspectiveElement);
+				}
 			}
+			cachedElements = (QuickAccessElement[]) idToElement.values().toArray(
+					new QuickAccessElement[idToElement.size()]);
 		}
 		return cachedElements;
 	}

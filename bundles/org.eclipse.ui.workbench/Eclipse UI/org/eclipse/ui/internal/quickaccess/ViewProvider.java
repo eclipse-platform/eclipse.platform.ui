@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -55,7 +56,9 @@ public class ViewProvider extends QuickAccessProvider {
 					.getViewRegistry().getViews();
 			Collection elements = new HashSet(views.length);
 			for (int i = 0; i < views.length; i++) {
-				addElement(views[i], elements, null, null);
+				if (!WorkbenchActivityHelper.filterItem(views[i])) {
+					addElement(views[i], elements, null, null);
+				}
 			}
 
 			addOpenViews(elements);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 
@@ -60,11 +61,14 @@ public class PreferenceProvider extends QuickAccessProvider {
 	 */
 	private void collectElements(String prefix, IPreferenceNode[] subNodes, List result) {
 		for (int i = 0; i < subNodes.length; i++) {
-			PreferenceElement preferenceElement = new PreferenceElement(
-					subNodes[i], prefix, this);
-			result.add(preferenceElement);
-			String nestedPrefix = prefix.length() == 0 ? subNodes[i].getLabelText() : (prefix + "/" + subNodes[i].getLabelText());  //$NON-NLS-1$
-			collectElements(nestedPrefix, subNodes[i].getSubNodes(), result);
+			if (!WorkbenchActivityHelper.filterItem(subNodes[i])) {
+				PreferenceElement preferenceElement = new PreferenceElement(subNodes[i], prefix,
+						this);
+				result.add(preferenceElement);
+				String nestedPrefix = prefix.length() == 0 ? subNodes[i].getLabelText() : (prefix
+						+ "/" + subNodes[i].getLabelText()); //$NON-NLS-1$
+				collectElements(nestedPrefix, subNodes[i].getSubNodes(), result);
+			}
 		}
 	}
 
