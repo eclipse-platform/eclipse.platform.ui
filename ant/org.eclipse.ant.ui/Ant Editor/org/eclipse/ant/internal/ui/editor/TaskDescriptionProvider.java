@@ -187,7 +187,10 @@ public class TaskDescriptionProvider {
     	for (int i = 0; i < nodes.getLength(); i++) {
     		Node node = nodes.item(i);
 			if(node.getNodeType() == Node.ELEMENT_NODE && XML_TAG_DESCRIPTION.equals(node.getNodeName())) {
-				return node.getTextContent();
+				node = node.getFirstChild();
+				if(node != null) {
+					return node.getNodeValue();
+				}
 			}
 		}
     	return null;
