@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelperRepository;
 import org.apache.tools.ant.RuntimeConfigurable;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
@@ -514,23 +515,31 @@ public class ProjectHelper extends ProjectHelper2 {
 	}
 	
 	/**
+	 * Constructor
+	 * <p>
+	 * This constructor is only to be used by the {@link ProjectHelperRepository} when loading
+	 * instances of registered helpers.
+	 * </p>
+	 * @since 3.7
+	 * @noreference This constructor is not intended to be referenced by clients.
+	 */
+	public ProjectHelper() {}
+	
+	/**
      * Parses the project file, configuring the project as it goes.
      *
      * @param project the current project
-     * @param source  the xml source or a java.io.File
+     * @param source  the XML source or a {@link File}
      * @param handler the root handler to use (contains the current context)
-     * @exception BuildException if the configuration is invalid or cannot
-     *                           be read
+     * @exception BuildException if the configuration is invalid or cannot be read
      */
-    public void parse(Project project, Object source, org.apache.tools.ant.helper.ProjectHelper2.RootHandler handler) throws BuildException {
-    	
+    public void parse(Project project, Object source, ProjectHelper2.RootHandler handler) throws BuildException {
     	if (!(source instanceof String) && !(source instanceof File)) {
     		//this should only occur with a source URL and that should not be possible currently
     		//as Antlib hard codes using ProjectHelper2 (bug 152793)
     		super.parse(project, source, handler);
     		return;
     	}
-    	
     	AntXMLContext context = (AntXMLContext)project.getReference("ant.parsing.context"); //$NON-NLS-1$
 		//switch to using "our" handler so parsing will continue on hitting errors.
     	handler = new RootHandler(context, mainHandler);

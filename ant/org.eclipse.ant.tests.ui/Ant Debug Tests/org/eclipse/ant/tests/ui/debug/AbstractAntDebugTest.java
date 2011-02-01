@@ -527,6 +527,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 				Object event = waiter.waitForEvent();
 				assertNotNull("No terminate event was recieved", event);
                 getLaunchManager().removeLaunch(debugTarget.getLaunch());
+                debugTarget = null;
 			} catch (CoreException e) {
 			}
 		}
@@ -747,6 +748,9 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
+		if(fEventSet != null) {
+			fEventSet = null;
+		}
 		//reset the options
 		IPreferenceStore debugUIPreferences = DebugUIPlugin.getDefault().getPreferenceStore(); 
 		debugUIPreferences.setToDefault(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR);

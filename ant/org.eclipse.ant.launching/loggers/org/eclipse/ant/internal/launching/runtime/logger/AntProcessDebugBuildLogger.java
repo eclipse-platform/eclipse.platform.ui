@@ -56,6 +56,38 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.launching.runtime.logger.AntProcessBuildLogger#buildFinished(org.apache.tools.ant.BuildEvent)
+	 */
+	public void buildFinished(BuildEvent event) {
+		super.buildFinished(event);
+		cleanup();
+	}
+	
+	/**
+	 * Cleans up all held memory.
+	 * <br><br>
+	 * Called from {@link #buildFinished(BuildEvent)} and {@link #terminate()}
+	 * @since 1.0.1
+	 */
+	void cleanup() {
+		if(fAntDebugTarget != null) {
+			IProcess process= getAntProcess(fProcessId);
+			if(process != null) {
+				ILaunch launch= process.getLaunch();
+				launch.removeDebugTarget(fAntDebugTarget);
+			}
+			fAntDebugTarget = null;
+		}
+		if(fDebugState != null) {
+			fDebugState.buildFinished();
+			fDebugState = null;
+		}
+		if(fBreakpoints != null) {
+			fBreakpoints.clear();
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskFinished(BuildEvent event) {
@@ -147,6 +179,13 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.launching.debug.IAntDebugController#terminate()
+	 */
+	public void terminate() {
+		cleanup();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepOver()
 	 */
 	public synchronized void stepOver() {
@@ -176,7 +215,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getProperties()
 	 */
 	public void getProperties() {
-		if (!fAntDebugTarget.isSuspended()) {
+		if (fAntDebugTarget == null || !fAntDebugTarget.isSuspended()) {
 			return;
 		}
 	    StringBuffer propertiesRepresentation= new StringBuffer();
@@ -234,7 +273,9 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public void targetFinished(BuildEvent event) {
 		super.targetFinished(event);
-		fDebugState.setTargetExecuting(null);
+		if(fDebugState != null) {
+			fDebugState.setTargetExecuting(null);
+		}
 	}
 
 	/* (non-Javadoc)

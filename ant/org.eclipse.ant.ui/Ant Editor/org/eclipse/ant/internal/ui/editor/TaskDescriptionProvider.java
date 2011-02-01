@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2011 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -31,10 +31,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -65,10 +63,44 @@ public class TaskDescriptionProvider {
     public static final String XML_TAG_DESCRIPTION = "description"; //$NON-NLS-1$
     public static final String XML_ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
     public static final String XML_ATTRIBUTE_REQUIRED = "required"; //$NON-NLS-1$
+
+    /**
+     * Class to avoid holding on to DOM element handles
+     * @since 3.5
+     */
+    class ProposalNode {
+    	String desc = null;
+    	String required = null;
+    	HashMap nodes = null;
+    	
+    	ProposalNode(String desc, String required) {
+    		this.desc = desc;
+    		this.required = required;
+    	}
+    	
+    	void addChild(String name, ProposalNode node) {
+    		if(nodes == null) {
+    			nodes = new HashMap(9);
+    		}
+    		nodes.put(name, node);
+    	}
+    	
+    	ProposalNode getChild(String name) {
+    		if(nodes != null) {
+    			return (ProposalNode) nodes.get(name);
+    		}
+    		return null;
+    	}
+    }
     
     private static TaskDescriptionProvider fgDefault;
 
-    private Map taskNodes= null;
+    /**
+     * Mapping of {@link String} to {@link ProposalNode}
+     * <br><br>
+     * <code>Map&lt;String, ProposalNode&gt;</code>
+     */
+    private Map taskNodes = null;
     
     /**
      * Meant to be a singleton
@@ -80,9 +112,8 @@ public class TaskDescriptionProvider {
     	if (fgDefault == null) {
     		fgDefault= new TaskDescriptionProvider();
     		IRunnableWithProgress runnable= new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-									throws InvocationTargetException, InterruptedException {					
-						fgDefault.initialize();
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {					
+					fgDefault.initialize();
 				}
 			};
 			
@@ -100,29 +131,68 @@ public class TaskDescriptionProvider {
      * Parses the task description xml file and stores the information.
      */
     protected void initialize() {
-    	taskNodes= new HashMap();
-        Document tempDocument = parseFile(TASKS_DESCRIPTION_XML_FILE_NAME);
-        Node tempRootNode = tempDocument.getDocumentElement();
-        NodeList tempChildNodes = tempRootNode.getChildNodes();
-        for(int i=0; i<tempChildNodes.getLength(); i++) {
-            Node tempNode = tempChildNodes.item(i);
-            if(tempNode.getNodeType() == Node.ELEMENT_NODE) {
-                String tempTagName = tempNode.getNodeName();
-                if(tempTagName.equals(XML_TAG_TASK)) {
-                    NamedNodeMap tempAttributes = tempNode.getAttributes();
-                    Node tempAttributeNode = tempAttributes.getNamedItem(XML_ATTRIBUTE_NAME);
-                    if(tempAttributeNode != null) {
-                        String tempTaskName = tempAttributeNode.getNodeValue();
-                        if(tempTaskName != null) {
-                            taskNodes.put(tempTaskName, tempNode);
-                        }
+    	taskNodes = new HashMap();
+        Document doc = parseFile(TASKS_DESCRIPTION_XML_FILE_NAME);
+        Node root = doc.getDocumentElement();
+        NodeList tasks = root.getChildNodes();
+        Node node = null;
+        for(int i=0; i < tasks.getLength(); i++) {
+            node = tasks.item(i);
+            if(node.getNodeType() == Node.ELEMENT_NODE) {
+                if(XML_TAG_TASK.equals(node.getNodeName())) {
+                	Element task = (Element) node;
+                	String name = task.getAttribute(XML_ATTRIBUTE_NAME);
+                    if(name != null) {
+                    	ProposalNode tasknode = new ProposalNode(getDescription(task), null);
+                    	taskNodes.put(name, tasknode);
+                    	NodeList nodes = task.getElementsByTagName(XML_TAG_ATTRIBUTE);
+                    	Element e = null;
+                    	for (int j = 0; j < nodes.getLength(); j++) {
+							e = (Element) nodes.item(j);
+							addNode(e, tasknode);
+						}
+                    	nodes = task.getElementsByTagName(XML_TAG_ELEMENT);
+                    	for (int j = 0; j < nodes.getLength(); j++) {
+							e = (Element) nodes.item(j);
+							addNode(e, tasknode);
+						}
                     }
                 }
             }
         }
     }
     
-
+    /**
+     * Adds a new child {@link ProposalNode} to the given parent node
+     * 
+     * @param element
+     * @param node
+     * @since 3.5
+     */
+    void addNode(Element element, ProposalNode node) {
+    	String name = element.getAttribute(XML_ATTRIBUTE_NAME);
+    	if(name != null) {
+    		node.addChild(name, new ProposalNode(getDescription(element), element.getAttribute(XML_ATTRIBUTE_REQUIRED)));
+    	}
+    }
+    
+    /**
+     * Recursively find the description text for the parent {@link Element} 
+     * @param element
+     * @return the description element text or <code>null</code>
+     * @since 3.5
+     */
+    String getDescription(Element element) {
+    	NodeList nodes = element.getChildNodes();
+    	for (int i = 0; i < nodes.getLength(); i++) {
+    		Node node = nodes.item(i);
+			if(node.getNodeType() == Node.ELEMENT_NODE && XML_TAG_DESCRIPTION.equals(node.getNodeName())) {
+				return node.getTextContent();
+			}
+		}
+    	return null;
+    }
+    
     /**
      * Returns the (DOM) document as a result of parsing the file with the 
      * specified file name.
@@ -164,61 +234,13 @@ public class TaskDescriptionProvider {
      * no description available.
      */
     public String getDescriptionForTask(String aTaskName) {
-        Element taskElement = (Element)taskNodes.get(aTaskName);
-        if(taskElement != null) {
-            return getDescriptionOfNode(taskElement);
-        }
+    	ProposalNode task = (ProposalNode) taskNodes.get(aTaskName);
+    	if(task != null) {
+    		return task.desc;
+    	}
         return null;
     }
 
-
-    /**
-     * Returns the description of the specified node.
-     * <P>
-     * The node must be either one of task node or attribute node.
-     */
-    private String getDescriptionOfNode(Node aNode) {
-        NodeList tempChildNodes = aNode.getChildNodes();
-        for (int i=0; i<tempChildNodes.getLength(); i++) {
-            Node tempNode = tempChildNodes.item(i);
-            if(tempNode instanceof Element && XML_TAG_DESCRIPTION.equals(tempNode.getNodeName())) {
-                Element tempDescriptionElement = (Element)tempNode;
-                Node tempChildNode = tempDescriptionElement.getFirstChild();
-                if(tempChildNode instanceof Text) {
-                    return ((Text)tempChildNode).getData();
-                }
-                break; 
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * Returns the Required value of the specified node.
-     * <P>
-     * Currently the XML file has Required defined as NOTDEFINED in
-     * some cases. If so the value returned is an empty string
-     */
-    protected String getRequiredOfNode(Node aNode) {
-    	
-    	String tmpNodeName = aNode.getNodeName();
-    	String tmpRequiredValue = null;
-    	
-   		if(aNode.getNodeType() == Node.ELEMENT_NODE && 
-   			(XML_TAG_ATTRIBUTE.equals(tmpNodeName) || XML_TAG_ELEMENT.equals(tmpNodeName)) ) {
-        	  
-        	  tmpRequiredValue = aNode.getAttributes().getNamedItem(XML_ATTRIBUTE_REQUIRED).getNodeValue();
-   		}
-   		
-   		if(tmpRequiredValue == null || tmpRequiredValue.equals("NOTDEFINED")) { //$NON-NLS-1$
-   			return ""; //$NON-NLS-1$
-   		}
-   		
-   		return tmpRequiredValue;
-                   
-    }
-
-    
     /**
      * Returns the description string for the specified attribute of the 
      * specified task.
@@ -227,28 +249,12 @@ public class TaskDescriptionProvider {
      * not known or no description available.
      */
     public String getDescriptionForTaskAttribute(String aTaskName, String anAttributeName) {
-        
-        String tmpDescription = null;	
-        	
-        Node tmpAttributesNode = getAttributesNode(aTaskName);
-        	
-        if(tmpAttributesNode != null) {
-        	
-        	tmpDescription = getDescriptionForNodeNamedWithNameInNodeList( XML_TAG_ATTRIBUTE, anAttributeName,
-        																tmpAttributesNode.getChildNodes());															
-    		//If Description is null we try the elements section else we're satisfied.
-    		if( tmpDescription != null ) {
-    			return tmpDescription;
-    		}
-        }
-        //Not yet found. Try the elements Node
-    	tmpAttributesNode = getElementsNode(aTaskName);
-    	if(tmpAttributesNode != null) {
-    		tmpDescription = getDescriptionForNodeNamedWithNameInNodeList( XML_TAG_ELEMENT, anAttributeName,
-            														   tmpAttributesNode.getChildNodes());
-            
-            return tmpDescription;  
-            
+        ProposalNode task = (ProposalNode) taskNodes.get(aTaskName);
+        if(task != null) {
+        	ProposalNode att = task.getChild(anAttributeName);
+        	if(att != null) {
+        		return att.desc;
+        	}
         }
         return null;
     }
@@ -261,170 +267,28 @@ public class TaskDescriptionProvider {
      * known or no description available.
      */
     public String getRequiredAttributeForTaskAttribute(String aTaskName, String anAttributeName) {
- 
-        String tmpRequired = null;	
-        	
-        Node tmpAttributesNode = getAttributesNode(aTaskName);
-        	
-        if(tmpAttributesNode != null) {
-        	
-        	tmpRequired = getRequiredForNodeNamedWithNameInNodeList( XML_TAG_ATTRIBUTE, anAttributeName,
-        																tmpAttributesNode.getChildNodes());															
-    		
-    		//If Required is null we try the elements section else we're satisfied.
-    		if( tmpRequired != null ) {
-    			return tmpRequired;
-    		}
-        }
-        
-        //Not yet found. Try the elements Node
-    	tmpAttributesNode = getElementsNode(aTaskName);
-    	if(tmpAttributesNode != null) {
-    		tmpRequired = getDescriptionForNodeNamedWithNameInNodeList( XML_TAG_ELEMENT, anAttributeName,
-            														   tmpAttributesNode.getChildNodes());
-            //Return it even if its null
-            return tmpRequired;  
-            
-        }
-        
-        //Not found return null
-        return null;
-    }
-    
-    /**
-     * Returns the Elements Node of the specified TaskName
-     * 
-     * @param aTaskName The name of the task
-     * @return The Elements Node of the Task.
-     */
-    private Node getElementsNode(String aTaskName) {
-    	
-    	Node tmpStructureNode = getStructureNode(aTaskName);
-    	if(tmpStructureNode != null) {
-    		return getChildNodeNamedOfTypeFromNode(XML_TAG_ELEMENTS, Node.ELEMENT_NODE,
-    												tmpStructureNode);
-    	}
-    	return null;
-    }
-    
-    /**
-     * Returns the Attributes Node of the specified TaskName
-     * 
-     * @param aTaskName The name of the task
-     * @return The Attributes Node of the Task or <code>null</code> if one
-     * does not exist.
-     */    
-    protected Node getAttributesNode(String aTaskName) {
-    	
-        Node tmpStructureNode = getStructureNode(aTaskName);
-        if(tmpStructureNode != null){
-        	return getChildNodeNamedOfTypeFromNode(XML_TAG_ATTRIBUTES, Node.ELEMENT_NODE,
-                                                             tmpStructureNode);
-    	} 
-        return null;
-    }
-
-    /**
-     * Returns the Structure Node of the specified TaskName
-     * 
-     * @param aTaskName The name of the task
-     * @return The Structure Node of the Task.
-     */        
-    private Node getStructureNode(String aTaskName) {	
-    	Element taskElement = (Element)taskNodes.get(aTaskName);
-        if(taskElement != null) {
-        	//Dig us down to the Structure node
-        	Node structureNode = getChildNodeNamedOfTypeFromNode(XML_TAG_STRUCTURE, Node.ELEMENT_NODE,
-        	                                                     taskElement);
-        	return structureNode;
+    	ProposalNode task = (ProposalNode) taskNodes.get(aTaskName);
+        if(task != null) {
+        	ProposalNode att = task.getChild(anAttributeName);
+        	if(att != null) {
+        		return att.required;
+        	}
         }
         return null;
     }
     
     /**
-     * Returns the Description for a Node satisfying the criterias in the
-     * NodeList given as Argument.
-     * 
-     * @param aNodeName The Name of the Node
-     * @param anAttributeName The string of the Name value
-     * @param anAttributesNodeList The NodeList to search in.
-     * @return The Description found or null if none is found
+     * Returns the {@link ProposalNode} for the given task name or <code>null</code> if one does not exist
+     * @param aTaskName
+     * @return the {@link ProposalNode} for the given name or <code>null</code>
+     * @since 3.5
      */
-    private String getDescriptionForNodeNamedWithNameInNodeList( String aNodeName, String anAttributeName,
-    																 NodeList anAttributesNodeList) {
-    	for (int i=0; i<anAttributesNodeList.getLength(); i++) {
-                Node tempNode = anAttributesNodeList.item(i);
-                if(tempNode.getNodeType() == Node.ELEMENT_NODE && aNodeName.equals(tempNode.getNodeName())) {
-                	if( anAttributeName.equals(getTaskAttributeName(tempNode)) ) {
-                    	return getDescriptionOfNode(tempNode);
-                	}
-                }
-        }
-        
-        //Not found
-        return null;																 	
-	}
-	
-	
-    /**
-     * Returns the Name of Task Attribute.
-     * 
-     * @return The Name of the Attribute.
-     */
-    public String getTaskAttributeName(Node aTaskAttributeNode) {
-    	NamedNodeMap tmpNamedNodeMap = aTaskAttributeNode.getAttributes();	
-    	return tmpNamedNodeMap.getNamedItem(XML_ATTRIBUTE_NAME).getNodeValue();
-    }
-    
-    /**
-     * Returns the ChildNode of the node defined by the Arguments. The
-     * first child found matching the criterias is returned.
-     * 
-     * @param aNodeName The Name of the Node to return.
-     * @param aType The Type of the node @see Node
-     * @param aParentNode The Node to get the child from
-     * 
-     * @return The First Child Node found matching the criterias,
-     * or null if none is found.
-     */
-    private Node getChildNodeNamedOfTypeFromNode(String aNodeName, short aNodeType, Node aParentNode) {
-    
-    	NodeList tmpNodeList = aParentNode.getChildNodes();
-		for(int i=0; i<tmpNodeList.getLength(); ++i ) {
-			Node tmpNode = tmpNodeList.item(i);
-			if( (tmpNode.getNodeType() == aNodeType) && aNodeName.equals(tmpNode.getNodeName()) ) {
-				return tmpNode;
-			}
-		}
-		//Not found
-		return null;    	
-    }
-    
-     /**
-     * Returns the Required Field for a Node satisfying the criterias in the
-     * NodeList given as Argument.
-     * 
-     * @param aNodeName The Name of the Node
-     * @param anAttributeName The string of the Name value
-     * @param anAttributesNodeList The NodeList to search in.
-     * @return The Description found or null if none is found
-     */
-    private String getRequiredForNodeNamedWithNameInNodeList( String aNodeName, String anAttributeName,
-    																 NodeList anAttributesNodeList) {
-    	for (int i=0; i<anAttributesNodeList.getLength(); i++) {
-    		Node tempNode = anAttributesNodeList.item(i);
-            if(tempNode.getNodeType() == Node.ELEMENT_NODE && aNodeName.equals(tempNode.getNodeName())) {
-        		if( anAttributeName.equals(getTaskAttributeName(tempNode)) ) {
-                	return getRequiredOfNode(tempNode);
-            	}
-            }
-        }
-        
-        //Not found
-        return null;																 	
+    ProposalNode getTaskNode(String aTaskName) {
+    	return (ProposalNode) taskNodes.get(aTaskName);
     }
     
     protected static void reset() {
+    	fgDefault.taskNodes.clear();
     	fgDefault= null;
     }
 }

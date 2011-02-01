@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,8 @@ public class TargetTests extends AbstractAntTest {
 			getTargets("Bug42926.xml");
 		} catch (CoreException ce) {
 			//classpathref was successful but the task is not defined
-			assertTrue("Core exception message not as expected: " + ce.getMessage(), ce.getMessage().endsWith("Bug42926.xml:7: taskdef class com.foo.SomeTask cannot be found"));
+			String message = ce.getMessage();
+			assertTrue("Core exception message not as expected: " + message, message.endsWith("Bug42926.xml:7: taskdef class com.foo.SomeTask cannot be found\n using the classloader AntClassLoader[]"));
 		}
 	}
 	

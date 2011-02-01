@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 9, 20);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
+		assertNotNull("Expecting a hovertext object", hoverText);
 		String correctResultRegEx= "<html><body text=\"#.*\" bgcolor=\"#.*\"><h5>Path Elements:</h5><ul><li>.*</html>";
 		assertTrue("Expected the following hover text to match regex: " + correctResultRegEx, hoverText.matches(correctResultRegEx));
     }
@@ -49,6 +50,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 42, 13);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
+		assertNotNull("Expecting a hovertext object", hoverText);
 		String correctResult= "<p>value with spaces</body></html>";
 		assertTrue("Expected the following hover text to end with: " + correctResult, hoverText.endsWith(correctResult));
     }
@@ -71,6 +73,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 45, 25);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
+		assertNotNull("Expecting a hovertext object", hoverText);
 		String correctResult= "<h5>Includes:</h5><li>*.xml</li><p><p><h5>Excludes:</h5><li>**/*Test*</li></body></html>";
 		assertTrue("Expected the following hover text to end with: " + correctResult + "was: " + hoverText, hoverText.endsWith(correctResult));
     }
@@ -82,6 +85,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 46, 25);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
+		assertNotNull("Expecting a hovertext object", hoverText);
 		String correctResult= "Ant UI Tests" + File.separatorChar + "buildfiles" + File.separatorChar + "nothere not found.";
 		assertTrue("Expected the following hover text to ends with: " + correctResult, hoverText.endsWith(correctResult));
     }
@@ -93,28 +97,14 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 44, 20);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-		
-		String correctResult= "<h5>Includes:</h5><li>include</li><p><p><h5>Excludes:</h5><li>exclude</li><li>**" + 
-			File.separatorChar + "*~</li><li>**" 
-			+ File.separatorChar
-			+ "#*#</li><li>**" + 
-			File.separatorChar + 
-			".#*</li><li>**" +
-			File.separatorChar + 
-			"%*%</li><li>**" + 
-			File.separatorChar +
-			"._*</li><li>**" + 
-			File.separatorChar + 
-			"CVS</li><li>**" +
-			File.separatorChar + 
-			"CVS" + File.separatorChar + "**</li><li>**" + 
-			File.separatorChar + ".cvsignore</li><li>**" + 
-			File.separatorChar + "SCCS</li><li>**" + File.separatorChar + 
-			"SCCS" + File.separatorChar + "**</li><li>**" + File.separatorChar + 
-			"vssver.scc</li><li>**" + File.separatorChar + 
-			".svn</li><li>**" + File.separatorChar + ".svn" + File.separatorChar + 
-			"**</li><li>**" + File.separatorChar + ".DS_Store</li></body></html>";
-		assertTrue("Expected the following hover text to be: " + correctResult + " Was " + hoverText, hoverText.endsWith(correctResult));
+		assertNotNull("Expecting a hovertext object", hoverText);
+		assertTrue("Expected to see '<h5>Includes:</h5><li>include</li>'", hoverText.indexOf("<h5>Includes:</h5><li>include</li>") > -1);
+		assertTrue("Expected to see '<h5>Excludes:</h5><li>exclude</li>'", hoverText.indexOf("<h5>Excludes:</h5><li>exclude</li>") > -1);
+		assertTrue("Expected to see '<li>**/SCCS/**</li>'", hoverText.indexOf("<li>**/SCCS/**</li>") > -1);
+		assertTrue("Expected to see '<li>**/.DS_Store</li>'", hoverText.indexOf("<li>**/.DS_Store</li>") > -1);
+		assertTrue("Expected to see '<li>**/.bzrignore</li>'", hoverText.indexOf("<li>**/.bzrignore</li>") > -1);
+		assertTrue("Expected to see '<li>**/.gitattributes</li>'", hoverText.indexOf("<li>**/.gitattributes</li>") > -1);
+		assertTrue("Expected to see '<li>**/.hgtags</li>'", hoverText.indexOf("<li>**/.hgtags</li>") > -1);
     }
     
     

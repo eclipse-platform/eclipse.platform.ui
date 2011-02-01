@@ -59,6 +59,39 @@ public class AntDebugState {
 		fLogger= logger;
 	}
 
+	public void buildStarted() {
+        fProjectToTargetNames= new HashMap();
+        fProjectToMapOfTargetToBuildSequence= new HashMap();
+    }
+    
+    /**
+     * Call-back from {@link org.eclipse.ant.internal.launching.runtime.logger.AntProcessDebugBuildLogger}
+     * when the build has finished
+     * @since 1.0.1
+     */
+    public void buildFinished() {
+    	if(fProjectToTargetNames != null) {
+    		fProjectToTargetNames.clear();
+    	}
+    	if(fProjectToMapOfTargetToBuildSequence != null) {
+    		fProjectToMapOfTargetToBuildSequence.clear();
+    	}
+    	fTargetsExecuting.clear();
+    	fTargetsToExecute.clear();
+    	if(fInitialProperties != null) {
+    		fInitialProperties.clear();
+    	}
+    	if(fProperties != null) {
+    		fProperties.clear();
+    	}
+    	if(fTaskToProxies != null) {
+    		fTaskToProxies.clear();
+    	}
+    	if(fTasks != null) {
+    		fTasks.clear();
+    	}
+    }
+	
 	public void waitIfSuspended() {
 		fLogger.waitIfSuspended();
 	}
@@ -522,9 +555,4 @@ public class AntDebugState {
 	    //the target to execute
 	    return (Target) allTargets.get(targets.remove(0));
 	}
-    
-    public void buildStarted() {
-        fProjectToTargetNames= new HashMap();
-        fProjectToMapOfTargetToBuildSequence= new HashMap();
-    }
 }

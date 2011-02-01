@@ -32,9 +32,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-
-import com.ibm.icu.text.MessageFormat;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
@@ -45,11 +44,6 @@ import org.apache.tools.ant.taskdefs.MacroDef;
 import org.apache.tools.ant.taskdefs.MacroInstance;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Reference;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -59,6 +53,7 @@ import org.eclipse.ant.internal.ui.dtd.IElement;
 import org.eclipse.ant.internal.ui.dtd.ISchema;
 import org.eclipse.ant.internal.ui.dtd.ParseError;
 import org.eclipse.ant.internal.ui.dtd.Parser;
+import org.eclipse.ant.internal.ui.editor.TaskDescriptionProvider.ProposalNode;
 import org.eclipse.ant.internal.ui.editor.templates.AntContext;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateAccess;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateInformationControlCreator;
@@ -72,18 +67,11 @@ import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
-
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -104,7 +92,8 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateProposal;
-
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -112,8 +101,12 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
-
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The completion processor for the Ant Editor.
@@ -1224,12 +1217,10 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     private String getTaskProposalReplacementString(String aTaskName, boolean hasNested) {
         StringBuffer replacement = new StringBuffer("<"); //$NON-NLS-1$
         replacement.append(aTaskName); 
-        Node attributeNode= getDescriptionProvider().getAttributesNode(aTaskName);
-		
-        if (attributeNode != null) {
-			appendRequiredAttributes(replacement, attributeNode);
-        } 
-        
+        ProposalNode task = getDescriptionProvider().getTaskNode(aTaskName);
+        if(task != null) {
+        	appendRequiredAttributes(replacement,task);
+        }
         if (hasNested) {
         	replacement.append("></"); //$NON-NLS-1$
             replacement.append(aTaskName);
@@ -1240,25 +1231,25 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         return replacement.toString();               
     }
 
-    private void appendRequiredAttributes(StringBuffer replacement, Node attributeNode) {
-		boolean requiredAdded= false;
-		NodeList attributes= attributeNode.getChildNodes();
-		String required;
-		Node attribute;
-		for (int i = 0; i < attributes.getLength(); i++) {
-			attribute = attributes.item(i);
-			required= getDescriptionProvider().getRequiredOfNode(attribute);
-			if (required.equalsIgnoreCase("yes")) { //$NON-NLS-1$
-				String attributeName= getDescriptionProvider().getTaskAttributeName(attribute);
-				replacement.append(' ');
-				replacement.append(attributeName);
-				replacement.append("=\"\""); //$NON-NLS-1$
-				if (!requiredAdded){
-					additionalProposalOffset= attributeName.length() + 2;
-					requiredAdded= true;
-				}	
+    private void appendRequiredAttributes(StringBuffer replacement, ProposalNode task) {
+    	if(task.nodes != null) {
+			boolean requiredAdded = false;
+			Entry entry = null;
+			for (Iterator i = task.nodes.entrySet().iterator();i.hasNext();) {
+				entry = (Entry) i.next();
+				String name = (String) entry.getKey();
+				ProposalNode att = (ProposalNode) entry.getValue();
+				if ("yes".equalsIgnoreCase(att.required)) { //$NON-NLS-1$
+					replacement.append(' ');
+					replacement.append(name);
+					replacement.append("=\"\""); //$NON-NLS-1$
+					if (!requiredAdded){
+						additionalProposalOffset = name.length() + 2;
+						requiredAdded = true;
+					}	
+				}
 			}
-		}
+    	}
 	}
 
 	/**
@@ -1713,10 +1704,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	 * does not contain the brackets.
 	 */
 	protected int getRelevance(Template template, String prefix) {
-		if (prefix.startsWith("<")) //$NON-NLS-1$
-			prefix= prefix.substring(1);
-		if (template.getName().startsWith(prefix))
+		String newprefix = prefix;
+		if (newprefix.startsWith("<")) {//$NON-NLS-1$
+			newprefix= prefix.substring(1);
+		}
+		if (template.getName().startsWith(newprefix)) {
 			return 90; 
+		}
 		return 0;
 	}
 

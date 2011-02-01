@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,12 @@ public interface IAntDebugController {
      * Step over the current Ant task
      */
 	public void stepOver();
+	
+	/**
+	 * The debugging session has terminated
+	 * @since 1.0.1
+	 */
+	public void terminate();
     
     /**
      * The provided breakpoint has been added or removed depending on the <code>added</code> parameter.

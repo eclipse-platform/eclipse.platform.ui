@@ -188,6 +188,28 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.launching.remote.logger.RemoteAntBuildLogger#buildFinished(org.apache.tools.ant.BuildEvent)
+	 */
+	public void buildFinished(BuildEvent event) {
+		super.buildFinished(event);
+		fDebugState.buildFinished();
+		fDebugState = null;
+		if(fBreakpoints != null) {
+			fBreakpoints.clear();
+		}
+		if(fRequestReader != null) {
+			try {
+				fRequestReader.close();
+			} catch (IOException e) {
+				
+			}
+		}
+		if(fRequestWriter != null) {
+			fRequestWriter.close();
+		}
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void taskStarted(BuildEvent event) {

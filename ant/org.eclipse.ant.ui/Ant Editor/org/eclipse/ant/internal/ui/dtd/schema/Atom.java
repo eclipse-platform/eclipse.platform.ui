@@ -23,7 +23,7 @@ public class Atom implements IAtom {
 
 	protected Atom(int kind, String name) {
 		fKind = kind;
-		fName = name.intern();
+		fName = name;
 	}
 	
 	/* (non-Javadoc)

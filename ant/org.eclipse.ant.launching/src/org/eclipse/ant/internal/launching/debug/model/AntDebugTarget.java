@@ -172,14 +172,14 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
-		return !isTerminated() && isSuspended();
+		return !fTerminated && fSuspended;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
-		return !isTerminated() && !isSuspended();
+		return !fTerminated && !fSuspended;
 	}
 	
 	/* (non-Javadoc)
@@ -193,8 +193,12 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
-	    fSuspended= false;
-	    fController.resume();
+		fSuspended= false;
+		fController.resume();
+		if(fThread.isSuspended()) {
+			fThread.resumedByTarget();
+		}
+		fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 	}
 	
 	/**
@@ -219,27 +223,31 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
-		fController.handleBreakpoint(breakpoint, true);
-        if (breakpoint instanceof AntLineBreakpoint) {
-            if (((AntLineBreakpoint) breakpoint).isRunToLine()) {
-                if (fRunToLineBreakpoints == null) {
-                    fRunToLineBreakpoints= new ArrayList();
-                }
-                fRunToLineBreakpoints.add(breakpoint);
-            }
-        }
+		if(!fTerminated) {
+			fController.handleBreakpoint(breakpoint, true);
+	        if (breakpoint instanceof AntLineBreakpoint) {
+	            if (((AntLineBreakpoint) breakpoint).isRunToLine()) {
+	                if (fRunToLineBreakpoints == null) {
+	                    fRunToLineBreakpoints= new ArrayList();
+	                }
+	                fRunToLineBreakpoints.add(breakpoint);
+	            }
+	        }
+		}
 	}
 
     /* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.resources.IMarkerDelta)
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
-		fController.handleBreakpoint(breakpoint, false);
-        if (fRunToLineBreakpoints != null) {
-            if (fRunToLineBreakpoints.remove(breakpoint) && fRunToLineBreakpoints.isEmpty()) {
-                fRunToLineBreakpoints= null;
-            }
-        }
+		if(!fTerminated) {
+			fController.handleBreakpoint(breakpoint, false);
+	        if (fRunToLineBreakpoints != null) {
+	            if (fRunToLineBreakpoints.remove(breakpoint) && fRunToLineBreakpoints.isEmpty()) {
+	                fRunToLineBreakpoints= null;
+	            }
+	        }
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -330,23 +338,26 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 * Called when this debug target terminates.
 	 */
 	public void terminated() {
-		fThreads= new IThread[0];
-		fTerminated = true;
-		fSuspended = false;
-		if (DebugPlugin.getDefault() != null) {
-			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
-			DebugPlugin.getDefault().removeDebugEventListener(this);
-			DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
-		}
-		if (!getProcess().isTerminated()) {
-		    try {
-                fProcess.terminate();
-                resume();
-		    } catch (DebugException e) {       
-		    }
-		}
-		if (DebugPlugin.getDefault() != null) {
-			fireTerminateEvent();
+		if(!fTerminated) {
+			fThreads= new IThread[0];
+			fTerminated = true;
+			fSuspended = false;
+			fController.terminate();
+			fController = null;
+			if (DebugPlugin.getDefault() != null) {
+				DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+				DebugPlugin.getDefault().removeDebugEventListener(this);
+				DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
+			}
+			if (!getProcess().isTerminated()) {
+			    try {
+	                fProcess.terminate();
+			    } catch (DebugException e) {       
+			    }
+			}
+			if (DebugPlugin.getDefault() != null) {
+				fireTerminateEvent();
+			}
 		}
 	}
 	
@@ -358,6 +369,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	public void stepOver() {
 	    fSuspended= false;
 		fController.stepOver();
+		fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 	}
 	
 	/**
@@ -368,6 +380,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	public void stepInto() {
 	    fSuspended= false;
 	    fController.stepInto();
+	    fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 	}
 	
 	/**
@@ -420,11 +433,15 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
     }
     
 	public void getStackFrames() {
-		fController.getStackFrames();
+		if(isSuspended()) {
+			fController.getStackFrames();
+		}
 	}
 	
 	public void getProperties() {
-		fController.getProperties();
+		if(!fTerminated) {
+			fController.getProperties();
+		}
 	}
 
     /* (non-Javadoc)
