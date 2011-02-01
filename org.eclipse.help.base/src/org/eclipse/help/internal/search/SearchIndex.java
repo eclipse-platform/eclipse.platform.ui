@@ -705,24 +705,33 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 		return isLuceneCompatible(usedLuceneVersion);
 	}
 
-	public boolean isLuceneCompatible(String luceneVersion) {
-		if (luceneVersion==null) return false;
-		String currentLuceneVersion = ""; //$NON-NLS-1$
+	/**
+	 * Determines whether an index can be read by the Lucene bundle
+	 * @param indexVersionString The version of an Index directory
+	 * @return
+	 */
+	public boolean isLuceneCompatible(String indexVersionString) {
+		if (indexVersionString==null) return false;
+		String luceneVersionString = ""; //$NON-NLS-1$
 		Bundle luceneBundle = Platform.getBundle(LUCENE_BUNDLE_ID);
 		if (luceneBundle != null) {
-			currentLuceneVersion += (String) luceneBundle.getHeaders()
+			luceneVersionString += (String) luceneBundle.getHeaders()
 					.get(Constants.BUNDLE_VERSION);
 		}
-		//Direct comparison
-		if (currentLuceneVersion.equals(luceneVersion))
+		Version luceneVersion = new Version(luceneVersionString);
+		Version indexVersion = new Version(indexVersionString);
+		Version v191 = new Version(1, 9, 1);
+		if (indexVersion.compareTo(v191) < 0) {
+			// index is older than Lucene 1.9.1
+			return false;
+		}
+		if ( luceneVersion.compareTo(indexVersion) >= 0 ) {
+			// Lucene bundle is newer than the index
 			return true;
-		Version version = new Version(currentLuceneVersion);
-		Version currentVersion = new Version(luceneVersion);
-		// must not compare with the qualifier because they
-		// change from build to build
-		return version.getMajor() == currentVersion.getMajor()
-				&& version.getMinor() == currentVersion.getMinor()
-				&& version.getMicro() == currentVersion.getMicro();
+		}
+		return luceneVersion.getMajor() == indexVersion.getMajor()
+				&& luceneVersion.getMinor() == indexVersion.getMinor()
+				&& luceneVersion.getMicro() == indexVersion.getMicro();
 	}
 
 	private boolean isAnalyzerCompatible() {
