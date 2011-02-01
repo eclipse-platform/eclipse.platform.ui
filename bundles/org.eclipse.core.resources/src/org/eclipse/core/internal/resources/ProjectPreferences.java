@@ -504,6 +504,9 @@ public class ProjectPreferences extends EclipsePreferences {
 				Policy.debug("Unable to determine preference file or file does not exist for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
+		// Before loading the preferences, try to initialize parent node (/project/<projectName>)
+		// see bug 335591
+		((ProjectPreferences) parent).initialize();
 		if (Policy.DEBUG_PREFERENCES)
 			Policy.debug("Loading preferences from file: " + localFile.getFullPath()); //$NON-NLS-1$
 		Properties fromDisk = new Properties();

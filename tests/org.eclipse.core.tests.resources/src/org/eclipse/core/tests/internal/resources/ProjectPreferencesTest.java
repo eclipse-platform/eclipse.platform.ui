@@ -827,6 +827,89 @@ public class ProjectPreferencesTest extends ResourceTest {
 
 	}
 
+	public void test_335591() {
+		String projectName = getUniqueString();
+		String nodeName = "node";
+		IProject project = getProject(projectName);
+
+		//create project but do not open it yet
+		try {
+			project.create(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		//create file with preferences that will be discovered during refresh
+		try {
+			File folder = new File(project.getLocation().toOSString() + "/.settings");
+			folder.mkdir();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(folder.getPath() + "/" + nodeName + ".prefs"));
+			bw.write("#Fri Jan 28 10:28:45 CET 2011\neclipse.preferences.version=1\nKEY=VALUE");
+			bw.close();
+		} catch (IOException e) {
+			fail("2.0", e);
+		}
+
+		//create /project/<projectName> preference node on closed project so that the node will not get initialized
+		//we cannot call new ProjectScope(project) because this does not create /project/<projectName> preference node
+		//we could use new ProjectScope(project).getNode("dummyNode") instead - this is the case that happened in bug 334241
+		Preferences projectNode = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).node(projectName);
+
+		//open the project. the new file will be found during refresh and preferences will be loaded into nodes
+		try {
+			project.open(getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		//the node was created on refresh so we can now take the node without creating it
+		Preferences node = projectNode.node(nodeName);
+
+		//correct value should be available
+		assertEquals("VALUE", node.get("KEY", null));
+
+		//add some preference to make the node dirty
+		node.put("NEW_KEY", "NEW_VALUE");
+
+		//node is dirty so we can flush it and the flush should change the content of the file
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("4.0", e);
+		}
+
+		//preferences were changed so the new file should contain two lines: 'KEY=VALUE' and 'NEW_KEY=NEW_VALUE'
+		try {
+			File folder = new File(project.getLocation().toOSString() + "/.settings");
+			BufferedReader br = new BufferedReader(new FileReader(folder.getPath() + "/" + nodeName + ".prefs"));
+			List<String> lines = new ArrayList<String>();
+			String line = br.readLine();
+			while (line != null) {
+				if ((!line.startsWith("#")) && (!line.startsWith("eclipse.preferences.version")))
+					lines.add(line);
+				line = br.readLine();
+			}
+			br.close();
+			assertEquals(2, lines.size());
+			Collections.sort(lines);
+			assertTrue(lines.get(0).equals("KEY=VALUE"));
+			assertTrue(lines.get(1).equals("NEW_KEY=NEW_VALUE"));
+		} catch (IOException e) {
+			fail("5.0", e);
+		}
+
+		//call sync to reload the node from file
+		try {
+			node.sync();
+		} catch (BackingStoreException e) {
+			fail("6.0", e);
+		}
+
+		//after reloading both preferences should be available
+		assertEquals("VALUE", node.get("KEY", null));
+		assertEquals("NEW_VALUE", node.get("NEW_KEY", null));
+	}
+
 	public void testProjectOpenClose() {
 		IProject project = getProject(getUniqueString());
 		ensureExistsInWorkspace(project, true);
