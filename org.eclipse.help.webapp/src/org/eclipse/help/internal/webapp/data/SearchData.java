@@ -13,6 +13,7 @@ package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -113,10 +114,13 @@ public class SearchData extends ActivitiesData {
 					{
 						for (int a=0;a<alternates.length;a++)
 						{
-							altList.add(
+							String div = 
 									"<div><a target=\"_self\" href=\"./searchView.jsp?searchWord="+alternates[a]+"\">"+ //$NON-NLS-1$ //$NON-NLS-2$
 									alternates[a]+
-									"</a></div>"); //$NON-NLS-1$
+									"</a></div>"; //$NON-NLS-1$
+							
+							if (!altList.contains(div))
+								altList.add(div);
 						}
 					}
 					String query = result.getQuery();
@@ -124,6 +128,7 @@ public class SearchData extends ActivitiesData {
 						searchWord = query;
 				}
 			}
+			Collections.sort(altList);
 			
 			loadSearchResults();
 			if (queryException != null) {

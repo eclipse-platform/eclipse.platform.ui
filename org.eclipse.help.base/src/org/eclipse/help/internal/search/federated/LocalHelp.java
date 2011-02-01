@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.search.federated;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.*;
@@ -52,13 +53,15 @@ public class LocalHelp implements ISearchEngine2 {
 				String alternates[] = result.getAlternateTerms();
 				if (alternates!=null)
 					for (int a=0;a<alternates.length;a++)
-						altList.add(alternates[a]);
+						if (!altList.contains(alternates[a]))
+							altList.add(alternates[a]);
 
 				String modQuery = result.getQuery();
 				if (modQuery!=null)
 					query = modQuery;
 			}
 		}
+		Collections.sort(altList);
 		
 		
 		SearchQuery searchQuery = new SearchQuery();
