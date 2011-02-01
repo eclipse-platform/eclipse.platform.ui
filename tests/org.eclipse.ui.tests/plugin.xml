@@ -687,6 +687,12 @@
             id="org.eclipse.ui.tests.multieditor.TiledEditor"
             name="%Editors.TiledEditor"/>
       <editor
+            class="org.eclipse.ui.tests.multieditor.ConcreteAbstractMultiEditor"
+            default="false"
+            icon="icons/binary_co.gif"
+            id="org.eclipse.ui.tests.multieditor.ConcreteAbstractMultiEditor"
+            name="%Editors.TiledEditor"/>
+      <editor
             class="org.eclipse.ui.tests.multieditor.TestEditor"
             contributorClass="org.eclipse.ui.tests.multieditor.TestActionBarContributor"
             default="false"

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1437,7 +1437,11 @@ public class EditorManager implements IExtensionChangeHandler {
 		return (IPathEditorInput) Util.getAdapter(input, IPathEditorInput.class);
 	}
 
-	private class InnerEditor extends EditorReference {
+	/**
+	 * An editor reference that is actually contained within another editor
+	 * reference.
+	 */
+	class InnerEditor extends EditorReference {
 
 		private IEditorReference outerEditor;
 
@@ -1449,6 +1453,14 @@ public class EditorManager implements IExtensionChangeHandler {
 			super(EditorManager.this, input, desc);
 			this.outerEditor = outerEditor;
 			this.outerEditorPart = outerEditorPart;
+		}
+
+		/**
+		 * @return Returns the parent editor reference that this reference is a
+		 *         child of.
+		 */
+		public IEditorReference getOuterEditor() {
+			return outerEditor;
 		}
 
 		protected void doDisposePart() {

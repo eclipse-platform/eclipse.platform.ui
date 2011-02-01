@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -3484,6 +3484,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         
         if (partBeingActivated != null) {
             if (partBeingActivated.getPart(false) != newPart) {
+            	// check if we're a nested editor reference
+				if (partBeingActivated instanceof EditorManager.InnerEditor) {
+					EditorReference outerEditor = (EditorReference) ((EditorManager.InnerEditor) partBeingActivated)
+							.getOuterEditor();
+					// get all the sibling references
+					IEditorReference[] children = outerEditor.getChildren();
+					if (children != null) {
+						for (int i = 0; i < children.length; i++) {
+							// there's a recursive activation request for a
+							// sibling reference, ignore it
+							if (children[i].getPart(false) == newPart) {
+								return;
+							}
+						}
+					}
+				}
+
                 WorkbenchPlugin.log(new RuntimeException(NLS.bind(
                         "WARNING: Prevented recursive attempt to activate part {0} while still in the middle of activating part {1}", //$NON-NLS-1$
                         getId(newPart), getId(partBeingActivated))));
