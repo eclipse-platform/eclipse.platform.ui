@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,6 +70,8 @@ public class ScopePart {
 
 	// Reference to its search page container (can be null)
 	private SearchDialog fSearchDialog;
+
+	private boolean fActiveEditorCanProvideScopeSelection;
 
 	/**
 	 * Returns a new scope part with workspace as initial scope.
@@ -192,6 +194,15 @@ public class ScopePart {
 
 	}
 
+	public void setActiveEditorCanProvideScopeSelection(boolean state) {
+		fActiveEditorCanProvideScopeSelection= state;
+		fUseSelection.setEnabled(canSearchInSelection());
+
+		// Reinitialize the controls
+		fScope= getStoredScope(fSettingsStore, fCanSearchEnclosingProjects);
+		setSelectedScope(fScope);
+	}
+
 	private void updateSearchPageContainerActionPerformedEnablement() {
 		fSearchDialog.notifyScopeSelectionChanged();
 	}
@@ -272,7 +283,7 @@ public class ScopePart {
 
 		fUseSelection= new Button(fPart, SWT.RADIO);
 		fUseSelection.setData(new Integer(ISearchPageContainer.SELECTION_SCOPE));
-			fUseSelection.setText(SearchMessages.ScopePart_selectedResourcesScope_text);
+		fUseSelection.setText(SearchMessages.ScopePart_selectedResourcesScope_text);
 
 		boolean canSearchInSelection= canSearchInSelection();
 		fUseSelection.setEnabled(canSearchInSelection);
@@ -343,7 +354,8 @@ public class ScopePart {
 
 	private boolean canSearchInSelection() {
 		ISelection selection= fSearchDialog.getSelection();
-		return selection instanceof IStructuredSelection && !selection.isEmpty();
+		return (selection instanceof IStructuredSelection) && !selection.isEmpty() || fActiveEditorCanProvideScopeSelection && fSearchDialog.getActiveEditorInput() != null;
+
 	}
 
 	private void handleScopeChanged(SelectionEvent e) {

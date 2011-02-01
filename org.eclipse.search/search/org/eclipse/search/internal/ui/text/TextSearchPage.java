@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -60,6 +61,7 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.ITextSelection;
 
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkingSet;
@@ -332,6 +334,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 					}
 				}
 			}
+		} else if (getContainer().getActiveEditorInput() != null) {
+			resources.add(getContainer().getActiveEditorInput().getAdapter(IFile.class));
 		}
 		IResource[] arr= (IResource[]) resources.toArray(new IResource[resources.size()]);
 		return FileTextSearchScope.newSearchScope(arr, getExtensions(), fSearchDerived);
@@ -434,6 +438,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			fPattern.setFocus();
 		}
 		updateOKStatus();
+
+		IEditorInput editorInput= getContainer().getActiveEditorInput();
+		getContainer().setActiveEditorCanProvideScopeSelection(editorInput != null && editorInput.getAdapter(IFile.class) != null);
+
 		super.setVisible(visible);
 	}
 

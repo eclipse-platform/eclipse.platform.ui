@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,13 +69,16 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+import org.eclipse.ui.part.MultiPageEditorPart;
 
 import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
@@ -83,6 +86,7 @@ import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.ISearchPageScoreComputer;
+
 
 public class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer, IPageChangeProvider {
 
@@ -245,14 +249,27 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		return fCurrentSelection;
 	}
 
-	private IEditorPart getActiveEditor() {
+	public IEditorPart getActiveEditor() {
 		IWorkbenchPage activePage= fWorkbenchWindow.getActivePage();
 		if (activePage != null) {
 			IEditorPart activeEditor= activePage.getActiveEditor();
-			if (activeEditor == activePage.getActivePart())
+			IWorkbenchPart activePart= activePage.getActivePart();
+			if (activeEditor == activePart || isOldSearchView(activePart))
 				return activeEditor;
 		}
 		return null;
+	}
+
+	/**
+	 * Tells whether the given part is the old ('classic') search view.
+	 * 
+	 * @param part the part to test
+	 * @return <code>true</code> if the given part is the old search view
+	 * @deprecated old ('classic') search is deprecated
+	 * @since 3.7
+	 */
+	private static boolean isOldSearchView(IWorkbenchPart part) {
+		return org.eclipse.search.ui.SearchUI.SEARCH_RESULT_VIEW_ID.equals(part.getSite().getId());
 	}
 
 	//---- Page Handling -------------------------------------------------------
@@ -540,12 +557,9 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		if (selection instanceof IStructuredSelection)
 			element= ((IStructuredSelection) selection).getFirstElement();
 
-		if (element == null) {
-			IEditorPart editorPart= getActiveEditor();
-			if (editorPart != null) {
-				element= editorPart.getEditorInput();
-			}
-		}
+		if (element == null)
+			element= getActiveEditorInput();
+
 		int result= 0;
 		int level= ISearchPageScoreComputer.LOWEST;
 		int size= fDescriptors.size();
@@ -610,6 +624,36 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	public void setSelectedScope(int scope) {
 		if (fScopeParts[fCurrentIndex] != null)
 			fScopeParts[fCurrentIndex].setSelectedScope(scope);
+	}
+
+	/*
+	 * @see org.eclipse.search.ui.ISearchPageContainer#allowsActiveEditorAsScope(boolean)
+	 * @since 3.7
+	 */
+	public void setActiveEditorCanProvideScopeSelection(boolean state) {
+		if (fScopeParts[fCurrentIndex] != null)
+			fScopeParts[fCurrentIndex].setActiveEditorCanProvideScopeSelection(state);
+	}
+
+	/*
+	 * @see org.eclipse.search.ui.ISearchPageContainer#getActiveEditorInput()
+	 * @since 3.7
+	 */
+	public IEditorInput getActiveEditorInput() {
+		IEditorPart editor= getActiveEditor();
+		if (editor == null)
+			return null;
+
+		// Handle multi-page editors
+		if (editor instanceof MultiPageEditorPart) {
+			Object page= ((MultiPageEditorPart)editor).getSelectedPage();
+			if (page instanceof IEditorPart)
+				editor= (IEditorPart)page;
+			else
+				return null;
+		}
+
+		return editor.getEditorInput();
 	}
 
 	/*
