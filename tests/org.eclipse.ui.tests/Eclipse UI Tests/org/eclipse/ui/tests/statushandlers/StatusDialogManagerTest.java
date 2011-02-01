@@ -694,7 +694,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue(wsdm[0].getStatusAdapters().contains(sa));
 	}
 	
-	public void testBug274867(){
+	public void testBug275867(){
 		StatusAdapter statusAdapter = createStatusAdapter(MESSAGE_1);
 		final StatusAdapter[] passed = new StatusAdapter[] { null };
 		Composite[] support = new Composite[] { null };
