@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2010 Broadcom Corporation and others.
+ *  Copyright (c) 2010, 2011 Broadcom Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -77,11 +77,11 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		// Create a builder set a null scheduling rule
 		EmptyDeltaBuilder builder = EmptyDeltaBuilder.getInstance();
 		builder.setRuleCallback(new BuilderRuleCallback() {
-			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map args) {
+			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				return null;
 			}
 
-			public IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				assertTrue(Job.getJobManager().currentRule() == null);
 				tb.setStatus(TestBarrier.STATUS_START);
 				while (!monitor.isCanceled())
@@ -154,7 +154,7 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 				return project;
 			}
 
-			public IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				// shared scheduling rule
 				assertTrue(Job.getJobManager().currentRule().contains(project));
 				tb1.setStatus(TestBarrier.STATUS_RUNNING);
@@ -165,13 +165,13 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		});
 		// Set the rule call-back
 		builder2.setRuleCallback(new BuilderRuleCallback() {
-			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map args) {
+			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 				// get rule is called before starting
 				tb2.setStatus(TestBarrier.STATUS_START);
 				return null;
 			}
 
-			public IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 				// shared scheduling rule
 				assertTrue(Job.getJobManager().currentRule() == null || Job.getJobManager().currentRule().contains(getWorkspace().getRoot()));
 				tb2.setStatus(TestBarrier.STATUS_RUNNING);

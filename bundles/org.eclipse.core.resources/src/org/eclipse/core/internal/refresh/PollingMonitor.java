@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.refresh;
 
@@ -48,11 +49,11 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	/**
 	 * The roots of resources which should be polled
 	 */
-	private final ArrayList resourceRoots;
+	private final ArrayList<IResource> resourceRoots;
 	/**
 	 * The resources remaining to be refreshed in this iteration
 	 */
-	private final ArrayList toRefresh;
+	private final ArrayList<IResource> toRefresh;
 	/**
 	 * The root that has most recently been out of sync
 	 */
@@ -76,8 +77,8 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		this.refreshManager = manager;
 		setPriority(Job.DECORATE);
 		setSystem(true);
-		resourceRoots = new ArrayList();
-		toRefresh = new ArrayList();
+		resourceRoots = new ArrayList<IResource>();
+		toRefresh = new ArrayList<IResource>();
 	}
 
 	/**
@@ -128,7 +129,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		while (!toRefresh.isEmpty()) {
 			if (monitor.isCanceled())
 				break;
-			poll((IResource) toRefresh.remove(toRefresh.size() - 1));
+			poll(toRefresh.remove(toRefresh.size() - 1));
 			//stop the iteration if we have exceed maximum duration
 			if (System.currentTimeMillis() - loopStart > MAX_DURATION)
 				break;

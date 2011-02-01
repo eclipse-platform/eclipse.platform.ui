@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -132,11 +133,11 @@ public class ProjectContentTypes {
 	/**
 	 * Collect content types associated to the natures configured for the given project.
 	 */
-	private Set collectAssociatedContentTypes(Project project) {
+	private Set<String> collectAssociatedContentTypes(Project project) {
 		String[] enabledNatures = workspace.getNatureManager().getEnabledNatures(project);
 		if (enabledNatures.length == 0)
 			return Collections.EMPTY_SET;
-		Set related = new HashSet(enabledNatures.length);
+		Set<String> related = new HashSet<String>(enabledNatures.length);
 		for (int i = 0; i < enabledNatures.length; i++) {
 			ProjectNatureDescriptor descriptor = (ProjectNatureDescriptor) workspace.getNatureDescriptor(enabledNatures[i]);
 			if (descriptor == null)
@@ -164,7 +165,7 @@ public class ProjectContentTypes {
 		return Platform.getContentTypeManager().getMatcher(projectContentTypeSelectionPolicy, projectContentTypeSelectionPolicy);
 	}
 
-	private Set getAssociatedContentTypes(Project project) {
+	private Set<String> getAssociatedContentTypes(Project project) {
 		final ResourceInfo info = project.getResourceInfo(false, false);
 		if (info == null)
 			// the project has been deleted
@@ -176,9 +177,9 @@ public class ProjectContentTypes {
 				// we have an entry...
 				if (entry.getTimestamp() == info.getContentId())
 					// ...and it is not stale, so just return it
-					return (Set) entry.getCached();
+					return (Set<String>) entry.getCached();
 			// no cached information found, have to collect associated content types  
-			Set result = collectAssociatedContentTypes(project);
+			Set<String> result = collectAssociatedContentTypes(project);
 			if (entry == null)
 				// there was no entry before - create one
 				entry = contentTypesPerProject.addEntry(projectName, result, info.getContentId());
@@ -219,7 +220,7 @@ public class ProjectContentTypes {
 		// since no vetoing is done here, don't go further if there is nothing to sort
 		if (candidates.length < 2)
 			return candidates;
-		final Set associated = getAssociatedContentTypes(project);
+		final Set<String> associated = getAssociatedContentTypes(project);
 		if (associated == null || associated.isEmpty())
 			// project has no content types associated
 			return candidates;

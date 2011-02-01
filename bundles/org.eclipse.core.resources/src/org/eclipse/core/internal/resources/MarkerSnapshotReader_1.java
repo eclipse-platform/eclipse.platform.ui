@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -61,7 +62,7 @@ public class MarkerSnapshotReader_1 extends MarkerSnapshotReader {
 		IPath path = new Path(input.readUTF());
 		int markersSize = input.readInt();
 		MarkerSet markers = new MarkerSet(markersSize);
-		ArrayList readTypes = new ArrayList();
+		ArrayList<String> readTypes = new ArrayList<String>();
 		for (int i = 0; i < markersSize; i++)
 			markers.add(readMarkerInfo(input, readTypes));
 		// we've read all the markers from the file for this snap. if the resource
@@ -73,11 +74,11 @@ public class MarkerSnapshotReader_1 extends MarkerSnapshotReader {
 		info.clear(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 	}
 
-	private Map readAttributes(DataInputStream input) throws IOException {
+	private Map<String, Object> readAttributes(DataInputStream input) throws IOException {
 		short attributesSize = input.readShort();
 		if (attributesSize == 0)
 			return null;
-		Map result = new MarkerAttributeMap(attributesSize);
+		Map<String, Object> result = new MarkerAttributeMap<String, Object>(attributesSize);
 		for (int j = 0; j < attributesSize; j++) {
 			String key = input.readUTF();
 			byte type = input.readByte();
@@ -102,7 +103,7 @@ public class MarkerSnapshotReader_1 extends MarkerSnapshotReader {
 		return result.isEmpty() ? null : result;
 	}
 
-	private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws IOException, CoreException {
+	private MarkerInfo readMarkerInfo(DataInputStream input, List<String> readTypes) throws IOException, CoreException {
 		MarkerInfo info = new MarkerInfo();
 		info.setId(input.readLong());
 		byte constant = input.readByte();
@@ -113,7 +114,7 @@ public class MarkerSnapshotReader_1 extends MarkerSnapshotReader {
 				readTypes.add(type);
 				break;
 			case INDEX :
-				info.setType((String) readTypes.get(input.readInt()));
+				info.setType(readTypes.get(input.readInt()));
 				break;
 			default :
 				//if we get here the marker file is corrupt

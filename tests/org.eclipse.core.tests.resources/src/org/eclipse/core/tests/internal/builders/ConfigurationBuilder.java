@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2011 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,9 @@ public class ConfigurationBuilder extends TestBuilder {
 	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.configbuilder";
 
 	/** Stores IBuildConfiguration -> ConfigurationBuilder */
-	private static HashMap builders = new HashMap();
+	private static HashMap<IBuildConfiguration, ConfigurationBuilder> builders = new HashMap<IBuildConfiguration, ConfigurationBuilder>();
 	/** Order in which builders have been run */
-	static List buildOrder = new ArrayList();
+	static List<IBuildConfiguration> buildOrder = new ArrayList<IBuildConfiguration>();
 
 	// Per builder instance stats
 	int triggerForLastBuild;
@@ -36,16 +36,16 @@ public class ConfigurationBuilder extends TestBuilder {
 	}
 
 	public static ConfigurationBuilder getBuilder(IBuildConfiguration config) {
-		return (ConfigurationBuilder) builders.get(config);
+		return builders.get(config);
 	}
 
 	public static void clearBuildOrder() {
-		buildOrder = new ArrayList();
+		buildOrder = new ArrayList<IBuildConfiguration>();
 	}
 
 	public static void clearStats() {
-		for (Iterator it = builders.values().iterator(); it.hasNext();) {
-			ConfigurationBuilder builder = (ConfigurationBuilder) it.next();
+		for (Iterator<ConfigurationBuilder> it = builders.values().iterator(); it.hasNext();) {
+			ConfigurationBuilder builder = it.next();
 			builder.buildCount = 0;
 			builder.triggerForLastBuild = 0;
 			builder.deltaForLastBuild = null;
@@ -58,7 +58,7 @@ public class ConfigurationBuilder extends TestBuilder {
 		buildCount = 0;
 	}
 
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		buildCount++;
 		triggerForLastBuild = kind;
 		deltaForLastBuild = getDelta(getProject());

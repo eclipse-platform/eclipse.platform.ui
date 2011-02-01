@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.internal.alias;
 
@@ -94,9 +95,9 @@ public class BasicAliasTest extends ResourceTest {
 		if (!(resource instanceof IContainer))
 			return new IResource[0];
 		IResource[] children = ((IContainer) resource).members();
-		Arrays.sort(children, new Comparator() {
-			public int compare(Object arg0, Object arg1) {
-				return ((IResource) arg0).getFullPath().toString().compareTo(((IResource) arg1).getFullPath().toString());
+		Arrays.sort(children, new Comparator<IResource>() {
+			public int compare(IResource arg0, IResource arg1) {
+				return arg0.getFullPath().toString().compareTo(arg1.getFullPath().toString());
 			}
 		});
 		return children;

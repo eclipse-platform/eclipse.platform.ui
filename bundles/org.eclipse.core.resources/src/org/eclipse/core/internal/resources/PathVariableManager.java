@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -26,8 +27,8 @@ import org.eclipse.osgi.util.NLS;
 public class PathVariableManager implements IPathVariableManager, IManager {
 
 	static final String VARIABLE_PREFIX = "pathvariable."; //$NON-NLS-1$
-	private Set listeners;
-	private Map/*<IProject, Set<Project>*/ projectListeners;
+	private Set<IPathVariableChangeListener> listeners;
+	private Map<IProject, Collection<IPathVariableChangeListener>> projectListeners;
 
 	private Preferences preferences;
 
@@ -35,8 +36,8 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * Constructor for the class.
 	 */
 	public PathVariableManager() {
-		this.listeners = Collections.synchronizedSet(new HashSet());
-		this.projectListeners = Collections.synchronizedMap(new HashMap());
+		this.listeners = Collections.synchronizedSet(new HashSet<IPathVariableChangeListener>());
+		this.projectListeners = Collections.synchronizedMap(new HashMap<IProject, Collection<IPathVariableChangeListener>>());
 		this.preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 	}
 
@@ -49,12 +50,12 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	synchronized public void addChangeListener(IPathVariableChangeListener listener, IProject project) {
-		Object list = projectListeners.get(project);
+		Collection<IPathVariableChangeListener> list = projectListeners.get(project);
 		if (list == null) {
-			list = Collections.synchronizedSet(new HashSet());
+			list = Collections.synchronizedSet(new HashSet<IPathVariableChangeListener>());
 			projectListeners.put(project, list);
 		}
-		((Set) list).add(listener);
+		list.add(listener);
 	}
 
 	/**
@@ -97,7 +98,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 		fireVariableChangeEvent(this.listeners, name, value, type);
 	}
 
-	private void fireVariableChangeEvent(Set list, String name, IPath value, int type) {
+	private void fireVariableChangeEvent(Collection<IPathVariableChangeListener> list, String name, IPath value, int type) {
 		if (list.size() == 0)
 			return;
 		// use a separate collection to avoid interference of simultaneous additions/removals 
@@ -119,9 +120,9 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	public void fireVariableChangeEvent(IProject project, String name, IPath value, int type) {
-		Object list = projectListeners.get(project);
+		Collection<IPathVariableChangeListener> list = projectListeners.get(project);
 		if (list != null)
-			fireVariableChangeEvent(((Set) list), name, value, type);
+			fireVariableChangeEvent(list, name, value, type);
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariableNames()
 	 */
 	public String[] getPathVariableNames() {
-		List result = new LinkedList();
+		List<String> result = new LinkedList<String>();
 		String[] names = preferences.propertyNames();
 		for (int i = 0; i < names.length; i++) {
 			if (names[i].startsWith(VARIABLE_PREFIX)) {
@@ -151,7 +152,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 					result.add(key);
 			}
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
@@ -184,10 +185,10 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	synchronized public void removeChangeListener(IPathVariableChangeListener listener, IProject project) {
-		Object list = projectListeners.get(project);
+		Collection<IPathVariableChangeListener> list = projectListeners.get(project);
 		if (list != null) {
-			((Set) list).remove(listener);
-			if (((Set) list).isEmpty())
+			list.remove(listener);
+			if (list.isEmpty())
 				projectListeners.remove(project);
 		}
 	}

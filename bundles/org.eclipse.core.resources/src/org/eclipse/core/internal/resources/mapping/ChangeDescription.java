@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
@@ -19,12 +20,12 @@ import org.eclipse.core.runtime.IPath;
  */
 public class ChangeDescription {
 
-	private List addedRoots = new ArrayList();
-	private List changedFiles = new ArrayList();
-	private List closedProjects = new ArrayList();
-	private List copiedRoots = new ArrayList();
-	private List movedRoots = new ArrayList();
-	private List removedRoots = new ArrayList();
+	private List<IResource> addedRoots = new ArrayList<IResource>();
+	private List<IResource> changedFiles = new ArrayList<IResource>();
+	private List<IResource> closedProjects = new ArrayList<IResource>();
+	private List<IResource> copiedRoots = new ArrayList<IResource>();
+	private List<IResource> movedRoots = new ArrayList<IResource>();
+	private List<IResource> removedRoots = new ArrayList<IResource>();
 
 	private IResource createSourceResource(IResourceDelta delta) {
 		IPath sourcePath = delta.getMovedFromPath();
@@ -41,10 +42,10 @@ public class ChangeDescription {
 		return null;
 	}
 
-	private void ensureResourceCovered(IResource resource, List list) {
+	private void ensureResourceCovered(IResource resource, List<IResource> list) {
 		IPath path = resource.getFullPath();
-		for (Iterator iter = list.iterator(); iter.hasNext();) {
-			IResource root = (IResource) iter.next();
+		for (Iterator<IResource> iter = list.iterator(); iter.hasNext();) {
+			IResource root = iter.next();
 			if (root.getFullPath().isPrefixOf(path)) {
 				return;
 			}
@@ -53,14 +54,14 @@ public class ChangeDescription {
 	}
 
 	public IResource[] getRootResources() {
-		Set result = new HashSet();
+		Set<IResource> result = new HashSet<IResource>();
 		result.addAll(addedRoots);
 		result.addAll(changedFiles);
 		result.addAll(closedProjects);
 		result.addAll(copiedRoots);
 		result.addAll(movedRoots);
 		result.addAll(removedRoots);
-		return (IResource[]) result.toArray(new IResource[result.size()]);
+		return result.toArray(new IResource[result.size()]);
 	}
 
 	private void handleAdded(IResourceDelta delta) {

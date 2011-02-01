@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -27,7 +28,7 @@ public class Synchronizer implements ISynchronizer {
 	protected SyncInfoWriter writer;
 
 	// Registry of sync partners. Set of qualified names.
-	protected Set registry = new HashSet(5);
+	protected Set<QualifiedName> registry = new HashSet<QualifiedName>(5);
 
 	public Synchronizer(Workspace workspace) {
 		super();
@@ -97,13 +98,13 @@ public class Synchronizer implements ISynchronizer {
 	 * @see ISynchronizer#getPartners()
 	 */
 	public QualifiedName[] getPartners() {
-		return (QualifiedName[]) registry.toArray(new QualifiedName[registry.size()]);
+		return registry.toArray(new QualifiedName[registry.size()]);
 	}
 
 	/**
 	 * For use by the serialization code.
 	 */
-	protected Set getRegistry() {
+	protected Set<QualifiedName> getRegistry() {
 		return registry;
 	}
 
@@ -206,11 +207,11 @@ public class Synchronizer implements ISynchronizer {
 		writer.savePartners(output);
 	}
 
-	public void saveSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List writtenPartners) throws IOException {
+	public void saveSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List<QualifiedName> writtenPartners) throws IOException {
 		writer.saveSyncInfo(info, requestor, output, writtenPartners);
 	}
 
-	protected void setRegistry(Set registry) {
+	protected void setRegistry(Set<QualifiedName> registry) {
 		this.registry = registry;
 	}
 

@@ -79,7 +79,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * independent synchronization. This is accomplished using a synchronized
 	 * wrapper map.
 	 */
-	protected Map savedStates;
+	protected Map<String, SavedState> savedStates;
 
 	/**
 	 * Ids of plugins that participate on a workspace save. Maps String (plugin id)-> ISaveParticipant.
@@ -87,7 +87,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * independent synchronization. This is accomplished using a synchronized
 	 * wrapper map.
 	 */
-	protected Map saveParticipants;
+	protected Map<String, ISaveParticipant> saveParticipants;
 
 	protected final DelayedSnapshotJob snapshotJob;
 
@@ -104,14 +104,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		this.workspace = workspace;
 		this.snapshotJob = new DelayedSnapshotJob(this);
 		snapshotRequested = false;
-		saveParticipants = Collections.synchronizedMap(new HashMap(10));
+		saveParticipants = Collections.synchronizedMap(new HashMap<String, ISaveParticipant>(10));
 	}
 
 	public ISavedState addParticipant(String pluginId, ISaveParticipant participant) throws CoreException {
 		// If the plugin was already registered as a save participant we return null
 		if (saveParticipants.put(pluginId, participant) != null)
 			return null;
-		SavedState state = (SavedState) savedStates.get(pluginId);
+		SavedState state = savedStates.get(pluginId);
 		if (state != null) {
 			if (isDeltaCleared(pluginId)) {
 				// this plugin was marked not to receive deltas
@@ -136,20 +136,20 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		return null;
 	}
 
-	protected void broadcastLifecycle(final int lifecycle, Map contexts, final MultiStatus warnings, IProgressMonitor monitor) {
+	protected void broadcastLifecycle(final int lifecycle, Map<String, SaveContext> contexts, final MultiStatus warnings, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask("", contexts.size()); //$NON-NLS-1$
-			for (final Iterator it = contexts.entrySet().iterator(); it.hasNext();) {
-				Map.Entry entry = (Map.Entry) it.next();
-				String pluginId = (String) entry.getKey();
-				final ISaveParticipant participant = (ISaveParticipant) saveParticipants.get(pluginId);
+			for (final Iterator<Map.Entry<String, SaveContext>> it = contexts.entrySet().iterator(); it.hasNext();) {
+				Map.Entry<String, SaveContext> entry = it.next();
+				String pluginId = entry.getKey();
+				final ISaveParticipant participant = saveParticipants.get(pluginId);
 				//save participants can be removed concurrently
 				if (participant == null) {
 					monitor.worked(1);
 					continue;
 				}
-				final SaveContext context = (SaveContext) entry.getValue();
+				final SaveContext context = entry.getValue();
 				/* Be extra careful when calling lifecycle method on arbitrary plugin */
 				ISafeRunnable code = new ISafeRunnable() {
 
@@ -184,7 +184,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	protected void cleanMasterTable() {
 		//remove tree file entries for everything except closed projects
-		for (Iterator it = masterTable.keySet().iterator(); it.hasNext();) {
+		for (Iterator<Object> it = masterTable.keySet().iterator(); it.hasNext();) {
 			String key = (String) it.next();
 			if (!key.endsWith(LocalMetaArea.F_TREE))
 				continue;
@@ -224,8 +224,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected void clearSavedDelta() {
 		synchronized (saveParticipants) {
-			for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
-				String pluginId = (String) i.next();
+			for (Iterator<String> i = saveParticipants.keySet().iterator(); i.hasNext();) {
+				String pluginId = i.next();
 				masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "true"); //$NON-NLS-1$
 			}
 		}
@@ -235,22 +235,22 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * Collects the set of ElementTrees we are still interested in,
 	 * and removes references to any other trees.
 	 */
-	protected void collapseTrees(Map contexts) throws CoreException {
+	protected void collapseTrees(Map<String, SaveContext> contexts) throws CoreException {
 		//collect trees we're interested in
 		
 		//forget saved trees, if they are not used by registered participants
 		synchronized (savedStates) {
-			for (Iterator i = contexts.values().iterator(); i.hasNext();) {
-				SaveContext context = (SaveContext) i.next();
+			for (Iterator<SaveContext> i = contexts.values().iterator(); i.hasNext();) {
+				SaveContext context = i.next();
 				forgetSavedTree(context.getPluginId());
 			}
 		}
 
 		//trees for plugin saved states
-		ArrayList trees = new ArrayList();
+		ArrayList<ElementTree> trees = new ArrayList<ElementTree>();
 		synchronized (savedStates) {
-			for (Iterator i = savedStates.values().iterator(); i.hasNext();) {
-				SavedState state = (SavedState) i.next();
+			for (Iterator<SavedState> i = savedStates.values().iterator(); i.hasNext();) {
+				SavedState state = i.next();
 				if (state.oldTree != null) {
 					trees.add(state.oldTree);
 				}
@@ -262,10 +262,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			if (project.isOpen()) {
-				ArrayList builderInfos = workspace.getBuildManager().createBuildersPersistentInfo(project);
+				ArrayList<BuilderPersistentInfo> builderInfos = workspace.getBuildManager().createBuildersPersistentInfo(project);
 				if (builderInfos != null) {
-					for (Iterator it = builderInfos.iterator(); it.hasNext();) {
-						BuilderPersistentInfo info = (BuilderPersistentInfo) it.next();
+					for (Iterator<BuilderPersistentInfo> it = builderInfos.iterator(); it.hasNext();) {
+						BuilderPersistentInfo info = it.next();
 						trees.add(info.getLastBuiltTree());
 					}
 				}
@@ -293,9 +293,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			sorted[i].collapseTo(sorted[i - 1]);
 	}
 
-	protected void commit(Map contexts) throws CoreException {
-		for (Iterator i = contexts.values().iterator(); i.hasNext();)
-			((SaveContext) i.next()).commit();
+	protected void commit(Map<String, SaveContext> contexts) throws CoreException {
+		for (Iterator<SaveContext> i = contexts.values().iterator(); i.hasNext();)
+			i.next().commit();
 	}
 
 	/**
@@ -303,8 +303,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * <code>SaveContexts</code> to use during the save lifecycle.
 	 * The keys are plugins and values are SaveContext objects.
 	 */
-	protected Map computeSaveContexts(String[] pluginIds, int kind, IProject project) {
-		HashMap result = new HashMap(pluginIds.length);
+	protected Map<String, SaveContext> computeSaveContexts(String[] pluginIds, int kind, IProject project) {
+		HashMap<String, SaveContext> result = new HashMap<String, SaveContext>(pluginIds.length);
 		for (int i = 0; i < pluginIds.length; i++) {
 			String pluginId = pluginIds[i];
 			try {
@@ -326,17 +326,17 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * any newly created saved states.  This method is used to compute the set of
 	 * saved states to be written out.
 	 */
-	protected Map computeStatesToSave(Map contexts, ElementTree current) {
-		HashMap result = new HashMap(savedStates.size() * 2);
+	protected Map<String, ElementTree> computeStatesToSave(Map<String, SaveContext> contexts, ElementTree current) {
+		HashMap<String, ElementTree> result = new HashMap<String, ElementTree>(savedStates.size() * 2);
 		synchronized (savedStates) {
-			for (Iterator i = savedStates.values().iterator(); i.hasNext();) {
-				SavedState state = (SavedState) i.next();
+			for (Iterator<SavedState> i = savedStates.values().iterator(); i.hasNext();) {
+				SavedState state = i.next();
 				if (state.oldTree != null)
 					result.put(state.pluginId, state.oldTree);
 			}
 		}
-		for (Iterator i = contexts.values().iterator(); i.hasNext();) {
-			SaveContext context = (SaveContext) i.next();
+		for (Iterator<SaveContext> i = contexts.values().iterator(); i.hasNext();) {
+			SaveContext context = i.next();
 			if (!context.isDeltaNeeded())
 				continue;
 			String pluginId = context.getPluginId();
@@ -374,11 +374,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	public void forgetSavedTree(String pluginId) {
 		if (pluginId == null) {
 			synchronized (savedStates) {
-				for (Iterator i = savedStates.values().iterator(); i.hasNext();)
-					((SavedState) i.next()).forgetTrees();
+				for (Iterator<SavedState> i = savedStates.values().iterator(); i.hasNext();)
+					i.next().forgetTrees();
 			}
 		} else {
-			SavedState state = (SavedState) savedStates.get(pluginId);
+			SavedState state = savedStates.get(pluginId);
 			if (state != null)
 				state.forgetTrees();
 		}
@@ -403,7 +403,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	protected String[] getSaveParticipantPluginIds() {
 		synchronized (saveParticipants) {
-			return (String[]) saveParticipants.keySet().toArray(new String[saveParticipants.size()]);
+			return saveParticipants.keySet().toArray(new String[saveParticipants.size()]);
 		}
 	}
 
@@ -515,8 +515,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 */
 	protected void removeClearDeltaMarks() {
 		synchronized (saveParticipants) {
-			for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
-				String pluginId = (String) i.next();
+			for (Iterator<String> i = saveParticipants.keySet().iterator(); i.hasNext();) {
+				String pluginId = i.next();
 				removeClearDeltaMarks(pluginId);
 			}
 		}
@@ -526,11 +526,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "false"); //$NON-NLS-1$
 	}
 
-	protected void removeFiles(java.io.File root, String[] candidates, List exclude) {
+	protected void removeFiles(java.io.File root, String[] candidates, List<String> exclude) {
 		for (int i = 0; i < candidates.length; i++) {
 			boolean delete = true;
-			for (ListIterator it = exclude.listIterator(); it.hasNext();) {
-				String s = (String) it.next();
+			for (ListIterator<String> it = exclude.listIterator(); it.hasNext();) {
+				String s = it.next();
 				if (s.equals(candidates[i])) {
 					it.remove();
 					delete = false;
@@ -555,10 +555,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	protected void removeUnusedSafeTables() {
-		List valuables = new ArrayList(10);
+		List<String> valuables = new ArrayList<String>(10);
 		IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
 		valuables.add(location.lastSegment()); // add master table
-		for (Enumeration e = masterTable.keys(); e.hasMoreElements();) {
+		for (Enumeration<Object> e = masterTable.keys(); e.hasMoreElements();) {
 			String key = (String) e.nextElement();
 			if (key.startsWith(SAVE_NUMBER_PREFIX)) {
 				String pluginId = key.substring(SAVE_NUMBER_PREFIX.length());
@@ -574,7 +574,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	protected void removeUnusedTreeFiles() {
 		// root resource
-		List valuables = new ArrayList(10);
+		List<String> valuables = new ArrayList<String>(10);
 		IPath location = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
 		valuables.add(location.lastSegment());
 		java.io.File target = location.toFile().getParentFile();
@@ -965,7 +965,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 		if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists()) {
-			savedStates = Collections.synchronizedMap(new HashMap(10));
+			savedStates = Collections.synchronizedMap(new HashMap<String, SavedState>(10));
 			return;
 		}
 		try {
@@ -1098,7 +1098,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				workspace.beginOperation(false);
 				hookStartSave(kind, project);
 				long start = System.currentTimeMillis();
-				Map contexts = computeSaveContexts(getSaveParticipantPluginIds(), kind, project);
+				Map<String, SaveContext> contexts = computeSaveContexts(getSaveParticipantPluginIds(), kind, project);
 				broadcastLifecycle(PREPARE_TO_SAVE, contexts, warnings, Policy.subMonitorFor(monitor, 1));
 				try {
 					broadcastLifecycle(SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));
@@ -1316,7 +1316,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * is used to save the state of an individual project.
 	 * @exception CoreException if there is a problem writing the tree to disk.
 	 */
-	protected void saveTree(Map contexts, IProgressMonitor monitor) throws CoreException {
+	protected void saveTree(Map<String, SaveContext> contexts, IProgressMonitor monitor) throws CoreException {
 		long start = System.currentTimeMillis();
 		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), true);
 		try {
@@ -1340,7 +1340,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Should only be used for read purposes.
 	 */
-	void setPluginsSavedState(HashMap savedStates) {
+	void setPluginsSavedState(HashMap<String, SavedState> savedStates) {
 		this.savedStates = Collections.synchronizedMap(savedStates);
 	}
 
@@ -1455,11 +1455,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		ElementTree[] sorted = new ElementTree[numTrees];
 
 		/* first build a table of ElementTree -> List of Integers(indices in trees array) */
-		Map table = new HashMap(numTrees * 2 + 1);
+		Map<ElementTree, List<Integer>> table = new HashMap<ElementTree, List<Integer>>(numTrees * 2 + 1);
 		for (int i = 0; i < trees.length; i++) {
-			List indices = (List) table.get(trees[i]);
+			List<Integer> indices = table.get(trees[i]);
 			if (indices == null) {
-				indices = new ArrayList(10);
+				indices = new ArrayList<Integer>(10);
 				table.put(trees[i], indices);
 			}
 			indices.add(new Integer(i));
@@ -1475,8 +1475,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		int i = numTrees - 1;
 		while (i >= 0) {
 			/* add all instances of the current oldest tree to the sorted list */
-			List indices = (List) table.remove(oldest);
-			for (Enumeration e = Collections.enumeration(indices); e.hasMoreElements();) {
+			List<Integer> indices = table.remove(oldest);
+			for (Enumeration<Integer> e = Collections.enumeration(indices); e.hasMoreElements();) {
 				e.nextElement();
 				sorted[i] = oldest;
 				i--;
@@ -1539,8 +1539,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath markersTempLocation = workspace.getMetaArea().getBackupLocationFor(markersLocation);
 		IPath syncInfoLocation = workspace.getMetaArea().getSyncInfoLocationFor(root);
 		IPath syncInfoTempLocation = workspace.getMetaArea().getBackupLocationFor(syncInfoLocation);
-		final List writtenTypes = new ArrayList(5);
-		final List writtenPartners = new ArrayList(synchronizer.registry.size());
+		final List<String> writtenTypes = new ArrayList<String>(5);
+		final List<QualifiedName> writtenPartners = new ArrayList<QualifiedName>(synchronizer.registry.size());
 		DataOutputStream o1 = null;
 		DataOutputStream o2 = null;
 		String message;
@@ -1753,14 +1753,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 *    For each interesting project:
 	 *       UTF - interesting project name
 	 */
-	private void writeBuilderPersistentInfo(DataOutputStream output, List builders, IProgressMonitor monitor) throws IOException {
+	private void writeBuilderPersistentInfo(DataOutputStream output, List<BuilderPersistentInfo> builders, IProgressMonitor monitor) throws IOException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			// write the number of builders we are saving
 			int numBuilders = builders.size();
 			output.writeInt(numBuilders);
 			for (int i = 0; i < numBuilders; i++) {
-				BuilderPersistentInfo info = (BuilderPersistentInfo) builders.get(i);
+				BuilderPersistentInfo info = builders.get(i);
 				output.writeUTF(info.getProjectName());
 				output.writeUTF(info.getBuilderName());
 				// write interesting projects
@@ -1801,13 +1801,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * @param additionalConfigNames configuration names of the remaining per-configuration trees
 	 * @throws CoreException
 	 */
-	private void getTreesToSave(IProject project, List trees, List builderInfos, List configNames, List additionalBuilderInfos, List additionalConfigNames) throws CoreException {
+	private void getTreesToSave(IProject project, List<ElementTree> trees, List<BuilderPersistentInfo> builderInfos, List<String> configNames, List<BuilderPersistentInfo> additionalBuilderInfos, List<String> additionalConfigNames) throws CoreException {
 		if (project.isOpen()) {
 			String activeConfigName = project.getActiveBuildConfig().getName();
-			List infos = workspace.getBuildManager().createBuildersPersistentInfo(project);
+			List<BuilderPersistentInfo> infos = workspace.getBuildManager().createBuildersPersistentInfo(project);
 			if (infos != null) {
-				for (Iterator it = infos.iterator(); it.hasNext();) {
-					BuilderPersistentInfo info = (BuilderPersistentInfo) it.next();
+				for (Iterator<BuilderPersistentInfo> it = infos.iterator(); it.hasNext();) {
+					BuilderPersistentInfo info = it.next();
 					// Nothing to persist if there isn't a previous delta tree.
 					// There used to be code which serialized the current workspace tree 
 					// but this will result in the next build of the builder getting an empty delta...
@@ -1851,7 +1851,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * 
 	 * @see WorkspaceTreeReader_2
 	 */
-	protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
+	protected void writeTree(Map<String, ElementTree> statesToSave, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
@@ -1861,7 +1861,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				ElementTree current = workspace.getElementTree();
 				wasImmutable = current.isImmutable();
 				current.immutable();
-				ArrayList trees = new ArrayList(statesToSave.size() * 2); // pick a number
+				ArrayList<ElementTree> trees = new ArrayList<ElementTree>(statesToSave.size() * 2); // pick a number
 				monitor.worked(Policy.totalWork * 10 / 100);
 
 				// write out the workspace fields
@@ -1869,9 +1869,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 				// save plugin info
 				output.writeInt(statesToSave.size()); // write the number of plugins we are saving
-				for (Iterator i = statesToSave.entrySet().iterator(); i.hasNext();) {
-					Map.Entry entry = (Map.Entry) i.next();
-					String pluginId = (String) entry.getKey();
+				for (Map.Entry<String, ElementTree> entry : statesToSave.entrySet()) {
+					String pluginId = entry.getKey();
 					output.writeUTF(pluginId);
 					trees.add(entry.getValue()); // tree
 					updateDeltaExpiration(pluginId);
@@ -1880,10 +1879,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 				// Get the the builder info and configuration names, and add all the associated workspace trees in the correct order
 				IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-				List builderInfos = new ArrayList(projects.length * 2);
-				List configNames = new ArrayList(projects.length);
-				List additionalBuilderInfos = new ArrayList(projects.length * 2);
-				List additionalConfigNames = new ArrayList(projects.length);
+				List<BuilderPersistentInfo> builderInfos = new ArrayList<BuilderPersistentInfo>(projects.length * 2);
+				List<String> configNames = new ArrayList<String>(projects.length);
+				List<BuilderPersistentInfo> additionalBuilderInfos = new ArrayList<BuilderPersistentInfo>(projects.length * 2);
+				List<String> additionalConfigNames = new ArrayList<String>(projects.length);
 				for (int i = 0; i < projects.length; i++)
 					getTreesToSave(projects[i], trees, builderInfos, configNames, additionalBuilderInfos, additionalConfigNames);
 
@@ -1895,7 +1894,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 				/* save the forest! */
 				ElementTreeWriter writer = new ElementTreeWriter(this);
-				ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
+				ElementTree[] treesToSave = trees.toArray(new ElementTree[trees.size()]);
 				writer.writeDeltaChain(treesToSave, Path.ROOT, ElementTreeWriter.D_INFINITE, output, ResourceComparator.getSaveComparator());
 				monitor.worked(Policy.totalWork * 40 / 100);
 
@@ -1903,10 +1902,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				writeBuilderPersistentInfo(output, additionalBuilderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 10 / 100));
 
 				// Save the configuration names for the builders in the order they were saved
-				for (Iterator it = configNames.iterator(); it.hasNext();)
-					output.writeUTF((String) it.next());
-				for (Iterator it = additionalConfigNames.iterator(); it.hasNext();)
-					output.writeUTF((String) it.next());
+				for (Iterator<String> it = configNames.iterator(); it.hasNext();)
+					output.writeUTF(it.next());
+				for (Iterator<String> it = additionalConfigNames.iterator(); it.hasNext();)
+					output.writeUTF(it.next());
 			} finally {
 				if (!wasImmutable)
 					workspace.newWorkingTree();
@@ -1944,14 +1943,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				ElementTree current = workspace.getElementTree();
 				wasImmutable = current.isImmutable();
 				current.immutable();
-				List trees = new ArrayList(2);
+				List<ElementTree> trees = new ArrayList<ElementTree>(2);
 				monitor.worked(Policy.totalWork * 10 / 100);
 
 				// Get the the builder info and configuration names, and add all the associated workspace trees in the correct order
-				List configNames = new ArrayList(5);
-				List builderInfos = new ArrayList(5);
-				List additionalConfigNames = new ArrayList(5);
-				List additionalBuilderInfos = new ArrayList(5);
+				List<String> configNames = new ArrayList<String>(5);
+				List<BuilderPersistentInfo> builderInfos = new ArrayList<BuilderPersistentInfo>(5);
+				List<String> additionalConfigNames = new ArrayList<String>(5);
+				List<BuilderPersistentInfo> additionalBuilderInfos = new ArrayList<BuilderPersistentInfo>(5);
 				getTreesToSave(project, trees, builderInfos, configNames, additionalBuilderInfos, additionalConfigNames);
 
 				// Save the version 2 builders info
@@ -1962,7 +1961,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 				// Save the trees
 				ElementTreeWriter writer = new ElementTreeWriter(this);
-				ElementTree[] treesToSave = (ElementTree[]) trees.toArray(new ElementTree[trees.size()]);
+				ElementTree[] treesToSave = trees.toArray(new ElementTree[trees.size()]);
 				writer.writeDeltaChain(treesToSave, project.getFullPath(), ElementTreeWriter.D_INFINITE, output, ResourceComparator.getSaveComparator());
 				monitor.worked(Policy.totalWork * 50 / 100);
 
@@ -1970,10 +1969,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				writeBuilderPersistentInfo(output, additionalBuilderInfos, Policy.subMonitorFor(monitor, Policy.totalWork * 20 / 100));
 
 				// Save configuration names for the builders in the order they were saved
-				for (Iterator it = configNames.iterator(); it.hasNext();)
-					output.writeUTF((String) it.next());
-				for (Iterator it = additionalConfigNames.iterator(); it.hasNext();)
-					output.writeUTF((String) it.next());
+				for (Iterator<String> it = configNames.iterator(); it.hasNext();)
+					output.writeUTF(it.next());
+				for (Iterator<String> it = additionalConfigNames.iterator(); it.hasNext();)
+					output.writeUTF(it.next());
 				output.close();
 			} finally {
 				FileUtil.safeClose(output);

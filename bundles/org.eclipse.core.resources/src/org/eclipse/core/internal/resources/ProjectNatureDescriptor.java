@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -112,10 +113,10 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 		label = natureExtension.getLabel();
 		IConfigurationElement[] elements = natureExtension.getConfigurationElements();
 		int count = elements.length;
-		ArrayList requiredList = new ArrayList(count);
-		ArrayList setList = new ArrayList(count);
-		ArrayList builderList = new ArrayList(count);
-		ArrayList contentTypeList = new ArrayList(count);
+		ArrayList<String> requiredList = new ArrayList<String>(count);
+		ArrayList<String> setList = new ArrayList<String>(count);
+		ArrayList<String> builderList = new ArrayList<String>(count);
+		ArrayList<String> contentTypeList = new ArrayList<String>(count);
 		for (int i = 0; i < count; i++) {
 			IConfigurationElement element = elements[i];
 			String name = element.getName();
@@ -145,10 +146,10 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 				allowLinking = !Boolean.FALSE.toString().equalsIgnoreCase(attribute);
 			}
 		}
-		requiredNatures = (String[]) requiredList.toArray(new String[requiredList.size()]);
-		natureSets = (String[]) setList.toArray(new String[setList.size()]);
-		builderIds = (String[]) builderList.toArray(new String[builderList.size()]);
-		contentTypeIds = (String[]) contentTypeList.toArray(new String[contentTypeList.size()]);
+		requiredNatures = requiredList.toArray(new String[requiredList.size()]);
+		natureSets = setList.toArray(new String[setList.size()]);
+		builderIds = builderList.toArray(new String[builderList.size()]);
+		contentTypeIds = contentTypeList.toArray(new String[contentTypeList.size()]);
 	}
 
 	/**

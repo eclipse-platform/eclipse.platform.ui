@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -21,9 +22,9 @@ public class SyncInfoSnapReader_3 extends SyncInfoSnapReader {
 		super(workspace, synchronizer);
 	}
 
-	private ObjectMap internalReadSyncInfo(DataInputStream input) throws IOException {
+	private ObjectMap<QualifiedName, Object> internalReadSyncInfo(DataInputStream input) throws IOException {
 		int size = input.readInt();
-		ObjectMap map = new ObjectMap(size);
+		ObjectMap<QualifiedName, Object> map = new ObjectMap<QualifiedName, Object>(size);
 		for (int i = 0; i < size; i++) {
 			// read the qualified name
 			String qualifier = input.readUTF();
@@ -51,7 +52,7 @@ public class SyncInfoSnapReader_3 extends SyncInfoSnapReader {
 	 */
 	public void readSyncInfo(DataInputStream input) throws IOException {
 		IPath path = new Path(input.readUTF());
-		ObjectMap map = internalReadSyncInfo(input);
+		ObjectMap<QualifiedName, Object> map = internalReadSyncInfo(input);
 		// set the table on the resource info
 		ResourceInfo info = workspace.getResourceInfo(path, true, false);
 		if (info == null)

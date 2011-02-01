@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2006 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
@@ -72,7 +73,7 @@ public class BucketTreeTests extends ResourceTest {
 
 		protected Object readEntryValue(DataInputStream source) throws IOException {
 			int length = source.readUnsignedShort();
-			Map value = new HashMap(length);
+			Map<String, String> value = new HashMap<String, String>(length);
 			for (int j = 0; j < length; j++)
 				value.put(source.readUTF(), source.readUTF());
 			return value;
@@ -80,10 +81,10 @@ public class BucketTreeTests extends ResourceTest {
 
 		public void set(IPath path, String key, String value) {
 			String pathAsString = path.toString();
-			Map existing = (Map) getEntryValue(pathAsString);
+			Map<String, String> existing = (Map<String, String>) getEntryValue(pathAsString);
 			if (existing == null) {
 				if (value != null) {
-					existing = new HashMap();
+					existing = new HashMap<String, String>();
 					existing.put(key, value);
 					setEntryValue(pathAsString, existing);
 				}
@@ -169,8 +170,8 @@ public class BucketTreeTests extends ResourceTest {
 		}
 	}
 
-	public void verify(BucketTree tree, final String tag, IPath root, int depth, final Collection expected) {
-		final Set visited = new HashSet();
+	public void verify(BucketTree tree, final String tag, IPath root, int depth, final Collection<IPath> expected) {
+		final Set<IPath> visited = new HashSet<IPath>();
 		SimpleBucket.Visitor verifier = new SimpleBucket.Visitor() {
 			public int visit(org.eclipse.core.internal.localstore.Bucket.Entry entry) {
 				SimpleBucket.SimpleEntry simple = (SimpleBucket.SimpleEntry) entry;
@@ -188,8 +189,8 @@ public class BucketTreeTests extends ResourceTest {
 			fail(tag + ".3", e);
 		}
 		assertEquals(tag + ".4", expected.size(), visited.size());
-		for (Iterator i = expected.iterator(); i.hasNext();) {
-			IPath path = (IPath) i.next();
+		for (Iterator<IPath> i = expected.iterator(); i.hasNext();) {
+			IPath path = i.next();
 			assertTrue(tag + ".5 " + path, visited.contains(path));
 		}
 	}

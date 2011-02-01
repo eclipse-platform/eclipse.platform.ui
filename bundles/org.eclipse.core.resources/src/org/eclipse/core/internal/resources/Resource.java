@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@
  *     Martin Oberhuber (Wind River) -  [245937] ProjectDescription#setLinkLocation() detects non-change
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -842,11 +843,11 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (exists())
 			getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
 		// if this is a linked resource or contains linked resources , remove their entries from the project description
-		List links = findLinks();
+		List<Resource> links = findLinks();
 		//pre-delete notification to internal infrastructure
 		if (links != null)
-			for (Iterator it = links.iterator(); it.hasNext();)
-				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_DELETE, (IResource) it.next()));
+			for (Iterator<Resource> it = links.iterator(); it.hasNext();)
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_DELETE, it.next()));
 
 		// check if we deleted a preferences file 
 		ProjectPreferences.deleted(this);
@@ -864,8 +865,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			ProjectDescription description = project.internalGetDescription();
 			if (description != null) {
 				boolean wasChanged = false;
-				for (Iterator it = links.iterator(); it.hasNext();)
-					wasChanged |= description.setLinkLocation(((IResource) it.next()).getProjectRelativePath(), null);
+				for (Iterator<Resource> it = links.iterator(); it.hasNext();)
+					wasChanged |= description.setLinkLocation(it.next().getProjectRelativePath(), null);
 				if (wasChanged) {
 					project.internalSetDescription(description, true);
 					project.writeDescription(IResource.FORCE);
@@ -873,14 +874,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			}
 		}
 
-		List filters = findFilters();
+		List<Resource> filters = findFilters();
 		if ((filters != null) && (filters.size() > 0)) {
 			// delete resource filters
 			Project project = (Project) getProject();
 			ProjectDescription description = project.internalGetDescription();
 			if (description != null) {
-				for (Iterator it = filters.iterator(); it.hasNext();)
-					description.setFilters(((IResource) it.next()).getProjectRelativePath(), null);
+				for (Iterator<Resource> it = filters.iterator(); it.hasNext();)
+					description.setFilters(it.next().getProjectRelativePath(), null);
 				project.internalSetDescription(description, true);
 				project.writeDescription(IResource.FORCE);
 			}
@@ -904,20 +905,20 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * Returns a list of all linked resources at or below this resource, or null if there
 	 * are no links.
 	 */
-	private List findLinks() {
+	private List<Resource> findLinks() {
 		Project project = (Project) getProject();
 		ProjectDescription description = project.internalGetDescription();
-		HashMap linkMap = description.getLinks();
+		HashMap<IPath,LinkDescription> linkMap = description.getLinks();
 		if (linkMap == null)
 			return null;
-		List links = null;
+		List<Resource> links = null;
 		IPath myPath = getProjectRelativePath();
-		for (Iterator it = linkMap.values().iterator(); it.hasNext();) {
-			LinkDescription link = (LinkDescription) it.next();
+		for (Iterator<LinkDescription> it = linkMap.values().iterator(); it.hasNext();) {
+			LinkDescription link = it.next();
 			IPath linkPath = link.getProjectRelativePath();
 			if (myPath.isPrefixOf(linkPath)) {
 				if (links == null)
-					links = new ArrayList();
+					links = new ArrayList<Resource>();
 				links.add(workspace.newResource(project.getFullPath().append(linkPath), link.getType()));
 			}
 		}
@@ -928,19 +929,19 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * Returns a list of all filtered resources at or below this resource, or null if there
 	 * are no links.
 	 */
-	private List findFilters() {
+	private List<Resource> findFilters() {
 		Project project = (Project) getProject();
 		ProjectDescription description = project.internalGetDescription();
-		List filters = null;
+		List<Resource> filters = null;
 		if (description != null) {
-			HashMap filterMap = description.getFilters();
+			HashMap<IPath, LinkedList<FilterDescription>> filterMap = description.getFilters();
 			if (filterMap != null) {
 				IPath myPath = getProjectRelativePath();
-				for (Iterator it = filterMap.keySet().iterator(); it.hasNext();) {
-					IPath filterPath = (IPath) it.next();
+				for (Iterator<IPath> it = filterMap.keySet().iterator(); it.hasNext();) {
+					IPath filterPath = it.next();
 					if (myPath.isPrefixOf(filterPath)) {
 						if (filters == null)
-							filters = new ArrayList();
+							filters = new ArrayList<Resource>();
 						filters.add(workspace.newResource(project.getFullPath().append(filterPath), IResource.FOLDER));
 					}
 				}
@@ -1051,13 +1052,13 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				project.writeDescription(IResource.NONE);
 		}
 
-		List filters = findFilters();
+		List<Resource> filters = findFilters();
 		if ((filters != null) && (filters.size() > 0)) {
 			// delete resource filters
 			Project project = (Project) getProject();
 			ProjectDescription description = project.internalGetDescription();
-			for (Iterator it = filters.iterator(); it.hasNext();)
-				description.setFilters(((IResource) it.next()).getProjectRelativePath(), null);
+			for (Iterator<Resource> it = filters.iterator(); it.hasNext();)
+				description.setFilters(it.next().getProjectRelativePath(), null);
 			project.writeDescription(IResource.NONE);
 		}
 
@@ -1182,7 +1183,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see IResource#getPersistentProperties()
 	 */
-	public Map getPersistentProperties() throws CoreException {
+	public Map<QualifiedName, String> getPersistentProperties() throws CoreException {
 		checkAccessibleAndLocal(DEPTH_ZERO);
 		return getPropertyManager().getProperties(this);
 	}
@@ -1252,7 +1253,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see IResource#getSessionProperties()
 	 */
-	public Map getSessionProperties() throws CoreException {
+	public Map<QualifiedName,Object> getSessionProperties() throws CoreException {
 		ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 		return info.getSessionProperties();
 	}
@@ -1400,12 +1401,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			ProjectDescription desc = ((Project) project).internalGetDescription();
 			if (desc == null)
 				return false;
-			HashMap links = desc.getLinks();
+			HashMap<IPath,LinkDescription> links = desc.getLinks();
 			if (links == null)
 				return false;
 			IPath myPath = getProjectRelativePath();
-			for (Iterator it = links.values().iterator(); it.hasNext();) {
-				if (((LinkDescription) it.next()).getProjectRelativePath().isPrefixOf(myPath))
+			for (Iterator<LinkDescription> it = links.values().iterator(); it.hasNext();) {
+				if (it.next().getProjectRelativePath().isPrefixOf(myPath))
 					return true;
 			}
 			return false;
@@ -1711,6 +1712,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @deprecated Replaced by {@link #setDerived(boolean, IProgressMonitor)} which 
 	 * is a workspace operation and reports changes in resource deltas.
 	 */
+	@Deprecated
 	public void setDerived(boolean isDerived) throws CoreException {
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it.  We don't know whether or not the tree is open and it really doesn't
@@ -1928,7 +1930,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * Calls the move/delete hook to perform the deletion.  Since this method calls 
 	 * client code, it is run "unprotected", so the workspace lock is not held.  
 	 */
-	private void unprotectedDelete(ResourceTree tree, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	private void unprotectedDelete(ResourceTree tree, int updateFlags, IProgressMonitor monitor) {
 		IMoveDeleteHook hook = workspace.getMoveDeleteHook();
 		switch (getType()) {
 			case IResource.FILE :
@@ -2078,9 +2080,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (description == null)
 			return list;
 		IPath relativePath = getProjectRelativePath();
-		LinkedList/*<Filter>*/currentIncludeFilters = new LinkedList/*<FilterDescription>*/();
-		LinkedList/*<Filter>*/currentExcludeFilters = new LinkedList/*<FilterDescription>*/();
-		LinkedList/*<FilterDescription>*/filters = null;
+		LinkedList<Filter> currentIncludeFilters = new LinkedList<Filter>();
+		LinkedList<Filter> currentExcludeFilters = new LinkedList<Filter>();
+		LinkedList<FilterDescription> filters = null;
 		
 		boolean firstSegment = true;
 		do {
@@ -2088,8 +2090,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				relativePath = relativePath.removeLastSegments(1);
 			filters = description.getFilter(relativePath);
 			if (filters != null) {
-				for (Iterator it = filters.iterator(); it.hasNext();) {
-					FilterDescription desc = (FilterDescription) it.next();
+				for (Iterator<FilterDescription> it = filters.iterator(); it.hasNext();) {
+					FilterDescription desc = it.next();
 					if (firstSegment || desc.isInheritable()) {
 						Filter filter = new Filter(project, desc);
 						if (filter.isIncludeOnly()) {

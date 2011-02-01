@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -27,7 +28,7 @@ public class StringPoolJob extends Job {
 	 * Stores all registered string pool participants, along with the scheduling
 	 * rule required when running it.
 	 */
-	private Map participants = Collections.synchronizedMap(new HashMap(10));
+	private Map<IStringPoolParticipant, ISchedulingRule> participants = Collections.synchronizedMap(new HashMap<IStringPoolParticipant, ISchedulingRule>(10));
 
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 
@@ -84,12 +85,13 @@ public class StringPoolJob extends Job {
 			return Status.OK_STATUS;
 
 		//copy current participants to handle concurrent additions and removals to map
-		Map.Entry[] entries = (Map.Entry[]) participants.entrySet().toArray(new Map.Entry[0]);
+		@SuppressWarnings("unchecked")
+		Map.Entry<IStringPoolParticipant, ISchedulingRule>[] entries = participants.entrySet().toArray(new Map.Entry[participants.size()]);
 		ISchedulingRule[] rules = new ISchedulingRule[entries.length];
 		IStringPoolParticipant[] toRun = new IStringPoolParticipant[entries.length];
 		for (int i = 0; i < toRun.length; i++) {
-			toRun[i] = (IStringPoolParticipant) entries[i].getKey();
-			rules[i] = (ISchedulingRule) entries[i].getValue();
+			toRun[i] = entries[i].getKey();
+			rules[i] = entries[i].getValue();
 		}
 		final ISchedulingRule rule = MultiRule.combine(rules);
 		long start = -1;

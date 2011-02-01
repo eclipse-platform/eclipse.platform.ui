@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     Martin Oberhuber (Wind River) - [232426] shared prefix histories for symlinks
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *     Martin Oberhuber (Wind River) - [292267] OutOfMemoryError due to leak in UnifiedTree
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -58,7 +59,7 @@ public class UnifiedTree {
 	/** tree's actual level */
 	protected int level;
 	/** our queue */
-	protected Queue queue;
+	protected Queue<UnifiedTreeNode> queue;
 
 	/** path prefixes for checking symbolic link cycles */
 	protected PrefixPool pathPrefixHistory, rootPathHistory;
@@ -98,7 +99,7 @@ public class UnifiedTree {
 		initializeQueue();
 		setLevel(0, depth);
 		while (!queue.isEmpty()) {
-			UnifiedTreeNode node = (UnifiedTreeNode) queue.remove();
+			UnifiedTreeNode node = queue.remove();
 			if (isChildrenMarker(node))
 				continue;
 			if (isLevelMarker(node)) {
@@ -246,10 +247,10 @@ public class UnifiedTree {
 			return;
 		//if we're about to change levels, then the children just added
 		//are the last nodes for their level, so add a level marker to the queue
-		UnifiedTreeNode nextNode = (UnifiedTreeNode) queue.peek();
+		UnifiedTreeNode nextNode = queue.peek();
 		if (isChildrenMarker(nextNode))
 			queue.remove();
-		nextNode = (UnifiedTreeNode) queue.peek();
+		nextNode = queue.peek();
 		if (isLevelMarker(nextNode))
 			addElementToQueue(levelMarker);
 	}
@@ -323,7 +324,7 @@ public class UnifiedTree {
 		/* create an enumeration with node's children */
 		List<UnifiedTreeNode> result = new ArrayList<UnifiedTreeNode>(10);
 		while (true) {
-			UnifiedTreeNode child = (UnifiedTreeNode) queue.elementAt(index);
+			UnifiedTreeNode child = queue.elementAt(index);
 			if (isChildrenMarker(child))
 				break;
 			result.add(child);
@@ -360,7 +361,7 @@ public class UnifiedTree {
 	protected void initializeQueue() {
 		//initialize the queue
 		if (queue == null)
-			queue = new Queue(100, false);
+			queue = new Queue<UnifiedTreeNode>(100, false);
 		else
 			queue.reset();
 		//initialize the free nodes list

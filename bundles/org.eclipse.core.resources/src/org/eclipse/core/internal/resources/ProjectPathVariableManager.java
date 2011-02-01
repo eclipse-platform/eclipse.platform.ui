@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2011 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing development
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -71,8 +72,8 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	 * @see org.eclipse.core.resources.IPathVariableManager#getPathVariableNames()
 	 */
 	public String[] getPathVariableNames() {
-		List result = new LinkedList();
-		HashMap map;
+		List<String> result = new LinkedList<String>();
+		HashMap<String,VariableDescription> map;
 		try {
 			map = ((ProjectDescription) resource.getProject().getDescription()).getVariables();
 		} catch (CoreException e) {
@@ -87,7 +88,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		if (map != null)
 			result.addAll(map.keySet());
 		result.addAll(Arrays.asList(getWorkspaceManager().getPathVariableNames()));
-		return (String[]) result.toArray(new String[0]);
+		return result.toArray(new String[0]);
 	}
 
 	/**
@@ -131,14 +132,14 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	public String internalGetValue(String varName) {
-		HashMap map;
+		HashMap<String,VariableDescription> map;
 		try {
 			map = ((ProjectDescription) resource.getProject().getDescription()).getVariables();
 		} catch (CoreException e) {
 			return null;
 		}
 		if (map != null && map.containsKey(varName))
-			return ((VariableDescription) map.get(varName)).getValue();
+			return map.get(varName).getValue();
 
 		String name;
 		int index = varName.indexOf('-');
@@ -170,11 +171,11 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		}
 		
 		try {
-			HashMap map = ((ProjectDescription) resource.getProject().getDescription()).getVariables();
+			HashMap<String,VariableDescription> map = ((ProjectDescription) resource.getProject().getDescription()).getVariables();
 			if (map != null) {
-				Iterator it = map.keySet().iterator();
+				Iterator<String> it = map.keySet().iterator();
 				while(it.hasNext()) {
-					String name = (String) it.next();
+					String name = it.next();
 					if (name.equals(varName))
 						return true;
 				}
@@ -205,7 +206,7 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 	}
 
 	public URI resolveVariable(String variable) {
-		LinkedList variableStack = new LinkedList();
+		LinkedList<String> variableStack = new LinkedList<String>();
 
 		String value = resolveVariable(variable, variableStack);
 		if (value != null) {
@@ -218,9 +219,9 @@ public class ProjectPathVariableManager implements IPathVariableManager, IManage
 		return null;
 	}
 
-	public String resolveVariable(String value, LinkedList variableStack) {
+	public String resolveVariable(String value, LinkedList<String> variableStack) {
 		if (variableStack == null)
-			variableStack = new LinkedList();
+			variableStack = new LinkedList<String>();
 
 		String tmp = internalGetValue(value);
 		if (tmp == null) {

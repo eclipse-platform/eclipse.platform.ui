@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
-
-import org.eclipse.core.internal.utils.FileUtil;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	 * in the resource tree to be flushed. 
 	 */
 	private class FlushJob extends WorkspaceJob {
-		private final List toFlush;
+		private final List<IPath> toFlush;
 		private boolean fullFlush;
 
 		public FlushJob() {
@@ -50,7 +49,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			setUser(false);
 			setPriority(LONG);
 			setRule(workspace.getRoot());
-			toFlush = new ArrayList(5);
+			toFlush = new ArrayList<IPath>(5);
 		}
 
 		/* (non-Javadoc)
@@ -97,7 +96,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 					if (fullFlush)
 						return null;
 					int size = toFlush.size();
-					return (size == 0) ? null : (IPath[]) toFlush.toArray(new IPath[size]);
+					return (size == 0) ? null : toFlush.toArray(new IPath[size]);
 				} finally {
 					fullFlush = false;
 					toFlush.clear();

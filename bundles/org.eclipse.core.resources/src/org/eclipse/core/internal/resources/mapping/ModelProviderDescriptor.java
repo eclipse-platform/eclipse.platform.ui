@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
@@ -60,7 +61,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 	}
 
 	public IResource[] getMatchingResources(IResource[] resources) throws CoreException {
-		Set result = new HashSet();
+		Set<IResource> result = new HashSet<IResource>();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			EvaluationContext evalContext = createEvaluationContext(resource);
@@ -68,7 +69,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 				result.add(resource);
 			}
 		}
-		return (IResource[]) result.toArray(new IResource[result.size()]);
+		return result.toArray(new IResource[result.size()]);
 	}
 
 	public synchronized ModelProvider getModelProvider() throws CoreException {
@@ -108,7 +109,7 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 		label = extension.getLabel();
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		int count = elements.length;
-		ArrayList extendsList = new ArrayList(count);
+		ArrayList<String> extendsList = new ArrayList<String>(count);
 		for (int i = 0; i < count; i++) {
 			IConfigurationElement element = elements[i];
 			String name = element.getName();
@@ -121,18 +122,18 @@ public class ModelProviderDescriptor implements IModelProviderDescriptor {
 				enablementRule = ExpressionConverter.getDefault().perform(element);
 			}
 		}
-		extendedModels = (String[]) extendsList.toArray(new String[extendsList.size()]);
+		extendedModels = extendsList.toArray(new String[extendsList.size()]);
 	}
 
 	public ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException {
-		List result = new ArrayList();
+		List<ResourceTraversal> result = new ArrayList<ResourceTraversal>();
 		for (int i = 0; i < traversals.length; i++) {
 			ResourceTraversal traversal = traversals[i];
 			if (getMatchingResources(traversal.getResources()).length > 0) {
 				result.add(traversal);
 			}
 		}
-		return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
+		return result.toArray(new ResourceTraversal[result.size()]);
 	}
 
 }

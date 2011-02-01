@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2006 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
@@ -139,7 +140,7 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 		//hold onto the set of requested projects here
 		final IProject[][] previousRequest = new IProject[][] {new IProject[] {project1}};
 		//hold onto projects that have been modified since the last time the builder was run.
-		final HashSet previouslyModified = new HashSet();
+		final HashSet<IProject> previouslyModified = new HashSet<IProject>();
 		new TestPerformer("testDeltas") {
 			public Object[] interestingOldState(Object[] args) throws Exception {
 				return null;
@@ -169,13 +170,13 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 			}
 
 			public boolean wasSuccess(Object[] args, Object result, Object[] oldState) throws Exception {
-				HashSet requested = new HashSet(Arrays.asList((IProject[]) result));
-				HashSet modified = new HashSet(Arrays.asList((IProject[]) args[1]));
+				HashSet<IProject> requested = new HashSet<IProject>(Arrays.asList((IProject[]) result));
+				HashSet<IProject> modified = new HashSet<IProject>(Arrays.asList((IProject[]) args[1]));
 				modified.addAll(previouslyModified);
-				HashSet obtained = new HashSet();
+				HashSet<IProject> obtained = new HashSet<IProject>();
 				if (!builder.getReceivedDeltas().isEmpty())
 					obtained.addAll(builder.getReceivedDeltas());
-				ArrayList emptyDeltas = builder.getEmptyDeltas();
+				ArrayList<IProject> emptyDeltas = builder.getEmptyDeltas();
 
 				//the builder's project is implicitly requested
 				requested.add(builder.getProject());

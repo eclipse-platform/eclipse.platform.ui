@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -29,7 +30,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Map of project names to the factory for that project.
 	 */
-	private final Map projectsToRules = Collections.synchronizedMap(new HashMap());
+	private final Map<String, IResourceRuleFactory> projectsToRules = Collections.synchronizedMap(new HashMap<String, IResourceRuleFactory>());
 	private final TeamHook teamHook;
 	private final IWorkspaceRoot root;
 
@@ -83,7 +84,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	 * Returns the scheduling rule factory for the given resource
 	 */
 	private IResourceRuleFactory factoryFor(IResource destination) {
-		IResourceRuleFactory fac = (IResourceRuleFactory) projectsToRules.get(destination.getFullPath().segment(0));
+		IResourceRuleFactory fac = projectsToRules.get(destination.getFullPath().segment(0));
 		if (fac == null) {
 			//use the default factory if the project is not yet accessible
 			if (!destination.getProject().isAccessible())
@@ -189,7 +190,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 			return factoryFor(resources[0]).validateEditRule(resources);
 		}
 		//gather rules for each resource from appropriate factory
-		HashSet rules = new HashSet();
+		HashSet<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
 		IResource[] oneResource = new IResource[1];
 		for (int i = 0; i < resources.length; i++) {
 			if (resources[i].getType() == IResource.ROOT)
@@ -202,8 +203,8 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 		if (rules.isEmpty())
 			return null;
 		if (rules.size() == 1)
-			return (ISchedulingRule) rules.iterator().next();
-		ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]);
+			return rules.iterator().next();
+		ISchedulingRule[] ruleArray = rules.toArray(new ISchedulingRule[rules.size()]);
 		return new MultiRule(ruleArray);
 	}
 }

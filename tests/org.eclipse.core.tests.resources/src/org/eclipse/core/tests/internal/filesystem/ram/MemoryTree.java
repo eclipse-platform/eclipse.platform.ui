@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public class MemoryTree {
 	static class DirNode extends Node {
-		private final ArrayList children = new ArrayList();
+		private final ArrayList<Node> children = new ArrayList<Node>();
 
 		DirNode(Node parent, String name) {
 			super(parent, name);
@@ -36,7 +36,7 @@ public class MemoryTree {
 		public String[] childNames() {
 			String[] names = new String[children.size()];
 			for (int i = 0, imax = children.size(); i < imax; i++) {
-				Node child = (Node) children.get(i);
+				Node child = children.get(i);
 				names[i] = child.getInfo(false).getName();
 			}
 			return names;
@@ -49,7 +49,7 @@ public class MemoryTree {
 		 */
 		Node getChild(String name) {
 			for (int i = 0, imax = children.size(); i < imax; i++) {
-				Node child = (Node) children.get(i);
+				Node child = children.get(i);
 				if (child.getInfo(false).getName().equals(name))
 					return child;
 			}

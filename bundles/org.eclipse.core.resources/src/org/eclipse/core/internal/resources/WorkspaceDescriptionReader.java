@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -47,13 +48,13 @@ public class WorkspaceDescriptionReader implements IModelObjectConstants {
 		NodeList list = target.getChildNodes();
 		if (list.getLength() == 0)
 			return EMPTY_STRING_ARRAY;
-		List result = new ArrayList(list.getLength());
+		List<Object> result = new ArrayList<Object>(list.getLength());
 		for (int i = 0; i < list.getLength(); i++) {
 			Node node = list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE)
 				result.add(read(node.getChildNodes().item(0)));
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**

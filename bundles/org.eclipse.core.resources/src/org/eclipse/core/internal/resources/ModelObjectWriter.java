@@ -220,26 +220,26 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			write(PROJECTS, PROJECT, getReferencedProjects(description), writer);
 			write(BUILD_SPEC, Arrays.asList(description.getBuildSpec(false)), writer);
 			write(NATURES, NATURE, description.getNatureIds(false), writer);
-			HashMap links = description.getLinks();
+			HashMap<IPath, LinkDescription> links = description.getLinks();
 			if (links != null) {
 				// ensure consistent order of map elements
-				List sorted = new ArrayList(links.values());
+				List<LinkDescription> sorted = new ArrayList<LinkDescription>(links.values());
 				Collections.sort(sorted);
 				write(LINKED_RESOURCES, sorted, writer);
 			}
-			HashMap filters = description.getFilters();
+			HashMap<IPath, LinkedList<FilterDescription>> filters = description.getFilters();
 			if (filters != null) {
-				List sorted = new ArrayList();
-				for (Iterator it = filters.values().iterator(); it.hasNext();) {
-					List list = (List) it.next();
+				List<FilterDescription> sorted = new ArrayList<FilterDescription>();
+				for (Iterator<LinkedList<FilterDescription>> it = filters.values().iterator(); it.hasNext();) {
+					List<FilterDescription> list = it.next();
 					sorted.addAll(list);
 				}
 				Collections.sort(sorted);
 				write(FILTERED_RESOURCES, sorted, writer);
 			}
-			HashMap variables = description.getVariables();
+			HashMap<String, VariableDescription> variables = description.getVariables();
 			if (variables != null) {
-				List sorted = new ArrayList(variables.values());
+				List<VariableDescription> sorted = new ArrayList<VariableDescription>(variables.values());
 				Collections.sort(sorted);
 				write(VARIABLE_LIST, sorted, writer);
 			}
@@ -247,25 +247,25 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.endTag(PROJECT_DESCRIPTION);
 	}
 
-	protected void write(String name, Collection collection, XMLWriter writer) throws IOException {
+	protected void write(String name, Collection<?> collection, XMLWriter writer) throws IOException {
 		writer.startTag(name, null);
-		for (Iterator it = collection.iterator(); it.hasNext();)
-			write(it.next(), writer);
+		for (Object o : collection)
+			write(o, writer);
 		writer.endTag(name);
 	}
 
 	/**
 	 * Write maps of (String, String).
 	 */
-	protected void write(String name, Map table, XMLWriter writer) {
+	protected void write(String name, Map<String, String> table, XMLWriter writer) {
 		writer.startTag(name, null);
 		if (table != null) {
 			// ensure consistent order of map elements
-			List sorted = new ArrayList(table.keySet());
+			List<String> sorted = new ArrayList<String>(table.keySet());
 			Collections.sort(sorted);
 
-			for (Iterator it = sorted.iterator(); it.hasNext();) {
-				String key = (String) it.next();
+			for (Iterator<String> it = sorted.iterator(); it.hasNext();) {
+				String key = it.next();
 				Object value = table.get(key);
 				writer.startTag(DICTIONARY, null);
 				{

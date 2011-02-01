@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -22,7 +23,7 @@ public class ProjectInfo extends ResourceInfo {
 	protected ProjectDescription description = null;
 
 	/** The list of natures for this project */
-	protected HashMap natures = null;
+	protected HashMap<String, IProjectNature> natures = null;
 
 	/** The property store for this resource (used only by the compatibility fragment) */
 	protected Object propertyStore = null;
@@ -69,10 +70,10 @@ public class ProjectInfo extends ResourceInfo {
 
 	public IProjectNature getNature(String natureId) {
 		// thread safety: (Concurrency001)
-		HashMap temp = natures;
+		HashMap<String, IProjectNature> temp = natures;
 		if (temp == null)
 			return null;
-		return (IProjectNature) temp.get(natureId);
+		return temp.get(natureId);
 	}
 
 	/**
@@ -105,23 +106,24 @@ public class ProjectInfo extends ResourceInfo {
 		this.matcher = matcher;
 	}
 
+	@SuppressWarnings("unchecked")
 	public synchronized void setNature(String natureId, IProjectNature value) {
 		// thread safety: (Concurrency001)
 		if (value == null) {
 			if (natures == null)
 				return;
-			HashMap temp = (HashMap) natures.clone();
+			HashMap<String, IProjectNature> temp = (HashMap<String, IProjectNature>) natures.clone();
 			temp.remove(natureId);
 			if (temp.isEmpty())
 				natures = null;
 			else
 				natures = temp;
 		} else {
-			HashMap temp = natures;
+			HashMap<String, IProjectNature> temp = natures;
 			if (temp == null)
-				temp = new HashMap(5);
+				temp = new HashMap<String, IProjectNature>(5);
 			else
-				temp = (HashMap) natures.clone();
+				temp = (HashMap<String, IProjectNature>) natures.clone();
 			temp.put(natureId, value);
 			natures = temp;
 		}

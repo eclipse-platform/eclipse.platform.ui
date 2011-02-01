@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
@@ -135,14 +136,14 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @exception CoreException 
 	 */
 	public ResourceMapping[] getMappings(IResource[] resources, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-		Set mappings = new HashSet();
+		Set<ResourceMapping> mappings = new HashSet<ResourceMapping>();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			ResourceMapping[] resourceMappings = getMappings(resource, context, monitor);
 			if (resourceMappings.length > 0)
 				mappings.addAll(Arrays.asList(resourceMappings));
 		}
-		return (ResourceMapping[]) mappings.toArray(new ResourceMapping[mappings.size()]);
+		return mappings.toArray(new ResourceMapping[mappings.size()]);
 	}
 
 	/**
@@ -162,14 +163,14 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @return the set of mappings that overlap with the given resource traversals
 	 */
 	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-		Set result = new HashSet();
+		Set<ResourceMapping> result = new HashSet<ResourceMapping>();
 		for (int i = 0; i < traversals.length; i++) {
 			ResourceTraversal traversal = traversals[i];
 			ResourceMapping[] mappings = getMappings(traversal.getResources(), context, monitor);
 			for (int j = 0; j < mappings.length; j++)
 				result.add(mappings[j]);
 		}
-		return (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
+		return result.toArray(new ResourceMapping[result.size()]);
 	}
 
 	/**
@@ -193,12 +194,12 @@ public abstract class ModelProvider extends PlatformObject {
 	public ResourceTraversal[] getTraversals(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask("", 100 * mappings.length); //$NON-NLS-1$
-			List traversals = new ArrayList();
+			List<ResourceTraversal> traversals = new ArrayList<ResourceTraversal>();
 			for (int i = 0; i < mappings.length; i++) {
 				ResourceMapping mapping = mappings[i];
 				traversals.addAll(Arrays.asList(mapping.getTraversals(context, new SubProgressMonitor(monitor, 100))));
 			}
-			return (ResourceTraversal[]) traversals.toArray(new ResourceTraversal[traversals.size()]);
+			return traversals.toArray(new ResourceTraversal[traversals.size()]);
 		} finally {
 			monitor.done();
 		}

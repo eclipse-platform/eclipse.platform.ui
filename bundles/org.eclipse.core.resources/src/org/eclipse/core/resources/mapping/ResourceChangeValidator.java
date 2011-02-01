@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
@@ -67,7 +68,7 @@ public final class ResourceChangeValidator {
 	}
 
 	private IStatus combineResults(IStatus[] result) {
-		List notOK = new ArrayList();
+		List<IStatus> notOK = new ArrayList<IStatus>();
 		for (int i = 0; i < result.length; i++) {
 			IStatus status = result[i];
 			if (!status.isOK()) {
@@ -78,9 +79,9 @@ public final class ResourceChangeValidator {
 			return Status.OK_STATUS;
 		}
 		if (notOK.size() == 1) {
-			return (IStatus) notOK.get(0);
+			return notOK.get(0);
 		}
-		return new MultiStatus(ResourcesPlugin.PI_RESOURCES, 0, (IStatus[]) notOK.toArray(new IStatus[notOK.size()]), Messages.mapping_multiProblems, null);
+		return new MultiStatus(ResourcesPlugin.PI_RESOURCES, 0, notOK.toArray(new IStatus[notOK.size()]), Messages.mapping_multiProblems, null);
 	}
 
 	/**
@@ -95,7 +96,7 @@ public final class ResourceChangeValidator {
 
 	private ModelProvider[] getProviders(IResource[] resources) {
 		IModelProviderDescriptor[] descriptors = ModelProvider.getModelProviderDescriptors();
-		List result = new ArrayList();
+		List<ModelProvider> result = new ArrayList<ModelProvider>();
 		for (int i = 0; i < descriptors.length; i++) {
 			IModelProviderDescriptor descriptor = descriptors[i];
 			try {
@@ -107,7 +108,7 @@ public final class ResourceChangeValidator {
 				Policy.log(e.getStatus().getSeverity(), NLS.bind("Could not instantiate provider {0}", descriptor.getId()), e); //$NON-NLS-1$
 			}
 		}
-		return (ModelProvider[]) result.toArray(new ModelProvider[result.size()]);
+		return result.toArray(new ModelProvider[result.size()]);
 	}
 
 	/*

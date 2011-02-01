@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
 import java.util.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.IPath;
 
 public class ResourceChangeEvent extends EventObject implements IResourceChangeEvent {
 
@@ -50,13 +52,13 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 		if (info == null)
 			return NO_MARKER_DELTAS;
 		//Map of IPath -> MarkerSet containing MarkerDelta objects
-		Map markerDeltas = info.getMarkerDeltas();
+		Map<IPath, MarkerSet> markerDeltas = info.getMarkerDeltas();
 		if (markerDeltas == null || markerDeltas.size() == 0)
 			return NO_MARKER_DELTAS;
-		ArrayList matching = new ArrayList();
-		Iterator deltaSets = markerDeltas.values().iterator();
+		ArrayList<IMarkerDelta> matching = new ArrayList<IMarkerDelta>();
+		Iterator<MarkerSet> deltaSets = markerDeltas.values().iterator();
 		while (deltaSets.hasNext()) {
-			MarkerSet deltas = (MarkerSet) deltaSets.next();
+			MarkerSet deltas = deltaSets.next();
 			IMarkerSetElement[] elements = deltas.elements();
 			for (int i = 0; i < elements.length; i++) {
 				MarkerDelta markerDelta = (MarkerDelta) elements[i];
@@ -65,7 +67,7 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 					matching.add(markerDelta);
 			}
 		}
-		return (IMarkerDelta[]) matching.toArray(new IMarkerDelta[matching.size()]);
+		return matching.toArray(new IMarkerDelta[matching.size()]);
 	}
 
 	/**

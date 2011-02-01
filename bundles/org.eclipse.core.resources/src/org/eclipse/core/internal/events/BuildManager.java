@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Isaac Pacht (isaacp3@gmail.com) - fix for bug 206540
  * Anton Leherbauer (Wind River) - [305858] Allow Builder to return null rule
  * James Blackburn (Broadcom) - [306822] Provide Context for Builder getRule()
- * Broadcom Corporation - build configurations and references
+ * Broadcom Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -593,6 +593,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * The list includes entries for all builders that are in the builder spec,
 	 * and that have a last built state but have not been instantiated this session.
 	 */
+	@SuppressWarnings("unchecked")
 	public ArrayList<BuilderPersistentInfo> getBuildersPersistentInfo(IProject project) throws CoreException {
 		return (ArrayList<BuilderPersistentInfo>) project.getSessionProperty(K_BUILD_LIST);
 	}
@@ -718,7 +719,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					currentBuilder.clean(monitor);
 				if (prereqs == null)
 					prereqs = new IProject[0];
-				currentBuilder.setInterestingProjects((IProject[]) prereqs.clone());
+				currentBuilder.setInterestingProjects(prereqs.clone());
 			}
 		};
 	}
@@ -1024,7 +1025,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * in the builder spec, and that have a last built state, even if they 
 	 * have not been instantiated this session.
 	 */
-	public void setBuildersPersistentInfo(IProject project, ArrayList<BuilderPersistentInfo> list) {
+	public void setBuildersPersistentInfo(IProject project, List<BuilderPersistentInfo> list) {
 		try {
 			project.setSessionProperty(K_BUILD_LIST, list);
 		} catch (CoreException e) {

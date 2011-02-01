@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,12 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
 import java.util.*;
-import org.eclipse.core.internal.resources.IManager;
-import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
@@ -49,7 +49,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	/**
 	 * The Threads that are currently avoiding notification.
 	 */
-	private Set avoidNotify = new HashSet();
+	private Set<Thread> avoidNotify = new HashSet<Thread>();
 
 	/**
 	 * Indicates whether a notification is currently in progress. Used to avoid
@@ -221,7 +221,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			// Markers may have changed since the delta was generated. If so, get the new
 			// marker state and insert it in to the delta which is being reused.
 			if (id != lastDeltaId) {
-				Map markerDeltas = workspace.getMarkerManager().getMarkerDeltas(lastPostBuildId);
+				Map<IPath, MarkerSet> markerDeltas = workspace.getMarkerManager().getMarkerDeltas(lastPostBuildId);
 				lastDelta.updateMarkers(markerDeltas);
 			}
 		} else {

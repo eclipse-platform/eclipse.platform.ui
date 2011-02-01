@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -42,10 +43,10 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 		boolean isAffected(ResourceInfo info, IPathRequestor requestor);
 	}
 
-	private ThreadLocal disabled = new ThreadLocal();
+	private ThreadLocal<Boolean> disabled = new ThreadLocal<Boolean>();
 
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
-	private Queue work = new Queue();
+	private Queue<ICharsetListenerFilter> work = new Queue<ICharsetListenerFilter>();
 
 	Workspace workspace;
 
@@ -136,7 +137,7 @@ public class CharsetDeltaJob extends Job implements IContentTypeManager.IContent
 
 	private ICharsetListenerFilter removeFromQueue() {
 		synchronized (work) {
-			return (ICharsetListenerFilter) work.remove();
+			return work.remove();
 		}
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2006 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
@@ -49,7 +50,7 @@ public abstract class AbstractBuilderTest extends ResourceTest {
 	 */
 	protected ICommand createCommand(IProjectDescription description, String builderName, String buildID) {
 		ICommand command = description.newCommand();
-		Map args = command.getArguments();
+		Map<String, String> args = command.getArguments();
 		args.put(TestBuilder.BUILD_ID, buildID);
 		command.setBuilderName(builderName);
 		command.setArguments(args);

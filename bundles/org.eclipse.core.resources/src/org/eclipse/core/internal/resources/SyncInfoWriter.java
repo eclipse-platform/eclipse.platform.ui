@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -35,10 +36,10 @@ public class SyncInfoWriter {
 	}
 
 	public void savePartners(DataOutputStream output) throws IOException {
-		Set registry = synchronizer.getRegistry();
+		Set<QualifiedName> registry = synchronizer.getRegistry();
 		output.writeInt(registry.size());
-		for (Iterator i = registry.iterator(); i.hasNext();) {
-			QualifiedName qname = (QualifiedName) i.next();
+		for (Iterator<QualifiedName> i = registry.iterator(); i.hasNext();) {
+			QualifiedName qname = i.next();
 			output.writeUTF(qname.getQualifier());
 			output.writeUTF(qname.getLocalName());
 		}
@@ -56,8 +57,8 @@ public class SyncInfoWriter {
 	 * QNAME -> byte String
 	 * BYTES -> byte[]
 	 */
-	public void saveSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List writtenPartners) throws IOException {
-		Map table = info.getSyncInfo(false);
+	public void saveSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List<QualifiedName> writtenPartners) throws IOException {
+		Map<QualifiedName, Object> table = info.getSyncInfo(false);
 		if (table == null)
 			return;
 		// if this is the first sync info that we have written, then
@@ -66,9 +67,8 @@ public class SyncInfoWriter {
 			output.writeInt(SYNCINFO_SAVE_VERSION);
 		output.writeUTF(requestor.requestPath().toString());
 		output.writeInt(table.size());
-		for (Iterator i = table.entrySet().iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
-			QualifiedName name = (QualifiedName) entry.getKey();
+		for (Map.Entry<QualifiedName, Object> entry : table.entrySet()) {
+			QualifiedName name = entry.getKey();
 			// if we have already written the partner name once, then write an integer
 			// constant to represent it instead to remove duplication
 			int index = writtenPartners.indexOf(name);
@@ -101,16 +101,15 @@ public class SyncInfoWriter {
 	public void snapSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output) throws IOException {
 		if (!info.isSet(ICoreConstants.M_SYNCINFO_SNAP_DIRTY))
 			return;
-		Map table = info.getSyncInfo(false);
+		Map<QualifiedName, Object> table = info.getSyncInfo(false);
 		if (table == null)
 			return;
 		// write the version id for the snapshot.
 		output.writeInt(SYNCINFO_SNAP_VERSION);
 		output.writeUTF(requestor.requestPath().toString());
 		output.writeInt(table.size());
-		for (Iterator i = table.entrySet().iterator(); i.hasNext();) {
-			Map.Entry entry = (Map.Entry) i.next();
-			QualifiedName name = (QualifiedName) entry.getKey();
+		for (Map.Entry<QualifiedName, Object> entry : table.entrySet()) {
+			QualifiedName name = entry.getKey();
 			output.writeUTF(name.getQualifier());
 			output.writeUTF(name.getLocalName());
 			byte[] bytes = (byte[]) entry.getValue();

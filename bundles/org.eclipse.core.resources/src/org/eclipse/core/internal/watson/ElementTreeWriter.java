@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.watson;
 
@@ -86,11 +87,11 @@ public class ElementTreeWriter {
 		int[] order = new int[numTrees];
 
 		/* first build a table of ElementTree -> Vector of Integers(indices in trees array) */
-		HashMap table = new HashMap(numTrees * 2 + 1);
+		HashMap<ElementTree, List<Integer>> table = new HashMap<ElementTree, List<Integer>>(numTrees * 2 + 1);
 		for (int i = 0; i < trees.length; i++) {
-			List indices = (List) table.get(trees[i]);
+			List<Integer> indices = table.get(trees[i]);
 			if (indices == null) {
-				indices = new ArrayList();
+				indices = new ArrayList<Integer>();
 				table.put(trees[i], indices);
 			}
 			indices.add(new Integer(i));
@@ -106,9 +107,9 @@ public class ElementTreeWriter {
 		int i = numTrees - 1;
 		while (i >= 0) {
 			/* add all instances of the current oldest tree to the sorted list */
-			List indices = (List) table.remove(oldest);
-			for (Enumeration e = Collections.enumeration(indices); e.hasMoreElements();) {
-				Integer next = (Integer) e.nextElement();
+			List<Integer> indices = table.remove(oldest);
+			for (Enumeration<Integer> e = Collections.enumeration(indices); e.hasMoreElements();) {
+				Integer next = e.nextElement();
 				sorted[i] = oldest;
 				order[i] = next.intValue();
 				i--;

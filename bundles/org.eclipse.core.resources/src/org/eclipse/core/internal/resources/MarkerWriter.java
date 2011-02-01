@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -82,7 +83,7 @@ public class MarkerWriter {
 	 * CREATION_TIME -> long
 	 * 	
 	 */
-	public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List writtenTypes) throws IOException {
+	public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List<String> writtenTypes) throws IOException {
 		// phantom resources don't have markers
 		if (info.isSet(ICoreConstants.M_PHANTOM))
 			return;
@@ -150,7 +151,7 @@ public class MarkerWriter {
 		// always write out the count...even if its zero. this will help
 		// use pick up marker deletions from our snapshot.
 		output.writeInt(count);
-		List writtenTypes = new ArrayList();
+		List<String> writtenTypes = new ArrayList<String>();
 		for (int i = 0; i < elements.length; i++)
 			if (isPersistent[i])
 				write((MarkerInfo) elements[i], output, writtenTypes);
@@ -160,12 +161,12 @@ public class MarkerWriter {
 	/* 
 	 * Write out the given marker attributes to the given output stream.
 	 */
-	private void write(Map attributes, DataOutputStream output) throws IOException {
+	private void write(Map<String, Object> attributes, DataOutputStream output) throws IOException {
 		output.writeShort(attributes.size());
-		for (Iterator i = attributes.keySet().iterator(); i.hasNext();) {
-			String key = (String) i.next();
+		for (Map.Entry<String, Object> e : attributes.entrySet()) {
+			String key = e.getKey();
 			output.writeUTF(key);
-			Object value = attributes.get(key);
+			Object value = e.getValue();
 			if (value instanceof Integer) {
 				output.writeByte(ATTRIBUTE_INTEGER);
 				output.writeInt(((Integer) value).intValue());
@@ -187,7 +188,7 @@ public class MarkerWriter {
 		}
 	}
 
-	private void write(MarkerInfo info, DataOutputStream output, List writtenTypes) throws IOException {
+	private void write(MarkerInfo info, DataOutputStream output, List<String> writtenTypes) throws IOException {
 		output.writeLong(info.getId());
 		// if we have already written the type once, then write an integer
 		// constant to represent it instead to remove duplication

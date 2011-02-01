@@ -233,11 +233,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	// Comparator used to provide a stable ordering of project buildConfigs
-	private static class BuildConfigurationComparator implements Comparator {
+	private static class BuildConfigurationComparator implements Comparator<IBuildConfiguration> {
 		public BuildConfigurationComparator() {}
-		public int compare(Object x, Object y) {
-			IBuildConfiguration px = (IBuildConfiguration) x;
-			IBuildConfiguration py = (IBuildConfiguration) y;
+		public int compare(IBuildConfiguration px, IBuildConfiguration py) {
 			int cmp = py.getProject().getName().compareTo(px.getProject().getName());
 			if (cmp == 0)
 				cmp = py.getName().compareTo(px.getName());
@@ -346,6 +344,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	/* (non-Javadoc)
 	 * @see IWorkspace#addSaveParticipant(Plugin, ISaveParticipant)
 	 */
+	@Deprecated
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException {
 		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
 		Assert.isNotNull(participant, "Participant must not be null"); //$NON-NLS-1$
@@ -401,7 +400,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @param configs collection of configurations to extend
 	 * @param config config to find reachable configurations to.
 	 */
-	private void recursivelyAddBuildConfigs(Collection/*<IBuildConfiguration>*/ configs, IBuildConfiguration config) {
+	private void recursivelyAddBuildConfigs(Collection/*<IBuildConfiguration>*/<IBuildConfiguration> configs, IBuildConfiguration config) {
 		try {
 			IBuildConfiguration[] referenced = config.getProject().getReferencedBuildConfigs(config.getName(), false);
 			for (int i = 0; i < referenced.length; i++) {
@@ -459,16 +458,16 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 							configs = getBuildOrder();
 						else {
 							// clean all accessible configurations
-							List configArr = new ArrayList();
+							List<IBuildConfiguration> configArr = new ArrayList<IBuildConfiguration>();
 							IProject[] prjs = getRoot().getProjects();
 							for (int i = 0; i < prjs.length; i++)
 								if (prjs[i].isAccessible())
 									configArr.addAll(Arrays.asList(prjs[i].getBuildConfigs()));
-							configs = (IBuildConfiguration[])configArr.toArray(new IBuildConfiguration[configArr.size()]);										
+							configs = configArr.toArray(new IBuildConfiguration[configArr.size()]);										
 						}
 					} else {
 						// Order the passed in build configurations + resolve references if requested
-						Set refsList = new HashSet();
+						Set<IBuildConfiguration> refsList = new HashSet<IBuildConfiguration>();
 						for (int i = 0 ; i < configs.length ; i++) {
 							// Check project + build configuration are accessible.
 							if (!configs[i].getProject().isAccessible() || !configs[i].getProject().hasBuildConfig(configs[i].getName()))
@@ -480,7 +479,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						}
 
 						// Order the referenced project buildConfigs
-						ProjectBuildConfigOrder order = computeProjectBuildConfigOrder((IBuildConfiguration[]) refsList.toArray(new IBuildConfiguration[refsList.size()]));
+						ProjectBuildConfigOrder order = computeProjectBuildConfigOrder(refsList.toArray(new IBuildConfiguration[refsList.size()]));
 						configs = order.buildConfigurations;
 					}
 
@@ -624,16 +623,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		// determine the full set of accessible projects in the workspace
 		// order the set in descending alphabetical order of project name
-		SortedSet allAccessibleProjects = new TreeSet(new Comparator() {
-			public int compare(Object x, Object y) {
-				IProject px = (IProject) x;
-				IProject py = (IProject) y;
+		SortedSet<IProject> allAccessibleProjects = new TreeSet<IProject>(new Comparator<IProject>() {
+			public int compare(IProject px, IProject py) {
 				return py.getName().compareTo(px.getName());
 			}
 		});
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		// List<IProject[]> edges
-		List edges = new ArrayList(allProjects.length);
+		List<IProject[]> edges = new ArrayList<IProject[]>(allProjects.length);
 		for (int i = 0; i < allProjects.length; i++) {
 			Project project = (Project) allProjects[i];
 			// ignore projects that are not accessible
@@ -687,14 +684,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// Order the set in descending alphabetical order of project name then build config name,
 		// as a secondary sort applied after sorting based on references, to achieve a stable
 		// ordering.
-		SortedSet allAccessibleBuildConfigs = new TreeSet(new BuildConfigurationComparator());
+		SortedSet<IBuildConfiguration> allAccessibleBuildConfigs = new TreeSet<IBuildConfiguration>(new BuildConfigurationComparator());
 
 		// For each project's active build config, perform a depth first search in the reference graph
 		// rooted at that build config.
 		// This generates the required subset of the reference graph that is required to order all
 		// the dependencies of the active project buildConfigs.
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		List/*<IBuildConfiguration[]>*/ edges = new ArrayList(allProjects.length);
+		List<IBuildConfiguration[]> edges = new ArrayList<IBuildConfiguration[]>(allProjects.length);
 
 		for (int i = 0; i < allProjects.length; i++) {
 			Project project = (Project) allProjects[i];
@@ -706,11 +703,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// perform a depth first search rooted at it
 			if (!allAccessibleBuildConfigs.contains(project.internalGetActiveBuildConfig())) {
 				allAccessibleBuildConfigs.add(project.internalGetActiveBuildConfig());
-				Stack stack = new Stack();
+				Stack<IBuildConfiguration> stack = new Stack<IBuildConfiguration>();
 				stack.push(project.internalGetActiveBuildConfig());
 
 				while (!stack.isEmpty()) {
-					IBuildConfiguration buildConfiguration = (IBuildConfiguration) stack.pop();
+					IBuildConfiguration buildConfiguration = stack.pop();
 
 					// Add all referenced buildConfigs from the current configuration
 					// (it is guaranteed to be accessible as it was pushed onto the stack)
@@ -767,10 +764,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	private VertexOrder computeFullBuildConfigOrder() {
 		// Compute the order for all accessible project buildConfigs
-		SortedSet allAccessibleBuildConfigurations = new TreeSet(new BuildConfigurationComparator());
+		SortedSet<IBuildConfiguration> allAccessibleBuildConfigurations = new TreeSet<IBuildConfiguration>(new BuildConfigurationComparator());
 
 		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		List/*<IBuildConfiguration[]>*/ edges = new ArrayList(allProjects.length);
+		List<IBuildConfiguration[]> edges = new ArrayList<IBuildConfiguration[]>(allProjects.length);
 
 		for (int i = 0; i < allProjects.length; i++) {
 			Project project = (Project) allProjects[i];
@@ -848,9 +845,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// when there are cycles, we need to remove all knotted projects from
 		// r.projects to form result[0] and merge all knots to form result[1]
 		// Set<IProject> bad
-		Set bad = new HashSet();
+		Set<IProject> bad = new HashSet<IProject>();
 		// Set<IProject> bad
-		Set keepers = new HashSet(Arrays.asList(r.projects));
+		Set<IProject> keepers = new HashSet<IProject>(Arrays.asList(r.projects));
 		for (int i = 0; i < r.knots.length; i++) {
 			IProject[] knot = r.knots[i];
 			for (int j = 0; j < knot.length; j++) {
@@ -864,10 +861,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		IProject[] result2 = new IProject[bad.size()];
 		bad.toArray(result2);
 		// List<IProject> p
-		List p = new LinkedList();
+		List<IProject> p = new LinkedList<IProject>();
 		p.addAll(Arrays.asList(r.projects));
-		for (Iterator it = p.listIterator(); it.hasNext();) {
-			IProject project = (IProject) it.next();
+		for (Iterator<IProject> it = p.listIterator(); it.hasNext();) {
+			IProject project = it.next();
 			if (bad.contains(project)) {
 				// remove knotted projects from the main answer
 				it.remove();
@@ -888,7 +885,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		VertexOrder fullProjectOrder = computeFullProjectOrder();
 
 		// Create a filter to remove all projects that are not in the list asked for
-		final Set projectSet = new HashSet(projects.length);
+		final Set<IProject> projectSet = new HashSet<IProject>(projects.length);
 		projectSet.addAll(Arrays.asList(projects));
 		VertexFilter filter = new VertexFilter() {
 			public boolean matches(Object vertex) {
@@ -939,7 +936,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		VertexOrder fullBuildConfigOrder = computeFullBuildConfigOrder();
 
 		// Create a filter to remove all project buildConfigs that are not in the list asked for
-		final Set projectConfigSet = new HashSet(buildConfigs.length);
+		final Set<IBuildConfiguration> projectConfigSet = new HashSet<IBuildConfiguration>(buildConfigs.length);
 		projectConfigSet.addAll(Arrays.asList(buildConfigs));
 		VertexFilter filter = new VertexFilter() {
 			public boolean matches(Object vertex) {
@@ -973,7 +970,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (resources.length == 0)
 				return Status.OK_STATUS;
 			// to avoid concurrent changes to this array
-			resources = (IResource[]) resources.clone();
+			resources = resources.clone();
 			IPath parentPath = null;
 			message = Messages.resources_copyProblem;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -1099,8 +1096,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// update filters in project descriptions
 		if (source.getProject().exists() && source instanceof Container && ((Container) source).hasFilters()) {
 			Project sourceProject = (Project) source.getProject();
-			LinkedList/*<FilterDescription>*/ originalDescriptions = sourceProject.internalGetDescription().getFilter(source.getProjectRelativePath());
-			LinkedList/*<FilterDescription>*/ filterDescriptions = FilterDescription.copy(originalDescriptions, destinationResource);
+			LinkedList<FilterDescription> originalDescriptions = sourceProject.internalGetDescription().getFilter(source.getProjectRelativePath());
+			LinkedList<FilterDescription> filterDescriptions = FilterDescription.copy(originalDescriptions, destinationResource);
 			if (moveResources && !movingProject) {
 				if (((Project) source.getProject())
 						.internalGetDescription()
@@ -1382,7 +1379,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			if (resources.length == 0)
 				return result;
-			resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
+			resources = resources.clone(); // to avoid concurrent changes to this array
 			try {
 				prepareOperation(getRoot(), monitor);
 				beginOperation(true);
@@ -1427,7 +1424,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (markers.length == 0)
 			return;
 		// clone to avoid outside changes
-		markers = (IMarker[]) markers.clone();
+		markers = markers.clone();
 		try {
 			prepareOperation(null, null);
 			beginOperation(true);
@@ -1576,7 +1573,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// see if a particular build order is specified
 		String[] order = description.getBuildOrder(false);
 		if (order != null) {
-			LinkedHashSet configs = new LinkedHashSet();
+			LinkedHashSet<IBuildConfiguration> configs = new LinkedHashSet<IBuildConfiguration>();
 
 			// convert from project names to active project buildConfigs
 			// and eliminate non-existent and closed projects
@@ -1612,15 +1609,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	/* (non-Javadoc)
 	 * @see IWorkspace#getDanglingReferences()
 	 */
-	public Map getDanglingReferences() {
+	public Map<IProject, IProject[]> getDanglingReferences() {
 		IProject[] projects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		Map result = new HashMap(projects.length);
+		Map<IProject, IProject[]> result = new HashMap<IProject, IProject[]>(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			Project project = (Project) projects[i];
 			if (!project.isAccessible())
 				continue;
 			IProject[] refs = project.internalGetDescription().getReferencedProjects(false);
-			List dangling = new ArrayList(refs.length);
+			List<IProject> dangling = new ArrayList<IProject>(refs.length);
 			for (int j = 0; j < refs.length; j++)
 				if (!refs[i].exists())
 					dangling.add(refs[i]);
@@ -2014,7 +2011,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.beginTask(message, totalWork);
 			if (resources.length == 0)
 				return Status.OK_STATUS;
-			resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
+			resources = resources.clone(); // to avoid concurrent changes to this array
 			IPath parentPath = null;
 			message = Messages.resources_moveProblem;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -2274,6 +2271,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	/* (non-Javadoc)
 	 * @see IWorkspace#removeSaveParticipant(Plugin)
 	 */
+	@Deprecated
 	public void removeSaveParticipant(Plugin plugin) {
 		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
 		saveManager.removeParticipant(plugin.getBundle().getSymbolicName());

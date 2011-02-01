@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -86,22 +87,22 @@ public class Filter {
 		return (getType() & IResourceFilterDescription.FILES) != 0;
 	}
 
-	public static IFileInfo[] filter(IProject project, LinkedList/*Filter*/includeFilters, LinkedList/*Filter*/excludeFilters, IContainer parent, IFileInfo[] list) throws CoreException {
+	public static IFileInfo[] filter(IProject project, LinkedList<Filter> includeFilters, LinkedList<Filter> excludeFilters, IContainer parent, IFileInfo[] list) throws CoreException {
 		IFileInfo[] result = filterIncludes(project, includeFilters, parent, list);
 		return filterExcludes(project, excludeFilters, parent, result);
 	}
 
-	public static IFileInfo[] filterIncludes(IProject project, LinkedList/*Filter*/filters, IContainer parent, IFileInfo[] list) throws CoreException {
+	public static IFileInfo[] filterIncludes(IProject project, LinkedList<Filter> filters, IContainer parent, IFileInfo[] list) throws CoreException {
 		if (filters.size() > 0) {
 			IFileInfo[] result = new IFileInfo[list.length];
 			int outputIndex = 0;
 
 			for (int i = 0; i < list.length; i++) {
 				IFileInfo info = list[i];
-				Iterator objIt = filters.iterator();
+				Iterator<Filter> objIt = filters.iterator();
 				boolean filtersWereApplicable = false;
 				while (objIt.hasNext()) {
-					Filter filter = (Filter) objIt.next();
+					Filter filter = objIt.next();
 					if (filter.appliesTo(info)) {
 						filtersWereApplicable = true;
 						if (filter.match(parent, info)) {
@@ -123,17 +124,17 @@ public class Filter {
 		return list;
 	}
 
-	public static IFileInfo[] filterExcludes(IProject project, LinkedList/*Filter*/filters, IContainer parent, IFileInfo[] list) throws CoreException {
+	public static IFileInfo[] filterExcludes(IProject project, LinkedList<Filter> filters, IContainer parent, IFileInfo[] list) throws CoreException {
 		if (filters.size() > 0) {
 			IFileInfo[] result = new IFileInfo[list.length];
 			int outputIndex = 0;
 
 			for (int i = 0; i < list.length; i++) {
 				IFileInfo info = list[i];
-				Iterator objIt = filters.iterator();
+				Iterator<Filter> objIt = filters.iterator();
 				boolean shouldBeExcluded = false;
 				while (objIt.hasNext()) {
-					Filter filter = (Filter) objIt.next();
+					Filter filter = objIt.next();
 					if (filter.appliesTo(info)) {
 						if (filter.match(parent, info)) {
 							shouldBeExcluded = true;

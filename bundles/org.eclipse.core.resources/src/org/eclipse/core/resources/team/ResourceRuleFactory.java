@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.resources.team;
 
@@ -233,15 +234,15 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 		if (resources.length == 1)
 			return isReadOnly(resources[0]) ? parent(resources[0]) : null;
 		//need a lock on the parents of all read-only files
-		HashSet rules = new HashSet();
+		HashSet<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
 		for (int i = 0; i < resources.length; i++)
 			if (isReadOnly(resources[i]))
 				rules.add(parent(resources[i]));
 		if (rules.isEmpty())
 			return null;
 		if (rules.size() == 1)
-			return (ISchedulingRule) rules.iterator().next();
-		ISchedulingRule[] ruleArray = (ISchedulingRule[]) rules.toArray(new ISchedulingRule[rules.size()]);
+			return rules.iterator().next();
+		ISchedulingRule[] ruleArray = rules.toArray(new ISchedulingRule[rules.size()]);
 		return new MultiRule(ruleArray);
 	}
 }

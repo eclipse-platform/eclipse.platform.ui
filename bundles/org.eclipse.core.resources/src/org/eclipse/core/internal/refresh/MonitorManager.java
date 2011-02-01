@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.refresh;
 
 import java.util.*;
+import java.util.Map.Entry;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.resources.Workspace;
@@ -44,7 +46,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	/**
 	 * A mapping of monitors to a list of resources each monitor is responsible for.
 	 */
-	protected final Map registeredMonitors;
+	protected final Map<IRefreshMonitor, List<IResource>> registeredMonitors;
 	/**
 	 * Reference to the workspace.
 	 */
@@ -53,7 +55,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	public MonitorManager(IWorkspace workspace, RefreshManager refreshManager) {
 		this.workspace = workspace;
 		this.refreshManager = refreshManager;
-		registeredMonitors = Collections.synchronizedMap(new HashMap(10));
+		registeredMonitors = Collections.synchronizedMap(new HashMap<IRefreshMonitor, List<IResource>>(10));
 		pollMonitor = new PollingMonitor(refreshManager);
 	}
 
@@ -69,7 +71,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			return providers;
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_REFRESH_PROVIDERS);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-		List providerList = new ArrayList(infos.length);
+		List<RefreshProvider> providerList = new ArrayList<RefreshProvider>(infos.length);
 		for (int i = 0; i < infos.length; i++) {
 			IConfigurationElement configurationElement = infos[i];
 			RefreshProvider provider = null;
@@ -81,7 +83,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			if (provider != null)
 				providerList.add(provider);
 		}
-		providers = (RefreshProvider[]) providerList.toArray(new RefreshProvider[providerList.size()]);
+		providers = providerList.toArray(new RefreshProvider[providerList.size()]);
 		return providers;
 	}
 
@@ -89,8 +91,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	 * Collects the set of root resources that required monitoring. This
 	 * includes projects and all linked resources.
 	 */
-	private List getResourcesToMonitor() {
-		final List resourcesToMonitor = new ArrayList(10);
+	private List<IResource> getResourcesToMonitor() {
+		final List<IResource> resourcesToMonitor = new ArrayList<IResource>(10);
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			if (!projects[i].isAccessible())
@@ -120,8 +122,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 
 	private boolean isMonitoring(IResource resource) {
 		synchronized (registeredMonitors) {
-			for (Iterator i = registeredMonitors.keySet().iterator(); i.hasNext();) {
-				List resources = (List) registeredMonitors.get(i.next());
+			for (Iterator<IRefreshMonitor> i = registeredMonitors.keySet().iterator(); i.hasNext();) {
+				List<IResource> resources = registeredMonitors.get(i.next());
 				if ((resources != null) && (resources.contains(resource)))
 					return true;
 			}
@@ -161,15 +163,15 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		if (registeredMonitors == null || monitor == null)
 			return;
 		if (resource == null) {
-			List resources = (List) registeredMonitors.get(monitor);
+			List<IResource> resources = registeredMonitors.get(monitor);
 			if (resources == null || resources.isEmpty()) {
 				registeredMonitors.remove(monitor);
 				return;
 			}
 			// synchronized: protect the collection during iteration
 			synchronized (registeredMonitors) {
-				for (Iterator i = resources.iterator(); i.hasNext();) {
-					resource = (IResource) i.next();
+				for (Iterator<IResource> i = resources.iterator(); i.hasNext();) {
+					resource = i.next();
 					pollMonitor.monitor(resource);
 					registerMonitor(pollMonitor, resource);
 				}
@@ -189,10 +191,10 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		if (registeredMonitors.isEmpty())
 			return;
 		String variableName = event.getVariableName();
-		Set invalidResources = new HashSet();
-		for (Iterator i = registeredMonitors.values().iterator(); i.hasNext();) {
-			for (Iterator j = ((List) i.next()).iterator(); j.hasNext();) {
-				IResource resource = (IResource) j.next();
+		Set<IResource> invalidResources = new HashSet<IResource>();
+		for (Iterator<List<IResource>> i = registeredMonitors.values().iterator(); i.hasNext();) {
+			for (Iterator<IResource> j = i.next().iterator(); j.hasNext();) {
+				IResource resource = j.next();
 				IPath rawLocation = resource.getRawLocation();
 				if (rawLocation != null) {
 					if (rawLocation.segmentCount() > 0 && variableName.equals(rawLocation.segment(0)) && !invalidResources.contains(resource)) {
@@ -202,8 +204,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 			}
 		}
 		if (!invalidResources.isEmpty()) {
-			for (Iterator i = invalidResources.iterator(); i.hasNext();) {
-				IResource resource = (IResource) i.next();
+			for (Iterator<IResource> i = invalidResources.iterator(); i.hasNext();) {
+				IResource resource = i.next();
 				unmonitor(resource);
 				monitor(resource);
 			}
@@ -213,9 +215,9 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	private void registerMonitor(IRefreshMonitor monitor, IResource resource) {
 		// synchronized: protect the collection during add
 		synchronized (registeredMonitors) {
-			List resources = (List) registeredMonitors.get(monitor);
+			List<IResource> resources = registeredMonitors.get(monitor);
 			if (resources == null) {
-				resources = new ArrayList(1);
+				resources = new ArrayList<IResource>(1);
 				registeredMonitors.put(monitor, resources);
 			}
 			if (!resources.contains(resource))
@@ -228,7 +230,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	private void removeMonitor(IRefreshMonitor monitor, IResource resource) {
 		// synchronized: protect the collection during remove
 		synchronized (registeredMonitors) {
-			List resources = (List) registeredMonitors.get(monitor);
+			List<IResource> resources = registeredMonitors.get(monitor);
 			if (resources != null && !resources.isEmpty())
 				resources.remove(resource);
 			else
@@ -257,8 +259,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	 */
 	public void start() {
 		boolean refreshNeeded = false;
-		for (Iterator i = getResourcesToMonitor().iterator(); i.hasNext();)
-			refreshNeeded |= !monitor((IResource) i.next());
+		for (Iterator<IResource> i = getResourcesToMonitor().iterator(); i.hasNext();)
+			refreshNeeded |= !monitor(i.next());
 		workspace.getPathVariableManager().addChangeListener(this);
 		workspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 		//adding the lifecycle listener twice does no harm
@@ -279,8 +281,8 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		workspace.getPathVariableManager().removeChangeListener(this);
 		// synchronized: protect the collection during iteration
 		synchronized (registeredMonitors) {
-			for (Iterator i = registeredMonitors.keySet().iterator(); i.hasNext();) {
-				IRefreshMonitor monitor = (IRefreshMonitor) i.next();
+			for (Iterator<IRefreshMonitor> i = registeredMonitors.keySet().iterator(); i.hasNext();) {
+				IRefreshMonitor monitor = i.next();
 				monitor.unmonitor(null);
 			}
 		}
@@ -294,11 +296,11 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 		if (resource == null || !isMonitoring(resource))
 			return;
 		synchronized (registeredMonitors) {
-			for (Iterator i = registeredMonitors.entrySet().iterator(); i.hasNext();) {
-				Map.Entry current = (Map.Entry) i.next();
-				List resources = (List) current.getValue();
+			for (Iterator<Entry<IRefreshMonitor, List<IResource>>> i = registeredMonitors.entrySet().iterator(); i.hasNext();) {
+				Entry<IRefreshMonitor, List<IResource>> current = i.next();
+				List<IResource> resources = current.getValue();
 				if ((resources != null) && !resources.isEmpty() && resources.contains(resource)) {
-					((IRefreshMonitor) current.getKey()).unmonitor(resource);
+					current.getKey().unmonitor(resource);
 					resources.remove(resource);
 				}
 			}

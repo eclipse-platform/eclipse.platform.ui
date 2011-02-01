@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
@@ -110,7 +111,7 @@ public class ResourceTraversal {
 	 * available to clients because underlying non-API methods are used that
 	 * may change.
 	 */
-	void doFindMarkers(ArrayList result, String type, boolean includeSubtypes) {
+	void doFindMarkers(ArrayList<IMarker> result, String type, boolean includeSubtypes) {
 		MarkerManager markerMan = ((Workspace) ResourcesPlugin.getWorkspace()).getMarkerManager();
 		for (int i = 0; i < resources.length; i++)
 			markerMan.doFindMarkers(resources[i], result, type, includeSubtypes, depth);
@@ -131,9 +132,9 @@ public class ResourceTraversal {
 	public IMarker[] findMarkers(String type, boolean includeSubtypes) throws CoreException {
 		if (resources.length == 0)
 			return new IMarker[0];
-		ArrayList result = new ArrayList();
+		ArrayList<IMarker> result = new ArrayList<IMarker>();
 		doFindMarkers(result, type, includeSubtypes);
-		return (IMarker[]) result.toArray(new IMarker[result.size()]);
+		return result.toArray(new IMarker[result.size()]);
 	}
 
 	/**

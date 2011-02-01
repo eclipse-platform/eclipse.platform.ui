@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Oakland Software Incorporated - added getSessionProperties and getPersistentProperties
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -67,7 +68,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * interface so we ensure that we get it right since we are making certain
 	 * assumptions about the object type w.r.t. casting.
 	 */
-	protected ObjectMap sessionProperties = null;
+	protected ObjectMap<QualifiedName,Object> sessionProperties = null;
 
 	/** 
 	 * The table of sync information. 
@@ -76,7 +77,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * interface so we ensure that we get it right since we are making certain
 	 * assumptions about the object type w.r.t. casting.
 	 */
-	protected ObjectMap syncInfo = null;
+	protected ObjectMap<QualifiedName, Object> syncInfo = null;
 
 	/** 
 	 * Returns the integer value stored in the indicated part of this info's flags.
@@ -194,13 +195,14 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * Returns a copy of the map of this resource session properties.
 	 * An empty map is returned if there are none.
 	 */
-	public Map getSessionProperties() {
+	@SuppressWarnings("unchecked")
+	public Map<QualifiedName,Object> getSessionProperties() {
 		// thread safety: (Concurrency001)
-		ObjectMap temp = sessionProperties;
+		ObjectMap<QualifiedName,Object> temp = sessionProperties;
 		if (temp == null)
-			temp = new ObjectMap(5);
+			temp = new ObjectMap<QualifiedName, Object>(5);
 		else
-			temp = (ObjectMap) sessionProperties.clone();
+			temp = (ObjectMap<QualifiedName, Object>) sessionProperties.clone();
 		return temp;
 	}
 	
@@ -209,7 +211,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 */
 	public Object getSessionProperty(QualifiedName name) {
 		// thread safety: (Concurrency001)
-		Map temp = sessionProperties;
+		Map<QualifiedName, Object> temp = sessionProperties;
 		if (temp == null)
 			return null;
 		return temp.get(name);
@@ -220,10 +222,11 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * interface so we ensure that we get it right since we are making certain
 	 * assumptions about the object type w.r.t. casting.
 	 */
-	public synchronized ObjectMap getSyncInfo(boolean makeCopy) {
+	@SuppressWarnings("unchecked")
+	public synchronized ObjectMap<QualifiedName, Object> getSyncInfo(boolean makeCopy) {
 		if (syncInfo == null)
 			return null;
-		return makeCopy ? (ObjectMap) syncInfo.clone() : syncInfo;
+		return makeCopy ? (ObjectMap<QualifiedName, Object>) syncInfo.clone() : syncInfo;
 	}
 
 	public synchronized byte[] getSyncInfo(QualifiedName id, boolean makeCopy) {
@@ -388,23 +391,24 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * Sets the identified session property to the given value.  If
 	 * the value is null, the property is removed.
 	 */
+	@SuppressWarnings("unchecked")
 	public synchronized void setSessionProperty(QualifiedName name, Object value) {
 		// thread safety: (Concurrency001)
 		if (value == null) {
 			if (sessionProperties == null)
 				return;
-			ObjectMap temp = (ObjectMap) sessionProperties.clone();
+			ObjectMap<QualifiedName, Object> temp = (ObjectMap<QualifiedName, Object>) sessionProperties.clone();
 			temp.remove(name);
 			if (temp.isEmpty())
 				sessionProperties = null;
 			else
 				sessionProperties = temp;
 		} else {
-			ObjectMap temp = sessionProperties;
+			ObjectMap<QualifiedName, Object> temp = sessionProperties;
 			if (temp == null)
-				temp = new ObjectMap(5);
+				temp = new ObjectMap<QualifiedName, Object>(5);
 			else
-				temp = (ObjectMap) sessionProperties.clone();
+				temp = (ObjectMap<QualifiedName, Object>) sessionProperties.clone();
 			temp.put(name, value);
 			sessionProperties = temp;
 		}
@@ -415,7 +419,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * interface so we ensure that we get it right since we are making certain
 	 * assumptions about the object type w.r.t. casting.
 	 */
-	protected void setSyncInfo(ObjectMap syncInfo) {
+	protected void setSyncInfo(ObjectMap<QualifiedName, Object> syncInfo) {
 		this.syncInfo = syncInfo;
 	}
 
@@ -430,7 +434,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		} else {
 			//add sync info
 			if (syncInfo == null)
-				syncInfo = new ObjectMap(5);
+				syncInfo = new ObjectMap<QualifiedName, Object>(5);
 			syncInfo.put(id, value.clone());
 		}
 	}
@@ -447,7 +451,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * Method declared on IStringPoolParticipant
 	 */
 	public void shareStrings(StringPool set) {
-		ObjectMap map = syncInfo;
+		ObjectMap<QualifiedName, Object> map = syncInfo;
 		if (map != null)
 			map.shareStrings(set);
 		map = sessionProperties;

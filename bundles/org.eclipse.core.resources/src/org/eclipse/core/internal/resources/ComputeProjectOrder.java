@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Broadcom Corporation - build configurations and references
+ *     Broadcom Corporation - ongoing development
  *******************************************************************************/
 
 package org.eclipse.core.internal.resources;
@@ -94,7 +94,7 @@ class ComputeProjectOrder {
 			 * 
 			 * Element type: <code>Vertex</code>
 			 */
-			public List adjacent = new ArrayList(3);
+			public List<Vertex> adjacent = new ArrayList<Vertex>(3);
 
 			/**
 			 * Creates a new vertex with the given id.
@@ -111,14 +111,14 @@ class ComputeProjectOrder {
 		 * 
 		 * Element type: <code>Vertex</code>
 		 */
-		private List vertexList = new ArrayList(100);
+		private List<Vertex> vertexList = new ArrayList<Vertex>(100);
 
 		/**
 		 * Map from id to vertex.
 		 * 
 		 * Key type: <code>Object</code>; value type: <code>Vertex</code>
 		 */
-		private Map vertexMap = new HashMap(100);
+		private Map<Object, Vertex> vertexMap = new HashMap<Object, Vertex>(100);
 
 		/**
 		 * DFS visit time. Non-negative.
@@ -202,8 +202,8 @@ class ComputeProjectOrder {
 			if (initialized) {
 				throw new IllegalArgumentException();
 			}
-			Vertex fromVertex = (Vertex) vertexMap.get(fromId);
-			Vertex toVertex = (Vertex) vertexMap.get(toId);
+			Vertex fromVertex = vertexMap.get(fromId);
+			Vertex toVertex = vertexMap.get(toId);
 			// nip problems with bogus vertexes in the bud
 			if (fromVertex == null) {
 				throw new IllegalArgumentException();
@@ -226,14 +226,14 @@ class ComputeProjectOrder {
 		 * (element type: <code>Object</code>)
 		 * @exception IllegalArgumentException if the graph is not frozen
 		 */
-		public List idsByDFSFinishTime(boolean increasing) {
+		public List<Object> idsByDFSFinishTime(boolean increasing) {
 			if (!initialized) {
 				throw new IllegalArgumentException();
 			}
 			int len = vertexList.size();
 			Object[] r = new Object[len];
-			for (Iterator allV = vertexList.iterator(); allV.hasNext();) {
-				Vertex vertex = (Vertex) allV.next();
+			for (Iterator<Vertex> allV = vertexList.iterator(); allV.hasNext();) {
+				Vertex vertex = allV.next();
 				int f = vertex.finishTime;
 				// note that finish times start at 1, not 0
 				if (increasing) {
@@ -269,15 +269,15 @@ class ComputeProjectOrder {
 		 * <code>Object[]</code>)
 		 * @exception IllegalArgumentException if the graph is not frozen
 		 */
-		public List nonTrivialComponents() {
+		public List<Object[]> nonTrivialComponents() {
 			if (!initialized) {
 				throw new IllegalArgumentException();
 			}
 			// find the roots of each component
 			// Map<Vertex,List<Object>> components
-			Map components = new HashMap();
-			for (Iterator it = vertexList.iterator(); it.hasNext();) {
-				Vertex vertex = (Vertex) it.next();
+			Map<Vertex, List<Object>> components = new HashMap<Vertex, List<Object>>();
+			for (Iterator<Vertex> it = vertexList.iterator(); it.hasNext();) {
+				Vertex vertex = it.next();
 				if (vertex.predecessor == null) {
 					// this vertex is the root of a component
 					// if component is non-trivial we will hit a child
@@ -287,18 +287,18 @@ class ComputeProjectOrder {
 					while (root.predecessor != null) {
 						root = root.predecessor;
 					}
-					List component = (List) components.get(root);
+					List<Object> component = components.get(root);
 					if (component == null) {
-						component = new ArrayList(2);
+						component = new ArrayList<Object>(2);
 						component.add(root.id);
 						components.put(root, component);
 					}
 					component.add(vertex.id);
 				}
 			}
-			List result = new ArrayList(components.size());
-			for (Iterator it = components.values().iterator(); it.hasNext();) {
-				List component = (List) it.next();
+			List<Object[]> result = new ArrayList<Object[]>(components.size());
+			for (Iterator<List<Object>> it = components.values().iterator(); it.hasNext();) {
+				List<Object> component = it.next();
 				if (component.size() > 1) {
 					result.add(component.toArray());
 				}
@@ -374,10 +374,10 @@ class ComputeProjectOrder {
 			// all vertex.predecessor initially null;
 			time = 0;
 			// for a stack, append to the end of an array-based list
-			List stack = new ArrayList(Math.max(1, vertexList.size()));
-			Iterator allAdjacent = null;
+			List<Object> stack = new ArrayList<Object>(Math.max(1, vertexList.size()));
+			Iterator<Vertex> allAdjacent = null;
 			Vertex vertex = null;
-			Iterator allV = vertexList.iterator();
+			Iterator<Vertex> allV = vertexList.iterator();
 			state = NEXT_VERTEX;
 			nextStateLoop: while (true) {
 				switch (state) {
@@ -387,7 +387,7 @@ class ComputeProjectOrder {
 							// all done
 							break nextStateLoop;
 						}
-						Vertex nextVertex = (Vertex) allV.next();
+						Vertex nextVertex = allV.next();
 						if (nextVertex.color == Vertex.WHITE) {
 							stack.add(NEXT_VERTEX_OBJECT);
 							vertex = nextVertex;
@@ -409,7 +409,7 @@ class ComputeProjectOrder {
 						// on entry, "allAdjacent" contains adjacent vertexes to
 						// be visited; "vertex" contains vertex being visited
 						if (allAdjacent.hasNext()) {
-							Vertex adjVertex = (Vertex) allAdjacent.next();
+							Vertex adjVertex = allAdjacent.next();
 							if (adjVertex.color == Vertex.WHITE) {
 								// explore edge from vertex to adjVertex
 								adjVertex.predecessor = vertex;
@@ -436,7 +436,7 @@ class ComputeProjectOrder {
 					case AFTER_NEXTED_DFS_VISIT :
 						// on entry, stack contains "vertex" and "allAjacent"
 						vertex = (Vertex) stack.remove(stack.size() - 1);
-						allAdjacent = (Iterator) stack.remove(stack.size() - 1);
+						allAdjacent = (Iterator<Vertex>) stack.remove(stack.size() - 1);
 						state = NEXT_ADJACENT;
 						continue nextStateLoop;
 				}
@@ -505,17 +505,17 @@ class ComputeProjectOrder {
 	 * @param references a list of pairs [A,B] meaning that A references B
 	 * @return an object describing the resulting order
 	 */
-	static VertexOrder computeVertexOrder(SortedSet vertexes, List references) {
+	static VertexOrder computeVertexOrder(SortedSet<? extends Object> vertexes, List<? extends Object[]> references) {
 
 		// Step 1: Create the graph object.
 		final Digraph g1 = new Digraph();
 		// add vertexes
-		for (Iterator it = vertexes.iterator(); it.hasNext();) {
+		for (Iterator<?> it = vertexes.iterator(); it.hasNext();) {
 			g1.addVertex(it.next());
 		}
 		// add edges
-		for (Iterator it = references.iterator(); it.hasNext();) {
-			Object[] ref = (Object[]) it.next();
+		for (Iterator<? extends Object[]> it = references.iterator(); it.hasNext();) {
+			Object[] ref = it.next();
 			Object p = ref[0];
 			Object q = ref[1];
 			// p has a reference to q
@@ -530,13 +530,13 @@ class ComputeProjectOrder {
 		// interchange "to" and "from" to reverse edges from g1
 		final Digraph g2 = new Digraph();
 		// add vertexes
-		List resortedVertexes = g1.idsByDFSFinishTime(false);
-		for (Iterator it = resortedVertexes.iterator(); it.hasNext();) {
+		List<Object> resortedVertexes = g1.idsByDFSFinishTime(false);
+		for (Iterator<Object> it = resortedVertexes.iterator(); it.hasNext();) {
 			g2.addVertex(it.next());
 		}
 		// add edges
-		for (Iterator it = references.iterator(); it.hasNext();) {
-			Object[] ref = (Object[]) it.next();
+		for (Iterator<? extends Object[]> it = references.iterator(); it.hasNext();) {
+			Object[] ref = it.next();
 			Object p = ref[0];
 			Object q = ref[1];
 			// p has a reference to q
@@ -548,13 +548,13 @@ class ComputeProjectOrder {
 
 		// Step 3: Return the vertexes in increasing order of depth-first finish
 		// time in g2
-		List sortedVertexList = g2.idsByDFSFinishTime(true);
+		List<Object> sortedVertexList = g2.idsByDFSFinishTime(true);
 		Object[] orderedVertexes = new Object[sortedVertexList.size()];
 		sortedVertexList.toArray(orderedVertexes);
 		Object[][] knots;
 		boolean hasCycles = g2.containsCycles();
 		if (hasCycles) {
-			List knotList = g2.nonTrivialComponents();
+			List<Object[]> knotList = g2.nonTrivialComponents();
 			knots = new Object[knotList.size()][];
 			knotList.toArray(knots);
 		} else {
@@ -598,10 +598,10 @@ class ComputeProjectOrder {
 		}
 
 		// and from the knots list
-		List reducedKnots = new ArrayList(order.knots.length);
+		List<Object[]> reducedKnots = new ArrayList<Object[]>(order.knots.length);
 		for (int i = 0; i < order.knots.length; i++) {
 			Object[] knot = order.knots[i];
-			List knotList = new ArrayList(knot.length);
+			List<Object> knotList = new ArrayList<Object>(knot.length);
 			for (int j = 0; j < knot.length; j++) {
 				Object vertex = knot[j];
 				if (!filter.matches(vertex)) {
@@ -615,6 +615,6 @@ class ComputeProjectOrder {
 		}
 
 		return new VertexOrder(reducedVertexes, reducedKnots.size() > 0,
-						(Object[][]) reducedKnots.toArray(new Object[reducedKnots.size()][]));
+						reducedKnots.toArray(new Object[reducedKnots.size()][]));
 	}
 }

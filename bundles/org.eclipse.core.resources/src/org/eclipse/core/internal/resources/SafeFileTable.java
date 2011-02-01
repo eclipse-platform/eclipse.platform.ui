@@ -34,8 +34,8 @@ public class SafeFileTable {
 	}
 
 	public IPath[] getFiles() {
-		Set set = table.keySet();
-		String[] keys = (String[]) set.toArray(new String[set.size()]);
+		Set<Object> set = table.keySet();
+		String[] keys = set.toArray(new String[set.size()]);
 		IPath[] files = new IPath[keys.length];
 		for (int i = 0; i < keys.length; i++)
 			files[i] = new Path(keys[i]);

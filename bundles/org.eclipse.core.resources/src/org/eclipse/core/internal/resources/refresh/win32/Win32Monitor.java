@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources.refresh.win32;
 
@@ -202,7 +203,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	}
 
 	protected class LinkedResourceHandle extends ChainedHandle {
-		private List fileHandleChain;
+		private List<FileHandle> fileHandleChain;
 		private IResource resource;
 
 		/**
@@ -214,7 +215,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		}
 
 		protected void createFileHandleChain() {
-			fileHandleChain = new ArrayList(1);
+			fileHandleChain = new ArrayList<FileHandle>(1);
 			File file = new File(resource.getLocation().toOSString());
 			file = file.getParentFile();
 			while (file != null) {
@@ -223,17 +224,17 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 			}
 			int size = fileHandleChain.size();
 			for (int i = 0; i < size; i++) {
-				ChainedHandle handle = (ChainedHandle) fileHandleChain.get(i);
-				handle.setPrevious((i > 0) ? (ChainedHandle) fileHandleChain.get(i - 1) : null);
-				handle.setNext((i + 1 < size) ? (ChainedHandle) fileHandleChain.get(i + 1) : this);
+				ChainedHandle handle = fileHandleChain.get(i);
+				handle.setPrevious((i > 0) ? fileHandleChain.get(i - 1) : null);
+				handle.setNext((i + 1 < size) ? fileHandleChain.get(i + 1) : this);
 			}
-			setPrevious((size > 0) ? (ChainedHandle) fileHandleChain.get(size - 1) : null);
+			setPrevious((size > 0) ? fileHandleChain.get(size - 1) : null);
 		}
 
 		public void destroy() {
 			super.destroy();
-			for (Iterator i = fileHandleChain.iterator(); i.hasNext();) {
-				Handle handle = (Handle) i.next();
+			for (Iterator<FileHandle> i = fileHandleChain.iterator(); i.hasNext();) {
+				Handle handle = i.next();
 				handle.destroy();
 			}
 		}
@@ -308,7 +309,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	 * Mapping of handles (java.lang.Long) to absolute paths
 	 * (java.lang.String).
 	 */
-	protected Map fHandleValueToHandle;
+	protected Map<Long, Handle> fHandleValueToHandle;
 	protected IRefreshResult refreshResult;
 
 	/*
@@ -320,7 +321,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		this.refreshResult = result;
 		setPriority(Job.DECORATE);
 		setSystem(true);
-		fHandleValueToHandle = new HashMap(1);
+		fHandleValueToHandle = new HashMap<Long, Handle>(1);
 		setHandleValueArrays(createHandleArrays());
 	}
 
@@ -380,15 +381,15 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		long[] handles;
 		// synchronized: in order to protect the map during iteration
 		synchronized (fHandleValueToHandle) {
-			Set keys = fHandleValueToHandle.keySet();
+			Set<Long> keys = fHandleValueToHandle.keySet();
 			int size = keys.size();
 			if (size == 0) {
 				return new long[0][0];
 			}
 			handles = new long[size];
 			int count = 0;
-			for (Iterator i = keys.iterator(); i.hasNext();) {
-				handles[count++] = ((Long) i.next()).longValue();
+			for (Iterator<Long> i = keys.iterator(); i.hasNext();) {
+				handles[count++] = i.next().longValue();
 			}
 		}
 		return balancedSplit(handles, Win32Natives.MAXIMUM_WAIT_OBJECTS);
@@ -400,8 +401,8 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		}
 		// synchronized: in order to protect the map during iteration
 		synchronized (fHandleValueToHandle) {
-			for (Iterator i = fHandleValueToHandle.values().iterator(); i.hasNext();) {
-				Handle handle = (Handle) i.next();
+			for (Iterator<Handle> i = fHandleValueToHandle.values().iterator(); i.hasNext();) {
+				Handle handle = i.next();
 				if (handle instanceof ResourceHandle) {
 					ResourceHandle resourceHandle = (ResourceHandle) handle;
 					if (resourceHandle.getResource().equals(resource)) {
@@ -456,7 +457,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	 *                  a handle, not <code>null</code>
 	 */
 	protected void removeHandle(Handle handle) {
-		List handles = new ArrayList(1);
+		List<Handle> handles = new ArrayList<Handle>(1);
 		handles.add(handle);
 		removeHandles(handles);
 	}
@@ -470,11 +471,11 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 	 * @param handles
 	 *                  a collection of handles, not <code>null</code>
 	 */
-	private void removeHandles(Collection handles) {
+	private void removeHandles(Collection<Handle> handles) {
 		// synchronized: protect the array, removal must be atomic
 		synchronized (this) {
-			for (Iterator i = handles.iterator(); i.hasNext();) {
-				Handle handle = (Handle) i.next();
+			for (Iterator<Handle> i = handles.iterator(); i.hasNext();) {
+				Handle handle = i.next();
 				fHandleValueToHandle.remove(new Long(handle.getHandleValue()));
 				handle.destroy();
 			}
@@ -544,7 +545,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		if (resource == null) {
 			// resource == null means stop monitoring all resources
 			synchronized (fHandleValueToHandle) {
-				removeHandles(new ArrayList(fHandleValueToHandle.values()));
+				removeHandles(new ArrayList<Handle>(fHandleValueToHandle.values()));
 			}
 		} else {
 			Handle handle = getHandle(resource);
@@ -582,7 +583,7 @@ class Win32Monitor extends Job implements IRefreshMonitor {
 		// a change occurred
 		// WaitForMultipleObjects returns WAIT_OBJECT_0 + index
 		index -= Win32Natives.WAIT_OBJECT_0;
-		Handle handle = (Handle) fHandleValueToHandle.get(new Long(handleValues[index]));
+		Handle handle = fHandleValueToHandle.get(new Long(handleValues[index]));
 		if (handle != null)
 			handle.handleNotification();
 	}

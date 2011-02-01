@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -31,7 +32,7 @@ public class MarkerManager implements IManager {
 	private static final IMarker[] NO_MARKERS = new IMarker[0];
 	protected MarkerTypeDefinitionCache cache = new MarkerTypeDefinitionCache();
 	private long changeId = 0;
-	protected Map currentDeltas = null;
+	protected Map<IPath, MarkerSet> currentDeltas = null;
 	protected final MarkerDeltaManager deltaManager = new MarkerDeltaManager();
 
 	protected Workspace workspace;
@@ -95,7 +96,7 @@ public class MarkerManager implements IManager {
 		int size = markers.size();
 		if (size <= 0)
 			return NO_MARKER_INFO;
-		List result = new ArrayList(size);
+		List<MarkerInfo> result = new ArrayList<MarkerInfo>(size);
 		IMarkerSetElement[] elements = markers.elements();
 		for (int i = 0; i < elements.length; i++) {
 			MarkerInfo marker = (MarkerInfo) elements[i];
@@ -115,7 +116,7 @@ public class MarkerManager implements IManager {
 		size = result.size();
 		if (size <= 0)
 			return NO_MARKER_INFO;
-		return (MarkerInfo[]) result.toArray(new MarkerInfo[size]);
+		return result.toArray(new MarkerInfo[size]);
 	}
 
 	protected int basicFindMaxSeverity(MarkerSet markers, String type, boolean includeSubtypes) {
@@ -199,7 +200,7 @@ public class MarkerManager implements IManager {
 	/**
 	 * Adds the markers on the given target which match the specified type to the list.
 	 */
-	protected void buildMarkers(IMarkerSetElement[] markers, IPath path, int type, ArrayList list) {
+	protected void buildMarkers(IMarkerSetElement[] markers, IPath path, int type, ArrayList<IMarker> list) {
 		if (markers.length == 0)
 			return;
 		IResource resource = workspace.newResource(path, type);
@@ -219,7 +220,7 @@ public class MarkerManager implements IManager {
 		if (currentDeltas == null)
 			currentDeltas = deltaManager.newGeneration(changeId);
 		IPath path = resource.getFullPath();
-		MarkerSet previousChanges = (MarkerSet) currentDeltas.get(path);
+		MarkerSet previousChanges = currentDeltas.get(path);
 		MarkerSet result = MarkerDelta.merge(previousChanges, changes);
 		if (result.size() == 0)
 			currentDeltas.remove(path);
@@ -258,11 +259,11 @@ public class MarkerManager implements IManager {
 	 * for all types (i.e., <code>null</code> is a wildcard.
 	 */
 	public IMarker[] findMarkers(IResource target, final String type, final boolean includeSubtypes, int depth) {
-		ArrayList result = new ArrayList();
+		ArrayList<IMarker> result = new ArrayList<IMarker>();
 		doFindMarkers(target, result, type, includeSubtypes, depth);
 		if (result.size() == 0)
 			return NO_MARKERS;
-		return (IMarker[]) result.toArray(new IMarker[result.size()]);
+		return result.toArray(new IMarker[result.size()]);
 	}
 
 	/**
@@ -271,7 +272,7 @@ public class MarkerManager implements IManager {
 	 * Passing <code>null</code> for the type specifies a match
 	 * for all types (i.e., <code>null</code> is a wildcard.
 	 */
-	public void doFindMarkers(IResource target, ArrayList result, final String type, final boolean includeSubtypes, int depth) {
+	public void doFindMarkers(IResource target, ArrayList<IMarker> result, final String type, final boolean includeSubtypes, int depth) {
 		//optimize the deep searches with an element tree visitor
 		if (depth == IResource.DEPTH_INFINITE && target.getType() != IResource.FILE)
 			visitorFindMarkers(target.getFullPath(), result, type, includeSubtypes);
@@ -297,7 +298,7 @@ public class MarkerManager implements IManager {
 	/**
 	 * Returns the map of all marker deltas since the given change Id.
 	 */
-	public Map getMarkerDeltas(long startChangeId) {
+	public Map<IPath, MarkerSet> getMarkerDeltas(long startChangeId) {
 		return deltaManager.assembleDeltas(startChangeId);
 	}
 
@@ -308,7 +309,7 @@ public class MarkerManager implements IManager {
 	boolean hasDelta(IPath path, long id) {
 		if (currentDeltas == null)
 			return false;
-		MarkerSet set = (MarkerSet) currentDeltas.get(path);
+		MarkerSet set = currentDeltas.get(path);
 		if (set == null)
 			return false;
 		return set.get(id) != null;
@@ -378,7 +379,7 @@ public class MarkerManager implements IManager {
 	/**
 	 * Adds the markers for a subtree of resources to the list.
 	 */
-	private void recursiveFindMarkers(IPath path, ArrayList list, String type, boolean includeSubtypes, int depth) {
+	private void recursiveFindMarkers(IPath path, ArrayList<IMarker> list, String type, boolean includeSubtypes, int depth) {
 		ResourceInfo info = workspace.getResourceInfo(path, false, false);
 		if (info == null)
 			return;
@@ -566,7 +567,7 @@ public class MarkerManager implements IManager {
 		}
 	}
 
-	public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List list) throws IOException {
+	public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List<String> list) throws IOException {
 		writer.save(info, requestor, output, list);
 	}
 
@@ -591,7 +592,7 @@ public class MarkerManager implements IManager {
 	/**
 	 * Adds the markers for a subtree of resources to the list.
 	 */
-	private void visitorFindMarkers(IPath path, final ArrayList list, final String type, final boolean includeSubtypes) {
+	private void visitorFindMarkers(IPath path, final ArrayList<IMarker> list, final String type, final boolean includeSubtypes) {
 		IElementContentVisitor visitor = new IElementContentVisitor() {
 			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
 				ResourceInfo info = (ResourceInfo) elementContents;

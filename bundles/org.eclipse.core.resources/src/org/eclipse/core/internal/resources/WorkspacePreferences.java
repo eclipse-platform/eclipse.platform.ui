@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -54,10 +55,10 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	 * stringN" to a string array {"string1","string2",..."stringN"}.
 	 */
 	public static String[] convertStringToStringArray(String string, String separator) {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		for (StringTokenizer tokenizer = new StringTokenizer(string, separator); tokenizer.hasMoreTokens();)
 			list.add(tokenizer.nextToken());
-		return (String[]) list.toArray(new String[list.size()]);
+		return list.toArray(new String[list.size()]);
 	}
 
 	/**

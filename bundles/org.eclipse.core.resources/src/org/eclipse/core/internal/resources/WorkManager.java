@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -56,7 +57,7 @@ public class WorkManager implements IManager {
 	 * Indicates that the last checkIn failed, either due to cancelation or due to the
 	 * workspace tree being locked for modifications (during resource change events).
 	 */
-	private final ThreadLocal checkInFailed = new ThreadLocal();
+	private final ThreadLocal<Boolean> checkInFailed = new ThreadLocal<Boolean>();
 	/**
 	 * Indicates whether any operations have run that may require a build. 
 	 */

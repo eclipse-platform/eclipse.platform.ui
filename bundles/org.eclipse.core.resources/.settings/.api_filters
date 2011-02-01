@@ -1,12 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.resources" version="2">
-    <resource path="src/org/eclipse/core/resources/mapping/IResourceChangeDescriptionFactory.java" type="org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/core/resources/mapping/ModelProvider.java" type="org.eclipse.core.resources.mapping.ModelProvider">
         <filter id="338944126">
             <message_arguments>

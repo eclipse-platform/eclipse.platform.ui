@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,14 +32,14 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 		/**
 		 * Fetch the scheduling rule for the build
 		 */
-		public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map args) {
+		public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
 			return ResourcesPlugin.getWorkspace().getRoot();
 		}
 
 		/**
 		 * Build call-back
 		 */
-		public IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+		public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 			return new IProject[0];
 		}
 	}
@@ -63,15 +63,15 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	/**
 	 * The arguments for one run of the builder.
 	 */
-	protected Map arguments;
+	protected Map<String, String> arguments;
 	private IConfigurationElement config = null;
 	private String name = null;
 	private Object data = null;
 	/**
 	 * These are static because we want one event set for all builder instances.
 	 */
-	private static final ArrayList expectedEvents = new ArrayList();
-	private static final ArrayList actualEvents = new ArrayList();
+	private static final ArrayList<String> expectedEvents = new ArrayList<String>();
+	private static final ArrayList<String> actualEvents = new ArrayList<String>();
 
 	/**
 	 * Logs the given plug-in lifecycle event for this builder's plugin.
@@ -96,8 +96,8 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * 
 	 * @see InternalBuilder#build(IResourceDelta,int,IProgressMonitor)
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
-		arguments = args == null ? new HashMap(1) : args;
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
+		arguments = args == null ? new HashMap<String, String>(1) : args;
 		logPluginLifecycleEvent(getBuildId());
 		if (ruleCallBack == null)
 			return new IProject[0];
@@ -108,7 +108,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * Allow overriding the default scheduling rule
 	 * @see IncrementalProjectBuilder#getRule(int, Map)
 	 */
-	public ISchedulingRule getRule(int trigger, Map args) {
+	public ISchedulingRule getRule(int trigger, Map<String, String> args) {
 		if (ruleCallBack == null)
 			return super.getRule(trigger, args);
 		return ruleCallBack.getRule(name, this, trigger, args);
@@ -125,7 +125,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * Returns an ID that identifies the current build.
 	 */
 	private String getBuildId() {
-		String buildId = (String) arguments.get(BUILD_ID);
+		String buildId = arguments.get(BUILD_ID);
 		if (buildId == null)
 			buildId = DEFAULT_BUILD_ID;
 		return buildId;

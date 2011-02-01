@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A simple XML writer.
@@ -47,21 +48,21 @@ public class XMLWriter extends PrintWriter {
 			super.print('\t');
 	}
 
-	public void printTag(String name, HashMap parameters) {
+	public void printTag(String name, HashMap<String, Object> parameters) {
 		printTag(name, parameters, true, true);
 	}
 
-	public void printTag(String name, HashMap parameters, boolean shouldTab, boolean newLine) {
+	public void printTag(String name, HashMap<String, Object> parameters, boolean shouldTab, boolean newLine) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<"); //$NON-NLS-1$
 		sb.append(name);
 		if (parameters != null)
-			for (Iterator it = parameters.keySet().iterator(); it.hasNext();) {
+			for (Map.Entry<String, Object> entry : parameters.entrySet()) {
 				sb.append(" "); //$NON-NLS-1$
-				String key = (String) it.next();
+				String key = entry.getKey();
 				sb.append(key);
 				sb.append("=\""); //$NON-NLS-1$
-				sb.append(getEscaped(String.valueOf(parameters.get(key))));
+				sb.append(getEscaped(String.valueOf(entry.getValue())));
 				sb.append("\""); //$NON-NLS-1$
 			}
 		sb.append(">"); //$NON-NLS-1$
@@ -73,11 +74,11 @@ public class XMLWriter extends PrintWriter {
 			print(sb.toString());
 	}
 
-	public void startTag(String name, HashMap parameters) {
+	public void startTag(String name, HashMap<String, Object> parameters) {
 		startTag(name, parameters, true);
 	}
 
-	public void startTag(String name, HashMap parameters, boolean newLine) {
+	public void startTag(String name, HashMap<String, Object> parameters, boolean newLine) {
 		printTag(name, parameters, true, newLine);
 		tab++;
 	}

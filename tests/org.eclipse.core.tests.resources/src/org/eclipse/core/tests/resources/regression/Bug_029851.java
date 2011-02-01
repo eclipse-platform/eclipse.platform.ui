@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2008 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -40,8 +40,8 @@ public class Bug_029851 extends ResourceTest {
 		super(name);
 	}
 
-	private Collection createChildren(int breadth, int depth, IPath prefix) {
-		ArrayList result = new ArrayList();
+	private Collection<String> createChildren(int breadth, int depth, IPath prefix) {
+		ArrayList<String> result = new ArrayList<String>();
 		for (int i = 0; i < breadth; i++) {
 			IPath child = prefix.append(Integer.toString(i)).addTrailingSeparator();
 			result.add(child.toString());
@@ -55,9 +55,9 @@ public class Bug_029851 extends ResourceTest {
 		int depth = 3;
 		int breadth = 3;
 		IPath prefix = new Path("/a/");
-		Collection result = createChildren(breadth, depth, prefix);
+		Collection<String> result = createChildren(breadth, depth, prefix);
 		result.add(prefix.toString());
-		return (String[]) result.toArray(new String[0]);
+		return result.toArray(new String[0]);
 	}
 
 	public void test() {

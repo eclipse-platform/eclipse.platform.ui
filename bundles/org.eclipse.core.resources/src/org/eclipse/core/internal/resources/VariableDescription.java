@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -15,7 +16,7 @@ import org.eclipse.core.runtime.*;
 /**
  * 
  */
-public class VariableDescription implements Comparable {
+public class VariableDescription implements Comparable<VariableDescription> {
 
 	private String name;
 	private String value;
@@ -64,8 +65,7 @@ public class VariableDescription implements Comparable {
 	 * Compare string descriptions in a way that sorts them topologically by
 	 * name.
 	 */
-	public int compareTo(Object o) {
-		VariableDescription that = (VariableDescription) o;
+	public int compareTo(VariableDescription that) {
 		return name.compareTo(that.name);
 	}
 }

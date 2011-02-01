@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -20,7 +21,7 @@ import org.eclipse.core.runtime.*;
  * Object for describing the characteristics of linked resources that are stored
  * in the project description.
  */
-public class LinkDescription implements Comparable {
+public class LinkDescription implements Comparable<LinkDescription> {
 	public static final URI VIRTUAL_LOCATION = getVirtualLocation();
 	private static URI getVirtualLocation() {
 		try {
@@ -104,8 +105,7 @@ public class LinkDescription implements Comparable {
 	 * This is important to ensure we process links in topological (breadth-first) order when reconciling
 	 * links.  See {@link Project#reconcileLinksAndGroups(ProjectDescription)}.
 	 */
-	public int compareTo(Object o) {
-		LinkDescription that = (LinkDescription) o;
+	public int compareTo(LinkDescription that) {
 		IPath path1 = this.getProjectRelativePath();
 		IPath path2 = that.getProjectRelativePath();
 		int count1 = path1.segmentCount();

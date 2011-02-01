@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -25,13 +26,13 @@ import org.eclipse.osgi.util.NLS;
  */
 public class NatureManager implements ILifecycleListener, IManager {
 	//maps String (nature ID) -> descriptor objects
-	private Map descriptors;
+	private Map<String, IProjectNatureDescriptor> descriptors;
 
 	//maps IProject -> String[] of enabled natures for that project
-	private final Map natureEnablements = new HashMap(20);
+	private final Map<Project, String[]> natureEnablements = new HashMap<Project, String[]>(20);
 
 	//maps String (builder ID) -> String (nature ID)
-	private Map buildersToNatures;
+	private Map<String, String> buildersToNatures;
 	//colour constants used in cycle detection algorithm
 	private static final byte WHITE = 0;
 	private static final byte GREY = 1;
@@ -56,9 +57,9 @@ public class NatureManager implements ILifecycleListener, IManager {
 			return natureIds;
 
 		//set of the nature ids being validated (String (id))
-		HashSet candidates = new HashSet(count * 2);
+		HashSet<String> candidates = new HashSet<String>(count * 2);
 		//table of String(set ID) -> ArrayList (nature IDs that belong to that set)
-		HashMap setsToNatures = new HashMap(count);
+		HashMap<String, ArrayList<String>> setsToNatures = new HashMap<String, ArrayList<String>>(count);
 		for (int i = 0; i < count; i++) {
 			String id = natureIds[i];
 			ProjectNatureDescriptor desc = (ProjectNatureDescriptor) getNatureDescriptor(id);
@@ -70,17 +71,17 @@ public class NatureManager implements ILifecycleListener, IManager {
 			String[] setIds = desc.getNatureSetIds();
 			for (int j = 0; j < setIds.length; j++) {
 				String set = setIds[j];
-				ArrayList current = (ArrayList) setsToNatures.get(set);
+				ArrayList<String> current = setsToNatures.get(set);
 				if (current == null) {
-					current = new ArrayList(5);
+					current = new ArrayList<String>(5);
 					setsToNatures.put(set, current);
 				}
 				current.add(id);
 			}
 		}
 		//now remove all natures that belong to sets with more than one member
-		for (Iterator it = setsToNatures.values().iterator(); it.hasNext();) {
-			ArrayList setMembers = (ArrayList) it.next();
+		for (Iterator<ArrayList<String>> it = setsToNatures.values().iterator(); it.hasNext();) {
+			ArrayList<String> setMembers = it.next();
 			if (setMembers.size() > 1) {
 				candidates.removeAll(setMembers);
 			}
@@ -88,7 +89,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 		//now walk over the set and ensure all pre-requisite natures are present
 		//need to walk in prereq order because if A requires B and B requires C, and C is
 		//disabled for some other reason, we must ensure both A and B are disabled
-		String[] orderedCandidates = (String[]) candidates.toArray(new String[candidates.size()]);
+		String[] orderedCandidates = candidates.toArray(new String[candidates.size()]);
 		orderedCandidates = sortNatureSet(orderedCandidates);
 		for (int i = 0; i < orderedCandidates.length; i++) {
 			String id = orderedCandidates[i];
@@ -102,7 +103,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 			}
 		}
 		//remaining candidates are enabled
-		return (String[]) candidates.toArray(new String[candidates.size()]);
+		return candidates.toArray(new String[candidates.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -110,7 +111,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 */
 	public synchronized IProjectNatureDescriptor getNatureDescriptor(String natureId) {
 		lazyInitialize();
-		return (IProjectNatureDescriptor) descriptors.get(natureId);
+		return descriptors.get(natureId);
 	}
 
 	/* (non-Javadoc)
@@ -118,8 +119,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 */
 	public synchronized IProjectNatureDescriptor[] getNatureDescriptors() {
 		lazyInitialize();
-		Collection values = descriptors.values();
-		return (IProjectNatureDescriptor[]) values.toArray(new IProjectNatureDescriptor[values.size()]);
+		Collection<IProjectNatureDescriptor> values = descriptors.values();
+		return values.toArray(new IProjectNatureDescriptor[values.size()]);
 	}
 
 	public void handleEvent(LifecycleEvent event) {
@@ -164,15 +165,16 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * new description are removed.  Updates the old description so that it reflects
 	 * the new set of the natures.  Errors are added to the given multi-status.
 	 */
+	@SuppressWarnings("unchecked")
 	public void configureNatures(Project project, ProjectDescription oldDescription, ProjectDescription newDescription, MultiStatus status) {
 		// Be careful not to rely on much state because (de)configuring a nature
 		// may well result in recursive calls to this method.
-		HashSet oldNatures = new HashSet(Arrays.asList(oldDescription.getNatureIds(false)));
-		HashSet newNatures = new HashSet(Arrays.asList(newDescription.getNatureIds(false)));
+		HashSet<String> oldNatures = new HashSet<String>(Arrays.asList(oldDescription.getNatureIds(false)));
+		HashSet<String> newNatures = new HashSet<String>(Arrays.asList(newDescription.getNatureIds(false)));
 		if (oldNatures.equals(newNatures))
 			return;
-		HashSet deletions = (HashSet) oldNatures.clone();
-		HashSet additions = (HashSet) newNatures.clone();
+		HashSet<String> deletions = (HashSet<String>) oldNatures.clone();
+		HashSet<String> additions = (HashSet<String>) newNatures.clone();
 		additions.removeAll(oldNatures);
 		deletions.removeAll(newNatures);
 		//do validation of the changes.  If any single change is invalid, fail the whole operation
@@ -193,12 +195,12 @@ public class NatureManager implements ILifecycleListener, IManager {
 		//(de)configure in topological order to maintain consistency of configured set
 		String[] ordered = null;
 		if (deletions.size() > 0) {
-			ordered = sortNatureSet((String[]) deletions.toArray(new String[deletions.size()]));
+			ordered = sortNatureSet(deletions.toArray(new String[deletions.size()]));
 			for (int i = ordered.length; --i >= 0;)
 				deconfigureNature(project, ordered[i], status);
 		}
 		if (additions.size() > 0) {
-			ordered = sortNatureSet((String[]) additions.toArray(new String[additions.size()]));
+			ordered = sortNatureSet(additions.toArray(new String[additions.size()]));
 			for (int i = 0; i < ordered.length; i++)
 				configureNature(project, ordered[i], status);
 		}
@@ -276,8 +278,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * Marks all nature descriptors that are involved in cycles
 	 */
 	private void detectCycles() {
-		Collection values = descriptors.values();
-		ProjectNatureDescriptor[] natures = (ProjectNatureDescriptor[]) values.toArray(new ProjectNatureDescriptor[values.size()]);
+		Collection<IProjectNatureDescriptor> values = descriptors.values();
+		ProjectNatureDescriptor[] natures = values.toArray(new ProjectNatureDescriptor[values.size()]);
 		for (int i = 0; i < natures.length; i++)
 			if (natures[i].colour == WHITE)
 				hasCycles(natures[i]);
@@ -296,7 +298,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 */
 	public synchronized String findNatureForBuilder(String builderID) {
 		if (buildersToNatures == null) {
-			buildersToNatures = new HashMap(10);
+			buildersToNatures = new HashMap<String, String>(10);
 			IProjectNatureDescriptor[] descs = getNatureDescriptors();
 			for (int i = 0; i < descs.length; i++) {
 				String natureId = descs[i].getNatureId();
@@ -307,7 +309,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 				}
 			}
 		}
-		return (String) buildersToNatures.get(builderID);
+		return buildersToNatures.get(builderID);
 	}
 
 	private synchronized void flushEnablements(IProject project) {
@@ -319,7 +321,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * or null if there is nothing in the cache.
 	 */
 	protected synchronized String[] getEnabledNatures(Project project) {
-		String[] enabled = (String[]) natureEnablements.get(project);
+		String[] enabled = natureEnablements.get(project);
 		if (enabled != null)
 			return enabled;
 		enabled = computeNatureEnablements(project);
@@ -403,7 +405,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	/**
 	 * Perform depth-first insertion of the given nature ID into the result list.
 	 */
-	protected void insert(ArrayList list, Set seen, String id) {
+	protected void insert(ArrayList<String> list, Set<String> seen, String id) {
 		if (seen.contains(id))
 			return;
 		seen.add(id);
@@ -440,7 +442,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 			return;
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_NATURES);
 		IExtension[] extensions = point.getExtensions();
-		descriptors = new HashMap(extensions.length * 2 + 1);
+		descriptors = new HashMap<String, IProjectNatureDescriptor>(extensions.length * 2 + 1);
 		for (int i = 0, imax = extensions.length; i < imax; i++) {
 			IProjectNatureDescriptor desc = null;
 			try {
@@ -467,19 +469,19 @@ public class NatureManager implements ILifecycleListener, IManager {
 		int count = natureIds.length;
 		if (count == 0)
 			return natureIds;
-		ArrayList result = new ArrayList(count);
-		HashSet seen = new HashSet(count);//for cycle and duplicate detection
+		ArrayList<String> result = new ArrayList<String>(count);
+		HashSet<String> seen = new HashSet<String>(count);//for cycle and duplicate detection
 		for (int i = 0; i < count; i++)
 			insert(result, seen, natureIds[i]);
 		//remove added prerequisites that didn't exist in original list
 		seen.clear();
 		seen.addAll(Arrays.asList(natureIds));
-		for (Iterator it = result.iterator(); it.hasNext();) {
+		for (Iterator<String> it = result.iterator(); it.hasNext();) {
 			Object id = it.next();
 			if (!seen.contains(id))
 				it.remove();
 		}
-		return (String[]) result.toArray(new String[result.size()]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	public void startup(IProgressMonitor monitor) {
@@ -496,11 +498,11 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * @return An OK status if all additions are valid, and an error status 
 	 * 	if any of the additions introduce new inconsistencies.
 	 */
-	protected IStatus validateAdditions(HashSet newNatures, HashSet additions, IProject project) {
+	protected IStatus validateAdditions(HashSet<String> newNatures, HashSet<String> additions, IProject project) {
 		Boolean hasLinks = null;//three states: true, false, null (not yet computed)
 		//perform checks in order from least expensive to most expensive
-		for (Iterator added = additions.iterator(); added.hasNext();) {
-			String id = (String) added.next();
+		for (Iterator<String> added = additions.iterator(); added.hasNext();) {
+			String id = added.next();
 			// check for adding a nature that is not available. 
 			IProjectNatureDescriptor desc = getNatureDescriptor(id);
 			if (desc == null) {
@@ -518,8 +520,8 @@ public class NatureManager implements ILifecycleListener, IManager {
 				}
 			}
 			// check for adding a nature that creates a duplicated set member.
-			for (Iterator all = newNatures.iterator(); all.hasNext();) {
-				String current = (String) all.next();
+			for (Iterator<String> all = newNatures.iterator(); all.hasNext();) {
+				String current = all.next();
 				if (!current.equals(id)) {
 					String overlap = hasSetOverlap(desc, getNatureDescriptor(current));
 					if (overlap != null) {
@@ -568,10 +570,10 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * @return An OK status if all removals are valid, and a not OK status 
 	 * 	if any of the deletions introduce new inconsistencies.
 	 */
-	protected IStatus validateRemovals(HashSet newNatures, HashSet deletions) {
+	protected IStatus validateRemovals(HashSet<String> newNatures, HashSet<String> deletions) {
 		//iterate over new nature set, and ensure that none of their prerequisites are being deleted
-		for (Iterator it = newNatures.iterator(); it.hasNext();) {
-			String currentID = (String) it.next();
+		for (Iterator<String> it = newNatures.iterator(); it.hasNext();) {
+			String currentID = it.next();
 			IProjectNatureDescriptor desc = getNatureDescriptor(currentID);
 			if (desc != null) {
 				String[] required = desc.getRequiredNatureIds();
@@ -596,9 +598,9 @@ public class NatureManager implements ILifecycleListener, IManager {
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_NATURE_SET, msg, null);
 
 		//set of the nature ids being validated (String (id))
-		HashSet natures = new HashSet(count * 2);
+		HashSet<String> natures = new HashSet<String>(count * 2);
 		//set of nature sets for which a member nature has been found (String (id))
-		HashSet sets = new HashSet(count);
+		HashSet<String> sets = new HashSet<String>(count);
 		for (int i = 0; i < count; i++) {
 			String id = natureIds[i];
 			ProjectNatureDescriptor desc = (ProjectNatureDescriptor) getNatureDescriptor(id);

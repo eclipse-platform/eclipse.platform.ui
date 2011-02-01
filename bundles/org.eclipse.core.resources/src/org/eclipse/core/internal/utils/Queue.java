@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -16,7 +17,8 @@ import java.util.Iterator;
 /**
  * A Queue of objects.
  */
-public class Queue {
+@SuppressWarnings("unchecked")
+public class Queue<T> {
 	protected Object[] elements;
 	protected int head;
 	protected int tail;
@@ -40,7 +42,7 @@ public class Queue {
 		this.reuse = reuse;
 	}
 
-	public void add(Object element) {
+	public void add(T element) {
 		int newTail = increment(tail);
 		if (newTail == head) {
 			grow();
@@ -58,11 +60,12 @@ public class Queue {
 		return (index == 0) ? (elements.length - 1) : index - 1;
 	}
 
-	public Object elementAt(int index) {
-		return elements[index];
+	public T elementAt(int index) {
+		return (T)elements[index];
 	}
 
-	public Iterator iterator() {
+	@SuppressWarnings("rawtypes")
+	public Iterator<T> iterator() {
 		/**/
 		if (isEmpty())
 			return Collections.EMPTY_LIST.iterator();
@@ -85,11 +88,11 @@ public class Queue {
 	 * been processed and removed from the queue.  Returns null if there
 	 * are no available objects.
 	 */
-	public Object getNextAvailableObject() {
+	public T getNextAvailableObject() {
 		int index = tail;
 		while (index != head) {
 			if (elements[index] != null) {
-				Object result = elements[index];
+				T result = (T)elements[index];
 				elements[index] = null;
 				return result;
 			}
@@ -120,7 +123,7 @@ public class Queue {
 		return (index == (elements.length - 1)) ? 0 : index + 1;
 	}
 
-	public int indexOf(Object target) {
+	public int indexOf(T target) {
 		if (tail >= head) {
 			for (int i = head; i < tail; i++)
 				if (target.equals(elements[i]))
@@ -140,26 +143,26 @@ public class Queue {
 		return tail == head;
 	}
 
-	public Object peek() {
-		return elements[head];
+	public T peek() {
+		return (T)elements[head];
 	}
 
-	public Object peekTail() {
-		return elements[decrement(tail)];
+	public T peekTail() {
+		return (T)elements[decrement(tail)];
 	}
 
-	public Object remove() {
+	public T remove() {
 		if (isEmpty())
 			return null;
-		Object result = peek();
+		T result = peek();
 		if (!reuse)
 			elements[head] = null;
 		head = increment(head);
 		return result;
 	}
 
-	public Object removeTail() {
-		Object result = peekTail();
+	public T removeTail() {
+		T result = peekTail();
 		tail = decrement(tail);
 		if (!reuse)
 			elements[tail] = null;
@@ -179,7 +182,7 @@ public class Queue {
 		sb.append('[');
 		int count = 0;
 		if (!isEmpty()) {
-			Iterator it = iterator();
+			Iterator<T> it = iterator();
 			//only print a fixed number of elements to prevent debugger from choking
 			while (count < 100) {
 				sb.append(it.next());

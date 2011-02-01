@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.resources.mapping;
 
@@ -80,12 +81,12 @@ public final class CompositeResourceMapping extends ResourceMapping {
 	 */
 	public IProject[] getProjects() {
 		if (projects == null) {
-			Set result = new HashSet();
+			Set<IProject> result = new HashSet<IProject>();
 			for (int i = 0; i < mappings.length; i++) {
 				ResourceMapping mapping = mappings[i];
 				result.addAll(Arrays.asList(mapping.getProjects()));
 			}
-			projects = (IProject[]) result.toArray(new IProject[result.size()]);
+			projects = result.toArray(new IProject[result.size()]);
 		}
 		return projects;
 	}
@@ -98,12 +99,12 @@ public final class CompositeResourceMapping extends ResourceMapping {
 			monitor = new NullProgressMonitor();
 		try {
 			monitor.beginTask("", 100 * mappings.length); //$NON-NLS-1$
-			List result = new ArrayList();
+			List<ResourceTraversal> result = new ArrayList<ResourceTraversal>();
 			for (int i = 0; i < mappings.length; i++) {
 				ResourceMapping mapping = mappings[i];
 				result.addAll(Arrays.asList(mapping.getTraversals(context, new SubProgressMonitor(monitor, 100))));
 			}
-			return (ResourceTraversal[]) result.toArray(new ResourceTraversal[result.size()]);
+			return result.toArray(new ResourceTraversal[result.size()]);
 		} finally {
 			monitor.done();
 		}

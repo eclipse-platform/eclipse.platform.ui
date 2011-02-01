@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,8 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class Bug_265810 extends ResourceTest {
 
 	protected final static String VARIABLE_NAME = "ROOT";
-	private final ArrayList toDelete = new ArrayList();
-	private List resourceDeltas = new ArrayList();
+	private final ArrayList<IPath> toDelete = new ArrayList<IPath>();
+	private List<IResourceDelta> resourceDeltas = new ArrayList<IResourceDelta>();
 
 	/**
 	 * Constructor for Bug_265810.
@@ -53,7 +53,7 @@ public class Bug_265810 extends ResourceTest {
 	}
 
 	protected void tearDown() throws Exception {
-		IPath[] paths = (IPath[]) toDelete.toArray(new IPath[0]);
+		IPath[] paths = toDelete.toArray(new IPath[0]);
 		toDelete.clear();
 		for (int i = 0; i < paths.length; i++)
 			Workspace.clear(paths[i].toFile());
@@ -113,15 +113,15 @@ public class Bug_265810 extends ResourceTest {
 		byte[] dotProject2 = storeDotProject(project);
 
 		try {
-			resourceDeltas = new ArrayList();
+			resourceDeltas = new ArrayList<IResourceDelta>();
 			getWorkspace().addResourceChangeListener(ll);
 
 			// restore .project [1]
 			restoreDotProject(project, dotProject1);
 
 			assertEquals("9.0", 1, resourceDeltas.size());
-			assertEquals("9.1", newFile, ((IResourceDelta) resourceDeltas.get(0)).getResource());
-			assertEquals("9.2", IResourceDelta.REMOVED, ((IResourceDelta) resourceDeltas.get(0)).getKind());
+			assertEquals("9.1", newFile, resourceDeltas.get(0).getResource());
+			assertEquals("9.2", IResourceDelta.REMOVED, resourceDeltas.get(0).getKind());
 		} finally {
 			getWorkspace().removeResourceChangeListener(ll);
 		}
@@ -134,15 +134,15 @@ public class Bug_265810 extends ResourceTest {
 		}
 
 		try {
-			resourceDeltas = new ArrayList();
+			resourceDeltas = new ArrayList<IResourceDelta>();
 			getWorkspace().addResourceChangeListener(ll);
 
 			// restore .project [2]
 			restoreDotProject(project, dotProject2);
 
 			assertEquals("11.0", 1, resourceDeltas.size());
-			assertEquals("11.1", newFile, ((IResourceDelta) resourceDeltas.get(0)).getResource());
-			assertEquals("11.2", IResourceDelta.REPLACED, ((IResourceDelta) resourceDeltas.get(0)).getFlags() & IResourceDelta.REPLACED);
+			assertEquals("11.1", newFile, resourceDeltas.get(0).getResource());
+			assertEquals("11.2", IResourceDelta.REPLACED, resourceDeltas.get(0).getFlags() & IResourceDelta.REPLACED);
 		} finally {
 			getWorkspace().removeResourceChangeListener(ll);
 		}

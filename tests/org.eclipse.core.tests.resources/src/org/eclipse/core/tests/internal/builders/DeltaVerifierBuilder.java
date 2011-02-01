@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
@@ -41,9 +42,9 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	 */
 	protected boolean deltaWasEmpty = false;
 	/** The empty deltas that were received */
-	protected ArrayList emptyDeltas = new ArrayList();
+	protected ArrayList<IProject> emptyDeltas = new ArrayList<IProject>();
 	/** The deltas that were actually received */
-	protected ArrayList receivedDeltas = new ArrayList();
+	protected ArrayList<IProject> receivedDeltas = new ArrayList<IProject>();
 	/** The projects to request deltas for (may be null) */
 	protected IProject[] requestedDeltas;
 	/**
@@ -123,7 +124,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	 * Like a wiley restaurant critic, this method masquerades as a builder, but
 	 * is actually verifying that the provided delta is correct.
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		super.build(kind, args, monitor);
 		triggerForLastBuild = kind;
 		doCheckDeltas();
@@ -181,7 +182,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	/**
 	 * Returns the empty deltas received during the last build.
 	 */
-	public ArrayList getEmptyDeltas() {
+	public ArrayList<IProject> getEmptyDeltas() {
 		return emptyDeltas;
 	}
 
@@ -207,7 +208,7 @@ public class DeltaVerifierBuilder extends TestBuilder {
 	 * Returns the projects for the deltas that were actually received during
 	 * the last build.
 	 */
-	public ArrayList getReceivedDeltas() {
+	public ArrayList<IProject> getReceivedDeltas() {
 		return receivedDeltas;
 	}
 

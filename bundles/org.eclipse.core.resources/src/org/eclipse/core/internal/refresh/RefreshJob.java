@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM - Initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.refresh;
 
@@ -33,7 +34,7 @@ public class RefreshJob extends WorkspaceJob {
 	 * or the end of the list depending on whether they are explicit user
 	 * requests or background refresh requests.
 	 */
-	private final List fRequests;
+	private final List<IResource> fRequests;
 
 	/**
 	 * The history of path prefixes visited during this refresh job invocation.
@@ -43,7 +44,7 @@ public class RefreshJob extends WorkspaceJob {
 
 	public RefreshJob() {
 		super(Messages.refresh_jobName);
-		fRequests = new ArrayList(1);
+		fRequests = new ArrayList<IResource>(1);
 	}
 
 	/**
@@ -53,8 +54,8 @@ public class RefreshJob extends WorkspaceJob {
 	 */
 	private synchronized void addRequest(IResource resource) {
 		IPath toAdd = resource.getFullPath();
-		for (Iterator it = fRequests.iterator(); it.hasNext();) {
-			IPath request = ((IResource) it.next()).getFullPath();
+		for (Iterator<IResource> it = fRequests.iterator(); it.hasNext();) {
+			IPath request = it.next().getFullPath();
 			//discard any existing requests the same or below the resource to be added
 			if (toAdd.isPrefixOf(request))
 				it.remove();
@@ -66,7 +67,7 @@ public class RefreshJob extends WorkspaceJob {
 		fRequests.add(resource);
 	}
 
-	private synchronized void addRequests(List list) {
+	private synchronized void addRequests(List<IResource> list) {
 		//add requests to the end of the queue
 		fRequests.addAll(0, list);
 	}
@@ -82,7 +83,7 @@ public class RefreshJob extends WorkspaceJob {
 	 * This method adds all members at the specified depth from the resource
 	 * to the provided list.
 	 */
-	private List collectChildrenToDepth(IResource resource, ArrayList children, int depth) {
+	private List<IResource> collectChildrenToDepth(IResource resource, ArrayList<IResource> children, int depth) {
 		if (resource.getType() == IResource.FILE)
 			return children;
 		IResource[] members;
@@ -129,7 +130,7 @@ public class RefreshJob extends WorkspaceJob {
 		int len = fRequests.size();
 		if (len == 0)
 			return null;
-		return (IResource) fRequests.remove(len - 1);
+		return fRequests.remove(len - 1);
 	}
 
 	/* (non-Javadoc)
@@ -182,7 +183,7 @@ public class RefreshJob extends WorkspaceJob {
 						}
 						longestRefresh = 0;
 					}
-					addRequests(collectChildrenToDepth(toRefresh, new ArrayList(), depth));
+					addRequests(collectChildrenToDepth(toRefresh, new ArrayList<IResource>(), depth));
 				} catch (CoreException e) {
 					errors.merge(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, errors.getMessage(), e));
 				}

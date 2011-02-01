@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -59,7 +60,7 @@ public class MarkerReader_2 extends MarkerReader {
 	 */
 	public void read(DataInputStream input, boolean generateDeltas) throws IOException, CoreException {
 		try {
-			List readTypes = new ArrayList(5);
+			List<String> readTypes = new ArrayList<String>(5);
 			while (true) {
 				IPath path = new Path(input.readUTF());
 				int markersSize = input.readInt();
@@ -78,11 +79,11 @@ public class MarkerReader_2 extends MarkerReader {
 					// and shrinking the array.
 					Resource resource = workspace.newResource(path, info.getType());
 					IMarkerSetElement[] infos = markers.elements;
-					ArrayList deltas = new ArrayList(infos.length);
+					ArrayList<MarkerDelta> deltas = new ArrayList<MarkerDelta>(infos.length);
 					for (int i = 0; i < infos.length; i++)
 						if (infos[i] != null)
 							deltas.add(new MarkerDelta(IResourceDelta.ADDED, resource, (MarkerInfo) infos[i]));
-					workspace.getMarkerManager().changedMarkers(resource, (IMarkerSetElement[]) deltas.toArray(new IMarkerSetElement[deltas.size()]));
+					workspace.getMarkerManager().changedMarkers(resource, deltas.toArray(new IMarkerSetElement[deltas.size()]));
 				}
 			}
 		} catch (EOFException e) {
@@ -90,11 +91,11 @@ public class MarkerReader_2 extends MarkerReader {
 		}
 	}
 
-	private Map readAttributes(DataInputStream input) throws IOException {
+	private Map<String, Object> readAttributes(DataInputStream input) throws IOException {
 		int attributesSize = input.readShort();
 		if (attributesSize == 0)
 			return null;
-		Map result = new MarkerAttributeMap(attributesSize);
+		Map<String, Object> result = new MarkerAttributeMap<String, Object>(attributesSize);
 		for (int j = 0; j < attributesSize; j++) {
 			String key = input.readUTF();
 			byte type = input.readByte();
@@ -119,7 +120,7 @@ public class MarkerReader_2 extends MarkerReader {
 		return result.isEmpty() ? null : result;
 	}
 
-	private MarkerInfo readMarkerInfo(DataInputStream input, List readTypes) throws IOException, CoreException {
+	private MarkerInfo readMarkerInfo(DataInputStream input, List<String> readTypes) throws IOException, CoreException {
 		MarkerInfo info = new MarkerInfo();
 		info.setId(input.readLong());
 		byte constant = input.readByte();
@@ -130,7 +131,7 @@ public class MarkerReader_2 extends MarkerReader {
 				readTypes.add(type);
 				break;
 			case INDEX :
-				info.setType((String) readTypes.get(input.readInt()));
+				info.setType(readTypes.get(input.readInt()));
 				break;
 			default :
 				//if we get here the marker file is corrupt

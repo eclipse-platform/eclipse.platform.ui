@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -26,7 +27,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * that have been requested from this root.  This maps project
 	 * name strings to project handles.
 	 */
-	private final Map projectTable = Collections.synchronizedMap(new HashMap(16));
+	private final Map<String, Project> projectTable = Collections.synchronizedMap(new HashMap<String, Project>(16));
 	
 	/**
 	 * Cache of the canonicalized platform location.
@@ -176,14 +177,14 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 */
 	public IProject getProject(String name) {
 		//first check our project cache
-		Project result = (Project) projectTable.get(name);
+		Project result = projectTable.get(name);
 		if (result == null) {
 			IPath projectPath = new Path(null, name).makeAbsolute();
 			String message = "Path for project must have only one segment."; //$NON-NLS-1$
 			Assert.isLegal(projectPath.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH, message);
 			//try to get the project using a canonical name
 			String canonicalName = projectPath.lastSegment();
-			result = (Project) projectTable.get(canonicalName);
+			result = projectTable.get(canonicalName);
 			if (result != null)
 				return result;
 			result = new Project(projectPath, workspace);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -175,11 +176,11 @@ public abstract class Container extends Resource implements IContainer {
 		Project project = (Project) getProject();
 		ProjectDescription desc = project.internalGetDescription();
 		if (desc != null) {
-			LinkedList/*<FilterDescription>*/ list = desc.getFilter(getProjectRelativePath());
+			LinkedList<FilterDescription> list = desc.getFilter(getProjectRelativePath());
 			if (list != null) {
 				results = new IResourceFilterDescription[list.size()];
 				for (int i = 0; i < list.size(); i++) {
-					results[i] = (FilterDescription) list.get(i);
+					results[i] = list.get(i);
 				}
 				return results;
 			}
@@ -194,7 +195,7 @@ public abstract class Container extends Resource implements IContainer {
 		ProjectDescription desc = ((Project) project).internalGetDescription();
 		if (desc == null)
 			return false;
-		LinkedList/*<FilterDescription>*/ filters = desc.getFilter(getProjectRelativePath());
+		LinkedList<FilterDescription> filters = desc.getFilter(getProjectRelativePath());
 		if ((filters != null) && (filters.size() > 0))
 			return true;
 		return false;
@@ -324,7 +325,7 @@ public abstract class Container extends Resource implements IContainer {
 		IHistoryStore historyStore = getLocalManager().getHistoryStore();
 		IPath basePath = getFullPath();
 		IWorkspaceRoot root = getWorkspace().getRoot();
-		Set deletedFiles = new HashSet();
+		Set<IFile> deletedFiles = new HashSet<IFile>();
 
 		if (depth == IResource.DEPTH_ZERO) {
 			// this folder might have been a file in a past life
@@ -335,17 +336,15 @@ public abstract class Container extends Resource implements IContainer {
 				}
 			}
 		} else {
-			Set allFilePaths = historyStore.allFiles(basePath, depth, monitor);
 			// convert IPaths to IFiles keeping only files that no longer exist
-			for (Iterator it = allFilePaths.iterator(); it.hasNext();) {
-				IPath filePath = (IPath) it.next();
+			for (IPath filePath : historyStore.allFiles(basePath, depth, monitor)) {
 				IFile file = root.getFile(filePath);
 				if (!file.exists()) {
 					deletedFiles.add(file);
 				}
 			}
 		}
-		return (IFile[]) deletedFiles.toArray(new IFile[deletedFiles.size()]);
+		return deletedFiles.toArray(new IFile[deletedFiles.size()]);
 	}
 
 	/** (non-Javadoc)

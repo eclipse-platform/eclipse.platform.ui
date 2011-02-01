@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
@@ -14,8 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * A simple model provider that represents the resource model itself.
@@ -35,7 +35,7 @@ public final class ResourceModelProvider extends ModelProvider {
 	 * @see org.eclipse.core.resources.mapping.ModelProvider#getMappings(org.eclipse.core.resources.mapping.ResourceTraversal[], org.eclipse.core.resources.mapping.ResourceMappingContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public ResourceMapping[] getMappings(ResourceTraversal[] traversals, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
-		Set result = new HashSet();
+		Set<IAdaptable> result = new HashSet<IAdaptable>();
 		for (int i = 0; i < traversals.length; i++) {
 			ResourceTraversal traversal = traversals[i];
 			IResource[] resources = traversal.getResources();
@@ -62,7 +62,7 @@ public final class ResourceModelProvider extends ModelProvider {
 		}
 		ResourceMapping[] mappings = new ResourceMapping[result.size()];
 		int i = 0;
-		for (Iterator iter = result.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = result.iterator(); iter.hasNext();) {
 			Object element = iter.next();
 			if (element instanceof IResource) {
 				mappings[i++] = new SimpleResourceMapping((IResource) element);

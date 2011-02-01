@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -27,7 +28,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	//
 	protected static final long UNDEFINED_ID = -1;
 	/** The store of attributes for this marker. */
-	protected Map attributes = null;
+	protected Map<String, Object> attributes = null;
 
 	/** The creation time for this marker. */
 	protected long creationTime = 0;
@@ -107,14 +108,14 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		return attributes == null ? null : attributes.get(attributeName);
 	}
 
-	public Map getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return getAttributes(true);
 	}
 
-	public Map getAttributes(boolean makeCopy) {
+	public Map<String, Object> getAttributes(boolean makeCopy) {
 		if (attributes == null)
 			return null;
-		return makeCopy ? new MarkerAttributeMap(attributes) : attributes;
+		return makeCopy ? new MarkerAttributeMap<String, Object>(attributes) : attributes;
 	}
 
 	public Object[] getAttributes(String[] attributeNames) {
@@ -136,7 +137,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		return type;
 	}
 
-	public void internalSetAttributes(Map map) {
+	public void internalSetAttributes(Map<String, Object> map) {
 		//the cast effectively acts as an assertion to make sure
 		//the right kind of map is being used
 		attributes = map;
@@ -148,7 +149,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		if (attributes == null) {
 			if (value == null)
 				return;
-			attributes = new MarkerAttributeMap();
+			attributes = new MarkerAttributeMap<String, Object>();
 			attributes.put(attributeName, value);
 		} else {
 			if (value == null) {
@@ -165,7 +166,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		if (map == null)
 			attributes = null;
 		else {
-			attributes = new MarkerAttributeMap(map.size());
+			attributes = new MarkerAttributeMap<String, Object>(map.size());
 			for (Iterator<String> i = map.keySet().iterator(); i.hasNext();) {
 				Object key = i.next();
 				Assert.isTrue(key instanceof String);
@@ -198,7 +199,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	 */
 	public void shareStrings(StringPool set) {
 		type = set.add(type);
-		Map map = attributes;
+		Map<String, Object> map = attributes;
 		if (map instanceof IStringPoolParticipant)
 			((IStringPoolParticipant) map).shareStrings(set);
 	}

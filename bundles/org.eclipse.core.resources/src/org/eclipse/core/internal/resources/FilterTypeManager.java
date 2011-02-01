@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2011 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing development
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -25,7 +26,7 @@ class FilterTypeManager implements IManager {
 
 	private static final String FILTER_ELEMENT = "filterMatcher"; //$NON-NLS-1$
 
-	private HashMap/*<String, FilterDescriptor>*/factories = new HashMap();
+	private HashMap<String, IFilterMatcherDescriptor> factories = new HashMap<String, IFilterMatcherDescriptor>();
 
 	public FilterTypeManager() {
 		IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILTER_MATCHERS);
@@ -59,11 +60,11 @@ class FilterTypeManager implements IManager {
 	}
 
 	public IFilterMatcherDescriptor getFilterDescriptor(String id) {
-		return (IFilterMatcherDescriptor) factories.get(id);
+		return factories.get(id);
 	}
 
 	public IFilterMatcherDescriptor[] getFilterDescriptors() {
-		return (IFilterMatcherDescriptor[]) factories.values().toArray(new IFilterMatcherDescriptor[0]);
+		return factories.values().toArray(new IFilterMatcherDescriptor[0]);
 	}
 
 	protected void processExtension(IExtension extension) {

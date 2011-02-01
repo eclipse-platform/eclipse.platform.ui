@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2011 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
  *     IBM Corporation - ongoing development
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -65,7 +66,7 @@ public class ProjectVariableProviderManager {
 		}
 	}
 
-	private static Map descriptors;
+	private static Map<String, Descriptor> descriptors;
 	private static ProjectVariableProviderManager instance;
 
 	public synchronized static ProjectVariableProviderManager getDefault() {
@@ -77,7 +78,7 @@ public class ProjectVariableProviderManager {
 
 	public Descriptor[] getDescriptors() {
 		lazyInitialize();
-		return (Descriptor[]) descriptors.values().toArray(new Descriptor[descriptors.size()]);
+		return descriptors.values().toArray(new Descriptor[descriptors.size()]);
 	}
 
 	protected void lazyInitialize() {
@@ -85,7 +86,7 @@ public class ProjectVariableProviderManager {
 			return;
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_VARIABLE_PROVIDERS);
 		IExtension[] extensions = point.getExtensions();
-		descriptors = new HashMap(extensions.length * 2 + 1);
+		descriptors = new HashMap<String, Descriptor>(extensions.length * 2 + 1);
 		for (int i = 0, imax = extensions.length; i < imax; i++) {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			int count = elements.length;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -90,7 +91,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		// Only need to check for added and removed, or for changes on the workspace.
 		// For changed, the bit is set in the comparator.
 		if (path.isRoot() || kind == ADDED || kind == REMOVED) {
-			MarkerSet changes = (MarkerSet) deltaInfo.getMarkerDeltas().get(path);
+			MarkerSet changes = deltaInfo.getMarkerDeltas().get(path);
 			if (changes != null && changes.size() > 0) {
 				status |= MARKERS;
 				// If there have been marker changes, then ensure kind is CHANGED (if not ADDED or REMOVED).
@@ -271,12 +272,12 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	 * @see IResourceDelta#getMarkerDeltas()
 	 */
 	public IMarkerDelta[] getMarkerDeltas() {
-		Map markerDeltas = deltaInfo.getMarkerDeltas();
+		Map<IPath, MarkerSet> markerDeltas = deltaInfo.getMarkerDeltas();
 		if (markerDeltas == null)
 			return EMPTY_MARKER_DELTAS;
 		if (path == null)
 			path = Path.ROOT;
-		MarkerSet changes = (MarkerSet) markerDeltas.get(path);
+		MarkerSet changes = markerDeltas.get(path);
 		if (changes == null)
 			return EMPTY_MARKER_DELTAS;
 		IMarkerSetElement[] elements = changes.elements();
@@ -426,7 +427,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	 * when the delta is reused in cases where the only changes 
 	 * are marker changes.
 	 */
-	public void updateMarkers(Map markers) {
+	public void updateMarkers(Map<IPath, MarkerSet> markers) {
 		deltaInfo.setMarkerDeltas(markers);
 	}
 
@@ -544,14 +545,14 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	}
 
 	public void writeMarkerDebugString(StringBuffer buffer) {
-		Map markerDeltas = deltaInfo.getMarkerDeltas();
+		Map<IPath, MarkerSet> markerDeltas = deltaInfo.getMarkerDeltas();
 		if (markerDeltas == null || markerDeltas.isEmpty())
 			return;
 		buffer.append('[');
-		for (Iterator e = markerDeltas.keySet().iterator(); e.hasNext();) {
-			IPath key = (IPath) e.next();
+		for (Iterator<IPath> e = markerDeltas.keySet().iterator(); e.hasNext();) {
+			IPath key = e.next();
 			if (getResource().getFullPath().equals(key)) {
-				IMarkerSetElement[] deltas = ((MarkerSet) markerDeltas.get(key)).elements();
+				IMarkerSetElement[] deltas = markerDeltas.get(key).elements();
 				boolean addComma = false;
 				for (int i = 0; i < deltas.length; i++) {
 					IMarkerDelta delta = (IMarkerDelta) deltas[i];

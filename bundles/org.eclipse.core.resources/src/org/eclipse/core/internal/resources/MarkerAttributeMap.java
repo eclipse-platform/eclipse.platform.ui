@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -21,7 +22,8 @@ import org.eclipse.core.internal.utils.StringPool;
  * 
  * Implemented as a single array that alternates keys and values.
  */
-public class MarkerAttributeMap implements Map, IStringPoolParticipant {
+@SuppressWarnings("unchecked")
+public class MarkerAttributeMap<K extends String, V> implements Map<K, V>, IStringPoolParticipant {
 	protected Object[] elements = null;
 	protected int count = 0;
 
@@ -50,7 +52,7 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * Creates a new marker attribute map of default size
 	 * @param map The entries in the given map will be added to the new map.
 	 */
-	public MarkerAttributeMap(Map map) {
+	public MarkerAttributeMap(Map<? extends K, ? extends V> map) {
 		this(map.size());
 		putAll(map);
 	}
@@ -94,7 +96,7 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
-	public Set entrySet() {
+	public Set<Entry<K, V>> entrySet() {
 		return toHashMap().entrySet();
 	}
 
@@ -104,7 +106,7 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	public boolean equals(Object o) {
 		if (!(o instanceof Map))
 			return false;
-		Map other = (Map) o;
+		Map<K, V> other = (Map<K, V>) o;
 		//must be same size
 		if (count != other.size())
 			return false;
@@ -127,13 +129,13 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	/* (non-Javadoc)
 	 * @see Map#get(java.lang.Object)
 	 */
-	public Object get(Object key) {
+	public V get(Object key) {
 		if (count == 0)
 			return null;
-		key = ((String) key).intern();
+		key = ((String)key).intern();
 		for (int i = 0; i < elements.length; i = i + 2)
 			if (elements[i] == key)
-				return elements[i + 1];
+				return (V)elements[i + 1];
 		return null;
 	}
 
@@ -175,13 +177,13 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
-	public Set keySet() {
-		Set result = new HashSet(size());
+	public Set<K> keySet() {
+		Set<K> result = new HashSet<K>(size());
 		if (count == 0)
 			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.add(elements[i]);
+				result.add((K)elements[i]);
 			}
 		}
 		return result;
@@ -190,12 +192,12 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	/* (non-Javadoc)
 	 * @see Map#put(java.lang.Object, java.lang.Object)
 	 */
-	public Object put(Object key, Object value) {
-		if (key == null)
+	public V put(K k, V value) {
+		if (k == null)
 			throw new NullPointerException();
 		if (value == null)
-			return remove(key);
-		key = ((String) key).intern();
+			return remove(k);
+		String key = k.intern();
 
 		if (elements.length <= (count * 2))
 			grow();
@@ -213,7 +215,7 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 			if (elements[i] == key) {
 				Object oldValue = elements[i + 1];
 				elements[i + 1] = value;
-				return oldValue;
+				return (V)oldValue;
 			}
 		}
 
@@ -232,28 +234,25 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	/* (non-Javadoc)
 	 * @see Map#putAll(java.util.Map)
 	 */
-	public void putAll(Map map) {
-		for (Iterator i = map.keySet().iterator(); i.hasNext();) {
-			Object key = i.next();
-			Object value = map.get(key);
-			put(key, value);
-		}
+	public void putAll(Map<? extends K, ? extends V> map) {
+		for (Map.Entry<? extends K, ? extends V> e : map.entrySet())
+			put(e.getKey(), e.getValue());
 	}
 
 	/* (non-Javadoc)
 	 * @see Map#remove(java.lang.Object)
 	 */
-	public Object remove(Object key) {
+	public V remove(Object key) {
 		if (count == 0)
 			return null;
-		key = ((String) key).intern();
+		key = ((String)key).intern();
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] == key) {
 				elements[i] = null;
 				Object result = elements[i + 1];
 				elements[i + 1] = null;
 				count--;
-				return result;
+				return (V)result;
 			}
 		}
 		return null;
@@ -287,13 +286,13 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	/**
 	 * Creates a new hash map with the same contents as this map.
 	 */
-	private HashMap toHashMap() {
-		HashMap result = new HashMap(size());
+	private HashMap<K, V> toHashMap() {
+		HashMap<K, V> result = new HashMap<K, V>(size());
 		if (count == 0)
 			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.put(elements[i], elements[i + 1]);
+				result.put((K)elements[i], (V)elements[i + 1]);
 			}
 		}
 		return result;
@@ -305,13 +304,13 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
-	public Collection values() {
-		Set result = new HashSet(size());
+	public Collection<V> values() {
+		Set<V> result = new HashSet<V>(size());
 		if (count == 0)
 			return result;
 		for (int i = 1; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.add(elements[i]);
+				result.add((V)elements[i]);
 			}
 		}
 		return result;

@@ -28,6 +28,7 @@ import org.eclipse.osgi.util.NLS;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+@SuppressWarnings("unchecked")
 public class ProjectDescriptionReader extends DefaultHandler implements IModelObjectConstants {
 
 	//states
@@ -83,7 +84,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	protected final StringBuffer charBuffer = new StringBuffer();
 
-	protected Stack objectStack;
+	protected Stack<Object> objectStack;
 	protected MultiStatus problems;
 
 	/**
@@ -161,7 +162,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// Pop this BuildCommand off the stack.
 			BuildCommand command = (BuildCommand) objectStack.pop();
 			// Add this BuildCommand to a array list of BuildCommands.
-			ArrayList commandList = (ArrayList) objectStack.peek();
+			ArrayList<BuildCommand> commandList = (ArrayList<BuildCommand>) objectStack.peek();
 			commandList.add(command);
 			state = S_BUILD_SPEC;
 		}
@@ -174,11 +175,11 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		if (elementName.equals(BUILD_SPEC)) {
 			// Pop off the array list of BuildCommands and add them to the
 			// ProjectDescription which is the next thing on the stack.
-			ArrayList commands = (ArrayList) objectStack.pop();
+			ArrayList<ICommand> commands = (ArrayList<ICommand>) objectStack.pop();
 			state = S_PROJECT_DESC;
 			if (commands.isEmpty())
 				return;
-			ICommand[] commandArray = ((ICommand[]) commands.toArray(new ICommand[commands.size()]));
+			ICommand[] commandArray = commands.toArray(new ICommand[commands.size()]);
 			projectDescription.setBuildSpec(commandArray);
 		}
 	}
@@ -227,7 +228,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// pairs if they exist.
 			String value = (String) objectStack.pop();
 			String key = (String) objectStack.pop();
-			((HashMap) objectStack.peek()).put(key, value);
+			((HashMap<String, String>) objectStack.peek()).put(key, value);
 			state = S_BUILD_COMMAND_ARGUMENTS;
 		}
 	}
@@ -295,7 +296,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				if (elementName.equals(ARGUMENTS)) {
 					// There is a hashmap on the top of the stack with the
 					// arguments (if any).
-					HashMap dictionaryArgs = (HashMap) objectStack.pop();
+					HashMap<String, String> dictionaryArgs = (HashMap<String, String>) objectStack.pop();
 					state = S_BUILD_COMMAND;
 					if (dictionaryArgs.isEmpty())
 						break;
@@ -345,7 +346,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					// Referenced projects are just project names and, therefore,
 					// are also IResource names and cannot have leading/trailing 
 					// whitespace.
-					((ArrayList) objectStack.peek()).add(charBuffer.toString().trim());
+					((ArrayList<String>) objectStack.peek()).add(charBuffer.toString().trim());
 					state = S_PROJECTS;
 				}
 				break;
@@ -369,7 +370,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					//top of stack is list of nature names
 					// A nature name is an extension id and cannot
 					// have leading/trailing whitespace.
-					((ArrayList) objectStack.peek()).add(charBuffer.toString().trim());
+					((ArrayList<String>) objectStack.peek()).add(charBuffer.toString().trim());
 					state = S_NATURES;
 				}
 				break;
@@ -421,7 +422,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 */
 	private void endLinkedResourcesElement(String elementName) {
 		if (elementName.equals(LINKED_RESOURCES)) {
-			HashMap linkedResources = (HashMap) objectStack.pop();
+			HashMap<IPath, LinkDescription> linkedResources = (HashMap<IPath, LinkDescription>) objectStack.pop();
 			state = S_PROJECT_DESC;
 			if (linkedResources.isEmpty())
 				return;
@@ -434,7 +435,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 */
 	private void endFilteredResourcesElement(String elementName) {
 		if (elementName.equals(FILTERED_RESOURCES)) {
-			HashMap filteredResources = (HashMap) objectStack.pop();
+			HashMap<IPath, LinkedList<FilterDescription>> filteredResources = (HashMap<IPath, LinkedList<FilterDescription>>) objectStack.pop();
 			state = S_PROJECT_DESC;
 			if (filteredResources.isEmpty())
 				return;
@@ -448,7 +449,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 */
 	private void endVariableListElement(String elementName) {
 		if (elementName.equals(VARIABLE_LIST)) {
-			HashMap variableList = (HashMap) objectStack.pop();
+			HashMap<String, VariableDescription> variableList = (HashMap<String, VariableDescription>) objectStack.pop();
 			state = S_PROJECT_DESC;
 			if (variableList.isEmpty())
 				return;
@@ -482,7 +483,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			}
 
 			// The HashMap of linked resources is the next thing on the stack
-			((HashMap) objectStack.peek()).put(link.getProjectRelativePath(), link);
+			((HashMap<IPath, LinkDescription>) objectStack.peek()).put(link.getProjectRelativePath(), link);
 		}
 	}
 	
@@ -501,7 +502,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			if (objectStack.peek() instanceof ArrayList) {
 				state = S_MATCHER_ARGUMENTS;
 				// The ArrayList of matchers is the next thing on the stack
-				ArrayList list = ((ArrayList) objectStack.peek());
+				ArrayList<FileInfoMatcherDescription> list = ((ArrayList<FileInfoMatcherDescription>) objectStack.peek());
 				list.add(new FileInfoMatcherDescription((String) matcher[0], matcher[1]));
 			}
 
@@ -535,10 +536,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				}
 
 				// The HashMap of filtered resources is the next thing on the stack
-				HashMap map = ((HashMap) objectStack.peek());
-				LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(filter.getResource().getProjectRelativePath());
+				HashMap<IPath, LinkedList<FilterDescription>> map = ((HashMap<IPath, LinkedList<FilterDescription>>) objectStack.peek());
+				LinkedList<FilterDescription>list = map.get(filter.getResource().getProjectRelativePath());
 				if (list == null) {
-					list = new LinkedList/*FilterDescription*/();
+					list = new LinkedList<FilterDescription>();
 					map.put(filter.getResource().getProjectRelativePath(), list);
 				}
 				list.add(filter);
@@ -547,10 +548,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				// if the project is null, that means that we're loading a project description to retrieve 
 				// some meta data only.
 				String key = new String(); // an empty key;
-				HashMap map = ((HashMap) objectStack.peek());
-				LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(key);
+				HashMap<String, LinkedList<FilterDescription>> map = ((HashMap<String, LinkedList<FilterDescription>>) objectStack.peek());
+				LinkedList<FilterDescription>list = map.get(key);
 				if (list == null) {
-					list = new LinkedList/*FilterDescription*/();
+					list = new LinkedList<FilterDescription>();
 					map.put(key, list);
 				}
 				list.add(filter);
@@ -575,7 +576,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			}
 
 			// The HashMap of variables is the next thing on the stack
-			((HashMap) objectStack.peek()).put(desc.getName(), desc);
+			((HashMap<String, VariableDescription>) objectStack.peek()).put(desc.getName(), desc);
 		}
 	}
 
@@ -656,7 +657,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	private void endMatcherArguments(String elementName) {
 		if (elementName.equals(ARGUMENTS)) {
-			ArrayList matchers = (ArrayList) objectStack.pop();
+			ArrayList<FileInfoMatcherDescription> matchers = (ArrayList<FileInfoMatcherDescription>) objectStack.pop();
 			Object newArguments = charBuffer.toString();
 			
 			if (matchers.size() > 0)
@@ -782,11 +783,11 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	private void endNaturesElement(String elementName) {
 		if (elementName.equals(NATURES)) {
 			// Pop the array list of natures off the stack
-			ArrayList natures = (ArrayList) objectStack.pop();
+			ArrayList<String> natures = (ArrayList<String>) objectStack.pop();
 			state = S_PROJECT_DESC;
 			if (natures.size() == 0)
 				return;
-			String[] natureNames = (String[]) natures.toArray(new String[natures.size()]);
+			String[] natureNames = natures.toArray(new String[natures.size()]);
 			projectDescription.setNatureIds(natureNames);
 		}
 	}
@@ -796,7 +797,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 */
 	private void endProjectsElement(String elementName) {
 		// Pop the array list that contains all the referenced project names
-		ArrayList referencedProjects = (ArrayList) objectStack.pop();
+		ArrayList<String> referencedProjects = (ArrayList<String>) objectStack.pop();
 		if (referencedProjects.size() == 0)
 			// Don't bother adding an empty group of referenced projects to the
 			// project descriptor.
@@ -804,7 +805,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject[] projects = new IProject[referencedProjects.size()];
 		for (int i = 0; i < projects.length; i++) {
-			projects[i] = root.getProject((String) referencedProjects.get(i));
+			projects[i] = root.getProject(referencedProjects.get(i));
 		}
 		projectDescription.setReferencedProjects(projects);
 	}
@@ -869,7 +870,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// popped off the stack, massaged into the right format
 			// and added to the project description when we hit the
 			// end element for PROJECTS.
-			objectStack.push(new ArrayList());
+			objectStack.push(new ArrayList<String>());
 			return;
 		}
 		if (elementName.equals(BUILD_SPEC)) {
@@ -878,30 +879,30 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// for this build spec.  This array list will be popped off the stack,
 			// massaged into the right format and added to the project's build
 			// spec when we hit the end element for BUILD_SPEC.
-			objectStack.push(new ArrayList());
+			objectStack.push(new ArrayList<ICommand>());
 			return;
 		}
 		if (elementName.equals(NATURES)) {
 			state = S_NATURES;
 			// Push an array list to hold all the nature names.
-			objectStack.push(new ArrayList());
+			objectStack.push(new ArrayList<String>());
 			return;
 		}
 		if (elementName.equals(LINKED_RESOURCES)) {
 			// Push a HashMap to collect all the links.
-			objectStack.push(new HashMap());
+			objectStack.push(new HashMap<IPath, LinkDescription>());
 			state = S_LINKED_RESOURCES;
 			return;
 		}
 		if (elementName.equals(FILTERED_RESOURCES)) {
 			// Push a HashMap to collect all the filters.
-			objectStack.push(new HashMap());
+			objectStack.push(new HashMap<IPath, LinkedList<FilterDescription>>());
 			state = S_FILTERED_RESOURCES;
 			return;
 		}
 		if (elementName.equals(VARIABLE_LIST)) {
 			// Push a HashMap to collect all the variables.
-			objectStack.push(new HashMap());
+			objectStack.push(new HashMap<String, VariableDescription>());
 			state = S_VARIABLE_LIST;
 			return;
 		}
@@ -913,7 +914,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	public ProjectDescription read(InputSource input) {
 		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Messages.projRead_failureReadingProjectDesc, null);
-		objectStack = new Stack();
+		objectStack = new Stack<Object>();
 		state = S_INITIAL;
 		try {
 			createParser().parse(input, this);
@@ -1001,7 +1002,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					state = S_BUILD_COMMAND_ARGUMENTS;
 					// Push a HashMap to hold all the key/value pairs which
 					// will become the argument list.
-					objectStack.push(new HashMap());
+					objectStack.push(new HashMap<String, String>());
 				}
 				break;
 			case S_BUILD_COMMAND_ARGUMENTS :
@@ -1077,7 +1078,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					state = S_MATCHER_ID;
 				} else if (elementName.equals(ARGUMENTS)) {
 					state = S_MATCHER_ARGUMENTS;
-					objectStack.push(new ArrayList());
+					objectStack.push(new ArrayList<FileInfoMatcherDescription>());
 				}
 				break;
 			case S_MATCHER_ARGUMENTS:

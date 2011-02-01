@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -72,7 +73,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	/* (non-Javadoc)
 	 * @see IMarkerDelta#getAttributes()
 	 */
-	public Map getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return info.getAttributes();
 	}
 
@@ -129,16 +130,16 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	 * Merge two Maps of (IPath->MarkerSet) representing changes.  Use the old
 	 * map to store the result so we don't have to build a new map to return.
 	 */
-	public static Map merge(Map oldChanges, Map newChanges) {
+	public static Map<IPath, MarkerSet> merge(Map<IPath, MarkerSet> oldChanges, Map<IPath, MarkerSet> newChanges) {
 		if (oldChanges == null)
 			//don't worry about copying since the new changes are no longer used
 			return newChanges;
 		if (newChanges == null)
 			return oldChanges;
-		for (Iterator it = newChanges.keySet().iterator(); it.hasNext();) {
-			IPath key = (IPath) it.next();
-			MarkerSet oldSet = (MarkerSet) oldChanges.get(key);
-			MarkerSet newSet = (MarkerSet) newChanges.get(key);
+		for (Iterator<IPath> it = newChanges.keySet().iterator(); it.hasNext();) {
+			IPath key = it.next();
+			MarkerSet oldSet = oldChanges.get(key);
+			MarkerSet newSet = newChanges.get(key);
 			if (oldSet == null)
 				oldChanges.put(key, newSet);
 			else

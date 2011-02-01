@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Francis Lynch (Wind River) - [305718] Allow reading snapshot into renamed project
+ * James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -36,20 +37,20 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 		return ICoreConstants.WORKSPACE_TREE_VERSION_1;
 	}
 
-	protected void linkBuildersToTrees(List buildersToBeLinked, ElementTree[] trees, int index, IProgressMonitor monitor) {
+	protected void linkBuildersToTrees(List<BuilderPersistentInfo> buildersToBeLinked, ElementTree[] trees, int index, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			ArrayList infos = null;
+			ArrayList<BuilderPersistentInfo> infos = null;
 			String projectName = null;
 			for (int i = 0; i < buildersToBeLinked.size(); i++) {
-				BuilderPersistentInfo info = (BuilderPersistentInfo) buildersToBeLinked.get(i);
+				BuilderPersistentInfo info = buildersToBeLinked.get(i);
 				if (!info.getProjectName().equals(projectName)) {
 					if (infos != null) { // if it is not the first iteration
 						IProject project = workspace.getRoot().getProject(projectName);
 						workspace.getBuildManager().setBuildersPersistentInfo(project, infos);
 					}
 					projectName = info.getProjectName();
-					infos = new ArrayList(5);
+					infos = new ArrayList<BuilderPersistentInfo>(5);
 				}
 				info.setLastBuildTree(trees[index++]);
 				infos.add(info);
@@ -63,11 +64,11 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 		}
 	}
 
-	protected void linkPluginsSavedStateToTrees(List states, ElementTree[] trees, IProgressMonitor monitor) {
+	protected void linkPluginsSavedStateToTrees(List<SavedState> states, ElementTree[] trees, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			for (int i = 0; i < states.size(); i++) {
-				SavedState state = (SavedState) states.get(i);
+				SavedState state = states.get(i);
 				// If the tree is too old (depends on the policy), the plug-in should not
 				// get it back as a delta. It is expensive to maintain this information too long.
 				final SaveManager saveManager = workspace.getSaveManager();
@@ -93,7 +94,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 		return new BuilderPersistentInfo(projectName, builderName, index);
 	}
 
-	protected void readBuildersPersistentInfo(IProject project, DataInputStream input, List builders, IProgressMonitor monitor) throws IOException {
+	protected void readBuildersPersistentInfo(IProject project, DataInputStream input, List<BuilderPersistentInfo> builders, IProgressMonitor monitor) throws IOException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			int builderCount = input.readInt();
@@ -104,7 +105,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 		}
 	}
 
-	protected void readPluginsSavedStates(DataInputStream input, HashMap savedStates, List plugins, IProgressMonitor monitor) throws IOException, CoreException {
+	protected void readPluginsSavedStates(DataInputStream input, HashMap<String, SavedState> savedStates, List<SavedState> plugins, IProgressMonitor monitor) throws IOException, CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			int stateCount = input.readInt();
@@ -155,12 +156,12 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 			monitor.beginTask(message, Policy.totalWork);
 			readWorkspaceFields(input, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
-			HashMap savedStates = new HashMap(20);
-			List pluginsToBeLinked = new ArrayList(20);
+			HashMap<String, SavedState> savedStates = new HashMap<String, SavedState>(20);
+			List<SavedState> pluginsToBeLinked = new ArrayList<SavedState>(20);
 			readPluginsSavedStates(input, savedStates, pluginsToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 			workspace.getSaveManager().setPluginsSavedState(savedStates);
 
-			List buildersToBeLinked = new ArrayList(20);
+			List<BuilderPersistentInfo> buildersToBeLinked = new ArrayList<BuilderPersistentInfo>(20);
 			readBuildersPersistentInfo(null, input, buildersToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 			ElementTree[] trees = readTrees(Path.ROOT, input, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
@@ -197,7 +198,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 
 			/* map builder names to trees */
 			if (numBuilders > 0) {
-				ArrayList infos = new ArrayList(trees.length * 2 + 1);
+				ArrayList<BuilderPersistentInfo> infos = new ArrayList<BuilderPersistentInfo>(trees.length * 2 + 1);
 				for (int i = 0; i < numBuilders; i++) {
 					BuilderPersistentInfo info = new BuilderPersistentInfo(project.getName(), builderNames[i], -1);
 					info.setLastBuildTree(trees[i]);

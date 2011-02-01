@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -18,7 +19,8 @@ import java.util.*;
  * 
  * Implemented as a single array that alternates keys and values.
  */
-public class ObjectMap implements Map, IStringPoolParticipant {
+@SuppressWarnings("unchecked")
+public class ObjectMap<K,V> implements Map<K,V>, IStringPoolParticipant {
 
 	// 8 attribute keys, 8 attribute values
 	protected static final int DEFAULT_SIZE = 16;
@@ -47,7 +49,7 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	 * populate it with the key/attribute pairs found in the map.
 	 * @param map The entries in the given map will be added to the new map.
 	 */
-	public ObjectMap(Map map) {
+	public ObjectMap(Map<? extends K, ? extends V> map) {
 		this(map.size());
 		putAll(map);
 	}
@@ -64,7 +66,7 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	 * @see java.lang.Object#clone()
 	 */
 	public Object clone() {
-		return new ObjectMap(this);
+		return new ObjectMap<K, V>(this);
 	}
 
 	/**
@@ -97,7 +99,7 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
-	public Set entrySet() {
+	public Set<Entry<K, V>> entrySet() {
 		return count == 0 ? Collections.EMPTY_SET : toHashMap().entrySet();
 	}
 
@@ -107,7 +109,7 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	public boolean equals(Object o) {
 		if (!(o instanceof Map))
 			return false;
-		Map other = (Map) o;
+		Map<Object, Object> other = (Map<Object, Object>) o;
 		//must be same size
 		if (count != other.size())
 			return false;
@@ -127,12 +129,12 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	/**
 	 * @see Map#get(java.lang.Object)
 	 */
-	public Object get(Object key) {
+	public V get(Object key) {
 		if (elements == null || count == 0)
 			return null;
 		for (int i = 0; i < elements.length; i = i + 2)
 			if (elements[i] != null && elements[i].equals(key))
-				return elements[i + 1];
+				return (V)elements[i + 1];
 		return null;
 	}
 
@@ -172,11 +174,11 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
-	public Set keySet() {
-		Set result = new HashSet(size());
+	public Set<K> keySet() {
+		Set<K> result = new HashSet<K>(size());
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.add(elements[i]);
+				result.add((K)elements[i]);
 			}
 		}
 		return result;
@@ -185,7 +187,7 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	/**
 	 * @see Map#put(java.lang.Object, java.lang.Object)
 	 */
-	public Object put(Object key, Object value) {
+	public V put(K key, V value) {
 		if (key == null)
 			throw new NullPointerException();
 		if (value == null)
@@ -208,7 +210,7 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 				if (elements[i].equals(key)) {
 					Object oldValue = elements[i + 1];
 					elements[i + 1] = value;
-					return oldValue;
+					return (V)oldValue;
 				}
 			} else if (emptyIndex == -1) {
 				// keep track of the first empty index
@@ -233,18 +235,15 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	/**
 	 * @see Map#putAll(java.util.Map)
 	 */
-	public void putAll(Map map) {
-		for (Iterator i = map.keySet().iterator(); i.hasNext();) {
-			Object key = i.next();
-			Object value = map.get(key);
-			put(key, value);
-		}
+	public void putAll(Map<? extends K, ? extends V> map) {
+		for (Map.Entry<? extends K, ? extends V> e : map.entrySet())
+			put(e.getKey(), e.getValue());
 	}
 
 	/**
 	 * @see Map#remove(java.lang.Object)
 	 */
-	public Object remove(Object key) {
+	public V remove(Object key) {
 		if (elements == null || count == 0)
 			return null;
 		for (int i = 0; i < elements.length; i = i + 2) {
@@ -253,7 +252,7 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 				Object result = elements[i + 1];
 				elements[i + 1] = null;
 				count--;
-				return result;
+				return (V)result;
 			}
 		}
 		return null;
@@ -286,11 +285,11 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	/**
 	 * Creates a new hash map with the same contents as this map.
 	 */
-	private HashMap toHashMap() {
-		HashMap result = new HashMap(size());
+	private HashMap<K,V> toHashMap() {
+		HashMap<K,V> result = new HashMap<K,V>(size());
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.put(elements[i], elements[i + 1]);
+				result.put((K)elements[i], (V)elements[i + 1]);
 			}
 		}
 		return result;
@@ -302,11 +301,11 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
-	public Collection values() {
-		Set result = new HashSet(size());
+	public Collection<V> values() {
+		Set<V> result = new HashSet<V>(size());
 		for (int i = 1; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.add(elements[i]);
+				result.add((V)elements[i]);
 			}
 		}
 		return result;

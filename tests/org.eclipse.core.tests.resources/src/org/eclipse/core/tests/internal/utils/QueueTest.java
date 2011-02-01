@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,17 +29,17 @@ public class QueueTest extends TestCase {
 
 	public void testElements() {
 		/* add elements without removing */
-		Queue queue = new Queue(5, false);
+		Queue<String> queue = new Queue<String>(5, false);
 		for (int i = 0; i < 10; i++)
 			queue.add(String.valueOf(i));
 
 		/* assert elements are correct */
-		Iterator elements = queue.iterator();
+		Iterator<String> elements = queue.iterator();
 		for (int i = 0; i < 10; i++)
 			assertTrue("1.0", elements.next().equals(String.valueOf(i)));
 
 		/* add and remove elements */
-		queue = new Queue(5, false);
+		queue = new Queue<String>(5, false);
 		for (int i = 0; i < 5; i++)
 			queue.add(String.valueOf(i));
 		for (int i = 0; i < 4; i++)
@@ -57,13 +57,13 @@ public class QueueTest extends TestCase {
 
 	public void testGrow() {
 		/* add elements without removing */
-		Queue queue = new Queue(5, false);
+		Queue<String> queue = new Queue<String>(5, false);
 		for (int i = 0; i < 10; i++)
 			queue.add(String.valueOf(i));
 		assertTrue("1.0", queue.size() == 10);
 
 		/* add and remove elements */
-		queue = new Queue(5, false);
+		queue = new Queue<String>(5, false);
 		for (int i = 0; i < 5; i++)
 			queue.add(String.valueOf(i));
 		for (int i = 0; i < 4; i++)
@@ -76,7 +76,7 @@ public class QueueTest extends TestCase {
 
 	public void testRemoveTail() {
 		/* head < tail */
-		Queue queue = new Queue(10, false);
+		Queue<String> queue = new Queue<String>(10, false);
 		for (int i = 0; i < 8; i++)
 			queue.add(String.valueOf(i));
 		assertTrue("1.0", queue.peekTail().equals("7"));
@@ -84,7 +84,7 @@ public class QueueTest extends TestCase {
 		assertTrue("1.2", queue.peekTail().equals("6"));
 
 		/* head > tail */
-		queue = new Queue(5, false);
+		queue = new Queue<String>(5, false);
 		for (int i = 0; i < 5; i++)
 			queue.add(String.valueOf(i));
 		for (int i = 0; i < 4; i++)
@@ -103,7 +103,7 @@ public class QueueTest extends TestCase {
 		}
 
 		/* add elements */
-		Queue queue = new Queue(10, true);
+		Queue<ReusableObject> queue = new Queue<ReusableObject>(10, true);
 		for (int i = 0; i < 9; i++) {
 			ReusableObject o = new ReusableObject();
 			queue.add(o);
@@ -118,7 +118,7 @@ public class QueueTest extends TestCase {
 
 		/* add again reusing the elements */
 		for (int i = 0; i < 9; i++) {
-			ReusableObject o = (ReusableObject) queue.getNextAvailableObject();
+			ReusableObject o = queue.getNextAvailableObject();
 			assertTrue("1.0", o != null);
 			queue.add(o);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,26 +7,20 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Broadcom Corporation - build configurations and references
+ *     Broadcom Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.util.*;
-import java.util.Map.Entry;
-import org.eclipse.core.runtime.Path;
-
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * Reads version 2 of the workspace tree file format. 
@@ -47,7 +41,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 
-	private List builderInfos;
+	private List<BuilderPersistentInfo> builderInfos;
 
 	public WorkspaceTreeReader_2(Workspace workspace) {
 		super(workspace);
@@ -60,7 +54,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 	/*
 	 * overwritten from WorkspaceTreeReader_1
 	 */
-	protected void readBuildersPersistentInfo(IProject project, DataInputStream input, List builders, IProgressMonitor monitor) throws IOException {
+	protected void readBuildersPersistentInfo(IProject project, DataInputStream input, List<BuilderPersistentInfo> builders, IProgressMonitor monitor) throws IOException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			int builderCount = input.readInt();
@@ -90,18 +84,18 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			message = Messages.resources_reading;
 			monitor.beginTask(message, Policy.totalWork);
 
-			builderInfos = new ArrayList(20);
+			builderInfos = new ArrayList<BuilderPersistentInfo>(20);
 
 			// Read the version 2 part of the file, but don't set the builder info in
 			// the projects. Store it in builderInfos instead.
 			readWorkspaceFields(input, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
-			HashMap savedStates = new HashMap(20);
-			List pluginsToBeLinked = new ArrayList(20);
+			HashMap<String, SavedState> savedStates = new HashMap<String, SavedState>(20);
+			List<SavedState> pluginsToBeLinked = new ArrayList<SavedState>(20);
 			readPluginsSavedStates(input, savedStates, pluginsToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 			workspace.getSaveManager().setPluginsSavedState(savedStates);
 
-			List buildersToBeLinked = new ArrayList(20);
+			List<BuilderPersistentInfo> buildersToBeLinked = new ArrayList<BuilderPersistentInfo>(20);
 			readBuildersPersistentInfo(null, input, buildersToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 			final ElementTree[] trees = readTrees(Path.ROOT, input, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
@@ -114,8 +108,8 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 				readBuildersPersistentInfo(null, input, buildersToBeLinked, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 				linkBuildersToTrees(buildersToBeLinked, trees, 0, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
-				for (Iterator it = builderInfos.iterator(); it.hasNext();)
-					((BuilderPersistentInfo) it.next()).setConfigName(input.readUTF());
+				for (Iterator<BuilderPersistentInfo> it = builderInfos.iterator(); it.hasNext();)
+					it.next().setConfigName(input.readUTF());
 			}
 
 			// Set the builder infos on the projects
@@ -140,12 +134,12 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			message = Messages.resources_reading;
 			monitor.beginTask(message, 10);
 
-			builderInfos = new ArrayList(20);
+			builderInfos = new ArrayList<BuilderPersistentInfo>(20);
 
 			// Read the version 2 part of the file, but don't set the builder info in
 			// the projects. It is stored in builderInfos instead.
 
-			List buildersToBeLinked = new ArrayList(20);
+			List<BuilderPersistentInfo> buildersToBeLinked = new ArrayList<BuilderPersistentInfo>(20);
 			readBuildersPersistentInfo(project, input, buildersToBeLinked, Policy.subMonitorFor(monitor, 1));
 
 			ElementTree[] trees = readTrees(project.getFullPath(), input, Policy.subMonitorFor(monitor, 8));
@@ -154,12 +148,12 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			// Since 3.7: Read the additional builder information
 			if (input.available() > 0) {
 
-				List infos = new ArrayList(5);
+				List<BuilderPersistentInfo> infos = new ArrayList<BuilderPersistentInfo>(5);
 				readBuildersPersistentInfo(project, input, infos, Policy.subMonitorFor(monitor, 1));
 				linkBuildersToTrees(infos, trees, 0, Policy.subMonitorFor(monitor, 1));
 
-				for (Iterator it = builderInfos.iterator(); it.hasNext();)
-					((BuilderPersistentInfo) it.next()).setConfigName(input.readUTF());
+				for (Iterator<BuilderPersistentInfo> it = builderInfos.iterator(); it.hasNext();)
+					it.next().setConfigName(input.readUTF());
 			}
 
 			// Set the builder info on the projects
@@ -178,11 +172,11 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 	 * Links trees with the given builders, but does not add them to the projects.
 	 * Overrides {@link WorkspaceTreeReader_1#linkBuildersToTrees(List, ElementTree[], int, IProgressMonitor)}
 	 */
-	protected void linkBuildersToTrees(List buildersToBeLinked, ElementTree[] trees, int index, IProgressMonitor monitor) {
+	protected void linkBuildersToTrees(List<BuilderPersistentInfo> buildersToBeLinked, ElementTree[] trees, int index, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			for (int i = 0; i < buildersToBeLinked.size(); i++) {
-				BuilderPersistentInfo info = (BuilderPersistentInfo) buildersToBeLinked.get(i);
+				BuilderPersistentInfo info = buildersToBeLinked.get(i);
 				info.setLastBuildTree(trees[index++]);
 				builderInfos.add(info);
 			}
@@ -194,18 +188,17 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 	/**
 	 * Given a list of builder infos, group them by project and set them on the project.
 	 */
-	private void setBuilderInfos(List infos) {
-		Map groupedInfos = new HashMap();
-		for (Iterator it = infos.iterator(); it.hasNext();) {
-			BuilderPersistentInfo info = (BuilderPersistentInfo) it.next();
+	private void setBuilderInfos(List<BuilderPersistentInfo> infos) {
+		Map<String, List<BuilderPersistentInfo>> groupedInfos = new HashMap<String, List<BuilderPersistentInfo>>();
+		for (Iterator<BuilderPersistentInfo> it = infos.iterator(); it.hasNext();) {
+			BuilderPersistentInfo info = it.next();
 			if (!groupedInfos.containsKey(info.getProjectName()))
-				groupedInfos.put(info.getProjectName(), new ArrayList());
-			((ArrayList) groupedInfos.get(info.getProjectName())).add(info);
+				groupedInfos.put(info.getProjectName(), new ArrayList<BuilderPersistentInfo>());
+			groupedInfos.get(info.getProjectName()).add(info);
 		}
-		for (Iterator it = groupedInfos.entrySet().iterator(); it.hasNext();) {
-			Entry entry = (Entry) it.next();
-			IProject proj = workspace.getRoot().getProject((String) entry.getKey());
-			workspace.getBuildManager().setBuildersPersistentInfo(proj, (ArrayList) entry.getValue());
+		for (Map.Entry<String, List<BuilderPersistentInfo>> entry : groupedInfos.entrySet()) {
+			IProject proj = workspace.getRoot().getProject(entry.getKey());
+			workspace.getBuildManager().setBuildersPersistentInfo(proj, entry.getValue());
 		}
 	}
 

@@ -11,7 +11,7 @@
  *     Anton Leherbauer (Wind River) - [198591] Allow Builder to specify scheduling rule
  *     Francis Lynch (Wind River) - [301563] Save and load tree snapshots
  *     Markus Schorn (Wind River) - [306575] Save snapshot location with project
- *     Broadcom Corporation - build configurations and references
+ *     Broadcom Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -117,7 +117,7 @@ public class Project extends Container implements IProject {
 	/* (non-Javadoc)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 */
-	public void build(int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
+	public void build(int trigger, String builderName, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(builderName);
 		if (!isAccessible())
 			return;
@@ -531,7 +531,7 @@ public class Project extends Container implements IProject {
 	 */
 	public IProject[] getReferencingProjects() {
 		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		List result = new ArrayList(projects.length);
+		List<IProject> result = new ArrayList<IProject>(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			Project project = (Project) projects[i];
 			if (!project.isAccessible())
@@ -546,7 +546,7 @@ public class Project extends Container implements IProject {
 					break;
 				}
 		}
-		return (IProject[]) result.toArray(new IProject[result.size()]);
+		return result.toArray(new IProject[result.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -593,7 +593,7 @@ public class Project extends Container implements IProject {
 	/**
 	 * Implements all build methods on IProject.
 	 */
-	protected void internalBuild(final IBuildConfiguration config, final int trigger, final String builderName, final Map args, IProgressMonitor monitor) throws CoreException {
+	protected void internalBuild(final IBuildConfiguration config, final int trigger, final String builderName, final Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor innerMonitor) throws CoreException {
 				innerMonitor = Policy.monitorFor(innerMonitor);
@@ -833,7 +833,7 @@ public class Project extends Container implements IProject {
 	public IBuildConfiguration[] internalGetReferencedBuildConfigs(String configName, boolean includeMissing) {
 		ProjectDescription description = internalGetDescription();
 		IBuildConfiguration[] refs = description.getAllBuildConfigReferences(configName, false);
-		Collection configs = new LinkedHashSet(refs.length);
+		Collection<IBuildConfiguration> configs = new LinkedHashSet<IBuildConfiguration>(refs.length);
 		for (int i = 0; i < refs.length; i++) {
 			try {
 				configs.add((((BuildConfiguration)refs[i]).getBuildConfig()));
@@ -845,7 +845,7 @@ public class Project extends Container implements IProject {
 					configs.add(refs[i]);
 			}
 		}
-		return (IBuildConfiguration[])configs.toArray(new IBuildConfiguration[configs.size()]);
+		return configs.toArray(new IBuildConfiguration[configs.size()]);
 	}
 
 	boolean internalHasBuildConfig(String configName) {
@@ -1189,21 +1189,21 @@ public class Project extends Container implements IProject {
 	 */
 	public IStatus reconcileLinksAndGroups(ProjectDescription newDescription) {
 		String msg = Messages.links_errorLinkReconcile;
-		HashMap newLinks = newDescription.getLinks();
+		HashMap<IPath,LinkDescription> newLinks = newDescription.getLinks();
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.OPERATION_FAILED, msg, null);
 		//walk over old linked resources and remove those that are no longer defined
 		ProjectDescription oldDescription = internalGetDescription();
 		if (oldDescription != null) {
-			HashMap oldLinks = oldDescription.getLinks();
+			HashMap<IPath,LinkDescription> oldLinks = oldDescription.getLinks();
 			if (oldLinks != null) {
-				for (Iterator it = oldLinks.values().iterator(); it.hasNext();) {
-					LinkDescription oldLink = (LinkDescription) it.next();
+				for (Iterator<LinkDescription> it = oldLinks.values().iterator(); it.hasNext();) {
+					LinkDescription oldLink = it.next();
 					Resource oldLinkResource = (Resource) findMember(oldLink.getProjectRelativePath());
 					if (oldLinkResource == null || !oldLinkResource.isLinked())
 						continue;
 					LinkDescription newLink = null;
 					if (newLinks != null)
-						newLink = (LinkDescription) newLinks.get(oldLink.getProjectRelativePath());
+						newLink = newLinks.get(oldLink.getProjectRelativePath());
 					//if the new link is missing, or has different (raw) location or gender, then remove old link
 					if (newLink == null || !newLink.getLocationURI().equals(oldLinkResource.getRawLocationURI()) || newLink.getType() != oldLinkResource.getType()) {
 						try {
@@ -1225,10 +1225,10 @@ public class Project extends Container implements IProject {
 		if (newLinks == null)
 			return status;
 		//sort links to avoid creating nested links before their parents
-		TreeSet newLinksAndGroups = new TreeSet(new Comparator() {
-			public int compare(Object arg0, Object arg1) {
-				int numberOfSegments0 = ((LinkDescription) arg0).getProjectRelativePath().segmentCount();
-				int numberOfSegments1 = ((LinkDescription) arg1).getProjectRelativePath().segmentCount();
+		TreeSet<LinkDescription> newLinksAndGroups = new TreeSet<LinkDescription>(new Comparator<LinkDescription>() {
+			public int compare(LinkDescription arg0, LinkDescription arg1) {
+				int numberOfSegments0 = arg0.getProjectRelativePath().segmentCount();
+				int numberOfSegments1 = arg1.getProjectRelativePath().segmentCount();
 				if (numberOfSegments0 != numberOfSegments1)
 					return numberOfSegments0 - numberOfSegments1;
 				else if (arg0.equals(arg1))
@@ -1241,7 +1241,7 @@ public class Project extends Container implements IProject {
 		if (newLinks != null)
 			newLinksAndGroups.addAll(newLinks.values());
 
-		for (Iterator it = newLinksAndGroups.iterator(); it.hasNext();) {
+		for (Iterator<LinkDescription> it = newLinksAndGroups.iterator(); it.hasNext();) {
 			Object description = it.next();
 			LinkDescription newLink = (LinkDescription) description;
 			try {

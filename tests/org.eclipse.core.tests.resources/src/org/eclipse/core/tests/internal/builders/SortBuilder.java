@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class SortBuilder extends TestBuilder {
 	/**
 	 * All instances.
 	 */
-	protected static final ArrayList allInstances = new ArrayList();
+	protected static final ArrayList<SortBuilder> allInstances = new ArrayList<SortBuilder>();
 
 	/**
 	 * Build command parameters.
@@ -66,7 +66,7 @@ public class SortBuilder extends TestBuilder {
 	/**
 	 * List of the resources that were in the last delta, if any.
 	 */
-	protected final ArrayList changedResources = new ArrayList();
+	protected final ArrayList<IResource> changedResources = new ArrayList<IResource>();
 	private boolean requestForgetState = false;
 
 	/**
@@ -74,7 +74,7 @@ public class SortBuilder extends TestBuilder {
 	 * The returned array is in the order in which the builders were first instantiated.
 	 */
 	public static SortBuilder[] allInstances() {
-		return (SortBuilder[]) allInstances.toArray(new SortBuilder[allInstances.size()]);
+		return allInstances.toArray(new SortBuilder[allInstances.size()]);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class SortBuilder extends TestBuilder {
 	 * <code>BaseBuilder</code>.
 	 * @see BaseBuilder#build(IResourceDelta,int,IProgressMonitor)
 	 */
-	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 		arguments = args;
 		super.build(kind, args, monitor);
 		triggerForLastBuild = kind;
@@ -155,12 +155,10 @@ public class SortBuilder extends TestBuilder {
 			requestForgetState = false;
 			forgetLastBuiltState();
 		}
-		String project = (String) arguments.get(INTERESTING_PROJECT);
-		if (project != null) {
+		String project = arguments.get(INTERESTING_PROJECT);
+		if (project != null)
 			return new IProject[] {getProject().getWorkspace().getRoot().getProject(project)};
-		} else {
-			return new IProject[0];
-		}
+		return new IProject[0];
 	}
 
 	/**
@@ -283,7 +281,7 @@ public class SortBuilder extends TestBuilder {
 	 * Affected means that resource changed or one of its children changed.
 	 */
 	public IResource[] getAffectedResources() {
-		return (IResource[]) changedResources.toArray(new IResource[changedResources.size()]);
+		return changedResources.toArray(new IResource[changedResources.size()]);
 	}
 
 	/**
@@ -291,7 +289,7 @@ public class SortBuilder extends TestBuilder {
 	 * @return IFolder
 	 */
 	private IFolder getSortedFolder() {
-		String sortedFolder = (String) arguments.get(SORTED_FOLDER);
+		String sortedFolder = arguments.get(SORTED_FOLDER);
 		if (sortedFolder == null)
 			sortedFolder = DEFAULT_SORTED_FOLDER;
 		return getProject().getFolder(sortedFolder);
@@ -302,7 +300,7 @@ public class SortBuilder extends TestBuilder {
 	 * @return IFolder
 	 */
 	private IFolder getUnsortedFolder() {
-		String unsortedFolder = (String) arguments.get(UNSORTED_FOLDER);
+		String unsortedFolder = arguments.get(UNSORTED_FOLDER);
 		if (unsortedFolder == null)
 			unsortedFolder = DEFAULT_UNSORTED_FOLDER;
 		return getProject().getFolder(unsortedFolder);
@@ -357,7 +355,7 @@ public class SortBuilder extends TestBuilder {
 	 * @return boolean
 	 */
 	private boolean isSortOrderAscending() {
-		String sortOrder = (String) arguments.get(SORT_ORDER);
+		String sortOrder = arguments.get(SORT_ORDER);
 		return !DESCENDING.equals(sortOrder);
 	}
 

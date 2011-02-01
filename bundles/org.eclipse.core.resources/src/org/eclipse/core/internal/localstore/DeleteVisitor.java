@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt McCutchen - fix for bug 174492
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -108,8 +109,8 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 			return;
 		if (node.isFolder()) {
 			monitor.subTask(NLS.bind(Messages.localstore_deleting, target.getFullPath()));
-			for (Iterator children = node.getChildren(); children.hasNext();)
-				recursiveKeepHistory(store, (UnifiedTreeNode) children.next());
+			for (Iterator<UnifiedTreeNode> children = node.getChildren(); children.hasNext();)
+				recursiveKeepHistory(store, children.next());
 		} else {
 			IFileInfo info = node.fileInfo;
 			if (info == null)
@@ -129,7 +130,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		if (skipList == null)
 			return false;
 		for (int i = 0; i < skipList.size(); i++)
-			if (equals(resource, (IResource) skipList.get(i)))
+			if (equals(resource, skipList.get(i)))
 				return true;
 		return false;
 	}

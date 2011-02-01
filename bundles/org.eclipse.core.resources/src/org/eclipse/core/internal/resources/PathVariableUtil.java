@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Freescale Semiconductor and others.
+ * Copyright (c) 2008, 2011 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -357,7 +358,7 @@ public class PathVariableUtil {
 	}
 
 	private static String[] splitPathComponents(String userFormat) {
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < userFormat.length(); i++) {
 			char c = userFormat.charAt(i);
@@ -370,7 +371,7 @@ public class PathVariableUtil {
 		}
 		if (buffer.length() > 0)
 			list.add(buffer.toString());
-		return (String[]) list.toArray(new String[0]);
+		return list.toArray(new String[0]);
 	}
 
 	public static String convertToUserEditableFormatInternal(String value, boolean locationFormat) {
@@ -417,7 +418,7 @@ public class PathVariableUtil {
 	 * returned will be {"${ECLIPSE_HOME}" "/plugins"}
 	 */
 	static String[] splitVariablesAndContent(String value) {
-		LinkedList result = new LinkedList();
+		LinkedList<String> result = new LinkedList<String>();
 		while (true) {
 			// we check if the value contains referenced variables with ${VAR}
 			int index = value.indexOf("${"); //$NON-NLS-1$
@@ -432,7 +433,7 @@ public class PathVariableUtil {
 		}
 		if (value.length() > 0)
 			result.add(value);
-		return (String[]) result.toArray(new String[0]);
+		return result.toArray(new String[0]);
 	}
 
 	/*
@@ -445,7 +446,7 @@ public class PathVariableUtil {
 	 * {"ECLIPSE_HOME", "FOO"}.
 	 */
 	static String[] splitVariableNames(String value) {
-		LinkedList result = new LinkedList();
+		LinkedList<String> result = new LinkedList<String>();
 		while (true) {
 			int index = value.indexOf("${"); //$NON-NLS-1$
 			if (index != -1) {
@@ -455,7 +456,7 @@ public class PathVariableUtil {
 			} else
 				break;
 		}
-		return (String[]) result.toArray(new String[0]);
+		return result.toArray(new String[0]);
 	}
 
 	/*

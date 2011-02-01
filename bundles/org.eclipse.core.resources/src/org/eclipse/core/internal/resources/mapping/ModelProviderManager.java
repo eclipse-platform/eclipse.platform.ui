@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources.mapping;
 
@@ -20,7 +21,7 @@ import org.eclipse.core.runtime.*;
 
 public class ModelProviderManager {
 
-	private static Map descriptors;
+	private static Map<String, IModelProviderDescriptor> descriptors;
 	private static ModelProviderManager instance;
 
 	public synchronized static ModelProviderManager getDefault() {
@@ -37,12 +38,12 @@ public class ModelProviderManager {
 
 	public IModelProviderDescriptor getDescriptor(String id) {
 		lazyInitialize();
-		return (IModelProviderDescriptor) descriptors.get(id);
+		return descriptors.get(id);
 	}
 
 	public IModelProviderDescriptor[] getDescriptors() {
 		lazyInitialize();
-		return (IModelProviderDescriptor[]) descriptors.values().toArray(new IModelProviderDescriptor[descriptors.size()]);
+		return descriptors.values().toArray(new IModelProviderDescriptor[descriptors.size()]);
 	}
 
 	public ModelProvider getModelProvider(String modelProviderId) throws CoreException {
@@ -57,7 +58,7 @@ public class ModelProviderManager {
 			return;
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MODEL_PROVIDERS);
 		IExtension[] extensions = point.getExtensions();
-		descriptors = new HashMap(extensions.length * 2 + 1);
+		descriptors = new HashMap<String, IModelProviderDescriptor>(extensions.length * 2 + 1);
 		for (int i = 0, imax = extensions.length; i < imax; i++) {
 			IModelProviderDescriptor desc = null;
 			try {

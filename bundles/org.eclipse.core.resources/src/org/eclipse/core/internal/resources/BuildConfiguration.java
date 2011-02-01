@@ -123,6 +123,7 @@ public class BuildConfiguration extends PlatformObject implements IBuildConfigur
 	}
 
 	@Override
+	@SuppressWarnings("rawtypes")
 	public Object getAdapter(Class adapter) {
 		if (adapter.isInstance(project))
 			return project;

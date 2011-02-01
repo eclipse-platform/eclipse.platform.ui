@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -30,10 +31,8 @@ public class HistoryBucket extends Bucket {
 	 */
 	public static final class HistoryEntry extends Bucket.Entry {
 
-		final static Comparator COMPARATOR = new Comparator() {
-			public int compare(Object o1, Object o2) {
-				byte[] state1 = (byte[]) o1;
-				byte[] state2 = (byte[]) o2;
+		final static Comparator<byte[]> COMPARATOR = new Comparator<byte[]>() {
+			public int compare(byte[] state1, byte[] state2) {
 				return compareStates(state1, state2);
 			}
 		};
@@ -57,7 +56,7 @@ public class HistoryBucket extends Bucket {
 		 * 
 		 * @see Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
-		private static int compareStates(byte[] state1, byte[] state2) {
+		static int compareStates(byte[] state1, byte[] state2) {
 			long timestamp1 = getTimestamp(state1);
 			long timestamp2 = getTimestamp(state2);
 			if (timestamp1 == timestamp2)
@@ -68,7 +67,7 @@ public class HistoryBucket extends Bucket {
 		/**
 		 * Returns the byte array representation of a (UUID, timestamp) pair. 
 		 */
-		private static byte[] getState(UniversalUniqueIdentifier uuid, long timestamp) {
+		static byte[] getState(UniversalUniqueIdentifier uuid, long timestamp) {
 			byte[] uuidBytes = uuid.toBytes();
 			byte[] state = new byte[DATA_LENGTH];
 			System.arraycopy(uuidBytes, 0, state, 0, uuidBytes.length);
@@ -90,7 +89,7 @@ public class HistoryBucket extends Bucket {
 		 * Inserts the given item into the given array at the right position. 
 		 * Returns the resulting array. Returns null if the item already exists. 
 		 */
-		private static byte[][] insert(byte[][] existing, byte[] toAdd) {
+		static byte[][] insert(byte[][] existing, byte[] toAdd) {
 			// look for the right spot where to insert the new guy
 			int index = search(existing, toAdd);
 			if (index >= 0)
@@ -110,7 +109,7 @@ public class HistoryBucket extends Bucket {
 		/**
 		 * Merges two entries (are always sorted). Duplicates are discarded.
 		 */
-		private static byte[][] merge(byte[][] base, byte[][] additions) {
+		static byte[][] merge(byte[][] base, byte[][] additions) {
 			int additionPointer = 0;
 			int basePointer = 0;
 			int added = 0;
