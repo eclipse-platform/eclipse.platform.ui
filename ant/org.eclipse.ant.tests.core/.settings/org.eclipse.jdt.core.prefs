@@ -1,4 +1,4 @@
-#Wed Feb 02 09:45:56 CST 2011
+#Wed Feb 02 10:36:11 CST 2011
 eclipse.preferences.version=1
 org.eclipse.jdt.core.builder.cleanOutputFolder=clean
 org.eclipse.jdt.core.builder.duplicateResourceTask=warning
@@ -25,7 +25,7 @@ org.eclipse.jdt.core.compiler.problem.deadCode=error
 org.eclipse.jdt.core.compiler.problem.deprecation=warning
 org.eclipse.jdt.core.compiler.problem.deprecationInDeprecatedCode=disabled
 org.eclipse.jdt.core.compiler.problem.deprecationWhenOverridingDeprecatedMethod=disabled
-org.eclipse.jdt.core.compiler.problem.discouragedReference=warning
+org.eclipse.jdt.core.compiler.problem.discouragedReference=ignore
 org.eclipse.jdt.core.compiler.problem.emptyStatement=error
 org.eclipse.jdt.core.compiler.problem.enumIdentifier=warning
 org.eclipse.jdt.core.compiler.problem.fallthroughCase=error
@@ -60,7 +60,7 @@ org.eclipse.jdt.core.compiler.problem.missingSerialVersion=warning
 org.eclipse.jdt.core.compiler.problem.missingSynchronizedOnInheritedMethod=warning
 org.eclipse.jdt.core.compiler.problem.noEffectAssignment=error
 org.eclipse.jdt.core.compiler.problem.noImplicitStringConversion=warning
-org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=warning
+org.eclipse.jdt.core.compiler.problem.nonExternalizedStringLiteral=ignore
 org.eclipse.jdt.core.compiler.problem.nullReference=error
 org.eclipse.jdt.core.compiler.problem.overridingPackageDefaultMethod=warning
 org.eclipse.jdt.core.compiler.problem.parameterAssignment=warning
