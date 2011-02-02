@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -603,6 +603,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_locked;
 	public static String ResourceInfo_archive;
 	public static String ResourceInfo_derived;
+	public static String ResourceInfo_derivedHasDerivedAncestor;
 	public static String ResourceInfo_type;
 	public static String ResourceInfo_location;
 	public static String ResourceInfo_resolvedLocation;

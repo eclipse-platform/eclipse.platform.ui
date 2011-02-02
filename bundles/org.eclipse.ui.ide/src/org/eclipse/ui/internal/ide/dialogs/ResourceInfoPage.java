@@ -104,6 +104,8 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private static String DERIVED = IDEWorkbenchMessages.ResourceInfo_derived;
 
+	private static String DERIVED_HAS_DERIVED_ANCESTOR = IDEWorkbenchMessages.ResourceInfo_derivedHasDerivedAncestor;
+
 	private static String TYPE_TITLE = IDEWorkbenchMessages.ResourceInfo_type;
 
 	private static String LOCATION_TITLE = IDEWorkbenchMessages.ResourceInfo_location;
@@ -633,12 +635,17 @@ public class ResourceInfoPage extends PropertyPage {
 	 * 
 	 * @param composite
 	 *            the parent of the button
+	 * @param resource
+	 *            the resource the information is being taken from
 	 */
-	private void createDerivedButton(Composite composite) {
+	private void createDerivedButton(Composite composite, IResource resource) {
 
 		this.derivedBox = new Button(composite, SWT.CHECK | SWT.RIGHT);
 		this.derivedBox.setAlignment(SWT.LEFT);
-		this.derivedBox.setText(DERIVED);
+		if (resource.getParent().isDerived(IResource.CHECK_ANCESTORS))
+			this.derivedBox.setText(DERIVED_HAS_DERIVED_ANCESTOR);
+		else
+			this.derivedBox.setText(DERIVED);
 		this.derivedBox.setSelection(this.previousDerivedValue);
 	}
 
@@ -693,7 +700,7 @@ public class ResourceInfoPage extends PropertyPage {
 			if ((fsAttributes & EFS.ATTRIBUTE_IMMUTABLE) != 0)
 				createImmutableButton(composite);
 		}
-		createDerivedButton(composite);
+		createDerivedButton(composite, resource);
 		// create warning for executable flag
 		if (executableBox != null && resource.getType() == IResource.FOLDER)
 			createExecutableWarning(composite, font);
