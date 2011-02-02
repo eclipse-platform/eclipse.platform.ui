@@ -147,7 +147,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			// part's selection
 			SelectionService service = (SelectionService) getWorkbenchWindow()
 					.getSelectionService();
-			service.updateSelection();
+			service.updateSelection(getWorkbenchPart(part));
 		}
 
 		public void partBroughtToTop(MPart part) {

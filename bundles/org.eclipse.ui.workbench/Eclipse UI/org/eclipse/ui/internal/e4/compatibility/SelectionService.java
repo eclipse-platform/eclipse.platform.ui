@@ -85,8 +85,11 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 	/**
 	 * Updates the selection of the workbench window with that of the active
 	 * part's.
+	 * 
+	 * @param activePart
+	 *            the currently active part
 	 */
-	public void updateSelection() {
+	public void updateSelection(IWorkbenchPart activePart) {
 		if (activePart != null) {
 			ISelectionProvider selectionProvider = activePart.getSite().getSelectionProvider();
 			if (selectionProvider != null) {
