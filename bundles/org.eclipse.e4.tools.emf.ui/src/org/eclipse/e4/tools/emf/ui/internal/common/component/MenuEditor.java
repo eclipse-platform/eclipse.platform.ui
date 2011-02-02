@@ -523,12 +523,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MMenu menu = (MMenu) element;
-
-		if (menu.getLabel() != null && menu.getLabel().trim().length() > 0) {
-			return menu.getLabel();
-		}
-		return null;
+		return getLocalizedLabel((MUILabel) element);
 	}
 
 	@Override

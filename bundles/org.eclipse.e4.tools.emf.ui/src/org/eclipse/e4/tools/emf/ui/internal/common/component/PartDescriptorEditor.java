@@ -412,8 +412,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MPartDescriptor o = (MPartDescriptor) element;
-		return o.getLabel();
+		return getLocalizedLabel((MUILabel) element);
 	}
 
 	@Override

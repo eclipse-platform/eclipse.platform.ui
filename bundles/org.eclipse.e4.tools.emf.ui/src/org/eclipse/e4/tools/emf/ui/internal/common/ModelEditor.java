@@ -114,6 +114,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowCont
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.AnnotationAccess;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.XMLConfiguration;
@@ -272,6 +273,21 @@ public class ModelEditor {
 		this.context = context;
 		this.context.set(ModelEditor.class, this);
 		this.obsManager = new ObservablesManager();
+		if (project != null) {
+			ProjectOSGiTranslationProvider translationProvider = new ProjectOSGiTranslationProvider(project) {
+				@Override
+				protected void clearCache() {
+					super.clearCache();
+					viewer.getControl().getDisplay().asyncExec(new Runnable() {
+
+						public void run() {
+							viewer.refresh();
+						}
+					});
+				}
+			};
+			context.set(ProjectOSGiTranslationProvider.class, translationProvider);
+		}
 	}
 
 	@PostConstruct

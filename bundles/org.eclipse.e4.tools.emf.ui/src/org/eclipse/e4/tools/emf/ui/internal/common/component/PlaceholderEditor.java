@@ -77,8 +77,10 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 			b.append(((EObject) pl.getRef()).eClass().getName());
 			if (pl.getRef() instanceof MUILabel) {
 				MUILabel label = (MUILabel) pl.getRef();
-				if (label.getLabel() != null && label.getLabel().trim().length() > 0) {
-					b.append(" (" + label.getLabel() + ")"); //$NON-NLS-1$//$NON-NLS-2$
+				String l = getLocalizedLabel(label);
+
+				if (l != null && l.trim().length() > 0) {
+					b.append(" (" + l + ")"); //$NON-NLS-1$//$NON-NLS-2$
 				} else if (label.getTooltip() != null && label.getTooltip().trim().length() > 0) {
 					b.append(" (" + label.getTooltip() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
@@ -194,8 +196,9 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 						EObject o = (EObject) fromObject;
 						if (o instanceof MUILabel) {
 							MUILabel label = (MUILabel) o;
-							if (!Util.isNullOrEmpty(label.getLabel())) {
-								return o.eClass().getName() + " - " + label.getLabel(); //$NON-NLS-1$
+							String l = getLocalizedLabel(label);
+							if (!Util.isNullOrEmpty(l)) {
+								return o.eClass().getName() + " - " + l; //$NON-NLS-1$
 							}
 						}
 

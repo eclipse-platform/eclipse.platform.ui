@@ -332,11 +332,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MUILabel label = (MUILabel) element;
-		if (label.getLabel() != null && label.getLabel().trim().length() > 0) {
-			return label.getLabel();
-		}
-		return null;
+		return getLocalizedLabel((MUILabel) element);
 	}
 
 	@Override

@@ -299,8 +299,10 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 	@Override
 	public String getDetailLabel(Object element) {
 		MToolItem item = (MToolItem) element;
-		if (item.getLabel() != null && item.getLabel().trim().length() > 0) {
-			return item.getLabel();
+		String l = getLocalizedLabel(item);
+
+		if (l != null && l.trim().length() > 0) {
+			return l;
 		} else if (item.getTooltip() != null && item.getTooltip().trim().length() > 0) {
 			return item.getTooltip();
 		}

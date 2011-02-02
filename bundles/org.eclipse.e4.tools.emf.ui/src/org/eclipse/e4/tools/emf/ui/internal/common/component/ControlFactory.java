@@ -19,11 +19,14 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
+import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -270,7 +273,26 @@ public class ControlFactory {
 		gd.horizontalSpan = 2;
 		t.setLayoutData(gd);
 		context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
+	}
 
+	public static void createTranslatedTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, IResourcePool resourcePool, IProject project) {
+		Label l = new Label(parent, SWT.NONE);
+		l.setText(label);
+		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+		Text t = new Text(parent, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		if (project == null) {
+			gd.horizontalSpan = 2;
+		}
+
+		t.setLayoutData(gd);
+		context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
+
+		if (project != null) {
+			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+			b.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_world_edit));
+		}
 	}
 
 	public static void createFindImport(Composite parent, final Messages Messages, final AbstractComponentEditor editor, EMFDataBindingContext context) {
@@ -518,5 +540,28 @@ public class ControlFactory {
 		t.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
 		context.bindValue(selectionProp.observe(t), modelProp.observeDetail(master));
 
+	}
+
+	public static String getLocalizedLabel(ProjectOSGiTranslationProvider translationProvider, MUILabel element, String locale) {
+		if (translationProvider == null) {
+			if (element.getLocalizedLabel() != null && element.getLocalizedLabel().trim().length() > 0) {
+				return element.getLocalizedLabel();
+			}
+		}
+
+		if (element.getLabel() != null && element.getLabel().trim().length() > 0) {
+			String label = element.getLabel();
+			return tr(translationProvider, locale, label);
+		}
+		return null;
+	}
+
+	public static String tr(ProjectOSGiTranslationProvider translationProvider, String locale, String label) {
+		if (label.startsWith("%") && translationProvider != null) { //$NON-NLS-1$
+			String key = label.substring(1);
+			String translation = translationProvider.translate(locale, key);
+			return translation == key ? label : translation;
+		}
+		return label;
 	}
 }

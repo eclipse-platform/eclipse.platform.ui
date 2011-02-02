@@ -147,12 +147,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MPerspective perspective = (MPerspective) element;
-		if (perspective.getLabel() != null && perspective.getLabel().trim().length() > 0) {
-			return perspective.getLabel();
-		}
-
-		return null;
+		return getLocalizedLabel((MUILabel) element);
 	}
 
 	@Override

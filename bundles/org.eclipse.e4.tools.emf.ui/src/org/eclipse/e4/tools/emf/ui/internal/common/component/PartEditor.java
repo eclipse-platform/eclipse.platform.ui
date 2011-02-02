@@ -360,8 +360,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 	@Override
 	public String getDetailLabel(Object element) {
-		MPart o = (MPart) element;
-		return o.getLabel();
+		return getLocalizedLabel((MUILabel) element);
 	}
 
 	@Override

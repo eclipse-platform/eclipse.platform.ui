@@ -13,14 +13,20 @@ package org.eclipse.e4.tools.emf.ui.common.component;
 import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Named;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
+import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.Translation;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.emf.databinding.FeaturePath;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
@@ -46,11 +52,19 @@ public abstract class AbstractComponentEditor {
 	@Inject
 	private ModelEditor editor;
 	@Inject
-	private IResourcePool resourcePool;
+	protected IResourcePool resourcePool;
 
 	@Inject
 	@Translation
 	protected Messages Messages;
+
+	@Inject
+	@Optional
+	private ProjectOSGiTranslationProvider translationProvider;
+
+	@Inject
+	@Named(TranslationService.LOCALE)
+	private String locale;
 
 	public EditingDomain getEditingDomain() {
 		return editingDomain;
@@ -99,5 +113,9 @@ public abstract class AbstractComponentEditor {
 
 	public List<Action> getActions(Object element) {
 		return Collections.emptyList();
+	}
+
+	protected String getLocalizedLabel(MUILabel element) {
+		return ControlFactory.getLocalizedLabel(translationProvider, element, locale);
 	}
 }

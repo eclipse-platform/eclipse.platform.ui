@@ -362,10 +362,8 @@ public class Messages {
 	public String WindowEditor_AddMainMenu;
 	public String WindowEditor_TreeLabel;
 	public String WindowEditor_TreeLabelDescription;
-	public String WindowEditor_X;
-	public String WindowEditor_Y;
-	public String WindowEditor_Width;
-	public String WindowEditor_Height;
+
+	public String WindowEditor_Bounds;
 	public String WindowEditor_Label;
 	public String WindowEditor_Tooltip;
 	public String WindowEditor_IconURI;
