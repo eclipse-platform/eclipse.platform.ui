@@ -2365,7 +2365,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return null;
 		}
 
-		if (getWorkbenchWindow().getWorkbench().getEditorRegistry().findEditor(editorId) == null) {
+		EditorDescriptor descriptor = (EditorDescriptor) getWorkbenchWindow().getWorkbench()
+				.getEditorRegistry().findEditor(editorId);
+		if (descriptor == null) {
 			throw new PartInitException(NLS.bind(
 					WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorId));
 		}
@@ -2381,6 +2383,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				activate(editor);
 			}
 			return editor;
+		} else if (descriptor.isOpenExternal()) {
+			openExternalEditor(descriptor, input);
+			// no editor parts for external editors, return null
+			return null;
 		}
 
 		MPart editor = partService.createPart(CompatibilityEditor.MODEL_ELEMENT_ID);
