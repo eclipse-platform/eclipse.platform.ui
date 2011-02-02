@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -659,12 +659,14 @@ public class TextSegment extends ParagraphSegment {
 				// only wrap on the first fragment if we are not at the start of a line
 				if ((i != 0 || locator.x > locator.getStartX() + (isSelectable() ? 1 : 0)) && locator.x + lineExtent.x + fragment.length > rightEdge) {
 					// overflow
-					int ly = locator.getBaseline(lineHeight - fm.getLeading());
-					Rectangle br = new Rectangle(isSelectable()?
-							locator.x - 1:locator.x, ly,
-							isSelectable()?lineExtent.x + 1:lineExtent.x, lineHeight - descent + 3);
-					areaRectangles
-							.add(new AreaRectangle(br, lineStart, lastLoc));
+					if ( i != 0 ) {
+						int ly = locator.getBaseline(lineHeight - fm.getLeading());
+						Rectangle br = new Rectangle(isSelectable()?
+								locator.x - 1:locator.x, ly,
+								isSelectable()?lineExtent.x + 1:lineExtent.x, lineHeight - descent + 3);
+						areaRectangles
+						.add(new AreaRectangle(br, lineStart, lastLoc));
+					}
 
 					locator.rowHeight = Math.max(locator.rowHeight,
 							lineExtent.y);
