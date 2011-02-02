@@ -1846,6 +1846,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		
 		bindingService[0].readRegistryAndPreferences(commandService[0]);
 		serviceLocator.registerService(IBindingService.class, bindingService[0]);
+		// there is a thin window where the filter is set but the service is not
+		// yet available
+		((BindingService) bindingService[0]).getKeyboard().getKeyDownFilter().setEnabled(true);
 
 		final CommandImageManager commandImageManager = new CommandImageManager();
 		final CommandImageService commandImageService = new CommandImageService(

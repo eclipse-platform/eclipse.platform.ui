@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.keys;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.Binding;
@@ -29,6 +28,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.keys.WorkbenchKeyboard.KeyDownFilter;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -93,7 +93,8 @@ public final class BindingService implements IBindingService {
 		// Hook up the key binding support.
 		keyboard = new WorkbenchKeyboard(workbench);
 		final Display display = workbench.getDisplay();
-		final Listener listener = keyboard.getKeyDownFilter();
+		final KeyDownFilter listener = keyboard.getKeyDownFilter();
+		listener.setEnabled(false);
 		display.addFilter(SWT.KeyDown, listener);
 		display.addFilter(SWT.Traverse, listener);
 
