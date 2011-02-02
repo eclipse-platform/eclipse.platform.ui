@@ -548,7 +548,7 @@ public class TextSegment extends ParagraphSegment {
 		int sstart = -1;
 		int sstop = -1;
 
-		if (firstRow && bounds.x + swidth > leftOffset) {
+		if (firstRow && bounds.x < leftOffset) {
 			sstart = convertOffsetToStringIndex(gc, s, bounds.x, swidth,
 					leftOffset);
 		}
