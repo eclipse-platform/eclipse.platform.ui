@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ abstract class MarkersContribution extends CompoundContributionItem {
 	/**
 	 * Get the view this contribution is working on.
 	 * 
-	 * @return ExtendedMarkersView
+	 * @return ExtendedMarkersView or <code>null</code> if the active view isn't a marker view
 	 */
 	ExtendedMarkersView getView() {
 		IWorkbenchWindow active = PlatformUI.getWorkbench()
@@ -56,7 +56,7 @@ abstract class MarkersContribution extends CompoundContributionItem {
 		if (page == null)
 			return null;
 		IWorkbenchPart part = page.getActivePart();
-		if (part == null)
+		if (!(part instanceof ExtendedMarkersView))
 			return null;
 
 		return (ExtendedMarkersView) part;

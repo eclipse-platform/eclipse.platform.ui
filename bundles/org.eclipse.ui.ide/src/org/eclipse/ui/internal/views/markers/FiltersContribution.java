@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,11 @@ public class FiltersContribution extends MarkersContribution {
 	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
 	 */
 	protected IContributionItem[] getContributionItems() {
+		final ExtendedMarkersView view = getView();
+		if (view == null)
+			return new IContributionItem[0];
 
-		Collection groups = getView().getAllFilters();
+		Collection groups = view.getAllFilters();
 
 		if (groups.size() == 0)
 			return new IContributionItem[0];
@@ -60,7 +63,6 @@ public class FiltersContribution extends MarkersContribution {
 				public void fill(Menu menu, int index) {
 					MenuItem item = new MenuItem(menu, SWT.CHECK);
 					item.setText(group.getName());
-					ExtendedMarkersView view = getView();
 					item.addListener(SWT.Selection, getMenuItemListener(group,
 							view));
 
@@ -126,7 +128,9 @@ public class FiltersContribution extends MarkersContribution {
 					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 					 */
 					public void handleEvent(Event event) {
-						getView().disableAllFilters();
+						ExtendedMarkersView view = getView();
+						if (view != null)
+							view.disableAllFilters();
 					}
 				});
 			}
@@ -138,7 +142,11 @@ public class FiltersContribution extends MarkersContribution {
 			 *         filters are selected.
 			 */
 			private boolean noFiltersSelected() {
-				Iterator groupsIterator = getView().getAllFilters().iterator();
+				ExtendedMarkersView view = getView();
+				if (view == null)
+					return true;
+
+				Iterator groupsIterator= view.getAllFilters().iterator();
 				while (groupsIterator.hasNext()) {
 					MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groupsIterator
 							.next();
