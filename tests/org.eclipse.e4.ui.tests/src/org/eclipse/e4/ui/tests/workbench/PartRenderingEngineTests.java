@@ -26,8 +26,12 @@ import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -1795,6 +1799,33 @@ public class PartRenderingEngineTests extends TestCase {
 
 		assertNull(detachedWindow.getContext());
 		assertNull(detachedWindow.getWidget());
+	}
+
+	/**
+	 * Test to ensure that we don't get an exception while rendering a child of
+	 * an MTrimBar that doesn't have its element id set.
+	 */
+	public void testBug336139() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
+				.createTrimmedWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		window.getTrimBars().add(trimBar);
+
+		MToolControl toolControl = MenuFactoryImpl.eINSTANCE
+				.createToolControl();
+		trimBar.getChildren().add(toolControl);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
 	}
 
 	private MWindow createWindowWithOneView(String partName) {

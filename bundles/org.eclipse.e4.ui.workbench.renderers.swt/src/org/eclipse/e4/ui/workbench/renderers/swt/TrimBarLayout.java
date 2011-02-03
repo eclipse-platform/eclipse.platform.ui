@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -241,7 +241,7 @@ public class TrimBarLayout extends Layout {
 	private boolean isStatusLine(Control ctrl) {
 		MUIElement element = (MUIElement) ctrl
 				.getData(AbstractPartRenderer.OWNING_ME);
-		if (element != null
+		if (element != null && element.getElementId() != null
 				&& element.getElementId().equals("org.eclipse.ui.StatusLine")) //$NON-NLS-1$
 			return true;
 
