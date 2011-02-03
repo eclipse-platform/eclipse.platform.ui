@@ -39,44 +39,59 @@ public class TestBug202384 extends WorkspaceSessionTest {
 			fail("1.0", e);
 		}
 		try {
-			assertEquals("UTF-8", project.getDefaultCharset());
+			assertEquals("2.0", "UTF-8", project.getDefaultCharset(false));
 		} catch (CoreException e) {
-			fail("2.0", e);
+			fail("3.0", e);
 		}
 		try {
 			project.close(getMonitor());
 		} catch (CoreException e) {
-			fail("3.0", e);
+			fail("4.0", e);
 		}
-		assertFalse(project.isOpen());
 		try {
 			workspace.save(true, getMonitor());
 		} catch (CoreException e) {
-			fail("4.0", e);
+			fail("5.0", e);
 		}
 	}
 
 	public void testStartWithClosedProject() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject project = workspace.getRoot().getProject("project");
-		assertFalse(project.isOpen());
+		assertFalse("1.0", project.isOpen());
 		try {
-			//ProjectPreferences should get created on getDefaultCharset but not
-			//initialized hence it is not possible to read correct encoding
-			assertNull(project.getDefaultCharset(false));
+			//project is closed so it is not possible to read correct encoding
+			assertNull("2.0", project.getDefaultCharset(false));
 		} catch (CoreException e) {
-			fail("1.0", e);
+			fail("3.0", e);
 		}
 		try {
-			//opening project should re-initialize already created ProjectPreferences
-			//because project resources are now available
+			//opening the project should initialize ProjectPreferences
 			project.open(getMonitor());
 		} catch (CoreException e) {
-			fail("2.0", e);
+			fail("4.0", e);
 		}
 		try {
-			//correct values should be available after re-initialization
-			assertEquals("UTF-8", project.getDefaultCharset());
+			//correct values should be available after initialization
+			assertEquals("5.0", "UTF-8", project.getDefaultCharset(false));
+		} catch (CoreException e) {
+			fail("6.0", e);
+		}
+		try {
+			workspace.save(true, getMonitor());
+		} catch (CoreException e) {
+			fail("7.0", e);
+		}
+	}
+
+	public void testStartWithOpenProject() {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProject project = workspace.getRoot().getProject("project");
+		assertTrue("1.0", project.isOpen());
+		try {
+			//correct values should be available if ProjectPreferences got
+			//initialized upon creation
+			assertEquals("2.0", "UTF-8", project.getDefaultCharset(false));
 		} catch (CoreException e) {
 			fail("3.0", e);
 		}
@@ -84,24 +99,6 @@ public class TestBug202384 extends WorkspaceSessionTest {
 			workspace.save(true, getMonitor());
 		} catch (CoreException e) {
 			fail("4.0", e);
-		}
-	}
-
-	public void testStartWithOpenProject() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject project = workspace.getRoot().getProject("project");
-		assertTrue(project.isOpen());
-		try {
-			//correct values should be available if ProjectPreferences got
-			//initialized upon creation
-			assertEquals("UTF-8", project.getDefaultCharset(false));
-		} catch (CoreException e) {
-			fail("1.0", e);
-		}
-		try {
-			workspace.save(true, getMonitor());
-		} catch (CoreException e) {
-			fail("2.0", e);
 		}
 	}
 
