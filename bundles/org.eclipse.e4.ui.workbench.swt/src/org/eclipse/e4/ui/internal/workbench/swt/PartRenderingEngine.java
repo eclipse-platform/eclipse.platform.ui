@@ -659,6 +659,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 				for (MWindow subWindow : window.getWindows()) {
 					removeGui(subWindow);
 				}
+
+				if (window instanceof MTrimmedWindow) {
+					MTrimmedWindow trimmedWindow = (MTrimmedWindow) window;
+					for (MUIElement trimBar : trimmedWindow.getTrimBars()) {
+						removeGui(trimBar);
+					}
+				}
 			}
 
 			renderer.disposeWidget(element);

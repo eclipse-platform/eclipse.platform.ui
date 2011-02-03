@@ -1828,6 +1828,36 @@ public class PartRenderingEngineTests extends TestCase {
 		wb.createAndRunUI(window);
 	}
 
+	public void testBut336225() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
+				.createTrimmedWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		window.getTrimBars().add(trimBar);
+
+		MToolControl toolControl = MenuFactoryImpl.eINSTANCE
+				.createToolControl();
+		toolControl.setContributionURI(SampleToolControl.CONTRIBUTION_URI);
+		trimBar.getChildren().add(toolControl);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		SampleToolControl impl = (SampleToolControl) toolControl.getObject();
+
+		appContext.get(IPresentationEngine.class).removeGui(window);
+		assertFalse("The shell should not have been disposed first",
+				impl.shellEagerlyDestroyed);
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
