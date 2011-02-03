@@ -12,12 +12,19 @@
 package org.eclipse.jface.action;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-
+import org.eclipse.jface.dialogs.ProgressIndicator;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -33,14 +40,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.jface.dialogs.ProgressIndicator;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Util;
 
 /**
  * A StatusLine control is a SWT Composite with a horizontal layout which hosts
@@ -113,6 +116,8 @@ import org.eclipse.jface.util.Util;
 	/** stop image descriptor */
 	protected static ImageDescriptor fgStopImage = ImageDescriptor
 			.createFromFile(StatusLine.class, "images/stop.gif");//$NON-NLS-1$
+
+	private MenuItem copyMenuItem;
 	static {
 		JFaceResources.getImageRegistry().put(
 				"org.eclipse.jface.parts.StatusLine.stopImage", fgStopImage);//$NON-NLS-1$
@@ -282,13 +287,26 @@ import org.eclipse.jface.util.Util;
 		setLayout(new StatusLineLayout());
 
 		fMessageLabel = new CLabel(this, SWT.NONE);// SWT.SHADOW_IN);
-		// Color[] colors = new Color[2];
-		// colors[0] =
-		// parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
-		// colors[1] = fMessageLabel.getBackground();
-		// int[] gradient = new int[] {JFaceColors.STATUS_PERCENT};
-		// fMessageLabel.setBackground(colors, gradient);
-
+		
+		// this would need extra work to make this accessible
+		// from the workbench command framework.
+		Menu menu = new Menu(fMessageLabel);
+		fMessageLabel.setMenu(menu);
+		copyMenuItem = new MenuItem(menu, SWT.PUSH);
+		copyMenuItem.setText(JFaceResources.getString("copy")); //$NON-NLS-1$
+		copyMenuItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				String text = fMessageLabel.getText();
+				if (text != null && text.length() > 0) {
+					text = LegacyActionTools.removeMnemonics(text);
+					Clipboard cp = new Clipboard(e.display);
+					cp.setContents(new Object[] { text },
+							new Transfer[] { TextTransfer.getInstance() });
+					cp.dispose();
+				}
+			}
+		});
+		
 		fProgressIsVisible = false;
 		fCancelEnabled = false;
 
@@ -677,6 +695,10 @@ import org.eclipse.jface.util.Util;
 						.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
 				fMessageLabel.setText(fMessageText == null ? "" : fMessageText); //$NON-NLS-1$
 				fMessageLabel.setImage(fMessageImage);
+			}
+			if (copyMenuItem != null && !copyMenuItem.isDisposed()) {
+				String text = fMessageLabel.getText();
+				copyMenuItem.setEnabled(text != null && text.length() > 0);
 			}
 		}
 	}
