@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
@@ -774,6 +776,20 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 				IDialogConstants.BACK_LABEL, false);
 		nextButton = createButton(composite, IDialogConstants.NEXT_ID,
 				IDialogConstants.NEXT_LABEL, false);
+		
+		// make sure screen readers skip visual '<', '>' chars on buttons:
+		final String backReaderText = IDialogConstants.BACK_LABEL.replace('<', ' ');
+		backButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = backReaderText;
+			}
+		});
+		final String nextReaderText = IDialogConstants.NEXT_LABEL.replace('>', ' ');
+		nextButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = nextReaderText;
+			}
+		});
 		return composite;
 	}
 
