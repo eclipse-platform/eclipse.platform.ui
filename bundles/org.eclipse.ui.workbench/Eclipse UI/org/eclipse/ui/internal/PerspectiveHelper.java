@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -298,6 +297,9 @@ public class PerspectiveHelper {
         active = true;
     }
 
+	private String tmpViewId = null;
+	private Exception tmpStackTrace = null;
+
 	/**
      * Adds a part to the presentation. If a placeholder exists for the part
      * then swap the part in. Otherwise, add the part in the bottom right
@@ -371,6 +373,21 @@ public class PerspectiveHelper {
                         ContainerPlaceholder containerPlaceholder = (ContainerPlaceholder) container;                        
                         ILayoutContainer parentContainer = containerPlaceholder
                                 .getContainer();
+						if (parentContainer == null) {
+							WorkbenchPlugin.log("Previous ContainerPlaceholder for " + tmpViewId, //$NON-NLS-1$
+									tmpStackTrace);
+							tmpViewId = null;
+							tmpStackTrace = new Exception();
+							tmpStackTrace.fillInStackTrace();
+							WorkbenchPlugin.log(
+									"Current ContainerPlaceholder with null parent for " //$NON-NLS-1$
+											+ primaryId + ":" + secondaryId, tmpStackTrace); //$NON-NLS-1$
+							tmpStackTrace = null;
+							return;
+						}
+						tmpViewId = primaryId + ":" + secondaryId; //$NON-NLS-1$
+						tmpStackTrace = new Exception();
+						tmpStackTrace.fillInStackTrace();
                         container = (ILayoutContainer) containerPlaceholder
                                 .getRealContainer();
                         if (container instanceof LayoutPart) {
