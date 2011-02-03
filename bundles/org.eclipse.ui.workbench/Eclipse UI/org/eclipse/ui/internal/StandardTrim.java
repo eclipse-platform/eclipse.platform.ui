@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -30,6 +31,8 @@ public class StandardTrim {
 	@Inject
 	EModelService modelService;
 
+	private StatusLineManager manager;
+
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl toolControl) {
 		if (toolControl.getElementId().equals("org.eclipse.ui.StatusLine")) { //$NON-NLS-1$
@@ -38,6 +41,14 @@ public class StandardTrim {
 			createHeapStatus(parent, toolControl);
 		} else if (toolControl.getElementId().equals("org.eclipse.ui.ProgressBar")) { //$NON-NLS-1$
 			createProgressBar(parent, toolControl);
+		}
+	}
+
+	@PreDestroy
+	void destroy() {
+		if (manager != null) {
+			manager.dispose();
+			manager = null;
 		}
 	}
 
@@ -67,7 +78,7 @@ public class StandardTrim {
 	private void createStatusLine(Composite parent, MToolControl toolControl) {
 		IEclipseContext context = modelService.getContainingContext(toolControl);
 		WorkbenchWindow wbw = (WorkbenchWindow) context.get(IWorkbenchWindow.class);
-		StatusLineManager slm = wbw.getStatusLineManager();
-		slm.createControl(parent);
+		manager = wbw.getStatusLineManager();
+		manager.createControl(parent);
 	}
 }
