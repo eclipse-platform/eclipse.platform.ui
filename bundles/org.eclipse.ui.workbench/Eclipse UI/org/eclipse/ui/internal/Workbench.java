@@ -1315,6 +1315,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				new ActiveWorkbenchWindowQueryContextFunction(ISources.ACTIVE_PART_ID_NAME));
 		application.getContext().set(ISources.ACTIVE_SITE_NAME,
 				new ActiveWorkbenchWindowQueryContextFunction(ISources.ACTIVE_SITE_NAME));
+		application.getContext().set("org.eclipse.core.runtime.Platform", Platform.class); //$NON-NLS-1$
 
 		// setup debug mode if required.
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
