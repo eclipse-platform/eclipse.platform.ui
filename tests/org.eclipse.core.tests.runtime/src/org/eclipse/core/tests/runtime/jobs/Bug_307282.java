@@ -106,7 +106,7 @@ public class Bug_307282 extends AbstractJobManagerTest {
 		assertTrue(!lock2.acquire(0));
 
 		tb2.setStatus(RELEASE_LOCK);
-		assertTrue(lock2.acquire(100));
+		assertTrue(lock2.acquire(1000));
 
 		tb1.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
 		tb2.setStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
