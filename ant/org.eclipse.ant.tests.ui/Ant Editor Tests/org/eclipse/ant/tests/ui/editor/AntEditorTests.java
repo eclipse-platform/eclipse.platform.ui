@@ -100,13 +100,18 @@ public class AntEditorTests extends AbstractAntUITest {
 		assertNotNull("Expecting a hovertext object", hoverText);
 		assertTrue("Expected to see '<h5>Includes:</h5><li>include</li>'", hoverText.indexOf("<h5>Includes:</h5><li>include</li>") > -1);
 		assertTrue("Expected to see '<h5>Excludes:</h5><li>exclude</li>'", hoverText.indexOf("<h5>Excludes:</h5><li>exclude</li>") > -1);
-		assertTrue("Expected to see '<li>**/SCCS/**</li>'", hoverText.indexOf("<li>**/SCCS/**</li>") > -1);
-		assertTrue("Expected to see '<li>**/.DS_Store</li>'", hoverText.indexOf("<li>**/.DS_Store</li>") > -1);
-		assertTrue("Expected to see '<li>**/.bzrignore</li>'", hoverText.indexOf("<li>**/.bzrignore</li>") > -1);
-		assertTrue("Expected to see '<li>**/.gitattributes</li>'", hoverText.indexOf("<li>**/.gitattributes</li>") > -1);
-		assertTrue("Expected to see '<li>**/.hgtags</li>'", hoverText.indexOf("<li>**/.hgtags</li>") > -1);
+		String text = "<li>**"+File.separator+"SCCS"+File.separator+"**</li>";
+		assertTrue("Expected to see '<li>**/SCCS/**</li>'", hoverText.indexOf(text) > -1);
+		text = "<li>**"+File.separator+".DS_Store</li>";
+		assertTrue("Expected to see '<li>**/.DS_Store</li>'", hoverText.indexOf(text) > -1);
+		text = "<li>**"+File.separator+".bzrignore</li>";
+		assertTrue("Expected to see '<li>**/.bzrignore</li>'", hoverText.indexOf(text) > -1);
+		text = "<li>**"+File.separator+".gitattributes</li>";
+		assertTrue("Expected to see '<li>**/.gitattributes</li>'", hoverText.indexOf(text) > -1);
+		text = "<li>**"+File.separator+".hgtags</li>";
+		assertTrue("Expected to see '<li>**/.hgtags</li>'", hoverText.indexOf(text) > -1);
     }
-    
+
     
     public void testTaskdefOpenDeclaration() throws PartInitException, BadLocationException {
         IFile file= getIFile("taskdef.xml");
