@@ -3459,7 +3459,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		if (model == partService.getActivePart()) {
+		if (partService.getActivePart() == null) {
+			// unset active part/editor sources if no active part found
 			updateActivePartSources(null);
 			updateActiveEditorSources(null);
 		} else if (part instanceof IEditorPart) {
