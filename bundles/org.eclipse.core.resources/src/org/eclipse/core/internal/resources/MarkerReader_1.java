@@ -94,7 +94,7 @@ public class MarkerReader_1 extends MarkerReader {
 		int attributesSize = input.readInt();
 		if (attributesSize == 0)
 			return null;
-		Map<String, Object> result = new MarkerAttributeMap<String, Object>(attributesSize);
+		Map<String, Object> result = new MarkerAttributeMap<Object>(attributesSize);
 		for (int j = 0; j < attributesSize; j++) {
 			String key = input.readUTF();
 			int type = input.readInt();

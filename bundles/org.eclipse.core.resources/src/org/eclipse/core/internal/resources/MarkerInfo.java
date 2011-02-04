@@ -115,7 +115,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 	public Map<String, Object> getAttributes(boolean makeCopy) {
 		if (attributes == null)
 			return null;
-		return makeCopy ? new MarkerAttributeMap<String, Object>(attributes) : attributes;
+		return makeCopy ? new MarkerAttributeMap<Object>(attributes) : attributes;
 	}
 
 	public Object[] getAttributes(String[] attributeNames) {
@@ -149,7 +149,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		if (attributes == null) {
 			if (value == null)
 				return;
-			attributes = new MarkerAttributeMap<String, Object>();
+			attributes = new MarkerAttributeMap<Object>();
 			attributes.put(attributeName, value);
 		} else {
 			if (value == null) {
@@ -166,7 +166,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		if (map == null)
 			attributes = null;
 		else {
-			attributes = new MarkerAttributeMap<String, Object>(map.size());
+			attributes = new MarkerAttributeMap<Object>(map.size());
 			for (Iterator<String> i = map.keySet().iterator(); i.hasNext();) {
 				Object key = i.next();
 				Assert.isTrue(key instanceof String);

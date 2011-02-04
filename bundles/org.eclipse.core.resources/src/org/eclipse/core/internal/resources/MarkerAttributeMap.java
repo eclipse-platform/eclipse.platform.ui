@@ -23,7 +23,7 @@ import org.eclipse.core.internal.utils.StringPool;
  * Implemented as a single array that alternates keys and values.
  */
 @SuppressWarnings("unchecked")
-public class MarkerAttributeMap<K extends String, V> implements Map<K, V>, IStringPoolParticipant {
+public class MarkerAttributeMap<V> implements Map<String, V>, IStringPoolParticipant {
 	protected Object[] elements = null;
 	protected int count = 0;
 
@@ -52,7 +52,7 @@ public class MarkerAttributeMap<K extends String, V> implements Map<K, V>, IStri
 	 * Creates a new marker attribute map of default size
 	 * @param map The entries in the given map will be added to the new map.
 	 */
-	public MarkerAttributeMap(Map<? extends K, ? extends V> map) {
+	public MarkerAttributeMap(Map<String, ? extends V> map) {
 		this(map.size());
 		putAll(map);
 	}
@@ -96,7 +96,7 @@ public class MarkerAttributeMap<K extends String, V> implements Map<K, V>, IStri
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
-	public Set<Entry<K, V>> entrySet() {
+	public Set<Entry<String, V>> entrySet() {
 		return toHashMap().entrySet();
 	}
 
@@ -106,7 +106,7 @@ public class MarkerAttributeMap<K extends String, V> implements Map<K, V>, IStri
 	public boolean equals(Object o) {
 		if (!(o instanceof Map))
 			return false;
-		Map<K, V> other = (Map<K, V>) o;
+		Map<String, V> other = (Map<String, V>) o;
 		//must be same size
 		if (count != other.size())
 			return false;
@@ -177,13 +177,13 @@ public class MarkerAttributeMap<K extends String, V> implements Map<K, V>, IStri
 	 * in the Map interface.  The returned collection will not be bound to
 	 * this map and will not remain in sync with this map.
 	 */
-	public Set<K> keySet() {
-		Set<K> result = new HashSet<K>(size());
+	public Set<String> keySet() {
+		Set<String> result = new HashSet<String>(size());
 		if (count == 0)
 			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.add((K)elements[i]);
+				result.add((String)elements[i]);
 			}
 		}
 		return result;
@@ -192,7 +192,7 @@ public class MarkerAttributeMap<K extends String, V> implements Map<K, V>, IStri
 	/* (non-Javadoc)
 	 * @see Map#put(java.lang.Object, java.lang.Object)
 	 */
-	public V put(K k, V value) {
+	public V put(String k, V value) {
 		if (k == null)
 			throw new NullPointerException();
 		if (value == null)
@@ -234,8 +234,8 @@ public class MarkerAttributeMap<K extends String, V> implements Map<K, V>, IStri
 	/* (non-Javadoc)
 	 * @see Map#putAll(java.util.Map)
 	 */
-	public void putAll(Map<? extends K, ? extends V> map) {
-		for (Map.Entry<? extends K, ? extends V> e : map.entrySet())
+	public void putAll(Map<? extends String, ? extends V> map) {
+		for (Map.Entry<? extends String, ? extends V> e : map.entrySet())
 			put(e.getKey(), e.getValue());
 	}
 
@@ -286,13 +286,13 @@ public class MarkerAttributeMap<K extends String, V> implements Map<K, V>, IStri
 	/**
 	 * Creates a new hash map with the same contents as this map.
 	 */
-	private HashMap<K, V> toHashMap() {
-		HashMap<K, V> result = new HashMap<K, V>(size());
+	private HashMap<String, V> toHashMap() {
+		HashMap<String, V> result = new HashMap<String, V>(size());
 		if (count == 0)
 			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
-				result.put((K)elements[i], (V)elements[i + 1]);
+				result.put((String)elements[i], (V)elements[i + 1]);
 			}
 		}
 		return result;
