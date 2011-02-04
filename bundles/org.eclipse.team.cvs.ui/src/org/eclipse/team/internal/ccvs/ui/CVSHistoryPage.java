@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1504,7 +1504,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 			IStatus status = Status.OK_STATUS;
 			
+			if (Policy.DEBUG_HISTORY) {
+				String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+				System.out.println(time + ": RefreshCVSFileHistory#run started"); //$NON-NLS-1$
+			}
+
+
 			if (fileHistory != null && !shutdown) {
+				if (Policy.DEBUG_HISTORY) {
+					String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+					System.out.println(time + ": RefreshCVSFileHistory#run checkpoint 1"); //$NON-NLS-1$
+				}
 				//If fileHistory terminates in a bad way, try to fetch the local
 				//revisions only
 				boolean localFetched = false;
@@ -1514,6 +1524,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 						&& (cachedRefreshFlags & CVSFileHistory.REFRESH_REMOTE) > 0) {
 					// If this is the first refresh, show the local history before hitting the server
 					try {
+						if (Policy.DEBUG_HISTORY) {
+							String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+							System.out.println(time + ": RefreshCVSFileHistory#run checkpoint 2"); //$NON-NLS-1$
+						}
 						fileHistory.refresh(CVSFileHistory.REFRESH_LOCAL, monitor);
 						updateTable();
 						localFetched = true;
@@ -1522,18 +1536,22 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 						// Ignore and try the full refresh
 						if (Policy.DEBUG_HISTORY) {
 							String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-							System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception"); //$NON-NLS-1$
+							System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception(1)"); //$NON-NLS-1$
 							e.printStackTrace();
 						}
 					}
 				}
 				try {
+					if (Policy.DEBUG_HISTORY) {
+						String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+						System.out.println(time + ": RefreshCVSFileHistory#run checkpoint 3"); //$NON-NLS-1$
+					}
 					fileHistory.refresh(cachedRefreshFlags, monitor);
 					needsUpdate = true;
 				} catch (TeamException ex) {
 					if (Policy.DEBUG_HISTORY) {
 						String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-						System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception"); //$NON-NLS-1$
+						System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception(2)"); //$NON-NLS-1$
 						ex.printStackTrace();
 					}
 					if (!localFetched) {
@@ -1544,15 +1562,20 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 							// Ignore and allow the original exception to go through
 							if (Policy.DEBUG_HISTORY) {
 								String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-								System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception"); //$NON-NLS-1$
+								System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception(3)"); //$NON-NLS-1$
 								e.printStackTrace();
 							}
 						}
 					}
 					status = new CVSStatus(ex.getStatus().getSeverity(), ex.getStatus().getCode(), ex.getMessage(), ex);
 				}
-				if (needsUpdate)
+				if (needsUpdate) {
+					if (Policy.DEBUG_HISTORY) {
+						String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+						System.out.println(time + ": RefreshCVSFileHistory#run checkpoint 4"); //$NON-NLS-1$
+					}
 					updateTable();
+				}
 			}
 
 			if (status != Status.OK_STATUS ) {
