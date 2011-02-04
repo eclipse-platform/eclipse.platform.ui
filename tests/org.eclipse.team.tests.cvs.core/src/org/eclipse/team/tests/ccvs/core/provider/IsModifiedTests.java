@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,16 +11,33 @@
 package org.eclipse.team.tests.ccvs.core.provider;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.util.ResourceStateChangeListeners;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -548,5 +565,43 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(copy, null, true);
 	}
 
+	public void testBug62547() throws TeamException, CoreException,
+			UnsupportedEncodingException {
+		IProject project = createProject("testBug62547Project", new String[] {
+				"file1.txt", "file2.txt" });
+
+		project.getFile("file1.txt").setContents(
+				new ByteArrayInputStream("Sample text 1".getBytes("UTF-8")),
+				true, true, getMonitor());
+		project.getFile("file2.txt").setContents(
+				new ByteArrayInputStream("Sample text 2".getBytes("UTF-8")),
+				true, true, getMonitor());
+		long currentTime = System.currentTimeMillis();
+		new File(project.getFile("file1.txt").getLocationURI())
+				.setLastModified(currentTime);
+		project.getFile("file1.txt").refreshLocal(1, getMonitor());
+
+		assertEquals(currentTime, project.getFile("file1.txt")
+				.getLocalTimeStamp());
+
+		new File(project.getFile("file2.txt").getLocationURI())
+				.setLastModified(currentTime);
+		project.getFile("file2.txt").refreshLocal(1, getMonitor());
+		assertEquals(currentTime, project.getFile("file2.txt")
+				.getLocalTimeStamp());
+
+		commitResources(project, new String[] { "file1.txt", "file2.txt" });
+
+		project.getFile("file1.txt").delete(true, getMonitor());
+		project.getFile("file2.txt").copy(
+				project.getFile("file1.txt").getFullPath(), true, getMonitor());
+
+		assertEquals(project.getFile("file1.txt").getLocalTimeStamp(), project
+				.getFile("file2.txt").getLocalTimeStamp());
+
+		assertModificationState(project, new String[] { ".", "file1.txt" },
+				true);
+
+	}
 }
 

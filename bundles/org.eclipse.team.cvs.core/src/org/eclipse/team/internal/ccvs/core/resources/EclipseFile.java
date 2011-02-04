@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -617,7 +617,9 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 			// isMerged() must be called because when a file is updated and merged by the cvs server the timestamps
 			// are equal. Merged files should however be reported as dirty because the user should take action and commit
 			// or review the merged contents.
-			if(ResourceSyncInfo.isAddition(syncBytes) || ResourceSyncInfo.isMerge(syncBytes) || !exists()) {
+			if (ResourceSyncInfo.isAddition(syncBytes)
+					|| ResourceSyncInfo.isMerge(syncBytes)
+					|| ResourceSyncInfo.wasDeleted(syncBytes) || !exists()) {
 				dirty = true;
 			} else {
 				// TODO: non-optimal as ResourceSyncInfo is created each time

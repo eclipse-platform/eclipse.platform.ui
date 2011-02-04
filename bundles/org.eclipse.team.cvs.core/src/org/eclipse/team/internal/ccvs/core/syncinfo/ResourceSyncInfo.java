@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,10 +69,12 @@ public class ResourceSyncInfo {
 	protected static final int TYPE_REGULAR = 1;
 	protected static final int TYPE_MERGED = 2;
 	protected static final int TYPE_MERGED_WITH_CONFLICTS = 3;
+	protected static final int TYPE_DELETED_AND_RESTORED = 4;
 	
 	protected static final String TIMESTAMP_DUMMY = "dummy timestamp"; //$NON-NLS-1$
 	protected static final String TIMESTAMP_MERGED = "Result of merge"; //$NON-NLS-1$
 	protected static final String TIMESTAMP_MERGED_WITH_CONFLICT = TIMESTAMP_MERGED + "+"; //$NON-NLS-1$
+	protected static final String TIMESTAMP_DELETED_AND_RESTORED = "restored+"; //$NON-NLS-1$
 	
 	protected static final String TIMESTAMP_SERVER_MERGED = "+modified"; //$NON-NLS-1$
 	protected static final String TIMESTAMP_SERVER_MERGED_WITH_CONFLICT = "+="; //$NON-NLS-1$
@@ -421,6 +423,9 @@ public class ResourceSyncInfo {
 		} else if(date.indexOf(TIMESTAMP_MERGED)!=-1) {
 			syncType = TYPE_MERGED;
 			date = null;
+		} else if (date.indexOf(TIMESTAMP_DELETED_AND_RESTORED) != -1) {
+			syncType = TYPE_DELETED_AND_RESTORED;
+			date = date.substring(date.indexOf("+") + 1); //$NON-NLS-1$
 		}
 		
 		if(date==null || "".equals(date)) { //$NON-NLS-1$
@@ -494,6 +499,8 @@ public class ResourceSyncInfo {
 							entryLineTimestamp = TIMESTAMP_MERGED; break;
 						case TYPE_MERGED_WITH_CONFLICTS:
 							entryLineTimestamp = TIMESTAMP_MERGED_WITH_CONFLICT + CVSDateFormatter.dateToEntryLine(timeStamp); break;
+						case TYPE_DELETED_AND_RESTORED:
+							entryLineTimestamp = TIMESTAMP_DELETED_AND_RESTORED + CVSDateFormatter.dateToEntryLine(timeStamp); break;
 					}						
 				}
 				result.append(entryLineTimestamp);
@@ -658,6 +665,25 @@ public class ResourceSyncInfo {
 			byte[] newSyncBytes = new byte[syncBytes.length - 1];
 			System.arraycopy(syncBytes, 0, newSyncBytes, 0, index + 1);
 			System.arraycopy(syncBytes, index + 2, newSyncBytes, index + 1, newSyncBytes.length - index - 1);
+
+			String syncTimestamp = Util.getSubstring(syncBytes, SEPARATOR_BYTE,
+					3, false);
+			if (getSyncType(new String(syncTimestamp)) == TYPE_REGULAR) {
+				syncTimestamp = TIMESTAMP_DELETED_AND_RESTORED + syncTimestamp;
+				byte[] oldSyncBytes = newSyncBytes;
+				newSyncBytes = new byte[oldSyncBytes.length
+						+ TIMESTAMP_DELETED_AND_RESTORED.length()];
+				System.arraycopy(oldSyncBytes, 0, newSyncBytes, 0,
+						startOfSlot(oldSyncBytes, 3) + 1);
+				System.arraycopy(syncTimestamp.getBytes(), 0, newSyncBytes,
+						startOfSlot(oldSyncBytes, 3) + 1,
+						syncTimestamp.length());
+				System.arraycopy(oldSyncBytes,
+						startOfSlot(oldSyncBytes, 4) - 1, newSyncBytes,
+						startOfSlot(oldSyncBytes, 3) + syncTimestamp.length(),
+						oldSyncBytes.length
+								- (startOfSlot(oldSyncBytes, 4) - 1));
+			}
 			return newSyncBytes;
 		}
 		return syncBytes;
@@ -731,7 +757,9 @@ public class ResourceSyncInfo {
 				throw new CVSException(NLS.bind(CVSMessages.ResourceSyncInfo_malformedSyncBytes, new String[] { new String(syncBytes) })); 
 			}
 			int syncType = getSyncType(syncTimestamp);
-			if (syncType != TYPE_REGULAR) {
+			if (syncType == TYPE_DELETED_AND_RESTORED) {
+				return syncTimestamp.substring(syncTimestamp.indexOf("+") + 1); //$NON-NLS-1$
+			} else if (syncType != TYPE_REGULAR) {
 				if (syncType == TYPE_MERGED_WITH_CONFLICTS && fileTimestamp.equals(getTimestamp(syncTimestamp))) {
 					return TIMESTAMP_SERVER_MERGED_WITH_CONFLICT;
 				} else {
@@ -785,6 +813,8 @@ public class ResourceSyncInfo {
 			return TYPE_MERGED_WITH_CONFLICTS;
 		} else if(date.indexOf(TIMESTAMP_MERGED)!=-1) {
 			return TYPE_MERGED;
+		} else if (date.indexOf(TIMESTAMP_DELETED_AND_RESTORED) != -1) {
+			return TYPE_DELETED_AND_RESTORED;
 		}
 		return TYPE_REGULAR;
 	}
@@ -872,6 +902,25 @@ public class ResourceSyncInfo {
 		}
 		int syncType = getSyncType(timestamp);
 		return syncType == TYPE_MERGED || syncType == TYPE_MERGED_WITH_CONFLICTS;
+	}
+
+	/**
+	 * Checks if the ResourceSyncInfo was deleted and restored afterwards.
+	 * Parses the timestamp in <code>syncBytes</code> and searches for markers.
+	 * 
+	 * @param syncBytes
+	 * @return boolean
+	 */
+	public static boolean wasDeleted(byte[] syncBytes) throws CVSException {
+		String timestamp = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 3,
+				false);
+		if (timestamp == null) {
+			throw new CVSException(NLS.bind(
+					CVSMessages.ResourceSyncInfo_malformedSyncBytes,
+					new String[] { new String(syncBytes) }));
+		}
+		int syncType = getSyncType(timestamp);
+		return syncType == TYPE_DELETED_AND_RESTORED;
 	}
 
 	/**
