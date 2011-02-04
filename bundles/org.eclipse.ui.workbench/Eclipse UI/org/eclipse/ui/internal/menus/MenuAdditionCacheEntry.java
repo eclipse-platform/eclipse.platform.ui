@@ -162,7 +162,15 @@ public class MenuAdditionCacheEntry {
 		String iconUrl = MenuHelper.getIconUrl(commandAddition,
 				IWorkbenchRegistryConstants.ATT_ICON);
 		if (iconUrl == null) {
-			item.setLabel(MenuHelper.getLabel(commandAddition));
+			ICommandImageService commandImageService = application.getContext().get(
+					ICommandImageService.class);
+			ImageDescriptor descriptor = commandImageService == null ? null : commandImageService
+					.getImageDescriptor(item.getElementId());
+			if (descriptor == null) {
+				item.setLabel(MenuHelper.getLabel(commandAddition));
+			} else {
+				item.setIconURI(MenuHelper.getImageUrl(descriptor));
+			}
 		} else {
 			item.setIconURI(iconUrl);
 		}
