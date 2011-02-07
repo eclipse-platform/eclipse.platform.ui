@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,7 +209,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	
 		boolean projectNeedsMigration= false;
 		for (int i = 0; i < commands.length; i++) {
-			String[] version= new String[] {""}; //$NON-NLS-1$
+			String[] version= new String[] {IExternalToolConstants.EMPTY_STRING};
 			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(project, commands[i].getArguments(), version);
 			if (BuilderCoreUtils.VERSION_2_1.equals(version[0])) {
 				// Storing the .project file of a project with 2.1 configs, will

@@ -319,7 +319,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		String buildKindString= null;
 		String buildScope= null;
 		try {
-			buildKindString= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""); //$NON-NLS-1$
+			buildKindString= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.EMPTY_STRING);
 			buildScope= configuration.getAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, (String)null);
 		} catch (CoreException e) {
 		}

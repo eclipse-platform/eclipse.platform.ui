@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,11 +48,9 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	/**
 	 * Status representing no problems encountered during operation.
 	 */
-	public static final IStatus OK_STATUS = new Status(IStatus.OK, PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+	public static final IStatus OK_STATUS = new Status(IStatus.OK, PLUGIN_ID, 0, IExternalToolConstants.EMPTY_STRING, null);
 		
 	private static ExternalToolsPlugin plugin;
-
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private static IWindowListener fWindowListener;
 
@@ -134,7 +132,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
 		if (message == null) {
-			message= EMPTY_STRING; 
+			return new Status(IStatus.ERROR, PLUGIN_ID, 0, IExternalToolConstants.EMPTY_STRING, exception); 
 		}		
 		return new Status(IStatus.ERROR, PLUGIN_ID, 0, message, exception);
 	}

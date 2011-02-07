@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,6 @@ public class ExternalToolsCore extends Plugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.core.externaltools"; //$NON-NLS-1$
-	
-	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 	
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -102,7 +100,7 @@ public class ExternalToolsCore extends Plugin {
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
 		if (message == null) {
-			message= EMPTY_STRING; 
+			return new Status(IStatus.ERROR, PLUGIN_ID, 0, IExternalToolConstants.EMPTY_STRING, exception); 
 		}		
 		return new Status(IStatus.ERROR, PLUGIN_ID, 0, message, exception);
 	}

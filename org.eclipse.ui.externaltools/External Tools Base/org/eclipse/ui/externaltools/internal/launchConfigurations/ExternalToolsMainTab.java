@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -317,9 +317,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * configuration.
 	 */
 	protected void updateWorkingDirectory(ILaunchConfiguration configuration) {
-		String workingDir= ""; //$NON-NLS-1$
+		String workingDir= IExternalToolConstants.EMPTY_STRING; 
 		try {
-			workingDir= configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
+			workingDir= configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, IExternalToolConstants.EMPTY_STRING); 
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Error_reading_configuration_10, ce);
 		}
@@ -331,9 +331,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * configuration.
 	 */
 	protected void updateLocation(ILaunchConfiguration configuration) {
-		String location= ""; //$NON-NLS-1$
+		String location= IExternalToolConstants.EMPTY_STRING; 
 		try {
-			location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""); //$NON-NLS-1$
+			location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, IExternalToolConstants.EMPTY_STRING); 
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Error_reading_configuration_10, ce);
 		}
@@ -345,9 +345,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * configuration.
 	 */
 	protected void updateArgument(ILaunchConfiguration configuration) {
-		String arguments= ""; //$NON-NLS-1$
+		String arguments= IExternalToolConstants.EMPTY_STRING; 
 		try {
-			arguments= configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""); //$NON-NLS-1$
+			arguments= configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, IExternalToolConstants.EMPTY_STRING); 
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.ExternalToolsMainTab_Error_reading_configuration_7, ce);
 		}
