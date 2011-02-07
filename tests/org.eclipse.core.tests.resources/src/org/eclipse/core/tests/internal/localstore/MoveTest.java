@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,24 +51,28 @@ public class MoveTest extends LocalStoreTest {
 	 * This test has Windows as the target OS. Drives C: and D: should be available.
 	 */
 	public void testMoveFileAcrossVolumes() {
-		/* test if we are in the adequate environment */
-		if (!new java.io.File("c:\\").exists() || !new java.io.File("d:\\").exists())
+		if (!isWindows())
+			return;
+
+		/* look for the adequate environment */
+		String[] devices = findAvailableDevices();
+		if (devices[0] == null || devices[1] == null)
 			return;
 
 		// create common objects
-		IProject source = getWorkspace().getRoot().getProject("SourceProject");
-		IProject destination = getWorkspace().getRoot().getProject("DestinationProject");
-		IPath destinationLocation = new Path("d:/temp/destination");
+		String location = getUniqueString();
+		IProject source = getWorkspace().getRoot().getProject(location + "1");
+		IProject destination = getWorkspace().getRoot().getProject(location + "2");
 		try {
 			source.create(getMonitor());
 			source.open(getMonitor());
-			IProjectDescription description = getWorkspace().newProjectDescription("DestinationProject");
-			description.setLocation(destinationLocation);
+
+			IProjectDescription description = getWorkspace().newProjectDescription(destination.getName());
+			description.setLocation(new Path(devices[1] + location));
 			destination.create(description, getMonitor());
 			destination.open(getMonitor());
 		} catch (CoreException e) {
-			//if projects could not be created then test machine does not have the necessary drives
-			return;
+			fail("0.0", e);
 		}
 
 		String fileName = "fileToBeMoved.txt";
@@ -127,7 +131,6 @@ public class MoveTest extends LocalStoreTest {
 		} catch (CoreException e) {
 			fail("20.0", e);
 		}
-		ensureDoesNotExistInFileSystem(destinationLocation.toFile());
 	}
 
 	/**
@@ -178,18 +181,24 @@ public class MoveTest extends LocalStoreTest {
 	 * This test has Windows as the target OS. Drives C: and D: should be available.
 	 */
 	public void testMoveFolderAcrossVolumes() {
-		/* test if we are in the adequate environment */
-		if (!new java.io.File("c:\\").exists() || !new java.io.File("d:\\").exists())
+		if (!isWindows())
+			return;
+
+		/* look for the adequate environment */
+		String[] devices = findAvailableDevices();
+		if (devices[0] == null || devices[1] == null)
 			return;
 
 		// create common objects
-		IProject source = getWorkspace().getRoot().getProject("SourceProject");
-		IProject destination = getWorkspace().getRoot().getProject("DestinationProject");
+		String location = getUniqueString();
+		IProject source = getWorkspace().getRoot().getProject(location + "1");
+		IProject destination = getWorkspace().getRoot().getProject(location + "2");
 		try {
 			source.create(getMonitor());
 			source.open(getMonitor());
-			IProjectDescription description = getWorkspace().newProjectDescription("DestinationProject");
-			description.setLocation(new Path("d:/temp/destination"));
+
+			IProjectDescription description = getWorkspace().newProjectDescription(destination.getName());
+			description.setLocation(new Path(devices[1] + location));
 			destination.create(description, getMonitor());
 			destination.open(getMonitor());
 		} catch (CoreException e) {
@@ -251,7 +260,7 @@ public class MoveTest extends LocalStoreTest {
 			source.delete(true, true, getMonitor());
 			destination.delete(true, true, getMonitor());
 		} catch (CoreException e) {
-			fail("20.0", e);
+			fail("6.0", e);
 		}
 	}
 

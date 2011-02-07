@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.alias;
 
-import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -234,18 +233,7 @@ public class BasicAliasTest extends ResourceTest {
 			return;
 
 		/* look for the adequate environment */
-		String[] devices = new String[2];
-		for (int i = 97/*a*/; i < 123/*z*/; i++) {
-			char c = (char) i;
-			if (new File(c + ":\\").exists()) {
-				if (devices[0] == null) {
-					devices[0] = c + ":/";
-				} else {
-					devices[1] = c + ":/";
-					break;
-				}
-			}
-		}
+		String[] devices = findAvailableDevices();
 		if (devices[0] == null || devices[1] == null)
 			return;
 

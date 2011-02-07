@@ -946,4 +946,20 @@ public abstract class ResourceTest extends CoreTest {
 			//ignore
 		}
 	}
+
+	public String[] findAvailableDevices() {
+		String[] devices = new String[2];
+		for (int i = 97/*a*/; i < 123/*z*/; i++) {
+			char c = (char) i;
+			if (new java.io.File(c + ":\\").exists() && new java.io.File(c + ":\\").canWrite()) {
+				if (devices[0] == null) {
+					devices[0] = c + ":/";
+				} else {
+					devices[1] = c + ":/";
+					break;
+				}
+			}
+		}
+		return devices;
+	}
 }
