@@ -1100,6 +1100,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 	
 	public void refresh(int refreshFlags) {
+		printDebugInfo("CVSHistoryPage#refresh", (IFile)(previousFile != null ? previousFile.getIResource() : null), cvsFileHistory, new Throwable()); //$NON-NLS-1$
 		//refetch revisions, not a select only job
 		// TODO
 		refreshHistory(true, false, refreshFlags);
@@ -1113,6 +1114,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			refreshCVSFileHistoryJob.setLocalFileRevision(oldJob.localFileRevision);
 			refreshCVSFileHistoryJob.setSelectLocal(oldJob.useLocalSelect);
 			refetch = true;
+			printDebugInfo("CVSHistoryPage#refreshHistory, cancel old job", (IFile)(previousFile != null ? previousFile.getIResource() : null), cvsFileHistory, null); //$NON-NLS-1$
 		}
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
 		IResource resource = previousFile.getIResource();
@@ -1128,10 +1130,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshCVSFileHistoryJob.setGrouping(groupingOn);
 		refreshCVSFileHistoryJob.setRefreshFlags(refreshFlags);
 		IHistoryPageSite parentSite = getHistoryPageSite();
-		if (Policy.DEBUG_HISTORY) {
-			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-			System.out.println(time + ": CVSHistoryPage#refreshHistory, about to schedule RefreshCVSFileHistoryJob"); //$NON-NLS-1$
-		}
+		printDebugInfo("CVSHistoryPage#refreshHistory, about to schedule RefreshCVSFileHistoryJob", (IFile)resource, cvsFileHistory, null); //$NON-NLS-1$
 		Utils.schedule(refreshCVSFileHistoryJob, getWorkbenchSite(parentSite));
 	}
 
@@ -1501,20 +1500,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		public IStatus run(IProgressMonitor monitor)  {
 			final int cachedRefreshFlags = refreshFlags;
-
+			final boolean cachedSelectOnly= selectOnly;
 			IStatus status = Status.OK_STATUS;
-			
-			if (Policy.DEBUG_HISTORY) {
-				String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-				System.out.println(time + ": RefreshCVSFileHistory#run started"); //$NON-NLS-1$
-			}
-
-
+			printDebugInfo("RefreshCVSFileHistory#run started for", workspaceFile, fileHistory, null); //$NON-NLS-1$
 			if (fileHistory != null && !shutdown) {
-				if (Policy.DEBUG_HISTORY) {
-					String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-					System.out.println(time + ": RefreshCVSFileHistory#run checkpoint 1"); //$NON-NLS-1$
-				}
+				printDebugInfo("RefreshCVSFileHistory#run checkpoint 1", workspaceFile, fileHistory, null); //$NON-NLS-1$
+
 				//If fileHistory terminates in a bad way, try to fetch the local
 				//revisions only
 				boolean localFetched = false;
@@ -1524,57 +1515,39 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 						&& (cachedRefreshFlags & CVSFileHistory.REFRESH_REMOTE) > 0) {
 					// If this is the first refresh, show the local history before hitting the server
 					try {
-						if (Policy.DEBUG_HISTORY) {
-							String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-							System.out.println(time + ": RefreshCVSFileHistory#run checkpoint 2"); //$NON-NLS-1$
-						}
+						printDebugInfo("RefreshCVSFileHistory#run checkpoint 2", workspaceFile, fileHistory, null); //$NON-NLS-1$
 						fileHistory.refresh(CVSFileHistory.REFRESH_LOCAL, monitor);
-						updateTable();
+						updateTable(cachedSelectOnly);
 						localFetched = true;
 						needsUpdate = false;
 					} catch (TeamException e) {
 						// Ignore and try the full refresh
-						if (Policy.DEBUG_HISTORY) {
-							String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-							System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception(1)"); //$NON-NLS-1$
-							e.printStackTrace();
-						}
+						printDebugInfo("RefreshCVSFileHistory#run encountered an exception(1)", workspaceFile, fileHistory, e); //$NON-NLS-1$
 					}
 				}
 				try {
-					if (Policy.DEBUG_HISTORY) {
-						String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-						System.out.println(time + ": RefreshCVSFileHistory#run checkpoint 3"); //$NON-NLS-1$
-					}
+					printDebugInfo("RefreshCVSFileHistory#run checkpoint 3", workspaceFile, fileHistory, null); //$NON-NLS-1$
 					fileHistory.refresh(cachedRefreshFlags, monitor);
 					needsUpdate = true;
+				} catch (OperationCanceledException ex) {
+					printDebugInfo("RefreshCVSFileHistory#run OperationCanceledException", workspaceFile, fileHistory, ex); //$NON-NLS-1$
+					throw ex;
 				} catch (TeamException ex) {
-					if (Policy.DEBUG_HISTORY) {
-						String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-						System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception(2)"); //$NON-NLS-1$
-						ex.printStackTrace();
-					}
+					printDebugInfo("RefreshCVSFileHistory#run encountered an exception(2)", workspaceFile, fileHistory, ex); //$NON-NLS-1$
 					if (!localFetched) {
 						try {
 							fileHistory.refresh(CVSFileHistory.REFRESH_LOCAL, monitor);
 							needsUpdate = true;
 						} catch (TeamException e) {
 							// Ignore and allow the original exception to go through
-							if (Policy.DEBUG_HISTORY) {
-								String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-								System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception(3)"); //$NON-NLS-1$
-								e.printStackTrace();
-							}
+							printDebugInfo("RefreshCVSFileHistory#run encountered an exception(3)", workspaceFile, fileHistory, e); //$NON-NLS-1$
 						}
 					}
 					status = new CVSStatus(ex.getStatus().getSeverity(), ex.getStatus().getCode(), ex.getMessage(), ex);
 				}
 				if (needsUpdate) {
-					if (Policy.DEBUG_HISTORY) {
-						String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-						System.out.println(time + ": RefreshCVSFileHistory#run checkpoint 4"); //$NON-NLS-1$
-					}
-					updateTable();
+					printDebugInfo("RefreshCVSFileHistory#run checkpoint 4", workspaceFile, fileHistory, null); //$NON-NLS-1$
+					updateTable(cachedSelectOnly);
 				}
 			}
 
@@ -1582,21 +1555,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				this.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
 				this.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
 			}
-			
-			if (Policy.DEBUG_HISTORY) {
-				String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-				System.out.println(time + ": RefreshCVSFileHistory#run finished, status: " + status); //$NON-NLS-1$
-			}
-			
+			printDebugInfo("RefreshCVSFileHistory#run finished, status: " + status, workspaceFile, fileHistory, null); //$NON-NLS-1$
 			return status;
 		}
 
-		private void updateTable() {
+		private void updateTable(final boolean selectOnly) {
 			if (grouping)
 				revisionsFound = sortRevisions();
 			
 			Utils.asyncExec(new Runnable() {
 				public void run() {
+					printDebugInfo("RefreshCVSFileHistory#updateTable, in asyncExec", workspaceFile, cvsFileHistory, null); //$NON-NLS-1$
 					treeViewer.refresh();
 					historyTableProvider.setFile(fileHistory, workspaceFile);
 					//historyTableProvider.setWorkspaceFile(workspaceFile);
@@ -1605,6 +1574,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 							mapExpandedElements(treeViewer.getExpandedElements());
 							treeViewer.getTree().setLinesVisible(revisionsFound);
 							treeViewer.getTree().setRedraw(false);
+							printDebugInfo("RefreshCVSFileHistory#updateTable, setInput:grouping", workspaceFile, cvsFileHistory, null); //$NON-NLS-1$
 							treeViewer.setInput(categories);
 							//if user is switching modes and already has expanded elements
 							//selected try to expand those, else expand all
@@ -1622,6 +1592,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 						} else {
 							if (fileHistory.getFileRevisions().length > 0) {
 								treeViewer.getTree().setLinesVisible(true);
+								printDebugInfo("RefreshCVSFileHistory#updateTable, setInput:no grouping", workspaceFile, cvsFileHistory, null); //$NON-NLS-1$
 								treeViewer.setInput(fileHistory);
 							} else {
 								categories = new AbstractHistoryCategory[] {getErrorMessage()};
@@ -1972,26 +1943,15 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		// if this input is the same as the last, we don't need to cancel
 		// the current job
 		boolean needRefresh = checkPreviousInput();
-		
-		if (Policy.DEBUG_HISTORY) {
-			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-			System.out.println(time + ": CVSHistoryPage#inputSet, needRefresh = " + needRefresh); //$NON-NLS-1$
-		}
-
+		printDebugInfo("CVSHistoryPage#inputSet, needRefresh = " + needRefresh, (IFile)cvsFile.getIResource(), cvsFileHistory, null); //$NON-NLS-1$
 		if (refreshCVSFileHistoryJob != null) {
 			if (!needRefresh && refreshCVSFileHistoryJob.getState() != Job.NONE) {
 				// let the old job finish
-				if (Policy.DEBUG_HISTORY) {
-					String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-					System.out.println(time + ": CVSHistoryPage#inputSet, the old job is still running"); //$NON-NLS-1$
-				}
+				printDebugInfo("CVSHistoryPage#inputSet, the old job is still running", (IFile)cvsFile.getIResource(), cvsFileHistory, null); //$NON-NLS-1$
 				return true;
 			} else {
 				// cancel the old job and continue
-				if (Policy.DEBUG_HISTORY) {
-					String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
-					System.out.println(time + ": CVSHistoryPage#inputSet, cancel the old job"); //$NON-NLS-1$
-				}
+				printDebugInfo("CVSHistoryPage#inputSet, cancel the old job", (IFile)cvsFile.getIResource(), cvsFileHistory, null); //$NON-NLS-1$
 				refreshCVSFileHistoryJob.cancel();
 			}
 		}
@@ -2224,4 +2184,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		}
 	}
 
+	private static void printDebugInfo(String message, IFile file, CVSFileHistory history, Throwable t) {
+		if (!Policy.DEBUG_HISTORY)
+			return;
+		String time= new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+		String fileName= file != null ? file.getName() : "<workspaceFile == null>"; //$NON-NLS-1$
+		String fileHistoryID= history != null ? history.toString() : "<fileHistory == null>"; //$NON-NLS-1$
+		int i= fileHistoryID.indexOf('@');
+		if (i != -1)
+			fileHistoryID= fileHistoryID.substring(i);
+		System.out.println(time + ": " + fileName + ", " + fileHistoryID + ": " + message); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (t != null)
+			t.printStackTrace();
+	}
 }
