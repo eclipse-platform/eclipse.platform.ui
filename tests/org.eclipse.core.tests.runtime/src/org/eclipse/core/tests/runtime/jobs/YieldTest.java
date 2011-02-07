@@ -64,11 +64,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		return new TestSuite(YieldTest.class);
 		//		TestSuite suite = new TestSuite();
 		//		for (int i = 0; i < 100; i++) {
-		//			suite.addTestSuite(YieldTest.class);
-		//			suite.addTest(new YieldTest("transferRuleToYieldingJobException"));
 		//			suite.addTest(new YieldTest("testYieldJobToJobsInterleaved"));
-		//			suite.addTest(new YieldTest("testYieldPingPongBetweenMultipleJobs"));
-		//			suite.addTest(new YieldTest("testParallelYieldPingPongBetweenMultipleJobs"));
 		//		}
 		//		return suite;
 	}
@@ -122,6 +118,9 @@ public class YieldTest extends AbstractJobManagerTest {
 				barrier2.waitForStatus(TestBarrier.STATUS_START);
 				try {
 					yielding.yieldRule(null);
+				} catch (IllegalArgumentException e) {
+					//expected
+					return new Status(IStatus.ERROR, "org.eclipse.core.tests.runtime", "Expected failure");
 				} finally {
 					barrier1.setStatus(TestBarrier.STATUS_START);
 				}
@@ -639,7 +638,6 @@ public class YieldTest extends AbstractJobManagerTest {
 	}
 
 	public void testYieldPingPongBetweenMultipleJobs() throws Throwable {
-		System.out.println("---");
 		final TestBarrier barrier = new TestBarrier();
 		final PathRule rule = new PathRule(getName());
 		final Object SYNC = new Object();
@@ -882,7 +880,10 @@ public class YieldTest extends AbstractJobManagerTest {
 		} catch (InterruptedException e) {
 			fail("4.99", e);
 		}
-		waitForJobsCompletion(jobs.toArray(new Job[jobs.size()]), 5000);
+		//		long time = -System.currentTimeMillis();
+		waitForJobsCompletion(jobs.toArray(new Job[jobs.size()]), 10000);
+		//		time += System.currentTimeMillis();
+		//		System.out.println("Waited: " + time);
 		for (Iterator<Job> job = jobs.iterator(); job.hasNext();) {
 			Job conflict = job.next();
 			assertTrue(conflict.getResult().isOK());
