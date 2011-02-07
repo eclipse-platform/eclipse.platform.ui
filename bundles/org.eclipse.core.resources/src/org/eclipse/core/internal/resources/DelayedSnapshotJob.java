@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,15 @@ public class DelayedSnapshotJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return Status.CANCEL_STATUS;
-		if (ResourcesPlugin.getWorkspace() == null)
+
+		try {
+			ResourcesPlugin.getWorkspace();
+		} catch (IllegalStateException e) {
+			// workspace is null, log it as warning only and return OK_STATUS
+			Policy.log(IStatus.WARNING, null, e);
 			return Status.OK_STATUS;
+		}
+
 		try {
 			return saveManager.save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
 		} catch (CoreException e) {
