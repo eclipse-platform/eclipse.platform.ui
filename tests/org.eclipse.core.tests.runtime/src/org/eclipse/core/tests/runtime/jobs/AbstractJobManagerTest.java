@@ -106,21 +106,19 @@ public class AbstractJobManagerTest extends AbstractJobTest {
 	}
 
 	protected void waitForJobsCompletion(Job[] jobs, int waitTime) {
-		List joblist = new ArrayList(Arrays.asList(jobs));
+		List<Job> jobList = new ArrayList<Job>(Arrays.asList(jobs));
 		int i = 0;
 		int tickLength = 10;
 		int ticks = waitTime / tickLength;
-
-		while (!joblist.isEmpty()) {
+		while (!jobList.isEmpty()) {
 			sleep(tickLength);
 			//sanity test to avoid hanging tests
 			if (i++ > ticks) {
 				dumpState();
 				assertTrue("Timeout waiting for job to complete", false);
 			}
-			for (Iterator iterator = joblist.iterator(); iterator.hasNext();) {
-				Job job = (Job) iterator.next();
-				if (job.getState() == Job.NONE)
+			for (Iterator<Job> iterator = jobList.iterator(); iterator.hasNext();) {
+				if (iterator.next().getState() == Job.NONE)
 					iterator.remove();
 			}
 		}
