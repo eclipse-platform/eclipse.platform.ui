@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.AbstractFileSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.debug.model.AntProperty;
 import org.eclipse.ant.internal.launching.debug.model.AntStackFrame;
 import org.eclipse.ant.internal.launching.debug.model.AntValue;
@@ -201,8 +202,8 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 				HTMLPrinter.addBullet(buffer, includes[i]);
 			}
 		}
-		HTMLPrinter.addParagraph(buffer, ""); //$NON-NLS-1$
-		HTMLPrinter.addParagraph(buffer, ""); //$NON-NLS-1$
+		HTMLPrinter.addParagraph(buffer, IAntCoreConstants.EMPTY_STRING);
+		HTMLPrinter.addParagraph(buffer, IAntCoreConstants.EMPTY_STRING);
 		if (excludes != null && excludes.length > 0) {
 			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_6);
 			for (int i = 0; i < excludes.length; i++) {
@@ -302,24 +303,25 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 
 	private static IRegion cleanRegionForNonProperty(int offset, IDocument document, IRegion region) throws BadLocationException {
 		//do not allow spaces in region that is not a property
-		String text= document.get(region.getOffset(), region.getLength());
+		IRegion r = region;
+		String text= document.get(r.getOffset(), r.getLength());
 		if (text.startsWith("/")) { //$NON-NLS-1$
 			text= text.substring(1);
-			region= new Region(region.getOffset() + 1, region.getLength() - 1);
+			r= new Region(r.getOffset() + 1, r.getLength() - 1);
 		}
 		StringTokenizer tokenizer= new StringTokenizer(text, " "); //$NON-NLS-1$
 		if (tokenizer.countTokens() != 1) {
 		    while(tokenizer.hasMoreTokens()) {
 		        String token= tokenizer.nextToken();
 		        int index= text.indexOf(token);
-		        if (region.getOffset() + index <= offset && region.getOffset() + index + token.length() >= offset) {
-		            region= new Region(region.getOffset() + index, token.length());
+		        if (r.getOffset() + index <= offset && r.getOffset() + index + token.length() >= offset) {
+		            r= new Region(r.getOffset() + index, token.length());
 		            break;
 		        }
 		    }
 		}
 		
-		return region;
+		return r;
 	}
 	
 	/* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 John-Mason P. Shackelford and others.
+ * Copyright (c) 2004, 2011 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.formatter;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -25,7 +26,7 @@ public class FormattingPreferences {
        if (!useSpacesInsteadOfTabs()) {
             canonicalIndent = "\t"; //$NON-NLS-1$
         } else {
-            String tab = ""; //$NON-NLS-1$
+            String tab = IAntCoreConstants.EMPTY_STRING;
             for (int i = 0; i < getTabWidth(); i++) {
                 tab = tab.concat(" "); //$NON-NLS-1$
             }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.tools.ant.Project;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.core.resources.IFile;
@@ -129,9 +130,9 @@ public class AntProjectNode extends AntElementNode {
         	return null;
         }
         List results= new ArrayList(1);
-    	identifier= new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
-    	int defaultTargetNameOffset= textToSearch.indexOf("default"); //$NON-NLS-1$
-    	defaultTargetNameOffset= textToSearch.indexOf(identifier, defaultTargetNameOffset);
+    	String newidentifier= new StringBuffer("\"").append(identifier).append('"').toString(); //$NON-NLS-1$
+    	int defaultTargetNameOffset= textToSearch.indexOf(IAntCoreConstants.DEFAULT);
+    	defaultTargetNameOffset= textToSearch.indexOf(newidentifier, defaultTargetNameOffset);
     	results.add(new Integer(getOffset() + defaultTargetNameOffset + 1));
         return results;
     }

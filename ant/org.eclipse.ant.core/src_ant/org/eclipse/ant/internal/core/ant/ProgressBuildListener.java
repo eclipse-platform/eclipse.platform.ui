@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Ant;
 import org.apache.tools.ant.taskdefs.CallTarget;
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -94,10 +95,11 @@ public class ProgressBuildListener implements BuildListener {
 		projects = new HashMap();
 		mainProject = project;
 		ProjectMonitors monitors = new ProjectMonitors();
-		if (monitor == null) {
-			monitor= new NullProgressMonitor();
+		IProgressMonitor localmonitor = monitor;
+		if (localmonitor == null) {
+			localmonitor= new NullProgressMonitor();
 		}
-		monitors.setMainMonitor(monitor);
+		monitors.setMainMonitor(localmonitor);
 		projects.put(mainProject, monitors);
 		List targets= new ArrayList(targetNames.size());
 		for (int i = 0; i < targetNames.size(); i++) {
@@ -108,7 +110,7 @@ public class ProgressBuildListener implements BuildListener {
 			}
 		}
 		int work = computeWork(targets);
-		monitors.getMainMonitor().beginTask("", work);  //$NON-NLS-1$
+		monitors.getMainMonitor().beginTask(IAntCoreConstants.EMPTY_STRING, work);
 	}
 
 	/* (non-Javadoc)
@@ -190,7 +192,7 @@ public class ProgressBuildListener implements BuildListener {
 
 		monitors.setTargetMonitor(subMonitorFor(monitors.getMainMonitor(), 1));
 		int work = (target != null) ? target.getTasks().length : 100;
-		monitors.getTargetMonitor().beginTask("", work);  //$NON-NLS-1$
+		monitors.getTargetMonitor().beginTask(IAntCoreConstants.EMPTY_STRING, work);
 	}
 
 	protected ProjectMonitors createMonitors(Project currentProject, Target target) {
@@ -209,7 +211,7 @@ public class ProgressBuildListener implements BuildListener {
 			parentProject = null;
 			monitors.setMainMonitor(subMonitorFor(parentMonitors.getTaskMonitor(), 1));
 		}
-		monitors.getMainMonitor().beginTask("", work);  //$NON-NLS-1$
+		monitors.getMainMonitor().beginTask(IAntCoreConstants.EMPTY_STRING, work);
 		projects.put(currentProject, monitors);
 		return monitors;
 	}
@@ -255,7 +257,7 @@ public class ProgressBuildListener implements BuildListener {
 		}
 		currentTaskThread= Thread.currentThread();
 		monitors.setTaskMonitor(subMonitorFor(monitors.getTargetMonitor(), 1));
-		monitors.getTaskMonitor().beginTask("", 1);  //$NON-NLS-1$
+		monitors.getTaskMonitor().beginTask(IAntCoreConstants.EMPTY_STRING, 1);
 		// If this script is calling another one, track the project chain.
 		if (task instanceof Ant) {
 			parentProject = currentProject;

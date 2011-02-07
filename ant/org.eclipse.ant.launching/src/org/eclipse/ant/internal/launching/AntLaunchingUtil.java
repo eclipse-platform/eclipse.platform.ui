@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.launchConfigurations.AntHomeClasspathEntry;
 import org.eclipse.ant.internal.launching.launchConfigurations.AntProcess;
 import org.eclipse.ant.internal.launching.launchConfigurations.RemoteAntRuntimeProcess;
@@ -254,7 +255,7 @@ public final class AntLaunchingUtil {
 		for (int i = 0; i < entries.length; i++) {
 			IRuntimeClasspathEntry entry = entries[i];
 			try {
-				urls[i] = new URL("file:" + entry.getLocation()); //$NON-NLS-1$
+				urls[i] = new URL(IAntCoreConstants.FILE_PROTOCOL + entry.getLocation());
 			} catch (MalformedURLException e) {
 				throw new CoreException(new Status(IStatus.ERROR, AntLaunching
 						.getUniqueIdentifier(), AntLaunching.INTERNAL_ERROR,

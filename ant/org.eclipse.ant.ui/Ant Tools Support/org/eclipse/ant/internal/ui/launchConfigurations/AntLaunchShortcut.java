@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -320,7 +321,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 			if (!DebugUITools.saveBeforeLaunch()) {
 				return;
 			}
-			IStatus status = new Status(IStatus.INFO, IAntUIConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.INFO, IAntUIConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, IAntCoreConstants.EMPTY_STRING, null);
 			String groupId;
 			if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			    groupId= IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP;

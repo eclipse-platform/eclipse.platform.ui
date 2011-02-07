@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005  John-Mason P. Shackelford and others.
+ * Copyright (c) 2000, 2011  John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.templates;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlFormatter;
@@ -95,7 +96,7 @@ public class AntTemplatePreferencePage extends TemplatePreferencePage {
 				viewer.getDocument().set(template.getPattern());
 			}
 		} else {
-			viewer.getDocument().set(""); //$NON-NLS-1$
+			viewer.getDocument().set(IAntCoreConstants.EMPTY_STRING);
 		}		
 	}
 	/* (non-Javadoc)

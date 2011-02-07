@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.ant.internal.ui.editor;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -92,7 +93,7 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int, org.eclipse.jface.text.DocumentEvent)
 	 */
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
-		String enteredText= ""; //$NON-NLS-1$
+		String enteredText= IAntCoreConstants.EMPTY_STRING;
 		try {
 			enteredText = document.get(fReplacementOffset, offset-fReplacementOffset);
 		} catch (BadLocationException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ import org.eclipse.ant.core.Type;
 import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.ant.internal.core.AntSecurityManager;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
@@ -739,7 +740,7 @@ public class InternalAntRunner {
 	private BuildLogger createLogger() {
 		if (loggerClassname == null) {
 			buildLogger= new DefaultLogger();
-		} else if (!"".equals(loggerClassname)) { //$NON-NLS-1$
+		} else if (!IAntCoreConstants.EMPTY_STRING.equals(loggerClassname)) {
 			try {
 				buildLogger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
 			} catch (ClassCastException e) {
@@ -837,8 +838,8 @@ public class InternalAntRunner {
 			project.log(message, priority);	
 		} else {
 			if (buildListeners != null) {
-				project = new Project();
-				BuildEvent event = new BuildEvent(project);
+				Project p = new Project();
+				BuildEvent event = new BuildEvent(p);
 				event.setMessage(message, priority);
 				//notify the build listeners that are not registered as
 				//no project existed
@@ -1163,7 +1164,7 @@ public class InternalAntRunner {
 		if (p < 0) { return; }
 
 		// remove everything preceding that last '-arg'
-		String s = ""; //$NON-NLS-1$
+		String s = IAntCoreConstants.EMPTY_STRING;
 		for (int i = 0; i <= p; i++) {
 			s += " " + ((String) commands.get(0)); //$NON-NLS-1$
 			commands.remove(0);

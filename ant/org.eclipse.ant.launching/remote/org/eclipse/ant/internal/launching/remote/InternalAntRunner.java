@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * Portions Copyright  2000-2005 The Apache Software Foundation
  * All rights reserved. This program and the accompanying materials are made 
  * available under the terms of the Apache Software License v2.0 which 
@@ -46,6 +46,7 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.remote.logger.RemoteAntBuildLogger;
 
 /**
@@ -222,7 +223,7 @@ public class InternalAntRunner {
 		//notify the logger that project help message are coming
 		//since there is no buildstarted or targetstarted to 
 		//to be used to establish the connection
-		logMessage(project, "", MSG_PROJECT_HELP); //$NON-NLS-1$
+		logMessage(project, IAntCoreConstants.EMPTY_STRING, MSG_PROJECT_HELP);
 		// find the target with the longest name
 		int maxLength = 0;
 		Enumeration ptargets = project.getTargets().elements();
@@ -255,7 +256,7 @@ public class InternalAntRunner {
 		Collections.sort(topDescriptions);
 		
 		String defaultTargetName = project.getDefaultTarget();
-		if (defaultTargetName != null && !"".equals(defaultTargetName)) { // shouldn't need to check but... //$NON-NLS-1$
+		if (defaultTargetName != null && !IAntCoreConstants.EMPTY_STRING.equals(defaultTargetName)) { // shouldn't need to check but...
 			List defaultName = new ArrayList(1);
 			List defaultDesc = null;
 			defaultName.add(defaultTargetName);
@@ -521,7 +522,7 @@ public class InternalAntRunner {
 	private BuildLogger createLogger() {
 		if (loggerClassname == null) {
 			buildLogger= new DefaultLogger();
-		} else if (!"".equals(loggerClassname)) { //$NON-NLS-1$
+		} else if (!IAntCoreConstants.EMPTY_STRING.equals(loggerClassname)) {
 			try {
 				buildLogger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
 			} catch (ClassCastException e) {
@@ -586,8 +587,8 @@ public class InternalAntRunner {
 			project.log(message, priority);	
 		} else {
 			if (buildListeners != null) {
-				project = new Project();
-				BuildEvent event = new BuildEvent(project);
+				Project p = new Project();
+				BuildEvent event = new BuildEvent(p);
 				event.setMessage(message, priority);
 				//notify the build listeners that are not registered as
 				//no project existed
@@ -879,7 +880,7 @@ public class InternalAntRunner {
 		if (p < 0) { return; }
 
 		// remove everything preceding that last '-arg'
-		String s = ""; //$NON-NLS-1$
+		String s = IAntCoreConstants.EMPTY_STRING;
 		for (int i = 0; i <= p; i++) {
 			s += " " + ((String) commands.get(0)); //$NON-NLS-1$
 			commands.remove(0);
@@ -981,7 +982,7 @@ public class InternalAntRunner {
 				int posEq = name.indexOf("="); //$NON-NLS-1$
 				if (posEq == 0) {
 					value= name.substring(1);
-					name= ""; //$NON-NLS-1$
+					name= IAntCoreConstants.EMPTY_STRING;
 				} else if (posEq > 0 && posEq != name.length() - 1) {
 					value = name.substring(posEq + 1).trim();
 					name = name.substring(0, posEq);
@@ -1138,12 +1139,12 @@ public class InternalAntRunner {
 		}
 		commands.remove(index);
 		if (index == commands.size()) {// if this is the last command
-			return ""; //$NON-NLS-1$
+			return IAntCoreConstants.EMPTY_STRING;
 		}
 		
 		String command = (String) commands.get(index);
 		if (command.startsWith("-")) { //new parameter //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
+			return IAntCoreConstants.EMPTY_STRING;
 		}
 		
 		commands.remove(index);

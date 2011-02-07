@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Richard Hoefter and others.
+ * Copyright (c) 2004, 2011 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,9 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
+import org.eclipse.ant.internal.ui.model.IAntModelConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -265,8 +267,8 @@ public class BuildFileCreator
             String key = (String) iterator.next();
             String value = (String) variable2valueMap.get(key);
             Element prop = doc.createElement("property"); //$NON-NLS-1$
-            prop.setAttribute("name", key); //$NON-NLS-1$
-            prop.setAttribute("value", value); //$NON-NLS-1$
+            prop.setAttribute(IAntCoreConstants.NAME, key);
+            prop.setAttribute(IAntCoreConstants.VALUE, value);
             if (first)
             {
                 first = false;               
@@ -291,8 +293,8 @@ public class BuildFileCreator
     {   
         // <project name="hello" default="build" basedir=".">
         root = doc.createElement("project"); //$NON-NLS-1$
-        root.setAttribute("name" , projectName); //$NON-NLS-1$
-        root.setAttribute("default" , "build"); //$NON-NLS-1$ //$NON-NLS-2$
+        root.setAttribute(IAntCoreConstants.NAME , projectName);
+        root.setAttribute(IAntCoreConstants.DEFAULT , "build"); //$NON-NLS-1$
         root.setAttribute("basedir" , "."); //$NON-NLS-1$ //$NON-NLS-2$
         doc.appendChild(root);
         
@@ -335,7 +337,7 @@ public class BuildFileCreator
                     if (node instanceof ProcessingInstruction &&  
                             IMPORT_BUILDFILE_PROCESSING_TARGET.equals(((ProcessingInstruction) node).getTarget().trim())) {
                         Element element = doc.createElement("import"); //$NON-NLS-1$
-                        element.setAttribute("file", file.getName()); //$NON-NLS-1$
+                        element.setAttribute(IAntCoreConstants.FILE, file.getName());
                         root.appendChild(element);
                         break;
                     }
@@ -424,7 +426,7 @@ public class BuildFileCreator
             else
             {
                 // prefix with ${project.location}
-                String prefix = ""; //$NON-NLS-1$
+                String prefix = IAntCoreConstants.EMPTY_STRING;
                 if (!entry.startsWith("${") &&                                  // no variable ${var}/classes //$NON-NLS-1$
                     !projectName.equals(currentProject.getProject().getName())) // not main project 
                 {
@@ -436,7 +438,7 @@ public class BuildFileCreator
                 }
                 Element pathElement = doc.createElement("pathelement"); //$NON-NLS-1$
                 String path = ExportUtil.getRelativePath(prefix + entry, projectRoot);
-                pathElement.setAttribute("location", path); //$NON-NLS-1$
+                pathElement.setAttribute(IAntModelConstants.ATTR_LOCATION, path);
                 element.appendChild(pathElement);
             }
         }
@@ -483,7 +485,7 @@ public class BuildFileCreator
                 }
                 jarFile = ExportUtil.getRelativePath(jarFile, projectRoot);
                 Element userPathElement = doc.createElement("pathelement"); //$NON-NLS-1$
-                userPathElement.setAttribute("location", jarFile); //$NON-NLS-1$
+                userPathElement.setAttribute(IAntModelConstants.ATTR_LOCATION, jarFile);
                 userElement.appendChild(userPathElement);
             }
             addToClasspathBlock(userElement);
@@ -499,11 +501,11 @@ public class BuildFileCreator
         // <fileset dir="${java.home}/lib" includes="*.jar"/>
         // <fileset dir="${java.home}/lib/ext" includes="*.jar"/>
         Element pathElement = doc.createElement("fileset"); //$NON-NLS-1$
-        pathElement.setAttribute("dir", "${java.home}/lib"); //$NON-NLS-1$ //$NON-NLS-2$
+        pathElement.setAttribute(IAntCoreConstants.DIR, "${java.home}/lib"); //$NON-NLS-1$
         pathElement.setAttribute("includes", "*.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         element.appendChild(pathElement);
         pathElement = doc.createElement("fileset"); //$NON-NLS-1$
-        pathElement.setAttribute("dir", "${java.home}/lib/ext"); //$NON-NLS-1$ //$NON-NLS-2$
+        pathElement.setAttribute(IAntCoreConstants.DIR, "${java.home}/lib/ext"); //$NON-NLS-1$
         pathElement.setAttribute("includes", "*.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         element.appendChild(pathElement);
     }
@@ -552,7 +554,7 @@ public class BuildFileCreator
         //     <mkdir dir="classes"/>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "init"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "init"); //$NON-NLS-1$
         List classDirsUnique = ExportUtil.removeDuplicates(classDirs);        
         for (Iterator iterator = classDirsUnique.iterator(); iterator.hasNext();)
         {            
@@ -561,7 +563,7 @@ public class BuildFileCreator
                 !EclipseClasspath.isReference(classDir))
             {
                 Element pathElement = doc.createElement("mkdir"); //$NON-NLS-1$
-                pathElement.setAttribute("dir", classDir); //$NON-NLS-1$
+                pathElement.setAttribute(IAntCoreConstants.DIR, classDir);
                 element.appendChild(pathElement);
             }
         }
@@ -605,7 +607,7 @@ public class BuildFileCreator
                 copyElement.setAttribute("todir", classDir); //$NON-NLS-1$
                 copyElement.setAttribute("includeemptydirs", "false"); //$NON-NLS-1$ //$NON-NLS-2$
                 Element filesetElement = doc.createElement("fileset"); //$NON-NLS-1$
-                filesetElement.setAttribute("dir", srcDir); //$NON-NLS-1$
+                filesetElement.setAttribute(IAntCoreConstants.DIR, srcDir);
 
                 List inclusions = (List) inclusionLists.get(i);
                 List exclusions = (List) exclusionLists.get(i);
@@ -614,21 +616,21 @@ public class BuildFileCreator
                 {
                     String inclusion = (String) iter.next();
                     Element includeElement = doc.createElement("include"); //$NON-NLS-1$
-                    includeElement.setAttribute("name", inclusion); //$NON-NLS-1$
+                    includeElement.setAttribute(IAntCoreConstants.NAME, inclusion);
                     filesetElement.appendChild(includeElement);
                 }           
                 for (Iterator iter = filters.iterator(); iter.hasNext();)
                 {
                     String exclusion = (String) iter.next();
                     Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
-                    excludeElement.setAttribute("name", exclusion); //$NON-NLS-1$
+                    excludeElement.setAttribute(IAntCoreConstants.NAME, exclusion);
                     filesetElement.appendChild(excludeElement);
                 }
                 for (Iterator iter = exclusions.iterator(); iter.hasNext();)
                 {
                     String exclusion = (String) iter.next();
                     Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
-                    excludeElement.setAttribute("name", exclusion); //$NON-NLS-1$
+                    excludeElement.setAttribute(IAntCoreConstants.NAME, exclusion);
                     filesetElement.appendChild(excludeElement);
                 }
                 
@@ -648,7 +650,7 @@ public class BuildFileCreator
         //     <delete dir="classes"/>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "clean"); //$NON-NLS-1$
         List classDirUnique = ExportUtil.removeDuplicates(classDirs);
         for (Iterator iterator = classDirUnique.iterator(); iterator.hasNext();)
         {
@@ -657,7 +659,7 @@ public class BuildFileCreator
                 !EclipseClasspath.isReference(classDir))
             {
                 Element deleteElement = doc.createElement("delete"); //$NON-NLS-1$
-                deleteElement.setAttribute("dir", classDir); //$NON-NLS-1$
+                deleteElement.setAttribute(IAntCoreConstants.DIR, classDir);
                 element.appendChild(deleteElement);
             }
         }
@@ -672,7 +674,7 @@ public class BuildFileCreator
         {
             Element deleteElement = doc.createElement("delete"); //$NON-NLS-1$
             Element filesetElement = doc.createElement("fileset"); //$NON-NLS-1$
-            filesetElement.setAttribute("dir", "."); //$NON-NLS-1$ //$NON-NLS-2$
+            filesetElement.setAttribute(IAntCoreConstants.DIR, "."); //$NON-NLS-1$
             filesetElement.setAttribute("includes", "**/*.class"); //$NON-NLS-1$ //$NON-NLS-2$
             deleteElement.appendChild(filesetElement);           
             element.appendChild(deleteElement);           
@@ -688,7 +690,7 @@ public class BuildFileCreator
         //     <ant antfile="build.xml" dir="${hello.location}" inheritAll="false" target="clean"/>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "cleanall"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "cleanall"); //$NON-NLS-1$
         element.setAttribute("depends", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
         List subProjects = ExportUtil.getClasspathProjectsRecursive(project);
         for (Iterator iterator = subProjects.iterator(); iterator.hasNext();)
@@ -696,7 +698,7 @@ public class BuildFileCreator
             IJavaProject subProject = (IJavaProject) iterator.next();
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
-            antElement.setAttribute("dir", "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute(IAntCoreConstants.DIR, "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("target", "clean");  //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
             element.appendChild(antElement);
@@ -715,7 +717,7 @@ public class BuildFileCreator
     {
         // <target name="build" depends="build-subprojects,build-project"/>
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "build"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "build"); //$NON-NLS-1$
         element.setAttribute("depends", "build-subprojects,build-project"); //$NON-NLS-1$ //$NON-NLS-2$
         root.appendChild(element);
         
@@ -723,20 +725,20 @@ public class BuildFileCreator
         //     <ant antfile="build.xml" dir="${hello.location}" inheritAll="false" target="build-project"/>
         // </target>
         element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "build-subprojects"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "build-subprojects"); //$NON-NLS-1$
         List subProjects = ExportUtil.getClasspathProjectsRecursive(project);
         for (Iterator iterator = subProjects.iterator(); iterator.hasNext();)
         {
             IJavaProject subProject = (IJavaProject) iterator.next();
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
-            antElement.setAttribute("dir", "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute(IAntCoreConstants.DIR, "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("target", "build-project");  //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
             if (CREATE_ECLIPSE_COMPILE_TARGET) {
                 Element propertysetElement = doc.createElement("propertyset"); //$NON-NLS-1$
                 Element propertyrefElement = doc.createElement("propertyref"); //$NON-NLS-1$
-                propertyrefElement.setAttribute("name", "build.compiler");  //$NON-NLS-1$ //$NON-NLS-2$
+                propertyrefElement.setAttribute(IAntCoreConstants.NAME, "build.compiler");  //$NON-NLS-1$
                 propertysetElement.appendChild(propertyrefElement);
                 antElement.appendChild(propertysetElement);
             }
@@ -754,7 +756,7 @@ public class BuildFileCreator
         //     </javac>    
         // </target>        
         element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "build-project"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "build-project"); //$NON-NLS-1$
         element.setAttribute("depends", "init"); //$NON-NLS-1$ //$NON-NLS-2$
         Element echoElement = doc.createElement("echo"); //$NON-NLS-1$
         echoElement.setAttribute("message", "${ant.project.name}: ${ant.file}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -782,14 +784,14 @@ public class BuildFileCreator
                 {
                     String inclusion = (String) iter.next();
                     Element includeElement = doc.createElement("include"); //$NON-NLS-1$
-                    includeElement.setAttribute("name", inclusion); //$NON-NLS-1$
+                    includeElement.setAttribute(IAntCoreConstants.NAME, inclusion);
                     javacElement.appendChild(includeElement);
                 }           
                 for (Iterator iter = exclusions.iterator(); iter.hasNext();)
                 {
                     String exclusion = (String) iter.next();
                     Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
-                    excludeElement.setAttribute("name", exclusion); //$NON-NLS-1$
+                    excludeElement.setAttribute(IAntCoreConstants.NAME, exclusion);
                     javacElement.appendChild(excludeElement);
                 }           
                 Element classpathRefElement = doc.createElement("classpath"); //$NON-NLS-1$
@@ -826,8 +828,8 @@ public class BuildFileCreator
         //     <ant antfile="build.xml" dir="${hello.location}" target="build" inheritAll="false"/> 
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "build-refprojects"); //$NON-NLS-1$ //$NON-NLS-2$
-        element.setAttribute("description", "Build all projects which " + //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "build-refprojects"); //$NON-NLS-1$
+        element.setAttribute(IAntCoreConstants.DESCRIPTION, "Build all projects which " + //$NON-NLS-1$ 
                 "reference this project. Useful to propagate changes."); //$NON-NLS-1$
         for (Iterator iter = refProjects.iterator(); iter.hasNext();) {
             IJavaProject p = (IJavaProject) iter.next();
@@ -839,20 +841,20 @@ public class BuildFileCreator
 
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
-            antElement.setAttribute("dir", "${" + p.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute(IAntCoreConstants.DIR, "${" + p.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("target", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false"); //$NON-NLS-1$ //$NON-NLS-2$
             element.appendChild(antElement);
             
             antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
-            antElement.setAttribute("dir", "${" + p.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute(IAntCoreConstants.DIR, "${" + p.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("target", "build"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
             if (CREATE_ECLIPSE_COMPILE_TARGET) {
                 Element propertysetElement = doc.createElement("propertyset"); //$NON-NLS-1$
                 Element propertyrefElement = doc.createElement("propertyref"); //$NON-NLS-1$
-                propertyrefElement.setAttribute("name", "build.compiler");  //$NON-NLS-1$ //$NON-NLS-2$
+                propertyrefElement.setAttribute(IAntCoreConstants.NAME, "build.compiler");  //$NON-NLS-1$
                 propertysetElement.appendChild(propertyrefElement);
                 antElement.appendChild(propertysetElement);
             }
@@ -884,12 +886,12 @@ public class BuildFileCreator
         //     </unzip>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "init-eclipse-compiler"); //$NON-NLS-1$ //$NON-NLS-2$
-        element.setAttribute("description", "copy Eclipse compiler jars to ant lib directory"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "init-eclipse-compiler"); //$NON-NLS-1$
+        element.setAttribute(IAntCoreConstants.DESCRIPTION, "copy Eclipse compiler jars to ant lib directory"); //$NON-NLS-1$ 
         Element copyElement = doc.createElement("copy"); //$NON-NLS-1$
         copyElement.setAttribute("todir", "${ant.library.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
         Element filesetElement = doc.createElement("fileset"); //$NON-NLS-1$
-        filesetElement.setAttribute("dir", "${ECLIPSE_HOME}/plugins"); //$NON-NLS-1$ //$NON-NLS-2$
+        filesetElement.setAttribute(IAntCoreConstants.DIR, "${ECLIPSE_HOME}/plugins"); //$NON-NLS-1$
         filesetElement.setAttribute("includes", "org.eclipse.jdt.core_*.jar"); //$NON-NLS-1$ //$NON-NLS-2$
         copyElement.appendChild(filesetElement);
         element.appendChild(copyElement);
@@ -913,11 +915,11 @@ public class BuildFileCreator
         //     <antcall target="build" />
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "build-eclipse-compiler"); //$NON-NLS-1$ //$NON-NLS-2$
-        element.setAttribute("description", "compile project with Eclipse compiler"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "build-eclipse-compiler"); //$NON-NLS-1$
+        element.setAttribute(IAntCoreConstants.DESCRIPTION, "compile project with Eclipse compiler"); //$NON-NLS-1$ 
         Element propertyElement = doc.createElement("property"); //$NON-NLS-1$
-        propertyElement.setAttribute("name", "build.compiler"); //$NON-NLS-1$ //$NON-NLS-2$
-        propertyElement.setAttribute("value", "org.eclipse.jdt.core.JDTCompilerAdapter"); //$NON-NLS-1$ //$NON-NLS-2$
+        propertyElement.setAttribute(IAntCoreConstants.NAME, "build.compiler"); //$NON-NLS-1$
+        propertyElement.setAttribute(IAntCoreConstants.VALUE, "org.eclipse.jdt.core.JDTCompilerAdapter"); //$NON-NLS-1$
         element.appendChild(propertyElement);
         Element antcallElement = doc.createElement("antcall"); //$NON-NLS-1$
         antcallElement.setAttribute("target", "build"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -977,7 +979,7 @@ public class BuildFileCreator
         for (int i = 0; i < confs.length; i++)
         {
             ILaunchConfiguration conf = confs[i];
-            if (!projectName.equals(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""))) //$NON-NLS-1$
+            if (!projectName.equals(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, IAntCoreConstants.EMPTY_STRING)))
             {
                 continue;
             }
@@ -1012,25 +1014,25 @@ public class BuildFileCreator
     public void addJavaApplication(Map variable2value, ILaunchConfiguration conf) throws CoreException
     {
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", conf.getName()); //$NON-NLS-1$
+        element.setAttribute(IAntCoreConstants.NAME, conf.getName());
         Element javaElement = doc.createElement("java"); //$NON-NLS-1$
         javaElement.setAttribute("fork", "yes"); //$NON-NLS-1$ //$NON-NLS-2$
-        javaElement.setAttribute("classname", conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "")); //$NON-NLS-1$ //$NON-NLS-2$
+        javaElement.setAttribute("classname", conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, IAntCoreConstants.EMPTY_STRING)); //$NON-NLS-1$
         javaElement.setAttribute("failonerror", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-        String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
+        String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, IAntCoreConstants.EMPTY_STRING);
         ExportUtil.addVariable(variable2value, dir, projectRoot);                
-        if (!dir.equals("")) //$NON-NLS-1$
+        if (!dir.equals(IAntCoreConstants.EMPTY_STRING))
         {
-            javaElement.setAttribute("dir", ExportUtil.getRelativePath(dir, projectRoot)); //$NON-NLS-1$
+            javaElement.setAttribute(IAntCoreConstants.DIR, ExportUtil.getRelativePath(dir, projectRoot));
         }
         if (!conf.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true))
         {
             javaElement.setAttribute("newenvironment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         Map props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap());
-        addElements(props, doc, javaElement, "env", "key", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElements(props, doc, javaElement, "env", "key", IAntCoreConstants.VALUE); //$NON-NLS-1$ //$NON-NLS-2$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, javaElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, javaElement, "arg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$
         element.appendChild(javaElement);
         
         addRuntimeClasspath(conf, javaElement);
@@ -1049,8 +1051,8 @@ public class BuildFileCreator
      */
     public void addApplet(Map variable2value, ILaunchConfiguration conf) throws CoreException, TransformerFactoryConfigurationError, UnsupportedEncodingException
     {
-        String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
-        if (dir.equals("")) //$NON-NLS-1$
+        String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, IAntCoreConstants.EMPTY_STRING);
+        if (dir.equals(IAntCoreConstants.EMPTY_STRING))
         {
             dir = projectRoot;
         }
@@ -1090,17 +1092,17 @@ public class BuildFileCreator
         }
         
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", conf.getName()); //$NON-NLS-1$
+        element.setAttribute(IAntCoreConstants.NAME, conf.getName());
         Element javaElement = doc.createElement("java"); //$NON-NLS-1$
         javaElement.setAttribute("fork", "yes");  //$NON-NLS-1$//$NON-NLS-2$
         javaElement.setAttribute("classname", conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_APPLETVIEWER_CLASS, "sun.applet.AppletViewer")); //$NON-NLS-1$ //$NON-NLS-2$
         javaElement.setAttribute("failonerror", "true"); //$NON-NLS-1$ //$NON-NLS-2$
         if (value != null)
         {
-            javaElement.setAttribute("dir", ExportUtil.getRelativePath(dir, projectRoot)); //$NON-NLS-1$
+            javaElement.setAttribute(IAntCoreConstants.DIR, ExportUtil.getRelativePath(dir, projectRoot));
         }
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, javaElement, "jvmarg", "line", variable2value, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""), doc, javaElement, "arg", "line", variable2value, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, javaElement, "jvmarg", "line", variable2value, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, javaElement, "arg", "line", variable2value, projectRoot);   //$NON-NLS-1$//$NON-NLS-2$
         addElement(conf.getName() + ".html", doc, javaElement, "arg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         element.appendChild(javaElement);
         addRuntimeClasspath(conf, javaElement);
@@ -1126,22 +1128,22 @@ public class BuildFileCreator
         //         <classpath refid="project.classpath"/>
         //     </junit>
         // </target>
-        String testClass = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, ""); //$NON-NLS-1$
+        String testClass = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, IAntCoreConstants.EMPTY_STRING);
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", conf.getName()); //$NON-NLS-1$
+        element.setAttribute(IAntCoreConstants.NAME, conf.getName());
         
         Element mkdirElement = doc.createElement("mkdir"); //$NON-NLS-1$
-        mkdirElement.setAttribute("dir", "${junit.output.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
+        mkdirElement.setAttribute(IAntCoreConstants.DIR, "${junit.output.dir}"); //$NON-NLS-1$
         element.appendChild(mkdirElement);
         
         Element junitElement = doc.createElement("junit"); //$NON-NLS-1$
         junitElement.setAttribute("fork", "yes"); //$NON-NLS-1$ //$NON-NLS-2$
         junitElement.setAttribute("printsummary", "withOutAndErr"); //$NON-NLS-1$ //$NON-NLS-2$
-        String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
+        String dir = conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, IAntCoreConstants.EMPTY_STRING);
         ExportUtil.addVariable(variable2value, dir, projectRoot);                
-        if (!dir.equals("")) //$NON-NLS-1$
+        if (!dir.equals(IAntCoreConstants.EMPTY_STRING))
         {
-            junitElement.setAttribute("dir", ExportUtil.getRelativePath(dir, projectRoot)); //$NON-NLS-1$
+            junitElement.setAttribute(IAntCoreConstants.DIR, ExportUtil.getRelativePath(dir, projectRoot));
         }
         if (!conf.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true))
         {
@@ -1150,32 +1152,32 @@ public class BuildFileCreator
         Element formatterElement = doc.createElement("formatter"); //$NON-NLS-1$
         formatterElement.setAttribute("type", "xml");  //$NON-NLS-1$//$NON-NLS-2$
         junitElement.appendChild(formatterElement);
-        if (!testClass.equals("")) //$NON-NLS-1$
+        if (!testClass.equals(IAntCoreConstants.EMPTY_STRING))
         {
             // Case 1: Single JUnit class
             Element testElement = doc.createElement("test"); //$NON-NLS-1$
-            testElement.setAttribute("name", testClass); //$NON-NLS-1$
+            testElement.setAttribute(IAntCoreConstants.NAME, testClass);
             testElement.setAttribute("todir", "${junit.output.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
             junitElement.appendChild(testElement);                       
         }
         else
         {
             // Case 2: Run all tests in project, package or source folder
-            String container = conf.getAttribute("org.eclipse.jdt.junit.CONTAINER" /*JUnitBaseLaunchConfiguration.LAUNCH_CONTAINER_ATTR*/, ""); //$NON-NLS-1$ //$NON-NLS-2$
+            String container = conf.getAttribute("org.eclipse.jdt.junit.CONTAINER" /*JUnitBaseLaunchConfiguration.LAUNCH_CONTAINER_ATTR*/, IAntCoreConstants.EMPTY_STRING); //$NON-NLS-1$
             IType[] types = ExportUtil.findTestsInContainer(container);
             Set sortedTypes = new TreeSet(ExportUtil.getITypeComparator());
             sortedTypes.addAll(Arrays.asList(types));
             for (Iterator iter = sortedTypes.iterator(); iter.hasNext();) {
                 IType type = (IType) iter.next();
                 Element testElement = doc.createElement("test"); //$NON-NLS-1$
-                testElement.setAttribute("name", type.getFullyQualifiedName()); //$NON-NLS-1$
+                testElement.setAttribute(IAntCoreConstants.NAME, type.getFullyQualifiedName());
                 testElement.setAttribute("todir", "${junit.output.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
                 junitElement.appendChild(testElement);                       
             }
         }
         Map props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap());
-        addElements(props, doc, junitElement, "env", "key", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, ""), doc, junitElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        addElements(props, doc, junitElement, "env", "key", IAntCoreConstants.VALUE); //$NON-NLS-1$ //$NON-NLS-2$
+        addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, junitElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$
         element.appendChild(junitElement);
         addRuntimeClasspath(conf, junitElement);
         addRuntimeBootClasspath(conf, junitElement);
@@ -1198,14 +1200,14 @@ public class BuildFileCreator
         //     </junitreport>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
-        element.setAttribute("name", "junitreport"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.setAttribute(IAntCoreConstants.NAME, "junitreport"); //$NON-NLS-1$
         Element junitreport = doc.createElement("junitreport"); //$NON-NLS-1$
         junitreport.setAttribute("todir", "${junit.output.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
         Element fileset = doc.createElement("fileset"); //$NON-NLS-1$
-        fileset.setAttribute("dir", "${junit.output.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
+        fileset.setAttribute(IAntCoreConstants.DIR, "${junit.output.dir}"); //$NON-NLS-1$
         junitreport.appendChild(fileset);
         Element include = doc.createElement("include"); //$NON-NLS-1$
-        include.setAttribute("name", "TEST-*.xml"); //$NON-NLS-1$ //$NON-NLS-2$
+        include.setAttribute(IAntCoreConstants.NAME, "TEST-*.xml"); //$NON-NLS-1$
         fileset.appendChild(include);
         Element report = doc.createElement("report"); //$NON-NLS-1$
         report.setAttribute("format", "frames"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -82,9 +83,9 @@ public class AddCustomDialog extends StatusDialog {
 	
 	private Text nameField;
 	
-	private String name=""; //$NON-NLS-1$
+	private String name= IAntCoreConstants.EMPTY_STRING;
 	private IAntClasspathEntry library= null;
-	private String className=""; //$NON-NLS-1$
+	private String className= IAntCoreConstants.EMPTY_STRING;
 	
 	private boolean editing= false;
 	
@@ -394,7 +395,7 @@ public class AddCustomDialog extends StatusDialog {
 		// Use an empty label so that display of the element's full name
 		// doesn't include a confusing label
 		MinimizedFileSystemElement dummyParent =
-			new MinimizedFileSystemElement("", null, true);//$NON-NLS-1$
+			new MinimizedFileSystemElement(IAntCoreConstants.EMPTY_STRING, null, true);
 		dummyParent.setPopulated();
 		MinimizedFileSystemElement result =
 			new MinimizedFileSystemElement(elementLabel, dummyParent, isContainer);

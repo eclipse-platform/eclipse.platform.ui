@@ -73,12 +73,12 @@ public class AntCoreUtil {
 		}
 		commands.remove(index);
 		if (index == commands.size()) {// if this is the last command
-			return ""; //$NON-NLS-1$
+			return IAntCoreConstants.EMPTY_STRING;
 		}
 		
 		String command = (String) commands.get(index);
 		if (command.startsWith("-")) { //new parameter //$NON-NLS-1$
-			return ""; //$NON-NLS-1$
+			return IAntCoreConstants.EMPTY_STRING;
 		}
 		commands.remove(index);
 		return command;
@@ -94,7 +94,7 @@ public class AntCoreUtil {
 				int posEq = name.indexOf("="); //$NON-NLS-1$
 				if (posEq == 0) {
 					value= name.substring(1);
-					name= ""; //$NON-NLS-1$
+					name= IAntCoreConstants.EMPTY_STRING;
 				} else if (posEq > 0 && posEq != name.length() - 1) {
 					value = name.substring(posEq + 1).trim();
 					name = name.substring(0, posEq);

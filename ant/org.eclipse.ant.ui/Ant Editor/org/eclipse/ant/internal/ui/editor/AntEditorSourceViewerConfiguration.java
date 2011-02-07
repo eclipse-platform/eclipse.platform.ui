@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlElementFormattingStrategy;
@@ -262,7 +263,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 			list.add(prefix.toString());
 		}
 
-		list.add(""); //$NON-NLS-1$
+		list.add(IAntCoreConstants.EMPTY_STRING);
 		
 		return (String[]) list.toArray(new String[list.size()]);
 	}

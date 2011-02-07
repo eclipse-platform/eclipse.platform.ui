@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.util.StringUtils;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.debug.AntDebugState;
 import org.eclipse.ant.internal.launching.remote.AntSecurityException;
 import org.eclipse.ant.internal.launching.remote.InternalAntRunner;
@@ -55,7 +56,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
     /**
      * Host to connect to, default is the localhost
      */
-    protected String fHost= ""; //$NON-NLS-1$
+    protected String fHost= IAntCoreConstants.EMPTY_STRING;
     /**
      * Port to connect to.
      */
@@ -311,7 +312,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
         StringBuffer message;
         String taskName= event.getTask().getTaskName();
         if (taskName != null && taskName.equals(fLastTaskName)) {
-            taskName= ""; //$NON-NLS-1$
+            taskName= IAntCoreConstants.EMPTY_STRING;
         } else {
             fLastTaskName= taskName;
         }

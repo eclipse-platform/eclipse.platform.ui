@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.preferences.AntObjectLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -92,11 +93,11 @@ public abstract class ColumnSorter extends ViewerComparator {
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		String text1 = getCompareText(e1, this.columnidx);
 		if(text1 == null) {
-			text1 = ""; //$NON-NLS-1$
+			text1 = IAntCoreConstants.EMPTY_STRING; 
 		}
 		String text2 = getCompareText(e2, this.columnidx);
 		if(text2 == null) {
-			text2 = ""; //$NON-NLS-1$
+			text2 = IAntCoreConstants.EMPTY_STRING; 
 		}
 		return (this.direction == SWT.UP ? -1 : 1) * 
 			text1.compareTo(text2);

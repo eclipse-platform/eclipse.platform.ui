@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
@@ -221,7 +222,7 @@ public class AntClasspathBlock {
 		String result = dialog.open();
 		if (result != null) {
 			try {
-				URL url = new URL("file:" + result + "/"); //$NON-NLS-2$;//$NON-NLS-1$;
+				URL url = new URL(IAntCoreConstants.FILE_PROTOCOL + result + "/"); //$NON-NLS-1$;
 				((AntClasspathContentProvider)treeViewer.getContentProvider()).add(currentParent, url);
 			} catch (MalformedURLException e) {
 			}
@@ -252,7 +253,7 @@ public class AntClasspathBlock {
 			String jarName = results[i];
 			try {
 				IPath path = filterPath.append(jarName).makeAbsolute();
-				URL url = new URL("file:" + path.toOSString()); //$NON-NLS-1$;
+				URL url = new URL(IAntCoreConstants.FILE_PROTOCOL + path.toOSString());
 				contentProvider.add(currentParent, url);
 			} catch (MalformedURLException e) {
 			}
@@ -497,7 +498,7 @@ public class AntClasspathBlock {
 				File file = new File(rootDir, names[i]);
 				if (file.isFile() && file.getPath().endsWith(".jar")) { //$NON-NLS-1$
 					try {
-						URL url = new URL("file:" +  file.getAbsolutePath()); //$NON-NLS-1$
+						URL url = new URL(IAntCoreConstants.FILE_PROTOCOL +  file.getAbsolutePath());
 						contentProvider.add(ClasspathModel.ANT_HOME, url);
 					} catch (MalformedURLException e) {
 					}

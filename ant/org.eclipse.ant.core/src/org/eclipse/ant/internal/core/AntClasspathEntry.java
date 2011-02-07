@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,10 +42,10 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 		}
 		try {
 			String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(entryString);
-			return new URL("file:" + expanded); //$NON-NLS-1$
+			return new URL(IAntCoreConstants.FILE_PROTOCOL + expanded);
 		} catch (CoreException e) {
 			try {
-				return new URL("file:" + entryString); //$NON-NLS-1$
+				return new URL(IAntCoreConstants.FILE_PROTOCOL + entryString);
 			} catch (MalformedURLException e1) {
 				return null;
 			}

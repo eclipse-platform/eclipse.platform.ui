@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 Object Factory Inc.
+ * Copyright (c) 2002, 2011 Object Factory Inc.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  * 
  * Contributors:
  *		Object Factory Inc. - Initial implementation
+ *		IBM Corporation - bug fixes
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.dtd.schema;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.dtd.IAtom;
 import org.eclipse.ant.internal.ui.dtd.IModel;
 
@@ -207,7 +209,7 @@ public class Model implements IModel {
 	 * @see org.eclipse.ant.internal.ui.dtd.IModel#getQualifier()
 	 */
 	public String getQualifier() {
-		return fMin == 1 ? (fMax == UNBOUNDED ? "+" : "") : (fMax == UNBOUNDED ? "*" : "?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return fMin == 1 ? (fMax == UNBOUNDED ? "+" : IAntCoreConstants.EMPTY_STRING) : (fMax == UNBOUNDED ? "*" : "?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
 	/**

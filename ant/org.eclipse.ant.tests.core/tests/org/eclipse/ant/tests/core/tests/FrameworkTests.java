@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.internal.core.AntClasspathEntry;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.ant.tests.core.testplugin.ProjectHelper;
@@ -44,10 +45,10 @@ public class FrameworkTests extends AbstractAntTest {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		
 		String path= getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("classpathOrdering1.jar").getLocation().toFile().getAbsolutePath();
-		URL url= new URL("file:" + path);
+		URL url= new URL(IAntCoreConstants.FILE_PROTOCOL + path);
 		
 		path= getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("classpathOrdering2.jar").getLocation().toFile().getAbsolutePath();
-		URL url2= new URL("file:" + path);
+		URL url2= new URL(IAntCoreConstants.FILE_PROTOCOL + path);
 		
 		URL urls[] = prefs.getCustomURLs();
 		URL newUrls[] = new URL[urls.length + 2];

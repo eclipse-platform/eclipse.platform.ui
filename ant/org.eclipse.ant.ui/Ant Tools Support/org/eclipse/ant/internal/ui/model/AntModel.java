@@ -372,7 +372,7 @@ public class AntModel implements IAntModel {
         // to determine the actual location of the file. Though the file 
         // contents will not be parsed. We parse the passed document string
         File file = getEditedFile();
-        String filePath= ""; //$NON-NLS-1$
+        String filePath= IAntCoreConstants.EMPTY_STRING;
         if (file != null) {
             filePath= file.getAbsolutePath();
         }
@@ -861,7 +861,7 @@ public class AntModel implements IAntModel {
         } else if(taskName.equalsIgnoreCase("antcall")) { //$NON-NLS-1$
             newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_TARGET));
         } else if(taskName.equalsIgnoreCase("mkdir")) { //$NON-NLS-1$
-            newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_DIR));
+            newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntCoreConstants.DIR));
         } else if(taskName.equalsIgnoreCase("copy")) { //$NON-NLS-1$
             newNode= new AntTaskNode(newTask, generateLabel(taskName, attributes, IAntModelConstants.ATTR_DESTFILE));
         } else if(taskName.equalsIgnoreCase("tar")  //$NON-NLS-1$
@@ -894,11 +894,11 @@ public class AntModel implements IAntModel {
             newNode= new AntAntNode(newTask, attributes);
         } else if(taskName.equalsIgnoreCase("delete")) { //$NON-NLS-1$
             String label = "delete "; //$NON-NLS-1$
-            String file = attributes.getValue(IAntModelConstants.ATTR_FILE);
+            String file = attributes.getValue(IAntCoreConstants.FILE);
             if(file != null) {
                 label+= file;
             } else {
-                file = attributes.getValue(IAntModelConstants.ATTR_DIR);
+                file = attributes.getValue(IAntCoreConstants.DIR);
                 if(file != null) {
                     label+= file;
                 }
@@ -941,7 +941,7 @@ public class AntModel implements IAntModel {
         }
         String taskName= newTask.getTaskName();
         if ("attribute".equals(taskName) || "element".equals(taskName)) { //$NON-NLS-1$ //$NON-NLS-2$
-            String name= attributes.getValue("name"); //$NON-NLS-1$
+            String name= attributes.getValue(IAntCoreConstants.NAME);
             if (name != null) {
                 newNode.setBaseLabel(name);
             }

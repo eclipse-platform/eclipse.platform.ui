@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.AntLaunch;
 import org.eclipse.ant.internal.launching.AntLaunching;
 import org.eclipse.ant.internal.launching.AntLaunchingUtil;
@@ -217,7 +218,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
     				}
     				line = r.readLine();
     			}
-    			logMessage("", event, Project.MSG_ERR); //$NON-NLS-1$
+    			logMessage(IAntCoreConstants.EMPTY_STRING, event, Project.MSG_ERR);
     		} catch (IOException e) {
     		}
         }

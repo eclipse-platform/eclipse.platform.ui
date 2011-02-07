@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
@@ -208,7 +209,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	 */
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (fLaunchConfiguration.exists()) {
-			String buildFileLocation= fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""); //$NON-NLS-1$
+			String buildFileLocation= fLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, IAntCoreConstants.EMPTY_STRING); 
 			if (fOldBuildfileLocation == null || (buildFileLocation.endsWith(fOldBuildfileLocation + '}') || buildFileLocation.endsWith(fOldBuildfileLocation))) {
 				String projectName= fLaunchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String)null);
 				if (fOldProjectName.equals(projectName)) {
@@ -233,7 +234,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
             fNewLaunchConfiguration.setContainer(container);
         }
 
-		String oldBuildfileLocation= fNewLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""); //$NON-NLS-1$
+		String oldBuildfileLocation= fNewLaunchConfiguration.getAttribute(IExternalToolConstants.ATTR_LOCATION, IAntCoreConstants.EMPTY_STRING); 
 		String oldProjectName;
 		if (fNewBuildfileLocation != null) {
             String newBuildFileLocation= oldBuildfileLocation.replaceFirst(fOldBuildfileLocation, fNewBuildfileLocation);

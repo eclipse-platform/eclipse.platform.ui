@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.AntLaunch;
 import org.eclipse.ant.internal.launching.AntLaunchingUtil;
 import org.eclipse.ant.internal.launching.LinkDescriptor;
@@ -137,7 +138,7 @@ public class TaskLinkManager {
 
 	private static boolean linkBuildFileMessage(IConsole console, IRegion region) {
 		
-		String message= ""; //$NON-NLS-1$
+		String message= IAntCoreConstants.EMPTY_STRING;
 		int offset= region.getOffset();
 		try {
 			message = console.getDocument().get(offset, region.getLength());

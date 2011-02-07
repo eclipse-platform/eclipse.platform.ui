@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2011 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntImageDescriptor;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUtil;
@@ -333,7 +334,7 @@ public class AntElementNode implements IAdaptable, IAntElement {
 			if (buildFileName != null) {
 				buffer.append(buildFileName);
 			}
-			buffer.append(getParentNode() != null ? getParentNode().getElementPath() : ""); //$NON-NLS-1$
+			buffer.append(getParentNode() != null ? getParentNode().getElementPath() : IAntCoreConstants.EMPTY_STRING);
 			buffer.append('/');
 			buffer.append(getElementIdentifier());
 			buffer.append('[');
@@ -347,9 +348,9 @@ public class AntElementNode implements IAdaptable, IAntElement {
 
 	private String getElementIdentifier() {
 		if (fElementIdentifier == null) {
-			StringBuffer buffer= escape(new StringBuffer(getName() != null ? getName() : ""), '\\', "$/[]\\"); //$NON-NLS-1$ //$NON-NLS-2$
+			StringBuffer buffer= escape(new StringBuffer(getName() != null ? getName() : IAntCoreConstants.EMPTY_STRING), '\\', "$/[]\\"); //$NON-NLS-1$
 			buffer.append('$');
-			buffer.append(escape(new StringBuffer(getLabel() != null ? getLabel() : ""), '\\', "$/[]\\").toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			buffer.append(escape(new StringBuffer(getLabel() != null ? getLabel() : IAntCoreConstants.EMPTY_STRING), '\\', "$/[]\\").toString()); //$NON-NLS-1$
 			
 			fElementIdentifier= buffer.toString();
 		}
@@ -365,28 +366,6 @@ public class AntElementNode implements IAdaptable, IAntElement {
 
 		return sb;
 	}
-
-//	private int getElementIndexOf(AntElementNode child) {
-//		if (getChildNodes() == null) {
-//			return -1;
-//		}
-//		
-//		int result= -1;
-//		
-//		Iterator iter= getChildNodes().iterator();
-//		AntElementNode current= null;
-//		while (current != child && iter.hasNext()) {
-//			current= (AntElementNode) iter.next();
-//			if (child.getElementIdentifier().equals(current.getElementIdentifier()))
-//				result++;
-//		}
-//		
-//		if (current != child) {
-//			return -1;
-//		}
-//		
-//		return result;
-//	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

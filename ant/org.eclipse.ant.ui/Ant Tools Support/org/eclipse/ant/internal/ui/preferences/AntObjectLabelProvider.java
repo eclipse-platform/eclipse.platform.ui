@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.preferences;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Task;
 import org.eclipse.ant.internal.core.AntObject;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -98,7 +99,7 @@ public class AntObjectLabelProvider extends LabelProvider implements ITableLabel
                     return property.getPluginLabel();
                 }
         }
-        return ""; //$NON-NLS-1$
+        return IAntCoreConstants.EMPTY_STRING;
     }
     
 	public static Image getTypeImage() {

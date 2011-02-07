@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2011 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -44,6 +44,7 @@ import org.apache.tools.ant.taskdefs.MacroDef;
 import org.apache.tools.ant.taskdefs.MacroInstance;
 import org.apache.tools.ant.types.EnumeratedAttribute;
 import org.apache.tools.ant.types.Reference;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -302,12 +303,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		ITextSelection selection= (ITextSelection) viewer.getSelectionProvider().getSelection();
 
 		// adjust offset to end of normalized selection
-		if (selection.getOffset() == offset) {
-			offset= selection.getOffset() + selection.getLength();
+		int newoffset = offset;
+		if (selection.getOffset() == newoffset) {
+			newoffset= selection.getOffset() + selection.getLength();
 		}
 
-		String prefix= extractPrefix(viewer, offset);
-		Region region= new Region(offset - prefix.length(), prefix.length());
+		String prefix= extractPrefix(viewer, newoffset);
+		Region region= new Region(newoffset - prefix.length(), prefix.length());
 		TemplateContext context= createContext(viewer, region);
 		if (context == null) {
 			return new ICompletionProposal[0];
@@ -490,14 +492,14 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         }
         
         if (proposals.length > 0) {
-        	errorMessage= ""; //$NON-NLS-1$
+        	errorMessage= IAntCoreConstants.EMPTY_STRING;
         }
         return proposals;
 
     }
     
     private ICompletionProposal[] getProjectAttributeValueProposals(String prefix, String attributeName) {
-		if (attributeName.equalsIgnoreCase("default")) { //$NON-NLS-1$
+		if (attributeName.equalsIgnoreCase(IAntCoreConstants.DEFAULT)) {
 			return getDefaultValueProposals(prefix);
 		}
 
@@ -848,7 +850,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 			}
 			String description = getDescriptionProvider().getDescriptionForTaskAttribute(taskName, attrName);
 			if(description != null) {
-			    proposalInfo = (proposalInfo == null ? "" : proposalInfo); //$NON-NLS-1$
+			    proposalInfo = (proposalInfo == null ? IAntCoreConstants.EMPTY_STRING : proposalInfo);
 			    proposalInfo += description;
 			}
 		}
@@ -1340,7 +1342,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         if (startOfWordToken != anOffset) {
             currentPrefix= aDocumentText.substring(startOfWordToken, anOffset).toLowerCase();
         } else {
-            currentPrefix= ""; //$NON-NLS-1$
+            currentPrefix= IAntCoreConstants.EMPTY_STRING;
         }
         return currentPrefix;
     }
@@ -1404,14 +1406,19 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
             int spaceIndex = stringToPrefix.lastIndexOf(' ');
             int lessThanIndex = stringToPrefix.lastIndexOf('<');
             int greaterThanIndex = stringToPrefix.lastIndexOf('>');
-            
             // Task proposal
-            if(lessThanIndex > spaceIndex && greaterThanIndex < lessThanIndex) {
-                int slashIndex = stringToPrefix.lastIndexOf('/');
-                if(slashIndex == lessThanIndex +1) {
-                    return PROPOSAL_MODE_TASK_PROPOSAL_CLOSING; // ... </
-                }
-                return PROPOSAL_MODE_TASK_PROPOSAL;
+            if(greaterThanIndex < lessThanIndex) {
+            	//we are inside an open element
+            	if(lastChar == '$') {
+            		return PROPOSAL_MODE_PROPERTY_PROPOSAL;
+            	}
+            	if(lessThanIndex > spaceIndex) {
+	                int slashIndex = stringToPrefix.lastIndexOf('/');
+	                if(slashIndex == lessThanIndex +1) {
+	                    return PROPOSAL_MODE_TASK_PROPOSAL_CLOSING; // ... </
+	                }
+	                return PROPOSAL_MODE_TASK_PROPOSAL;
+            	}
             }
             if(lessThanIndex < greaterThanIndex) {
             	if (isPropertyProposalMode(stringToPrefix)) {
@@ -1585,7 +1592,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     		node= antModel.getOpenElement();
     	}
     	if (node == null) {
-    		return ""; //$NON-NLS-1$
+    		return IAntCoreConstants.EMPTY_STRING;
     	} else if (node instanceof AntTaskNode) {
     		String name= node.getName();
     		if (offset <= node.getOffset() + name.length() - 1) {

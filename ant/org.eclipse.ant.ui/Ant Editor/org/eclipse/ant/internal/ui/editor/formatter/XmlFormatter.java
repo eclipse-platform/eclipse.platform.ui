@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 John-Mason P. Shackelford and others.
+ * Copyright (c) 2004, 2011 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - initial API and implementation
+ *     IBM Corporation - bug fixes
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.formatter;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.editor.templates.AntContext;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorPartitionScanner;
@@ -222,11 +224,11 @@ public class XmlFormatter {
 	private static String getLeadingText(IDocument document, IAntModel model, int completionOffset) {
 		AntProjectNode project= model.getProjectNode(false);
 		if (project == null) {
-			return ""; //$NON-NLS-1$
+			return IAntCoreConstants.EMPTY_STRING;
 		}
 		AntElementNode node= project.getNode(completionOffset);// - fAccumulatedChange);
 		if (node == null) {
-			return ""; //$NON-NLS-1$
+			return IAntCoreConstants.EMPTY_STRING;
 		}
 		
 		StringBuffer buf= new StringBuffer();

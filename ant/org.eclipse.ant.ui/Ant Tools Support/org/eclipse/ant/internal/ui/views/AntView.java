@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
@@ -575,7 +576,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 
 			AntProjectNodeProxy project = null;
 			if (nameString == null) {
-				nameString = ""; //$NON-NLS-1$
+				nameString = IAntCoreConstants.EMPTY_STRING;
 			}
 			project = new AntProjectNodeProxy(nameString, pathString);
 			if (errorString != null && Boolean.valueOf(errorString).booleanValue()) {

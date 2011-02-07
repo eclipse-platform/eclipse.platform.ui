@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui;
 
 import java.util.Locale;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.editor.DecayCodeCompletionDataStructuresThread;
 import org.eclipse.ant.internal.ui.editor.text.AntEditorDocumentProvider;
 import org.eclipse.core.runtime.IStatus;
@@ -52,8 +53,6 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 * for the Ant UI plug-in.
 	 */
 	public static final String PI_ANTUI = "org.eclipse.ant.ui"; //$NON-NLS-1$
-	
-	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 	
 	/**
 	 * The combined preference store.
@@ -139,7 +138,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	public static IStatus newErrorStatus(String message, Throwable exception) {
 		if (message == null) {
-			message= EMPTY_STRING; 
+			return new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, IAntCoreConstants.EMPTY_STRING, exception);
 		}		
 		return new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, message, exception);
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import org.apache.tools.ant.Target;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.core.AntCoreUtil;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.AntLaunchingUtil;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
@@ -247,7 +248,7 @@ public final class AntUtil {
 		AntTargetNode[] targets= getTargets(project);
         if (targets == null) {
             Hashtable antTargets= project.getProject().getTargets();
-            Target implicitTarget= (Target) antTargets.get(""); //$NON-NLS-1$
+            Target implicitTarget= (Target) antTargets.get(IAntCoreConstants.EMPTY_STRING);
             if (implicitTarget != null) {
                 AntTargetNode implicitTargetNode= new AntTargetNode(implicitTarget);
                 project.addChildNode(implicitTargetNode);
@@ -397,7 +398,7 @@ public final class AntUtil {
 		if (path.length() == 0) {
 			return null;
 		}
-		if (path.startsWith("file:")) { //$NON-NLS-1$
+		if (path.startsWith(IAntCoreConstants.FILE_PROTOCOL)) {
 			// remove "file:"
 			path= path.substring(5, path.length());
 		}

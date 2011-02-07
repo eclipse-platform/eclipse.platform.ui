@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
@@ -96,7 +98,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			settings.put(IAntUIPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING, "build.xml"); //$NON-NLS-1$
 		}
 		if (settings.get(IAntUIPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE) == null) {
-			settings.put(IAntUIPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, ""); //$NON-NLS-1$
+			settings.put(IAntUIPreferenceConstants.ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE, IAntCoreConstants.EMPTY_STRING); 
 		} 
 	}
 
@@ -303,7 +305,7 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	private void setWorkingSet(IWorkingSet set) {
 		if (set == null) {
 			searchScopes= null;
-			workingSetText.setText(""); //$NON-NLS-1$
+			workingSetText.setText(IAntCoreConstants.EMPTY_STRING); 
 			validateInput();
 			return;
 		}

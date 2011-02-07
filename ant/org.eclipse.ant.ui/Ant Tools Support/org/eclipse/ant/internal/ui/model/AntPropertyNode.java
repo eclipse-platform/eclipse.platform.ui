@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.Map;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.core.AntSecurityException;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
@@ -31,7 +32,7 @@ public class AntPropertyNode extends AntTaskNode {
 	
 	private String fValue= null;
 	private String fReferencedName;
-    private String fOccurrencesStartingPoint= IAntModelConstants.ATTR_VALUE;
+    private String fOccurrencesStartingPoint= IAntCoreConstants.VALUE;
     private String fOccurrencesIdentifier;
     
 	/*
@@ -42,9 +43,9 @@ public class AntPropertyNode extends AntTaskNode {
 	
 	public AntPropertyNode(Task task, Attributes attributes) {
 		super(task);
-		 String label = attributes.getValue(IAntModelConstants.ATTR_NAME);
+		 String label = attributes.getValue(IAntCoreConstants.NAME);
          if (label == null) {
-			label = attributes.getValue(IAntModelConstants.ATTR_FILE);
+			label = attributes.getValue(IAntCoreConstants.FILE);
          	if (label != null) {
          		fReferencedName= label;
          		label=  "file="+label; //$NON-NLS-1$
@@ -67,7 +68,7 @@ public class AntPropertyNode extends AntTaskNode {
          		}
          	}
          } else {
-         	fValue= attributes.getValue(IAntModelConstants.ATTR_VALUE);
+         	fValue= attributes.getValue(IAntCoreConstants.VALUE);
             if (fValue == null) {
                 fOccurrencesStartingPoint= IAntModelConstants.ATTR_LOCATION;
                 fValue= attributes.getValue(fOccurrencesStartingPoint);
@@ -140,7 +141,7 @@ public class AntPropertyNode extends AntTaskNode {
 			String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
 			if (textToSearch != null && textToSearch.length() != 0) {
 				String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
-				if ("file".equals(attributeString) || "resource".equals(attributeString) || "srcFile".equals(attributeString)) {  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				if (IAntCoreConstants.FILE.equals(attributeString) || IAntModelConstants.ATTR_RESOURCE.equals(attributeString) || "srcFile".equals(attributeString)) {  //$NON-NLS-1$
 					return fReferencedName;
 				}
 			}
@@ -214,7 +215,7 @@ public class AntPropertyNode extends AntTaskNode {
         List results= new ArrayList();
         if (fBaseLabel != null) {
             if (fBaseLabel.equals(identifier)) {
-                int nameOffset= textToSearch.indexOf("name"); //$NON-NLS-1$
+                int nameOffset= textToSearch.indexOf(IAntCoreConstants.NAME);
                 nameOffset= textToSearch.indexOf(identifier, nameOffset + 1);
                 results.add(new Integer(getOffset() + nameOffset));
             }
@@ -249,7 +250,7 @@ public class AntPropertyNode extends AntTaskNode {
          if (textToSearch == null || textToSearch.length() == 0) {
          	return false;
          }
-         int nameStartOffset= textToSearch.indexOf("name"); //$NON-NLS-1$
+         int nameStartOffset= textToSearch.indexOf(IAntCoreConstants.NAME);
          nameStartOffset= textToSearch.indexOf("\"", nameStartOffset); //$NON-NLS-1$
          int nameEndOffset= textToSearch.indexOf("\"", nameStartOffset + 1); //$NON-NLS-1$
          nameEndOffset+=offset;

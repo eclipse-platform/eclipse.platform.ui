@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -99,7 +100,7 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 			
 		try {
 			String expanded = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(fVariableString);
-			return new URL("file:" + expanded); //$NON-NLS-1$
+			return new URL(IAntCoreConstants.FILE_PROTOCOL + expanded);
 		} catch (CoreException e) {
 			AntUIPlugin.log(e);
 		} catch (MalformedURLException e) {

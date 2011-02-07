@@ -38,6 +38,7 @@ import org.apache.tools.ant.helper.AntXMLContext;
 import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.JAXPUtils;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.jface.text.BadLocationException;
 import org.xml.sax.Attributes;
@@ -159,7 +160,7 @@ public class ProjectHelper extends ProjectHelper2 {
             String fileName= contextLocator.getSystemId();
             String normalizedFileName= (String) fNormalizedFileNames.get(fileName);
             if (normalizedFileName == null) {
-                if (fileName.startsWith("file:")) { //$NON-NLS-1$
+                if (fileName.startsWith(IAntCoreConstants.FILE_PROTOCOL)) {
                     normalizedFileName= getFileUtils().fromURI(fileName);
                     fNormalizedFileNames.put(fileName, normalizedFileName);
                 } else {
@@ -299,7 +300,7 @@ public class ProjectHelper extends ProjectHelper2 {
 			}
             if (context.getCurrentTarget() == null) {
                 //exception occurred creating the project
-                context.getProject().addTarget("", context.getImplicitTarget()); //$NON-NLS-1$
+                context.getProject().addTarget(IAntCoreConstants.EMPTY_STRING, context.getImplicitTarget());
                 context.setCurrentTarget(context.getImplicitTarget());
             }
 			if (currentImportStackSize == 1) {
@@ -645,7 +646,7 @@ public class ProjectHelper extends ProjectHelper2 {
             try {
                 Target newCurrent = new Target();
                 newCurrent.setProject(project);
-                newCurrent.setName(""); //$NON-NLS-1$
+                newCurrent.setName(IAntCoreConstants.EMPTY_STRING);
                 context.setCurrentTarget(newCurrent);
                 context.setCurrentTargets(new HashMap());
                 context.setImplicitTarget(newCurrent);

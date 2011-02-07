@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Richard Hoefter and others.
+ * Copyright (c) 2004, 2011 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -59,7 +60,7 @@ public class AppletUtil
         b.append("        <applet code="); //$NON-NLS-1$
         b.append(getQuotedString(name + ".class")); //$NON-NLS-1$
         String appletName = configuration.getAttribute(
-                IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, ""); //$NON-NLS-1$
+                IJavaLaunchConfigurationConstants.ATTR_APPLET_NAME, IAntCoreConstants.EMPTY_STRING);
         if (appletName.length() != 0)
         {
             b.append(" name=\"" + appletName + "\""); //$NON-NLS-1$ //$NON-NLS-2$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ant.internal.core;
+
+import org.eclipse.ant.core.AntCorePlugin;
 
 
 /**
@@ -43,4 +45,74 @@ public interface IAntCoreConstants {
 	public static final String PREFERENCE_PROPERTIES = "properties"; //$NON-NLS-1$
 	public static final String PREFERENCE_PROPERTY_FILES = "propertyfiles"; //$NON-NLS-1$
 	public static final String PREFIX_PROPERTY = "property."; //$NON-NLS-1$
+
+	/**
+	 * Constant for the word 'default'
+	 * <br><br>
+	 * Value is: <code>default</code>
+	 * 
+	 * @since org.eclipse.ant.core 3.2.200
+	 */
+	public static final String DEFAULT = "default"; //$NON-NLS-1$
+
+	/**
+	 * Constant for the word 'dir'
+	 * <br><br>
+	 * Value is: <code>dir</code>
+	 * 
+	 * @since org.eclipse.ant.core 3.2.200
+	 */
+	public static final String DIR = "dir"; //$NON-NLS-1$
+	
+	/**
+	 * Constant for the empty {@link String}
+	 * 
+	 * @since org.eclipse.ant.core 3.2.200
+	 */
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	
+	/**
+	 * Constant for the word 'file'
+	 * <br><br>
+	 * Value is: <code>file</code>
+	 * 
+	 * @since org.eclipse.ant.core 3.2.200
+	 */
+	public static final String FILE = "file"; //$NON-NLS-1$
+
+	/**
+	 * Constant representing a file URL protocol
+	 * <br><br>
+	 * Value is: <code>file:</code>
+	 * 
+	 * @since org.eclipse.ant.core 3.2.200
+	 */
+	public static final String FILE_PROTOCOL = "file:"; //$NON-NLS-1$
+	
+	/**
+	 * Constant for the word 'name'
+	 * <br><br>
+	 * Value is: <code>name</code>
+	 * 
+	 * @since org.eclipse.ant.core 3.2.200
+	 */
+	public static final String NAME = AntCorePlugin.NAME;
+
+	/**
+	 * Constant for the word 'value'
+	 * <br><br>
+	 * Value is: <code>value</code>
+	 * 
+	 * @since org.eclipse.ant.core 3.2.200
+	 */
+	public static final String VALUE = AntCorePlugin.VALUE;
+
+	/**
+	 * Constant for the word 'description'
+	 * <br><br>
+	 * Value is: <code>description</code>
+	 * 
+	 * @since org.eclipse.ant.core 3.2.200
+	 */
+	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 }

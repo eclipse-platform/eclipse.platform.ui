@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ant.core.Property;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.ColumnSorter;
@@ -404,7 +405,7 @@ public class AntPropertiesBlock {
 		String lastUsedPath;
 		lastUsedPath= dialogSettings.get(IAntUIConstants.DIALOGSTORE_LASTEXTFILE);
 		if (lastUsedPath == null) {
-			lastUsedPath= ""; //$NON-NLS-1$
+			lastUsedPath= IAntCoreConstants.EMPTY_STRING;
 		}
 		FileDialog dialog = new FileDialog(fileTableViewer.getControl().getShell(), SWT.MULTI);
 		dialog.setFilterExtensions(new String[] { "*.properties", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$;
@@ -438,7 +439,7 @@ public class AntPropertiesBlock {
 	 */
 	private void addProperty() {
 		String title = AntPreferencesMessages.AntPropertiesBlock_Add_Property_2;
-		AddPropertyDialog dialog = new AddPropertyDialog(propertyTableViewer.getControl().getShell(), title, new String[]{"", ""}); //$NON-NLS-1$ //$NON-NLS-2$
+		AddPropertyDialog dialog = new AddPropertyDialog(propertyTableViewer.getControl().getShell(), title, new String[]{IAntCoreConstants.EMPTY_STRING, IAntCoreConstants.EMPTY_STRING});
 		if (dialog.open() == Window.CANCEL) {
 			return;
 		}

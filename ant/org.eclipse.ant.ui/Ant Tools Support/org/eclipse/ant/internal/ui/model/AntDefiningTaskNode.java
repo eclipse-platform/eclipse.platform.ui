@@ -26,6 +26,7 @@ import org.apache.tools.ant.UnknownElement;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntSecurityException;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -40,11 +41,11 @@ public class AntDefiningTaskNode extends AntTaskNode {
     
     public AntDefiningTaskNode(Task task, Attributes attributes) {
         super(task);
-        String label= attributes.getValue(IAntModelConstants.ATTR_NAME);
+        String label= attributes.getValue(IAntCoreConstants.NAME);
         if (label == null) {
             label= task.getTaskName();
         
-            String file= attributes.getValue(IAntModelConstants.ATTR_FILE);
+            String file= attributes.getValue(IAntCoreConstants.FILE);
             if(file != null) {
                 label=  label + " " + file; //$NON-NLS-1$
                 fIdentifier= file;

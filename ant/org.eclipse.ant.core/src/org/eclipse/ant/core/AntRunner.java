@@ -340,7 +340,7 @@ public class AntRunner implements IApplication {
 			
 			if (buildLoggerClassName == null) {
 				//indicate that the default logger is not to be used
-				buildLoggerClassName= ""; //$NON-NLS-1$
+				buildLoggerClassName= IAntCoreConstants.EMPTY_STRING;
 			}
 			// add build logger
 			Method addBuildLogger = classInternalAntRunner.getMethod("addBuildLogger", new Class[] { String.class }); //$NON-NLS-1$

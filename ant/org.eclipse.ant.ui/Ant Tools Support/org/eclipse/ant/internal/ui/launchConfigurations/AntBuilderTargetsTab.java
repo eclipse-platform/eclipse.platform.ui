@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
@@ -272,7 +273,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
     private void initializeBuildKinds(ILaunchConfiguration configuration) {
         String buildKindString= null;
         try {
-            buildKindString= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""); //$NON-NLS-1$
+            buildKindString= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IAntCoreConstants.EMPTY_STRING);
         } catch (CoreException e) {
             AntUIPlugin.log("Error reading configuration", e); //$NON-NLS-1$
         }

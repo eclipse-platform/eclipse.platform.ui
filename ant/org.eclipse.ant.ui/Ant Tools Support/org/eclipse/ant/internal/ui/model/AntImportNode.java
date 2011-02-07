@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.model;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.eclipse.ant.core.AntSecurityException;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -29,7 +30,7 @@ public class AntImportNode extends AntTaskNode {
 	
 	public AntImportNode(Task task, Attributes attributes) {
 		super(task);
-         fFile= attributes.getValue(IAntModelConstants.ATTR_FILE);
+         fFile= attributes.getValue(IAntCoreConstants.FILE);
 	}
 	
 	public String getFile() {
@@ -98,7 +99,7 @@ public class AntImportNode extends AntTaskNode {
 			String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
 			if (textToSearch != null && textToSearch.length() != 0) {
 				String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
-				if (IAntModelConstants.ATTR_FILE.equals(attributeString)) {
+				if (IAntCoreConstants.FILE.equals(attributeString)) {
 					return fFile;
 				}
 			}

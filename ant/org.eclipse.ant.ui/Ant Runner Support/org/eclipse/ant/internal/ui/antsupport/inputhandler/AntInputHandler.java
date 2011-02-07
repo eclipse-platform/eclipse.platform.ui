@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.antsupport.inputhandler;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputRequest;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.antsupport.AntSupportMessages;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -59,7 +60,7 @@ public class AntInputHandler extends DefaultInputHandler {
 						} 
 						if (fFirstValidation) {
 						    fFirstValidation= false;
-						    return ""; //$NON-NLS-1$
+						    return IAntCoreConstants.EMPTY_STRING;
 						}
 						return AntSupportMessages.AntInputHandler_Invalid_input_2;
 					}

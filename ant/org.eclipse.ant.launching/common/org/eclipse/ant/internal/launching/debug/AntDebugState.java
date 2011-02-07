@@ -24,6 +24,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.MacroInstance;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.debug.model.DebugMessageIds;
 
 public class AntDebugState {
@@ -401,7 +402,7 @@ public class AntDebugState {
         }
         
 		if (!isAfterTaskEvent()) {
-			appendToStack(stackRepresentation, targetExecuting.getName(), "", getLocation(targetExecuting)); //$NON-NLS-1$
+			appendToStack(stackRepresentation, targetExecuting.getName(), IAntCoreConstants.EMPTY_STRING, getLocation(targetExecuting));
 		}
 		for (int i = tasks.size() - 1; i >= 0 ; i--) {
 			Task task= (Task) tasks.get(i);
@@ -441,7 +442,7 @@ public class AntDebugState {
 	     	for (int i = startIndex; i <= dependancyStackDepth; i++) {
 	     		stackTarget= (Target) buildSequence.get(i);
 	            if (stackTarget.dependsOn(targetExecuting.getName())) {
-	     		    appendToStack(stackRepresentation, stackTarget.getName(), "", getLocation(stackTarget)); //$NON-NLS-1$
+	     		    appendToStack(stackRepresentation, stackTarget.getName(), IAntCoreConstants.EMPTY_STRING, getLocation(stackTarget));
 	            }
 	     	}
 	     }

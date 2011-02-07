@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 Richard Hoefter and others.
+ * Copyright (c) 2004, 2011 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     IBM Corporation - NLS'ing and incorporating into Eclipse. 
  *                     - Bug 177833 Class created from combination of all utility classes of contribution 
  *                     - Bug 267459 Java project with an external jar file from C:\ on the build path throws a NPE during the Ant Buildfile generation.
+ *                     - bug fixing
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.datatransfer;
@@ -47,6 +48,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -712,7 +714,7 @@ public class ExportUtil {
 	 */
 	public static void addVariable(Map variable2valueMap, String s,
 			String projectRoot) {
-		if (s == null || s.equals("")) //$NON-NLS-1$
+		if (s == null || s.equals(IAntCoreConstants.EMPTY_STRING))
 		{
 			return;
 		}
@@ -758,7 +760,7 @@ public class ExportUtil {
 		}
 		int baseCount = base.segmentCount();
 		int count = base.matchingFirstSegments(location);
-		String temp = ""; //$NON-NLS-1$
+		String temp = IAntCoreConstants.EMPTY_STRING;
 		for (int j = 0; j < baseCount - count; j++) {
 			temp += "../"; //$NON-NLS-1$
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -55,7 +56,6 @@ public final class AntHandler extends DefaultHandler {
         }
     }
 
-    private static final String DEFAULT_ATTRIBUTE= "default"; //$NON-NLS-1$
     private static final String PROJECT = "project"; //$NON-NLS-1$
     private static final String TARGET= "target"; //$NON-NLS-1$
     private static final String MACRODEF= "macrodef"; //$NON-NLS-1$
@@ -141,7 +141,7 @@ public final class AntHandler extends DefaultHandler {
      * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
      */
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
-        return new InputSource(new StringReader("")); //$NON-NLS-1$
+        return new InputSource(new StringReader(IAntCoreConstants.EMPTY_STRING));
     }
 
     /*
@@ -158,7 +158,7 @@ public final class AntHandler extends DefaultHandler {
                 throw new StopParsingException();
             }
             if (attributes != null) {
-                fDefaultAttributeFound= attributes.getValue(DEFAULT_ATTRIBUTE) != null;
+                fDefaultAttributeFound= attributes.getValue(IAntCoreConstants.DEFAULT) != null;
                 if (fDefaultAttributeFound) {
                     throw new StopParsingException();
                 }

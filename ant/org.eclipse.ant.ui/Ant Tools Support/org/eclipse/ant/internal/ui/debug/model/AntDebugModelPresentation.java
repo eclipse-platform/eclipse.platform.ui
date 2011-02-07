@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.debug.model;
 
 import java.io.File;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.debug.model.AntLineBreakpoint;
 import org.eclipse.ant.internal.launching.debug.model.AntProperties;
 import org.eclipse.ant.internal.launching.debug.model.AntProperty;
@@ -133,7 +134,7 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
 	 */
 	public void computeDetail(IValue value, IValueDetailListener listener) {
-		String detail = ""; //$NON-NLS-1$
+		String detail = IAntCoreConstants.EMPTY_STRING;
 		try {
 			detail = value.getValueString();
 		} catch (DebugException e) {

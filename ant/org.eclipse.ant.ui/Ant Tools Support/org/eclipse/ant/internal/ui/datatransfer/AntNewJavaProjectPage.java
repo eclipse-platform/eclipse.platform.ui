@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.taskdefs.Javac;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
@@ -249,7 +250,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 	 */
 	private String getProjectNameFieldValue() {
 		if (fProjectNameField == null) {
-			return ""; //$NON-NLS-1$
+			return IAntCoreConstants.EMPTY_STRING;
 		} 
 		return fProjectNameField.getText().trim();
 	}
@@ -268,7 +269,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 	 */
 	private void handleBrowseButtonPressed() {
 		
-		String lastUsedPath= ""; //$NON-NLS-1$
+		String lastUsedPath= IAntCoreConstants.EMPTY_STRING;
 		FileDialog dialog = new FileDialog(getShell(), SWT.SINGLE);
 		dialog.setFilterExtensions(new String[] { "*.xml" }); //$NON-NLS-1$;
 		dialog.setFilterPath(lastUsedPath);
@@ -295,13 +296,13 @@ public class AntNewJavaProjectPage extends WizardPage {
 
 		String locationFieldContents = getProjectLocationFieldValue();
 
-		if (locationFieldContents.equals("")) { //$NON-NLS-1$
+		if (locationFieldContents.equals(IAntCoreConstants.EMPTY_STRING)) {
 			setErrorMessage(null);
 			setMessage(DataTransferMessages.AntNewJavaProjectPage_15);
 			return false;
 		}
 
-		IPath path = new Path(""); //$NON-NLS-1$
+		IPath path = new Path(IAntCoreConstants.EMPTY_STRING);
 		if (!path.isValidPath(locationFieldContents)) {
 			setErrorMessage(DataTransferMessages.AntNewJavaProjectPage_16);
 			return false;

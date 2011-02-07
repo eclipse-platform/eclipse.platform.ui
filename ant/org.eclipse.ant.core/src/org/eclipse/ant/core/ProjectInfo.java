@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ant.core;
+
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 
 
 /**
@@ -28,12 +30,12 @@ public class ProjectInfo {
 	 * Create a project information
 	 * 
 	 * @param name project name
-	 * @param description a brief explanation of the project's purpose 		or
+	 * @param description a brief explanation of the project's purpose or
 	 * <code>null</code> if not specified
 	 */
 	/*package*/
 	ProjectInfo(String name, String description) {
-		this.name = name == null ? "" : name; //$NON-NLS-1$
+		this.name = name == null ? IAntCoreConstants.EMPTY_STRING : name;
 		this.description = description;
 	}
 

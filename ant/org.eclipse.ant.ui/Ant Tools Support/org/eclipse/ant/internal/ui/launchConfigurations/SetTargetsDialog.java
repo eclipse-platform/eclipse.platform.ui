@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.runtime.CoreException;
@@ -61,7 +62,7 @@ public class SetTargetsDialog extends Dialog {
     protected String getTargetsSelected() {
 		String defaultValue= null;
 		if (!fTargetsTab.isTargetSelected()) {
-			defaultValue= ""; //$NON-NLS-1$
+			defaultValue= IAntCoreConstants.EMPTY_STRING;
 		}
         try {
             return fConfiguration.getAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, defaultValue);

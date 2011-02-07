@@ -24,6 +24,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -60,8 +61,6 @@ public class TaskDescriptionProvider {
     public static final String XML_TAG_ATTRIBUTES = "attributes"; //$NON-NLS-1$
     public static final String XML_TAG_ELEMENT = "element"; //$NON-NLS-1$
     public static final String XML_TAG_STRUCTURE = "structure"; //$NON-NLS-1$
-    public static final String XML_TAG_DESCRIPTION = "description"; //$NON-NLS-1$
-    public static final String XML_ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
     public static final String XML_ATTRIBUTE_REQUIRED = "required"; //$NON-NLS-1$
 
     /**
@@ -141,7 +140,7 @@ public class TaskDescriptionProvider {
             if(node.getNodeType() == Node.ELEMENT_NODE) {
                 if(XML_TAG_TASK.equals(node.getNodeName())) {
                 	Element task = (Element) node;
-                	String name = task.getAttribute(XML_ATTRIBUTE_NAME);
+                	String name = task.getAttribute(IAntCoreConstants.NAME);
                     if(name != null) {
                     	ProposalNode tasknode = new ProposalNode(getDescription(task), null);
                     	taskNodes.put(name, tasknode);
@@ -170,7 +169,7 @@ public class TaskDescriptionProvider {
      * @since 3.5
      */
     void addNode(Element element, ProposalNode node) {
-    	String name = element.getAttribute(XML_ATTRIBUTE_NAME);
+    	String name = element.getAttribute(IAntCoreConstants.NAME);
     	if(name != null) {
     		node.addChild(name, new ProposalNode(getDescription(element), element.getAttribute(XML_ATTRIBUTE_REQUIRED)));
     	}
@@ -186,7 +185,7 @@ public class TaskDescriptionProvider {
     	NodeList nodes = element.getChildNodes();
     	for (int i = 0; i < nodes.getLength(); i++) {
     		Node node = nodes.item(i);
-			if(node.getNodeType() == Node.ELEMENT_NODE && XML_TAG_DESCRIPTION.equals(node.getNodeName())) {
+			if(node.getNodeType() == Node.ELEMENT_NODE && IAntCoreConstants.DESCRIPTION.equals(node.getNodeName())) {
 				node = node.getFirstChild();
 				if(node != null) {
 					return node.getNodeValue();

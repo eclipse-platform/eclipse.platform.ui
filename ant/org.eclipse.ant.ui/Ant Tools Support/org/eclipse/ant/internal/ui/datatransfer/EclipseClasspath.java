@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Richard Hoefter and others.
+ * Copyright (c) 2004, 2011 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -218,7 +219,7 @@ public class EclipseClasspath
             }
             else
             {
-                String relativePath = ExportUtil.getRelativePath(file.getLocation() + "", //$NON-NLS-1$
+                String relativePath = ExportUtil.getRelativePath(file.getLocation() + IAntCoreConstants.EMPTY_STRING,
                         projectRoot);
                 variable2valueMap.put(srcDir + ".link", relativePath); //$NON-NLS-1$
             }
@@ -307,7 +308,7 @@ public class EclipseClasspath
                 index = e.indexOf('\\');
             }
             String variable = e;
-            String path = ""; //$NON-NLS-1$
+            String path = IAntCoreConstants.EMPTY_STRING;
             if (index != -1)
             {
                 variable = e.substring(0, index);
@@ -324,7 +325,7 @@ public class EclipseClasspath
             else if (variable2valueMap.get(variable) == null)
             {
                 // only add empty value, if variable is new 
-                variable2valueMap.put(variable, ""); //$NON-NLS-1$
+                variable2valueMap.put(variable, IAntCoreConstants.EMPTY_STRING);
             }
             rawClassPathEntriesAbsolute.add(value + path);
             rawClassPathEntries.add("${" + variable + "}" + path); //$NON-NLS-1$ //$NON-NLS-2$

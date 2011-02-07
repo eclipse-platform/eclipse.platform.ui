@@ -51,7 +51,6 @@ public class BuildTests extends AbstractAntUIBuildTest {
    * stack trace. Bug 82833
    */
   public void testVerboseStackTrace() throws Exception {
-	  System.err.println("Expected CoreException [BuildTests#testVerboseStackTrace()]");
 	  launch("failingTarget", "-k -verbose");
       assertEquals("Incorrect message", "BUILD FAILED", ConsoleLineTracker.getMessage(19));
       assertTrue("Incorrect message" + ConsoleLineTracker.getMessage(22), ConsoleLineTracker.getMessage(22).startsWith("\tat org.apache.tools.ant.taskdefs.Zip"));

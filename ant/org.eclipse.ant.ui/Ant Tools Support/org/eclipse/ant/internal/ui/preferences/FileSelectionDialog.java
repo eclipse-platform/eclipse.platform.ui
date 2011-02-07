@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.ant.internal.ui.preferences;
 
 import java.util.List;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -55,14 +56,14 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				if (selection.length == 0) {
-					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null); 
 				}
 				for (int i= 0; i < selection.length; i++) {
 					if (!(selection[i] instanceof IFile)) {
-						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null); 
 					}
 				}
-				return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+				return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null); 
 			}			
 		};
 		setValidator(validator);

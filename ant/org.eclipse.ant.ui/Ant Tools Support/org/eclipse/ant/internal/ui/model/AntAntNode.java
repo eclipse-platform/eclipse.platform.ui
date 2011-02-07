@@ -14,6 +14,7 @@ import java.io.File;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor;
 import org.xml.sax.Attributes;
 
@@ -24,7 +25,7 @@ public class AntAntNode extends AntTaskNode {
     public AntAntNode(Task task, Attributes attributes) {
         super(task);
         StringBuffer label= new StringBuffer("ant "); //$NON-NLS-1$
-        fFile= attributes.getValue(IAntModelConstants.ATTR_DIR);
+        fFile= attributes.getValue(IAntCoreConstants.DIR);
         if (fFile != null) {
         	if (!FileUtils.isAbsolutePath(fFile)) {
         		File basedir= task.getProject().getBaseDir();

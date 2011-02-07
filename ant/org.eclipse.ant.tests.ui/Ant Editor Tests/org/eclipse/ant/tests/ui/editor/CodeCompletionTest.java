@@ -28,6 +28,7 @@ import junit.framework.TestSuite;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
@@ -78,8 +79,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
         String displayString = proposal.getDisplayString();
         assertTrue(displayString.equals("id") 
         || displayString.equals("taskname")
-        || displayString.equals("description")
-        || displayString.equals("file")
+        || displayString.equals(IAntCoreConstants.DESCRIPTION)
+        || displayString.equals(IAntCoreConstants.FILE)
         || displayString.equals("preservelastmodified - (true | false | on | off | yes | no)")
         || displayString.equals("tofile")
         || displayString.equals("todir")
@@ -531,9 +532,9 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	processor.setCursorPosition(lineOffset + columnNumber);
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
         assertEquals(proposals.length, 5);
-    	assertContains("description", proposals);
+    	assertContains(IAntCoreConstants.DESCRIPTION, proposals);
     	assertContains("implicit - (true | false | on | off | yes | no)", proposals);
-    	assertContains("name", proposals);
+    	assertContains(IAntCoreConstants.NAME, proposals);
         processor.dispose();
 	}
 	
@@ -1036,7 +1037,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	processor.setCursorPosition(lineOffset + columnNumber);
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "n");
     	assertTrue(proposals.length == 1); 
-    	assertContains("name", proposals);
+    	assertContains(IAntCoreConstants.NAME, proposals);
         processor.dispose();
 	}
 	
@@ -1177,7 +1178,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), "");
     	//includes all the project attributes
     	assertTrue(proposals.length == 3);
-    	assertContains("name", proposals);
+    	assertContains(IAntCoreConstants.NAME, proposals);
     	assertContains("default", proposals);
     	assertContains("basedir", proposals);
     	
@@ -1188,7 +1189,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     	processor.setCursorPosition(lineOffset + columnNumber);
     	proposals = processor.getProposalsFromDocument(getCurrentDocument(), "n");
     	assertTrue(proposals.length == 1);
-    	assertContains("name", proposals);
+    	assertContains(IAntCoreConstants.NAME, proposals);
         processor.dispose();
     }
 }

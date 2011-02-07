@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,7 +99,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 
 		public String toString() {
-			return from.toString() + "->" + (to == null ? "" : to.toString()); //$NON-NLS-1$//$NON-NLS-2$
+			return from.toString() + "->" + (to == null ? IAntCoreConstants.EMPTY_STRING : to.toString()); //$NON-NLS-1$
 		}
 	}
 
@@ -206,7 +206,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	private void restoreTasks(Preferences prefs) {
 		 String tasks = prefs.getString(IAntCoreConstants.PREFERENCE_TASKS);
-		 if (tasks.equals("")) { //$NON-NLS-1$
+		 if (tasks.equals(IAntCoreConstants.EMPTY_STRING)) {
 			 customTasks = new Task[0];
 		 } else {
 			 customTasks = extractTasks(prefs, getArrayFromString(tasks));
@@ -215,7 +215,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	private void restoreTypes(Preferences prefs) {
 		String types = prefs.getString(IAntCoreConstants.PREFERENCE_TYPES);
-		if (types.equals("")) {//$NON-NLS-1$
+		if (types.equals(IAntCoreConstants.EMPTY_STRING)) {
 			customTypes = new Type[0];
 		} else {
 			customTypes = extractTypes(prefs, getArrayFromString(types));
@@ -224,14 +224,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	private void restoreAntHomeEntries(Preferences prefs) {
 		String entries = prefs.getString("ant_urls"); //old constant //$NON-NLS-1$
-		if (entries.equals("")) {//$NON-NLS-1$
+		if (entries.equals(IAntCoreConstants.EMPTY_STRING)) {
 			entries= prefs.getString(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES);
 		} else {
 			prefs.setToDefault("ant_urls"); //$NON-NLS-1$
 			antHomeEntries= migrateURLEntries(getArrayFromString(entries));
 			return;
 		}
-		if (entries.equals("")) {//$NON-NLS-1$
+		if (entries.equals(IAntCoreConstants.EMPTY_STRING)) {
 			antHomeEntries= getDefaultAntHomeEntries();
 		} else {
 			antHomeEntries= extractEntries(getArrayFromString(entries));
@@ -240,14 +240,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	private void restoreAdditionalEntries(Preferences prefs) {
 		String entries = prefs.getString("urls"); //old constant //$NON-NLS-1$
-		if (entries.equals("")) {//$NON-NLS-1$
+		if (entries.equals(IAntCoreConstants.EMPTY_STRING)) {
 			entries = prefs.getString(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES);
 		} else {
 			prefs.setToDefault("urls"); //$NON-NLS-1$
 			additionalEntries= migrateURLEntries(getArrayFromString(entries));
 			return;
 		}
-		if (entries.equals("")) {//$NON-NLS-1$
+		if (entries.equals(IAntCoreConstants.EMPTY_STRING)) {
 			IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
 			List userLibs= getUserLibraries();
 			if (toolsJarEntry == null) {
@@ -314,7 +314,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	private void restoreCustomProperties(Preferences prefs) {
 		String properties = prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTIES);
-		if (properties.equals("")) {//$NON-NLS-1$
+		if (properties.equals(IAntCoreConstants.EMPTY_STRING)) {
 			customProperties = new Property[0];
 		} else {
 			customProperties = extractProperties(prefs, getArrayFromString(properties));
@@ -323,7 +323,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	
 	private void restoreCustomPropertyFiles(Preferences prefs) {
 		String propertyFiles= prefs.getString(IAntCoreConstants.PREFERENCE_PROPERTY_FILES);
-		if (propertyFiles.equals("")) { //$NON-NLS-1$
+		if (propertyFiles.equals(IAntCoreConstants.EMPTY_STRING)) {
 			customPropertyFiles= new String[0];
 		} else {
 			customPropertyFiles= getArrayFromString(propertyFiles);
@@ -342,7 +342,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			task.setTaskName(taskName);
 			task.setClassName(values[0]);
 			String library= values[1];
-			if (library.startsWith("file:")) { //$NON-NLS-1$
+			if (library.startsWith(IAntCoreConstants.FILE_PROTOCOL)) {
 				//old format where URLs were persisted
 				library= library.substring(5);
 			}
@@ -364,7 +364,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			type.setTypeName(typeName);
 			type.setClassName(values[0]);
 			String library= values[1];
-			if (library.startsWith("file:")) { //$NON-NLS-1$
+			if (library.startsWith(IAntCoreConstants.FILE_PROTOCOL)) {
 				//old format where URLs were persisted
 				library= library.substring(5);
 			}
@@ -552,7 +552,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				continue;
 			}
 			Task task = new Task();
-			task.setTaskName(element.getAttribute(AntCorePlugin.NAME));
+			task.setTaskName(element.getAttribute(IAntCoreConstants.NAME));
 			task.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			
 			configureAntObject(result, element, task, task.getTaskName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_task);
@@ -587,7 +587,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 				continue;
 			}
 			Type type = new Type();
-			type.setTypeName(element.getAttribute(AntCorePlugin.NAME));
+			type.setTypeName(element.getAttribute(IAntCoreConstants.NAME));
 			type.setClassName(element.getAttribute(AntCorePlugin.CLASS));
 			
 			configureAntObject(result, element, type, type.getTypeName(), InternalCoreAntMessages.AntCorePreferences_No_library_for_type);
@@ -608,7 +608,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (!urlFile.exists())
 			return null;
 	    String path = urlFile.getAbsolutePath();
-	    return new URL("file:" + (urlFile.isDirectory() ? path + "/" : path));  //$NON-NLS-1$//$NON-NLS-2$
+	    return new URL(IAntCoreConstants.FILE_PROTOCOL + (urlFile.isDirectory() ? path + "/" : path));  //$NON-NLS-1$
 	}
 
 	private void configureAntObject(List result, IConfigurationElement element, AntObject antObject, String objectName, String errorMessage) {
@@ -720,11 +720,11 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			if (!relevantRunningHeadless(element)) {
 				continue;
 			}
-			String name = element.getAttribute(AntCorePlugin.NAME);
+			String name = element.getAttribute(IAntCoreConstants.NAME);
 			if (name == null) {
 				continue;
 			}
-			String value = element.getAttribute(AntCorePlugin.VALUE);
+			String value = element.getAttribute(IAntCoreConstants.VALUE);
 			Property property= null;
 			if (value != null) {
 				property = new Property(name, value);
@@ -758,16 +758,17 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @since 3.0
 	 */
 	public IAntClasspathEntry getToolsJarEntry(IPath javaHomePath) {
-		if ("jre".equalsIgnoreCase(javaHomePath.lastSegment())) { //$NON-NLS-1$
-			javaHomePath = javaHomePath.removeLastSegments(1);
+		IPath newjh = javaHomePath;
+		if ("jre".equalsIgnoreCase(newjh.lastSegment())) { //$NON-NLS-1$
+			newjh = newjh.removeLastSegments(1);
 		}
-		javaHomePath= javaHomePath.append("lib").append("tools.jar"); //$NON-NLS-1$ //$NON-NLS-2$
-		File tools= javaHomePath.toFile();
+		newjh= newjh.append("lib").append("tools.jar"); //$NON-NLS-1$ //$NON-NLS-2$
+		File tools= newjh.toFile();
 		if (!tools.exists()) {
 			//attempt to find in the older 1.1.* 
-			javaHomePath= javaHomePath.removeLastSegments(1);
-			javaHomePath= javaHomePath.append("classes.zip"); //$NON-NLS-1$
-			tools= javaHomePath.toFile();
+			newjh= newjh.removeLastSegments(1);
+			newjh= newjh.append("classes.zip"); //$NON-NLS-1$
+			tools= newjh.toFile();
 			if (!tools.exists()) {
 				return null;
 			}
@@ -904,7 +905,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	private void addLibraries(Bundle source, List destination) throws IOException, MalformedURLException {
 		ManifestElement[] libraries = null;
 		try {
-			libraries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) source.getHeaders("").get(Constants.BUNDLE_CLASSPATH)); //$NON-NLS-1$
+			libraries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) source.getHeaders(IAntCoreConstants.EMPTY_STRING).get(Constants.BUNDLE_CLASSPATH));
 		} catch (BundleException e) {
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_0, e);
 			AntCorePlugin.getPlugin().getLog().log(status);
@@ -1515,13 +1516,13 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 */
 	protected String[] getArrayFromString(String list) {
 		String separator= ","; //$NON-NLS-1$
-		if (list == null || list.trim().equals("")) { //$NON-NLS-1$
+		if (list == null || list.trim().equals(IAntCoreConstants.EMPTY_STRING)) {
 			return new String[0];
 		}
 		ArrayList result = new ArrayList();
 		for (StringTokenizer tokens = new StringTokenizer(list, separator); tokens.hasMoreTokens();) {
 			String token = tokens.nextToken().trim();
-			if (!token.equals("")) { //$NON-NLS-1$
+			if (!token.equals(IAntCoreConstants.EMPTY_STRING)) {
 				result.add(token);
 			}
 		}
@@ -1559,7 +1560,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}	
 		
 		if (customTasks.length == 0) {
-			prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, ""); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, IAntCoreConstants.EMPTY_STRING);
 			return;
 		}
 		StringBuffer tasks = new StringBuffer();
@@ -1581,7 +1582,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}	
 				
 		if (customTypes.length == 0) {
-			prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, ""); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, IAntCoreConstants.EMPTY_STRING);
 			return;
 		}
 		StringBuffer types = new StringBuffer();
@@ -1603,7 +1604,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		
 		if (customProperties.length == 0) {
-			prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, ""); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, IAntCoreConstants.EMPTY_STRING);
 			return;
 		}
 		StringBuffer properties = new StringBuffer();
@@ -1616,8 +1617,8 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	protected void updateAdditionalEntries(Preferences prefs) {
-		prefs.setValue("urls", ""); //old constant removed  //$NON-NLS-1$//$NON-NLS-2$
-		String serialized= ""; //$NON-NLS-1$
+		prefs.setValue("urls", IAntCoreConstants.EMPTY_STRING); //old constant removed  //$NON-NLS-1$
+		String serialized= IAntCoreConstants.EMPTY_STRING;
 		IAntClasspathEntry toolsJarEntry= getToolsJarEntry();
 		List userLibs= getUserLibraries();
 		if (userLibs == null) {
@@ -1647,7 +1648,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		
 		prefs.setValue(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES, serialized);
 		
-		String prefAntHome= ""; //$NON-NLS-1$
+		String prefAntHome= IAntCoreConstants.EMPTY_STRING;
 		if (antHome != null && !antHome.equals(getDefaultAntHome())) {
 			prefAntHome= antHome;
 		} 
@@ -1655,7 +1656,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 	
 	protected void updateAntHomeEntries(Preferences prefs) {
-		prefs.setValue("ant_urls", ""); //old constant removed  //$NON-NLS-1$//$NON-NLS-2$
+		prefs.setValue("ant_urls", IAntCoreConstants.EMPTY_STRING); //old constant removed  //$NON-NLS-1$
 		
 		//see if the custom entries are just the default entries
 		IAntClasspathEntry[] defaultEntries= getDefaultAntHomeEntries();
@@ -1672,7 +1673,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		if (dflt) {
 			//always want to recalculate the default Ant urls
 			//to pick up any changes in the default Ant classpath
-			prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES, ""); //$NON-NLS-1$
+			prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES, IAntCoreConstants.EMPTY_STRING);
 			return;
 		}
 		StringBuffer entries = new StringBuffer();

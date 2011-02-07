@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -96,7 +97,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 
 	private void updateProjectName(ILaunchConfigurationWorkingCopy configuration) {
         IFile file = getIFile(configuration);
-        String projectName= ""; //$NON-NLS-1$
+        String projectName= IAntCoreConstants.EMPTY_STRING;
         if (file != null) {
             projectName= file.getProject().getName();
         }

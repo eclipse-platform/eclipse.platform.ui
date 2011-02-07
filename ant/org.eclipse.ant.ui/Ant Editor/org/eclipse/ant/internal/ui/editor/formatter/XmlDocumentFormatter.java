@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006s John-Mason P. Shackelford and others.
+ * Copyright (c) 2004, 2011 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.Assert;
@@ -206,7 +207,7 @@ public class XmlDocumentFormatter {
          * @see org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormatter.TagReader#getStartOfTag()
          */
         public String getStartOfTag() {
-            return ""; //$NON-NLS-1$
+            return IAntCoreConstants.EMPTY_STRING;
         }
 
         /* (non-Javadoc)

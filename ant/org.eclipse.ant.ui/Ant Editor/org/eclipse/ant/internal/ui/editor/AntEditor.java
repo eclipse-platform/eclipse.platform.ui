@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2010 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2011 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH,
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.ExternalHyperlink;
@@ -910,7 +911,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
             return null;
         }
         
-		return ""; //$NON-NLS-1$
+		return IAntCoreConstants.EMPTY_STRING;
 	}
 	
 	/* (non-Javadoc)

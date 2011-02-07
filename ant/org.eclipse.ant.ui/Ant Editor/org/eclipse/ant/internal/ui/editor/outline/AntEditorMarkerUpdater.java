@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.IProblem;
@@ -51,7 +52,7 @@ public class AntEditorMarkerUpdater {
 		 */
 		public IStatus runInWorkspace(IProgressMonitor monitor) {
 			updateMarkers0(fProblems);
-			return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), IStatus.OK, "", null); //$NON-NLS-1$
+			return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), IStatus.OK, IAntCoreConstants.EMPTY_STRING, null);
 		}
 	}
 	

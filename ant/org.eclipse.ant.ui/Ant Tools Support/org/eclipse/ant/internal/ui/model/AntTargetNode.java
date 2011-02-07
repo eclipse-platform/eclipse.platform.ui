@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tools.ant.Target;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -179,7 +180,7 @@ public class AntTargetNode extends AntElementNode {
         }
         List results= new ArrayList();
         if (getTargetName().equals(identifier)) {
-            int nameOffset= textToSearch.indexOf("name"); //$NON-NLS-1$
+            int nameOffset= textToSearch.indexOf(IAntCoreConstants.NAME);
             nameOffset= textToSearch.indexOf(identifier, nameOffset);
             results.add(new Integer(getOffset() + nameOffset));
         } else {
@@ -236,7 +237,7 @@ public class AntTargetNode extends AntElementNode {
 		}
 		if (checkReferenceRegion(region, textToSearch, "depends")) { //$NON-NLS-1$
 			return true;
-		} else if (checkReferenceRegion(region, textToSearch, "name")) { //$NON-NLS-1$
+		} else if (checkReferenceRegion(region, textToSearch, IAntCoreConstants.NAME)) {
 			return true;
 		} else if (checkReferenceRegion(region, textToSearch, "if")) { //$NON-NLS-1$
 			return true;
@@ -252,6 +253,6 @@ public class AntTargetNode extends AntElementNode {
          if (textToSearch == null || textToSearch.length() == 0) {
          	return false;
          }
-         return checkReferenceRegion(region, textToSearch, "name"); //$NON-NLS-1$
+         return checkReferenceRegion(region, textToSearch, IAntCoreConstants.NAME);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.IAntClasspathEntry;
+import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.AntLaunching;
 import org.eclipse.ant.internal.launching.AntLaunchingUtil;
 import org.eclipse.core.runtime.CoreException;
@@ -155,7 +156,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
                    continue;
                 }
                 String urlFileName= bundleURL.getFile();
-                if (urlFileName.startsWith("file:")) { //$NON-NLS-1$
+                if (urlFileName.startsWith(IAntCoreConstants.FILE_PROTOCOL)) {
                     try {
                         urlFileName= new URL(urlFileName).getFile();
                         if (urlFileName.endsWith("!/")) { //$NON-NLS-1$
