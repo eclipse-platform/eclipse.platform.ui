@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -1856,6 +1857,74 @@ public class PartRenderingEngineTests extends TestCase {
 		appContext.get(IPresentationEngine.class).removeGui(window);
 		assertFalse("The shell should not have been disposed first",
 				impl.shellEagerlyDestroyed);
+	}
+
+	public void testBug330662() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MArea area = AdvancedFactoryImpl.eINSTANCE.createArea();
+		window.getSharedElements().add(area);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		area.getChildren().add(partStack);
+		area.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveA.setElementId("perspectiveA"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(area);
+		area.setCurSharedRef(placeholderA);
+		perspectiveA.getChildren().add(placeholderA);
+		perspectiveA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveB.setElementId("perspectiveB"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(area);
+		perspectiveB.getChildren().add(placeholderB);
+		perspectiveB.setSelectedElement(placeholderB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.showPart(partB, PartState.ACTIVATE);
+
+		partService.switchPerspective(perspectiveB);
+
+		window.getContext().get(IPresentationEngine.class)
+				.removeGui(perspectiveA);
+
+		assertEquals(perspectiveB.getContext(), partA.getContext().getParent());
+		assertEquals(perspectiveB.getContext(), partB.getContext().getParent());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
