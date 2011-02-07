@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 Broadcom Corporation and others.
+ * Copyright (c) 2010, 2011 Broadcom Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,13 +17,6 @@ package org.eclipse.core.resources;
  * This can be interrogated by a builder to determine what's been built
  * before, and what's being built after it, for this particular build
  * invocation.
- * </p>
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * work or that it will remain the same. Please do not use this API without
- * consulting with the Platform Workspace team.
  * </p>
  * 
  * @noimplement This interface is not intended to be implemented by clients.

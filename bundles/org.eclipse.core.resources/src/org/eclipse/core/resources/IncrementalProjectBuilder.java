@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -462,13 +462,6 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <p>
 	 * This can be used to discover which build configurations are being built before
 	 * and after this build configuration.
-	 * </p>
-	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This interface has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * work or that it will remain the same. Please do not use this API without
-	 * consulting with the Platform Workspace team.
 	 * </p>
 	 *
 	 * @return the context for the most recent invocation of the builder
