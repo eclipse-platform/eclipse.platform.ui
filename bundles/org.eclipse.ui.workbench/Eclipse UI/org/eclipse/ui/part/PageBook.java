@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,30 +92,24 @@ public class PageBook extends Composite {
      * @param page the page to show
      */
     public void showPage(Control page) {
-
-        if (page == currentPage) {
-			return;
-		}
-        if (page.getParent() != this) {
+		if (page.isDisposed() || page.getParent() != this) {
 			return;
 		}
 
-        Control oldPage = currentPage;
-        currentPage = page;
+		currentPage = page;
 
         // show new page
-        if (page != null) {
-            if (!page.isDisposed()) {
-                page.setVisible(true);
-                layout(true);
-                //				if (fRequestFocusOnShowPage)
-                //					page.setFocus();
-            }
-        }
+		page.setVisible(true);
+		layout(true);
 
-        // hide old *after* new page has been made visible in order to avoid flashing
-        if (oldPage != null && !oldPage.isDisposed()) {
-			oldPage.setVisible(false);
+		// hide old (and all others) *after* new page has been made visible in
+		// order to avoid flashing
+		Control[] children = getChildren();
+		for (int i = 0; i < children.length; i++) {
+			Control child = children[i];
+			if (child != page && !child.isDisposed()) {
+				child.setVisible(false);
+			}
 		}
     }
 }
