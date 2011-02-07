@@ -37,6 +37,7 @@ import org.eclipse.e4.ui.internal.workbench.PartServiceImpl;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
@@ -57,6 +58,7 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -1643,19 +1645,101 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see IWorkbenchPage
      */
     public IEditorPart getActiveEditor() {
+		IWorkbenchPart activePart = getActivePart();
+		if (activePart instanceof IEditorPart) {
+			// if the currently active part is an editor, return it
+			return (IEditorPart) activePart;
+		}
+
+		List<MPart> candidates = new ArrayList<MPart>(activationList);
+		MUIElement area = findSharedArea();
+		if (area instanceof MPlaceholder) {
+			area = ((MPlaceholder) area).getRef();
+		}
+		if (area != null && area.isVisible() && area.isToBeRendered()) {
+			// we have a shared area, try iterating over its editors first
+			List<MPart> editors = modelService
+					.findElements(area, CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
+			for (Iterator<MPart> it = candidates.iterator(); it.hasNext();) {
+				MPart model = it.next();
+				if (!editors.contains(model)) {
+					continue;
+				}
+
+				Object object = model.getObject();
+				if (object instanceof CompatibilityEditor) {
+					CompatibilityEditor editor = (CompatibilityEditor) object;
+					// see bug 308492
+					if (!editor.isBeingDisposed() && isInArea(area, model)) {
+						return ((CompatibilityEditor) object).getEditor();
+					}
+				}
+				it.remove();
+			}
+		}
+
+		MPerspective perspective = getPerspectiveStack().getSelectedElement();
 		for (MPart model : activationList) {
 			Object object = model.getObject();
 			if (object instanceof CompatibilityEditor) {
 				CompatibilityEditor editor = (CompatibilityEditor) object;
 				// see bug 308492
 				if (!editor.isBeingDisposed()) {
-					return ((CompatibilityEditor) object).getEditor();
+					if (isValid(perspective, model) || isValid(window, model)) {
+						return ((CompatibilityEditor) object).getEditor();
+					}
 				}
 			}
 		}
 		return null;
     }
 
+	private boolean isInArea(MUIElement area, MUIElement element) {
+		if (!element.isToBeRendered() || !element.isVisible()) {
+			return false;
+		}
+
+		if (element == area) {
+			return true;
+		}
+
+		MElementContainer<?> parent = element.getParent();
+		if (parent == null || parent instanceof MPerspective || parent instanceof MWindow) {
+			return false;
+		} else if (parent instanceof MGenericStack) {
+			return parent.getSelectedElement() == element ? isValid(area, parent) : false; 
+		}
+
+		return isValid(area, parent);
+	}
+
+	private boolean isValid(MUIElement ancestor, MUIElement element) {
+		if (!element.isToBeRendered() || !element.isVisible()) {
+			return false;
+		}
+
+		if (element == ancestor) {
+			return true;
+		}
+
+		MElementContainer<?> parent = element.getParent();
+		if (parent == null) {
+			// might be a detached window
+			if (element instanceof MWindow) {
+				parent = (MElementContainer<?>) ((EObject) element).eContainer();
+			}
+
+			if (parent == null) {
+				return false;
+			}
+		}
+
+		if (parent instanceof MGenericStack) {
+			return parent.getSelectedElement() == element ? isValid(ancestor, parent) : false;
+		}
+
+		return isValid(ancestor, parent);
+	}
     
     public IWorkbenchPart getActivePart() {
 		MPart part = partService.getActivePart();
@@ -2225,12 +2309,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return mpart == null ? false : partService.isPartVisible(mpart);
     }
     
+	private MUIElement findSharedArea() {
+		MPerspective perspective = getPerspectiveStack().getSelectedElement();
+		return modelService.find(IPageLayout.ID_EDITOR_AREA, perspective);
+	}
+
     /**
      * See IWorkbenchPage.
      */
     public boolean isEditorAreaVisible() {
-		MPerspective perspective = getPerspectiveStack().getSelectedElement();
-		MUIElement find = modelService.find(IPageLayout.ID_EDITOR_AREA, perspective);
+		MUIElement find = findSharedArea();
 		return find == null ? false : find.isVisible() && find.isToBeRendered();
     }
 
@@ -2729,8 +2817,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * @see org.eclipse.ui.IWorkbenchPage#setEditorAreaVisible(boolean)
 	 */
 	public void setEditorAreaVisible(boolean showEditorArea) {
-		MPerspective perspective = getPerspectiveStack().getSelectedElement();
-		MUIElement find = modelService.find(IPageLayout.ID_EDITOR_AREA, perspective);
+		MUIElement find = findSharedArea();
 		if (find != null) {
 			if (showEditorArea) {
 				// make sure it's been rendered if it hasn't been
