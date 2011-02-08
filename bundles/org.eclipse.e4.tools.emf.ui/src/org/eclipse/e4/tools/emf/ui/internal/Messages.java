@@ -580,4 +580,14 @@ public class Messages {
 	public String ModelEditor_Delete;
 	public String ModelEditor_Form;
 	public String ModelEditor_XMI;
+	public String ModelEditor_ExternalizeStrings;
+
+	public String ExternalizeStringHandler_Dialog_ElementName;
+	public String ExternalizeStringHandler_Dialog_AttributeName;
+	public String ExternalizeStringHandler_Dialog_Key;
+	public String ExternalizeStringHandler_Dialog_Value;
+	public String ExternalizeStringHandler_Dialog_ShellTitle;
+	public String ExternalizeStringHandler_Dialog_DialogTitle;
+	public String ExternalizeStringHandler_Dialog_DialogMessage;
+
 }

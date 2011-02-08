@@ -97,18 +97,7 @@ public abstract class ProjectOSGiTranslationProvider extends AbstractTranslation
 
 	private void handleManifestChange(IFile file) {
 		try {
-			InputStream in = file.getContents();
-			BufferedReader r = new BufferedReader(new InputStreamReader(in));
-			String line;
-			String newValue = "OSGI-INF/l10n/bundle"; //$NON-NLS-1$
-			while ((line = r.readLine()) != null) {
-				if (line.startsWith("Bundle-Localization:")) { //$NON-NLS-1$
-					newValue = line.substring("Bundle-Localization:".length()).trim(); //$NON-NLS-1$
-					break;
-				}
-			}
-
-			r.close();
+			String newValue = extractBasenameFromManifest(file);
 
 			if (!newValue.equals(basename)) {
 				if (basename != null) {
@@ -126,6 +115,22 @@ public abstract class ProjectOSGiTranslationProvider extends AbstractTranslation
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static String extractBasenameFromManifest(IFile file) throws CoreException, IOException {
+		InputStream in = file.getContents();
+		BufferedReader r = new BufferedReader(new InputStreamReader(in));
+		String line;
+		String newValue = "OSGI-INF/l10n/bundle"; //$NON-NLS-1$
+		while ((line = r.readLine()) != null) {
+			if (line.startsWith("Bundle-Localization:")) { //$NON-NLS-1$
+				newValue = line.substring("Bundle-Localization:".length()).trim(); //$NON-NLS-1$
+				break;
+			}
+		}
+
+		r.close();
+		return newValue;
 	}
 
 	@Override

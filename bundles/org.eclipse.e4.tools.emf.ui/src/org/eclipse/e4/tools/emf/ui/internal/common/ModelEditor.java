@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
@@ -114,6 +115,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowCont
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.properties.ExternalizeStringHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.AnnotationAccess;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.EMFDocumentResourceMediator;
@@ -527,6 +529,16 @@ public class ModelEditor {
 					for (Action a : actions) {
 						manager.add(a);
 					}
+				}
+
+				if (project != null) {
+					Action nlsAction = new Action(messages.ModelEditor_ExternalizeStrings) {
+						public void run() {
+							ExternalizeStringHandler h = ContextInjectionFactory.make(ExternalizeStringHandler.class, context);
+							ContextInjectionFactory.invoke(h, Execute.class, context);
+						}
+					};
+					manager.add(nlsAction);
 				}
 			}
 		});
