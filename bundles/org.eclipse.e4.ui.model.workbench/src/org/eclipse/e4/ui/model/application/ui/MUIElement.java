@@ -292,4 +292,12 @@ public interface MUIElement extends MApplicationElement {
 	 */
 	void setAccessibilityPhrase(String value);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	String getLocalizedAccessibilityPhrase();
+
 } // MUIElement

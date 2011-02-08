@@ -129,6 +129,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="UIElement" abstract="true" eSuperTypes="#//ApplicationElement">
+      <eOperations name="getLocalizedAccessibilityPhrase" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="widget" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
           transient="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="renderer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"

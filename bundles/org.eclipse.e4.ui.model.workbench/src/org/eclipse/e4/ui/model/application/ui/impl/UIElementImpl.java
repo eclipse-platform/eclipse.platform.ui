@@ -10,6 +10,8 @@
  */
 package org.eclipse.e4.ui.model.application.ui.impl;
 
+import org.eclipse.e4.ui.model.LocalizationHelper;
+
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
@@ -493,6 +495,15 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		accessibilityPhrase = newAccessibilityPhrase;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE, oldAccessibilityPhrase, accessibilityPhrase));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalizedAccessibilityPhrase() {
+		return LocalizationHelper.getLocalizedAccessibilityPhrase(this);
 	}
 
 	/**

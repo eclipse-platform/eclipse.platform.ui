@@ -28,6 +28,19 @@ final public class LocalizationHelper {
 	}
 	
 	/**
+	 * Returns localized accessibilityPhrase for the specified element using locale information 
+	 * from its context.
+	 * @param element the element
+	 * @return localized element's accessibilityPhrase, or <code>null</code> if no label can be found
+	 */
+	public static String getLocalizedAccessibilityPhrase(MUIElement element) {
+		String key = element.getAccessibilityPhrase();
+		if (key == null)
+			return null;
+		return getLocalized(key, element);
+	}
+	
+	/**
 	 * Returns localized label for the specified element using locale information 
 	 * from its context.
 	 * @param element the element
