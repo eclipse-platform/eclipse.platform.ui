@@ -1114,6 +1114,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			refreshCVSFileHistoryJob.setLocalFileRevision(oldJob.localFileRevision);
 			refreshCVSFileHistoryJob.setSelectLocal(oldJob.useLocalSelect);
 			refetch = true;
+			selectOnly = false;
+			refreshFlags = CVSFileHistory.REFRESH_ALL;
 			printDebugInfo("CVSHistoryPage#refreshHistory, cancel old job", (IFile)(previousFile != null ? previousFile.getIResource() : null), cvsFileHistory, null); //$NON-NLS-1$
 		}
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
