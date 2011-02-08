@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,7 +122,7 @@ public class MarkersPropertyPage extends PropertyPage {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(MarkerMessages.propertiesDialog_creationTime_text);
 
-		Label creationTime = new Label(parent, SWT.NONE);
+		Text creationTime = new Text(parent, SWT.SINGLE | SWT.READ_ONLY);
 		creationTime.setText(Util.getCreationTime(marker));
 	}
 
@@ -236,8 +236,7 @@ public class MarkersPropertyPage extends PropertyPage {
 		severityImage.setImage(Util.getImage(marker.getAttribute(
 				IMarker.SEVERITY, -1)));
 
-		Label severityLabel = new Label(composite, SWT.NONE);
-
+		Text severityLabel = new Text(composite, SWT.SINGLE | SWT.READ_ONLY);
 		int severity = marker.getAttribute(IMarker.SEVERITY, -1);
 		if (severity == IMarker.SEVERITY_ERROR) {
 			severityLabel.setText(MarkerMessages.propertiesDialog_errorLabel);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public class DialogMarkerProperties extends TrayDialog {
 	/**
 	 * The control for the Creation Time field.
 	 */
-	private Label creationTime;
+	private Text creationTime;
 
 	/**
 	 * The text control for the Resource field.
@@ -339,7 +339,7 @@ public class DialogMarkerProperties extends TrayDialog {
         label.setText(MarkerMessages
                 .propertiesDialog_creationTime_text);
 
-        creationTime = new Label(parent, SWT.NONE);
+        creationTime = new Text(parent, SWT.SINGLE | SWT.READ_ONLY);
 	}
 
 	/**
