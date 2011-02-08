@@ -190,11 +190,15 @@ public class PluginIndex {
 	}
 
 	public boolean equals(Object obj) {
-		return pluginId.equals(obj);
+		if ( !(obj instanceof PluginIndex) ) {
+			return false;
+		}
+		PluginIndex index = (PluginIndex) obj;
+		return pluginId.equals(index.pluginId) && path.equals(index.path);
 	}
 
 	public int hashCode() {
-		return pluginId.hashCode();
+		return pluginId.hashCode() + path.hashCode();
 	}
 
 	public String toString() {

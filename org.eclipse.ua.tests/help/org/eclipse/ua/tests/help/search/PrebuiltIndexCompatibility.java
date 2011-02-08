@@ -102,6 +102,38 @@ public class PrebuiltIndexCompatibility extends TestCase {
 		checkLuceneCompatible("2.9.1", true);
 	}
 
+	public void testPluginIndexEqualToItself() {
+		PluginIndex index = createPluginIndex("data/help/searchindex/index191");
+		assertTrue(index.equals(index));
+	}
+
+	/**
+	 * Verify that if the paths and plugins are the same two PluginIndex objects are equal
+	 */
+	public void testPluginIndexEquality() {
+		PluginIndex index1a = createPluginIndex("data/help/searchindex/index191");
+		PluginIndex index1b = createPluginIndex("data/help/searchindex/index191");
+		assertTrue(index1a.equals(index1b));
+	}
+	
+	/**
+	 * Verify that if the paths and plugins are the same two PluginIndex objects are equal
+	 */
+	public void testPluginIndexHash() {
+		PluginIndex index1a = createPluginIndex("data/help/searchindex/index191");
+		PluginIndex index1b = createPluginIndex("data/help/searchindex/index191");
+		assertEquals(index1a.hashCode(), index1b.hashCode());
+	}
+	
+	/**
+	 * Verify that if the paths are different two PluginIndex objects are not equal
+	 */
+	public void testPluginIndexInequality() {
+		PluginIndex index1 = createPluginIndex("data/help/searchindex/index191");
+		PluginIndex index2 = createPluginIndex("data/help/searchindex/index291");
+		assertFalse(index1.equals(index2));
+	}
+
     /*
      * Verifies that a prebuilt index can be searched
      */
@@ -128,13 +160,19 @@ public class PrebuiltIndexCompatibility extends TestCase {
 	 * Tests the isCompatible method in PluginIndex
 	 */
 	private void checkCompatible(String versionDirectory, boolean expected) {
+		PluginIndex pluginIndex = createPluginIndex(versionDirectory);
+		Path path = new Path(versionDirectory);
+		assertEquals(expected, pluginIndex.isCompatible(UserAssistanceTestPlugin.getDefault().getBundle(), path));
+	}
+
+	public PluginIndex createPluginIndex(String versionDirectory) {
+		PluginIndex pluginIndex;
 		SearchIndexWithIndexingProgress index = BaseHelpSystem.getLocalSearchManager().getIndex("en_us".toString());
 		BaseHelpSystem.getLocalSearchManager().ensureIndexUpdated(
 				new NullProgressMonitor(),
 				index);
-		Path path = new Path(versionDirectory);
-		PluginIndex pluginIndex = new PluginIndex("org.eclipse.ua.tests", "data/help/searchindex/" + versionDirectory, index);
-		assertEquals(expected, pluginIndex.isCompatible(UserAssistanceTestPlugin.getDefault().getBundle(), path));
+		pluginIndex = new PluginIndex("org.eclipse.ua.tests", "data/help/searchindex/" + versionDirectory, index);
+		return pluginIndex;
 	}
 	
 	/*
