@@ -1,5 +1,6 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.properties;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
@@ -19,10 +21,12 @@ import org.eclipse.e4.tools.services.Translation;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -40,7 +44,7 @@ public class ExternalizeStringHandler {
 
 	@Execute
 	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, @Translation Messages messages, IModelResource resource, IResourcePool pool, IProject project) {
-		TitleAreaDialog dialog = new ExtractionDialog(shell, messages, resource.getRoot(), pool, project);
+		TitleAreaDialog dialog = new ExtractionDialog(shell, messages, resource, resource.getRoot(), pool, project);
 		dialog.open();
 	}
 
@@ -49,13 +53,16 @@ public class ExternalizeStringHandler {
 		private IObservableList list;
 		private IResourcePool pool;
 		private IProject project;
+		private CheckboxTableViewer viewer;
+		private IModelResource resource;
 
-		public ExtractionDialog(Shell parentShell, Messages messages, IObservableList list, IResourcePool pool, IProject project) {
+		public ExtractionDialog(Shell parentShell, Messages messages, IModelResource resource, IObservableList list, IResourcePool pool, IProject project) {
 			super(parentShell);
 			this.messages = messages;
 			this.list = list;
 			this.pool = pool;
 			this.project = project;
+			this.resource = resource;
 		}
 
 		@Override
@@ -71,7 +78,8 @@ public class ExternalizeStringHandler {
 			t.setHeaderVisible(true);
 			t.setLinesVisible(true);
 
-			CheckboxTableViewer viewer = new CheckboxTableViewer(t);
+			viewer = new CheckboxTableViewer(t);
+
 			{
 				TableViewerColumn column = new TableViewerColumn(viewer, SWT.NONE);
 				column.setLabelProvider(new ColumnLabelProvider() {
@@ -151,26 +159,9 @@ public class ExternalizeStringHandler {
 				}
 			}
 
-			try {
-				IFile file = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
-				String base = ProjectOSGiTranslationProvider.extractBasenameFromManifest(file);
-				IFile f = project.getFile(base + ".properties"); //$NON-NLS-1$
-				if (f.exists()) {
-					Properties prop = new Properties();
-					InputStream in = f.getContents();
-					prop.load(in);
-					in.close();
-
-					for (Object o : prop.keySet()) {
-						ids.add(o.toString());
-					}
-				}
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			Properties properties = getBaseProperties();
+			for (Object o : properties.keySet()) {
+				ids.add(o.toString());
 			}
 
 			it = EcoreUtil.getAllContents(list);
@@ -208,14 +199,75 @@ public class ExternalizeStringHandler {
 
 		@Override
 		protected void okPressed() {
-			super.okPressed();
+			Object[] els = viewer.getCheckedElements();
+			if (els.length > 0) {
+				try {
+					IFile f = getBasePropertyFile();
+					if (f.exists()) {
+						StringBuilder b = new StringBuilder(System.getProperty("line.separator"));
+						for (Object o : els) {
+							Entry e = (Entry) o;
+							b.append(e.key + " = " + e.value + System.getProperty("line.separator")); //$NON-NLS-1$//$NON-NLS-2$
+						}
+
+						System.err.println("Appending: " + b);
+
+						ByteArrayInputStream stream = new ByteArrayInputStream(b.toString().getBytes());
+						f.appendContents(stream, IFile.KEEP_HISTORY, new NullProgressMonitor());
+
+						for (Object o : els) {
+							Entry e = (Entry) o;
+							Command cmd = SetCommand.create(resource.getEditingDomain(), e.object, e.feature, "%" + e.key);
+
+							if (cmd.canExecute()) {
+								resource.getEditingDomain().getCommandStack().execute(cmd);
+							}
+						}
+					}
+					super.okPressed();
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+		}
+
+		private IFile getBasePropertyFile() throws CoreException, IOException {
+			IFile file = project.getFile("META-INF/MANIFEST.MF"); //$NON-NLS-1$
+			String base = ProjectOSGiTranslationProvider.extractBasenameFromManifest(file);
+			return project.getFile(base + ".properties"); //$NON-NLS-1$
+		}
+
+		private Properties getBaseProperties() {
+			Properties prop = new Properties();
+			try {
+				IFile f = getBasePropertyFile();
+				if (f.exists()) {
+
+					InputStream in = f.getContents();
+					prop.load(in);
+					in.close();
+				}
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return prop;
 		}
 	}
 
 	private static String findId(List<String> ids, String prefix) {
 		int count = 1;
 		String id = prefix + "." + count; //$NON-NLS-1$
-		while (ids.contains(prefix)) {
+		while (ids.contains(id)) {
 			id = prefix + "." + ++count; //$NON-NLS-1$
 		}
 		return id;
