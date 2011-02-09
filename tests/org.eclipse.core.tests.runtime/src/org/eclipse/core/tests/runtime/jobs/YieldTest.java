@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -837,7 +837,7 @@ public class YieldTest extends AbstractJobManagerTest {
 		final TestBarrier barrier = new TestBarrier();
 		final PathRule rule = new PathRule(getName());
 
-		final int count = 100;
+		final int count = 50;
 		Job yieldA = new Job(getName() + " YieldingA") {
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.waitForStatus(TestBarrier.STATUS_START);
@@ -880,14 +880,10 @@ public class YieldTest extends AbstractJobManagerTest {
 		} catch (InterruptedException e) {
 			fail("4.99", e);
 		}
-		//		long time = -System.currentTimeMillis();
-		waitForJobsCompletion(jobs.toArray(new Job[jobs.size()]), 10000);
-		//		time += System.currentTimeMillis();
-		//		System.out.println("Waited: " + time);
+		waitForJobsCompletion(jobs.toArray(new Job[jobs.size()]), 20000);
 		for (Iterator<Job> job = jobs.iterator(); job.hasNext();) {
 			Job conflict = job.next();
 			assertTrue(conflict.getResult().isOK());
-
 		}
 	}
 
