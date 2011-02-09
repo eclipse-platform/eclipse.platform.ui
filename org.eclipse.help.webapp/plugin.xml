@@ -27,8 +27,13 @@
    <extension
          point="org.eclipse.equinox.http.registry.resources">
       <resource
-            alias="/"
-            base-name="/"
+            alias="/advanced"
+            base-name="/advanced"
+            httpcontextId="help">
+      </resource>
+      <resource
+            alias="/basic"
+            base-name="/basic"
             httpcontextId="help">
       </resource>
       <serviceSelector
@@ -120,6 +125,16 @@
       <servlet
             alias="/*.jsp"
             class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/"
+            httpcontextId="help">
+      </servlet>
+      <servlet
+            alias="/advanced/*.jsp"
+            class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/advanced/"
+            httpcontextId="help">
+      </servlet>
+      <servlet
+            alias="/basic/*.jsp"
+            class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/basic/"
             httpcontextId="help">
       </servlet>
       <serviceSelector
