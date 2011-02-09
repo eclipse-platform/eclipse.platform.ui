@@ -289,6 +289,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 	};
 
+	private EventHandler windowsHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			childrenHandler.handleEvent(event);
+		}
+	};
+
 	private IEclipseContext appContext;
 
 	protected Shell testShell;
@@ -394,6 +400,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 			eventBroker.subscribe(UIEvents.buildTopic(
 					UIEvents.ElementContainer.TOPIC,
 					UIEvents.ElementContainer.CHILDREN), childrenHandler);
+			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC,
+					UIEvents.Window.WINDOWS), windowsHandler);
+			eventBroker.subscribe(UIEvents.buildTopic(
+					UIEvents.Perspective.TOPIC, UIEvents.Perspective.WINDOWS),
+					windowsHandler);
 			eventBroker.subscribe(UIEvents.buildTopic(
 					UIEvents.TrimmedWindow.TOPIC,
 					UIEvents.TrimmedWindow.TRIMBARS), trimHandler);

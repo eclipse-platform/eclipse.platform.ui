@@ -1927,6 +1927,132 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(perspectiveB.getContext(), partB.getContext().getParent());
 	}
 
+	/**
+	 * Ensure that adding a detached window to a window will cause it to get
+	 * rendered automatically.
+	 */
+	public void testBug335444_A() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.getWindows().add(detachedWindow);
+
+		assertNotNull(detachedWindow.getContext());
+		assertNotNull(detachedWindow.getWidget());
+		assertNotNull(detachedWindow.getRenderer());
+	}
+
+	/**
+	 * Ensure that adding a detached window to a perspective will cause it to
+	 * get rendered automatically.
+	 */
+	public void testBug335444_B() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		perspective.getWindows().add(detachedWindow);
+
+		assertNotNull(detachedWindow.getContext());
+		assertNotNull(detachedWindow.getWidget());
+		assertNotNull(detachedWindow.getRenderer());
+	}
+
+	/**
+	 * Ensure that switching the state of the 'toBeRendered' flag of a detached
+	 * window of a window will cause it to be rendered.
+	 */
+	public void testBug335444_C() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		detachedWindow.setToBeRendered(false);
+		window.getWindows().add(detachedWindow);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		detachedWindow.setToBeRendered(true);
+
+		assertNotNull(detachedWindow.getContext());
+		assertNotNull(detachedWindow.getWidget());
+		assertNotNull(detachedWindow.getRenderer());
+	}
+
+	/**
+	 * Ensure that switching the state of the 'toBeRendered' flag of a detached
+	 * window of a perspective will cause it to be rendered.
+	 */
+	public void testBug335444_D() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		detachedWindow.setToBeRendered(false);
+		perspective.getWindows().add(detachedWindow);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		detachedWindow.setToBeRendered(true);
+
+		assertNotNull(detachedWindow.getContext());
+		assertNotNull(detachedWindow.getWidget());
+		assertNotNull(detachedWindow.getRenderer());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);

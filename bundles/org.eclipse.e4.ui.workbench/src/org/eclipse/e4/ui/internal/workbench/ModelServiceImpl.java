@@ -39,7 +39,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
 
@@ -540,9 +539,6 @@ public class ModelServiceImpl implements EModelService {
 		if (curParent instanceof MPerspective) {
 			MPerspective persp = (MPerspective) curParent;
 			persp.getWindows().add(newWindow);
-
-			IPresentationEngine renderingEngine = persp.getContext().get(IPresentationEngine.class);
-			renderingEngine.createGui(newWindow, window.getWidget(), persp.getContext());
 		} else if (curParent instanceof MWindow) {
 			((MWindow) curParent).getWindows().add(newWindow);
 		}

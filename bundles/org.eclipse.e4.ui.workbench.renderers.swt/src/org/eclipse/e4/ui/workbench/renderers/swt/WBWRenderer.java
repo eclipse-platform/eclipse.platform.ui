@@ -542,6 +542,13 @@ public class WBWRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public Object getUIContainer(MUIElement element) {
+		MUIElement parent = element.getParent();
+		if (parent == null) {
+			// might be a detached window
+			parent = (MUIElement) ((EObject) element).eContainer();
+			return parent == null ? null : parent.getWidget();
+		}
+
 		Composite shellComp = (Composite) element.getParent().getWidget();
 		TrimmedPartLayout tpl = (TrimmedPartLayout) shellComp.getLayout();
 		return tpl.clientArea;
