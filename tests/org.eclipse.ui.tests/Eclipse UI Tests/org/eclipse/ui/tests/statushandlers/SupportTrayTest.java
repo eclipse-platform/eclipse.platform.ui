@@ -138,8 +138,7 @@ public class SupportTrayTest extends TestCase {
 			td[0].setBlockOnOpen(false);
 			td[0].open();
 			td[0].openTray(st);
-		} catch (Exception e) {
-			fail();
+		} finally {
 			if (td != null)
 				td[0].close();
 		}
