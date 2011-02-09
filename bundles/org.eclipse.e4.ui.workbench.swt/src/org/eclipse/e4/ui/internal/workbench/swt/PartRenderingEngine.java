@@ -548,7 +548,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return newWidget;
 	}
 
-	private IEclipseContext getContext(MElementContainer<MUIElement> parent) {
+	private IEclipseContext getContext(MUIElement parent) {
 		if (parent instanceof MContext) {
 			return ((MContext) parent).getContext();
 		}
@@ -580,7 +580,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		} else if (parentContext == null && element.getParent() != null) {
 			parentContext = getContext(element.getParent());
 		} else if (parentContext == null && element.getParent() == null) {
-			parentContext = getContext((MElementContainer<MUIElement>) ((EObject) element)
+			parentContext = getContext((MUIElement) ((EObject) element)
 					.eContainer());
 		}
 

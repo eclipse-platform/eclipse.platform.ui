@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.widgets.CTabFolder;
@@ -2090,6 +2091,30 @@ public class PartRenderingEngineTests extends TestCase {
 
 	public void testBug326175_False() {
 		testBug326175(false);
+	}
+
+	public void testCreateGui_Bug319004() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(part);
+		window.setSelectedElement(part);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		part.setToolbar(toolBar);
+
+		IPresentationEngine engine = appContext.get(IPresentationEngine.class);
+		engine.createGui(toolBar);
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
