@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.ui.themes.IThemeManager;
 
 /**
@@ -94,11 +93,6 @@ public class ThemeRegistry implements IThemeRegistry {
         return (IThemeDescriptor) findDescriptor(getThemes(), id);
     }
 
-    /**
-     * @param descriptors
-     * @param id
-     * @return
-     */
     private IThemeElementDefinition findDescriptor(
             IThemeElementDefinition[] descriptors, String id) {
         int idx = Arrays.binarySearch(descriptors, id, ID_COMPARATOR);
@@ -198,12 +192,12 @@ public class ThemeRegistry implements IThemeRegistry {
     }
 
     /**
-     * Overlay the override onto the base definition.
-     * 
-     * @param defs the base definition
-     * @param overrides the override
-     * @return the overlayed element
-     */
+	 * Overlay the override onto the base definition.
+	 * 
+	 * @param original
+	 *            the base definition
+	 * @return the overlaid element
+	 */
     private IThemeElementDefinition overlay(IThemeElementDefinition original,
             IThemeElementDefinition overlay) {
         if (original instanceof ColorDefinition) {

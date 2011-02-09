@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,11 @@
 package org.eclipse.ui.internal.util;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.osgi.service.prefs.BackingStoreException;
+
 
 /**
  * Internal utility class to help with getting/setting preferences.
@@ -47,8 +50,11 @@ public class PrefUtil {
     private static IPreferenceStore uiPreferenceStore;
 
     /**
-     * Sets the callback used to obtain and save the UI preference store.
-     */
+	 * Sets the callback used to obtain and save the UI preference store.
+	 * 
+	 * @param callback
+	 *            the callback
+	 */
     public static final void setUICallback(ICallback callback) {
         Assert.isTrue(uiCallback == null);
         uiCallback = callback;
@@ -96,6 +102,10 @@ public class PrefUtil {
      * Saves the internal preference store, if needed.
      */
     public static void saveInternalPrefs() {
-        WorkbenchPlugin.getDefault().savePluginPreferences();
+		try {
+			InstanceScope.INSTANCE.getNode(WorkbenchPlugin.PI_WORKBENCH).flush();
+		} catch (BackingStoreException e) {
+			WorkbenchPlugin.log(e);
+		}
     }
 }
