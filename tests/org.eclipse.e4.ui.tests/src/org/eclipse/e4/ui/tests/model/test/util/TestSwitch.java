@@ -2,11 +2,10 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestSwitch.java,v 1.2 2010/04/16 17:28:42 pwebster Exp $
+ * $Id: TestSwitch.java,v 1.3 2010/06/04 20:22:21 johna Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.util;
 
-import java.util.List;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -19,8 +18,9 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.tests.model.test.MTestHarness;
 import org.eclipse.e4.ui.tests.model.test.MTestPackage;
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.util.Switch;
 
 /**
  * <!-- begin-user-doc --> The <b>Switch</b> for the model's inheritance
@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.EObject;
  * @see org.eclipse.e4.ui.tests.model.test.MTestPackage
  * @generated
  */
-public class TestSwitch<T1> {
+public class TestSwitch<T1> extends Switch<T1> {
 	/**
 	 * The cached model package <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -54,16 +54,16 @@ public class TestSwitch<T1> {
 	}
 
 	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns
-	 * a non null result; it yields that result. <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
+	 * Checks whether this is a switch for the given package. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
-	 * @return the first non-null result returned by a <code>caseXXX</code>
-	 *         call.
+	 * @parameter ePackage the package in question.
+	 * @return whether this is a switch for the given package.
 	 * @generated
 	 */
-	public T1 doSwitch(EObject theEObject) {
-		return doSwitch(theEObject.eClass(), theEObject);
+	@Override
+	protected boolean isSwitchFor(EPackage ePackage) {
+		return ePackage == modelPackage;
 	}
 
 	/**
@@ -75,25 +75,7 @@ public class TestSwitch<T1> {
 	 *         call.
 	 * @generated
 	 */
-	protected T1 doSwitch(EClass theEClass, EObject theEObject) {
-		if (theEClass.eContainer() == modelPackage) {
-			return doSwitch(theEClass.getClassifierID(), theEObject);
-		} else {
-			List<EClass> eSuperTypes = theEClass.getESuperTypes();
-			return eSuperTypes.isEmpty() ? defaultCase(theEObject) : doSwitch(
-					eSuperTypes.get(0), theEObject);
-		}
-	}
-
-	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns
-	 * a non null result; it yields that result. <!-- begin-user-doc --> <!--
-	 * end-user-doc -->
-	 * 
-	 * @return the first non-null result returned by a <code>caseXXX</code>
-	 *         call.
-	 * @generated
-	 */
+	@Override
 	protected T1 doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
 		case MTestPackage.TEST_HARNESS: {
@@ -329,6 +311,7 @@ public class TestSwitch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject)
 	 * @generated
 	 */
+	@Override
 	public T1 defaultCase(EObject object) {
 		return null;
 	}

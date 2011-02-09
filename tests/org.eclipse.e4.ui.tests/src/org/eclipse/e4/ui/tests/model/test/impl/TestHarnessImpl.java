@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestHarnessImpl.java,v 1.9 2010/11/12 15:56:19 obesedin Exp $
+ * $Id: TestHarnessImpl.java,v 1.10 2011/01/14 19:24:47 obesedin Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
@@ -1113,6 +1113,17 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	 * @generated
 	 */
 	public String getLocalizedTooltip() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalizedAccessibilityPhrase() {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
