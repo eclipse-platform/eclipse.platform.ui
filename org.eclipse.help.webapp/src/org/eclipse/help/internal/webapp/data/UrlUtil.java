@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,15 +158,23 @@ public class UrlUtil {
 	public static boolean isValidTopicParamOrWasOpenedFromHelpDisplay(String path) {
 		// Topics opened via the help display ( including cheat sheets and intro ) 
 		// are are always valid
-		if (path.equals(BaseHelpSystem.getHelpDisplay().getHrefOpenedFromHelpDisplay())) {
+		if (wasOpenedFromHelpDisplay(path)) {
 			return true;
 		}
+
 		if (new WebappPreferences().isRestrictTopicParameter()) {
 		    if (path.indexOf("://") >= 0) {  //$NON-NLS-1$
 			    return false;
 		    }
 		}
 		return true;
+	}
+
+	public static boolean wasOpenedFromHelpDisplay(String path) {
+		if (path.equals(BaseHelpSystem.getHelpDisplay().getHrefOpenedFromHelpDisplay())) {
+			return true;
+		}
+		return path.equals(getHelpURL(BaseHelpSystem.getHelpDisplay().getHrefOpenedFromHelpDisplay()));
 	}
 	
 	/**

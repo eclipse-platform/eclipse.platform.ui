@@ -94,7 +94,8 @@ public class EclipseConnector {
 			}
 			String lowerCaseuRL = url.toLowerCase(Locale.ENGLISH);
 			if (lowerCaseuRL.startsWith("jar:") //$NON-NLS-1$
-					|| lowerCaseuRL.startsWith("platform:")) { //$NON-NLS-1$
+					|| lowerCaseuRL.startsWith("platform:") //$NON-NLS-1$
+					|| (lowerCaseuRL.startsWith("file:") && UrlUtil.wasOpenedFromHelpDisplay(url))) { //$NON-NLS-1$
 				int i = url.indexOf('?');
 				if (i != -1)
 					url = url.substring(0, i);
