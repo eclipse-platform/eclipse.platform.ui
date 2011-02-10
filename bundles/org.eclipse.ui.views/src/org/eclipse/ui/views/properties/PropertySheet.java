@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Markus Alexander Kuppe (Versant Corp.) - https://bugs.eclipse.org/248103
  *     Semion Chichelnitsky (semion@il.ibm.com) - bug 272564
+ *     Craig Foote (Footeware.ca) - https://bugs.eclipse.org/325743
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
