@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,15 +71,7 @@ public class ServletResources {
 			HttpServletRequest request) {
 		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(
 				request, null), replace0);
-		if (property == null || property.length() <= 0) {
-			return property;
-		}
-		int amp = property.indexOf('&');
-		if (amp <0 || amp >= property.length() - 1) {
-			return property;
-		}
-		return property.substring(0, amp - 1)
-				+ property.substring(amp + 1, property.length());
+		return property;
 	}
 	
 	/**
@@ -95,15 +87,7 @@ public class ServletResources {
 			HttpServletRequest request) {
 		String property = WebappResources.getString(name, UrlUtil.getLocaleObj(
 				request, null), args);
-		if (property == null || property.length() <= 0) {
-			return property;
-		}
-		int amp = property.indexOf('&');
-		if (amp <0 || amp >= property.length() - 1) {
-			return property;
-		}
-		return property.substring(0, amp - 1)
-				+ property.substring(amp + 1, property.length());
+		return property;
 	}
 	
 	/**
