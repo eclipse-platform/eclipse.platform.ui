@@ -2227,21 +2227,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				return;
 			}
 
-			EContextService contextService = window.getContext().get(EContextService.class);
 			MPerspective oldPersp = (MPerspective) event.getProperty(UIEvents.EventTags.OLD_VALUE);
-			List<String> oldIds = ModeledPageLayout.getIds(oldPersp,
-					ModeledPageLayout.ACTION_SET_TAG);
 			MPerspective newPersp = (MPerspective) event.getProperty(UIEvents.EventTags.NEW_VALUE);
-			List<String> newIds = ModeledPageLayout.getIds(newPersp,
-					ModeledPageLayout.ACTION_SET_TAG);
-
-			oldIds.removeAll(newIds);
-			for (String id : oldIds) {
-				contextService.deactivateContext(id);
-			}
-			for (String id : newIds) {
-				contextService.activateContext(id);
-			}
+			updatePerspectiveActionSets(oldPersp, newPersp);
 
 			List<MPart> hiddenParts = new ArrayList<MPart>();
 			List<MPart> visibleParts = new ArrayList<MPart>();
@@ -2674,10 +2662,35 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			persp.getChildren().remove(0);
 		}
 
+		// deactivate and activate other action sets as
+		updatePerspectiveActionSets(persp, dummyPerspective);
+
+		// migrate the tags
+		List<String> tags = persp.getTags();
+		tags.clear();
+		tags.addAll(dummyPerspective.getTags());
+
 		partService.requestActivation();
 	}
 
+	private void updatePerspectiveActionSets(MPerspective currentPerspective,
+			MPerspective newPerspective) {
+		List<String> oldIds = ModeledPageLayout.getIds(currentPerspective,
+				ModeledPageLayout.ACTION_SET_TAG);
+		List<String> newIds = ModeledPageLayout.getIds(newPerspective,
+				ModeledPageLayout.ACTION_SET_TAG);
+		oldIds.removeAll(newIds);
 
+		EContextService contextService = window.getContext().get(EContextService.class);
+		// deactivate action sets that are no longer valid
+		for (String id : oldIds) {
+			contextService.deactivateContext(id);
+		}
+		// activate the new ones
+		for (String id : newIds) {
+			contextService.activateContext(id);
+		}
+	}
 
     /**
      * See IWorkbenchPage
