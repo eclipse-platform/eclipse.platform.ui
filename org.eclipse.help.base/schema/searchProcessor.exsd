@@ -55,7 +55,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractSearchProcessor:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.search.AbstractSearchProcessor:"/>
                </appInfo>
             </annotation>
          </attribute>
