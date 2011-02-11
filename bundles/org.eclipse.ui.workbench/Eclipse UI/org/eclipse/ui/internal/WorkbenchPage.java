@@ -2383,16 +2383,20 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public IEditorPart openEditor(final IEditorInput input,
             final String editorID, final boolean activate, final int matchFlags)
             throws PartInitException {
-    	return openEditor(input, editorID, activate, matchFlags, null);
+    	return openEditor(input, editorID, activate, matchFlags, null, true);
     }
+
+	private IEditorPart openEditor(final IEditorInput input, final String editorID,
+			final boolean activate, final int matchFlags, boolean notify) throws PartInitException {
+		return openEditor(input, editorID, activate, matchFlags, null, notify);
+	}
 	
     /**
      * This is not public API but for use internally.  editorState can be <code>null</code>.
      */
-    public IEditorPart openEditor(final IEditorInput input,
-            final String editorID, final boolean activate, final int matchFlags,
-            final IMemento editorState)
-            throws PartInitException {
+	public IEditorPart openEditor(final IEditorInput input, final String editorID,
+			final boolean activate, final int matchFlags, final IMemento editorState,
+			final boolean notify) throws PartInitException {
         if (input == null || editorID == null) {
             throw new IllegalArgumentException();
         }
@@ -2403,8 +2407,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 new Runnable() {
                     public void run() {
                         try {
-                            result[0] = busyOpenEditor(input, editorID,
-                                    activate, matchFlags, editorState);
+					result[0] = busyOpenEditor(input, editorID, activate, matchFlags, editorState,
+							notify);
                         } catch (PartInitException e) {
                             ex[0] = e;
                         }
@@ -2421,8 +2425,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /**
      * @see #openEditor(IEditorInput, String, boolean, int)
 	 */
-	private IEditorPart busyOpenEditor(IEditorInput input, String editorId,
-            boolean activate, int matchFlags, IMemento editorState) throws PartInitException {
+	private IEditorPart busyOpenEditor(IEditorInput input, String editorId, boolean activate,
+			int matchFlags, IMemento editorState, boolean notify) throws PartInitException {
 
 		if (input == null || editorId == null) {
 			throw new IllegalArgumentException();
@@ -2466,7 +2470,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		MPart editor = partService.createPart(CompatibilityEditor.MODEL_ELEMENT_ID);
-		createEditorReferenceForPart(editor, input, editorId, editorState);
+		EditorReference ref = createEditorReferenceForPart(editor, input, editorId, editorState);
 		partService.showPart(editor, PartState.VISIBLE);
 
 		CompatibilityEditor compatibilityEditor = (CompatibilityEditor) editor.getObject();
@@ -2475,6 +2479,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			partService.activate(editor);
 		} else {
 			updateActiveEditorSources(editor);
+		}
+
+		if (notify) {
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), ref, CHANGE_EDITOR_OPEN);
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
 		}
 
 		return compatibilityEditor.getEditor();
@@ -3414,7 +3423,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		try {
 			references[0] = (IEditorReference) getReference(openEditor(inputs[0], editorIDs[0],
-					true, matchFlags));
+					true, matchFlags, false));
 		} catch (PartInitException e) {
 			hasFailures = true;
 			exceptions[0] = e;
@@ -3431,6 +3440,20 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				references[i] = createEditorReferenceForPart(editor, inputs[i], editorIDs[i], null);
 				((PartServiceImpl) partService).addPart(editor);
 			}
+		}
+
+		boolean hasSuccesses = false;
+		for (IEditorReference reference : references) {
+			if (reference != null) {
+				hasSuccesses = true;
+				legacyWindow.firePerspectiveChanged(this, getPerspective(), reference,
+						CHANGE_EDITOR_OPEN);
+			}
+		}
+
+		// only fire this event if an editor was opened
+		if (hasSuccesses) {
+			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
 		}
 
 		if (hasFailures) {
@@ -3660,7 +3683,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return null;
 		}
 		return openEditor(fileEditorInput, editorDescriptor.getId(), activate, MATCH_INPUT,
-				editorState);
+				editorState, true);
 	}
 
 	/**
