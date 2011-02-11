@@ -19,6 +19,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.ant.tests.ui.AntUtilTests;
 import org.eclipse.ant.tests.ui.BuildTests;
+import org.eclipse.ant.tests.ui.ModelProjectTests;
 import org.eclipse.ant.tests.ui.debug.BreakpointTests;
 import org.eclipse.ant.tests.ui.debug.PropertyTests;
 import org.eclipse.ant.tests.ui.debug.RunToLineTests;
@@ -54,6 +55,7 @@ public class AntUITests extends TestSuite {
         suite.addTest(new TestSuite(AntEditorContentOutlineTests.class));
         suite.addTest(new TestSuite(MigrationTests.class));
         suite.addTest(new TestSuite(BuilderCoreUtilsTests.class));
+        suite.addTest(new TestSuite(ModelProjectTests.class));
         suite.addTest(new TestSuite(FormattingPreferencesTest.class));
         suite.addTest(new TestSuite(XmlDocumentFormatterTest.class));
         suite.addTest(new TestSuite(XmlTagFormatterTest.class));

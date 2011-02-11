@@ -17,7 +17,9 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -112,7 +114,7 @@ public class AntModelProject extends Project {
 		setDefault(null);
 		setDescription(null);
 		setName(IAntCoreConstants.EMPTY_STRING);
-		/*synchronized (loaderLock) {
+		synchronized (loaderLock) {
 			if(loaders != null) {
 				Iterator i = loaders.entrySet().iterator();
 				Entry e = null;
@@ -123,7 +125,7 @@ public class AntModelProject extends Project {
 					acl.clearAssertionStatus();
 				}
 			}
-		}*/
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -226,14 +228,14 @@ public class AntModelProject extends Project {
      * @see org.apache.tools.ant.Project#getReferences()
      */
     public Hashtable getReferences() {
-    	return new Hashtable(references);
+    	return references;
     }
     
     /* (non-Javadoc)
      * @see org.apache.tools.ant.Project#getCopyOfReferences()
      */
     public Map getCopyOfReferences() {
-    	return getReferences();
+    	return new Hashtable(references);
     }
     
     /* (non-Javadoc)
