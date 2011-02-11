@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		}
         boolean kindCompatible= commandConfiguredForKind(config, kind);
         if (kindCompatible && configEnabled(config)) {
-            doBuildBasedOnScope(resources, kind, config, monitor);
+            doBuildBasedOnScope(resources, kind, config, args, monitor);
         }
         
 		return projectsWithinScope;
@@ -157,7 +157,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		return true;
 	}
 
-	private void doBuildBasedOnScope(IResource[] resources, int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
+	private void doBuildBasedOnScope(IResource[] resources, int kind, ILaunchConfiguration config, Map args, IProgressMonitor monitor) throws CoreException {
 		boolean buildForChange = true;
 		if (kind != FULL_BUILD) { //scope not applied for full builds
 			if (resources != null && resources.length > 0) {
@@ -166,19 +166,19 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		}
 
 		if (buildForChange) {
-			launchBuild(kind, config, monitor);
+			launchBuild(kind, config, args, monitor);
 		}
 	}
 	
-	private void launchBuild(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
+	private void launchBuild(int kind, ILaunchConfiguration config, Map args, IProgressMonitor monitor) throws CoreException {
 		monitor.subTask(NLS.bind(ExternalToolsModelMessages.ExternalToolBuilder_Running__0_____1, new String[] { config.getName()}));
-		buildStarted(kind);
+		buildStarted(kind, args);
 		// The default value for "launch in background" is true in debug core. If
 		// the user doesn't go through the UI, the new attribute won't be set. This means
 		// that existing Ant builders will try to run in the background (and likely conflict with
 		// each other) without migration.
-		config= ExternalToolMigration.migrateRunInBackground(config);
-		config.launch(ILaunchManager.RUN_MODE, monitor);
+		ILaunchConfiguration newconfig= ExternalToolMigration.migrateRunInBackground(config);
+		newconfig.launch(ILaunchManager.RUN_MODE, monitor);
 		buildEnded();
 	}
 
@@ -215,15 +215,22 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Stores the currently active build kind and build project when a build begins
 	 * @param buildKind
+	 * @param args the arguments passed into the builder
 	 */
-	private void buildStarted(int buildKind) {
+	private void buildStarted(int buildKind, Map args) {
 		switch (buildKind) {
 			case IncrementalProjectBuilder.INCREMENTAL_BUILD :
 				buildType = IExternalToolConstants.BUILD_TYPE_INCREMENTAL;
 				buildDelta = getDelta(getProject());
 				break;
 			case IncrementalProjectBuilder.FULL_BUILD :
-				buildType = IExternalToolConstants.BUILD_TYPE_FULL;
+				if(args != null && args.containsKey(BuilderCoreUtils.INC_CLEAN)) {
+					buildType = IExternalToolConstants.BUILD_TYPE_INCREMENTAL;
+					buildDelta = getDelta(getProject());
+				}
+				else {
+					buildType = IExternalToolConstants.BUILD_TYPE_FULL;
+				}
 				break;
 			case IncrementalProjectBuilder.AUTO_BUILD :
 				buildType = IExternalToolConstants.BUILD_TYPE_AUTO;
@@ -285,6 +292,6 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
             return;
         }
 	
-		launchBuild(IncrementalProjectBuilder.CLEAN_BUILD, config, monitor);
+		launchBuild(IncrementalProjectBuilder.CLEAN_BUILD, config, null, monitor);
     }
 }

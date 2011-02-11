@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,12 @@ import org.eclipse.debug.core.ILaunchManager;
 public class BuilderCoreUtils {
 
 	public static final String LAUNCH_CONFIG_HANDLE = "LaunchConfigHandle"; //$NON-NLS-1$
+	/**
+	 * Constant added to the build command to determine if we are doing an incremental build after a clean
+	 * 
+	 * @since 3.7
+	 */
+	public static final String INC_CLEAN = "incclean"; //$NON-NLS-1$
 
 	/**
 	 * Constant used to find a builder using the 3.0-interim format
@@ -113,41 +119,41 @@ public class BuilderCoreUtils {
 		return configuration;
 	}
 
-	public static void configureTriggers(ILaunchConfiguration config,
-			ICommand newCommand) throws CoreException {
+	public static void configureTriggers(ILaunchConfiguration config, ICommand newCommand) throws CoreException {
 		newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, false);
-		newCommand.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD,
-				false);
+		newCommand.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
 		newCommand.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
 		newCommand.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
-		String buildKinds = config.getAttribute(
-				IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) null);
-		int[] triggers = BuilderCoreUtils.buildTypesToArray(buildKinds);
+		Map args = newCommand.getArguments();
+		String buildKinds = config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) null);
+		int[] triggers = buildTypesToArray(buildKinds);
+		boolean isfull = false, isinc = false;
 		for (int i = 0; i < triggers.length; i++) {
 			switch (triggers[i]) {
-			case IncrementalProjectBuilder.FULL_BUILD:
-				newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD,
-						true);
-				break;
-			case IncrementalProjectBuilder.INCREMENTAL_BUILD:
-				newCommand.setBuilding(
-						IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-				break;
-			case IncrementalProjectBuilder.AUTO_BUILD:
-				newCommand.setBuilding(IncrementalProjectBuilder.AUTO_BUILD,
-						true);
-				break;
-			case IncrementalProjectBuilder.CLEAN_BUILD:
-				newCommand.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD,
-						true);
-				break;
+				case IncrementalProjectBuilder.FULL_BUILD:
+					newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
+					isfull = true;
+					break;
+				case IncrementalProjectBuilder.INCREMENTAL_BUILD:
+					newCommand.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+					isinc = true;
+					break;
+				case IncrementalProjectBuilder.AUTO_BUILD:
+					newCommand.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, true);
+					break;
+				case IncrementalProjectBuilder.CLEAN_BUILD:
+					newCommand.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
+					break;
 			}
 		}
-		if (!config.getAttribute(
-				IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false)) {
+		if(!isfull && isinc) {
+			newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
+			args.put(INC_CLEAN, Boolean.TRUE.toString());
+			newCommand.setArguments(args);
+		}
+		if (!config.getAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false)) {
 			ILaunchConfigurationWorkingCopy copy = config.getWorkingCopy();
-			copy.setAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED,
-					true);
+			copy.setAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, true);
 			copy.doSave();
 		}
 	}
