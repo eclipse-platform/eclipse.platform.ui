@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.ui.externaltools;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import junit.framework.TestCase;
 
 import org.eclipse.ant.internal.launching.AntLaunchingUtil;
 import org.eclipse.ant.launching.IAntLaunchConstants;
@@ -29,8 +26,15 @@ import org.eclipse.debug.ui.RefreshTab;
  * Tests migration of Ant and External Tool configurations from old
  * formats to the current format.
  */
-public class MigrationTests extends TestCase {
+public class MigrationTests extends AbstractExternalToolTest {
 	
+	/**
+	 * Constructor
+	 */
+	public MigrationTests() {
+		super("Migration Tests");
+	}
+
 	/**
 	 * Tests migration of arguments from an Eclipse 2.0 Ant buildfile
 	 * configuration to a current launch configuration.
@@ -59,27 +63,6 @@ public class MigrationTests extends TestCase {
 	}
 	
 	/**
-	 * Returns a map of arguments for an Ant buildfile using
-	 * Eclipse 2.0 arguments.
-	 * 
-	 * @return a map of 2.0 arguments for an Ant buildfile.
-	 */
-	private Map get20AntArgumentMap() {
-		HashMap arguments= new HashMap();
-		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0");
-		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.ant");
-		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "ant tool");
-		arguments.put(ExternalToolMigration.TAG_TOOL_LOCATION, "location");
-		arguments.put(ExternalToolMigration.TAG_TOOL_REFRESH, "refresh scope");
-		arguments.put(ExternalToolMigration.TAG_TOOL_ARGUMENTS, "arg ${ant_target:target1} ${ant_target:target2}");
-		arguments.put(ExternalToolMigration.TAG_TOOL_SHOW_LOG, "true");
-		arguments.put(ExternalToolMigration.TAG_TOOL_BLOCK, "false");
-		arguments.put(ExternalToolMigration.TAG_TOOL_BUILD_TYPES, "build kinds");
-		arguments.put(ExternalToolMigration.TAG_TOOL_DIRECTORY, "working dir");
-		return arguments;
-	}
-
-	/**
 	 * Tests migration of arguments from an Eclipse 2.0 Ant buildfile
 	 * configuration to a current launch configuration.
 	 * 
@@ -97,27 +80,6 @@ public class MigrationTests extends TestCase {
 		assertEquals("build kinds", config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""));
 		assertEquals("arg ${ant_target:target1} ${ant_target:target2}", config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""));
 		assertEquals("working dir", config.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, ""));
-	}
-	
-	/**
-	 * Returns a map of arguments for executing a program
-	 * using Eclipse 2.0 arguments.
-	 * 
-	 * @return a map of 2.0 arguments for a program
-	 */
-	private Map get20ProgramArgumentMap() {
-		HashMap arguments= new HashMap();
-		arguments.put(ExternalToolMigration.TAG_VERSION, "2.0");
-		arguments.put(ExternalToolMigration.TAG_TOOL_TYPE, "org.eclipse.ui.externaltools.type.program");
-		arguments.put(ExternalToolMigration.TAG_TOOL_NAME, "program tool");
-		arguments.put(ExternalToolMigration.TAG_TOOL_LOCATION, "location");
-		arguments.put(ExternalToolMigration.TAG_TOOL_REFRESH, "refresh scope");
-		arguments.put(ExternalToolMigration.TAG_TOOL_ARGUMENTS, "arg ${ant_target:target1} ${ant_target:target2}");
-		arguments.put(ExternalToolMigration.TAG_TOOL_SHOW_LOG, "true");
-		arguments.put(ExternalToolMigration.TAG_TOOL_BLOCK, "false");
-		arguments.put(ExternalToolMigration.TAG_TOOL_BUILD_TYPES, "build kinds");
-		arguments.put(ExternalToolMigration.TAG_TOOL_DIRECTORY, "working dir");
-		return arguments;
 	}
 	
 	/**
@@ -150,32 +112,6 @@ public class MigrationTests extends TestCase {
 	}
 	
 	/**
-	 * Returns a map of arguments for executing an Ant
-	 * buildfile using Eclipse 2.1 arguments.
-	 * 
-	 * @return a map of 2.1 arguments for an Ant buildfile
-	 */
-	private Map get21AntArgumentMap() {
-		HashMap arguments= new HashMap();
-		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1");
-		arguments.put(ExternalToolMigration.TAG_NAME, "ant config");
-		arguments.put(ExternalToolMigration.TAG_TYPE, ExternalToolMigration.TOOL_TYPE_ANT_BUILD);
-		arguments.put(ExternalToolMigration.TAG_LOCATION, "location");
-		arguments.put(ExternalToolMigration.TAG_WORK_DIR, "working directory");
-		arguments.put(ExternalToolMigration.TAG_CAPTURE_OUTPUT, "true");
-		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true");
-		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true");
-		arguments.put(ExternalToolMigration.TAG_RUN_BKGRND, "true");
-		arguments.put(ExternalToolMigration.TAG_PROMPT_ARGS, "true");
-		arguments.put(ExternalToolMigration.TAG_REFRESH_SCOPE, "refresh scope");
-		arguments.put(ExternalToolMigration.TAG_REFRESH_RECURSIVE, "true");
-		arguments.put(ExternalToolMigration.TAG_RUN_BUILD_KINDS, "build kinds");
-		arguments.put(ExternalToolMigration.TAG_ARGS, "arg1 arg2");
-		arguments.put(ExternalToolMigration.TAG_EXTRA_ATTR, ExternalToolMigration.RUN_TARGETS_ATTRIBUTE + "=target1,target2");
-		return arguments;
-	}
-	
-	/**
 	 * Tests migration of arguments from an Eclipse 2.1 program
 	 * configuration to a current launch configuration.
 	 * 
@@ -199,30 +135,4 @@ public class MigrationTests extends TestCase {
 		assertEquals("build kinds", config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""));
 		assertEquals("arg1 arg2", config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""));
 	}
-	
-	/**
-	 * Returns a map of arguments for executing a program
-	 * buildfile using Eclipse 2.1 arguments.
-	 * 
-	 * @return a map of 2.1 arguments for a program
-	 */
-	private Map get21ProgramArgumentMap() {
-		HashMap arguments= new HashMap();
-		arguments.put(ExternalToolMigration.TAG_VERSION, "2.1");
-		arguments.put(ExternalToolMigration.TAG_NAME, "program config");
-		arguments.put(ExternalToolMigration.TAG_TYPE, IExternalToolConstants.TOOL_TYPE_PROGRAM);
-		arguments.put(ExternalToolMigration.TAG_LOCATION, "location");
-		arguments.put(ExternalToolMigration.TAG_WORK_DIR, "working directory");
-		arguments.put(ExternalToolMigration.TAG_CAPTURE_OUTPUT, "true");
-		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true");
-		arguments.put(ExternalToolMigration.TAG_SHOW_CONSOLE, "true");
-		arguments.put(ExternalToolMigration.TAG_RUN_BKGRND, "true");
-		arguments.put(ExternalToolMigration.TAG_PROMPT_ARGS, "true");
-		arguments.put(ExternalToolMigration.TAG_REFRESH_SCOPE, "refresh scope");
-		arguments.put(ExternalToolMigration.TAG_REFRESH_RECURSIVE, "true");
-		arguments.put(ExternalToolMigration.TAG_RUN_BUILD_KINDS, "build kinds");
-		arguments.put(ExternalToolMigration.TAG_ARGS, "arg1 arg2");
-		return arguments;
-	}
-	
 }
