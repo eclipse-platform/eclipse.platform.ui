@@ -115,8 +115,6 @@ public class PartServiceImpl implements EPartService {
 
 	private MPart activePart;
 
-	private MPart lastActivePart;
-
 	private ListenerList listeners = new ListenerList();
 
 	private boolean constructed = false;
@@ -139,7 +137,7 @@ public class PartServiceImpl implements EPartService {
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
 		if (activePart != p) {
-			lastActivePart = activePart;
+			MPart lastActivePart = activePart;
 			activePart = p;
 
 			// no need to do anything if we have no listeners

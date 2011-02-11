@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.tests.application;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10388,6 +10389,48 @@ public class EPartServiceTest extends TestCase {
 		partService.activate(part);
 		partService.switchPerspective(perspectiveB);
 		assertEquals(part, partService.getActivePart());
+	}
+
+	/**
+	 * Test to ensure that a part that has been hidden by the part service and
+	 * presumably removed and is indeed longer reachable and can be garbage
+	 * collected.
+	 */
+	public void testLeak() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partA);
+		window.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(partB);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partA);
+		partService.activate(partB);
+		partService.activate(partA);
+
+		WeakReference<MPart> ref = new WeakReference<MPart>(partA);
+		assertEquals(partA, ref.get());
+
+		partService.hidePart(partA, true);
+		assertEquals(partB, window.getSelectedElement());
+		assertFalse(window.getChildren().contains(partA));
+		partA = null;
+
+		System.runFinalization();
+		System.gc();
+
+		assertNull("The part should no longer be reachable", ref.get());
 	}
 
 	private MApplication createApplication(String partId) {
