@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,15 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.util.Collections;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.core.resources.IContainer;
-
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.util.Util;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -30,14 +34,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.util.Util;
-import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -48,7 +44,6 @@ import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 
 /**
@@ -75,8 +70,6 @@ public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 			int typesMask) {
 		super(parentShell, true, container, typesMask);
 		setTitle(IDEWorkbenchMessages.OpenResourceDialog_title);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parentShell,
-				IIDEHelpContextIds.OPEN_RESOURCE_DIALOG);
 	}
 
 	/* (non-Javadoc)
