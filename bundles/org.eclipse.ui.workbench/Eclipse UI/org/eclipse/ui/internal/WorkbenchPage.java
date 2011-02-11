@@ -3435,6 +3435,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				references[i] = null;
 				exceptions[i] = new PartInitException(NLS.bind(
 						WorkbenchMessages.EditorManager_unknownEditorIDMessage, editorIDs[i]));
+				hasFailures = true;
 			} else {
 				MPart editor = partService.createPart(CompatibilityEditor.MODEL_ELEMENT_ID);
 				references[i] = createEditorReferenceForPart(editor, inputs[i], editorIDs[i], null);
