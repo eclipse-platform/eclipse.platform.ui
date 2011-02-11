@@ -38,7 +38,7 @@ public class ClassRequestor extends Requestor {
 	}
 
 	public Object execute() throws InjectionException {
-		// do nothing
+		clearResolvedArgs();
 		return null;
 	}
 

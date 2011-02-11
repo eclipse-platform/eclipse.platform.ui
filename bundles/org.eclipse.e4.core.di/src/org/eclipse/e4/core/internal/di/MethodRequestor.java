@@ -34,6 +34,10 @@ public class MethodRequestor extends Requestor {
 	}
 
 	public Object execute() throws InjectionException {
+		if (actualArgs == null) {
+			if (method.getParameterTypes().length > 0)
+				return null; // optional method call
+		}
 		Object userObject = getRequestingObject();
 		if (userObject == null)
 			return null;
@@ -62,6 +66,7 @@ public class MethodRequestor extends Requestor {
 				method.setAccessible(false);
 			if (pausedRecording)
 				primarySupplier.resumeRecoding();
+			clearResolvedArgs();
 		}
 		return result;
 	}

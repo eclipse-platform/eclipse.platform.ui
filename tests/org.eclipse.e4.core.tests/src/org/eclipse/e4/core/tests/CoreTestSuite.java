@@ -44,6 +44,7 @@ import org.eclipse.e4.core.internal.tests.di.DisposeClassLinkTest;
 import org.eclipse.e4.core.internal.tests.di.InjectArraysTest;
 import org.eclipse.e4.core.internal.tests.di.InjectBaseTypeTest;
 import org.eclipse.e4.core.internal.tests.di.InjectionOrderTest;
+import org.eclipse.e4.core.internal.tests.di.InjectionResultLeakTest;
 import org.eclipse.e4.core.internal.tests.di.InvokeTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionEventTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionMixedSuppliersTest;
@@ -63,6 +64,7 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(InjectionOrderTest.class);
 		addTestSuite(InvokeTest.class);
 		addTestSuite(InjectBaseTypeTest.class);
+		addTestSuite(InjectionResultLeakTest.class);
 		addTest(AtInjectTest.suite());
 
 		// Contexts

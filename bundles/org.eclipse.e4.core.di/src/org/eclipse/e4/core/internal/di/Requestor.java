@@ -128,4 +128,18 @@ abstract public class Requestor implements IRequestor {
 			objectDescriptors = calcDependentObjects();
 		return objectDescriptors;
 	}
+
+	/**
+	 * Don't hold on to the resolved results as it will prevent 
+	 * them from being garbage collected. 
+	 */
+	protected void clearResolvedArgs() {
+		if (actualArgs == null)
+			return;
+		for (int i = 0; i < actualArgs.length; i++) {
+			actualArgs[i] = null;
+		}
+		actualArgs = null;
+		return;
+	}
 }

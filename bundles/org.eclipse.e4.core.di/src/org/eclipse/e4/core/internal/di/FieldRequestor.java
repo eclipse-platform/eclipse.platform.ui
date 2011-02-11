@@ -26,7 +26,10 @@ public class FieldRequestor extends Requestor {
 	}
 
 	public Object execute() throws InjectionException {
+		if (actualArgs == null)
+			return null; // optional field
 		setField(field, actualArgs[0]);
+		clearResolvedArgs();
 		return null;
 	}
 

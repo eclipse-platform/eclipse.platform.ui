@@ -56,6 +56,7 @@ public class ConstructorRequestor extends Requestor {
 				constructor.setAccessible(false);
 			if (pausedRecording)
 				primarySupplier.resumeRecoding();
+			clearResolvedArgs();
 		}
 		return result;
 	}
