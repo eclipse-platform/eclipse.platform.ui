@@ -60,7 +60,8 @@ public class NewEditorHandler extends AbstractHandler {
 						.createWriteRoot(IWorkbenchConstants.TAG_EDITOR_STATE);
 				((IPersistableEditor) editor).saveState(editorState);
 				((WorkbenchPage) page).openEditor(editor.getEditorInput(),
-						editorId, true, IWorkbenchPage.MATCH_NONE, editorState);
+ editorId, true,
+						IWorkbenchPage.MATCH_NONE, editorState, true);
 			} else {
 				page.openEditor(editor.getEditorInput(), editorId, true,
 						IWorkbenchPage.MATCH_NONE);
