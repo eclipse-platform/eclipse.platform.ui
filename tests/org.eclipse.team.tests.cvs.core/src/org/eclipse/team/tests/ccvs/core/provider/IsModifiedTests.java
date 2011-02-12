@@ -11,9 +11,6 @@
 package org.eclipse.team.tests.ccvs.core.provider;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,6 +27,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -355,9 +353,16 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt"}, true);
 		// copy the destination back to the source
 		project.getFile("folder2/a.txt").copy(project.getFile("folder1/a.txt").getFullPath(), false, DEFAULT_MONITOR);
-		assertModificationState(project, new String[] {".", "folder2/", "folder2/a.txt"}, true);
+		assertModificationState(project, new String[] {".", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt"}, true);
 		addResources(new IResource[] {project.getFile("folder2/a.txt")});
-		commitProject(project);
+		try {
+			commitProject(project);
+		} catch (CVSException e) {
+			// Some CVS servers return info about resetting date
+			if (e.getStatus().getSeverity() == IStatus.ERROR) {
+				throw e;
+			}
+		}
 		assertModificationState(project, null, true);
 	}
 	
@@ -491,13 +496,20 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(project, new String[] {".", "folder1/", "folder1/folder3", "folder1/folder3/file.txt", "folder2/", "folder2/folder3/", "folder2/folder3/file.txt"}, true);
 		// copy the destination back to the source
 		project.getFolder("folder2/folder3/").copy(project.getFolder("folder1/folder3").getFullPath(), false, DEFAULT_MONITOR);
-		assertModificationState(project, new String[] {".", "folder2/", "folder2/folder3/", "folder2/folder3/file.txt"}, true);
+		assertModificationState(project, new String[] {".", "folder1/", "folder1/folder3", "folder1/folder3/file.txt", "folder2/", "folder2/folder3/", "folder2/folder3/file.txt"}, true);
 		addResources(new IResource[] {project.getFolder("folder2/folder3/")});
-		commitProject(project);
+		try {
+			commitProject(project);
+		} catch (CVSException e) {
+			// Some CVS servers return info about resetting date
+			if (e.getStatus().getSeverity() == IStatus.ERROR) {
+				throw e;
+			}
+		}
 		assertModificationState(project, null, true);
 	}
 	
-	public void testUpdate() throws TeamException, CoreException, IOException {
+	public void testUpdate() throws TeamException, CoreException {
 		// Create a test project, import it into cvs and check it out
 		IProject project = createProject("testUpdate", new String[] { "changed.txt", "merged.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
 
@@ -523,7 +535,7 @@ public class IsModifiedTests extends EclipseTest {
 		// assertModificationState(project, null, true);
 	}
 	
-	public void testUpdateIgnoreLocal() throws TeamException, CoreException, IOException {
+	public void testUpdateIgnoreLocal() throws TeamException, CoreException {
 		// Create a test project, import it into cvs and check it out
 		IProject project = createProject("testUpdateIgnoreLocal", new String[] { "changed.txt", "merged.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
 
@@ -565,43 +577,24 @@ public class IsModifiedTests extends EclipseTest {
 		assertModificationState(copy, null, true);
 	}
 
-	public void testBug62547() throws TeamException, CoreException,
-			UnsupportedEncodingException {
-		IProject project = createProject("testBug62547Project", new String[] {
-				"file1.txt", "file2.txt" });
-
-		project.getFile("file1.txt").setContents(
-				new ByteArrayInputStream("Sample text 1".getBytes("UTF-8")),
-				true, true, getMonitor());
-		project.getFile("file2.txt").setContents(
-				new ByteArrayInputStream("Sample text 2".getBytes("UTF-8")),
-				true, true, getMonitor());
-		long currentTime = System.currentTimeMillis();
-		new File(project.getFile("file1.txt").getLocationURI())
-				.setLastModified(currentTime);
-		project.getFile("file1.txt").refreshLocal(1, getMonitor());
-
-		assertEquals(currentTime, project.getFile("file1.txt")
-				.getLocalTimeStamp());
-
-		new File(project.getFile("file2.txt").getLocationURI())
-				.setLastModified(currentTime);
-		project.getFile("file2.txt").refreshLocal(1, getMonitor());
-		assertEquals(currentTime, project.getFile("file2.txt")
-				.getLocalTimeStamp());
-
+	public void testBug62547() throws TeamException, CoreException {
+		IProject project = createProject("testBug62547Project", new String[] { "file1.txt", "file2.txt" });
+		// ensure files have different content
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		setContentsAndEnsureModified(project.getFile("file2.txt"));
+		// ... but the same timestamp
+		project.getFile("file2.txt").setLocalTimeStamp(project.getFile("file1.txt").getLocalTimeStamp());
+		assertEquals(project.getFile("file1.txt").getLocalTimeStamp(), project.getFile("file2.txt").getLocalTimeStamp());
+		// commit both
 		commitResources(project, new String[] { "file1.txt", "file2.txt" });
 
+		// delete the first file, and copy the second file over it
 		project.getFile("file1.txt").delete(true, getMonitor());
-		project.getFile("file2.txt").copy(
-				project.getFile("file1.txt").getFullPath(), true, getMonitor());
-
-		assertEquals(project.getFile("file1.txt").getLocalTimeStamp(), project
-				.getFile("file2.txt").getLocalTimeStamp());
-
-		assertModificationState(project, new String[] { ".", "file1.txt" },
-				true);
-
+		project.getFile("file2.txt").copy(project.getFile("file1.txt").getFullPath(), true, getMonitor());
+		// check the timestamp once again
+		assertEquals(project.getFile("file1.txt").getLocalTimeStamp(), project.getFile("file2.txt").getLocalTimeStamp());
+		// there should be an outgoing change for the first file
+		assertModificationState(project, new String[] { ".", "file1.txt" },	true);
 	}
 }
 
