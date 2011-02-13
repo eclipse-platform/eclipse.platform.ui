@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Brock Janiczak (brockj@tpg.com.au) - Bug 180436 Use table sort indicators on CVS
  *     Brock Janiczak (brockj@tpg.com.au) - Bug 181899 CVS History wrongly ordered
  *     Brock Janiczak <brockj@tpg.com.au> - Bug 182442 Display full comment in tooltip
+ *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -60,16 +61,18 @@ public class CVSHistoryTableProvider {
 
 	//column constants
 	private static final int COL_REVISIONID = 0;
-	private static final int COL_TAGS = 1;
-	private static final int COL_DATE = 2;
-	private static final int COL_AUTHOR = 3;
-	private static final int COL_COMMENT = 4;
+	private static final int COL_BRANCHES = 1;
+	private static final int COL_TAGS = 2;
+	private static final int COL_DATE = 3;
+	private static final int COL_AUTHOR = 4;
+	private static final int COL_COMMENT = 5;
 	
 	// cvs history table provider settings section name
 	private static final String CVS_HISTORY_TABLE_PROVIDER_SECTION = CVSHistoryTableProvider.class.getName();
 
 	// cvs history table provider settings keys
 	private static final String COL_REVISIONID_NAME = "COL_REVISIONID"; //$NON-NLS-1$
+	private static final String COL_BRANCHES_NAME = "COL_BRANCHES"; //$NON-NLS-1$
 	private static final String COL_TAGS_NAME = "COL_TAGS"; //$NON-NLS-1$
 	private static final String COL_DATE_NAME = "COL_DATE"; //$NON-NLS-1$
 	private static final String COL_AUTHOR_NAME = "COL_AUTHOR"; //$NON-NLS-1$
@@ -226,6 +229,16 @@ public class CVSHistoryTableProvider {
 							revision = NLS.bind(CVSUIMessages.currentRevision, new String[] {revision}); //NLS.bind(CVSUIMessages.currentRevision, new String[] { revision });
 					}
 					return revision;
+				case COL_BRANCHES:
+					ITag[] branches = entry.getBranches();
+					StringBuffer resultBranches = new StringBuffer();
+					for (int i = 0; i < branches.length; i++) {
+						resultBranches.append(branches[i].getName());
+						if (i < branches.length - 1) {
+							resultBranches.append(", "); //$NON-NLS-1$
+						}
+					}
+					return resultBranches.toString();
 				case COL_TAGS:
 					ITag[] tags = entry.getTags();
 					StringBuffer result = new StringBuffer();
@@ -331,12 +344,14 @@ public class CVSHistoryTableProvider {
 		
 		private VersionCollator versionCollator = new VersionCollator();
 		
-		// column headings:	"Revision" "Tags" "Date" "Author" "Comment"
-		private int[][] SORT_ORDERS_BY_COLUMN = { {COL_REVISIONID, COL_DATE, COL_AUTHOR, COL_COMMENT, COL_TAGS}, /* revision */
-		{COL_TAGS, COL_DATE, COL_REVISIONID, COL_AUTHOR, COL_COMMENT}, /* tags */
-		{COL_DATE, COL_REVISIONID, COL_AUTHOR, COL_COMMENT, COL_TAGS}, /* date */
-		{COL_AUTHOR, COL_REVISIONID, COL_DATE, COL_COMMENT, COL_TAGS}, /* author */
-		{COL_COMMENT, COL_REVISIONID, COL_DATE, COL_AUTHOR, COL_TAGS} /* comment */
+		// column headings:	"Revision" "Branches" "Tags" "Date" "Author" "Comment"
+		private int[][] SORT_ORDERS_BY_COLUMN = {
+		{COL_REVISIONID, COL_DATE, COL_AUTHOR, COL_COMMENT, COL_TAGS, COL_BRANCHES}, /* revision */
+		{COL_BRANCHES, COL_DATE, COL_REVISIONID, COL_AUTHOR, COL_COMMENT, COL_TAGS}, /* tags */
+		{COL_TAGS, COL_DATE, COL_REVISIONID, COL_AUTHOR, COL_COMMENT, COL_BRANCHES}, /* tags */
+		{COL_DATE, COL_REVISIONID, COL_AUTHOR, COL_COMMENT, COL_TAGS, COL_BRANCHES}, /* date */
+		{COL_AUTHOR, COL_REVISIONID, COL_DATE, COL_COMMENT, COL_TAGS, COL_BRANCHES}, /* author */
+		{COL_COMMENT, COL_REVISIONID, COL_DATE, COL_AUTHOR, COL_TAGS, COL_BRANCHES} /* comment */
 		};
 
 		/**
@@ -377,7 +392,7 @@ public class CVSHistoryTableProvider {
 		 */
 		int compareColumnValue(int columnNumber, IFileRevision e1, IFileRevision e2) {
 			switch (columnNumber) {
-				case 0 : /* revision */
+				case COL_REVISIONID : /* revision */
 					if (e1 instanceof LocalFileRevision ||
 						e2 instanceof LocalFileRevision) {
 						//compare based on dates
@@ -389,7 +404,17 @@ public class CVSHistoryTableProvider {
 						return date1 > date2 ? 1 : -1;
 					}
 					return versionCollator.compare(e1.getContentIdentifier(), e2.getContentIdentifier());
-				case 1: /* tags */
+				case COL_BRANCHES: /* branches */
+					ITag[] branches1 = e1.getBranches();
+					ITag[] branches2 = e2.getBranches();
+					if (branches2.length == 0) {
+						return -1;
+					}
+					if (branches1.length == 0) {
+						return 1;
+					}
+					return getComparator().compare(branches1[0].getName(), branches2[0].getName());
+				case COL_TAGS: /* tags */
 					ITag[] tags1 = e1.getTags();
 					ITag[] tags2 = e2.getTags();
 					if (tags2.length == 0) {
@@ -399,7 +424,7 @@ public class CVSHistoryTableProvider {
 						return 1;
 					}
 					return getComparator().compare(tags1[0].getName(), tags2[0].getName());
-				case 2 : /* date */
+				case COL_DATE : /* date */
 					long date1 = e1.getTimestamp();
 					long date2 = e2.getTimestamp();
 					if (date1 == date2)
@@ -407,7 +432,7 @@ public class CVSHistoryTableProvider {
 
 					return date1 > date2 ? 1 : -1;
 
-				case 3 : /* author */
+				case COL_AUTHOR : /* author */
 					String author1 = e1.getAuthor();
 					String author2 = e2.getAuthor();
 					if (author2 == null)
@@ -417,7 +442,7 @@ public class CVSHistoryTableProvider {
 						return 1;
 					
 					return getComparator().compare(author1, author2);
-				case 4 : /* comment */
+				case COL_COMMENT : /* comment */
 					String comment1 = e1.getComment();
 					String comment2 = e2.getComment();
 					if (comment2 == null)
@@ -520,6 +545,15 @@ public class CVSHistoryTableProvider {
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Revision);
 		col.addSelectionListener(headerListener);
 
+		// branches
+		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
+		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_BRANCHES, this));
+		col = viewerCol.getColumn();
+		col.setData(COL_NAME, COL_BRANCHES_NAME);
+		col.setResizable(true);
+		col.setText(CVSUIMessages.HistoryView_branches); 
+		col.addSelectionListener(headerListener);
+
 		// tags
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
 		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_TAGS, this));
@@ -560,8 +594,11 @@ public class CVSHistoryTableProvider {
 	}
 
 	public void loadColumnLayout(TableLayout layout) {
-		int weights[] = new int[] { getSettingsInt(COL_REVISIONID_NAME),
-				getSettingsInt(COL_TAGS_NAME), getSettingsInt(COL_DATE_NAME),
+		int weights[] = new int[] {
+				getSettingsInt(COL_REVISIONID_NAME),
+				getSettingsInt(COL_BRANCHES_NAME),
+				getSettingsInt(COL_TAGS_NAME), 
+				getSettingsInt(COL_DATE_NAME),
 				getSettingsInt(COL_AUTHOR_NAME),
 				getSettingsInt(COL_COMMENT_NAME) };
 		ColumnLayoutData weightData[] = getWeightData(weights);
@@ -597,12 +634,16 @@ public class CVSHistoryTableProvider {
 	
 	private int getSettingsInt(String key) {
 		String value = settings.get(key);
-		int ret = 0;
+		int ret = ColumnWeightData.MINIMUM_WIDTH;
 		try {
 			ret = Integer.parseInt(value);
 		} catch (NumberFormatException e) {
 			// Nothing to do
 		}
+		//If user hide column and restart eclipse no way to show back column.
+		//This was true on Ubuntu 10.10 gtk2
+		//This at least allows to expand column from size 1
+		if (ret == 0) ret=ColumnWeightData.MINIMUM_WIDTH;
 		return ret;
 	}
 
@@ -616,7 +657,7 @@ public class CVSHistoryTableProvider {
 		ColumnLayoutData[] ret = new ColumnLayoutData[widths.length];
 		for (int i = 0; i < widths.length; i++) {
 			if (onlyZeroes) {
-				ret[i] = new ColumnWeightData(20, true);
+				ret[i] = new ColumnWeightData(ColumnWeightData.MINIMUM_WIDTH, true);
 			} else {
 				ret[i] = new ColumnPixelData(widths[i]);
 			}

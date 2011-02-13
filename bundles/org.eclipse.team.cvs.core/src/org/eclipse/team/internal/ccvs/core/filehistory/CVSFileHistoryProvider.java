@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.core.filehistory;
@@ -70,7 +71,7 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 			if (remoteResource != null && 
 				remoteResource instanceof RemoteFile){
 				ResourceSyncInfo syncInfo = remoteResource.getSyncInfo();
-				LogEntry cvsEntry = new LogEntry((RemoteFile) remoteResource, syncInfo.getRevision(), "", null,"","", new CVSTag[0]);  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				LogEntry cvsEntry = new LogEntry((RemoteFile) remoteResource, syncInfo.getRevision(), "", null,"","", new CVSTag[0], new CVSTag[0]);  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				return new CVSFileRevision(cvsEntry);
 			}
 		} catch (CVSException e) {

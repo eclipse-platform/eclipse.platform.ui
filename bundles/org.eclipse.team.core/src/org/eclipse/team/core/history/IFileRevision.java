@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.core.history;
 
@@ -93,6 +94,15 @@ public interface IFileRevision {
 	 * @return the comment for this file revision or <code>null</code>
 	 */
 	public String getComment();
+
+	/**
+	 * Returns the branches names of file revision.
+	 * 
+	 * @return an array of ITag's if branch names exist for this revision or an
+	 *         empty ITag array if no names exist
+	 * @since 3.6
+	 */
+	public ITag[] getBranches();
 
 	/**
 	 * Returns the set of tags available for this file revision.

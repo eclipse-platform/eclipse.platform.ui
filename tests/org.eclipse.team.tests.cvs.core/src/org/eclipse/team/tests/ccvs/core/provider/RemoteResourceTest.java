@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,11 +35,14 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.client.RTag;
+import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
 import org.eclipse.team.internal.ccvs.ui.operations.CheckoutToRemoteFolderOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
@@ -262,10 +265,126 @@ public class RemoteResourceTest extends EclipseTest {
 			}
 		}
 	 }
-	 
-	 public void testTag() throws TeamException, CoreException, IOException {
-	 	IProject project = createProject("testTag", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
-	 	
+
+	public void testFileRevisionsForBranches() throws TeamException, CoreException {
+		// Create a project with an empty file
+		IProject project = createProject("testFileRevisionsForBranches", new String[] { "file.txt"}); // 1.1
+		setContentsAndEnsureModified(project.getFile("file.txt"), "hello HEAD");
+		commitResources(project, new String[] {"file.txt"}); // 1.2
+		setContentsAndEnsureModified(project.getFile("file.txt"), "hello again HEAD");
+		commitResources(project, new String[] {"file.txt"}); // 1.3
+
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		makeBranch(new IResource[] {project}, root, branch, true);
+		setContentsAndEnsureModified(project.getFile("file.txt"), "hello branch1");
+		commitResources(project, new String[] {"file.txt"}); // 1.3.2.1
+		setContentsAndEnsureModified(project.getFile("file.txt"), "hello again branch1");
+		commitResources(project, new String[] {"file.txt"}); // 1.3.2.2
+
+		// Checkout and branch another copy
+		CVSTag root2 = new CVSTag("root_branch2", CVSTag.VERSION);
+		CVSTag branch2 = new CVSTag("branch2", CVSTag.BRANCH);
+		makeBranch(new IResource[] {project}, root2, branch2, true);
+		setContentsAndEnsureModified(project.getFile("file.txt"), "hello branch2");
+		commitResources(project, new String[] {"file.txt"}); // 1.3.2.2.2.1
+
+		updateProject(project, CVSTag.DEFAULT, false);
+		setContentsAndEnsureModified(project.getFile("file.txt"), "hello HEAD for the last time");
+		commitResources(project, new String[] {"file.txt"}); // 1.4
+
+		ICVSRemoteFile remote = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file.txt"));
+		ILogEntry[] entries = remote.getLogEntries(DEFAULT_MONITOR);
+		assertEquals(7, entries.length);
+
+		LogEntry logEntry = getLogEntryByRevision(entries, "1.1");
+		assertNotNull(logEntry);
+		assertEquals(0, logEntry.getTags().length);
+		assertEquals(1, logEntry.getBranches().length);
+		assertTrue(CVSTag.equalTags(CVSTag.DEFAULT, logEntry.getBranches()[0]));
+		assertEquals("1", logEntry.getBranches()[0].getBranchRevision());
+		assertEquals(0, logEntry.getBranchRevisions().length);
+
+		logEntry = getLogEntryByRevision(entries, "1.2");
+		assertNotNull(logEntry);
+		assertEquals(0, logEntry.getTags().length);
+		assertEquals(1, logEntry.getBranches().length);
+		assertTrue(CVSTag.equalTags(CVSTag.DEFAULT, logEntry.getBranches()[0]));
+		assertEquals("1", logEntry.getBranches()[0].getBranchRevision());
+		assertEquals(0, logEntry.getBranchRevisions().length);
+
+		logEntry = getLogEntryByRevision(entries, "1.3");
+		assertNotNull(logEntry);
+		assertEquals(2, logEntry.getTags().length);
+		CVSTag tag = getTagByName(logEntry.getTags(), "root_branch1");
+		assertTrue(CVSTag.equalTags(root, tag));
+		assertEquals(null, tag.getBranchRevision());
+		tag = getTagByName(logEntry.getTags(), "branch1");
+		assertTrue(CVSTag.equalTags(branch, tag));
+		assertEquals("1.3.0.2", tag.getBranchRevision());
+		assertEquals(1, logEntry.getBranches().length);
+		assertTrue(CVSTag.equalTags(CVSTag.DEFAULT, logEntry.getBranches()[0]));
+		assertEquals(0, logEntry.getBranchRevisions().length);
+
+		logEntry = getLogEntryByRevision(entries, "1.3.2.1");
+		assertNotNull(logEntry);
+		assertEquals(0, logEntry.getTags().length);
+		assertEquals(1, logEntry.getBranches().length);
+		assertTrue(CVSTag.equalTags(branch, logEntry.getBranches()[0]));
+		assertEquals("1.3.0.2", logEntry.getBranches()[0].getBranchRevision());
+		assertEquals(0, logEntry.getBranchRevisions().length);
+
+		logEntry = getLogEntryByRevision(entries, "1.3.2.2");
+		assertNotNull(logEntry);
+		assertEquals(2, logEntry.getTags().length);
+		tag = getTagByName(logEntry.getTags(), "root_branch2");
+		assertTrue(CVSTag.equalTags(root2, tag));
+		assertEquals(null, tag.getBranchRevision());
+		tag = getTagByName(logEntry.getTags(), "branch2");
+		assertTrue(CVSTag.equalTags(branch2, tag));
+		assertEquals("1.3.2.2.0.2", tag.getBranchRevision());
+		assertEquals(1, logEntry.getBranches().length);
+		assertTrue(CVSTag.equalTags(branch, logEntry.getBranches()[0]));
+		assertEquals("1.3.0.2", logEntry.getBranches()[0].getBranchRevision());
+		assertEquals(0, logEntry.getBranchRevisions().length);
+
+		logEntry = getLogEntryByRevision(entries, "1.3.2.2.2.1");
+		assertNotNull(logEntry);
+		assertEquals(0, logEntry.getTags().length);
+		assertEquals(1, logEntry.getBranches().length);
+		assertTrue(CVSTag.equalTags(branch2, logEntry.getBranches()[0]));
+		assertEquals("1.3.2.2.0.2", logEntry.getBranches()[0].getBranchRevision());
+		assertEquals(0, logEntry.getBranchRevisions().length);
+
+		logEntry = getLogEntryByRevision(entries, "1.4");
+		assertNotNull(logEntry);
+		assertEquals(0, logEntry.getTags().length);
+		assertEquals(1, logEntry.getBranches().length);
+		assertTrue(CVSTag.equalTags(CVSTag.DEFAULT, logEntry.getBranches()[0]));
+		assertEquals("1", logEntry.getBranches()[0].getBranchRevision());
+		assertEquals(0, logEntry.getBranchRevisions().length);
+	}
+
+	private LogEntry getLogEntryByRevision(ILogEntry[] entries, String revision) {
+		for (int i = 0; i < entries.length; i++) {
+			if (entries[i].getRevision().equals(revision) && entries[i] instanceof LogEntry) {
+				return (LogEntry) entries[i];
+			}
+		}
+		return null;
+	}
+
+	private CVSTag getTagByName(CVSTag[] tags, String name) {
+		for (int i = 0; i < tags.length; i++)
+			if (tags[i].getName().equals(name))
+				return tags[i];
+		return null;
+	}
+
+	public void testTag() throws TeamException, CoreException, IOException {
+		IProject project = createProject("testTag", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
+
 		ICVSRemoteFolder remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
 		CVSTag tag = new CVSTag("v1", CVSTag.VERSION);
 		tagRemoteResource(remote, tag, false);
@@ -291,8 +410,74 @@ public class RemoteResourceTest extends EclipseTest {
 		tagProject(project, tag2, true);
 		IProject copy = checkoutCopy(project, tag2);
 		assertEquals(project, copy, false, false);
-	 }
-	 
+	}
+
+	public void testUnknownBranch() throws TeamException, CoreException {
+		IProject project = createProject("testUnknownBranch", new String[] { "file1.txt"});
+
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		makeBranch(new IResource[] {project}, root, branch, true);
+
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		commitProject(project);
+
+		// remove the branch
+		ICVSRemoteFolder remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
+		TagInRepositoryOperation op = new TagInRepositoryOperation(null, new ICVSRemoteResource[] {remote});
+		op.addLocalOption(RTag.DELETE);
+		runTag(op, branch, true);
+
+		ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));
+		ILogEntry[] entries = remoteFile.getLogEntries(DEFAULT_MONITOR);
+		assertEquals(2, entries.length);
+
+		LogEntry logEntry = getLogEntryByRevision(entries, "1.1");
+		assertNotNull(logEntry);
+		assertEquals(1, logEntry.getTags().length);
+		CVSTag tag = getTagByName(logEntry.getTags(), "root_branch1");
+		assertTrue(CVSTag.equalTags(root, tag));
+		assertEquals(null, tag.getBranchRevision());
+		tag = getTagByName(logEntry.getTags(), "branch1");
+		assertNull(tag);
+		assertEquals(1, logEntry.getBranches().length);
+		assertTrue(CVSTag.equalTags(CVSTag.DEFAULT, logEntry.getBranches()[0]));
+		assertEquals("1", logEntry.getBranches()[0].getBranchRevision());
+		assertEquals(0, logEntry.getBranchRevisions().length);
+
+		logEntry = getLogEntryByRevision(entries, "1.1.2.1");
+		assertNotNull(logEntry);
+		assertEquals(0, logEntry.getTags().length);
+		assertEquals(1, logEntry.getBranches().length);
+		assertEquals(CVSTag.UNKNOWN_BRANCH, logEntry.getBranches()[0].getName());
+		assertEquals("1.1.0.2", logEntry.getBranches()[0].getBranchRevision());
+		assertEquals(0, logEntry.getBranchRevisions().length);
+	}
+
+	public void testVendorBranch() throws TeamException, CoreException {
+		// Create a test project and import it into cvs
+		IProject project = getUniqueTestProject("testVendorBranch");
+		buildResources(project, new String[] { "file1.txt" }, true);
+		importProject(project);
+
+		// Now, check out the project
+		IProject copy = getWorkspace().getRoot().getProject(project.getName() + "copy");
+		checkout(getRepository(), copy, project.getName(), null, DEFAULT_MONITOR);
+
+		ICVSRemoteFile remote = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(copy.getFile("file1.txt"));
+		ILogEntry[] entries = remote.getLogEntries(DEFAULT_MONITOR);
+		assertEquals(2, entries.length);
+
+		// skip revision 1.1 and check 1.1.1.1
+		LogEntry logEntry = getLogEntryByRevision(entries, "1.1.1.1");
+		assertNotNull(logEntry);
+		assertEquals(1, logEntry.getTags().length);
+		assertTrue(CVSTag.equalTags(new CVSTag("start", CVSTag.VERSION), logEntry.getTags()[0]));
+		assertEquals(1, logEntry.getBranches().length);
+		assertTrue(CVSTag.equalTags(new CVSTag(getRepository().getUsername(), CVSTag.BRANCH), logEntry.getBranches()[0]));
+		assertEquals(CVSTag.VENDOR_REVISION, logEntry.getBranches()[0].getBranchRevision());
+	}
+
 	 public void testExists() throws TeamException, CoreException {
 	 	IProject project = createProject("testExists", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 	 	ICVSRemoteResource resource1 = CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));

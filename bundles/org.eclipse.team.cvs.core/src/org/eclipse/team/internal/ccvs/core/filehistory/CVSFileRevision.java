@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.core.filehistory;
@@ -80,6 +81,10 @@ public class CVSFileRevision extends FileRevision implements IAdaptable {
 	public URI getURI() {
 		ICVSRemoteFile file = entry.getRemoteFile();
 		return ((RemoteFile)file).toCVSURI().toURI();
+	}
+
+	public ITag[] getBranches() {
+		return entry.getBranches();
 	}
 
 	public ITag[] getTags() {

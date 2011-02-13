@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -29,6 +30,7 @@ public class CVSHistoryFilterDialog extends TrayDialog {
 	//widgets
 	private Button orRadio;
 	private Button andRadio;
+	private Text branchName;
 	private Text author;
 	private Text comment;
 	private DateTime fromDate;
@@ -71,6 +73,12 @@ public class CVSHistoryFilterDialog extends TrayDialog {
 		data.horizontalSpan = 2;
 		orRadio.setLayoutData(data);
 
+		//branch name
+		label = new Label(topLevel, SWT.NONE);
+		label.setText(CVSUIMessages.HistoryFilterDialog_branchname);
+		branchName = new Text(topLevel, SWT.BORDER);
+		branchName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 		//author
 		label = new Label(topLevel, SWT.NONE);
 		label.setText(CVSUIMessages.HistoryFilterDialog_author);
@@ -104,6 +112,9 @@ public class CVSHistoryFilterDialog extends TrayDialog {
 	void initializeValues() {
 		if (historyFilter == null)
 			return;
+		if (historyFilter.branchName != null) {
+			branchName.setText(historyFilter.branchName);
+		}
 		if (historyFilter.author != null) {
 			author.setText(historyFilter.author);
 		}
@@ -139,7 +150,7 @@ public class CVSHistoryFilterDialog extends TrayDialog {
 		Date toDate = getToDate();
 
 		//create the filter
-		historyFilter = new CVSHistoryFilter(author.getText(), comment.getText(), fromDate, toDate, orRadio.getSelection());
+		historyFilter = new CVSHistoryFilter(branchName.getText(), author.getText(), comment.getText(), fromDate, toDate, orRadio.getSelection());
 
 		super.buttonPressed(buttonId);
 	}
