@@ -91,7 +91,7 @@ public class VCommandEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Composite getEditor(Composite parent, Object object) {
+	public Composite doGetEditor(Composite parent, Object object) {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
 			composite = createForm(parent, context, getMaster());

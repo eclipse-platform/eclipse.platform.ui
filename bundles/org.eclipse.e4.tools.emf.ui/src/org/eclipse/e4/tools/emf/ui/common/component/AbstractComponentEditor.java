@@ -103,7 +103,7 @@ public abstract class AbstractComponentEditor {
 
 	public abstract String getDescription(Object element);
 
-	public abstract Composite getEditor(Composite parent, Object object);
+	public abstract Composite doGetEditor(Composite parent, Object object);
 
 	public abstract IObservableList getChildList(Object element);
 
@@ -117,5 +117,17 @@ public abstract class AbstractComponentEditor {
 
 	protected String getLocalizedLabel(MUILabel element) {
 		return ControlFactory.getLocalizedLabel(translationProvider, element, locale);
+	}
+
+	public void handleCopy() {
+
+	}
+
+	public void handlePaste() {
+
+	}
+
+	public void handleCut() {
+
 	}
 }

@@ -268,6 +268,8 @@ public class ModelEditor {
 
 	private EMFDocumentResourceMediator emfDocumentProvider;
 
+	private AbstractComponentEditor currentEditor;
+
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
 		this.modelProvider = modelProvider;
@@ -441,12 +443,13 @@ public class ModelEditor {
 						EObject obj = (EObject) s.getFirstElement();
 						final AbstractComponentEditor editor = getEditor(obj.eClass());
 						if (editor != null) {
+							currentEditor = editor;
 							textLabel.setText(editor.getLabel(obj));
 							iconLabel.setImage(editor.getImage(obj, iconLabel.getDisplay()));
 							obsManager.runAndCollect(new Runnable() {
 
 								public void run() {
-									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
+									Composite comp = editor.doGetEditor(contentContainer, s.getFirstElement());
 									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 									layout.topControl = comp;
 									contentContainer.layout(true);
@@ -457,12 +460,13 @@ public class ModelEditor {
 						VirtualEntry<?> entry = (VirtualEntry<?>) s.getFirstElement();
 						final AbstractComponentEditor editor = virtualEditors.get(entry.getId());
 						if (editor != null) {
+							currentEditor = editor;
 							textLabel.setText(editor.getLabel(entry));
 							iconLabel.setImage(editor.getImage(entry, iconLabel.getDisplay()));
 							obsManager.runAndCollect(new Runnable() {
 
 								public void run() {
-									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
+									Composite comp = editor.doGetEditor(contentContainer, s.getFirstElement());
 									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 									layout.topControl = comp;
 									contentContainer.layout(true);
@@ -907,8 +911,16 @@ public class ModelEditor {
 
 	class ClipboardHandler implements Handler {
 
-		@SuppressWarnings("unchecked")
 		public void paste() {
+			if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
+				handleStructurePaste();
+			} else if (currentEditor != null) {
+				currentEditor.handlePaste();
+			}
+		}
+
+		@SuppressWarnings("unchecked")
+		private void handleStructurePaste() {
 			Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
 			Object o = clip.getContents(MemoryTransfer.getInstance());
 			clip.dispose();
@@ -965,6 +977,14 @@ public class ModelEditor {
 		}
 
 		public void copy() {
+			if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
+				handleStructureCopy();
+			} else if (currentEditor != null) {
+				currentEditor.handleCopy();
+			}
+		}
+
+		private void handleStructureCopy() {
 			Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
 			if (o != null && o instanceof EObject) {
 				Clipboard clip = new Clipboard(viewer.getControl().getDisplay());
@@ -974,6 +994,14 @@ public class ModelEditor {
 		}
 
 		public void cut() {
+			if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
+				handleStructureCut();
+			} else if (currentEditor != null) {
+				currentEditor.handleCut();
+			}
+		}
+
+		private void handleStructureCut() {
 			Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
 			if (o != null && o instanceof EObject) {
 				Clipboard clip = new Clipboard(viewer.getControl().getDisplay());

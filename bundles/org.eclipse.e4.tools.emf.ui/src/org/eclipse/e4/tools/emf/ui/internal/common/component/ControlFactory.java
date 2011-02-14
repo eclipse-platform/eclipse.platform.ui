@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -81,6 +82,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class ControlFactory {
+	public static final String COPY_WRITABLE = ControlFactory.class.getName() + ".COPY_WRITABLE"; //$NON-NLS-1$
+
 	public static void createXMIId(Composite parent, AbstractComponentEditor editor) {
 		Label l = new Label(parent, SWT.NONE);
 		l.setText("XMI:ID"); //$NON-NLS-1$
@@ -272,7 +275,12 @@ public class ControlFactory {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		t.setLayoutData(gd);
-		context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
+
+		IObservableValue modelObs = modelProp.observeDetail(master);
+		WritableValue copyWritable = new WritableValue("", String.class);//$NON-NLS-1$
+		context.bindValue(copyWritable, modelObs);
+		t.setData(COPY_WRITABLE, copyWritable);
+		context.bindValue(textProp.observeDelayed(200, t), modelObs);
 	}
 
 	public static void createTranslatedTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, IResourcePool resourcePool, IProject project) {

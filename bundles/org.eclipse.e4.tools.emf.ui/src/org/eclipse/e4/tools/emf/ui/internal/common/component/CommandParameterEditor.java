@@ -74,7 +74,7 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Composite getEditor(Composite parent, Object object) {
+	public Composite doGetEditor(Composite parent, Object object) {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
 			if (getEditor().isModelFragment()) {

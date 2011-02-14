@@ -161,7 +161,7 @@ public class MenuEditor extends AbstractComponentEditor {
 	}
 
 	@Override
-	public Composite getEditor(Composite parent, Object object) {
+	public Composite doGetEditor(Composite parent, Object object) {
 		if (composite == null) {
 			context = new EMFDataBindingContext();
 			composite = new Composite(parent, SWT.NONE);
