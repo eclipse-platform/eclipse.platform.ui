@@ -111,6 +111,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
@@ -487,6 +488,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		});
 
 		windowContext.set(IWorkbenchWindow.class.getName(), this);
+		windowContext.set(IPageService.class, this);
 		windowContext.set(IPartService.class, partService);
 
 		windowContext.set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, this);
