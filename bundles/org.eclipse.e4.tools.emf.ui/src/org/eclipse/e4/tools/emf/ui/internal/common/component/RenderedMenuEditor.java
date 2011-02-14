@@ -11,7 +11,6 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import javax.inject.Inject;
-import org.eclipse.e4.tools.emf.ui.internal.Messages;
 
 public class RenderedMenuEditor extends MenuEditor {
 

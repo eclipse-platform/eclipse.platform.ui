@@ -63,7 +63,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 public class PartSashContainerEditor extends AbstractComponentEditor {
 
@@ -203,19 +202,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 			return parent;
 		}
 
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.ModelTooling_Common_Id);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			Text t = new Text(parent, SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
-		}
-
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 
 		// ------------------------------------------------------------
@@ -241,19 +228,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createSelectedElement(parent, this, context, Messages.PartSashContainerEditor_SelectedElement);
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.PartSashContainerEditor_ContainerData);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			Text t = new Text(parent, SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA).observeDetail(master));
-		}
+		ControlFactory.createTextField(parent, Messages.PartSashContainerEditor_ContainerData, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__CONTAINER_DATA));
 
 		{
 			Label l = new Label(parent, SWT.NONE);

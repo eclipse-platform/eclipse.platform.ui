@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
@@ -27,6 +26,7 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
+import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -69,6 +69,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -82,7 +85,49 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class ControlFactory {
-	public static final String COPY_WRITABLE = ControlFactory.class.getName() + ".COPY_WRITABLE"; //$NON-NLS-1$
+	public static final String COPY_HANDLER = ControlFactory.class.getName() + ".COPY_HANDLER"; //$NON-NLS-1$
+
+	public static class TextPasteHandler implements Handler {
+		private final Text t;
+
+		public TextPasteHandler(Text t) {
+			this.t = t;
+		}
+
+		public static void createFor(Text t) {
+			t.setData(COPY_HANDLER, new TextPasteHandler(t));
+		}
+
+		public void paste() {
+			Clipboard cp = new Clipboard(t.getDisplay());
+			Object o = cp.getContents(TextTransfer.getInstance());
+			cp.dispose();
+			if (o == null) {
+				return;
+			}
+
+			if (validate(o.toString())) {
+				t.insert(o.toString());
+			}
+		}
+
+		public void cut() {
+			Clipboard cp = new Clipboard(t.getDisplay());
+			cp.setContents(new Object[] { t.getSelectionText() }, new Transfer[] { TextTransfer.getInstance() });
+			cp.dispose();
+			t.insert(""); //$NON-NLS-1$
+		}
+
+		public void copy() {
+			Clipboard cp = new Clipboard(t.getDisplay());
+			cp.setContents(new Object[] { t.getSelectionText() }, new Transfer[] { TextTransfer.getInstance() });
+			cp.dispose();
+		}
+
+		public boolean validate(String text) {
+			return true;
+		}
+	}
 
 	public static void createXMIId(Composite parent, AbstractComponentEditor editor) {
 		Label l = new Label(parent, SWT.NONE);
@@ -94,6 +139,8 @@ public class ControlFactory {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		t.setLayoutData(gd);
+
+		TextPasteHandler.createFor(t);
 
 		editor.getMaster().addValueChangeListener(new IValueChangeListener() {
 
@@ -271,16 +318,13 @@ public class ControlFactory {
 		l.setText(label);
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-		Text t = new Text(parent, SWT.BORDER);
+		final Text t = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		t.setLayoutData(gd);
 
-		IObservableValue modelObs = modelProp.observeDetail(master);
-		WritableValue copyWritable = new WritableValue("", String.class);//$NON-NLS-1$
-		context.bindValue(copyWritable, modelObs);
-		t.setData(COPY_WRITABLE, copyWritable);
-		context.bindValue(textProp.observeDelayed(200, t), modelObs);
+		TextPasteHandler.createFor(t);
+		context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
 	}
 
 	public static void createTranslatedTextField(Composite parent, String label, IObservableValue master, EMFDataBindingContext context, IWidgetValueProperty textProp, IEMFEditValueProperty modelProp, IResourcePool resourcePool, IProject project) {
@@ -288,19 +332,21 @@ public class ControlFactory {
 		l.setText(label);
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-		Text t = new Text(parent, SWT.BORDER);
+		final Text t = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		if (project == null) {
 			gd.horizontalSpan = 2;
 		}
 
 		t.setLayoutData(gd);
+
+		TextPasteHandler.createFor(t);
 		context.bindValue(textProp.observeDelayed(200, t), modelProp.observeDetail(master));
 
-		if (project != null) {
-			Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_world_edit));
-		}
+		// if (project != null) {
+		// Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+		// b.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_world_edit));
+		// }
 	}
 
 	public static void createFindImport(Composite parent, final Messages Messages, final AbstractComponentEditor editor, EMFDataBindingContext context) {
@@ -310,9 +356,12 @@ public class ControlFactory {
 		l.setText(Messages.ModelTooling_Common_RefId);
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-		Text t = new Text(parent, SWT.BORDER);
+		final Text t = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		t.setLayoutData(gd);
+
+		TextPasteHandler.createFor(t);
+
 		context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(editor.getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(editor.getMaster()));
 
 		final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
@@ -412,6 +461,8 @@ public class ControlFactory {
 				}
 			}
 		});
+
+		TextPasteHandler.createFor(t);
 
 		Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
 		b.setText(Messages.ModelTooling_Common_Add);

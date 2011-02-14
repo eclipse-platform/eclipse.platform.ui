@@ -15,6 +15,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ExpressionIdDialog;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -97,6 +98,7 @@ public class CoreExpressionEditor extends AbstractComponentEditor {
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			final Text t = new Text(parent, SWT.BORDER);
+			TextPasteHandler.createFor(t);
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.CORE_EXPRESSION__CORE_EXPRESSION_ID).observeDetail(getMaster()));

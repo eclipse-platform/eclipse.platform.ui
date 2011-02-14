@@ -32,6 +32,7 @@ import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EClass2EObject;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.MenuItemEditor.EObject2EClass;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIconDialogEditor;
@@ -210,46 +211,15 @@ public class MenuEditor extends AbstractComponentEditor {
 			return parent;
 		}
 
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.ModelTooling_Common_Id);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			Text t = new Text(parent, SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
-		}
+		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 
 		// ------------------------------------------------------------
 		if (!rootMenu) {
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.MenuEditor_LabelLabel);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			Text t = new Text(parent, SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL).observeDetail(master));
+			ControlFactory.createTranslatedTextField(parent, Messages.MenuEditor_LabelLabel, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL), resourcePool, project);
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
-
-		// ------------------------------------------------------------
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.MenuEditor_Mnemonics);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			Text t = new Text(parent, SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS).observeDetail(master));
-		}
+		ControlFactory.createTextField(parent, Messages.MenuEditor_Mnemonics, master, context, textProp, EMFEditProperties.value(getEditingDomain(), MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS));
 
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -374,15 +344,7 @@ public class MenuEditor extends AbstractComponentEditor {
 
 		// ------------------------------------------------------------
 		if (!rootMenu) {
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.MenuEditor_Tooltip);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			Text t = new Text(parent, SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP).observeDetail(master));
+			ControlFactory.createTranslatedTextField(parent, Messages.MenuEditor_Tooltip, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP), resourcePool, project);
 		}
 
 		// ------------------------------------------------------------
@@ -392,6 +354,7 @@ public class MenuEditor extends AbstractComponentEditor {
 			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
 			Text t = new Text(parent, SWT.BORDER);
+			TextPasteHandler.createFor(t);
 			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__ICON_URI).observeDetail(master));
 

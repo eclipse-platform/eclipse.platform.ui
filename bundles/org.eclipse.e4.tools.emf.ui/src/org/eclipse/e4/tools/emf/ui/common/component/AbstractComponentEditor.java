@@ -23,6 +23,7 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
+import org.eclipse.e4.tools.services.IClipboardService.Handler;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.Translation;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -34,6 +35,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractComponentEditor {
@@ -65,6 +67,8 @@ public abstract class AbstractComponentEditor {
 	@Inject
 	@Named(TranslationService.LOCALE)
 	private String locale;
+
+	private Composite editorControl;
 
 	public EditingDomain getEditingDomain() {
 		return editingDomain;
@@ -103,7 +107,11 @@ public abstract class AbstractComponentEditor {
 
 	public abstract String getDescription(Object element);
 
-	public abstract Composite doGetEditor(Composite parent, Object object);
+	public Composite getEditor(Composite parent, Object object) {
+		return editorControl = doGetEditor(parent, object);
+	}
+
+	protected abstract Composite doGetEditor(Composite parent, Object object);
 
 	public abstract IObservableList getChildList(Object element);
 
@@ -119,15 +127,41 @@ public abstract class AbstractComponentEditor {
 		return ControlFactory.getLocalizedLabel(translationProvider, element, locale);
 	}
 
-	public void handleCopy() {
+	private boolean isFocusChild(Control control) {
+		Control c = control;
+		while (c != null && c != editorControl) {
+			c = c.getParent();
+		}
+		return c != null;
+	}
 
+	public void handleCopy() {
+		if (editorControl != null) {
+			Control focusControl = editorControl.getDisplay().getFocusControl();
+
+			if (isFocusChild(focusControl) && focusControl.getData(ControlFactory.COPY_HANDLER) != null) {
+				((Handler) focusControl.getData(ControlFactory.COPY_HANDLER)).copy();
+			}
+		}
 	}
 
 	public void handlePaste() {
+		if (editorControl != null) {
+			Control focusControl = editorControl.getDisplay().getFocusControl();
 
+			if (isFocusChild(focusControl) && focusControl.getData(ControlFactory.COPY_HANDLER) != null) {
+				((Handler) focusControl.getData(ControlFactory.COPY_HANDLER)).paste();
+			}
+		}
 	}
 
 	public void handleCut() {
+		if (editorControl != null) {
+			Control focusControl = editorControl.getDisplay().getFocusControl();
 
+			if (isFocusChild(focusControl) && focusControl.getData(ControlFactory.COPY_HANDLER) != null) {
+				((Handler) focusControl.getData(ControlFactory.COPY_HANDLER)).cut();
+			}
+		}
 	}
 }

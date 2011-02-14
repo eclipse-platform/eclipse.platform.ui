@@ -449,7 +449,7 @@ public class ModelEditor {
 							obsManager.runAndCollect(new Runnable() {
 
 								public void run() {
-									Composite comp = editor.doGetEditor(contentContainer, s.getFirstElement());
+									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
 									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 									layout.topControl = comp;
 									contentContainer.layout(true);
@@ -466,7 +466,7 @@ public class ModelEditor {
 							obsManager.runAndCollect(new Runnable() {
 
 								public void run() {
-									Composite comp = editor.doGetEditor(contentContainer, s.getFirstElement());
+									Composite comp = editor.getEditor(contentContainer, s.getFirstElement());
 									comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
 									layout.topControl = comp;
 									contentContainer.layout(true);

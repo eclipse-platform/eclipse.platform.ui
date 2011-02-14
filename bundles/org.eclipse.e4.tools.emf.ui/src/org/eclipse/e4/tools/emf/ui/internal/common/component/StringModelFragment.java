@@ -20,6 +20,7 @@ import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FeatureSelectionDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindParentReferenceElementDialog;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -128,6 +129,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			comp.setLayout(gl);
 
 			Text t = new Text(comp, SWT.BORDER);
+			TextPasteHandler.createFor(t);
 			t.setEditable(false);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
@@ -160,6 +162,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			comp.setLayout(gl);
 
 			Text t = new Text(comp, SWT.BORDER);
+			TextPasteHandler.createFor(t);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			t.setLayoutData(gd);
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__FEATURENAME).observeDetail(getMaster()));
@@ -176,17 +179,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 		}
 
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.StringModelFragment_PositionInList);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			Text t = new Text(parent, SWT.BORDER);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.horizontalSpan = 2;
-			t.setLayoutData(gd);
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__POSITION_IN_LIST).observeDetail(getMaster()));
-		}
+		ControlFactory.createTextField(parent, Messages.StringModelFragment_PositionInList, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT__POSITION_IN_LIST));
 
 		// ------------------------------------------------------------
 		{

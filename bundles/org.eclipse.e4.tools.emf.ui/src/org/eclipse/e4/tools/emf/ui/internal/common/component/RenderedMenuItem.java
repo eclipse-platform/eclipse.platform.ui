@@ -12,7 +12,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.swt.widgets.Composite;
 
