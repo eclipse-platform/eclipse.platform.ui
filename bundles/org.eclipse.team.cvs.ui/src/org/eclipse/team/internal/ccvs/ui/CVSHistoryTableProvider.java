@@ -546,13 +546,13 @@ public class CVSHistoryTableProvider {
 		col.addSelectionListener(headerListener);
 
 		// branches
-		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
-		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_BRANCHES, this));
-		col = viewerCol.getColumn();
-		col.setData(COL_NAME, COL_BRANCHES_NAME);
-		col.setResizable(true);
-		col.setText(CVSUIMessages.HistoryView_branches); 
-		col.addSelectionListener(headerListener);
+//		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
+//		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_BRANCHES, this));
+//		col = viewerCol.getColumn();
+//		col.setData(COL_NAME, COL_BRANCHES_NAME);
+//		col.setResizable(true);
+//		col.setText(CVSUIMessages.HistoryView_branches); 
+//		col.addSelectionListener(headerListener);
 
 		// tags
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
@@ -596,8 +596,7 @@ public class CVSHistoryTableProvider {
 	public void loadColumnLayout(TableLayout layout) {
 		int weights[] = new int[] {
 				getSettingsInt(COL_REVISIONID_NAME),
-//				getSettingsInt(COL_BRANCHES_NAME),
-				0,
+				getSettingsInt(COL_BRANCHES_NAME),
 				getSettingsInt(COL_TAGS_NAME), 
 				getSettingsInt(COL_DATE_NAME),
 				getSettingsInt(COL_AUTHOR_NAME),
@@ -635,7 +634,7 @@ public class CVSHistoryTableProvider {
 	
 	private int getSettingsInt(String key) {
 		String value = settings.get(key);
-		int ret = ColumnWeightData.MINIMUM_WIDTH;
+		int ret = 0;
 		try {
 			ret = Integer.parseInt(value);
 		} catch (NumberFormatException e) {
@@ -654,7 +653,7 @@ public class CVSHistoryTableProvider {
 		ColumnLayoutData[] ret = new ColumnLayoutData[widths.length];
 		for (int i = 0; i < widths.length; i++) {
 			if (onlyZeroes) {
-				ret[i] = new ColumnWeightData(ColumnWeightData.MINIMUM_WIDTH, true);
+				ret[i] = new ColumnWeightData(20, true);
 			} else {
 				ret[i] = new ColumnPixelData(widths[i]);
 			}
