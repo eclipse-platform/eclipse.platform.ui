@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,49 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.ui;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 
 public class ReflectionUtils {
+
+	public static Object construct(String className, ClassLoader classLoader,
+			Class[] constructorTypes, Object[] constructorArgs) {
+		Class clazz = null;
+		try {
+			clazz = Class.forName(className, true, classLoader);
+		} catch (ClassNotFoundException e) {
+			EclipseTest.fail(e.getMessage());
+		} catch (ExceptionInInitializerError e) {
+			EclipseTest.fail(e.getMessage());
+		}
+		Constructor constructor = null;
+		try {
+			constructor = clazz.getDeclaredConstructor(constructorTypes);
+		} catch (SecurityException e) {
+			EclipseTest.fail(e.getMessage());
+		} catch (NoSuchMethodException e) {
+			EclipseTest.fail(e.getMessage());
+		}
+		Assert.isNotNull(constructor);
+		constructor.setAccessible(true);
+		try {
+			return constructor.newInstance(constructorArgs);
+		} catch (IllegalArgumentException e) {
+			EclipseTest.fail(e.getMessage());
+		} catch (InvocationTargetException e) {
+			EclipseTest.fail(e.getMessage());
+		} catch (InstantiationException e) {
+			EclipseTest.fail(e.getMessage());
+		} catch (IllegalAccessException e) {
+			EclipseTest.fail(e.getMessage());
+		}
+		return null;
+	}
 
 	public static Object callMethod(Object object, String name, Object args[]) {
 		try {

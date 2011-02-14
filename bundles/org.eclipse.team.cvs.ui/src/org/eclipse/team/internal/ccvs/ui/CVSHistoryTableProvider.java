@@ -596,7 +596,8 @@ public class CVSHistoryTableProvider {
 	public void loadColumnLayout(TableLayout layout) {
 		int weights[] = new int[] {
 				getSettingsInt(COL_REVISIONID_NAME),
-				getSettingsInt(COL_BRANCHES_NAME),
+//				getSettingsInt(COL_BRANCHES_NAME),
+				0,
 				getSettingsInt(COL_TAGS_NAME), 
 				getSettingsInt(COL_DATE_NAME),
 				getSettingsInt(COL_AUTHOR_NAME),
@@ -640,10 +641,6 @@ public class CVSHistoryTableProvider {
 		} catch (NumberFormatException e) {
 			// Nothing to do
 		}
-		//If user hide column and restart eclipse no way to show back column.
-		//This was true on Ubuntu 10.10 gtk2
-		//This at least allows to expand column from size 1
-		if (ret == 0) ret=ColumnWeightData.MINIMUM_WIDTH;
 		return ret;
 	}
 

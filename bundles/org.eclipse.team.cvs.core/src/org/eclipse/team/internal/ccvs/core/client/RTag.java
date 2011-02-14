@@ -24,7 +24,6 @@ public class RTag extends RemoteCommand {
 	public static final LocalOption CLEAR_FROM_REMOVED = new LocalOption("-a", null); //$NON-NLS-1$	
 	public static final LocalOption FORCE_REASSIGNMENT = new LocalOption("-F", null); //$NON-NLS-1$
 	public static final LocalOption FORCE_BRANCH_REASSIGNMENT = new LocalOption("-B", null); //$NON-NLS-1$
-	public static final LocalOption DELETE = new LocalOption("-d", null); //$NON-NLS-1$
 
 	/*** Default command output listener ***/
 	private static final ICommandOutputListener DEFAULT_OUTPUT_LISTENER = new TagListener();

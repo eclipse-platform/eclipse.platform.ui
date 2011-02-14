@@ -35,7 +35,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.client.RTag;
+import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
@@ -45,6 +45,7 @@ import org.eclipse.team.internal.ccvs.ui.operations.CheckoutToRemoteFolderOperat
 import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
+import org.eclipse.team.tests.ccvs.ui.ReflectionUtils;
 
 public class RemoteResourceTest extends EclipseTest {
 
@@ -425,7 +426,12 @@ public class RemoteResourceTest extends EclipseTest {
 		// remove the branch
 		ICVSRemoteFolder remote = (ICVSRemoteFolder)CVSWorkspaceRoot.getRemoteResourceFor(project);
 		TagInRepositoryOperation op = new TagInRepositoryOperation(null, new ICVSRemoteResource[] {remote});
-		op.addLocalOption(RTag.DELETE);
+		LocalOption lo = (LocalOption) ReflectionUtils
+				.construct(
+						"org.eclipse.team.internal.ccvs.core.client.Command$LocalOption",
+						getClass().getClassLoader(),
+						new Class[] { String.class }, new Object[] { "-d" });
+		op.addLocalOption(lo);
 		runTag(op, branch, true);
 
 		ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(project.getFile("file1.txt"));

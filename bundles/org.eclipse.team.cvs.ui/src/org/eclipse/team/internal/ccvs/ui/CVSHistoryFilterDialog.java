@@ -74,10 +74,10 @@ public class CVSHistoryFilterDialog extends TrayDialog {
 		orRadio.setLayoutData(data);
 
 		//branch name
-		label = new Label(topLevel, SWT.NONE);
-		label.setText(CVSUIMessages.HistoryFilterDialog_branchname);
-		branchName = new Text(topLevel, SWT.BORDER);
-		branchName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+//		label = new Label(topLevel, SWT.NONE);
+//		label.setText(CVSUIMessages.HistoryFilterDialog_branchname);
+//		branchName = new Text(topLevel, SWT.BORDER);
+//		branchName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		//author
 		label = new Label(topLevel, SWT.NONE);
