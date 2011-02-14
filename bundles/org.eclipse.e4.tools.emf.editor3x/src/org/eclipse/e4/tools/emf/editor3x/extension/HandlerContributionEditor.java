@@ -53,7 +53,7 @@ public class HandlerContributionEditor implements IContributionClassCreator {
 				try {
 					String packageName = el.getPackageDeclarations()[0].getElementName();
 					String className = wizard.getDomainClass().getName();
-					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "platform:/plugin/" + f.getProject().getName() + "/" + packageName+"."+className);
+					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "platform:/plugin/" + Util.getBundleSymbolicName(f.getProject()) + "/" + packageName+"."+className);
 					if( cmd.canExecute() ) {
 						domain.getCommandStack().execute(cmd);
 					}
@@ -67,6 +67,17 @@ public class HandlerContributionEditor implements IContributionClassCreator {
 			if (uri.segmentCount() == 3) {
 				IProject p = ResourcesPlugin.getWorkspace().getRoot()
 						.getProject(uri.segment(1));
+				
+				if( ! p.exists() ) {
+					for( IProject check : ResourcesPlugin.getWorkspace().getRoot().getProjects() ) {
+						String name = Util.getBundleSymbolicName(check);
+						if( uri.segment(1).equals(name) ) {
+							p = check;
+							break;
+						}
+					}
+				}
+				
 				// TODO If this is not a WS-Resource we need to open differently
 				if (p != null) {
 					IJavaProject jp = JavaCore.create(p);

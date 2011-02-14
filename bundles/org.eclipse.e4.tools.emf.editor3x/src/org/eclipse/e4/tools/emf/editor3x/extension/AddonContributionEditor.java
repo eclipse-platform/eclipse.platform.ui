@@ -13,6 +13,7 @@ package org.eclipse.e4.tools.emf.editor3x.extension;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.internal.tools.wizards.classes.NewAddonClassWizard;
 import org.eclipse.e4.tools.emf.ui.common.IContributionClassCreator;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -31,8 +32,13 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public class AddonContributionEditor implements IContributionClassCreator {
 
@@ -57,7 +63,7 @@ public class AddonContributionEditor implements IContributionClassCreator {
 				try {
 					String packageName = el.getPackageDeclarations()[0].getElementName();
 					String className = wizard.getDomainClass().getName();
-					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "platform:/plugin/" + f.getProject().getName() + "/" + packageName+"."+className);
+					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "platform:/plugin/" + Util.getBundleSymbolicName(f.getProject()) + "/" + packageName+"."+className);
 					if( cmd.canExecute() ) {
 						domain.getCommandStack().execute(cmd);
 					}
@@ -71,6 +77,17 @@ public class AddonContributionEditor implements IContributionClassCreator {
 			if (uri.segmentCount() == 3) {
 				IProject p = ResourcesPlugin.getWorkspace().getRoot()
 						.getProject(uri.segment(1));
+				
+				if( ! p.exists() ) {
+					for( IProject check : ResourcesPlugin.getWorkspace().getRoot().getProjects() ) {
+						String name = Util.getBundleSymbolicName(check);
+						if( uri.segment(1).equals(name) ) {
+							p = check;
+							break;
+						}
+					}
+				}
+				
 				// TODO If this is not a WS-Resource we need to open differently
 				if (p != null) {
 					IJavaProject jp = JavaCore.create(p);
@@ -99,5 +116,4 @@ public class AddonContributionEditor implements IContributionClassCreator {
 			}
 		}
 	}
-
 }
