@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,12 +71,12 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		Control[] labelledTextField;
 		text= AntPreferencesMessages.AntCodeAssistPreferencePage_Auto_activation__delay__3;
 		String[] errorMessages= new String[]{AntPreferencesMessages.AntCodeAssistPreferencePage_empty_input_auto_activation, AntPreferencesMessages.AntCodeAssistPreferencePage_invalid_input_auto_activation};
-		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 4, 0, errorMessages);
+		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY, 4, 20, errorMessages);
 		fAutoInsertDelayLabel= getLabelControl(labelledTextField);
 		fAutoInsertDelayText= getTextControl(labelledTextField);
 		
 		text= AntPreferencesMessages.AntCodeAssistPreferencePage_Auto_activation_tri_ggers__4;
-		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 0, null);
+		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 20, null);
 		fAutoInsertTriggerLabel= getLabelControl(labelledTextField);
 		fAutoInsertTriggerText= getTextControl(labelledTextField);
 		
