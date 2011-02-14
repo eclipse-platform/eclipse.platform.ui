@@ -72,7 +72,7 @@ public class CVSHistoryTableProvider {
 
 	// cvs history table provider settings keys
 	private static final String COL_REVISIONID_NAME = "COL_REVISIONID"; //$NON-NLS-1$
-	private static final String COL_BRANCHES_NAME = "COL_BRANCHES"; //$NON-NLS-1$
+//	private static final String COL_BRANCHES_NAME = "COL_BRANCHES"; //$NON-NLS-1$
 	private static final String COL_TAGS_NAME = "COL_TAGS"; //$NON-NLS-1$
 	private static final String COL_DATE_NAME = "COL_DATE"; //$NON-NLS-1$
 	private static final String COL_AUTHOR_NAME = "COL_AUTHOR"; //$NON-NLS-1$
@@ -596,7 +596,7 @@ public class CVSHistoryTableProvider {
 	public void loadColumnLayout(TableLayout layout) {
 		int weights[] = new int[] {
 				getSettingsInt(COL_REVISIONID_NAME),
-				getSettingsInt(COL_BRANCHES_NAME),
+//				getSettingsInt(COL_BRANCHES_NAME),
 				getSettingsInt(COL_TAGS_NAME), 
 				getSettingsInt(COL_DATE_NAME),
 				getSettingsInt(COL_AUTHOR_NAME),
