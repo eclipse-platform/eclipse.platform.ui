@@ -2180,8 +2180,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
 				referenceRemovalEventHandler);
 
-		if (getPerspectiveStack() != null) {
-			MPerspective persp = getPerspectiveStack().getSelectedElement();
+		MPerspectiveStack perspectiveStack = getPerspectiveStack();
+		if (perspectiveStack != null) {
+			extendPerspectives(perspectiveStack);
+
+			MPerspective persp = perspectiveStack.getSelectedElement();
 			List<String> newIds = ModeledPageLayout.getIds(persp, ModeledPageLayout.ACTION_SET_TAG);
 			EContextService contextService = window.getContext().get(EContextService.class);
 			for (String id : newIds) {
@@ -2191,7 +2194,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		IPerspectiveRegistry registry = getWorkbenchWindow().getWorkbench()
 				.getPerspectiveRegistry();
-		MPerspectiveStack perspectiveStack = getPerspectiveStack();
 		for (MPerspective perspective : perspectiveStack.getChildren()) {
 			IPerspectiveDescriptor desc = registry
 					.findPerspectiveWithId(perspective.getElementId());
@@ -2210,6 +2212,52 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
     }
+
+	/**
+	 * Extends the perspectives within the given stack with action set
+	 * contributions from the <code>perspectiveExtensions</code> extension
+	 * point.
+	 * 
+	 * @param perspectiveStack
+	 *            the stack that contain the perspectives to be extended
+	 */
+	private void extendPerspectives(MPerspectiveStack perspectiveStack) {
+		for (MPerspective perspective : perspectiveStack.getChildren()) {
+			String id = perspective.getElementId();
+			IPerspectiveDescriptor desc = getWorkbenchWindow().getWorkbench()
+					.getPerspectiveRegistry().findPerspectiveWithId(id);
+			if (desc != null) {
+				MPerspective temporary = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+				ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService,
+						partService, temporary, desc, this, true);
+
+				PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+				reader.setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET });
+				reader.extendLayout(null, id, modelLayout);
+
+				addActionSet(perspective, temporary);
+			}
+		}
+	}
+
+	/**
+	 * Copies action set extensions from the temporary perspective to the other
+	 * one.
+	 * 
+	 * @param perspective
+	 *            the perspective to copy action set contributions to
+	 * @param temporary
+	 *            the perspective to copy action set contributions from
+	 */
+	private void addActionSet(MPerspective perspective, MPerspective temporary) {
+		List<String> tags = perspective.getTags();
+		List<String> extendedTags = temporary.getTags();
+		for (String extendedTag : extendedTags) {
+			if (!tags.contains(extendedTag)) {
+				tags.add(extendedTag);
+			}
+		}
+	}
 
 	private EventHandler selectionHandler = new EventHandler() {
 		public void handleEvent(Event event) {
