@@ -79,7 +79,7 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		labelledTextField= addLabelledTextField(contentAssistComposite, text, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, 4, 20, null);
 		fAutoInsertTriggerLabel= getLabelControl(labelledTextField);
 		fAutoInsertTriggerText= getTextControl(labelledTextField);
-		
+		updateAutoactivationControls();
 		return contentAssistComposite;
 	}
 	
