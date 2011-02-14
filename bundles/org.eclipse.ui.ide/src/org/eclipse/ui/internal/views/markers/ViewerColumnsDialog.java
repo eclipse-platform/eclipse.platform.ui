@@ -20,16 +20,17 @@ import java.util.Random;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -39,13 +40,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -75,20 +75,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 	private Button toVisibleBtt, toNonVisibleBtt;
 
-	private Text widthText;
-
-	/**
-	 * A listener to validate positive integer numbers only
-	 */
-	Listener postiveIntTextListener = new Listener() {
-		private String intialValue;
-
-		public void handleEvent(Event event) {
-			intialValue = intialValue != null ? intialValue : Integer
-					.toString(0);
-			intialValue = handleIntegerFieldChange(event, intialValue);
-		}
-	};
+	private Spinner widthSpinner;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -130,30 +117,18 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 * @see org.eclipse.ui.internal.views.markers.ViewerSettingsAndStatusDialog#createDialogContentArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogContentArea(Composite dialogArea) {
-		return createColumnsArea(dialogArea);
+		Composite composite = new Composite(dialogArea, SWT.NONE);
+		composite.setLayout(new GridLayout(4, false));
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		createInvisibleTable(composite);
+		createMoveButtons(composite);
+		createVisibleTable(composite);
+		createUpDownBtt(composite);
+		createWidthArea(composite);
+		return composite;
 	}
 	
-	/**
-	 * Create the controls to configure columns.
-	 * 
-	 * @param dialogArea
-	 * @return {@link Control}
-	 */
-	Control createColumnsArea(Composite dialogArea) {
-		Group columnArea = new Group(dialogArea, SWT.NONE);
-		columnArea.setLayout(new GridLayout(4, false));
-		GridData gData = new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		columnArea.setLayoutData(gData);
-		columnArea.setText(MarkerMessages.MarkerPreferences_ColumnGroupTitle);
-
-		createInvisibleTable(columnArea);
-		createMoveButtons(columnArea);
-		createVisibleTable(columnArea);
-		createUpDownBtt(columnArea);
-		createWidthArea(columnArea);
-		return columnArea;
-	}
 
 	/**
 	 * The Up and Down button to change column ordering.
@@ -163,13 +138,10 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	Control createUpDownBtt(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(1, true);
-		layout.horizontalSpacing = 0;
-		layout.marginRight = -1;
-		layout.marginLeft = -1;
-		layout.marginWidth = 0;
 		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_END));
+		GridData gridData = new GridData(GridData.FILL_VERTICAL);
+		gridData.verticalIndent = convertHeightInCharsToPixels(1);
+		composite.setLayoutData(gridData);
 		upButton = new Button(composite, SWT.PUSH);
 		upButton.setText(JFaceResources.getString("ConfigureColumnsDialog_up")); //$NON-NLS-1$
 		upButton.addListener(SWT.Selection, new Listener() {
@@ -177,7 +149,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 				handleUpButton(event);
 			}
 		});
-		upButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		setButtonLayoutData(upButton);
 		upButton.setEnabled(false);
 
 		downButton = new Button(composite, SWT.PUSH);
@@ -188,7 +160,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 				handleDownButton(event);
 			}
 		});
-		downButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		setButtonLayoutData(downButton);
 		downButton.setEnabled(false);
 		return composite;
 	}
@@ -208,46 +180,25 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		gridData.horizontalSpan = 3;
 		widthLabel.setLayoutData(gridData);
 
-		widthText = new Text(parent, SWT.SINGLE | SWT.BORDER);
-		widthText.setText(Integer.toString(0));
-		gridData = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_CENTER);
-		gridData.widthHint = convertWidthInCharsToPixels(5);
-		widthText.setLayoutData(gridData);
-		widthText.addListener(SWT.Modify, postiveIntTextListener);
-		widthText.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				if (widthText.isEnabled()) {
-					try {
-						int width = Integer
-								.parseInt(widthText.getText().trim());
-						Object data = ((IStructuredSelection) visibleViewer
-								.getSelection()).getFirstElement();
-						if (data != null) {
-							IColumnUpdater updater = getColumnUpdater();
-							updater.setColumnWidth(data, width);
-						}
-					} catch (Exception e) {
-						return;// ignore
-					}
+		widthSpinner = new Spinner(parent, SWT.BORDER);
+		widthSpinner.setMinimum(1);
+		widthSpinner.setSelection(1);
+		widthSpinner.setMaximum(10000);
+		gridData = new GridData();
+		gridData.minimumWidth = convertWidthInCharsToPixels(5);
+		widthSpinner.setLayoutData(gridData);
+		widthSpinner.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+				Object data = ((IStructuredSelection) visibleViewer
+						.getSelection()).getFirstElement();
+				if (data != null) {
+					IColumnUpdater updater = getColumnUpdater();
+					updater.setColumnWidth(data, widthSpinner.getSelection());
 				}
 			}
 		});
-		widthText.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
-		widthText.setEditable(false);
-		return widthText;
-	}
-
-	/**
-	 * Adapter to {@link IStructuredContentProvider}
-	 */
-	abstract class ContentProviderAdapter implements IStructuredContentProvider {
-
-		public void dispose() {
-		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
+		widthSpinner.setEnabled(false);
+		return widthSpinner;
 	}
 
 	/**
@@ -257,12 +208,19 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 * @return {@link Control}
 	 */
 	Control createVisibleTable(Composite parent) {
-		final Table table = new Table(parent, SWT.BORDER | SWT.MULTI);
+
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(MarkerMessages.MarkerPreferences_VisibleColumnsTitle);
+
+		final Table table = new Table(composite, SWT.BORDER | SWT.MULTI);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.widthHint = convertWidthInCharsToPixels(30);
+		data.widthHint = convertWidthInCharsToPixels(20);
 		data.heightHint = table.getItemHeight() * 15;
 		table.setLayoutData(data);
-		table.setHeaderVisible(true);
 
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText(MarkerMessages.MarkerPreferences_VisibleColumnsTitle);
@@ -275,11 +233,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 		visibleViewer = new TableViewer(table);
 		visibleViewer.setLabelProvider(doGetLabelProvider());
-		visibleViewer.setContentProvider(new ContentProviderAdapter() {
-			public Object[] getElements(Object inputElement) {
-				return getVisible().toArray();
-			}
-		});
+		visibleViewer.setContentProvider(ArrayContentProvider.getInstance());
 		visibleViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
@@ -291,7 +245,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 				handleToNonVisibleButton(event);
 			}
 		});
-		visibleViewer.setInput(this);
+		visibleViewer.setInput(getVisible());
 		return table;
 	}
 
@@ -302,12 +256,19 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 * @return {@link Control}
 	 */
 	Control createInvisibleTable(Composite parent) {
-		final Table table = new Table(parent, SWT.BORDER | SWT.MULTI);
+		
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(MarkerMessages.MarkerPreferences_HiddenColumnsTitle);
+		
+		final Table table = new Table(composite, SWT.BORDER | SWT.MULTI);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.widthHint = convertWidthInCharsToPixels(30);
+		data.widthHint = convertWidthInCharsToPixels(20);
 		data.heightHint = table.getItemHeight() * 15;
 		table.setLayoutData(data);
-		table.setHeaderVisible(true);
 
 		final TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setText(MarkerMessages.MarkerPreferences_HiddenColumnsTitle);
@@ -320,11 +281,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 		nonVisibleViewer = new TableViewer(table);
 		nonVisibleViewer.setLabelProvider(doGetLabelProvider());
-		nonVisibleViewer.setContentProvider(new ContentProviderAdapter() {
-			public Object[] getElements(Object inputElement) {
-				return getNonVisible().toArray();
-			}
-		});
+		nonVisibleViewer.setContentProvider(ArrayContentProvider.getInstance());
 		nonVisibleViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
@@ -336,7 +293,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 				handleToVisibleButton(event);
 			}
 		});
-		nonVisibleViewer.setInput(this);
+		nonVisibleViewer.setInput(getNonVisible());
 		return table;
 	}
 
@@ -350,13 +307,27 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	Control createMoveButtons(Composite parent) {
 		Composite bttArea = new Composite(parent, SWT.NONE);
 		bttArea.setLayout(new GridLayout(1, true));
-		bttArea.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		GridData gridData = new GridData(GridData.FILL_VERTICAL);
+		gridData.verticalIndent = convertHeightInCharsToPixels(1);
+		bttArea.setLayoutData(gridData);
+
+		toVisibleBtt = new Button(bttArea, SWT.PUSH);
+		toVisibleBtt
+				.setText(getDefaultOrientation() == SWT.RIGHT_TO_LEFT ? MarkerMessages.MarkerPreferences_MoveLeft
+						: MarkerMessages.MarkerPreferences_MoveRight);
+		setButtonLayoutData(toVisibleBtt);
+		toVisibleBtt.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				handleToVisibleButton(event);
+			}
+		});
+		toVisibleBtt.setEnabled(false);
 
 		toNonVisibleBtt = new Button(bttArea, SWT.PUSH);
 		toNonVisibleBtt
 				.setText(getDefaultOrientation() == SWT.RIGHT_TO_LEFT ? MarkerMessages.MarkerPreferences_MoveRight
 						: MarkerMessages.MarkerPreferences_MoveLeft);
-		toNonVisibleBtt.setLayoutData(new GridData());
+		setButtonLayoutData(toNonVisibleBtt);
 
 		toNonVisibleBtt.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -365,57 +336,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		});
 		toNonVisibleBtt.setEnabled(false);
 
-		toVisibleBtt = new Button(bttArea, SWT.PUSH);
-		toVisibleBtt
-				.setText(getDefaultOrientation() == SWT.RIGHT_TO_LEFT ? MarkerMessages.MarkerPreferences_MoveLeft
-						: MarkerMessages.MarkerPreferences_MoveRight);
-		toVisibleBtt.setLayoutData(new GridData());
-		toVisibleBtt.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				handleToVisibleButton(event);
-			}
-		});
-		toVisibleBtt.setEnabled(false);
 		return bttArea;
-	}
-
-	/**
-	 * 
-	 * @param event
-	 * @param intialvalue
-	 * @return new value in String
-	 */
-	String handleIntegerFieldChange(Event event, String intialvalue) {
-		String value = ((Text) event.widget).getText().trim();
-		boolean editable = ((Text) event.widget).getEditable();
-		switch (event.type) {
-		case SWT.KeyDown:
-		case SWT.Modify:
-		case SWT.FocusOut:
-			if (!editable) {
-				handleStatusUdpate(IStatus.INFO, null);
-				break;
-			}
-			if (value.length() == 0) {
-				handleStatusUdpate(IStatus.ERROR, null);
-			} else {
-				try {
-					int number = Integer.parseInt(value);
-					if (number > 0) {
-						handleStatusUdpate(IStatus.INFO, null);
-					} else {
-						value = intialvalue;
-						((Text) event.widget).selectAll();
-						handleStatusUdpate(IStatus.ERROR, getErrorMessage());
-					}
-				} catch (Exception e) {
-					value = intialvalue;
-					((Text) event.widget).selectAll();
-					handleStatusUdpate(IStatus.ERROR, getErrorMessage());
-				}
-			}
-		}
-		return value;
 	}
 
 	/**
@@ -427,7 +348,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	void handleNonVisibleSelection(ISelection selection) {
 		Object[] nvKeys = ((IStructuredSelection) selection).toArray();
 		toVisibleBtt.setEnabled(nvKeys.length > 0);
-
+		widthSpinner.setEnabled(false);
 		if (visibleViewer.getControl().isFocusControl()
 				&& getVisible().size() <= 1) {
 			handleStatusUdpate(IStatus.INFO,
@@ -478,12 +399,12 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 		boolean edit = selVCols.size() == 1 ? infoProvider
 				.isColumnResizable(selVCols.get(0)) : false;
-		widthText.setEditable(edit);
+		widthSpinner.setEnabled(edit);
 		if (edit) {
-			widthText.setText(Integer.toString(infoProvider
-					.getColumnWidth(selVCols.get(0))));
+			widthSpinner.setSelection(infoProvider
+					.getColumnWidth(selVCols.get(0)));
 		} else {
-			widthText.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
+			widthSpinner.setSelection(0);
 		}
 	}
 
@@ -1005,5 +926,4 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 	}
 
-	// //////////////////////////////////////////////////////////////////////////////////
 }

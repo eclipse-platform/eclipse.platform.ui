@@ -352,11 +352,11 @@ public class ExtendedMarkersView extends ViewPart {
 						.getConfigurationElement().getAttribute(
 								MarkerSupportInternalUtilities.ATTRIBUTE_ID));
 				// Make sure we get a useful value
-				if (value != null && value.intValue() > 0)
+				if (value != null && value.intValue() >= 0)
 					preferredWidth = value.intValue();
 			}
 		}
-		if (preferredWidth <= 0) {
+		if (preferredWidth < 0) {
 			// Compute and store a font metric
 			GC gc = new GC(tree);
 			gc.setFont(tree.getFont());
@@ -1245,7 +1245,7 @@ public class ExtendedMarkersView extends ViewPart {
 			fields[positions[i]] = (MarkerField) column.getData(MARKER_FIELD);
 		}
 		if (generator != null) {
-			generator.saveSate(memento, fields);
+			generator.saveState(memento, fields);
 		}
 		builder.saveState(memento);
 	}

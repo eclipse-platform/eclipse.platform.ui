@@ -67,6 +67,7 @@ public class MarkerContentGenerator {
 	private static final String TAG_GROUP_ENTRY = "filterGroup"; //$NON-NLS-1$
 	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
 	private static final String TAG_LEGACY_FILTER_ENTRY = "filter"; //$NON-NLS-1$
+	private static final String TAG_MARKER_LIMIT = "markerLimit"; //$NON-NLS-1$
 	
 	/*Use this to indicate filter change rather than a null*/
 	private final Collection FILTERS_CHANGED = Collections.EMPTY_SET;
@@ -81,6 +82,7 @@ public class MarkerContentGenerator {
 	private Collection enabledFilters;
 	private Collection filters;
 	private boolean andFilters = false;
+	private int markerLimits = 100;
 
 	/**
 	 * focusResources
@@ -199,11 +201,10 @@ public class MarkerContentGenerator {
 		return hidden.toArray();
 	}
 
-	void initialise(IMemento memento) {
-		initialiseVisibleFields(memento);
-	}
+	void saveState(IMemento memento, MarkerField[] displayedFields) {
 
-	void saveSate(IMemento memento, MarkerField[] displayedFields) {
+		memento.putInteger(TAG_MARKER_LIMIT, markerLimits);
+
 		for (int i = 0; i < displayedFields.length; i++) {
 			memento.createChild(TAG_COLUMN_VISIBILITY, displayedFields[i]
 					.getConfigurationElement().getAttribute(
@@ -212,48 +213,55 @@ public class MarkerContentGenerator {
 	}
 
 	void restoreState(IMemento memento) {
-		initialiseVisibleFields(memento);
-	}
 
-	/**
-	 * Initialize the visible fields based on the initial settings or the
-	 * contents of the {@link IMemento}
-	 * 
-	 * @param memento
-	 *            IMemento
-	 */
-	private void initialiseVisibleFields(IMemento memento) {
+		initDefaults();
 
-		if (memento == null
-				|| memento.getChildren(TAG_COLUMN_VISIBILITY).length == 0) {
-			MarkerField[] initialFields = getInitialVisible();
-
-			visibleFields = new MarkerField[initialFields.length];
-			System.arraycopy(initialFields, 0, visibleFields, 0,
-					initialFields.length);
+		if (memento == null) {
 			return;
 		}
-
-		IMemento[] visible = memento.getChildren(TAG_COLUMN_VISIBILITY);
-		Collection newVisible = new ArrayList();
-
-		MarkerField[] all = getAllFields();
-		Hashtable allTable = new Hashtable();
-
-		for (int i = 0; i < all.length; i++) {
-			allTable.put(all[i].getConfigurationElement().getAttribute(
-					MarkerSupportInternalUtilities.ATTRIBUTE_ID), all[i]);
+		
+		Integer limits = memento.getInteger(TAG_MARKER_LIMIT);
+		if(limits != null) {
+			markerLimits = limits.intValue();
 		}
+		
+		if (memento.getChildren(TAG_COLUMN_VISIBILITY).length != 0) {
 
-		for (int i = 0; i < visible.length; i++) {
-			String key = visible[i].getID();
-			if (allTable.containsKey(key)) {
-				newVisible.add(allTable.get(key));
+			IMemento[] visible = memento.getChildren(TAG_COLUMN_VISIBILITY);
+			Collection newVisible = new ArrayList();
+	
+			MarkerField[] all = getAllFields();
+			Hashtable allTable = new Hashtable();
+	
+			for (int i = 0; i < all.length; i++) {
+				allTable.put(all[i].getConfigurationElement().getAttribute(
+						MarkerSupportInternalUtilities.ATTRIBUTE_ID), all[i]);
 			}
+	
+			for (int i = 0; i < visible.length; i++) {
+				String key = visible[i].getID();
+				if (allTable.containsKey(key)) {
+					newVisible.add(allTable.get(key));
+				}
+			}
+	
+			visibleFields = new MarkerField[newVisible.size()];
+			newVisible.toArray(visibleFields);
 		}
+	}
 
-		visibleFields = new MarkerField[newVisible.size()];
-		newVisible.toArray(visibleFields);
+	private void initDefaults() {
+		
+		IPreferenceStore preferenceStore = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		if(preferenceStore.getBoolean(IDEInternalPreferences.USE_MARKER_LIMITS))
+			markerLimits = preferenceStore.getInt(IDEInternalPreferences.MARKER_LIMITS_VALUE);
+
+		MarkerField[] initialFields = getInitialVisible();
+
+		visibleFields = new MarkerField[initialFields.length];
+		System.arraycopy(initialFields, 0, visibleFields, 0,
+				initialFields.length);
+
 	}
 
 	/**
@@ -389,6 +397,20 @@ public class MarkerContentGenerator {
 	 */
 	boolean andFilters() {
 		return andFilters;
+	}
+	
+	/**
+	 * @return Returns the markerLimits.
+	 */
+	public int getMarkerLimits() {
+		return markerLimits;
+	}
+	
+	/**
+	 * @param markerLimits The markerLimits to set.
+	 */
+	public void setMarkerLimits(int markerLimits) {
+		this.markerLimits = markerLimits;
 	}
 
 	/**
