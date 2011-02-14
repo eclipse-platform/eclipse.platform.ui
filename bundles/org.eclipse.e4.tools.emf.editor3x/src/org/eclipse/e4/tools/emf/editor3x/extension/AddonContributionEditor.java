@@ -61,9 +61,20 @@ public class AddonContributionEditor implements IContributionClassCreator {
 				IFile f = wizard.getFile();
 				ICompilationUnit el = JavaCore.createCompilationUnitFrom(f);
 				try {
-					String packageName = el.getPackageDeclarations()[0].getElementName();
-					String className = wizard.getDomainClass().getName();
-					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "platform:/plugin/" + Util.getBundleSymbolicName(f.getProject()) + "/" + packageName+"."+className);
+					String fullyQualified;
+					if( el.getPackageDeclarations() != null && el.getPackageDeclarations().length > 0 ) {
+						String packageName = el.getPackageDeclarations()[0].getElementName();
+						String className = wizard.getDomainClass().getName();
+						if( packageName.trim().length() > 0 ) {
+							fullyQualified = packageName + "." + className;	
+						} else {
+							fullyQualified = className;
+						}
+					} else {
+						fullyQualified = wizard.getDomainClass().getName();
+					}
+					
+					Command cmd = SetCommand.create(domain, contribution, ApplicationPackageImpl.Literals.CONTRIBUTION__CONTRIBUTION_URI, "platform:/plugin/" + Util.getBundleSymbolicName(f.getProject()) + "/" + fullyQualified);
 					if( cmd.canExecute() ) {
 						domain.getCommandStack().execute(cmd);
 					}

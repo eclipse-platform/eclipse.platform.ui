@@ -14,76 +14,82 @@ public class PartTemplate
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = " " + NL + "package ";
-  protected final String TEXT_2 = ";" + NL + "" + NL + "import javax.inject.Inject;";
-  protected final String TEXT_3 = NL + "import javax.annotation.PostConstruct;";
-  protected final String TEXT_4 = NL + "import javax.annotation.PreDestroy;";
-  protected final String TEXT_5 = NL + "import org.eclipse.e4.ui.di.Focus;";
-  protected final String TEXT_6 = NL + "import org.eclipse.e4.ui.di.Persist;";
-  protected final String TEXT_7 = NL + NL + "public class ";
-  protected final String TEXT_8 = " {" + NL + "\t@Inject" + NL + "\tpublic ";
-  protected final String TEXT_9 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
-  protected final String TEXT_10 = NL + "\t@PostConstruct" + NL + "\tpublic void ";
+  protected final String TEXT_1 = " ";
+  protected final String TEXT_2 = NL + "package ";
+  protected final String TEXT_3 = ";";
+  protected final String TEXT_4 = NL + NL + "import javax.inject.Inject;";
+  protected final String TEXT_5 = NL + "import javax.annotation.PostConstruct;";
+  protected final String TEXT_6 = NL + "import javax.annotation.PreDestroy;";
+  protected final String TEXT_7 = NL + "import org.eclipse.e4.ui.di.Focus;";
+  protected final String TEXT_8 = NL + "import org.eclipse.e4.ui.di.Persist;";
+  protected final String TEXT_9 = NL + NL + "public class ";
+  protected final String TEXT_10 = " {" + NL + "\t@Inject" + NL + "\tpublic ";
   protected final String TEXT_11 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
-  protected final String TEXT_12 = NL + "\t";
-  protected final String TEXT_13 = NL + "\t@PreDestroy" + NL + "\tpublic void ";
-  protected final String TEXT_14 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
-  protected final String TEXT_15 = NL + "\t";
-  protected final String TEXT_16 = NL + "\t@Focus" + NL + "\tpublic void ";
-  protected final String TEXT_17 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
-  protected final String TEXT_18 = NL + "\t";
-  protected final String TEXT_19 = NL + "\t@Persist" + NL + "\tpublic void ";
-  protected final String TEXT_20 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
-  protected final String TEXT_21 = NL + "}";
+  protected final String TEXT_12 = NL + "\t@PostConstruct" + NL + "\tpublic void ";
+  protected final String TEXT_13 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_14 = NL + "\t";
+  protected final String TEXT_15 = NL + "\t@PreDestroy" + NL + "\tpublic void ";
+  protected final String TEXT_16 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_17 = NL + "\t";
+  protected final String TEXT_18 = NL + "\t@Focus" + NL + "\tpublic void ";
+  protected final String TEXT_19 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_20 = NL + "\t";
+  protected final String TEXT_21 = NL + "\t@Persist" + NL + "\tpublic void ";
+  protected final String TEXT_22 = "() {" + NL + "\t\t//TODO Your code here" + NL + "\t}" + NL + "\t";
+  protected final String TEXT_23 = NL + "}";
 
   public String generate(Object argument)
   {
     final StringBuffer stringBuffer = new StringBuffer();
      PartClass domainClass = (PartClass)argument; 
     stringBuffer.append(TEXT_1);
-    stringBuffer.append( domainClass.getPackageFragment().getElementName() );
+     if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) { 
     stringBuffer.append(TEXT_2);
-     if( domainClass.isUsePostConstruct() ) { 
+    stringBuffer.append( domainClass.getPackageFragment().getElementName() );
     stringBuffer.append(TEXT_3);
      } 
-     if( domainClass.isUsePredestroy() ) { 
     stringBuffer.append(TEXT_4);
-     } 
-     if( domainClass.isUseFocus() ) { 
+     if( domainClass.isUsePostConstruct() ) { 
     stringBuffer.append(TEXT_5);
      } 
-     if( domainClass.isUsePersist() ) { 
+     if( domainClass.isUsePredestroy() ) { 
     stringBuffer.append(TEXT_6);
      } 
-    stringBuffer.append(TEXT_7);
-    stringBuffer.append( domainClass.getName() );
-    stringBuffer.append(TEXT_8);
-    stringBuffer.append( domainClass.getName() );
-    stringBuffer.append(TEXT_9);
-     if( domainClass.isUsePostConstruct() ) { 
-    stringBuffer.append(TEXT_10);
-    stringBuffer.append( domainClass.getPostConstructMethodName()  );
-    stringBuffer.append(TEXT_11);
-     } 
-    stringBuffer.append(TEXT_12);
-     if( domainClass.isUsePredestroy() ) { 
-    stringBuffer.append(TEXT_13);
-    stringBuffer.append( domainClass.getPreDestroyMethodName()  );
-    stringBuffer.append(TEXT_14);
-     } 
-    stringBuffer.append(TEXT_15);
      if( domainClass.isUseFocus() ) { 
-    stringBuffer.append(TEXT_16);
-    stringBuffer.append( domainClass.getFocusMethodName() );
-    stringBuffer.append(TEXT_17);
+    stringBuffer.append(TEXT_7);
      } 
-    stringBuffer.append(TEXT_18);
      if( domainClass.isUsePersist() ) { 
-    stringBuffer.append(TEXT_19);
-    stringBuffer.append( domainClass.getPersistMethodName() );
-    stringBuffer.append(TEXT_20);
+    stringBuffer.append(TEXT_8);
      } 
+    stringBuffer.append(TEXT_9);
+    stringBuffer.append( domainClass.getName() );
+    stringBuffer.append(TEXT_10);
+    stringBuffer.append( domainClass.getName() );
+    stringBuffer.append(TEXT_11);
+     if( domainClass.isUsePostConstruct() ) { 
+    stringBuffer.append(TEXT_12);
+    stringBuffer.append( domainClass.getPostConstructMethodName()  );
+    stringBuffer.append(TEXT_13);
+     } 
+    stringBuffer.append(TEXT_14);
+     if( domainClass.isUsePredestroy() ) { 
+    stringBuffer.append(TEXT_15);
+    stringBuffer.append( domainClass.getPreDestroyMethodName()  );
+    stringBuffer.append(TEXT_16);
+     } 
+    stringBuffer.append(TEXT_17);
+     if( domainClass.isUseFocus() ) { 
+    stringBuffer.append(TEXT_18);
+    stringBuffer.append( domainClass.getFocusMethodName() );
+    stringBuffer.append(TEXT_19);
+     } 
+    stringBuffer.append(TEXT_20);
+     if( domainClass.isUsePersist() ) { 
     stringBuffer.append(TEXT_21);
+    stringBuffer.append( domainClass.getPersistMethodName() );
+    stringBuffer.append(TEXT_22);
+     } 
+    stringBuffer.append(TEXT_23);
     return stringBuffer.toString();
   }
 }

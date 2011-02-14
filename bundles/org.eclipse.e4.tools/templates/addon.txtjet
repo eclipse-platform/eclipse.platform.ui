@@ -1,6 +1,8 @@
 <%@ jet package="org.eclipse.e4.internal.tools.wizards.classes.templates" class="AddonTemplate" imports="org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass" %>
 <% JavaClass domainClass = (JavaClass)argument; %> 
+<% if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) { %>
 package <%= domainClass.getPackageFragment().getElementName() %>;
+<% } %>
 
 import javax.inject.Inject;
 import javax.annotation.PostConstruct;
