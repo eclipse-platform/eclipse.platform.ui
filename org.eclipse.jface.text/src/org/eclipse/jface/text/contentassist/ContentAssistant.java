@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+f * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -851,6 +851,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public static final int WIDGET_PRIORITY= 20;
 
 	private static final int DEFAULT_AUTO_ACTIVATION_DELAY= 500;
+	private static final int ADDITIONAL_INFO_DELAY= 500; // The same value as used in OpenStrategy.TIME
+
 
 	private IInformationControlCreator fInformationControlCreator;
 	private int fAutoActivationDelay= DEFAULT_AUTO_ACTIVATION_DELAY;
@@ -1368,13 +1370,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		fInternalListener= new InternalListener();
 
 		AdditionalInfoController controller= null;
-		if (fInformationControlCreator != null) {
-			int delay= fAutoActivationDelay;
-			if (delay == 0)
-				delay= DEFAULT_AUTO_ACTIVATION_DELAY;
-			delay= Math.round(delay * 1.5f);
-			controller= new AdditionalInfoController(fInformationControlCreator, delay);
-		}
+		if (fInformationControlCreator != null)
+			controller= new AdditionalInfoController(fInformationControlCreator, ADDITIONAL_INFO_DELAY);
 
 		fContextInfoPopup= fContentAssistSubjectControlAdapter.createContextInfoPopup(this);
 		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller);
