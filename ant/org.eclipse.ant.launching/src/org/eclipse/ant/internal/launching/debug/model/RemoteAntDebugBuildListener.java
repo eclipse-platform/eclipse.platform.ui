@@ -23,6 +23,7 @@ import org.eclipse.ant.internal.launching.debug.IAntDebugController;
 import org.eclipse.ant.internal.launching.launchConfigurations.RemoteAntBuildListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -80,7 +81,9 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		} else if (message.startsWith(DebugMessageIds.SUSPENDED)){
 			handleSuspendMessage(message);
 		} else if (message.startsWith(DebugMessageIds.TERMINATED)){
-			fTarget.terminated();
+			try {
+				fTarget.terminate();
+			} catch (DebugException e) {}
 		} else if (message.startsWith(DebugMessageIds.STACK)){
 			AntThread thread= (AntThread) fTarget.getThreads()[0];
 			thread.buildStack(message);
@@ -178,8 +181,10 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 	
 	protected synchronized void shutDown() {
         if (fTarget != null) {
-            fTarget.terminated();
-            fTarget= null;
+            try {
+				fTarget.terminate();
+				fTarget= null;
+			} catch (DebugException e) {}
         }
 		fLaunch= null;
 		if (DebugPlugin.getDefault() != null) {
