@@ -27,9 +27,9 @@ public class Location {
 
 	@Inject
 	public Location(Composite parent) {
-		parent.setLayout(new FillLayout());
-		parent.setData("org.eclipse.e4.ui.css.id", "location");
-		browserParent = parent;
+		browserParent = new Composite(parent, SWT.NONE);
+		browserParent.setLayout(new FillLayout());
+		browserParent.setData("org.eclipse.e4.ui.css.id", "location");
 	}
 	
 	@Focus
@@ -42,7 +42,7 @@ public class Location {
 		if (input == null || this.exif == input) {
 			return;
 		}
-		this.exif = (Exif) input;
+		this.exif = input;
 
 		// Create Browser widget only when we have content to show
 		// so that we can control background color when there is no content
