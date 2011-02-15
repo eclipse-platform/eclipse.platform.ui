@@ -63,6 +63,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			IEclipseContext serviceContext = EclipseContextFactory.getServiceContext(bundleContext);
 
 			final IEclipseContext appContext = serviceContext.createChild("WorkbenchContext"); //$NON-NLS-1$
+			appContext.set(Display.class, Display.getCurrent());
 			appContext.set(Logger.class, new WorkbenchLogger());
 			appContext.set(IClipboardService.class, new ClipboardServiceImpl());
 			IContributionFactory contributionFactory = ContextInjectionFactory.make(ReflectionContributionFactory.class, appContext);
