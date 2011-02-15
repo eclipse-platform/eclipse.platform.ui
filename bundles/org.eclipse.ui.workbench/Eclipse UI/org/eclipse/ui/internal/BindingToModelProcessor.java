@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
@@ -41,6 +42,7 @@ public class BindingToModelProcessor {
 	private Map<String, MBindingContext> contexts = new HashMap<String, MBindingContext>();
 	private Map<String, MCommand> commands = new HashMap<String, MCommand>();
 	private Map<String, MBindingTable> tables = new HashMap<String, MBindingTable>();
+
 
 
 	@Execute
@@ -71,7 +73,7 @@ public class BindingToModelProcessor {
 	 */
 	private void gatherTables(List<MBindingTable> bindingTables) {
 		for (MBindingTable table : bindingTables) {
-			tables.put(table.getBindingContextId(), table);
+			tables.put(table.getBindingContext().getElementId(), table);
 		}
 	}
 
@@ -101,16 +103,54 @@ public class BindingToModelProcessor {
 		table.getBindings().add(keyBinding);
 	}
 
+	public MBindingContext getBindingContext(MApplication application, String id) {
+		// cache
+		MBindingContext result = contexts.get(id);
+		if (result == null) {
+			// search
+			result = searchContexts(id, application.getRootContext());
+			if (result == null) {
+				// create
+				result = MCommandsFactory.INSTANCE.createBindingContext();
+				result.setElementId(id);
+				result.setName("Auto::" + id); //$NON-NLS-1$
+				application.getRootContext().add(result);
+			}
+			if (result != null) {
+				contexts.put(id, result);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @param id
+	 * @param rootContext
+	 * @return
+	 */
+	private MBindingContext searchContexts(String id, List<MBindingContext> rootContext) {
+		for (MBindingContext context : rootContext) {
+			if (context.getElementId().equals(id)) {
+				return context;
+			}
+			MBindingContext result = searchContexts(id, context.getChildren());
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * @param contextId
 	 * @return
 	 */
 	private MBindingTable createTable(MApplication application, String contextId) {
 		MBindingTable table = CommandsFactoryImpl.eINSTANCE.createBindingTable();
-		table.setBindingContextId(contextId);
+		table.setBindingContext(getBindingContext(application, contextId));
 		table.setElementId(contextId);
 		application.getBindingTables().add(table);
-		tables.put(table.getBindingContextId(), table);
+		tables.put(table.getBindingContext().getElementId(), table);
 		return table;
 	}
 

@@ -67,9 +67,11 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -1806,6 +1808,45 @@ public final class Workbench extends EventManager implements IWorkbench {
 		return service;
 	}
 
+	private Map<String, MBindingContext> bindingContexts = new HashMap<String, MBindingContext>();
+
+	public MBindingContext getBindingContext(String id) {
+		// cache
+		MBindingContext result = bindingContexts.get(id);
+		if (result == null) {
+			// search
+			result = searchContexts(id, application.getRootContext());
+			if (result == null) {
+				// create
+				result = MCommandsFactory.INSTANCE.createBindingContext();
+				result.setElementId(id);
+				result.setName("Auto::" + id); //$NON-NLS-1$
+				application.getRootContext().add(result);
+			}
+			if (result != null) {
+				bindingContexts.put(id, result);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @param id
+	 * @param rootContext
+	 * @return
+	 */
+	private MBindingContext searchContexts(String id, List<MBindingContext> rootContext) {
+		for (MBindingContext context : rootContext) {
+			if (context.getElementId().equals(id)) {
+				return context;
+			}
+			MBindingContext result = searchContexts(id, context.getChildren());
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
+	}
 	private void defineBindingTable(String id) {
 		List<MBindingTable> bindingTables = application.getBindingTables();
 		if (contains(bindingTables, id)) {
@@ -1815,7 +1856,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			WorkbenchPlugin.log("Defining a binding table: " + id); //$NON-NLS-1$
 		}
 		MBindingTable bt = CommandsFactoryImpl.eINSTANCE.createBindingTable();
-		bt.setBindingContextId(id);
+		bt.setBindingContext(getBindingContext(id));
 		bindingTables.add(bt);
 	}
 
@@ -1826,7 +1867,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private boolean contains(List<MBindingTable> bindingTables, String id) {
 		for (MBindingTable bt : bindingTables) {
-			if (id.equals(bt.getBindingContextId())) {
+			if (id.equals(bt.getBindingContext().getElementId())) {
 				return true;
 			}
 		}

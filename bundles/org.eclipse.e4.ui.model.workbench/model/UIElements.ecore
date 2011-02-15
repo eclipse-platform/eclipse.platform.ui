@@ -51,8 +51,8 @@
           eType="#//commands/BindingContext" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Bindings" abstract="true" interface="true">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="bindingContexts" ordered="false"
-          upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="bindingContexts" upperBound="-1"
+          eType="#//commands/BindingContext"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="BindingContext" eSuperTypes="#//ApplicationElement">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -61,10 +61,10 @@
           eType="#//commands/BindingContext" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="BindingTable" eSuperTypes="#//ApplicationElement">
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="bindingContextId" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
           eType="#//commands/KeyBinding" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="bindingContext" lowerBound="1"
+          eType="#//commands/BindingContext"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Command" eSuperTypes="#//ApplicationElement">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="commandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

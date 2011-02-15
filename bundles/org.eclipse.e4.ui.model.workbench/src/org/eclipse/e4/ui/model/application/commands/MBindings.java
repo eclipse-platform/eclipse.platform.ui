@@ -29,18 +29,18 @@ import java.util.List;
  */
 public interface MBindings {
 	/**
-	 * Returns the value of the '<em><b>Binding Contexts</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.String}.
+	 * Returns the value of the '<em><b>Binding Contexts</b></em>' reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.commands.MBindingContext}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Binding Contexts</em>' attribute list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Binding Contexts</em>' attribute list.
-	 * @model ordered="false"
+	 * @return the value of the '<em>Binding Contexts</em>' reference list.
+	 * @model
 	 * @generated
 	 */
-	List<String> getBindingContexts();
+	List<MBindingContext> getBindingContexts();
 
 } // MBindings

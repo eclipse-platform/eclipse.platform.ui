@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.descriptor.basic.impl;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
@@ -30,6 +31,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -129,14 +131,14 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	protected EList<MHandler> handlers;
 
 	/**
-	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' attribute list.
+	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getBindingContexts()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<String> bindingContexts;
+	protected EList<MBindingContext> bindingContexts;
 
 	/**
 	 * The default value of the '{@link #isAllowMultiple() <em>Allow Multiple</em>}' attribute.
@@ -377,9 +379,9 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<String> getBindingContexts() {
+	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS);
+			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -661,7 +663,7 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__BINDING_CONTEXTS:
 				getBindingContexts().clear();
-				getBindingContexts().addAll((Collection<? extends String>)newValue);
+				getBindingContexts().addAll((Collection<? extends MBindingContext>)newValue);
 				return;
 			case BasicPackageImpl.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				setAllowMultiple((Boolean)newValue);
@@ -857,8 +859,6 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
 		result.append(tooltip);
-		result.append(", bindingContexts: "); //$NON-NLS-1$
-		result.append(bindingContexts);
 		result.append(", allowMultiple: "); //$NON-NLS-1$
 		result.append(allowMultiple);
 		result.append(", category: "); //$NON-NLS-1$

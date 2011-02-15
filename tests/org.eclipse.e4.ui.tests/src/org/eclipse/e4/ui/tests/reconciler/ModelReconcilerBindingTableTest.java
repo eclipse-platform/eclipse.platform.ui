@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.tests.reconciler;
 
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.workbench.modeling.ModelDelta;
@@ -21,20 +22,23 @@ import org.eclipse.e4.ui.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerBindingTableTest extends
 		ModelReconcilerTest {
 
-	private void testBindingTable_BindingContextId(String before, String after) {
+	public void testBindingTable_BindingContext_Set() {
 		MApplication application = createApplication();
 
 		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
 				.createBindingTable();
-		bindingTable.setBindingContextId(before);
 		application.getBindingTables().add(bindingTable);
+
+		MBindingContext bindingContext = CommandsFactoryImpl.eINSTANCE
+				.createBindingContext();
+		application.getRootContext().add(bindingContext);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		bindingTable.setBindingContextId(after);
+		bindingTable.setBindingContext(bindingContext);
 
 		Object state = reconciler.serialize();
 
@@ -43,51 +47,65 @@ public abstract class ModelReconcilerBindingTableTest extends
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(before, bindingTable.getBindingContextId());
+		assertEquals(1, application.getBindingTables().size());
+		assertEquals(bindingTable, application.getBindingTables().get(0));
+		assertNull(bindingTable.getBindingContext());
 
 		applyAll(deltas);
 
-		assertEquals(after, bindingTable.getBindingContextId());
+		MBindingContext restoredBindingContext = bindingTable
+				.getBindingContext();
+		assertEquals(1, application.getBindingTables().size());
+		assertEquals(bindingTable, application.getBindingTables().get(0));
+		assertNotNull(restoredBindingContext);
+		assertEquals(1, application.getRootContext().size());
+		assertEquals(restoredBindingContext, application.getRootContext()
+				.get(0));
 	}
 
-	public void testBindingTable_BindingContextId_NullNull() {
-		testBindingTable_BindingContextId(null, null);
-	}
+	public void testBindingTable_BindingContext_Unset() {
+		MApplication application = createApplication();
 
-	public void testBindingTable_BindingContextId_NullEmpty() {
-		testBindingTable_BindingContextId(null, "");
-	}
+		MBindingTable bindingTable = CommandsFactoryImpl.eINSTANCE
+				.createBindingTable();
+		application.getBindingTables().add(bindingTable);
 
-	public void testBindingTable_BindingContextId_NullString() {
-		testBindingTable_BindingContextId(null, "name");
-	}
+		MBindingContext bindingContext = CommandsFactoryImpl.eINSTANCE
+				.createBindingContext();
+		bindingTable.setBindingContext(bindingContext);
+		application.getRootContext().add(bindingContext);
 
-	public void testBindingTable_BindingContextId_EmptyNull() {
-		testBindingTable_BindingContextId("", null);
-	}
+		saveModel();
 
-	public void testBindingTable_BindingContextId_EmptyEmpty() {
-		testBindingTable_BindingContextId("", "");
-	}
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
 
-	public void testBindingTable_BindingContextId_EmptyString() {
-		testBindingTable_BindingContextId("", "name");
-	}
+		bindingTable.setBindingContext(null);
 
-	public void testBindingTable_BindingContextId_StringNull() {
-		testBindingTable_BindingContextId("name", null);
-	}
+		Object state = reconciler.serialize();
 
-	public void testBindingTable_BindingContextId_StringEmpty() {
-		testBindingTable_BindingContextId("name", "");
-	}
+		application = createApplication();
+		bindingTable = application.getBindingTables().get(0);
 
-	public void testBindingTable_BindingContextId_StringStringUnchanged() {
-		testBindingTable_BindingContextId("name", "name");
-	}
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-	public void testBindingTable_BindingContextId_StringStringChanged() {
-		testBindingTable_BindingContextId("name", "name2");
+		MBindingContext restoredBindingContext = bindingTable
+				.getBindingContext();
+		assertNotNull(restoredBindingContext);
+		assertEquals(1, application.getRootContext().size());
+		assertEquals(restoredBindingContext, application.getRootContext()
+				.get(0));
+		assertEquals(1, application.getBindingTables().size());
+		assertEquals(bindingTable, application.getBindingTables().get(0));
+
+		applyAll(deltas);
+
+		assertNull(bindingTable.getBindingContext());
+		assertEquals(1, application.getRootContext().size());
+		assertEquals(restoredBindingContext, application.getRootContext()
+				.get(0));
+		assertEquals(1, application.getBindingTables().size());
+		assertEquals(bindingTable, application.getBindingTables().get(0));
 	}
 
 }

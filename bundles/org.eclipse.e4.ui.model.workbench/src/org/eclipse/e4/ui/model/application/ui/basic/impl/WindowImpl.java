@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
@@ -39,6 +40,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -181,14 +183,14 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	protected EList<MHandler> handlers;
 
 	/**
-	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' attribute list.
+	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getBindingContexts()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<String> bindingContexts;
+	protected EList<MBindingContext> bindingContexts;
 
 	/**
 	 * The cached value of the '{@link #getMainMenu() <em>Main Menu</em>}' containment reference.
@@ -444,9 +446,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<String> getBindingContexts() {
+	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.WINDOW__BINDING_CONTEXTS);
+			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, BasicPackageImpl.WINDOW__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -717,7 +719,7 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 				return;
 			case BasicPackageImpl.WINDOW__BINDING_CONTEXTS:
 				getBindingContexts().clear();
-				getBindingContexts().addAll((Collection<? extends String>)newValue);
+				getBindingContexts().addAll((Collection<? extends MBindingContext>)newValue);
 				return;
 			case BasicPackageImpl.WINDOW__MAIN_MENU:
 				setMainMenu((MMenu)newValue);
@@ -941,8 +943,6 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$
 		result.append(variables);
-		result.append(", bindingContexts: "); //$NON-NLS-1$
-		result.append(bindingContexts);
 		result.append(", x: "); //$NON-NLS-1$
 		result.append(x);
 		result.append(", y: "); //$NON-NLS-1$

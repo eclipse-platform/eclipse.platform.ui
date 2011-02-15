@@ -503,7 +503,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * @generated
 	 */
 	public String getLocalizedAccessibilityPhrase() {
-		return LocalizationHelper.getLocalizedAccessibilityPhrase(this);
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	/**

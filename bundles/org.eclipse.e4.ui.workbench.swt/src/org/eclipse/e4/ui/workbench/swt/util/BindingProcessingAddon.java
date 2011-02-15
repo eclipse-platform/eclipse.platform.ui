@@ -31,6 +31,7 @@ import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
@@ -86,12 +87,13 @@ public class BindingProcessingAddon {
 		if (me instanceof MBindings) {
 			MContext contextModel = (MContext) me;
 			MBindings container = (MBindings) me;
-			List<String> bindingContexts = container.getBindingContexts();
+			List<MBindingContext> bindingContexts = container
+					.getBindingContexts();
 			IEclipseContext context = contextModel.getContext();
 			if (context != null && !bindingContexts.isEmpty()) {
 				EContextService cs = context.get(EContextService.class);
-				for (String id : bindingContexts) {
-					cs.activateContext(id);
+				for (MBindingContext element : bindingContexts) {
+					cs.activateContext(element.getElementId());
 				}
 			}
 		}
@@ -118,9 +120,9 @@ public class BindingProcessingAddon {
 	 */
 	private void defineBindingTable(MBindingTable bindingTable) {
 		final Context bindingContext = contextManager.getContext(bindingTable
-				.getBindingContextId());
+				.getBindingContext().getElementId());
 		BindingTable table = bindingTables.getTable(bindingTable
-				.getBindingContextId());
+				.getBindingContext().getElementId());
 		if (table == null) {
 			table = new BindingTable(bindingContext);
 			bindingTables.addTable(table);
@@ -188,7 +190,7 @@ public class BindingProcessingAddon {
 		}
 		MBindingTable bt = (MBindingTable) parentObj;
 		final Context bindingContext = contextManager.getContext(bt
-				.getBindingContextId());
+				.getBindingContext().getElementId());
 		BindingTable table = bindingTables.getTable(bindingContext.getId());
 		if (table == null) {
 			Activator.log(IStatus.ERROR, "Trying to create \'" + binding //$NON-NLS-1$
@@ -225,7 +227,8 @@ public class BindingProcessingAddon {
 							&& newObj instanceof MBindingTable) {
 						MBindingTable bt = (MBindingTable) newObj;
 						final Context bindingContext = contextManager
-								.getContext(bt.getBindingContextId());
+								.getContext(bt.getBindingContext()
+										.getElementId());
 						final BindingTable table = new BindingTable(
 								bindingContext);
 						bindingTables.addTable(table);

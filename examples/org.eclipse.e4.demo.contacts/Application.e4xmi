@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic http://www.eclipse.org/ui/2010/UIModel/application#//ui/basic http://www.eclipse.org/ui/2010/UIModel/application/ui/menu http://www.eclipse.org/ui/2010/UIModel/application#//ui/menu" xmi:id="_GRxcMXk5Ed-55voCTyIpVQ">
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xsi:schemaLocation="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic http://www.eclipse.org/ui/2010/UIModel/application#//ui/basic http://www.eclipse.org/ui/2010/UIModel/application/ui/menu http://www.eclipse.org/ui/2010/UIModel/application#//ui/menu" xmi:id="_GRxcMXk5Ed-55voCTyIpVQ" bindingContexts="_SeXUHO8EEd6FC9cDb6iV7y">
   <children xsi:type="basic:TrimmedWindow" xmi:id="_SeXUAe8EEd6FC9cDb6iV7g" elementId="_SeXUAe8EEd6FC9cDb6iV7g" label="%windowTitle" x="20" y="20" width="700" height="480">
     <children xsi:type="basic:PartSashContainer" xmi:id="_SeXUCu8EEd6FC9cDb6iV7g" elementId="_SeXUCu8EEd6FC9cDb6iV7g" horizontal="true">
       <children xsi:type="basic:PartStack" xmi:id="_SeXUC-8EEd6FC9cDb6iV7g" elementId="_SeXUC-8EEd6FC9cDb6iV7g" containerData="30">
@@ -27,7 +27,7 @@
   <handlers xmi:id="_SeXUGO8EEd6FC9cDb6iV7g" elementId="_SeXUGO8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler" command="contacts.save"/>
   <handlers xmi:id="_SeXUGe8EEd6FC9cDb6iV7g" elementId="_SeXUGe8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DeleteContactHandler" command="contacts.delete"/>
   <handlers xmi:id="_SeXUG=8EEd6FC9cDb6iV7g" elementId="_SeXUG=8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SwitchThemeHandler" command="contacts.switchTheme"/>
-  <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="_SeXUEO8EEd6FC9cDb6iV7x" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
+  <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="_SeXUEO8EEd6FC9cDb6iV7x" bindingContext="_SeXUHO8EEd6FC9cDb6iV7y">
     <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="CTRL+S" elementId="_SeXUHu8EEd6FC9cDb6iV7g" command="contacts.save"/>
     <bindings xmi:id="_SeXUH-8EEd6FC9cDb6iV7g" keySequence="Delete" elementId="_SeXUH-8EEd6FC9cDb6iV7g" command="contacts.delete"/>
     <bindings xmi:id="_SeXUIO8EEd6FC9cDb6iV7g" keySequence="CTRL+5 X" elementId="_SeXUIO8EEd6FC9cDb6iV7g" command="contacts.exit"/>
@@ -36,7 +36,6 @@
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs"/>
   </rootContext>
-  <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
   <commands xmi:id="contacts.exit" elementId="contacts.exit" commandName="Exit" description=""/>
   <commands xmi:id="contacts.save" elementId="contacts.save" commandName="Save" description=""/>
   <commands xmi:id="contacts.delete" elementId="contacts.delete" commandName="Delete" description=""/>

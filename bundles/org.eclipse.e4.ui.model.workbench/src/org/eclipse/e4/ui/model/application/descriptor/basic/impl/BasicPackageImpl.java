@@ -147,7 +147,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_DESCRIPTOR__HANDLERS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

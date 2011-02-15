@@ -137,7 +137,7 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 				 true,
 				 false,
 				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
 				 null,
 				 null));
 	}

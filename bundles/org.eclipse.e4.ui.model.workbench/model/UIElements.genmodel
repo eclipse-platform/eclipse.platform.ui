@@ -25,6 +25,7 @@
     <genClasses ecoreClass="UIElements.ecore#//ApplicationElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/elementId"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/tags"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/contributorURI"/>
     </genClasses>
     <genClasses image="false" ecoreClass="UIElements.ecore#//Contribution" labelFeature="#//application/Contribution/contributionURI">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Contribution/contributionURI"/>
@@ -39,16 +40,17 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/BindingTableContainer/rootContext"/>
       </genClasses>
       <genClasses image="false" ecoreClass="UIElements.ecore#//commands/Bindings">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Bindings/bindingContexts"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//commands/Bindings/bindingContexts"/>
       </genClasses>
       <genClasses ecoreClass="UIElements.ecore#//commands/BindingContext">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/BindingContext/name"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/BindingContext/description"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/BindingContext/children"/>
       </genClasses>
-      <genClasses ecoreClass="UIElements.ecore#//commands/BindingTable" labelFeature="#//application/commands/BindingTable/bindingContextId">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/BindingTable/bindingContextId"/>
+      <genClasses ecoreClass="UIElements.ecore#//commands/BindingTable">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/BindingTable/bindings"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference UIElements.ecore#//commands/BindingTable/bindingContext"/>
       </genClasses>
       <genClasses ecoreClass="UIElements.ecore#//commands/Command">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Command/commandName"/>
@@ -86,7 +88,8 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Category/description"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Ui" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui">
+    <nestedGenPackages prefix="Ui" disposableProviderFactory="true" contentTypeIdentifier=""
+        ecorePackage="UIElements.ecore#//ui">
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="UIElements.ecore#//ui/SideValue">
         <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/SideValue/Top"/>
         <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/SideValue/Bottom"/>
@@ -116,14 +119,14 @@
             ecoreFeature="ecore:EReference UIElements.ecore#//ui/UIElement/curSharedRef"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/UIElement/visibleWhen"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/accessibilityPhrase"/>
+        <genOperations ecoreOperation="UIElements.ecore#//ui/UIElement/getLocalizedAccessibilityPhrase"/>
       </genClasses>
       <genClasses image="false" ecoreClass="UIElements.ecore#//ui/UILabel">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/label"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/iconURI"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/tooltip"/>
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/localLabel"/>
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/localTooltip"/>
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UILabel/localImage"/>
+        <genOperations ecoreOperation="UIElements.ecore#//ui/UILabel/getLocalizedLabel"/>
+        <genOperations ecoreOperation="UIElements.ecore#//ui/UILabel/getLocalizedTooltip"/>
       </genClasses>
       <genClasses image="false" ecoreClass="UIElements.ecore#//ui/ElementContainer">
         <genTypeParameters ecoreTypeParameter="UIElements.ecore#//ui/ElementContainer/T"/>
@@ -165,10 +168,10 @@
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/menu/HandledItem/parameters"/>
         </genClasses>
         <genClasses image="false" ecoreClass="UIElements.ecore#//ui/menu/MenuElement"
-            labelFeature="#//application/ui/UILabel/label"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/menu/MenuItem" labelFeature="#//application/ui/UILabel/label">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/MenuItem/mnemonics"/>
+            labelFeature="#//application/ui/UILabel/label">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/MenuElement/mnemonics"/>
         </genClasses>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/MenuItem" labelFeature="#//application/ui/UILabel/label"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/MenuSeparator" labelFeature="#//application/ui/UILabel/label"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/Menu" labelFeature="#//application/ui/UILabel/label">
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/Menu/enabled"/>
@@ -228,6 +231,7 @@
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/menus"/>
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/toolbar"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Part/closeable"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Part/description"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/InputPart" labelFeature="#//application/Contribution/contributionURI"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/PartStack"/>
@@ -272,6 +276,7 @@
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/closeable"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/dirtyable"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/contributionURI"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/description"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//descriptor/basic/PartDescriptorContainer">
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptorContainer/descriptors"/>

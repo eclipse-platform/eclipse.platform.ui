@@ -371,7 +371,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__DESCRIPTORS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

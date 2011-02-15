@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
 import org.eclipse.e4.ui.model.application.commands.MHandlerContainer;
@@ -43,6 +44,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -256,14 +258,14 @@ public class PartImpl extends UIElementImpl implements MPart {
 	protected boolean dirty = DIRTY_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' attribute list.
+	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getBindingContexts()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<String> bindingContexts;
+	protected EList<MBindingContext> bindingContexts;
 
 	/**
 	 * The cached value of the '{@link #getMenus() <em>Menus</em>}' containment reference list.
@@ -544,9 +546,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<String> getBindingContexts() {
+	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, BasicPackageImpl.PART__BINDING_CONTEXTS);
+			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, BasicPackageImpl.PART__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -778,7 +780,7 @@ public class PartImpl extends UIElementImpl implements MPart {
 				return;
 			case BasicPackageImpl.PART__BINDING_CONTEXTS:
 				getBindingContexts().clear();
-				getBindingContexts().addAll((Collection<? extends String>)newValue);
+				getBindingContexts().addAll((Collection<? extends MBindingContext>)newValue);
 				return;
 			case BasicPackageImpl.PART__MENUS:
 				getMenus().clear();
@@ -1061,8 +1063,6 @@ public class PartImpl extends UIElementImpl implements MPart {
 		result.append(tooltip);
 		result.append(", dirty: "); //$NON-NLS-1$
 		result.append(dirty);
-		result.append(", bindingContexts: "); //$NON-NLS-1$
-		result.append(bindingContexts);
 		result.append(", closeable: "); //$NON-NLS-1$
 		result.append(closeable);
 		result.append(", description: "); //$NON-NLS-1$

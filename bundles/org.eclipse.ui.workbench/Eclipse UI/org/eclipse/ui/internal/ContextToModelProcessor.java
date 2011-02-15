@@ -48,11 +48,15 @@ public class ContextToModelProcessor {
 	private void generateContexts(MApplication application, ContextManager contextManager) {
 		for (Context ctx : contextManager.getDefinedContexts()) {
 			try {
-				MBindingContext contextModel = CommandsFactoryImpl.eINSTANCE.createBindingContext();
+				MBindingContext contextModel = contexts.get(ctx.getId());
+				if (contextModel == null) {
+					contextModel = CommandsFactoryImpl.eINSTANCE.createBindingContext();
+					contexts.put(ctx.getId(), contextModel);
+				}
 				contextModel.setElementId(ctx.getId());
 				contextModel.setName(ctx.getName());
 				contextModel.setDescription(ctx.getDescription());
-				contexts.put(contextModel.getElementId(), contextModel);
+
 			} catch (NotDefinedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

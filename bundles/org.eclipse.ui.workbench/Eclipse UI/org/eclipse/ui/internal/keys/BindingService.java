@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -23,8 +24,10 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
@@ -66,6 +69,8 @@ public final class BindingService implements IBindingService {
 	@Inject
 	@Optional
 	private KeyBindingDispatcher dispatcher;
+
+	private Map<String, MBindingContext> bindingContexts = new HashMap<String, MBindingContext>();
 
 	/*
 	 * (non-Javadoc)
@@ -387,6 +392,44 @@ public final class BindingService implements IBindingService {
 		return bindingService.getConflictsFor(sequence);
 	}
 
+	public MBindingContext getBindingContext(String id) {
+		// cache
+		MBindingContext result = bindingContexts.get(id);
+		if (result == null) {
+			// search
+			result = searchContexts(id, application.getRootContext());
+			if (result == null) {
+				// create
+				result = MCommandsFactory.INSTANCE.createBindingContext();
+				result.setElementId(id);
+				result.setName("Auto::" + id); //$NON-NLS-1$
+				application.getRootContext().add(result);
+			}
+			if (result != null) {
+				bindingContexts.put(id, result);
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * @param id
+	 * @param rootContext
+	 * @return
+	 */
+	private MBindingContext searchContexts(String id, List<MBindingContext> rootContext) {
+		for (MBindingContext context : rootContext) {
+			if (context.getElementId().equals(id)) {
+				return context;
+			}
+			MBindingContext result = searchContexts(id, context.getChildren());
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * TODO Promote this method to API.
 	 * <p>
@@ -404,7 +447,7 @@ public final class BindingService implements IBindingService {
 	public final void addBinding(final Binding binding) {
 		MBindingTable table = null;
 		for (MBindingTable bt : application.getBindingTables()) {
-			if (bt.getBindingContextId().equals(binding.getContextId())) {
+			if (bt.getBindingContext().getElementId().equals(binding.getContextId())) {
 				table = bt;
 				break;
 			}
@@ -412,7 +455,7 @@ public final class BindingService implements IBindingService {
 		if (table == null) {
 			table = CommandsFactoryImpl.eINSTANCE.createBindingTable();
 			tablesToRemove.add(table);
-			table.setBindingContextId(binding.getContextId());
+			table.setBindingContext(getBindingContext(binding.getContextId()));
 			table.setElementId(binding.getContextId());
 			application.getBindingTables().add(table);
 		}
@@ -454,7 +497,7 @@ public final class BindingService implements IBindingService {
 	public final void removeBinding(final Binding binding) {
 		MBindingTable table = null;
 		for (MBindingTable bt : application.getBindingTables()) {
-			if (bt.getBindingContextId().equals(binding.getContextId())) {
+			if (bt.getBindingContext().getElementId().equals(binding.getContextId())) {
 				table = bt;
 				break;
 			}

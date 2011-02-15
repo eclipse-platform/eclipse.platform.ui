@@ -49,6 +49,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -160,14 +161,14 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	protected EList<MPartDescriptor> descriptors;
 
 	/**
-	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' attribute list.
+	 * The cached value of the '{@link #getBindingContexts() <em>Binding Contexts</em>}' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getBindingContexts()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<String> bindingContexts;
+	protected EList<MBindingContext> bindingContexts;
 
 	/**
 	 * The cached value of the '{@link #getMenuContributions() <em>Menu Contributions</em>}' containment reference list.
@@ -346,9 +347,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public List<String> getBindingContexts() {
+	public List<MBindingContext> getBindingContexts() {
 		if (bindingContexts == null) {
-			bindingContexts = new EDataTypeUniqueEList<String>(String.class, this, ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS);
+			bindingContexts = new EObjectResolvingEList<MBindingContext>(MBindingContext.class, this, ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS);
 		}
 		return bindingContexts;
 	}
@@ -537,7 +538,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 				return;
 			case ApplicationPackageImpl.APPLICATION__BINDING_CONTEXTS:
 				getBindingContexts().clear();
-				getBindingContexts().addAll((Collection<? extends String>)newValue);
+				getBindingContexts().addAll((Collection<? extends MBindingContext>)newValue);
 				return;
 			case ApplicationPackageImpl.APPLICATION__MENU_CONTRIBUTIONS:
 				getMenuContributions().clear();
@@ -797,8 +798,6 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$
 		result.append(variables);
-		result.append(", bindingContexts: "); //$NON-NLS-1$
-		result.append(bindingContexts);
 		result.append(')');
 		return result.toString();
 	}

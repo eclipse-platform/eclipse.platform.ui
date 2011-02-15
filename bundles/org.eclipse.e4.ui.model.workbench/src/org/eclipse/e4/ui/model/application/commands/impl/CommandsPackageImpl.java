@@ -133,7 +133,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDINGS = 1;
 
 	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -261,22 +261,22 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_TABLE__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Binding Context Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int BINDING_TABLE__BINDING_CONTEXT_ID = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int BINDING_TABLE__BINDINGS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	public static final int BINDING_TABLE__BINDINGS = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Binding Context</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int BINDING_TABLE__BINDING_CONTEXT = ApplicationPackageImpl.APPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Binding Table</em>' class.
@@ -1016,16 +1016,16 @@ public class CommandsPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.commands.MBindings#getBindingContexts <em>Binding Contexts</em>}'.
+	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.commands.MBindings#getBindingContexts <em>Binding Contexts</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Binding Contexts</em>'.
+	 * @return the meta object for the reference list '<em>Binding Contexts</em>'.
 	 * @see org.eclipse.e4.ui.model.application.commands.MBindings#getBindingContexts()
 	 * @see #getBindings()
 	 * @generated
 	 */
-	public EAttribute getBindings_BindingContexts() {
-		return (EAttribute)bindingsEClass.getEStructuralFeatures().get(0);
+	public EReference getBindings_BindingContexts() {
+		return (EReference)bindingsEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1092,19 +1092,6 @@ public class CommandsPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindingContextId <em>Binding Context Id</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Binding Context Id</em>'.
-	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindingContextId()
-	 * @see #getBindingTable()
-	 * @generated
-	 */
-	public EAttribute getBindingTable_BindingContextId() {
-		return (EAttribute)bindingTableEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
 	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindings <em>Bindings</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1114,8 +1101,22 @@ public class CommandsPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getBindingTable_Bindings() {
+		return (EReference)bindingTableEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindingContext <em>Binding Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Binding Context</em>'.
+	 * @see org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindingContext()
+	 * @see #getBindingTable()
+	 * @generated
+	 */
+	public EReference getBindingTable_BindingContext() {
 		return (EReference)bindingTableEClass.getEStructuralFeatures().get(1);
 	}
+
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.commands.MCommand <em>Command</em>}'.
@@ -1473,7 +1474,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		createEReference(bindingTableContainerEClass, BINDING_TABLE_CONTAINER__ROOT_CONTEXT);
 
 		bindingsEClass = createEClass(BINDINGS);
-		createEAttribute(bindingsEClass, BINDINGS__BINDING_CONTEXTS);
+		createEReference(bindingsEClass, BINDINGS__BINDING_CONTEXTS);
 
 		bindingContextEClass = createEClass(BINDING_CONTEXT);
 		createEAttribute(bindingContextEClass, BINDING_CONTEXT__NAME);
@@ -1481,8 +1482,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 		createEReference(bindingContextEClass, BINDING_CONTEXT__CHILDREN);
 
 		bindingTableEClass = createEClass(BINDING_TABLE);
-		createEAttribute(bindingTableEClass, BINDING_TABLE__BINDING_CONTEXT_ID);
 		createEReference(bindingTableEClass, BINDING_TABLE__BINDINGS);
+		createEReference(bindingTableEClass, BINDING_TABLE__BINDING_CONTEXT);
 
 		commandEClass = createEClass(COMMAND);
 		createEAttribute(commandEClass, COMMAND__COMMAND_NAME);
@@ -1567,7 +1568,7 @@ public class CommandsPackageImpl extends EPackageImpl {
 		initEReference(getBindingTableContainer_RootContext(), this.getBindingContext(), null, "rootContext", null, 0, -1, MBindingTableContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(bindingsEClass, MBindings.class, "Bindings", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getBindings_BindingContexts(), ecorePackage.getEString(), "bindingContexts", null, 0, -1, MBindings.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
+		initEReference(getBindings_BindingContexts(), this.getBindingContext(), null, "bindingContexts", null, 0, -1, MBindings.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(bindingContextEClass, MBindingContext.class, "BindingContext", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getBindingContext_Name(), ecorePackage.getEString(), "name", null, 0, 1, MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1575,8 +1576,8 @@ public class CommandsPackageImpl extends EPackageImpl {
 		initEReference(getBindingContext_Children(), this.getBindingContext(), null, "children", null, 0, -1, MBindingContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(bindingTableEClass, MBindingTable.class, "BindingTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getBindingTable_BindingContextId(), ecorePackage.getEString(), "bindingContextId", null, 1, 1, MBindingTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getBindingTable_Bindings(), this.getKeyBinding(), null, "bindings", null, 0, -1, MBindingTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getBindingTable_BindingContext(), this.getBindingContext(), null, "bindingContext", null, 1, 1, MBindingTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(commandEClass, MCommand.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getCommand_CommandName(), ecorePackage.getEString(), "commandName", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1664,12 +1665,12 @@ public class CommandsPackageImpl extends EPackageImpl {
 		public static final EClass BINDINGS = eINSTANCE.getBindings();
 
 		/**
-		 * The meta object literal for the '<em><b>Binding Contexts</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Binding Contexts</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EAttribute BINDINGS__BINDING_CONTEXTS = eINSTANCE.getBindings_BindingContexts();
+		public static final EReference BINDINGS__BINDING_CONTEXTS = eINSTANCE.getBindings_BindingContexts();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.commands.impl.BindingContextImpl <em>Binding Context</em>}' class.
@@ -1716,20 +1717,20 @@ public class CommandsPackageImpl extends EPackageImpl {
 		public static final EClass BINDING_TABLE = eINSTANCE.getBindingTable();
 
 		/**
-		 * The meta object literal for the '<em><b>Binding Context Id</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		public static final EAttribute BINDING_TABLE__BINDING_CONTEXT_ID = eINSTANCE.getBindingTable_BindingContextId();
-
-		/**
 		 * The meta object literal for the '<em><b>Bindings</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
 		public static final EReference BINDING_TABLE__BINDINGS = eINSTANCE.getBindingTable_Bindings();
+
+		/**
+		 * The meta object literal for the '<em><b>Binding Context</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference BINDING_TABLE__BINDING_CONTEXT = eINSTANCE.getBindingTable_BindingContext();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.commands.impl.CommandImpl <em>Command</em>}' class.

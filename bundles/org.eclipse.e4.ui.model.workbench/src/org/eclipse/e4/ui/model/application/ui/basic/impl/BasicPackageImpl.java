@@ -410,7 +410,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__DIRTY = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -680,7 +680,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int INPUT_PART__DIRTY = PART__DIRTY;
 
 	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1238,7 +1238,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW__HANDLERS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -1517,7 +1517,7 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIMMED_WINDOW__HANDLERS = WINDOW__HANDLERS;
 
 	/**
-	 * The feature id for the '<em><b>Binding Contexts</b></em>' attribute list.
+	 * The feature id for the '<em><b>Binding Contexts</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated

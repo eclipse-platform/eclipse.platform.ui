@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1228,7 +1228,7 @@ public class XMLModelReconciler extends ModelReconciler {
 				EObject key = entry.getKey();
 				if (key instanceof MBindingTable) {
 					for (FeatureChange change : entry.getValue()) {
-						if (change.getFeatureName().equals(BINDINGTABLES_BINDINGS_ATTNAME)) {
+						if (change.getFeatureName().equals(BINDINGTABLE_BINDINGS_ATTNAME)) {
 							List<?> commands = (List<?>) change.getValue();
 							for (Object command : commands) {
 								if (command == reference) {
@@ -1802,7 +1802,9 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a KeyBinding has a single reference to a command
 				featureName.equals(KEYBINDING_COMMAND_ATTNAME) ||
 				// a Placeholder has a single reference to a ui element
-				featureName.equals(PLACEHOLDER_REF_NAME);
+				featureName.equals(PLACEHOLDER_REF_NAME) ||
+				// a BindingTable has a single reference to a bindingContext
+				featureName.equals(BINDINGTABLE_BINDINGCONTEXT_ATTNAME);
 	}
 
 	/**
@@ -1828,8 +1830,8 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static boolean isChainedReference(String featureName) {
 		// an ElementContainer has multiple children
 		return featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME) ||
-		// a BindingContainer has multiple bindings
-				featureName.equals(BINDINGTABLES_BINDINGS_ATTNAME) ||
+				// a BindingContainer has multiple bindings
+				featureName.equals(BINDINGTABLE_BINDINGS_ATTNAME) ||
 				// a Part has multiple menus
 				featureName.equals(PART_MENUS_ATTNAME) ||
 				// an Application has multiple commands
@@ -1853,7 +1855,11 @@ public class XMLModelReconciler extends ModelReconciler {
 				// a TrimContributions has multiple trim contributions
 				featureName.equals(TRIMCONTRIBUTIONS_TRIMCONTRIBUTIONS_ATTNAME) ||
 				// a Perspective has multiple windows
-				featureName.equals(PERSPECTIVE_WINDOWS_ATTNAME);
+				featureName.equals(PERSPECTIVE_WINDOWS_ATTNAME) ||
+				// a Binding has multiple binding contexts
+				featureName.equals(BINDINGS_BINDINGCONTEXTS_ATTNAME) ||
+				// a BindingContainer has multiple root contexts
+				featureName.equals(BINDINGCONTAINER_ROOTCONTEXT_ATTNAME);
 	}
 
 	private static boolean isUnorderedChainedAttribute(String featureName) {

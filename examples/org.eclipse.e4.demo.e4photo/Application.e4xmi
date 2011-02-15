@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_nsrxgUjNEd-CobQCdWYgrA" elementId="org.eclipse.e4.ide.application">
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_nsrxgUjNEd-CobQCdWYgrA" elementId="org.eclipse.e4.ide.application" bindingContexts="_Y_0CgEjPEd-XR9_8rlW1bQ">
   <children xsi:type="basic:Window" xmi:id="_Ry7agUjOEd-0rvoi3OqNpA" elementId="_Ry7agUjOEd-0rvoi3OqNpA" x="20" y="20" width="800" height="600">
     <children xsi:type="advanced:PerspectiveStack" xmi:id="_4yzIcUjOEd-XR9_8rlW1bQ" elementId="DefaultPerspectiveStack" selectedElement="_5aL0YUjVEd-Cd_8pRZhbHA">
       <children xsi:type="advanced:Perspective" xmi:id="_5aL0YUjVEd-Cd_8pRZhbHA" elementId="Default">
@@ -47,7 +47,7 @@
   <handlers xmi:id="_QLZmkEjPEd-XR9_8rlW1bQ" elementId="_QLZmkEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.SwitchPerspectiveHandler" command="_4L5EAEjPEd-XR9_8rlW1bQ"/>
   <handlers xmi:id="_RrwmEEjPEd-XR9_8rlW1bQ" elementId="_RrwmEEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="_6B0q4EjPEd-XR9_8rlW1bQ"/>
   <handlers xmi:id="_bH-CkUljEd-YPslvXqnLdg" elementId="_bH-CkUljEd-YPslvXqnLdg" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.AddNoteHandler" command="_9w2hYEjPEd-XR9_8rlW1bQ"/>
-  <bindingTables xmi:id="_ofif4EjPEd-XR9_8rlW1bQ" elementId="_ofif4EjPEd-XR9_8rlW1bQ" bindingContextId="org.eclipse.ui.contexts.dialogAndWindow">
+  <bindingTables xmi:id="_ofif4EjPEd-XR9_8rlW1bQ" elementId="_ofif4EjPEd-XR9_8rlW1bQ" bindingContext="_Y_0CgEjPEd-XR9_8rlW1bQ">
     <bindings xmi:id="_rCRiYEjPEd-XR9_8rlW1bQ" keySequence="CTRL+Q" elementId="_rCRiYEjPEd-XR9_8rlW1bQ" command="_vBr-QEjPEd-XR9_8rlW1bQ"/>
     <bindings xmi:id="_tDFjkEjPEd-XR9_8rlW1bQ" keySequence="CTRL+N" elementId="_tDFjkEjPEd-XR9_8rlW1bQ" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>
   </bindingTables>
@@ -55,7 +55,6 @@
     <children xmi:id="_gCmv0EjPEd-XR9_8rlW1bQ" elementId="org.eclipse.ui.contexts.window" name="In Windows" description=""/>
     <children xmi:id="_jcgD0EjPEd-XR9_8rlW1bQ" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs" description=""/>
   </rootContext>
-  <bindingContexts>org.eclipse.ui.contexts.dialogAndWindow</bindingContexts>
   <commands xmi:id="_vBr-QEjPEd-XR9_8rlW1bQ" elementId="e4photo.exit" commandName="Exit"/>
   <commands xmi:id="_zQSFoEjPEd-XR9_8rlW1bQ" elementId="e4photo.createAlbum" commandName="Create Album"/>
   <commands xmi:id="_4L5EAEjPEd-XR9_8rlW1bQ" elementId="e4photo.switchPersepective" commandName="Switch Perspective"/>

@@ -67,29 +67,29 @@ public class BindingTableItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addBindingContextIdPropertyDescriptor(object);
+			addBindingContextPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Binding Context Id feature.
+	 * This adds a property descriptor for the Binding Context feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addBindingContextIdPropertyDescriptor(Object object) {
+	protected void addBindingContextPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_BindingTable_bindingContextId_feature"), //$NON-NLS-1$
-				 getString("_UI_PropertyDescriptor_description", "_UI_BindingTable_bindingContextId_feature", "_UI_BindingTable_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				 CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT_ID,
+				 getString("_UI_BindingTable_bindingContext_feature"), //$NON-NLS-1$
+				 getString("_UI_PropertyDescriptor_description", "_UI_BindingTable_bindingContext_feature", "_UI_BindingTable_type"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				 CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT,
 				 true,
 				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 true,
+				 null,
 				 null,
 				 null));
 	}
@@ -161,9 +161,6 @@ public class BindingTableItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(MBindingTable.class)) {
-			case CommandsPackageImpl.BINDING_TABLE__BINDING_CONTEXT_ID:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
 			case CommandsPackageImpl.BINDING_TABLE__BINDINGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;

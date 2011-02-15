@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -240,14 +240,20 @@ public abstract class ModelReconciler {
 	/**
 	 * Attribute defined by MBindingTables (value is <code>bindings</code>).
 	 */
-	public static final String BINDINGTABLES_BINDINGS_ATTNAME = CommandsPackageImpl.eINSTANCE
+	public static final String BINDINGTABLE_BINDINGS_ATTNAME = CommandsPackageImpl.eINSTANCE
 			.getBindingTable_Bindings().getName();
 
 	/**
-	 * Attribute defined by MBindingTables (value is <code>bindingContextId</code>).
+	 * Attribute defined by MBindingTables (value is <code>bindingContext</code>).
 	 */
-	public static final String BINDINGTABLES_BINDINGCONTEXTID_ATTNAME = CommandsPackageImpl.eINSTANCE
-			.getBindingTable_BindingContextId().getName();
+	public static final String BINDINGTABLE_BINDINGCONTEXT_ATTNAME = CommandsPackageImpl.eINSTANCE
+			.getBindingTable_BindingContext().getName();
+
+	/**
+	 * Attribute defined by MBindings (value is <code>bindingContexts</code>).
+	 */
+	public static final String BINDINGS_BINDINGCONTEXTS_ATTNAME = CommandsPackageImpl.eINSTANCE
+			.getBindings_BindingContexts().getName();
 
 	/**
 	 * Attribute defined by MHandlers (value is <code>command</code>).

@@ -21,8 +21,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindingContextId <em>Binding Context Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindings <em>Bindings</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindingContext <em>Binding Context</em>}</li>
  * </ul>
  * </p>
  *
@@ -30,31 +30,6 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  * @generated
  */
 public interface MBindingTable extends MApplicationElement {
-	/**
-	 * Returns the value of the '<em><b>Binding Context Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Binding Context Id</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Binding Context Id</em>' attribute.
-	 * @see #setBindingContextId(String)
-	 * @model required="true"
-	 * @generated
-	 */
-	String getBindingContextId();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindingContextId <em>Binding Context Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Binding Context Id</em>' attribute.
-	 * @see #getBindingContextId()
-	 * @generated
-	 */
-	void setBindingContextId(String value);
-
 	/**
 	 * Returns the value of the '<em><b>Bindings</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.commands.MKeyBinding}.
@@ -69,5 +44,30 @@ public interface MBindingTable extends MApplicationElement {
 	 * @generated
 	 */
 	List<MKeyBinding> getBindings();
+
+	/**
+	 * Returns the value of the '<em><b>Binding Context</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Binding Context</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Binding Context</em>' reference.
+	 * @see #setBindingContext(MBindingContext)
+	 * @model required="true"
+	 * @generated
+	 */
+	MBindingContext getBindingContext();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.commands.MBindingTable#getBindingContext <em>Binding Context</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Binding Context</em>' reference.
+	 * @see #getBindingContext()
+	 * @generated
+	 */
+	void setBindingContext(MBindingContext value);
 
 } // MBindingTable
