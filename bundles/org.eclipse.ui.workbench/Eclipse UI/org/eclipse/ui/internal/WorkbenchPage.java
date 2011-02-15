@@ -2634,6 +2634,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (desc == null)
 			return;
 
+		// send out reset notification
+		legacyWindow.firePerspectiveChanged(this, desc, CHANGE_RESET);
+
 		// instantiate a dummy perspective perspective
 		MPerspective dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
 
@@ -2682,12 +2685,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					part.setDirty(false);
 					break;
 				case CANCEL:
+					// not going through with it, but we're done
+					legacyWindow.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);
 					return;
 				}
 			} else {
 				Save[] promptToSave = saveHandler.promptToSave(dirtyParts);
 				for (Save save : promptToSave) {
 					if (save == ISaveHandler.Save.CANCEL) {
+						// not going through with it, but we're done
+						legacyWindow.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);
 						return;
 					}
 				}
@@ -2728,6 +2735,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		tags.addAll(dummyPerspective.getTags());
 
 		partService.requestActivation();
+
+		// reset complete
+		legacyWindow.firePerspectiveChanged(this, desc, CHANGE_RESET_COMPLETE);
 	}
 
 	private void updatePerspectiveActionSets(MPerspective currentPerspective,
