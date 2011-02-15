@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.SlavePartService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.tests.helpers.TestFacade;
@@ -110,8 +111,7 @@ public class TestFacadeE4Impl extends TestFacade {
 
 	@Override
 	public boolean isSlavePartService(IPartService slaveService) {
-		E4Util.unsupported("isSlavePartService");
-		return false;
+		return slaveService instanceof SlavePartService;
 	}
 
 	@Override

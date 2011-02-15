@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IPageService;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -137,6 +138,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	private KeyBindingService keyBindingService;
 
 	private SlavePageService pageService;
+
+	private SlavePartService partService;
 
 	protected ArrayList menuExtenders;
 
@@ -261,6 +264,15 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				return pageService;
 			}
 		});
+		e4Context.set(IPartService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (partService == null) {
+					partService = new SlavePartService(context.getParent().get(IPartService.class));
+				}
+				return partService;
+			}
+		});
 	}
 
 	/**
@@ -296,6 +308,10 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 		if (pageService != null) {
 			pageService.dispose();
+		}
+
+		if (partService != null) {
+			partService.dispose();
 		}
 
 		if (serviceLocator != null) {
