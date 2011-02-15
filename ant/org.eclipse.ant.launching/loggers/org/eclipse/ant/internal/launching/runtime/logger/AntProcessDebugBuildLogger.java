@@ -76,7 +76,6 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 				ILaunch launch= process.getLaunch();
 				launch.removeDebugTarget(fAntDebugTarget);
 			}
-			fAntDebugTarget = null;
 		}
 		if(fDebugState != null) {
 			fDebugState.buildFinished();

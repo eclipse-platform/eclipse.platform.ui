@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2011 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ant.internal.launching.AntLaunching;
 import org.eclipse.ant.internal.launching.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.launching.debug.IAntDebugController;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
@@ -58,6 +57,8 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	// threads
 	private AntThread fThread;
 	private IThread[] fThreads;
+	
+	private IAntDebugController fController;
     
     private List fRunToLineBreakpoints;
 
@@ -73,7 +74,10 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		super(null);
 		fLaunch = launch;
 		fProcess = process;
-		fThread = new AntThread(this, controller);
+		
+		fController= controller;
+		
+		fThread = new AntThread(this);
 		fThreads = new IThread[] {fThread};
         
         DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
@@ -161,26 +165,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		if(!fTerminated) {
-			fThread.terminate();
-			fThreads= new IThread[0];
-			fTerminated = true;
-			fSuspended = false;
-			if (DebugPlugin.getDefault() != null) {
-				DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
-				DebugPlugin.getDefault().removeDebugEventListener(this);
-				DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
-			}
-			if (!getProcess().isTerminated()) {
-			    try {
-	                fProcess.terminate();
-			    } catch (DebugException e) {       
-			    }
-			}
-			if (DebugPlugin.getDefault() != null) {
-				fireTerminateEvent();
-			}
-		}
+	    terminated();
 	}
 	
 	/* (non-Javadoc)
@@ -209,8 +194,9 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 */
 	public void resume() throws DebugException {
 		fSuspended= false;
+		fController.resume();
 		if(fThread.isSuspended()) {
-			fThread.resume();
+			fThread.resumedByTarget();
 		}
 		fireResumeEvent(DebugEvent.CLIENT_REQUEST);
 	}
@@ -221,12 +207,8 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 * @param detail reason for the suspend
 	 */
 	public void suspended(int detail) {
+		fSuspended = true;
 		fThread.setStepping(false);
-		try {
-			fThread.suspend();
-		} catch (DebugException e) {
-			AntLaunching.log(e);
-		}
 		fThread.fireSuspendEvent(detail);
 	}	
 	
@@ -234,8 +216,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
-		fThread.suspend();
-		fSuspended = true;
+		fController.suspend();
 	}
 	
 	/* (non-Javadoc)
@@ -243,7 +224,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 */
 	public void breakpointAdded(IBreakpoint breakpoint) {
 		if(!fTerminated) {
-			fThread.getController().handleBreakpoint(breakpoint, true);
+			fController.handleBreakpoint(breakpoint, true);
 	        if (breakpoint instanceof AntLineBreakpoint) {
 	            if (((AntLineBreakpoint) breakpoint).isRunToLine()) {
 	                if (fRunToLineBreakpoints == null) {
@@ -260,7 +241,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 */
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if(!fTerminated) {
-			fThread.getController().handleBreakpoint(breakpoint, false);
+			fController.handleBreakpoint(breakpoint, false);
 	        if (fRunToLineBreakpoints != null) {
 	            if (fRunToLineBreakpoints.remove(breakpoint) && fRunToLineBreakpoints.isEmpty()) {
 	                fRunToLineBreakpoints= null;
@@ -354,6 +335,55 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	}
 	
 	/**
+	 * Called when this debug target terminates.
+	 */
+	public void terminated() {
+		if(!fTerminated) {
+			fThreads= new IThread[0];
+			fTerminated = true;
+			fSuspended = false;
+			fController.terminate();
+			fController = null;
+			if (DebugPlugin.getDefault() != null) {
+				DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener(this);
+				DebugPlugin.getDefault().removeDebugEventListener(this);
+				DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
+			}
+			if (!getProcess().isTerminated()) {
+			    try {
+	                fProcess.terminate();
+			    } catch (DebugException e) {       
+			    }
+			}
+			if (DebugPlugin.getDefault() != null) {
+				fireTerminateEvent();
+			}
+		}
+	}
+	
+	/**
+	 * Single step the Ant build.
+	 * 
+	 * @throws DebugException if the request fails
+	 */
+	public void stepOver() {
+	    fSuspended= false;
+		fController.stepOver();
+		fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+	}
+	
+	/**
+	 * Step-into the Ant build.
+	 * 
+	 * @throws DebugException if the request fails
+	 */
+	public void stepInto() {
+	    fSuspended= false;
+	    fController.stepInto();
+	    fireResumeEvent(DebugEvent.CLIENT_REQUEST);
+	}
+	
+	/**
 	 * Notification a breakpoint was encountered. Determine
 	 * which breakpoint was hit and fire a suspend event.
 	 * 
@@ -385,13 +415,6 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		suspended(DebugEvent.BREAKPOINT);
 	}	
     
-    /**
-     * Sets the given line breakpoint in the backing thread iff it matches the line number and build file criteria
-     * @param lineBreakpoint
-     * @param lineNumber
-     * @param fileName
-     * @return if the breakpoint was set in the thread or not
-     */
     private boolean setThreadBreakpoint(ILineBreakpoint lineBreakpoint, int lineNumber, String fileName) {
         try {
             if (lineBreakpoint.getLineNumber() == lineNumber && 
@@ -404,14 +427,22 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
         return false;
     }
 	
-    /**
-     * Call-back that a breakpoint has been hit
-     * @param breakpoint
-     */
     public void breakpointHit (IBreakpoint breakpoint) {
         fThread.setBreakpoints(new IBreakpoint[]{breakpoint});
         suspended(DebugEvent.BREAKPOINT);
     }
+    
+	public void getStackFrames() {
+		if(isSuspended()) {
+			fController.getStackFrames();
+		}
+	}
+	
+	public void getProperties() {
+		if(!fTerminated) {
+			fController.getProperties();
+		}
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
@@ -420,9 +451,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
         for (int i = 0; i < events.length; i++) {
             DebugEvent event = events[i];
             if (event.getKind() == DebugEvent.TERMINATE && event.getSource().equals(fProcess)) {
-                try {
-					terminate();
-				} catch (DebugException e) {}
+                terminated();
             }
         }
     }
@@ -443,5 +472,9 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
                 breakpointRemoved(breakpoint, null);
             }
         }
-    }   
+    }
+
+	public IAntDebugController getAntDebugController() {
+		return fController;
+	}   
 }

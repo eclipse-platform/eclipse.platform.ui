@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.launching.debug.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ant.internal.launching.debug.IAntDebugController;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -25,6 +24,8 @@ import org.eclipse.debug.core.model.IVariable;
  * An Ant build thread.
  */
 public class AntThread extends AntDebugElement implements IThread {
+	
+	static final IBreakpoint[] NO_BREAKPOINTS = new IBreakpoint[0];
 	
 	/**
 	 * Breakpoints this thread is suspended at or <code>null</code>
@@ -64,23 +65,6 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	private AntProperties fRuntimeProperties;
     
-	/**
-	 * Flag to denote suspended state
-	 * @since 1.0.100 org.eclipse.ant.launching
-	 */
-	private boolean fSuspended = false;
-	/**
-	 * Flag to denote terminated state
-	 * @since 1.0.100 org.eclipse.ant.launching
-	 */
-	private boolean fTerminated = false;
-	
-	/**
-	 * Debug controller
-	 * @since 1.0.100 org.eclipse.ant.launching
-	 */
-	private IAntDebugController fController;
-	
     private Object fPropertiesLock= new Object();
 	
 	/**
@@ -88,19 +72,8 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * 
 	 * @param target the Ant Build
 	 */
-	public AntThread(AntDebugTarget target, IAntDebugController controller) {
+	public AntThread(AntDebugTarget target) {
 		super(target);
-		fController = controller;
-	}
-	
-	/**
-	 * Returns the {@link IAntDebugController} backing this thread
-	 * 
-	 * @return the backing {@link IAntDebugController} for this thread
-	 * @since 1.0.100 org.eclipse.ant.launching
-	 */
-	IAntDebugController getController() {
-		return fController;
 	}
 	
 	/* (non-Javadoc)
@@ -112,6 +85,7 @@ public class AntThread extends AntDebugElement implements IThread {
 				getStackFrames0();
 			}
 		} 
+		
 		return (IStackFrame[]) fFrames.toArray(new IStackFrame[fFrames.size()]);
 	}
 	
@@ -122,7 +96,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	private void getStackFrames0() throws DebugException {
         synchronized (fFrames) {
-        	fController.getStackFrames();
+    		getAntDebugTarget().getStackFrames();
             if (fFrames.size() > 0) {
                 //frames set..no need to wait
                 return;
@@ -182,7 +156,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	public IBreakpoint[] getBreakpoints() {
 		if (fBreakpoints == null) {
-			return new IBreakpoint[0];
+			return NO_BREAKPOINTS;
 		}
 		return fBreakpoints;
 	}
@@ -216,24 +190,30 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
-		return fSuspended;
+		return getDebugTarget().isSuspended();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public synchronized void resume() throws DebugException {
-		aboutToResume(/*DebugEvent.CLIENT_REQUEST, */false);
-		fController.resume();
+		aboutToResume(DebugEvent.CLIENT_REQUEST, false);
+		getDebugTarget().resume();
+	}
+	
+	/**
+	 * Call-back when the target is resumed
+	 * @since 1.0
+	 */
+	void resumedByTarget() {
+		aboutToResume(DebugEvent.CLIENT_REQUEST, false);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public synchronized void suspend() throws DebugException {
-		fController.suspend();
-		fSuspended = true;
-		fireSuspendEvent(DebugEvent.CLIENT_REQUEST);
+		getDebugTarget().suspend();
 	}
 	
 	/* (non-Javadoc)
@@ -268,19 +248,18 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
 	public synchronized void stepInto() throws DebugException {
-	    aboutToResume(/*DebugEvent.STEP_INTO, */true);
-	    fController.stepInto();
+	    aboutToResume(DebugEvent.STEP_INTO, true);
+		((AntDebugTarget)getDebugTarget()).stepInto();
 	}
 	
-	private void aboutToResume(boolean stepping) {
+	private void aboutToResume(int detail, boolean stepping) {
 	    fRefreshProperties= true;
 	    fOldFrames= new ArrayList(fFrames);
         fFrames.clear();
         setPropertiesValid(false);
 	    setStepping(stepping);
 	    setBreakpoints(null);
-		fireResumeEvent(DebugEvent.CLIENT_REQUEST);
-		fSuspended = false;
+		fireResumeEvent(detail);
     }
 
     private void setPropertiesValid(boolean valid) {
@@ -295,8 +274,8 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
 	public synchronized void stepOver() throws DebugException {
-	    aboutToResume(/*DebugEvent.STEP_OVER, */true);
-	    fController.stepOver();
+	    aboutToResume(DebugEvent.STEP_OVER, true);
+		((AntDebugTarget)getDebugTarget()).stepOver();
 	}
 	
 	/* (non-Javadoc)
@@ -316,19 +295,15 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
-		return fTerminated;
+		return getDebugTarget().isTerminated();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
-		if(!fTerminated) {
-			fFrames.clear();
-			fController.terminate();
-			fTerminated = true;
-			getDebugTarget().terminate();
-		}
+		fFrames.clear();
+		getDebugTarget().terminate();
 	}
 	
 	/**
@@ -433,7 +408,7 @@ public class AntThread extends AntDebugElement implements IThread {
                             propertyName.append(datum[++i]);
                         }
 
-                        propertyName= fController.unescapeString(propertyName);
+                        propertyName= getAntDebugTarget().getAntDebugController().unescapeString(propertyName);
 
                         propertyValueLength= Integer.parseInt(datum[++i]);
                         if (propertyValueLength == 0 && i + 1 == datum.length) { //bug 81299
@@ -446,7 +421,7 @@ public class AntThread extends AntDebugElement implements IThread {
                             propertyValue.append(datum[++i]);
                         }
 
-                        propertyValue= fController.unescapeString(propertyValue);
+                        propertyValue= getAntDebugTarget().getAntDebugController().unescapeString(propertyValue);
 
                         int propertyType= Integer.parseInt(datum[++i]);
                         addProperty(userProperties, systemProperties, runtimeProperties, propertyName.toString(), propertyValue.toString(), propertyType);
@@ -489,7 +464,7 @@ public class AntThread extends AntDebugElement implements IThread {
     protected IVariable[] getVariables() throws DebugException {
         synchronized (fPropertiesLock) {
             if (fRefreshProperties) {
-            	fController.getProperties();
+                getAntDebugTarget().getProperties();
                 if (fRefreshProperties) { 
                     //properties have not been set; need to wait
                     try {
