@@ -381,7 +381,7 @@ public class ModelAssembler {
 		while (!sortedByOutdegree.isEmpty()) {
 			// don't sort unnecessarily: the current ordering is fine providing
 			// item #0 still has no dependencies
-			if (!depends.get(sortedByOutdegree.get(0)).isEmpty()) {
+			if (!requires.get(sortedByOutdegree.get(0)).isEmpty()) {
 				Collections.sort(sortedByOutdegree, outdegreeSorter);
 			}
 			String bundleId = sortedByOutdegree.remove(0);
