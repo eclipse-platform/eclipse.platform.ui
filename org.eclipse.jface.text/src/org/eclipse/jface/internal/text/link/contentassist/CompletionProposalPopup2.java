@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -776,13 +776,8 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 					char[] triggers= t.getTriggerCharacters();
 					if (contains(triggers, key)) {
 						hide();
-						if (key == ';') {
-							e.doit= true;
-							insertProposal(p, (char) 0, e.stateMask, fViewer.getSelectedRange().x);
-						} else {
-							e.doit= false;
-							insertProposal(p, key, e.stateMask, fViewer.getSelectedRange().x);
-						}
+						e.doit= false;
+						insertProposal(p, key, e.stateMask, fViewer.getSelectedRange().x);
 					}
 				}
 			}
