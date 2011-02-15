@@ -118,6 +118,7 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 							.removePostSelectionChangedListener(this);
 				}
 			}
+			activePart = null;
 		}
 
 		if (part != null) {
