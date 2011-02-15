@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -158,15 +158,15 @@ public abstract class TrayDialog extends Dialog {
 		if (getTray() == null) {
 			throw new IllegalStateException("Tray was not open"); //$NON-NLS-1$
 		}
-		final Shell shell = getShell();
+		Shell shell = getShell();
 		Control focusControl = shell.getDisplay().getFocusControl();
-		if (focusControl!= null && isContained(trayControl, focusControl) && nonTrayFocusControl!= null && !nonTrayFocusControl.isDisposed()) {
+		if (isContained(trayControl, focusControl) && nonTrayFocusControl!= null && !nonTrayFocusControl.isDisposed()) {
 			nonTrayFocusControl.setFocus();
 		}
 		nonTrayFocusControl= null;
 		shell.removeControlListener (resizeListener);
 		resizeListener = null;
-		final int trayWidth = trayControl.getSize().x + leftSeparator.getSize().x + sash.getSize().x + rightSeparator.getSize().x;
+		int trayWidth = trayControl.getSize().x + leftSeparator.getSize().x + sash.getSize().x + rightSeparator.getSize().x;
 		trayControl.dispose();
 		trayControl = null;
 		tray = null;
@@ -176,17 +176,8 @@ public abstract class TrayDialog extends Dialog {
 		rightSeparator = null;
 		sash.dispose();
 		sash = null;
-		final Rectangle bounds = shell.getBounds();
-		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=333684
-		// It's possible that we are closing the tray because we are in the middle
-		// of closing the entire dialog.  We don't want to set the bounds while in
-		// the middle of tearing down the widgetry.
-		shell.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				if (!shell.isDisposed())
-					shell.setBounds(bounds.x + ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width - trayWidth, bounds.height);
-			}
-		});
+		Rectangle bounds = shell.getBounds();
+		shell.setBounds(bounds.x + ((getDefaultOrientation() == SWT.RIGHT_TO_LEFT) ? trayWidth : 0), bounds.y, bounds.width - trayWidth, bounds.height);
 		if (fHelpButton != null) {
 			fHelpButton.setSelection(false);
 		}
@@ -415,7 +406,7 @@ public abstract class TrayDialog extends Dialog {
 		}
 		final Shell shell = getShell();
 		Control focusControl = shell.getDisplay().getFocusControl();
-		if (focusControl != null && isContained(shell, focusControl)) {
+		if (isContained(shell, focusControl)) {
 			nonTrayFocusControl = focusControl;
 		}
 		leftSeparator = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
