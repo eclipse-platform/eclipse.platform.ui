@@ -340,13 +340,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	    persistSashWeights();
 	    persistExpansion();
 		setCurrentlyVisibleLaunchConfigurationDialog(null);
-		getBannerImage().dispose();
 		fTabViewer.dispose();
 		if (fLaunchConfigurationView != null) {
 			fLaunchConfigurationView.dispose();
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-		return super.close();
+		boolean result = super.close();
+		getBannerImage().dispose();
+		return result;
 	}
 	
 	/**
