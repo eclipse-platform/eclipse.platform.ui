@@ -392,7 +392,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			rootContext.getChildren().add(childContext);
 			
 			application.getRootContext().add(rootContext);
-			application.getBindingContexts().add("org.eclipse.ui.contexts.dialogAndWindow");
+			application.getBindingContexts().add(rootContext);
 			
 			resource.getContents().add((EObject) application);
 
@@ -606,8 +606,17 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 			binding.setCommand(command);
 			List<MBindingTable> tables = application.getBindingTables();
 			if (tables.size()==0) {
+				MBindingContext rootContext = null;
+				if (application.getRootContext().size()>0) {
+					rootContext = application.getRootContext().get(0);
+				} else {
+					rootContext = MCommandsFactory.INSTANCE.createBindingContext();
+					rootContext.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
+					rootContext.setName("In Dialog and Windows");
+					application.getRootContext().add(rootContext);
+				}
 				MBindingTable table = MCommandsFactory.INSTANCE.createBindingTable();
-				table.setBindingContextId("org.eclipse.ui.contexts.dialogAndWindow");
+				table.setBindingContext(rootContext);
 				tables.add(table);
 			}
 			tables.get(0).getBindings().add(binding);

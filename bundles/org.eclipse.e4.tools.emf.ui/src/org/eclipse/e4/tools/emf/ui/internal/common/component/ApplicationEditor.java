@@ -128,14 +128,16 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ROOT_CONTEXTS, BINDING_TABLE_CONTAINER__ROOT_CONTEXT, element, Messages.ApplicationEditor_RootContexts) {
-
-			@Override
-			protected boolean accepted(Object o) {
-				return true;
-			}
-
-		});
+		// list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ROOT_CONTEXTS,
+		// BINDING_TABLE_CONTAINER__ROOT_CONTEXT, element,
+		// Messages.ApplicationEditor_RootContexts) {
+		//
+		// @Override
+		// protected boolean accepted(Object o) {
+		// return true;
+		// }
+		//
+		// });
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element, Messages.ApplicationEditor_BindingTables) {
 

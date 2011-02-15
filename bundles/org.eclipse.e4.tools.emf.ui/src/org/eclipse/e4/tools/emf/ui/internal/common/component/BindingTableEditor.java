@@ -22,8 +22,6 @@ import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BindingContextSelectionDialog;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
@@ -39,7 +37,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
-import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -161,33 +158,41 @@ public class BindingTableEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID).observeDetail(getMaster()));
 		}
 
-		{
-			Label l = new Label(parent, SWT.NONE);
-			l.setText(Messages.BindingTableEditor_ContextId);
-			l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-
-			Text t = new Text(parent, SWT.BORDER);
-			TextPasteHandler.createFor(t);
-			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT_ID).observeDetail(getMaster()));
-
-			final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
-			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false, false));
-			b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
-			b.setText(Messages.ModelTooling_Common_FindEllipsis);
-			b.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					BindingContextSelectionDialog dialog = new BindingContextSelectionDialog(b.getShell(), getEditor().getModelProvider(), Messages);
-					if (dialog.open() == BindingContextSelectionDialog.OK) {
-						Command cmd = SetCommand.create(getEditingDomain(), getMaster().getValue(), CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT_ID, dialog.getSelectedId());
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-						}
-					}
-				}
-			});
-		}
+		// {
+		// Label l = new Label(parent, SWT.NONE);
+		// l.setText(Messages.BindingTableEditor_ContextId);
+		// l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		//
+		// Text t = new Text(parent, SWT.BORDER);
+		// TextPasteHandler.createFor(t);
+		// t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		// context.bindValue(textProp.observeDelayed(200, t),
+		// EMFEditProperties.value(getEditingDomain(),
+		// CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT_ID).observeDetail(getMaster()));
+		//
+		// final Button b = new Button(parent, SWT.PUSH | SWT.FLAT);
+		// b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, false,
+		// false));
+		// b.setImage(createImage(ResourceProvider.IMG_Obj16_zoom));
+		// b.setText(Messages.ModelTooling_Common_FindEllipsis);
+		// b.addSelectionListener(new SelectionAdapter() {
+		// @Override
+		// public void widgetSelected(SelectionEvent e) {
+		// BindingContextSelectionDialog dialog = new
+		// BindingContextSelectionDialog(b.getShell(),
+		// getEditor().getModelProvider(), Messages);
+		// if (dialog.open() == BindingContextSelectionDialog.OK) {
+		// Command cmd = SetCommand.create(getEditingDomain(),
+		// getMaster().getValue(),
+		// CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT_ID,
+		// dialog.getSelectedId());
+		// if (cmd.canExecute()) {
+		// getEditingDomain().getCommandStack().execute(cmd);
+		// }
+		// }
+		// }
+		// });
+		// }
 
 		{
 			Label l = new Label(parent, SWT.NONE);
@@ -309,8 +314,8 @@ public class BindingTableEditor extends AbstractComponentEditor {
 	@Override
 	public String getDetailLabel(Object element) {
 		MBindingTable cmd = (MBindingTable) element;
-		if (cmd.getBindingContextId() != null && cmd.getBindingContextId().trim().length() > 0) {
-			return cmd.getBindingContextId();
+		if (cmd.getBindingContext() != null && cmd.getBindingContext().getName() != null && cmd.getBindingContext().getName().trim().length() > 0) {
+			return cmd.getBindingContext().getName();
 		}
 
 		return null;
@@ -318,7 +323,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 	@Override
 	public FeaturePath[] getLabelProperties() {
-		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT_ID) };
+		return new FeaturePath[] { FeaturePath.fromList(CommandsPackageImpl.Literals.BINDING_TABLE__BINDING_CONTEXT, CommandsPackageImpl.Literals.BINDING_CONTEXT__NAME) };
 	}
 
 	@Override
