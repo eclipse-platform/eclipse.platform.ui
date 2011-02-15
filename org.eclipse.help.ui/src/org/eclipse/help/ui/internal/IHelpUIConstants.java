@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,6 +63,7 @@ public interface IHelpUIConstants {
 	
 	public static final String HV_TOPIC_TREE = "topic-tree"; //$NON-NLS-1$
 	public static final String HV_BOOKMARKS_TREE = "bookmarks-tree"; //$NON-NLS-1$
+	public static final String HV_BOOKMARKS_HEADER = "bookmarks-header"; //$NON-NLS-1$
 	public static final String HV_SEE_ALSO = "see-also"; //$NON-NLS-1$
 	public static final String HV_BROWSER = "browser"; //$NON-NLS-1$
 	public static final String HV_CONTEXT_HELP = "context-help"; //$NON-NLS-1$

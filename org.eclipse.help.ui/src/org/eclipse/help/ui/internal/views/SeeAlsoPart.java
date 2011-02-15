@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,25 +15,19 @@ import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
-import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.HyperlinkGroup;
-import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -54,36 +48,16 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	 * @param style
 	 */
 	public SeeAlsoPart(Composite parent, FormToolkit toolkit) {
-		container = new Composite(parent, SWT.NULL);
+		container = toolkit.createComposite(parent);
 		container.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		container.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				updateBackgroundImage();
-			}
-		});
+
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		//layout.marginWidth = 0;
 		layout.verticalSpacing = 0;
 		layout.marginTop = 2;
 		container.setLayout(layout);
-		/*
-		Composite sep = toolkit.createCompositeSeparator(container);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.heightHint = 1;
-		sep.setLayoutData(gd);
-		*/
-		/*
 
-		Composite innerContainer = new Composite(container, SWT.NULL);
-		innerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		innerContainer.setLayout(layout);
-		*/
-		Label label = toolkit.createLabel(container, Messages.SeeAlsoPart_goto);
-		label.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
-		label.setBackground(null);
 		linkContainer = new Composite(container, SWT.NULL);
 		linkContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		RowLayout rlayout = new RowLayout();
@@ -99,41 +73,18 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		hyperlinkGroup.setHyperlinkUnderlineMode(toolkit.getHyperlinkGroup().getHyperlinkUnderlineMode());
 	}
 
-	private void updateBackgroundImage() {
-		FormToolkit toolkit = helpPart.getForm().getToolkit();
-		FormColors colors = toolkit.getColors();
-		Rectangle carea = container.getClientArea();
-		Image oldImage = bgImage;
-		if (bgImage!=null) {
-			Rectangle ibounds = bgImage.getBounds();
-			if (carea.height==ibounds.height)
-				return;
-		}
-		bgImage = new Image(container.getDisplay(), 1, carea.height);
-		GC gc = new GC(bgImage);
-		gc.setBackground(colors.getColor(IFormColors.H_GRADIENT_END));
-		gc.setForeground(colors.getColor(IFormColors.H_GRADIENT_START));
-		gc.fillGradientRectangle(0, 0,
-				1,
-				carea.height,
-				true);
-		gc.setForeground(colors.getColor(IFormColors.H_BOTTOM_KEYLINE2));
-		gc.drawLine(0, 0, 1, 0);
-		gc.setForeground(colors.getColor(IFormColors.H_BOTTOM_KEYLINE1));
-		gc.drawLine(0, 1, 1, 1);
-		gc.dispose();
-		container.setBackgroundImage(bgImage);
-		if (oldImage != null && !oldImage.isDisposed()) {
-			oldImage.dispose();
-		}
-	}
-	
 	private void updateLinks(String href) {
 		Control [] children = linkContainer.getChildren();
 		for (int i=0; i<children.length; i++) {
 			ImageHyperlink link = (ImageHyperlink)children[i];
 			RowData data = (RowData)link.getLayoutData();
-			data.exclude = link.getHref().equals(href);
+			boolean isCurrentPage = link.getHref().equals(href);
+			if (isCurrentPage) {
+				link.setFont(JFaceResources.getBannerFont());
+			} else {
+	            link.setFont(JFaceResources.getDefaultFont());
+			}
+			data.exclude = false; 
 			link.setVisible(!data.exclude);
 		}
 		linkContainer.layout();
@@ -209,7 +160,17 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	public void init(ReusableHelpPart parent, String id, IMemento memento) {
 		this.helpPart = parent;
 		this.id = id;
-		addLinks(linkContainer, helpPart.getForm().getToolkit());
+		FormToolkit toolkit = helpPart.getForm().getToolkit();
+		addLinks(linkContainer, toolkit);
+		Composite padding = toolkit.createComposite(container);
+		GridData paddingData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		paddingData.heightHint = 2;
+		padding.setLayoutData(paddingData);
+		Composite separator = new Composite(container, SWT.NULL);
+		GridData seperatorData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		separator.setBackground(toolkit.getColors().getBorderColor());
+		seperatorData.heightHint = 1;
+		separator.setLayoutData(seperatorData);
 	}
 
 	public String getId() {

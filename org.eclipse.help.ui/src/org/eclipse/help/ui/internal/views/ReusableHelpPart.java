@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -742,9 +742,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				Messages.ReusableHelpPart_searchPage_name,
 				IHelpUIConstants.IMAGE_HELP_SEARCH);
 		page.setVerticalSpacing(0);
+		page.addPart(HV_SEE_ALSO, false);
 		page.addPart(HV_FSEARCH, false);
 		page.addPart(HV_FSEARCH_RESULT, true);
-		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 
 		// all topics page
@@ -753,9 +753,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				IHelpUIConstants.IMAGE_ALL_TOPICS); 
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
+		page.addPart(HV_SEE_ALSO, false);
 		page.addPart(HV_SCOPE_SELECT, false);
 		page.addPart(HV_TOPIC_TREE, true);
-		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 
 		// bookmarks page
@@ -764,14 +764,15 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				IHelpUIConstants.IMAGE_BOOKMARKS); 
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
-		page.addPart(HV_BOOKMARKS_TREE, true);
 		page.addPart(HV_SEE_ALSO, false);
+		page.addPart(HV_BOOKMARKS_HEADER, false);
+		page.addPart(HV_BOOKMARKS_TREE, true);
 		pages.add(page);
 		// browser page
 		page = new HelpPartPage(HV_BROWSER_PAGE, null);
 		page.setVerticalSpacing(0);
-		page.addPart(HV_BROWSER, true);
 		page.addPart(HV_SEE_ALSO, false);
+		page.addPart(HV_BROWSER, true);
 		pages.add(page);
 
 		// context help page
@@ -782,8 +783,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// page.addPart(HV_SEARCH_RESULT, false, true);
 		page.setVerticalSpacing(0);
 		page.setHorizontalMargin(0);
-		page.addPart(HV_RELATED_TOPICS, true);
 		page.addPart(HV_SEE_ALSO, false);
+		page.addPart(HV_RELATED_TOPICS, true);
 		pages.add(page);
 
 		// index page
@@ -791,10 +792,10 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				Messages.ReusableHelpPart_indexPage_name,
 				IHelpUIConstants.IMAGE_INDEX); 
 		page.setVerticalSpacing(0);
+		page.addPart(HV_SEE_ALSO, false);
 		page.addPart(HV_SCOPE_SELECT, false);
 		page.addPart(HV_INDEX_TYPEIN, false);
 		page.addPart(HV_INDEX, true);
-		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
 	}
 
@@ -1027,12 +1028,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			oldPage.stop();
 			oldPage.setVisible(false);
 		}
-		mform.getForm().setText(newPage.getText());
+		mform.getForm().setText(null); //(newPage.getText());
 		mform.getForm().getForm().setSeparatorVisible(newPage.getText()!=null);
 		Image newImage=null;
-		String iconId = newPage.getIconId();
-		if (iconId != null)
-			newImage = HelpUIResources.getImage(iconId);
+		//String iconId = newPage.getIconId();
+		//if (iconId != null)
+			//newImage = HelpUIResources.getImage(iconId);
 		mform.getForm().setImage(newImage);
 		newPage.setVisible(true);
 		toolBarManager.update(true);
@@ -1177,6 +1178,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			part = new SeeAlsoPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH)) {
 			part = new SearchPart(parent, mform.getToolkit());
+		} else if (id.equals(HV_BOOKMARKS_HEADER)) {
+			part = new BookmarkHeaderPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_BOOKMARKS_TREE)) {
 			part = new BookmarksPart(parent, mform.getToolkit(), tbm);
 		} else if (id.equals(HV_INDEX)) {

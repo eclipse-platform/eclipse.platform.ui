@@ -172,7 +172,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private static int getSectionStyle() {
-		int style = Section.EXPANDED | Section.TITLE_BAR;
+		int style = Section.EXPANDED ;
 		if (RelatedTopicsPart.isUseDynamicHelp()) {
 			style = style | Section.TWISTIE;
 		}

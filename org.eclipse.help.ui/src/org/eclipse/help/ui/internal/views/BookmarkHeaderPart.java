@@ -1,0 +1,87 @@
+/*******************************************************************************
+ * Copyright (c) 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+package org.eclipse.help.ui.internal.views;
+
+/**
+ * Creates padding above the bookmarks view
+ */
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.forms.AbstractFormPart;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+
+public class BookmarkHeaderPart extends AbstractFormPart implements IHelpPart  {
+
+	private Composite container;
+	private String id;
+
+	public BookmarkHeaderPart(Composite parent, FormToolkit toolkit) {	
+		container = toolkit.createComposite(parent);
+		Composite inner = toolkit.createComposite(container);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		container.setLayout(layout);
+		GridData data = new GridData();
+		data.heightHint = 2;
+		inner.setLayoutData(data);
+	}
+	
+	public void init(ReusableHelpPart parent, String id, IMemento memento) {
+		this.id = id;
+	}
+
+	public void saveState(IMemento memento) {
+	}
+
+	public Control getControl() {
+		return container;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setVisible(boolean visible) {
+		container.setVisible(visible);
+	}
+
+	public boolean hasFocusControl(Control control) {
+		return false;
+	}
+
+	public boolean fillContextMenu(IMenuManager manager) {
+		return false;
+	}
+
+	public IAction getGlobalAction(String id) {
+		return null;
+	}
+
+	public void stop() {
+		
+	}
+
+	public void toggleRoleFilter() {
+		
+	}
+
+	public void refilter() {
+			
+	}
+		
+}
