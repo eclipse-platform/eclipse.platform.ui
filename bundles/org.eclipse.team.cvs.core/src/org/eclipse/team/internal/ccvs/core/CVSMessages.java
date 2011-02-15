@@ -7,7 +7,6 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
- *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
@@ -35,7 +34,6 @@ public class CVSMessages extends NLS {
 	public static String CVSTag_emptyName;
 	public static String CVSTag_beginName;
 	public static String CVSTag_badCharName;
-	public static String CVSTag_unknownBranch;
 
 	public static String CVSWorkspaceRoot_notCVSFolder;
 

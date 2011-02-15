@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,17 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
- *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.Date;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.team.core.history.ITag;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
 import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
 
 public class CVSHistoryFilter extends ViewerFilter {
-	public String branchName;
 	public String author;
 	public Date fromDate;
 	public Date toDate;
@@ -27,8 +25,7 @@ public class CVSHistoryFilter extends ViewerFilter {
 	public boolean isOr;
 	private int matchCounter;
 	
-	public CVSHistoryFilter(String branchName, String author, String comment, Date fromDate, Date toDate, boolean isOr) {
-		this.branchName = branchName;
+	public CVSHistoryFilter(String author, String comment, Date fromDate, Date toDate, boolean isOr) {
 		this.author = author;
 		this.comment = comment;
 		this.fromDate = fromDate;
@@ -48,7 +45,7 @@ public class CVSHistoryFilter extends ViewerFilter {
 			CVSFileRevision entry = (CVSFileRevision) element;
 			if (isOr) {
 				//empty fields should be considered a non-match
-				boolean orSearch = (hasBranchName() && branchMatch(entry)) || (hasAuthor() && authorMatch(entry)) || (hasDate() && dateMatch(entry)) || (hasComment() && commentMatch(entry));
+				boolean orSearch = (hasAuthor() && authorMatch(entry)) || (hasDate() && dateMatch(entry)) || (hasComment() && commentMatch(entry));
 				if (orSearch)
 					matchCounter++;
 				
@@ -56,24 +53,13 @@ public class CVSHistoryFilter extends ViewerFilter {
 			} else {
 				//"and" search
 				//empty fields should be considered a match
-				boolean andSearch = (!hasBranchName() || branchMatch(entry)) && (!hasAuthor() || authorMatch(entry)) && (!hasDate() || dateMatch(entry)) && (!hasComment() || commentMatch(entry));
+				boolean andSearch = (!hasAuthor() || authorMatch(entry)) && (!hasDate() || dateMatch(entry)) && (!hasComment() || commentMatch(entry));
 				if (andSearch)
 					matchCounter++;
 				
 				return andSearch;
 			}
 		}
-		return false;
-	}
-
-	protected boolean branchMatch(CVSFileRevision revision) {
-		ITag[] branches = revision.getBranches();
-		for (int i = 0; i < branches.length; i++) {
-			String tag = branches[i].getName().toLowerCase();
-			if ((tag.indexOf(branchName.toLowerCase()) != -1)) {
-					return true;
-			}
-		}		
 		return false;
 	}
 
@@ -99,10 +85,6 @@ public class CVSHistoryFilter extends ViewerFilter {
 		if (fromDate == null)
 			return true;
 		return (fromDate.before(new Date(revision.getTimestamp())));
-	}
-
-	protected boolean hasBranchName() {
-		return !branchName.equals(""); //$NON-NLS-1$
 	}
 
 	protected boolean hasAuthor() {

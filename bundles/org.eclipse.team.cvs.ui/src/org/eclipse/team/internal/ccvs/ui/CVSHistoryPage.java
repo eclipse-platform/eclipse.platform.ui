@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Eugene Kuleshov <eu@md.pp.ru> - Bug 153932 [History] Custom hyperlink detectors for comments in History view
  *     Brock Janiczak (brockj@tpg.com.au) - Bug 181899 CVS History wrongly ordered
- *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui;
@@ -1607,7 +1606,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					//Update the history (if it exists) to reflect the new
 					//counts
 					if (historyFilter != null){
-						CVSHistoryFilter tempFilter = new CVSHistoryFilter(historyFilter.branchName, historyFilter.author, historyFilter.comment, historyFilter.fromDate, historyFilter.toDate, historyFilter.isOr);
+						CVSHistoryFilter tempFilter = new CVSHistoryFilter(historyFilter.author, historyFilter.comment, historyFilter.fromDate, historyFilter.toDate, historyFilter.isOr);
 						showFilter(tempFilter);
 					}
 					

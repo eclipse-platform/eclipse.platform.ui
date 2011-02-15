@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM - Initial API and implementation
  *     Maik Schreiber - bug 102461
  *     Philippe Ombredanne - bug 84808
- *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -436,7 +435,6 @@ public class CVSUIMessages extends NLS {
 	public static String HistoryFilterDialog_showMatching;
 	public static String HistoryFilterDialog_matchingAny;
 	public static String HistoryFilterDialog_matchingAll;
-	public static String HistoryFilterDialog_branchname;
 	public static String HistoryFilterDialog_author;
 	public static String HistoryFilterDialog_comment;
 	public static String HistoryFilterDialog_fromDate;
@@ -447,7 +445,6 @@ public class CVSUIMessages extends NLS {
 	public static String HistoryView_tagWithExistingAction;
 	public static String HistoryView_copy;
 	public static String HistoryView_revision;
-	public static String HistoryView_branches;
 	public static String HistoryView_tags;
 	public static String HistoryView_date;
 	public static String HistoryView_author;

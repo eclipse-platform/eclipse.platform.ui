@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2011 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
- *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -45,7 +44,7 @@ public class CVSHistorySearchFilter extends org.eclipse.jface.viewers.ViewerFilt
 
 			CVSFileRevision entry = (CVSFileRevision) element;
 			//empty fields should be considered a non-match
-			boolean orSearch = (authorMatch(entry)) || (dateMatch(entry)) || (commentMatch(entry) || revisionMatch(entry) || tagMatch(entry) || branchNameMatch(entry));
+			boolean orSearch = (authorMatch(entry)) || (dateMatch(entry)) || (commentMatch(entry) || revisionMatch(entry) || tagMatch(entry));
 			if (orSearch)
 				matchCounter++;
 			return orSearch;
@@ -89,20 +88,7 @@ public class CVSHistorySearchFilter extends org.eclipse.jface.viewers.ViewerFilt
 
 		return false;
 	}
-
-	protected boolean branchNameMatch(CVSFileRevision revision) {
-		ITag[] branches = revision.getBranches();
-		for (int i = 0; i < branches.length; i++) {
-			String tag = branches[i].getName().toLowerCase();
-			Iterator iter = searchStrings.iterator();
-			while (iter.hasNext()) {
-				if (!(tag.indexOf(((String) iter.next()).toLowerCase()) == -1))
-					return true;
-			}
-		}
-		return false;
-	}
-
+	
 	protected boolean tagMatch(CVSFileRevision revision) {
 		ITag[] tags = revision.getTags();
 		for (int i = 0; i < tags.length; i++) {

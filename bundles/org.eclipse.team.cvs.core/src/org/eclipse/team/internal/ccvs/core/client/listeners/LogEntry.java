@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
@@ -26,7 +25,6 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	private String comment;
 	private String state;
 	private CVSTag[] tags;
-	private CVSTag[] branches;
     private String[] revisions;
     
 	/*
@@ -49,18 +47,17 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 		return buffer.toString();
 	}
 	
-	public LogEntry(RemoteFile file, String revision, String author, Date date, String comment, String state, CVSTag[] tags, CVSTag[] branches) {
+	public LogEntry(RemoteFile file, String revision, String author, Date date, String comment, String state, CVSTag[] tags) {
 		this.file = file.toRevision(revision);
 		this.author = author;
 		this.date = date;
 		this.comment = comment;
 		this.state = state;
 		this.tags = tags;
-		this.branches = branches;
 	}
 	
-	public LogEntry(RemoteFile file, String revision, String author, Date date, String comment, String state, CVSTag[] tags, CVSTag[] branches, String[] revisions) {
-		this(file,revision,author,date,comment,state,tags,branches);
+	public LogEntry(RemoteFile file, String revision, String author, Date date, String comment, String state, CVSTag[] tags, String[] revisions) {
+		this(file,revision,author,date,comment,state,tags);
 		this.revisions=revisions;
 	}
 
@@ -97,15 +94,6 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	 */
 	public String getState() {
 		return state;
-	}
-
-	/**
-	 * @see ILogEntry#getBranches()
-	 */
-	public CVSTag[] getBranches() {
-		CVSTag[] result = new CVSTag[branches.length];
-		System.arraycopy(branches, 0, result, 0, branches.length);
-		return result;
 	}
 
 	/**
