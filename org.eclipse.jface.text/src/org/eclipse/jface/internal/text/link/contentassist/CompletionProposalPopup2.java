@@ -90,6 +90,8 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private IDocumentListener fDocumentListener;
 	/** Reentrance count for <code>filterProposals</code> */
 	private long fInvocationCounter= 0;
+	/** Holds the last value of {@link #fInvocationCounter} that has been processed */
+	private long fInvocationProcessedCounter= 0;
 	/** The filter list of proposals */
 	private ICompletionProposal[] fFilteredProposals;
 	/** The computed list of proposals */
@@ -347,13 +349,21 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	 * Takes the selected proposal and applies it.
 	 *
 	 * @param stateMask the state mask
+	 * @return <code>true</code> iff a proposal has been inserted
 	 * @since 2.1
 	 */
-	private void selectProposalWithMask(int stateMask) {
+	private boolean selectProposalWithMask(int stateMask) {
+		if (fInvocationCounter != fInvocationProcessedCounter)
+			if (!doFilterProposals())
+				return false;
+			
 		ICompletionProposal p= getSelectedProposal();
 		hide();
-		if (p != null)
+		if (p != null) {
 			insertProposal(p, (char) 0, stateMask, fViewer.getSelectedRange().x);
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -758,8 +768,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				case '\n': // Ctrl-Enter on w2k
 				case '\r': // Enter
 					if ((e.stateMask & SWT.CTRL) == 0) {
-						e.doit= false;
-						selectProposalWithMask(e.stateMask);
+						e.doit= !selectProposalWithMask(e.stateMask);
 					}
 					break;
 
@@ -840,8 +849,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	}
 
 	/**
-	 * Filters the displayed proposal based on the given cursor position and the
-	 * offset of the original invocation of the content assistant.
+	 * Posts an async runnable to filter displayed proposals.
 	 */
 	private void filterProposals() {
 		++ fInvocationCounter;
@@ -850,27 +858,45 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 			long fCounter= fInvocationCounter;
 			public void run() {
 
-				if (fCounter != fInvocationCounter) return;
+				if (fCounter != fInvocationCounter)
+					return;
+				if (fInvocationProcessedCounter == fInvocationCounter)
+					return;
 
-				int offset= fViewer.getSelectedRange().x;
-				ICompletionProposal[] proposals= null;
-				try  {
-					if (offset > -1) {
-						DocumentEvent event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
-						proposals= computeFilteredProposals(offset, event);
-					}
-				} catch (BadLocationException x)  {
-				} finally  {
-					fDocumentEvents.clear();
-				}
-				fFilterOffset= offset;
-
-				if (proposals != null && proposals.length > 0)
-					setProposals(proposals);
-				else
-					hide();
+				doFilterProposals();
 			}
 		});
+	}
+
+	/**
+	 * Filters the displayed proposal based on the given cursor position and the
+	 * offset of the original invocation of the content assistant.
+	 * 
+	 * @return <code>true</code> if there are still proposals left, <code>false</code> if the popup has been closed
+	 * @since 3.7
+	 */
+	public boolean doFilterProposals() {
+		fInvocationProcessedCounter= fInvocationCounter;
+		int offset= fViewer.getSelectedRange().x;
+		ICompletionProposal[] proposals= null;
+		try  {
+			if (offset > -1) {
+				DocumentEvent event= TextUtilities.mergeProcessedDocumentEvents(fDocumentEvents);
+				proposals= computeFilteredProposals(offset, event);
+			}
+		} catch (BadLocationException x)  {
+		} finally  {
+			fDocumentEvents.clear();
+		}
+		fFilterOffset= offset;
+	
+		if (proposals != null && proposals.length > 0) {
+			setProposals(proposals);
+			return true;
+		} else {
+			hide();
+			return false;
+		}
 	}
 
 	/**
