@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPartService;
@@ -32,6 +33,7 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.SlavePageService;
 import org.eclipse.ui.internal.SlavePartService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
@@ -82,7 +84,7 @@ public class TestFacadeE4Impl extends TestFacade {
 
 	@Override
 	public void isSlavePageService(IPageService slaveService) {
-		E4Util.unsupported("isSlavePageService");
+		Assert.isTrue(slaveService instanceof SlavePageService);
 	}
 
 	@Override
