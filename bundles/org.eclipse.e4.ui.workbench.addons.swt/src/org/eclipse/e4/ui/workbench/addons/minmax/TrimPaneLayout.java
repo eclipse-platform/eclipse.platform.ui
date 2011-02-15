@@ -199,9 +199,7 @@ public class TrimPaneLayout extends Layout {
 			bounds.height += dy;
 		}
 
-		composite.setRedraw(false);
 		composite.setBounds(bounds);
-		composite.setRedraw(true);
 		composite.getDisplay().update();
 
 		curPos = p;
@@ -217,9 +215,7 @@ public class TrimPaneLayout extends Layout {
 			bounds.height += dy;
 		}
 
-		composite.setRedraw(false);
 		composite.setBounds(bounds);
-		composite.setRedraw(true);
 		composite.getDisplay().update();
 
 		curPos = p;
@@ -235,9 +231,7 @@ public class TrimPaneLayout extends Layout {
 			bounds.width += dx;
 		}
 
-		composite.setRedraw(false);
 		composite.setBounds(bounds);
-		composite.setRedraw(true);
 		composite.getDisplay().update();
 
 		curPos = p;
