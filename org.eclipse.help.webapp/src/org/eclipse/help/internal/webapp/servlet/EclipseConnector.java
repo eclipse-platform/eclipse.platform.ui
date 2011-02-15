@@ -219,6 +219,9 @@ public class EclipseConnector {
 	}
 
 	private boolean isProcessingRequired(String contentType) {
+		if (contentType.equals("application/xhtml+xml")) { //$NON-NLS-1$
+			return true;
+		}
 		if (!contentType.startsWith("text")) {  //$NON-NLS-1$
 				return false;
 	    }
@@ -240,7 +243,7 @@ public class EclipseConnector {
 		// use the context to get the mime type where possible
 		String pathInfo = req.getPathInfo();
 		String mimeType = context.getMimeType(pathInfo);
-		if (mimeType != null && !mimeType.equals("application/xhtml+xml")) { //$NON-NLS-1$
+		if (useMimeType(req, mimeType)) {
 			contentType = mimeType;
 		} else {
 			contentType = con.getContentType();
@@ -260,6 +263,17 @@ public class EclipseConnector {
 		}
 		resp.setHeader("Cache-Control", "max-age=" + maxAge); //$NON-NLS-1$ //$NON-NLS-2$
 		return con;
+	}
+
+
+	private boolean useMimeType(HttpServletRequest req, String mimeType) {
+		if  ( mimeType == null ) {
+	        return false;
+        }
+        if (mimeType.equals("application/xhtml+xml") && !UrlUtil.isMozilla(req)) { //$NON-NLS-1$
+        	return false;
+        }
+        return true;
 	}
 
 	/**
