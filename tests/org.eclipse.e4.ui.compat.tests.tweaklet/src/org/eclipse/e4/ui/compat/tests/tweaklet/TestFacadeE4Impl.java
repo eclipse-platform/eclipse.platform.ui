@@ -35,6 +35,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.SlavePageService;
 import org.eclipse.ui.internal.SlavePartService;
+import org.eclipse.ui.internal.SlaveSelectionService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.tests.helpers.TestFacade;
@@ -118,8 +119,7 @@ public class TestFacadeE4Impl extends TestFacade {
 
 	@Override
 	public boolean isSlaveSelectionService(ISelectionService slaveService) {
-		E4Util.unsupported("isSlaveSelectionService");
-		return false;
+		return slaveService instanceof SlaveSelectionService;
 	}
 
 	@Override
