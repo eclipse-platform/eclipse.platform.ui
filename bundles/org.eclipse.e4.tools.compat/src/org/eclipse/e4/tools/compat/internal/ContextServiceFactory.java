@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.compat.internal;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -66,6 +67,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			appContext.set(Display.class, Display.getCurrent());
 			appContext.set(Logger.class, new WorkbenchLogger());
 			appContext.set(IClipboardService.class, new ClipboardServiceImpl());
+			appContext.set(Realm.class, Realm.getDefault());
 			IContributionFactory contributionFactory = ContextInjectionFactory.make(ReflectionContributionFactory.class, appContext);
 			appContext.set(IContributionFactory.class.getName(),contributionFactory);
 			
