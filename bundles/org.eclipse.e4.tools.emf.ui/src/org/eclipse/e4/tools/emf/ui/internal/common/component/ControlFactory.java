@@ -341,6 +341,8 @@ public class ControlFactory {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		if (project == null) {
 			gd.horizontalSpan = 2;
+		} else {
+			gd.horizontalSpan = 2;
 		}
 
 		t.setLayoutData(gd);
