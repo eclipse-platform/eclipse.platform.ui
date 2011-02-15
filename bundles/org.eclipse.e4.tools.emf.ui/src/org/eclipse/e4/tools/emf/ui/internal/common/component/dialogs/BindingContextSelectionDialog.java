@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Text;
 public class BindingContextSelectionDialog extends TitleAreaDialog {
 	private IModelResource resource;
 	private TableViewer viewer;
-	private String selectedId;
+	private MBindingContext selectedContext;
 	private Messages Messages;
 
 	public BindingContextSelectionDialog(Shell parentShell, IModelResource resource, Messages Messages) {
@@ -58,8 +58,8 @@ public class BindingContextSelectionDialog extends TitleAreaDialog {
 		this.Messages = Messages;
 	}
 
-	public String getSelectedId() {
-		return selectedId;
+	public MBindingContext getSelectedContext() {
+		return selectedContext;
 	}
 
 	@Override
@@ -132,8 +132,8 @@ public class BindingContextSelectionDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 		if (!s.isEmpty()) {
-			selectedId = ((MBindingContext) s.getFirstElement()).getElementId();
-			if (selectedId != null && selectedId.trim().length() > 0) {
+			selectedContext = ((MBindingContext) s.getFirstElement());
+			if (selectedContext != null) {
 				super.okPressed();
 			} else {
 				setErrorMessage(Messages.BindingContextSelectionDialog_NoIdReference);

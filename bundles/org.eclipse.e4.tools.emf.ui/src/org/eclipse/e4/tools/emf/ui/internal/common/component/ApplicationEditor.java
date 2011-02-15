@@ -109,9 +109,8 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
-
+		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.ApplicationEditor_BindingContexts);
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ApplicationEditor_BindingContexts, CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;
 	}
@@ -128,16 +127,14 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		});
 
-		// list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ROOT_CONTEXTS,
-		// BINDING_TABLE_CONTAINER__ROOT_CONTEXT, element,
-		// Messages.ApplicationEditor_RootContexts) {
-		//
-		// @Override
-		// protected boolean accepted(Object o) {
-		// return true;
-		// }
-		//
-		// });
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_ROOT_CONTEXTS, BINDING_TABLE_CONTAINER__ROOT_CONTEXT, element, Messages.ApplicationEditor_RootContexts) {
+
+			@Override
+			protected boolean accepted(Object o) {
+				return true;
+			}
+
+		});
 
 		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_BINDING_TABLE, BINDING_CONTAINER__BINDINGS, element, Messages.ApplicationEditor_BindingTables) {
 

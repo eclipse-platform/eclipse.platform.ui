@@ -301,6 +301,7 @@ public class PartDescriptorEditor extends AbstractComponentEditor {
 			context.bindValue(textProp.observeDelayed(200, t), EMFEditProperties.value(getEditingDomain(), BasicPackageImpl.Literals.PART_DESCRIPTOR__CATEGORY).observeDetail(master));
 		}
 
+		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.PartEditor_BindingContexts);
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
 		return parent;

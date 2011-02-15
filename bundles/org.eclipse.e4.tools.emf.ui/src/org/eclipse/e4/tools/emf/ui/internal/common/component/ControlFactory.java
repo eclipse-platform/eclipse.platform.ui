@@ -24,6 +24,8 @@ import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.BindingContextSelectionDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.FindImportElementDialog;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
 import org.eclipse.e4.tools.services.IClipboardService.Handler;
@@ -31,6 +33,8 @@ import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.commands.MBindings;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -58,6 +62,7 @@ import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -440,6 +445,116 @@ public class ControlFactory {
 				binding[0] = context.bindValue(uiObs, mObs);
 			}
 		});
+	}
+
+	public static void createBindingContextWiget(Composite parent, final Messages Messages, final AbstractComponentEditor editor, String label) {
+		{
+			Label l = new Label(parent, SWT.NONE);
+			l.setText(label);
+			l.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+			final TableViewer viewer = new TableViewer(parent);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.heightHint = 120;
+			viewer.getControl().setLayoutData(gd);
+			viewer.setContentProvider(new ObservableListContentProvider());
+			viewer.setLabelProvider(new ComponentLabelProvider(editor.getEditor(), Messages));
+			viewer.setInput(EMFProperties.list(CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS).observeDetail(editor.getMaster()));
+
+			final Composite buttonComp = new Composite(parent, SWT.NONE);
+			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
+			GridLayout gl = new GridLayout();
+			gl.marginLeft = 0;
+			gl.marginRight = 0;
+			gl.marginWidth = 0;
+			gl.marginHeight = 0;
+			buttonComp.setLayout(gl);
+
+			Button b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_Up);
+			b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_up));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
+							Object obj = s.getFirstElement();
+							MBindings container = (MBindings) editor.getMaster().getValue();
+							int idx = container.getBindingContexts().indexOf(obj) - 1;
+							if (idx >= 0) {
+								Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, obj, idx);
+
+								if (cmd.canExecute()) {
+									editor.getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+
+						}
+					}
+				}
+			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_Down);
+			b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_arrow_down));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (!viewer.getSelection().isEmpty()) {
+						IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+						if (s.size() == 1) {
+							Object obj = s.getFirstElement();
+							MBindings container = (MBindings) editor.getMaster().getValue();
+							int idx = container.getBindingContexts().indexOf(obj) + 1;
+							if (idx < container.getBindingContexts().size()) {
+								Command cmd = MoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, obj, idx);
+
+								if (cmd.canExecute()) {
+									editor.getEditingDomain().getCommandStack().execute(cmd);
+									viewer.setSelection(new StructuredSelection(obj));
+								}
+							}
+
+						}
+					}
+				}
+			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_AddEllipsis);
+			b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_add));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					BindingContextSelectionDialog dialog = new BindingContextSelectionDialog(buttonComp.getShell(), editor.getEditor().getModelProvider(), Messages);
+					if (dialog.open() == IDialogConstants.OK_ID) {
+						Command cmd = AddCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, dialog.getSelectedContext());
+						if (cmd.canExecute()) {
+							editor.getEditingDomain().getCommandStack().execute(cmd);
+						}
+					}
+				}
+			});
+
+			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
+			b.setText(Messages.ModelTooling_Common_Remove);
+			b.setImage(editor.createImage(ResourceProvider.IMG_Obj16_table_delete));
+			b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false));
+			b.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					Command cmd = RemoveCommand.create(editor.getEditingDomain(), editor.getMaster().getValue(), CommandsPackageImpl.Literals.BINDINGS__BINDING_CONTEXTS, ((IStructuredSelection) viewer.getSelection()).toList());
+					if (cmd.canExecute()) {
+						editor.getEditingDomain().getCommandStack().execute(cmd);
+					}
+				}
+			});
+		}
 	}
 
 	public static void createStringListWidget(Composite parent, Messages Messages, final AbstractComponentEditor editor, String label, final EStructuralFeature feature, int vIndent) {
