@@ -52,6 +52,10 @@ public class TestModelUpdatesListener
     
     private boolean fFailOnRedundantUpdates;
     private Set fRedundantUpdates = new HashSet();
+    private Set fRedundantHasChildrenUpdateExceptions = new HashSet();
+    private Set fRedundantChildCountUpdateExceptions = new HashSet();
+    private Set fRedundantChildrenUpdateExceptions = new HashSet();
+    private Set fRedundantLabelUpdateExceptions = new HashSet();
     
     private boolean fFailOnMultipleModelUpdateSequences;
     private boolean fMultipleModelUpdateSequencesObserved;
@@ -161,6 +165,10 @@ public class TestModelUpdatesListener
     public void reset() {
         fJobError = null;
         fRedundantUpdates.clear();
+        fRedundantHasChildrenUpdateExceptions.clear();
+        fRedundantChildCountUpdateExceptions.clear();
+        fRedundantChildrenUpdateExceptions.clear();
+        fRedundantLabelUpdateExceptions.clear();
         fMultipleLabelUpdateSequencesObserved = false;
         fMultipleModelUpdateSequencesObserved = false;
         fHasChildrenUpdatesScheduled.clear();
@@ -253,6 +261,22 @@ public class TestModelUpdatesListener
         for (int i = 0; i < childDeltas.length; i++) {
             addStateUpdates(viewer, childDeltas[i], deltaFlags);
         }  
+    }
+    
+    public void addRedundantExceptionHasChildren(TreePath path) {
+        fRedundantHasChildrenUpdateExceptions.add(path);
+    }
+
+    public void addRedundantExceptionChildCount(TreePath path) {
+        fRedundantChildCountUpdateExceptions.add(path);
+    }
+
+    public void addRedundantExceptionChildren(TreePath path) {
+        fRedundantChildrenUpdateExceptions.add(path);
+    }
+
+    public void addRedundantExceptionLabel(TreePath path) {
+        fRedundantLabelUpdateExceptions.add(path);
     }
     
     /**
@@ -441,16 +465,23 @@ public class TestModelUpdatesListener
         }
 
         if (!update.isCanceled()) {
+            TreePath updatePath = update.getElementPath();
             if (update instanceof IHasChildrenUpdate) {
                 fHasChildrenUpdatesRunning.remove(update);
                 fHasChildrenUpdatesCompleted.add(update);                
-                if (!fHasChildrenUpdatesScheduled.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
+                if (!fHasChildrenUpdatesScheduled.remove(updatePath) &&
+                    fFailOnRedundantUpdates && 
+                    fRedundantHasChildrenUpdateExceptions.contains(updatePath)) 
+                {
                     fRedundantUpdates.add(update);
                 }
             } if (update instanceof IChildrenCountUpdate) {
                 fChildCountUpdatesRunning.remove(update);
                 fChildCountUpdatesCompleted.add(update);                
-                if (!fChildCountUpdatesScheduled.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
+                if (!fChildCountUpdatesScheduled.remove(updatePath) &&
+                    fFailOnRedundantUpdates &&
+                    !fRedundantChildCountUpdateExceptions.contains(updatePath)) 
+                {
                     fRedundantUpdates.add(update);
                 }
             } else if (update instanceof IChildrenUpdate) {
@@ -460,15 +491,15 @@ public class TestModelUpdatesListener
                 int start = ((IChildrenUpdate)update).getOffset();
                 int end = start + ((IChildrenUpdate)update).getLength();
                 
-                Set childrenIndexes = (Set)fChildrenUpdatesScheduled.get(update.getElementPath());
+                Set childrenIndexes = (Set)fChildrenUpdatesScheduled.get(updatePath);
                 if (childrenIndexes != null) {
                     for (int i = start; i < end; i++) {
                         childrenIndexes.remove(new Integer(i));
                     }
                     if (childrenIndexes.isEmpty()) {
-                        fChildrenUpdatesScheduled.remove(update.getElementPath());
+                        fChildrenUpdatesScheduled.remove(updatePath);
                     }
-                } else if (fFailOnRedundantUpdates) {
+                } else if (fFailOnRedundantUpdates && fRedundantChildrenUpdateExceptions.contains(updatePath)) {
                     fRedundantUpdates.add(update);
                 }
             } 
@@ -492,7 +523,10 @@ public class TestModelUpdatesListener
             fLabelUpdatesCompleted.add(update);
         	fLabelUpdatesCounter--;
         }
-        if (!fLabelUpdates.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
+        if (!fLabelUpdates.remove(update.getElementPath()) && 
+            fFailOnRedundantUpdates && 
+            !fRedundantLabelUpdateExceptions.contains(update.getElementPath())) 
+        {
             Assert.fail("Redundant update: " + update);
         }
     }

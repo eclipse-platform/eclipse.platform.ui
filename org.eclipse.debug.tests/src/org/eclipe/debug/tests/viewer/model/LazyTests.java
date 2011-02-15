@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
-import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -37,7 +36,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
     
     Display fDisplay;
     Shell fShell;
-    ITreeModelViewer fViewer;
+    ITreeModelContentProviderTarget fViewer;
     TestModelUpdatesListener fListener;
     
     public LazyTests(String name) {
@@ -61,8 +60,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
     }
 
     abstract protected ITreeModelContentProviderTarget createViewer(Display display, Shell shell);
-    
-    /**
+        /**
      * @throws java.lang.Exception
      */
     protected void tearDown() throws Exception {
@@ -196,5 +194,60 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         Assert.assertEquals(((IStructuredSelection)fViewer.getSelection()).getFirstElement(), _1_0_newElement);
     }
 
+    /**
+     */
+    public void testContentRefresh() {
+        // Create test model with lots of children.
+        TestModel model = largeSubtreeModel(1000); 
+        
+        // Expand children all
+        fViewer.setAutoExpandLevel(-1);
+
+        // Populate initial view content
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true); 
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Turn off autoexpand
+        fViewer.setAutoExpandLevel(0);
+
+        // Reposition the viewer to middle of list
+        fListener.reset();
+        fListener.setFailOnRedundantUpdates(false);
+        fViewer.reveal(model.findElement("1"), 500);
+        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        
+        // Create delta to refresh the "1" element.
+        TestElement rootElement = model.getRootElement();
+        ModelDelta rootDelta = new ModelDelta(rootElement, IModelDelta.NO_CHANGE);
+        ModelDelta expandDelta = model.getBaseDelta(rootDelta);
+        TestElement expandElement = rootElement.getChildren()[0];
+        expandDelta.addNode(expandElement, 0, IModelDelta.CONTENT, expandElement.getChildren().length);
+
+        // Rinse and repeast.  The refresh in bug 335734 is only triggered 
+        // only on the second time.
+        for (int repeatCount = 0; repeatCount < 3; repeatCount++) {
+            // Add first 250 elements (after element 500) as acceptable to materialize
+            fListener.reset(); 
+            fListener.setFailOnRedundantUpdates(true);
+            TreePath refreshElementPath = model.findElement("1");
+            fListener.addRedundantExceptionChildCount(refreshElementPath);
+            fListener.addRedundantExceptionLabel(refreshElementPath);
+            fListener.addChildreUpdate(TreePath.EMPTY, 0);
+            fListener.addHasChildrenUpdate(refreshElementPath);
+            fListener.addChildreCountUpdate(refreshElementPath);
+            fListener.addLabelUpdate(refreshElementPath); // TODO: not sure why label is updated upon expand?
+            for (int i = 499; i < 750; i++) {
+                fListener.addChildreUpdate(refreshElementPath, i);
+                TreePath childPath = refreshElementPath.createChildPath(expandElement.getChildren()[i]);
+                fListener.addLabelUpdate(childPath);
+                fListener.addHasChildrenUpdate(childPath);
+            }
+            model.postDelta(rootDelta);
+    
+            while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE | LABEL_UPDATES_COMPLETE)) 
+                if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        }
+    }
 
 }

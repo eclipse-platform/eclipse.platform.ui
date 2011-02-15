@@ -2301,13 +2301,13 @@ public class InternalTreeModelViewer extends TreeViewer
             items = tree.getItems(); 
         } else if (w instanceof TreeItem) {
             TreeItem item = (TreeItem)w;
-            int itemCount = item.getItemCount();
-            delta.setChildCount(((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, itemCount));
             if (item.getExpanded()) {
+                int itemCount = item.getData() != null ? item.getItemCount() : -1;
+                delta.setChildCount(((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, itemCount));
                 if ((flagsToSave & IModelDelta.EXPAND) != 0) {
                     delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
                 }
-            } else if ((flagsToSave & IModelDelta.COLLAPSE) != 0 && itemCount > 0){
+            } else if ((flagsToSave & IModelDelta.COLLAPSE) != 0){
                 delta.setFlags(delta.getFlags() | IModelDelta.COLLAPSE);
             }
             
@@ -2331,12 +2331,11 @@ public class InternalTreeModelViewer extends TreeViewer
         if (element != null) {
             boolean expanded = item.getExpanded();
             boolean selected = set.contains(item);
-            int itemCount = item.getItemCount();
             int flags = IModelDelta.NO_CHANGE;
             if (expanded && (flagsToSave & IModelDelta.EXPAND) != 0) {
                 flags = flags | IModelDelta.EXPAND;
             } 
-            if (!expanded && (flagsToSave & IModelDelta.COLLAPSE) != 0 && itemCount > 0) {
+            if (!expanded && (flagsToSave & IModelDelta.COLLAPSE) != 0) {
                 flags = flags | IModelDelta.COLLAPSE;
             }
             if (selected && (flagsToSave & IModelDelta.SELECT) != 0) {
@@ -2345,9 +2344,13 @@ public class InternalTreeModelViewer extends TreeViewer
             if (expanded || flags != IModelDelta.NO_CHANGE) {
                 int modelIndex = ((ITreeModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, index);
                 TreePath elementPath = parentPath.createChildPath(element);
-                int numChildren = ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(elementPath, itemCount);
-                ModelDelta childDelta = delta.addNode(element, modelIndex, flags, numChildren);
+                ModelDelta childDelta = delta.addNode(element, modelIndex, flags, -1);
                 if (expanded) {
+                    // Only get the item count if the item is expanded.  Getting
+                    // item count triggers an update of the element (bug 335734).
+                    int itemCount = item.getItemCount();                
+                    int numChildren = ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(elementPath, itemCount);
+                    childDelta.setChildCount(numChildren);
                     TreeItem[] items = item.getItems();
                     for (int i = 0; i < items.length; i++) {
                         doSaveElementState(elementPath, childDelta, items[i], set, i, flagsToSave);

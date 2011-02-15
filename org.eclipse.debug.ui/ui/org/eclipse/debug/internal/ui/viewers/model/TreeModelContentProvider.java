@@ -579,7 +579,11 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
                 if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
                     System.out.println("\tRESTORE COLLAPSE: " + treePath.getLastSegment()); //$NON-NLS-1$
                 }
-                getViewer().setExpandedState(treePath, false);
+                // Check auto-expand before collapsing an element (bug 335734)
+                int autoexpand = getViewer().getAutoExpandLevel();
+                if (autoexpand != ITreeModelViewer.ALL_LEVELS && autoexpand < (treePath.getSegmentCount() + 1)) {
+                    getViewer().setExpandedState(treePath, false);
+                }
                 delta.setFlags(delta.getFlags() & ~IModelDelta.COLLAPSE);
             }
 		}
