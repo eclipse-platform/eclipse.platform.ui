@@ -49,6 +49,14 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 			// There is no package qualification
 			// Perform the search only on the type name
 			typeName = currentContent.toCharArray();
+			if( currentContent.startsWith("*") ) {
+				typeName = "".toCharArray();
+				if( ! currentContent.endsWith("*") ) {
+					currentContent += "*";
+				}
+				packageName = currentContent.toCharArray();
+			}
+			
 		} else if ((index + 1) == currentContent.length()) {
 			// There is a package qualification and the last character is a
 			// dot
@@ -132,7 +140,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 		try {
 			searchEngine.searchAllTypeNames(
 					packageName, 
-					SearchPattern.R_EXACT_MATCH, 
+					SearchPattern.R_PATTERN_MATCH, 
 					typeName, 
 					SearchPattern.R_PREFIX_MATCH, 
 					IJavaSearchConstants.CLASS, 
