@@ -29,6 +29,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -1446,8 +1447,8 @@ public class InternalTreeModelViewer extends TreeViewer
     		setColumnProperties(null);
     	}
     	
-
-    	int avg = tree.getSize().x;
+    	int treeWidgetWidth = tree.getSize().x;
+    	int avg = treeWidgetWidth;
     	if (visibleColumnIds != null)
     		avg /= visibleColumnIds.length;
     	
@@ -1457,24 +1458,32 @@ public class InternalTreeModelViewer extends TreeViewer
                     Tree tree2 = getTree();
                     String[] visibleColumns = getVisibleColumns();
                     if (visibleColumns != null) {
-						int avg1 = tree2.getSize().x / visibleColumns.length;
-	                    initColumns(avg1);
+                    	int treeWidgetWidth1 = tree2.getSize().x;
+						int avg1 = treeWidgetWidth1 / visibleColumns.length;
+	                    initColumns(avg1, treeWidgetWidth1, visibleColumns);
                     }
                     tree2.removePaintListener(this);
                 }
             });
         } else {
-            initColumns(avg);
+            initColumns(avg, treeWidgetWidth, visibleColumnIds);
         }
     }
 
-    private void initColumns(int widthHint) {
+    private void initColumns(int widthHint, int treeWidgetWidth, String[] visibleColumnIds) {
         TreeColumn[] columns = getTree().getColumns();
         for (int i = 0; i < columns.length; i++) {
             TreeColumn treeColumn = columns[i];
-            Integer width = (Integer) fColumnSizes.get(treeColumn.getData());
+            Object colData = treeColumn.getData();
+            String columnId = colData instanceof String ? (String) colData : null;            
+            Integer width = (Integer) fColumnSizes.get(colData);
             if (width == null) {
-                treeColumn.setWidth(widthHint);
+            	int ans = getInitialColumnWidth(columnId, treeWidgetWidth, visibleColumnIds);
+            	if (ans == -1) {
+            		treeColumn.setWidth(widthHint);
+            	} else {
+            		treeColumn.setWidth(ans);
+            	}
             } else {
                 treeColumn.setWidth(width.intValue());
             }
@@ -1512,7 +1521,26 @@ public class InternalTreeModelViewer extends TreeViewer
 		return null;
 	}    
 	
-    /**
+	/**
+	 * Returns initial column width of a given column, or -1
+	 * @param columnId column Id
+	 * @param treeWidgetWidth tree widget width
+	 * @param visibleColumnIds visible columns
+	 *  
+	 * @return column width
+	 */
+	public int getInitialColumnWidth(String columnId, int treeWidgetWidth, String[] visibleColumnIds) {
+		if (isShowColumns()) {
+			IColumnPresentation presentation = getColumnPresentation();
+			if (presentation instanceof IColumnPresentation2) {
+				int ans = ((IColumnPresentation2) presentation).getInitialColumnWidth(columnId, treeWidgetWidth, visibleColumnIds);
+				return ans;
+			}
+		}
+		return -1;
+	}
+
+	/**
      * Persists column sizes in cache
      */
     protected void persistColumnSizes() { 
