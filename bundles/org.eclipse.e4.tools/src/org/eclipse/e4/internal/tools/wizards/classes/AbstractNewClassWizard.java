@@ -11,9 +11,15 @@
 package org.eclipse.e4.internal.tools.wizards.classes;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -29,10 +35,16 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.project.IBundleProjectDescription;
+import org.eclipse.pde.core.project.IBundleProjectService;
+import org.eclipse.pde.core.project.IRequiredBundleDescription;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public abstract class AbstractNewClassWizard extends Wizard implements INewWizard {
 	protected IPackageFragmentRoot root;
@@ -115,7 +127,39 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 	}
 	
 	protected void checkRequiredBundles() {
-		
+		IProject project = getDomainClass().getFragmentRoot().getJavaProject().getProject();
+		BundleContext context = FrameworkUtil.getBundle(NewAddonClassWizard.class).getBundleContext();
+		ServiceReference<IBundleProjectService> ref = context.getServiceReference(IBundleProjectService.class);
+		IBundleProjectService service = context.getService(ref);
+		try {
+			IBundleProjectDescription description = service.getDescription(project);
+			Set<String> requiredBundles = getRequiredBundles();
+			IRequiredBundleDescription[] arTmp = description.getRequiredBundles();
+			List<IRequiredBundleDescription> descs = new ArrayList<IRequiredBundleDescription>();
+			if( arTmp != null ) {
+				descs.addAll(Arrays.asList(arTmp));
+			}
+			for( IRequiredBundleDescription bd : descs ) {
+				requiredBundles.remove(bd.getName());
+			}
+			
+			if( requiredBundles.size() > 0 ) {
+				for( String b : requiredBundles ) {
+					descs.add(service.newRequiredBundle(b, null, false, false));
+				}
+				description.setRequiredBundles(descs.toArray(new IRequiredBundleDescription[0]));
+				description.apply(new NullProgressMonitor());
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	protected Set<String> getRequiredBundles() {
+		Set<String> rv = new HashSet<String>();
+		rv.add("javax.inject");
+		return rv;
 	}
 	
 	@Override

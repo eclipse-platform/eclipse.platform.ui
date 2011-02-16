@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
+import java.util.Set;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -87,12 +89,12 @@ public class NewHandlerClassWizard extends AbstractNewClassWizard {
 	}
 	
 	@Override
-	protected void checkRequiredBundles() {
-		// TODO Auto-generated method stub
-		
+	protected Set<String> getRequiredBundles() {
+		Set<String> set = super.getRequiredBundles();
+		set.add("org.eclipse.e4.core.di");
+		return set;
 	}
 	
-
 	public static class HandlerClass extends JavaClass {
 		private String executeMethodName = "execute";
 		private String canExecuteMethodName = "canExecute";

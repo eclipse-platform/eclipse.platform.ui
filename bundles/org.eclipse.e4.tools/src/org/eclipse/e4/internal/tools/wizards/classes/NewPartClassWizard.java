@@ -12,6 +12,7 @@ package org.eclipse.e4.internal.tools.wizards.classes;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Set;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
@@ -136,11 +137,18 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 	}
 	
 	@Override
-	protected void checkRequiredBundles() {
-		// TODO Auto-generated method stub
+	protected Set<String> getRequiredBundles() {
+		Set<String> rv = super.getRequiredBundles();
+		PartClass cl = (PartClass)getDomainClass();
+		if( cl.usePostConstruct || cl.usePredestroy ) {
+			rv.add("javax.annotation");
+		} else if( cl.useFocus || cl.usePersist ) {
+			rv.add("org.eclipse.e4.ui.di");
+		}
 		
+		return rv;
 	}
-
+	
 	@Override
 	protected String getContent() {
 		PartTemplate template = new PartTemplate();

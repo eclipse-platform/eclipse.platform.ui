@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.e4.internal.tools.wizards.classes;
 
+import java.util.Set;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.e4.internal.tools.wizards.classes.templates.AddonTemplate;
@@ -42,9 +44,10 @@ public class NewAddonClassWizard extends AbstractNewClassWizard {
 	}
 	
 	@Override
-	protected void checkRequiredBundles() {
-		// TODO Auto-generated method stub
-		
+	protected Set<String> getRequiredBundles() {
+		Set<String> rv = super.getRequiredBundles();
+		rv.add("javax.annotation");
+		rv.add("org.eclipse.e4.core.services");
+		return rv;
 	}
-
 }
