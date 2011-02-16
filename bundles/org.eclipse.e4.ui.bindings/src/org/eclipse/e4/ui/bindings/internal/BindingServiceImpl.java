@@ -70,6 +70,7 @@ public class BindingServiceImpl implements EBindingService {
 		BindingTable table = manager.getTable(contextId);
 		if (table == null) {
 			System.err.println("No binding table for " + contextId); //$NON-NLS-1$
+			return;
 		}
 		table.addBinding(binding);
 	}
@@ -86,6 +87,7 @@ public class BindingServiceImpl implements EBindingService {
 		BindingTable table = manager.getTable(contextId);
 		if (table == null) {
 			System.err.println("No binding table for " + contextId); //$NON-NLS-1$
+			return;
 		}
 		table.removeBinding(binding);
 	}
