@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,11 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -39,8 +38,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.jface.dialogs.DialogPage;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.preference.PreferencePage;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractAntEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -90,7 +97,15 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
+
+	/*
+	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE);
+	}
+
 	protected void initializeFields() {
 		Map checkBoxes= getCheckBoxes();
 		Map textFields= getTextFields();

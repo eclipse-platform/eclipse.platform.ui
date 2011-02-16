@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
 import org.eclipse.ant.internal.ui.editor.text.IAntEditorColorConstants;
 
@@ -59,7 +58,6 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewer;
 
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
@@ -339,7 +337,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_EDITOR_PREFERENCE_PAGE);
 		getOverlayStore().load();
 		getOverlayStore().start();
 		
