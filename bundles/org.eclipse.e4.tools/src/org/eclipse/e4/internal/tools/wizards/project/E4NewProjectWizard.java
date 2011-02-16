@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -72,6 +73,7 @@ import org.eclipse.pde.core.plugin.IPluginImport;
 import org.eclipse.pde.internal.core.ICoreConstants;
 import org.eclipse.pde.internal.core.bundle.WorkspaceBundlePluginModel;
 import org.eclipse.pde.internal.core.plugin.WorkspacePluginModelBase;
+import org.eclipse.pde.internal.core.util.CoreUtility;
 import org.eclipse.pde.internal.ui.PDEPlugin;
 import org.eclipse.pde.internal.ui.PDEUIMessages;
 import org.eclipse.pde.internal.ui.wizards.IProjectProvider;
@@ -316,8 +318,24 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		String xmiPath = map
 				.get(NewApplicationWizardPage.APPLICATION_XMI_PROPERTY);
 
+		// If there's no Activator created we create default package
+		if (!fPluginData.doGenerateClass()) {
+			String packageName = fPluginData.getId();
+			IPath path = new Path(packageName.replace('.', '/'));
+			if (fPluginData.getSourceFolderName().trim().length() > 0)
+				path = new Path(fPluginData.getSourceFolderName()).append(path);
+			
+			try {
+				CoreUtility.createFolder(project.getFolder(path));
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		IJavaProject javaProject = JavaCore.create(project);
 		IPackageFragment fragment = null;
+
 		try {
 			for (IPackageFragment element : javaProject.getPackageFragments()) {
 				if (element.getKind() == IPackageFragmentRoot.K_SOURCE) {
@@ -344,56 +362,58 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 
 			MApplication application = MApplicationFactory.INSTANCE
 					.createApplication();
-			
+
 			application.setElementId("org.eclipse.e4.ide.application");
-			
+
 			MAddon addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.core.commands.service");
 			addon.setContributionURI("platform:/plugin/org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon");
 			application.getAddons().add(addon);
-			
+
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.contexts.service");
 			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon");
 			application.getAddons().add(addon);
-			
+
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.bindings.service");
 			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon");
 			application.getAddons().add(addon);
-			
+
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.commands.model");
 			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon");
 			application.getAddons().add(addon);
-			
+
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.contexts.model");
 			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon");
 			application.getAddons().add(addon);
-			
+
 			addon = MApplicationFactory.INSTANCE.createAddon();
 			addon.setElementId("org.eclipse.e4.ui.workbench.bindings.model");
 			addon.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon");
 			application.getAddons().add(addon);
-			
-			MBindingContext rootContext = MCommandsFactory.INSTANCE.createBindingContext();
+
+			MBindingContext rootContext = MCommandsFactory.INSTANCE
+					.createBindingContext();
 			rootContext.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
 			rootContext.setName("In Dialog and Windows");
-			
-			MBindingContext childContext = MCommandsFactory.INSTANCE.createBindingContext();
+
+			MBindingContext childContext = MCommandsFactory.INSTANCE
+					.createBindingContext();
 			childContext.setElementId("org.eclipse.ui.contexts.window");
 			childContext.setName("In Windows");
 			rootContext.getChildren().add(childContext);
-			
+
 			childContext = MCommandsFactory.INSTANCE.createBindingContext();
 			childContext.setElementId("org.eclipse.ui.contexts.dialog");
 			childContext.setName("In Dialogs");
 			rootContext.getChildren().add(childContext);
-			
+
 			application.getRootContext().add(rootContext);
 			application.getBindingContexts().add(rootContext);
-			
+
 			resource.getContents().add((EObject) application);
 
 			// Create Quit command
@@ -410,7 +430,8 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 					"AboutHandler", "Ctrl+A", projectName, fragment,
 					application);
 
-			MTrimmedWindow mainWindow = MBasicFactory.INSTANCE.createTrimmedWindow();
+			MTrimmedWindow mainWindow = MBasicFactory.INSTANCE
+					.createTrimmedWindow();
 			application.getChildren().add(mainWindow);
 			{
 				mainWindow.setLabel(projectName);
@@ -423,8 +444,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 					mainWindow.setMainMenu(menu);
 					menu.setElementId("menu:org.eclipse.ui.main.menu");
 
-					MMenu fileMenuItem = MMenuFactory.INSTANCE
-							.createMenu();
+					MMenu fileMenuItem = MMenuFactory.INSTANCE.createMenu();
 					menu.getChildren().add(fileMenuItem);
 					fileMenuItem.setLabel("File");
 					{
@@ -450,8 +470,7 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						menuItemQuit.setLabel("Quit");
 						menuItemQuit.setCommand(quitCommand);
 					}
-					MMenu helpMenuItem = MMenuFactory.INSTANCE
-							.createMenu();
+					MMenu helpMenuItem = MMenuFactory.INSTANCE.createMenu();
 					menu.getChildren().add(helpMenuItem);
 					helpMenuItem.setLabel("Help");
 					{
@@ -481,15 +500,17 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 						MPartStack partStack = MBasicFactory.INSTANCE
 								.createPartStack();
 						partSashContainer.getChildren().add(partStack);
-//
-//						MPart part = MApplicationFactory.eINSTANCE.createPart();
-//						partStack.getChildren().add(part);
-//						part.setLabel("Main");
+						//
+						// MPart part =
+						// MApplicationFactory.eINSTANCE.createPart();
+						// partStack.getChildren().add(part);
+						// part.setLabel("Main");
 					}
 
 					// WindowTrim
 					{
-						MTrimBar trimBar = MBasicFactory.INSTANCE.createTrimBar();
+						MTrimBar trimBar = MBasicFactory.INSTANCE
+								.createTrimBar();
 						mainWindow.getTrimBars().add(trimBar);
 
 						MToolBar toolBar = MMenuFactory.INSTANCE
@@ -593,29 +614,31 @@ public class E4NewProjectWizard extends NewPluginProjectWizard {
 		application.getCommands().add(command);
 		{
 			// Create Quit handler for command
-			MHandler quitHandler =MCommandsFactory.INSTANCE
-					.createHandler();
+			MHandler quitHandler = MCommandsFactory.INSTANCE.createHandler();
 			quitHandler.setCommand(command);
-			quitHandler.setContributionURI("platform:/plugin/" + projectName + "/"
-					+ fragment.getElementName() + ".handlers." + className);
+			quitHandler.setContributionURI("platform:/plugin/" + projectName
+					+ "/" + fragment.getElementName() + ".handlers."
+					+ className);
 			application.getHandlers().add(quitHandler);
 
-			MKeyBinding binding = MCommandsFactory.INSTANCE
-					.createKeyBinding();
+			MKeyBinding binding = MCommandsFactory.INSTANCE.createKeyBinding();
 			binding.setKeySequence(keyBinding);
 			binding.setCommand(command);
 			List<MBindingTable> tables = application.getBindingTables();
-			if (tables.size()==0) {
+			if (tables.size() == 0) {
 				MBindingContext rootContext = null;
-				if (application.getRootContext().size()>0) {
+				if (application.getRootContext().size() > 0) {
 					rootContext = application.getRootContext().get(0);
 				} else {
-					rootContext = MCommandsFactory.INSTANCE.createBindingContext();
-					rootContext.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
+					rootContext = MCommandsFactory.INSTANCE
+							.createBindingContext();
+					rootContext
+							.setElementId("org.eclipse.ui.contexts.dialogAndWindow");
 					rootContext.setName("In Dialog and Windows");
 					application.getRootContext().add(rootContext);
 				}
-				MBindingTable table = MCommandsFactory.INSTANCE.createBindingTable();
+				MBindingTable table = MCommandsFactory.INSTANCE
+						.createBindingTable();
 				table.setBindingContext(rootContext);
 				tables.add(table);
 			}
