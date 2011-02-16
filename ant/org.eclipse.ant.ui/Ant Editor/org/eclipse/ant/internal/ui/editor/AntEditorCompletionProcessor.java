@@ -607,7 +607,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      * target cannot be found, <code>null</code> will be returned. 
      * 
      * @param targetName the target's name
-     * @return an image suitable for representating the target, or <code>null</code> if the target cannot be found
+     * @return an image suitable for representing the target, or <code>null</code> if the target cannot be found
      * @since 3.6
      */
     private Image getTargetImage(String targetName) {
@@ -1105,9 +1105,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	}
 
 	/** 
-    * Returns proposals that define the structure of a buildfile.
+    * Returns proposals that define the structure of a build file.
     * 
-    * Note that template proposals which define the structure of a buildfile 
+    * Note that template proposals which define the structure of a build file 
     * are handled by {@link #determineTemplateProposals(ITextViewer, int)} 
     * which limits proposals by context type.
 
@@ -1448,7 +1448,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		return false;
 	}
     /**
-     * Returns the last occuring task string in the specified string.
+     * Returns the last occurring task string in the specified string.
      * <P>
      * The returned string must not necessarily be a valid Ant task string.
      * This can be tested with the method <code>inNamedTaskKnown(String)</code>
@@ -1488,7 +1488,7 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     
 
     /**
-     * Returns the last occuring attribute string in the specified string.
+     * Returns the last occurring attribute string in the specified string.
      * <code>null</code> is returned if no attribute string is available.
      * <P>
      * Calling this method is only safe if the current proposal mode is really
