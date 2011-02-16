@@ -36,13 +36,16 @@
       </children>
       <children xsi:type="menu:Menu" xmi:id="_RD47gEjUEd-v7fhjaiz65w" elementId="_RD47gEjUEd-v7fhjaiz65w" label="Edit">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_Tc1v4EjUEd-v7fhjaiz65w" elementId="_Tc1v4EjUEd-v7fhjaiz65w" label="Exit" command="_vBr-QEjPEd-XR9_8rlW1bQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_ZBCPYEjUEd-v7fhjaiz65w" elementId="_vZa-QEjPEd-XR9_8rlW1bQ" label="Preferences..." command="_vZa-QEjPEd-XR9_8rlW1bQ"/>
       </children>
-      <children xsi:type="menu:Menu" xmi:id="_WbMXYEjUEd-v7fhjaiz65w" elementId="_WbMXYEjUEd-v7fhjaiz65w" label="Exit">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_XBCPYEjUEd-v7fhjaiz65w" elementId="_XBCPYEjUEd-v7fhjaiz65w" label="Exit" command="_vBr-QEjPEd-XR9_8rlW1bQ"/>
+      <children xsi:type="menu:Menu" xmi:id="_WbMXYEjUEd-v7fhjaiz65w" elementId="_WbMXYEjUEd-v7fhjaiz65w" label="Help">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_XBCPYEjUEd-v7fhjaiz65w" elementId="_XBCPYEjUEd-v7fhjaiz65w" label="About..." command="_vZr-QEjPEd-XR9_8rlW1bQ"/>
       </children>
     </mainMenu>
   </children>
   <handlers xmi:id="_JZspQEjPEd-XR9_8rlW1bQ" elementId="_JZspQEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler" command="_vBr-QEjPEd-XR9_8rlW1bQ"/>
+  <handlers xmi:id="_JBspQEjPEd-XR9_8rlW1bQ" elementId="_JBspQEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.AboutHandler" command="_vZr-QEjPEd-XR9_8rlW1bQ"/>
+  <handlers xmi:id="_JCspQEjPEd-XR9_8rlW1bQ" elementId="_JCspQEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.PreferencesHandler" command="_vZa-QEjPEd-XR9_8rlW1bQ"/>
   <handlers xmi:id="_OVTnoEjPEd-XR9_8rlW1bQ" elementId="_OVTnoEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="_zQSFoEjPEd-XR9_8rlW1bQ"/>
   <handlers xmi:id="_QLZmkEjPEd-XR9_8rlW1bQ" elementId="_QLZmkEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.SwitchPerspectiveHandler" command="_4L5EAEjPEd-XR9_8rlW1bQ"/>
   <handlers xmi:id="_RrwmEEjPEd-XR9_8rlW1bQ" elementId="_RrwmEEjPEd-XR9_8rlW1bQ" contributionURI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="_6B0q4EjPEd-XR9_8rlW1bQ"/>
@@ -55,7 +58,9 @@
     <children xmi:id="_gCmv0EjPEd-XR9_8rlW1bQ" elementId="org.eclipse.ui.contexts.window" name="In Windows" description=""/>
     <children xmi:id="_jcgD0EjPEd-XR9_8rlW1bQ" elementId="org.eclipse.ui.contexts.dialog" name="In Dialogs" description=""/>
   </rootContext>
-  <commands xmi:id="_vBr-QEjPEd-XR9_8rlW1bQ" elementId="e4photo.exit" commandName="Exit"/>
+  <commands xmi:id="_vBr-QEjPEd-XR9_8rlW1bQ" elementId="org.eclipse.ui.file.exit" commandName="Exit"/>
+  <commands xmi:id="_vZr-QEjPEd-XR9_8rlW1bQ" elementId="org.eclipse.ui.help.aboutAction" commandName="About..."/>
+  <commands xmi:id="_vZa-QEjPEd-XR9_8rlW1bQ" elementId="org.eclipse.ui.window.preferences" commandName="Preferences..."/>
   <commands xmi:id="_zQSFoEjPEd-XR9_8rlW1bQ" elementId="e4photo.createAlbum" commandName="Create Album"/>
   <commands xmi:id="_4L5EAEjPEd-XR9_8rlW1bQ" elementId="e4photo.switchPersepective" commandName="Switch Perspective"/>
   <commands xmi:id="_6B0q4EjPEd-XR9_8rlW1bQ" elementId="e4photo.imageDialog" commandName="Image Dialog"/>
