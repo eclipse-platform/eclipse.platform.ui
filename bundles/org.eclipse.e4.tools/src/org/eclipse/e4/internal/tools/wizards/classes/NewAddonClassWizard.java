@@ -40,5 +40,11 @@ public class NewAddonClassWizard extends AbstractNewClassWizard {
 		AddonTemplate template = new AddonTemplate();
 		return template.generate(getDomainClass());
 	}
+	
+	@Override
+	protected void checkRequiredBundles() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

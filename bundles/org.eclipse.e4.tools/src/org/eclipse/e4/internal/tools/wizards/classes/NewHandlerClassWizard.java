@@ -86,6 +86,11 @@ public class NewHandlerClassWizard extends AbstractNewClassWizard {
 		});
 	}
 	
+	@Override
+	protected void checkRequiredBundles() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 	public static class HandlerClass extends JavaClass {

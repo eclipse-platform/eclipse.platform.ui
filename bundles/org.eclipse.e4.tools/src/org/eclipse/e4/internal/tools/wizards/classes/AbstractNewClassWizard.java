@@ -13,9 +13,12 @@ package org.eclipse.e4.internal.tools.wizards.classes;
 import java.io.ByteArrayInputStream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.internal.tools.wizards.classes.AbstractNewClassPage.JavaClass;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -111,10 +114,20 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 		return ((AbstractNewClassPage) getPages()[0]).getClazz();
 	}
 	
+	protected void checkRequiredBundles() {
+		
+	}
+	
 	@Override
 	public boolean performFinish() {
 		JavaClass clazz = getDomainClass();
 		String content = getContent();
+		
+		if( clazz.getFragmentRoot() == null ) {
+			return false;
+		}
+		
+		checkRequiredBundles();
 		
 		IPackageFragment fragment = clazz.getPackageFragment();
 		if (fragment != null) {
@@ -131,7 +144,24 @@ public abstract class AbstractNewClassWizard extends Wizard implements INewWizar
 							IFile.FORCE | IFile.KEEP_HISTORY, null);
 				}
 				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
-				unit.open(null);
+//				unit.open(null);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			String cuName = clazz.getName() + ".java";
+			IFolder p = (IFolder) clazz.getFragmentRoot().getResource();
+			file = p.getFile(cuName);
+			try {
+				if (!file.exists()) {
+					file.create(new ByteArrayInputStream(content.getBytes()),
+							true, null);
+				} else {
+					file.setContents(new ByteArrayInputStream(content.getBytes()),
+							IFile.FORCE | IFile.KEEP_HISTORY, null);
+				}
+				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

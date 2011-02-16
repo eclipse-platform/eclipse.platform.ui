@@ -134,6 +134,12 @@ public class NewPartClassWizard extends AbstractNewClassWizard {
 
 		});
 	}
+	
+	@Override
+	protected void checkRequiredBundles() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	protected String getContent() {
