@@ -26,6 +26,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -52,7 +53,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
      */
     protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay/*, SWT.ON_TOP | SWT.SHELL_TRIM*/);
+        fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
         fShell.setMaximized(true);
         fShell.setLayout(new FillLayout());
 

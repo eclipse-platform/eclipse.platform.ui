@@ -18,6 +18,7 @@ import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -44,7 +45,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
      */
     protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay/*, SWT.ON_TOP | SWT.SHELL_TRIM*/);
+        fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
         fShell.setMaximized(true);
         fShell.setLayout(new FillLayout());
 

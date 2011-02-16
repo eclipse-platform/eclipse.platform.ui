@@ -64,7 +64,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 
 	void createViewer() {
 		fDisplay = PlatformUI.getWorkbench().getDisplay();
-		fShell = new Shell(fDisplay/* , SWT.ON_TOP | SWT.SHELL_TRIM */);
+		fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
 		//fShell.setMaximized(true);
 		fShell.setSize(800, 600);
 		fShell.setLayout(new FillLayout());
@@ -278,9 +278,6 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		makeModel(colPre, "m2");
 		Tree tree = fViewer.getTree();
 		TreeColumn[] columns = tree.getColumns();
-        int treeWidth = tree.getSize().x;
-        int avgWidth = treeWidth / columns.length;
-        int remainder = treeWidth % columns.length;
 		
         // Resizing the tree invalidates the test.
 		if (fResized) {
@@ -289,10 +286,9 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		
 		for (int i = 0; i < columns.length; i++) {
 			int width = colPre.repliedWidths[i];
-			if (width == -1) {
-			    width = avgWidth + remainder;
+			if (width != -1) {
+	            assertEquals(width, columns[i].getWidth());
 			}
-            assertEquals(width, columns[i].getWidth());
 		}
 	}
 

@@ -54,7 +54,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
      */
     protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay/*, SWT.ON_TOP | SWT.SHELL_TRIM*/);
+        fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
         fShell.setMaximized(true);
         fShell.setLayout(new FillLayout());
 
