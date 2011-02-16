@@ -127,7 +127,7 @@ public class TaskDescriptionProvider {
     }
 
     /**
-     * Parses the task description xml file and stores the information.
+     * Parses the task description XML file and stores the information.
      */
     protected void initialize() {
     	taskNodes = new HashMap();
@@ -290,7 +290,9 @@ public class TaskDescriptionProvider {
     }
     
     protected static void reset() {
-    	fgDefault.taskNodes.clear();
+    	if(fgDefault != null && fgDefault.taskNodes != null) {
+    		fgDefault.taskNodes.clear();
+    	}
     	fgDefault= null;
     }
 }
