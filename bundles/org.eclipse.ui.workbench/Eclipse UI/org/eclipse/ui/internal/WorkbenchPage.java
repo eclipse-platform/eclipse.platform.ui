@@ -59,6 +59,9 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -439,6 +442,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private ListenerList partListenerList = new ListenerList();
 	private ListenerList partListener2List = new ListenerList();
 
+	/**
+	 * A listener that forwards page change events to our part listeners.
+	 */
+	private IPageChangedListener pageChangedListener = new IPageChangedListener() {
+		public void pageChanged(final PageChangedEvent event) {
+			Object[] listeners = partListener2List.getListeners();
+			for (final Object listener : listeners) {
+				if (listener instanceof IPageChangedListener) {
+					SafeRunner.run(new SafeRunnable() {
+						public void run() throws Exception {
+							((IPageChangedListener) listener).pageChanged(event);
+						}
+					});
+				}
+			}
+		}
+	};
 
 	private E4PartListener e4PartListener = new E4PartListener();
 
@@ -3597,6 +3617,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				}
 			});
 		}
+
+		if (part instanceof IPageChangeProvider) {
+			((IPageChangeProvider) part).addPageChangedListener(pageChangedListener);
+		}
 	}
 
 	public void firePartClosed(CompatibilityPart compatibilityPart) {
@@ -3647,6 +3671,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			updateActiveEditorSources(null);
 		} else if (part instanceof IEditorPart) {
 			updateActiveEditorSources(findPart(getActiveEditor()));
+		}
+
+		if (part instanceof IPageChangeProvider) {
+			((IPageChangeProvider) part).removePageChangedListener(pageChangedListener);
 		}
 	}
 

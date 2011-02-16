@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
@@ -20,7 +22,8 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 
-public class PartService implements IPartListener, IPartListener2, IPartService {
+public class PartService implements IPageChangedListener, IPartListener, IPartListener2,
+		IPartService {
 
 	private ListenerList partListeners = new ListenerList();
 	private ListenerList partListeners2 = new ListenerList();
@@ -205,6 +208,19 @@ public class PartService implements IPartListener, IPartListener2, IPartService 
 					((IPartListener2) listener).partInputChanged(partRef);
 				}
 			});
+		}
+	}
+
+	public void pageChanged(final PageChangedEvent event) {
+		Object[] listeners = partListeners2.getListeners();
+		for (final Object listener : listeners) {
+			if (listener instanceof IPageChangedListener) {
+				SafeRunner.run(new SafeRunnable() {
+					public void run() throws Exception {
+						((IPageChangedListener) listener).pageChanged(event);
+					}
+				});
+			}
 		}
 	}
 
