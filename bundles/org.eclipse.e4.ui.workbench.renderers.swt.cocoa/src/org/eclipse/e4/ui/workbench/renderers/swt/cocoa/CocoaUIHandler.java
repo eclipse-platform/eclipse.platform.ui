@@ -25,9 +25,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
@@ -37,11 +35,10 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
+import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.commands.MBindingTable;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
-import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -58,6 +55,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.renderers.swt.HandledMenuItemRenderer;
+import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.internal.C;
 import org.eclipse.swt.internal.Callback;
@@ -91,6 +90,10 @@ import org.osgi.service.event.EventHandler;
  * @since 1.0
  */
 public class CocoaUIHandler {
+	/**
+	 * 
+	 */
+	private static final String DEFAULT_ACCELERATOR_CONFIGURATION = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 	protected static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
 	protected static final String HOST_ID = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
 	public static final String CLASS_URI = "platform:/plugin/" //$NON-NLS-1$  
@@ -105,7 +108,6 @@ public class CocoaUIHandler {
 	private static final String COMMAND_ID_TOGGLE_COOLBAR = "org.eclipse.ui.ToggleCoolbarAction"; //$NON-NLS-1$
 
 	private static final String COMMAND_ID_CLOSE_DIALOG = "org.eclipse.ui.cocoa.closeDialog"; //$NON-NLS-1$
-	private static final String DIALOG_CONTEXT_ID = "org.eclipse.ui.contexts.dialog"; //$NON-NLS-1$
 	private static final String CLOSE_DIALOG_KEYSEQUENCE = "M1+W"; //$NON-NLS-1$
 
 	private static final int kAboutMenuItem = 0;
@@ -148,6 +150,8 @@ public class CocoaUIHandler {
 	@Inject
 	protected EModelService modelService;
 	@Inject
+	protected EBindingService bindingService;
+	@Inject
 	protected IEventBroker eventBroker;
 
 	private EventHandler shellListener;
@@ -156,11 +160,7 @@ public class CocoaUIHandler {
 	private EventHandler commandListener;
 
 	public void constructActionNames() {
-		String productName = null;
-		IProduct product = Platform.getProduct();
-		if (product != null) {
-			productName = product.getName();
-		}
+		String productName = Display.getAppName();
 
 		ResourceBundle resourceBundle = ResourceBundle
 				.getBundle(RESOURCE_BUNDLE);
@@ -422,35 +422,15 @@ public class CocoaUIHandler {
 	}
 
 	private void addCloseDialogBinding() {
-		MBindingTable bt = findBindingTable(DIALOG_CONTEXT_ID);
-		for (MKeyBinding kb : bt.getBindings()) {
-			if (kb.getCommand() == closeDialogCommand) {
-				return;
-			}
-		}
-		MKeyBinding kb = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
-		kb.setCommand(closeDialogCommand);
-		kb.setKeySequence(CLOSE_DIALOG_KEYSEQUENCE);
-		bt.getBindings().add(kb);
-	}
-
-	/**
-	 * Find or create a binding table for the provided {@code contextId}
-	 * 
-	 * @param contextId
-	 * @return
-	 */
-	private MBindingTable findBindingTable(String contextId) {
-		for (MBindingTable bt : app.getBindingTables()) {
-			if (bt.getBindingContextId() != null
-					&& bt.getBindingContextId().equals(contextId)) {
-				return bt;
-			}
-		}
-		MBindingTable bt = CommandsFactoryImpl.eINSTANCE.createBindingTable();
-		bt.setBindingContextId(contextId);
-		app.getBindingTables().add(bt);
-		return bt;
+		TriggerSequence sequence = bindingService
+				.createSequence(CLOSE_DIALOG_KEYSEQUENCE);
+		ParameterizedCommand cmd = commandService.createCommand(
+				COMMAND_ID_CLOSE_DIALOG, null);
+		Binding binding = bindingService.createBinding(sequence, cmd,
+				DEFAULT_ACCELERATOR_CONFIGURATION,
+				EBindingService.DIALOG_CONTEXT_ID);
+		bindingService.deactivateBinding(binding);
+		bindingService.activateBinding(binding);
 	}
 
 	void log(Exception e) {
@@ -624,7 +604,7 @@ public class CocoaUIHandler {
 		if (elmtId != null
 				&& (elmtId.equals(COMMAND_ID_ABOUT)
 						|| elmtId.equals(COMMAND_ID_PREFERENCES) || elmtId
-						.equals(COMMAND_ID_QUIT))) {
+							.equals(COMMAND_ID_QUIT))) {
 			item.setVisible(false);
 		} else if (item instanceof MHandledMenuItem) {
 			MHandledMenuItem mhmi = (MHandledMenuItem) item;
@@ -633,7 +613,7 @@ public class CocoaUIHandler {
 			if (elmtId != null
 					&& (elmtId.equals(COMMAND_ID_ABOUT)
 							|| elmtId.equals(COMMAND_ID_PREFERENCES) || elmtId
-							.equals(COMMAND_ID_QUIT))) {
+								.equals(COMMAND_ID_QUIT))) {
 				item.setVisible(false);
 			}
 		}

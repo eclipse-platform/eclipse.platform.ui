@@ -9,4 +9,3 @@ Fragment-Host: org.eclipse.e4.ui.workbench.renderers.swt;bundle-version="[0.9.1,
 Bundle-Localization: fragment-cocoa
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.ui.workbench.renderers.swt.cocoa
-Import-Package: org.eclipse.core.runtime; bundle-symbolic-name="org.eclipse.core.runtime"
