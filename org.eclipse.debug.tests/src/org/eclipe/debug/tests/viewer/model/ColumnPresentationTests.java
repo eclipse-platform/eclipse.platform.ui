@@ -251,7 +251,6 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		TreeColumn[] columns = tree.getColumns();
 		int treeWidth = tree.getSize().x;
 		int avgWidth = treeWidth / columns.length;
-		int remainder = treeWidth % columns.length;
 
         // Resizing the tree invalidates the test.
 		if (fResized) {
@@ -261,7 +260,10 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		for (int i = 0; i < columns.length - 1; i++) {
 			assertEquals(avgWidth, columns[i].getWidth());
 		}
-        assertEquals(avgWidth + remainder, columns[columns.length - 1].getWidth());
+		// Checking of the width of the last column is not reliable.  
+		// I.e. it's handled differenty on different platforms.
+        //int remainder = treeWidth % columns.length;
+        //assertEquals(avgWidth + remainder, columns[columns.length - 1].getWidth());
 	}
 
 	/**
