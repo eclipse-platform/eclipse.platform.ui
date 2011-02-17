@@ -46,7 +46,9 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
     protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
-        fShell.setMaximized(true);
+        // Maximizing a shell with SWT.ON_TOP doesn't work on Linux (bug 325465)
+        //fShell.setMaximized(true);
+        fShell.setSize(800, 600);
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);

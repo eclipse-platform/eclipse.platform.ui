@@ -49,7 +49,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
      */
     protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay/*, SWT.ON_TOP | SWT.SHELL_TRIM*/);
+        fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
         fShell.setSize(300, 100);
         fShell.setLayout(new FillLayout());
 
