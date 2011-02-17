@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -825,9 +825,10 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	}
 
 	/**
-	 * Installs and uninstall the listeners needed for auto-activation.
-	 * @param start <code>true</code> if listeners must be installed,
-	 * 	<code>false</code> if they must be removed
+	 * Installs and uninstall the listeners needed for auto activation.
+	 * 
+	 * @param start <code>true</code> if listeners must be installed, <code>false</code> if they
+	 *            must be removed
 	 * @since 2.0
 	 */
 	private void manageAutoActivation(boolean start) {
