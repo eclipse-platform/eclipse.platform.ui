@@ -54,7 +54,9 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
     protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
         fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
-        fShell.setMaximized(true);
+        // Maximizing a shell with SWT.ON_TOP doesn't work on Linux (bug 325465)
+        //fShell.setMaximized(true);
+        fShell.setSize(800, 600);
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);
@@ -936,4 +938,74 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
         Assert.assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
     }
+    
+    public void testPreserveCollapseAndSelectDeltaAfterSaveAndRestore() {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        TestModel model = TestModel.simpleMultiLevel();
+
+        // Expand all
+        fViewer.setAutoExpandLevel(-1);
+        
+        // Create the listener.
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY, true);
+
+        fViewer.setSelection(new TreeSelection(model.findElement("3")));
+
+        // Turn off auto-expand
+        fViewer.setAutoExpandLevel(0);
+               
+        // Set the viewer input to null.  This will trigger the view to save the viewer state.
+        fListener.reset(false, false);
+        fViewer.setInput(null);
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+                
+        // Set the viewer input back to the model.  When view updates are complete
+        // the viewer 
+        // Note: disable redundant updates because the reveal delta triggers one.
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, false, false);
+        fViewer.setInput(model.getRootElement());
+        TreePath path = model.findElement("2");
+        fListener.addUpdates(null, path, (TestElement)path.getLastSegment(), 0, STATE_UPDATES);
+        path = model.findElement("3");
+        fListener.addUpdates(null, path, (TestElement)path.getLastSegment(), 0, STATE_UPDATES);
+
+        // Wait till we restore state of elements we want to collapse and select
+        while (!fListener.isFinished(STATE_RESTORE_STARTED | STATE_UPDATES | CHILDREN_UPDATES)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+                
+        // Update the viewer to collapse both elements and select a third
+        ModelDelta delta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+
+        // Post first collapse delta
+        model.postDelta(model.makeElementDelta(model.findElement("2"), IModelDelta.COLLAPSE));
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Post second collapse delta
+        fListener.resetModelChanged();
+        model.postDelta(model.makeElementDelta(model.findElement("3"), IModelDelta.COLLAPSE));
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Post select delta
+        model.postDelta(model.makeElementDelta(model.findElement("1"), IModelDelta.SELECT));
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Wait for all the updates to complete (note: we're not resetting the listener).
+        while (!fListener.isFinished(STATE_RESTORE_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Check to make sure that the state restore didn't change the selection.
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == false);
+        Assert.assertEquals(new TreeSelection(model.findElement("1")), fViewer.getSelection());
+    }
+
 }

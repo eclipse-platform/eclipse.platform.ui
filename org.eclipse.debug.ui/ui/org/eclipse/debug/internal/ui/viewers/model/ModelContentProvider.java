@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -499,25 +499,26 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         boolean checkChildrenRealized);
 
     public void cancelRestore(final TreePath path, final int flags) {
-        if (fPendingState == null && fPendingSetTopItem == null) {
-        	// Nothing to do
-            return;
-        }
-
         if (fInStateRestore) {
         	// If we are currently processing pending state already, ignore 
         	// cancelRestore requests.  These requests may be triggered in the viewer
         	// by changes to the tree state (Bug 295585).
         	return;
         }
+
+        if ((flags & IModelDelta.REVEAL) != 0 && fPendingSetTopItem != null) {
+            fPendingSetTopItem.dispose();
+            return;
+        }
+
+        // Nothing else to do 
+        if (fPendingState == null) {
+            return;
+        }
         
         if ((flags & (IModelDelta.SELECT | IModelDelta.REVEAL)) != 0) {
         	// If we're canceling reveal and this is waiting for updates to complete
         	// then just cancel it and return
-        	if ((flags & IModelDelta.REVEAL) != 0 && fPendingSetTopItem != null) {
-        		fPendingSetTopItem.dispose();
-        		return;
-        	}
         	
             // If we're canceling select or reveal, cancel it for all of pending deltas
             final int mask = flags & (IModelDelta.SELECT | IModelDelta.REVEAL);
@@ -540,7 +541,16 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
             // For other flags (EXPAND/COLLAPSE), cancel only from the matching path.
             fPendingState.accept(new IModelDeltaVisitor() {
                 public boolean visit(IModelDelta delta, int depth) {
-                    if (depth == path.getSegmentCount()) {
+                    if (depth < path.getSegmentCount()) {
+                        // Descend until we reach a matching depth.
+                        TreePath deltaPath = getViewerTreePath(delta);
+                        if (path.startsWith(deltaPath, null)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    else if (depth == path.getSegmentCount()) {
                         TreePath deltaPath = getViewerTreePath(delta);
                         if (deltaPath.equals(path)) {
                             int deltaFlags = delta.getFlags();
@@ -551,10 +561,24 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                                 }
                             }
                             ((ModelDelta)delta).setFlags(newFlags);
-                        }
+                            if ((flags & IModelDelta.EXPAND) != 0) {
+                                // Descend delta to clear the EXPAND flags of a canceled expand
+                                return true;
+                            }
+                        } 
                         return false;
-                    } 
-                    return true;
+                    } else {
+                        // We're clearing out flags of a matching sub-tree
+                        // assert (flags & IModelDelta.EXPAND) != 0;
+                        
+                        if (DEBUG_STATE_SAVE_RESTORE && DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+                            if (delta.getFlags() != IModelDelta.NO_CHANGE) {
+                                System.out.println("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(delta.getFlags()) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            }
+                        }
+                        ((ModelDelta)delta).setFlags(IModelDelta.NO_CHANGE);
+                        return true;
+                    }
                 }
             });
         }
@@ -1388,6 +1412,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         updateNodes(deltaArray, mask & ITreeModelContentProvider.UPDATE_MODEL_DELTA_FLAGS
             & ~(IModelDelta.REMOVED | IModelDelta.UNINSTALL));
         updateNodes(deltaArray, mask & ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
+        
+        checkIfRestoreComplete();
     }
 
     /**
