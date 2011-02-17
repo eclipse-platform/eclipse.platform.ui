@@ -456,6 +456,7 @@
        <toc file="data/help/search/toc3.xml" extradir="data/help/search/extraDir2"/>
        <toc file="data/help/search/toc4.xml" extradir="data/help/search/extraDir3"/>
        <toc file="data/help/index/toc.xml"/>
+       <toc file="data/help/jsp/toc.xml"/>
        <toc file="non_junit/toc.xml"/>
        <tocIcon
              id="org.eclipse.ua.tests.openOnly"
