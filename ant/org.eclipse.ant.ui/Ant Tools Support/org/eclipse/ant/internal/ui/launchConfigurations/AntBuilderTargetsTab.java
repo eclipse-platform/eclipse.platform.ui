@@ -11,8 +11,6 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
@@ -297,27 +295,19 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
     }
 
     public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-        HashSet kinds = new HashSet(4);
+        StringBuffer buffer= new StringBuffer();
         if (!fAfterCleanTargetText.getText().equals(NOT_ENABLED)) {
-            kinds.add(IExternalToolConstants.BUILD_TYPE_FULL);
+            buffer.append(IExternalToolConstants.BUILD_TYPE_FULL).append(',');
         } 
         if (!fManualBuildTargetText.getText().equals(NOT_ENABLED)){
-        	kinds.add(IExternalToolConstants.BUILD_TYPE_FULL);
-            kinds.add(IExternalToolConstants.BUILD_TYPE_INCREMENTAL); 
+            buffer.append(IExternalToolConstants.BUILD_TYPE_INCREMENTAL).append(','); 
         } 
         if (!fAutoBuildTargetText.getText().equals(NOT_ENABLED)) {
-            kinds.add(IExternalToolConstants.BUILD_TYPE_AUTO);
+            buffer.append(IExternalToolConstants.BUILD_TYPE_AUTO).append(',');
         }
         if (!fDuringCleanTargetText.getText().equals(NOT_ENABLED)) {
-            kinds.add(IExternalToolConstants.BUILD_TYPE_CLEAN);
+            buffer.append(IExternalToolConstants.BUILD_TYPE_CLEAN);
         }
-        StringBuffer buffer= new StringBuffer();
-		for(Iterator i = kinds.iterator(); i.hasNext();) {
-			buffer.append(i.next());
-			if(i.hasNext()) {
-				buffer.append(',');
-			}
-		}
         configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
         
         String targets= (String) fAttributeToTargets.get(IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS);
