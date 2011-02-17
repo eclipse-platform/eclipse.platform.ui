@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,17 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui;
+
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.PageChangedEvent;
+
 
 /**
  * Interface for listening to part lifecycle events.
  * <p>
  * This is a replacement for <code>IPartListener</code>.
- * <p> 
+ * <p>
+ * As of 3.5, if the implementation of this listener also implements
+ * {@link IPageChangedListener} then it will also be notified about
+ * {@link PageChangedEvent}s from parts that implement
+ * {@link IPageChangeProvider}.
+ * </p>
+ * <p>
  * This interface may be implemented by clients.
  * </p>
- *
+ * 
  * @see IPartService#addPartListener(IPartListener2)
  */
 public interface IPartListener2 {
