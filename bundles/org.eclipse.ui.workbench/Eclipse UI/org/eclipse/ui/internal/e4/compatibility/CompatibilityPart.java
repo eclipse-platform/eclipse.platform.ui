@@ -84,6 +84,23 @@ public abstract class CompatibilityPart {
 		}
 	};
 
+	/**
+	 * This handler will be notified when the part's client object has been
+	 * un/set.
+	 */
+	private EventHandler objectSetHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			// check that we're looking at our own part and that the object is
+			// being set
+			if (event.getProperty(UIEvents.EventTags.ELEMENT) == part
+					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) != null) {
+				WorkbenchPartReference reference = getReference();
+				// notify the workbench we've been opened
+				((WorkbenchPage) reference.getPage()).firePartOpened(CompatibilityPart.this);
+			}
+		}
+	};
+
 	CompatibilityPart(MPart part) {
 		this.part = part;
 	}
@@ -159,6 +176,9 @@ public abstract class CompatibilityPart {
 	public void create() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
 				UIEvents.UIElement.WIDGET), widgetSetHandler);
+		eventBroker.subscribe(
+				UIEvents.buildTopic(UIEvents.Contribution.TOPIC, UIEvents.Contribution.OBJECT),
+				objectSetHandler);
 
 		WorkbenchPartReference reference = getReference();
 
@@ -220,9 +240,6 @@ public abstract class CompatibilityPart {
 				}
 			}
 		});
-
-		// notify the workbench we've been opened
-		((WorkbenchPage) reference.getPage()).firePartOpened(CompatibilityPart.this);
 	}
 
 	@PreDestroy
@@ -232,6 +249,7 @@ public abstract class CompatibilityPart {
 		}
 
 		eventBroker.unsubscribe(widgetSetHandler);
+		eventBroker.unsubscribe(objectSetHandler);
 	}
 
 	/**
