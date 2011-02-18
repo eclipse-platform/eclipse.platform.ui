@@ -31,8 +31,9 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
@@ -93,10 +94,13 @@ public class ApplicationEditor extends AbstractComponentEditor {
 	}
 
 	protected Composite createForm(Composite parent, EMFDataBindingContext context) {
-		parent = new Composite(parent, SWT.NONE);
-		GridLayout gl = new GridLayout(3, false);
-		gl.horizontalSpacing = 10;
-		parent.setLayout(gl);
+		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabDefault);
+
+		parent = createScrollableContainer(folder);
+		item.setControl(parent.getParent());
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
@@ -105,14 +109,25 @@ public class ApplicationEditor extends AbstractComponentEditor {
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
-		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+
+		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.ApplicationEditor_BindingContexts);
 
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
-		ControlFactory.createBindingContextWiget(parent, Messages, this, Messages.ApplicationEditor_BindingContexts);
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
 
-		return parent;
+		item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabSupplementary);
+
+		parent = createScrollableContainer(folder);
+		item.setControl(parent.getParent());
+
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.AddonsEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+
+		folder.setSelection(0);
+
+		return folder;
 	}
 
 	@Override

@@ -10,7 +10,9 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -46,6 +48,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.IViewerValueProperty;
@@ -58,6 +61,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -78,6 +83,8 @@ public class AreaEditor extends AbstractComponentEditor {
 	private IListProperty ELEMENT_CONTAINER__CHILDREN = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);
 	private EStackLayout stackLayout;
 
+	private List<Action> actions = new ArrayList<Action>();
+
 	@Inject
 	@Optional
 	private IProject project;
@@ -85,6 +92,46 @@ public class AreaEditor extends AbstractComponentEditor {
 	@Inject
 	public AreaEditor() {
 		super();
+	}
+
+	@PostConstruct
+	void init() {
+		actions.add(new Action(Messages.PartSashContainerEditor_AddPartSashContainer, createImageDescriptor(ResourceProvider.IMG_PartSashContainer)) {
+			@Override
+			public void run() {
+				handleAddChild(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
+			}
+		});
+		actions.add(new Action(Messages.PartSashContainerEditor_AddPartStack, createImageDescriptor(ResourceProvider.IMG_PartStack)) {
+			@Override
+			public void run() {
+				handleAddChild(BasicPackageImpl.Literals.PART_STACK);
+			}
+		});
+		actions.add(new Action(Messages.PartSashContainerEditor_AddPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleAddChild(BasicPackageImpl.Literals.PART);
+			}
+		});
+		actions.add(new Action(Messages.PartSashContainerEditor_AddInputPart, createImageDescriptor(ResourceProvider.IMG_Part)) {
+			@Override
+			public void run() {
+				handleAddChild(BasicPackageImpl.Literals.INPUT_PART);
+			}
+		});
+		actions.add(new Action(Messages.PartSashContainerEditor_AddArea, createImageDescriptor(ResourceProvider.IMG_Area)) {
+			@Override
+			public void run() {
+				handleAddChild(AdvancedPackageImpl.Literals.AREA);
+			}
+		});
+		actions.add(new Action(Messages.PartSashContainerEditor_AddPlaceholder, createImageDescriptor(ResourceProvider.IMG_Placeholder)) {
+			@Override
+			public void run() {
+				handleAddChild(AdvancedPackageImpl.Literals.PLACEHOLDER);
+			}
+		});
 	}
 
 	@Override
@@ -155,10 +202,13 @@ public class AreaEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, final EMFDataBindingContext context, WritableValue master, boolean isImport) {
-		parent = new Composite(parent, SWT.NONE);
-		GridLayout gl = new GridLayout(3, false);
-		gl.horizontalSpacing = 10;
-		parent.setLayout(gl);
+		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabDefault);
+
+		parent = createScrollableContainer(folder);
+		item.setControl(parent.getParent());
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
@@ -173,7 +223,6 @@ public class AreaEditor extends AbstractComponentEditor {
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
 		ControlFactory.createTextField(parent, Messages.AreaEditor_LabelLabel, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__LABEL));
-		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 		ControlFactory.createTextField(parent, Messages.AreaEditor_Tooltip, master, context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_LABEL__TOOLTIP));
 
 		// ------------------------------------------------------------
@@ -244,8 +293,7 @@ public class AreaEditor extends AbstractComponentEditor {
 			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 			final TableViewer viewer = new TableViewer(parent);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 200;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			viewer.getControl().setLayoutData(gd);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
@@ -256,7 +304,7 @@ public class AreaEditor extends AbstractComponentEditor {
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			gl = new GridLayout(2, false);
+			GridLayout gl = new GridLayout(2, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;
@@ -332,15 +380,7 @@ public class AreaEditor extends AbstractComponentEditor {
 				public void widgetSelected(SelectionEvent e) {
 					if (!childrenDropDown.getSelection().isEmpty()) {
 						EClass eClass = (EClass) ((IStructuredSelection) childrenDropDown.getSelection()).getFirstElement();
-						EObject eObject = EcoreUtil.create(eClass);
-						setElementId(eObject);
-
-						Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
-
-						if (cmd.canExecute()) {
-							getEditingDomain().getCommandStack().execute(cmd);
-							getEditor().setSelection(eObject);
-						}
+						handleAddChild(eClass);
 					}
 				}
 			});
@@ -367,9 +407,30 @@ public class AreaEditor extends AbstractComponentEditor {
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 
+		item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabSupplementary);
+
+		parent = createScrollableContainer(folder);
+		item.setControl(parent.getParent());
+
+		ControlFactory.createTextField(parent, Messages.ModelTooling_UIElement_AccessibilityPhrase, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__ACCESSIBILITY_PHRASE));
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
-		return parent;
+		folder.setSelection(0);
+
+		return folder;
+	}
+
+	protected void handleAddChild(EClass eClass) {
+		EObject eObject = EcoreUtil.create(eClass);
+		setElementId(eObject);
+
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, eObject);
+
+		if (cmd.canExecute()) {
+			getEditingDomain().getCommandStack().execute(cmd);
+			getEditor().setSelection(eObject);
+		}
 	}
 
 	@Override
@@ -385,5 +446,12 @@ public class AreaEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL), FeaturePath.fromList(UiPackageImpl.Literals.GENERIC_TILE__HORIZONTAL), FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		l.addAll(actions);
+		return l;
 	}
 }

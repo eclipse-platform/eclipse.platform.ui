@@ -55,11 +55,12 @@ import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -150,10 +151,13 @@ public class PartEditor extends AbstractComponentEditor {
 	}
 
 	protected Composite createForm(Composite parent, EMFDataBindingContext context, IObservableValue master, boolean isImport) {
-		parent = new Composite(parent, SWT.NONE);
-		GridLayout gl = new GridLayout(3, false);
-		gl.horizontalSpacing = 10;
-		parent.setLayout(gl);
+		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabDefault);
+
+		parent = createScrollableContainer(folder);
+		item.setControl(parent.getParent());
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
@@ -281,9 +285,18 @@ public class PartEditor extends AbstractComponentEditor {
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Contribution_PersistedState, ApplicationPackageImpl.Literals.CONTRIBUTION__PERSISTED_STATE, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createMapProperties(parent, Messages, this, Messages.ModelTooling_Context_Properties, UiPackageImpl.Literals.CONTEXT__PROPERTIES, VERTICAL_LIST_WIDGET_INDENT);
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES, VERTICAL_LIST_WIDGET_INDENT);
-		ControlFactory.createStringListWidget(parent, Messages, this, Messages.ModelTooling_ApplicationElement_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
-		return parent;
+		item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabSupplementary);
+
+		parent = createScrollableContainer(folder);
+		item.setControl(parent.getParent());
+
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+
+		folder.setSelection(0);
+
+		return folder;
 	}
 
 	private void addToolBar() {

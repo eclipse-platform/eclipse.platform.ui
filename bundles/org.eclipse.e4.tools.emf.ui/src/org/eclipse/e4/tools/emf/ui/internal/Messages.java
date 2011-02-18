@@ -20,6 +20,8 @@ public class Messages {
 	public String ModelTooling_Common_Id;
 	public String ModelTooling_Common_RefId;
 	public String ModelTooling_Common_FindEllipsis;
+	public String ModelTooling_Common_TabDefault;
+	public String ModelTooling_Common_TabSupplementary;
 
 	public String ModelTooling_UIElement_ToBeRendered;
 	public String ModelTooling_UIElement_Visible;

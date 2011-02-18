@@ -27,9 +27,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -107,10 +108,13 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
-		parent = new Composite(parent, SWT.NONE);
-		GridLayout gl = new GridLayout(3, false);
-		gl.horizontalSpacing = 10;
-		parent.setLayout(gl);
+		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabDefault);
+
+		parent = createScrollableContainer(folder);
+		item.setControl(parent.getParent());
 
 		IWidgetValueProperty textProp = WidgetProperties.text(SWT.Modify);
 
@@ -141,7 +145,17 @@ public class CommandParameterEditor extends AbstractComponentEditor {
 			context.bindValue(uiProp.observe(checkbox), mprop.observeDetail(master));
 		}
 
-		return parent;
+		item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabSupplementary);
+
+		parent = createScrollableContainer(folder);
+		item.setControl(parent.getParent());
+
+		ControlFactory.createStringListWidget(parent, Messages, this, Messages.CategoryEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
+
+		folder.setSelection(0);
+
+		return folder;
 	}
 
 	@Override

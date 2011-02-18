@@ -50,6 +50,8 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -103,10 +105,13 @@ public class StringModelFragment extends AbstractComponentEditor {
 	}
 
 	private Composite createForm(Composite parent) {
-		parent = new Composite(parent, SWT.NONE);
-		GridLayout gl = new GridLayout(3, false);
-		gl.horizontalSpacing = 10;
-		parent.setLayout(gl);
+		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
+
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabDefault);
+
+		parent = createScrollableContainer(folder);
+		item.setControl(parent.getParent());
 
 		if (getEditor().isShowXMIId() || getEditor().isLiveModel()) {
 			ControlFactory.createXMIId(parent, this);
@@ -122,7 +127,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			comp.setLayoutData(gd);
-			gl = new GridLayout(2, false);
+			GridLayout gl = new GridLayout(2, false);
 			gl.marginWidth = gl.marginHeight = 0;
 			gl.verticalSpacing = 0;
 			gl.marginLeft = gl.marginBottom = gl.marginRight = gl.marginTop = 0;
@@ -155,7 +160,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 			gd.horizontalSpan = 2;
 			comp.setLayoutData(gd);
-			gl = new GridLayout(2, false);
+			GridLayout gl = new GridLayout(2, false);
 			gl.marginWidth = gl.marginHeight = 0;
 			gl.verticalSpacing = 0;
 			gl.marginLeft = gl.marginBottom = gl.marginRight = gl.marginTop = 0;
@@ -199,7 +204,7 @@ public class StringModelFragment extends AbstractComponentEditor {
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
 			buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.END, false, false));
-			gl = new GridLayout(2, false);
+			GridLayout gl = new GridLayout(2, false);
 			gl.marginLeft = 0;
 			gl.marginRight = 0;
 			gl.marginWidth = 0;
@@ -323,7 +328,9 @@ public class StringModelFragment extends AbstractComponentEditor {
 			});
 		}
 
-		return parent;
+		folder.setSelection(0);
+
+		return folder;
 	}
 
 	public void dispose() {

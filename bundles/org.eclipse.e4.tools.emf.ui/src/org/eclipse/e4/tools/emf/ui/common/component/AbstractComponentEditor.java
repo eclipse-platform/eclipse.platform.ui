@@ -33,12 +33,21 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 public abstract class AbstractComponentEditor {
+	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
+
 	private WritableValue master = new WritableValue();
 
 	public static final int SEARCH_IMAGE = 0;
@@ -163,5 +172,33 @@ public abstract class AbstractComponentEditor {
 				((Handler) focusControl.getData(ControlFactory.COPY_HANDLER)).cut();
 			}
 		}
+	}
+
+	protected Composite createScrollableContainer(Composite parent) {
+		final ScrolledComposite scrolling = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		scrolling.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		scrolling.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
+
+		final Composite contentContainer = new Composite(scrolling, SWT.NONE);
+
+		contentContainer.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
+		scrolling.setExpandHorizontal(true);
+		scrolling.setExpandVertical(true);
+		scrolling.setContent(contentContainer);
+
+		scrolling.addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				Rectangle r = scrolling.getClientArea();
+				scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
+			}
+		});
+
+		scrolling.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		GridLayout gl = new GridLayout(3, false);
+		gl.horizontalSpacing = 10;
+		contentContainer.setLayout(gl);
+
+		return contentContainer;
 	}
 }

@@ -182,18 +182,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -413,25 +409,29 @@ public class ModelEditor {
 		textLabel.setData(CSS_CLASS_KEY, "sectionHeader"); //$NON-NLS-1$
 		textLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-		final ScrolledComposite scrolling = new ScrolledComposite(editingArea, SWT.H_SCROLL | SWT.V_SCROLL);
-		scrolling.setBackgroundMode(SWT.INHERIT_DEFAULT);
-		scrolling.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
+		// final ScrolledComposite scrolling = new
+		// ScrolledComposite(editingArea, SWT.H_SCROLL | SWT.V_SCROLL);
+		// scrolling.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		//		scrolling.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
 
 		final EStackLayout layout = new EStackLayout();
-		final Composite contentContainer = new Composite(scrolling, SWT.NONE);
-		contentContainer.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
-		scrolling.setExpandHorizontal(true);
-		scrolling.setExpandVertical(true);
-		scrolling.setContent(contentContainer);
+		final Composite contentContainer = new Composite(editingArea, SWT.NONE);
+		contentContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		scrolling.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				Rectangle r = scrolling.getClientArea();
-				scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
-			}
-		});
-
-		scrolling.setLayoutData(new GridData(GridData.FILL_BOTH));
+		//		contentContainer.setData(CSS_CLASS_KEY, "formContainer"); //$NON-NLS-1$
+		// scrolling.setExpandHorizontal(true);
+		// scrolling.setExpandVertical(true);
+		// scrolling.setContent(contentContainer);
+		//
+		// scrolling.addControlListener(new ControlAdapter() {
+		// public void controlResized(ControlEvent e) {
+		// Rectangle r = scrolling.getClientArea();
+		// scrolling.setMinSize(contentContainer.computeSize(r.width,
+		// SWT.DEFAULT));
+		// }
+		// });
+		//
+		// scrolling.setLayoutData(new GridData(GridData.FILL_BOTH));
 		contentContainer.setLayout(layout);
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -476,10 +476,11 @@ public class ModelEditor {
 						}
 					}
 
-					Rectangle r = scrolling.getClientArea();
-					scrolling.setMinSize(contentContainer.computeSize(r.width, SWT.DEFAULT));
-					scrolling.setOrigin(0, 0);
-					scrolling.layout(true, true);
+					// Rectangle r = scrolling.getClientArea();
+					// scrolling.setMinSize(contentContainer.computeSize(r.width,
+					// SWT.DEFAULT));
+					// scrolling.setOrigin(0, 0);
+					// scrolling.layout(true, true);
 
 					if (selectionService != null) {
 						selectionService.setSelection(s.getFirstElement());
