@@ -263,8 +263,7 @@ public class PerspectiveEditor extends AbstractComponentEditor {
 			l.setLayoutData(new GridData(GridData.END, GridData.BEGINNING, false, false));
 
 			final TableViewer viewer = new TableViewer(parent);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 200;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			viewer.getControl().setLayoutData(gd);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);

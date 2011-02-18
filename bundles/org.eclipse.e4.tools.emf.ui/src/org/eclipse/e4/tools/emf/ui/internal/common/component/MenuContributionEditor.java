@@ -181,8 +181,7 @@ public class MenuContributionEditor extends AbstractComponentEditor {
 			viewer.setContentProvider(cp);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 300;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			viewer.getControl().setLayoutData(gd);
 
 			IEMFListProperty prop = EMFEditProperties.list(getEditingDomain(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);

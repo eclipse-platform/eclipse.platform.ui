@@ -207,8 +207,7 @@ public class ToolBarEditor extends AbstractComponentEditor {
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			viewer.setContentProvider(cp);
 
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 120;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			viewer.getControl().setLayoutData(gd);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 

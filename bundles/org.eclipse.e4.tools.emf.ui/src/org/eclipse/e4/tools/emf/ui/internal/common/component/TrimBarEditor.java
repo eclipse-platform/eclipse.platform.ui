@@ -205,8 +205,7 @@ public class TrimBarEditor extends AbstractComponentEditor {
 			final TableViewer viewer = new TableViewer(parent);
 			viewer.setLabelProvider(new ComponentLabelProvider(editor, Messages));
 			viewer.setContentProvider(new ObservableListContentProvider());
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 300;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			viewer.getControl().setLayoutData(gd);
 
 			IEMFListProperty prop = EMFProperties.list(UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN);

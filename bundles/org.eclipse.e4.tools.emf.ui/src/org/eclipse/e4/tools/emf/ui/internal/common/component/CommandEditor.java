@@ -193,8 +193,7 @@ public class CommandEditor extends AbstractComponentEditor {
 			viewer.setContentProvider(cp);
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 120;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			viewer.getControl().setLayoutData(gd);
 
 			IEMFEditListProperty mProp = EMFEditProperties.list(getEditingDomain(), CommandsPackageImpl.Literals.COMMAND__PARAMETERS);
