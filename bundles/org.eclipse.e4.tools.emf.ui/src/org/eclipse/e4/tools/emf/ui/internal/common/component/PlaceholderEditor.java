@@ -215,8 +215,12 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 				}
 			});
 		}
+
+		ControlFactory.createCheckBox(parent, Messages.PlaceholderEditor_Closeable, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), AdvancedPackageImpl.Literals.PLACEHOLDER__CLOSEABLE));
+
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context, WidgetProperties.selection(), EMFEditProperties.value(getEditingDomain(), UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
+
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
 
