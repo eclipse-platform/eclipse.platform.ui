@@ -979,9 +979,6 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         while (!fListener.isFinished(STATE_RESTORE_STARTED | STATE_UPDATES | CHILDREN_UPDATES)) 
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
                 
-        // Update the viewer to collapse both elements and select a third
-        ModelDelta delta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
-
         // Post first collapse delta
         model.postDelta(model.makeElementDelta(model.findElement("2"), IModelDelta.COLLAPSE));
         while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
