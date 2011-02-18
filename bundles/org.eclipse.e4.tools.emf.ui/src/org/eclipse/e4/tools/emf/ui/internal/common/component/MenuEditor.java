@@ -41,6 +41,7 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.MUiFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -59,6 +60,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
+import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
@@ -98,6 +100,8 @@ public class MenuEditor extends AbstractComponentEditor {
 	@Inject
 	@Optional
 	private IProject project;
+
+	private Action addExpression;
 
 	private static class Struct {
 		private final String label;
@@ -142,6 +146,16 @@ public class MenuEditor extends AbstractComponentEditor {
 				handleAdd(MenuPackageImpl.Literals.MENU_SEPARATOR, true);
 			}
 		});
+		addExpression = new Action(Messages.MenuEditor_AddCoreExpression, createImageDescriptor(ResourceProvider.IMG_CoreExpression)) {
+			@Override
+			public void run() {
+				MUIElement e = (MUIElement) getMaster().getValue();
+				Command cmd = SetCommand.create(getEditingDomain(), e, UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN, MUiFactory.INSTANCE.createCoreExpression());
+				if (cmd.canExecute()) {
+					getEditingDomain().getCommandStack().execute(cmd);
+				}
+			}
+		};
 	}
 
 	@Override
@@ -523,6 +537,9 @@ public class MenuEditor extends AbstractComponentEditor {
 	public List<Action> getActions(Object element) {
 		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
 		l.addAll(actions);
+		if (((MUIElement) getMaster().getValue()).getVisibleWhen() == null) {
+			l.add(addExpression);
+		}
 		return l;
 	}
 }

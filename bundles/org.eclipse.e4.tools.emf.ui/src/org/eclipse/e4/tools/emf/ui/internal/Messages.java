@@ -22,6 +22,7 @@ public class Messages {
 	public String ModelTooling_Common_FindEllipsis;
 	public String ModelTooling_Common_TabDefault;
 	public String ModelTooling_Common_TabSupplementary;
+	public String ModelEditor_AddChild;
 
 	public String ModelTooling_UIElement_ToBeRendered;
 	public String ModelTooling_UIElement_Visible;
@@ -134,6 +135,7 @@ public class Messages {
 	public String MenuEditor_AddMenu;
 	public String MenuEditor_AddDirectMenuItem;
 	public String MenuEditor_AddSeparator;
+	public String MenuEditor_AddCoreExpression;
 
 	public String MenuItemEditor_Type;
 	public String MenuItemEditor_Label;
@@ -144,6 +146,7 @@ public class Messages {
 	public String MenuItemEditor_Selected;
 	public String MenuItemEditor_Mnemonics;
 	public String MenuItemEditor_NoExpression;
+	public String MenuItemEditor_AddCoreExpression;
 
 	public String MenuSeparatorEditor_Label;
 

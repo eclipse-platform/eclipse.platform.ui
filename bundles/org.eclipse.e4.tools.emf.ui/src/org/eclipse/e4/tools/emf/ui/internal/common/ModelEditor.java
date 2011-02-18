@@ -159,6 +159,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -498,10 +499,20 @@ public class ModelEditor {
 
 			public void menuAboutToShow(IMenuManager manager) {
 				IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+				boolean addSeparator = false;
 				if (!s.isEmpty()) {
 					List<Action> actions;
 					if (s.getFirstElement() instanceof VirtualEntry<?>) {
 						actions = virtualEditors.get(((VirtualEntry<?>) s.getFirstElement()).getId()).getActions(s.getFirstElement());
+
+						if (actions.size() > 0) {
+							MenuManager addMenu = new MenuManager(messages.ModelEditor_AddChild);
+							for (Action a : actions) {
+								addSeparator = true;
+								addMenu.add(a);
+							}
+							manager.add(addMenu);
+						}
 					} else {
 						final EObject o = (EObject) s.getFirstElement();
 						AbstractComponentEditor editor = getEditor(o.eClass());
@@ -511,8 +522,18 @@ public class ModelEditor {
 							actions = new ArrayList<Action>();
 						}
 
+						if (actions.size() > 0) {
+							MenuManager addMenu = new MenuManager(messages.ModelEditor_AddChild);
+							for (Action a : actions) {
+								addSeparator = true;
+								addMenu.add(a);
+							}
+							manager.add(addMenu);
+						}
+
 						if (o.eContainer() != null) {
-							actions.add(new Action(messages.ModelEditor_Delete, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
+							addSeparator = true;
+							manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
 								public void run() {
 									if (o.eContainingFeature().isMany()) {
 										Command cmd = RemoveCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o.eContainer(), o.eContainingFeature(), o);
@@ -528,15 +549,15 @@ public class ModelEditor {
 								}
 							});
 						}
-
-					}
-
-					for (Action a : actions) {
-						manager.add(a);
 					}
 				}
 
 				if (project != null) {
+
+					if (addSeparator) {
+						manager.add(new Separator());
+					}
+
 					Action nlsAction = new Action(messages.ModelEditor_ExternalizeStrings) {
 						public void run() {
 							ExternalizeStringHandler h = ContextInjectionFactory.make(ExternalizeStringHandler.class, context);

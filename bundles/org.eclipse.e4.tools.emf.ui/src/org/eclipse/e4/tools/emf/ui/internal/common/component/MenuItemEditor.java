@@ -12,6 +12,7 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.conversion.Converter;
@@ -31,10 +32,12 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuItemIco
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.MUiFactory;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.databinding.FeaturePath;
@@ -42,6 +45,8 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.edit.command.SetCommand;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ViewerProperties;
@@ -73,8 +78,24 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	@Optional
 	protected IProject project;
 
+	private Action addExpression;
+
 	public MenuItemEditor() {
 		super();
+	}
+
+	@PostConstruct
+	void init() {
+		addExpression = new Action(Messages.MenuItemEditor_AddCoreExpression, createImageDescriptor(ResourceProvider.IMG_CoreExpression)) {
+			@Override
+			public void run() {
+				MUIElement e = (MUIElement) getMaster().getValue();
+				Command cmd = SetCommand.create(getEditingDomain(), e, UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN, MUiFactory.INSTANCE.createCoreExpression());
+				if (cmd.canExecute()) {
+					getEditingDomain().getCommandStack().execute(cmd);
+				}
+			}
+		};
 	}
 
 	@Override
@@ -306,6 +327,15 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 	@Override
 	public FeaturePath[] getLabelProperties() {
 		return new FeaturePath[] { FeaturePath.fromList(UiPackageImpl.Literals.UI_LABEL__LABEL), FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED) };
+	}
+
+	@Override
+	public List<Action> getActions(Object element) {
+		ArrayList<Action> l = new ArrayList<Action>(super.getActions(element));
+		if (((MUIElement) getMaster().getValue()).getVisibleWhen() == null) {
+			l.add(addExpression);
+		}
+		return l;
 	}
 
 	static class EObject2EClass extends Converter {
