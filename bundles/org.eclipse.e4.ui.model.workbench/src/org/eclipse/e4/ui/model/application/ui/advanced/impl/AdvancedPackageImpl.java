@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EGenericType;
@@ -111,6 +112,24 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PLACEHOLDER__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PLACEHOLDER__TRANIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PLACEHOLDER__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -212,13 +231,22 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PLACEHOLDER__REF = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Closeable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PLACEHOLDER__CLOSEABLE = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Placeholder</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 1;
+	public static final int PLACEHOLDER_FEATURE_COUNT = UiPackageImpl.UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl <em>Perspective</em>}' class.
@@ -256,6 +284,24 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PERSPECTIVE__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__TRANIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE__CLONABLE_SNIPPETS = UiPackageImpl.ELEMENT_CONTAINER__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -475,6 +521,24 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE_STACK__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE_STACK__TRANIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PERSPECTIVE_STACK__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -627,6 +691,24 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int AREA__CONTRIBUTOR_URI = BasicPackageImpl.PART_SASH_CONTAINER__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AREA__TRANIENT_DATA = BasicPackageImpl.PART_SASH_CONTAINER__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int AREA__CLONABLE_SNIPPETS = BasicPackageImpl.PART_SASH_CONTAINER__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -917,6 +999,20 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder#isCloseable <em>Closeable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Closeable</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder#isCloseable()
+	 * @see #getPlaceholder()
+	 * @generated
+	 */
+	public EAttribute getPlaceholder_Closeable() {
+		return (EAttribute)placeholderEClass.getEStructuralFeatures().get(1);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPerspective <em>Perspective</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -997,6 +1093,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		// Create classes and their features
 		placeholderEClass = createEClass(PLACEHOLDER);
 		createEReference(placeholderEClass, PLACEHOLDER__REF);
+		createEAttribute(placeholderEClass, PLACEHOLDER__CLOSEABLE);
 
 		perspectiveEClass = createEClass(PERSPECTIVE);
 		createEReference(perspectiveEClass, PERSPECTIVE__WINDOWS);
@@ -1065,6 +1162,7 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		// Initialize classes and features; add operations and parameters
 		initEClass(placeholderEClass, MPlaceholder.class, "Placeholder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPlaceholder_Ref(), theUiPackage.getUIElement(), null, "ref", null, 1, 1, MPlaceholder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getPlaceholder_Closeable(), ecorePackage.getEBoolean(), "closeable", "false", 0, 1, MPlaceholder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 
 		initEClass(perspectiveEClass, MPerspective.class, "Perspective", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPerspective_Windows(), theBasicPackage.getWindow(), null, "windows", null, 0, -1, MPerspective.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1104,6 +1202,14 @@ public class AdvancedPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference PLACEHOLDER__REF = eINSTANCE.getPlaceholder_Ref();
+
+		/**
+		 * The meta object literal for the '<em><b>Closeable</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute PLACEHOLDER__CLOSEABLE = eINSTANCE.getPlaceholder_Closeable();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PerspectiveImpl <em>Perspective</em>}' class.

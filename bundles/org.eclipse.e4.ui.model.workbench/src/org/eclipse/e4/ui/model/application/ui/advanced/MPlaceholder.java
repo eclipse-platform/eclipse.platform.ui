@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder#getRef <em>Ref</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder#isCloseable <em>Closeable</em>}</li>
  * </ul>
  * </p>
  *
@@ -54,5 +55,31 @@ public interface MPlaceholder extends MUIElement, MPartSashContainerElement, MSt
 	 * @generated
 	 */
 	void setRef(MUIElement value);
+
+	/**
+	 * Returns the value of the '<em><b>Closeable</b></em>' attribute.
+	 * The default value is <code>"false"</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Closeable</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Closeable</em>' attribute.
+	 * @see #setCloseable(boolean)
+	 * @model default="false"
+	 * @generated
+	 */
+	boolean isCloseable();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder#isCloseable <em>Closeable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Closeable</em>' attribute.
+	 * @see #isCloseable()
+	 * @generated
+	 */
+	void setCloseable(boolean value);
 
 } // MPlaceholder

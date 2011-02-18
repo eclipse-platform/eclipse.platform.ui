@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PlaceholderImpl#getRef <em>Ref</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.ui.advanced.impl.PlaceholderImpl#isCloseable <em>Closeable</em>}</li>
  * </ul>
  * </p>
  *
@@ -42,6 +43,25 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 * @ordered
 	 */
 	protected MUIElement ref;
+
+	/**
+	 * The default value of the '{@link #isCloseable() <em>Closeable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isCloseable()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean CLOSEABLE_EDEFAULT = false;
+	/**
+	 * The cached value of the '{@link #isCloseable() <em>Closeable</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isCloseable()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean closeable = CLOSEABLE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -105,12 +125,35 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isCloseable() {
+		return closeable;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCloseable(boolean newCloseable) {
+		boolean oldCloseable = closeable;
+		closeable = newCloseable;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE, oldCloseable, closeable));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case AdvancedPackageImpl.PLACEHOLDER__REF:
 				if (resolve) return getRef();
 				return basicGetRef();
+			case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
+				return isCloseable();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -125,6 +168,9 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 		switch (featureID) {
 			case AdvancedPackageImpl.PLACEHOLDER__REF:
 				setRef((MUIElement)newValue);
+				return;
+			case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
+				setCloseable((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -141,6 +187,9 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 			case AdvancedPackageImpl.PLACEHOLDER__REF:
 				setRef((MUIElement)null);
 				return;
+			case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
+				setCloseable(CLOSEABLE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -155,8 +204,26 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 		switch (featureID) {
 			case AdvancedPackageImpl.PLACEHOLDER__REF:
 				return ref != null;
+			case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
+				return closeable != CLOSEABLE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (closeable: "); //$NON-NLS-1$
+		result.append(closeable);
+		result.append(')');
+		return result.toString();
 	}
 
 } //PlaceholderImpl

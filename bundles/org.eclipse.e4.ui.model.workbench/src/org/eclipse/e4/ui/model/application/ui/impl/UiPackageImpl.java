@@ -226,6 +226,24 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int UI_ELEMENT__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int UI_ELEMENT__TRANIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int UI_ELEMENT__CLONABLE_SNIPPETS = ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -408,6 +426,24 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int ELEMENT_CONTAINER__CONTRIBUTOR_URI = UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ELEMENT_CONTAINER__TRANIENT_DATA = UI_ELEMENT__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ELEMENT_CONTAINER__CLONABLE_SNIPPETS = UI_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -562,6 +598,24 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_STACK__CONTRIBUTOR_URI = ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_STACK__TRANIENT_DATA = ELEMENT_CONTAINER__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_STACK__CLONABLE_SNIPPETS = ELEMENT_CONTAINER__CLONABLE_SNIPPETS;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -714,6 +768,24 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int GENERIC_TILE__CONTRIBUTOR_URI = ELEMENT_CONTAINER__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_TILE__TRANIENT_DATA = ELEMENT_CONTAINER__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_TILE__CLONABLE_SNIPPETS = ELEMENT_CONTAINER__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -879,6 +951,24 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int GENERIC_TRIM_CONTAINER__CONTRIBUTOR_URI = ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_TRIM_CONTAINER__TRANIENT_DATA = ELEMENT_CONTAINER__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int GENERIC_TRIM_CONTAINER__CLONABLE_SNIPPETS = ELEMENT_CONTAINER__CLONABLE_SNIPPETS;
+
+	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1042,6 +1132,24 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int EXPRESSION__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EXPRESSION__TRANIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int EXPRESSION__CLONABLE_SNIPPETS = ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
 	 * The number of structural features of the '<em>Expression</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1086,6 +1194,24 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int CORE_EXPRESSION__CONTRIBUTOR_URI = EXPRESSION__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CORE_EXPRESSION__TRANIENT_DATA = EXPRESSION__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CORE_EXPRESSION__CLONABLE_SNIPPETS = EXPRESSION__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Core Expression Id</b></em>' attribute.

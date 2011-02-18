@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.model.application;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,6 +24,8 @@ import java.util.List;
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getContributorURI <em>Contributor URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTranientData <em>Tranient Data</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getClonableSnippets <em>Clonable Snippets</em>}</li>
  * </ul>
  * </p>
  *
@@ -94,5 +97,45 @@ public interface MApplicationElement {
 	 * @generated
 	 */
 	void setContributorURI(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Tranient Data</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Tranient Data</em>' attribute.
+	 * @see #setTranientData(Map)
+	 * @model transient="true"
+	 * @generated
+	 */
+	Map<String, Object> getTranientData();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTranientData <em>Tranient Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Tranient Data</em>' attribute.
+	 * @see #getTranientData()
+	 * @generated
+	 */
+	void setTranientData(Map<String, Object> value);
+
+	/**
+	 * Returns the value of the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MApplicationElement}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Clonable Snippets</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Clonable Snippets</em>' containment reference list.
+	 * @model containment="true"
+	 * @generated
+	 */
+	List<MApplicationElement> getClonableSnippets();
 
 } // MApplicationElement

@@ -154,13 +154,31 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION_ELEMENT__CONTRIBUTOR_URI = 2;
 
 	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION_ELEMENT__TRANIENT_DATA = 3;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION_ELEMENT__CLONABLE_SNIPPETS = 4;
+
+	/**
 	 * The number of structural features of the '<em>Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_ELEMENT_FEATURE_COUNT = 3;
+	public static final int APPLICATION_ELEMENT_FEATURE_COUNT = 5;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl <em>Application</em>}' class.
@@ -198,6 +216,24 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int APPLICATION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__TRANIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__CLONABLE_SNIPPETS = UiPackageImpl.ELEMENT_CONTAINER__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -480,6 +516,24 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int CONTRIBUTION__CONTRIBUTOR_URI = APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTRIBUTION__TRANIENT_DATA = APPLICATION_ELEMENT__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTRIBUTION__CLONABLE_SNIPPETS = APPLICATION_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -551,6 +605,24 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int ADDON__CONTRIBUTOR_URI = CONTRIBUTION__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ADDON__TRANIENT_DATA = CONTRIBUTION__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ADDON__CLONABLE_SNIPPETS = CONTRIBUTION__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -867,6 +939,34 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTranientData <em>Tranient Data</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Tranient Data</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTranientData()
+	 * @see #getApplicationElement()
+	 * @generated
+	 */
+	public EAttribute getApplicationElement_TranientData() {
+		return (EAttribute)applicationElementEClass.getEStructuralFeatures().get(3);
+	}
+
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getClonableSnippets <em>Clonable Snippets</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Clonable Snippets</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getClonableSnippets()
+	 * @see #getApplicationElement()
+	 * @generated
+	 */
+	public EReference getApplicationElement_ClonableSnippets() {
+		return (EReference)applicationElementEClass.getEStructuralFeatures().get(4);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MContribution <em>Contribution</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -985,6 +1085,8 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TAGS);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__CONTRIBUTOR_URI);
+		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TRANIENT_DATA);
+		createEReference(applicationElementEClass, APPLICATION_ELEMENT__CLONABLE_SNIPPETS);
 
 		contributionEClass = createEClass(CONTRIBUTION);
 		createEAttribute(contributionEClass, CONTRIBUTION__CONTRIBUTION_URI);
@@ -1074,6 +1176,13 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		initEAttribute(getApplicationElement_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_Tags(), ecorePackage.getEString(), "tags", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_ContributorURI(), ecorePackage.getEString(), "contributorURI", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		g1 = createEGenericType(ecorePackage.getEMap());
+		g2 = createEGenericType(ecorePackage.getEString());
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(ecorePackage.getEJavaObject());
+		g1.getETypeArguments().add(g2);
+		initEAttribute(getApplicationElement_TranientData(), g1, "tranientData", null, 0, 1, MApplicationElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getApplicationElement_ClonableSnippets(), this.getApplicationElement(), null, "clonableSnippets", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(contributionEClass, MContribution.class, "Contribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContribution_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1195,6 +1304,22 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute APPLICATION_ELEMENT__CONTRIBUTOR_URI = eINSTANCE.getApplicationElement_ContributorURI();
+
+		/**
+		 * The meta object literal for the '<em><b>Tranient Data</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute APPLICATION_ELEMENT__TRANIENT_DATA = eINSTANCE.getApplicationElement_TranientData();
+
+		/**
+		 * The meta object literal for the '<em><b>Clonable Snippets</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EReference APPLICATION_ELEMENT__CLONABLE_SNIPPETS = eINSTANCE.getApplicationElement_ClonableSnippets();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ContributionImpl <em>Contribution</em>}' class.

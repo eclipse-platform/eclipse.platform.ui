@@ -12,13 +12,18 @@ package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -30,6 +35,8 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getContributorURI <em>Contributor URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTranientData <em>Tranient Data</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getClonableSnippets <em>Clonable Snippets</em>}</li>
  * </ul>
  * </p>
  *
@@ -85,6 +92,26 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * @ordered
 	 */
 	protected String contributorURI = CONTRIBUTOR_URI_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getTranientData() <em>Tranient Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTranientData()
+	 * @generated
+	 * @ordered
+	 */
+	protected Map<String, Object> tranientData;
+
+	/**
+	 * The cached value of the '{@link #getClonableSnippets() <em>Clonable Snippets</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getClonableSnippets()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MApplicationElement> clonableSnippets;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -163,6 +190,53 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Map<String, Object> getTranientData() {
+		return tranientData;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTranientData(Map<String, Object> newTranientData) {
+		Map<String, Object> oldTranientData = tranientData;
+		tranientData = newTranientData;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA, oldTranientData, tranientData));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public List<MApplicationElement> getClonableSnippets() {
+		if (clonableSnippets == null) {
+			clonableSnippets = new EObjectContainmentEList<MApplicationElement>(MApplicationElement.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS);
+		}
+		return clonableSnippets;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
+				return ((InternalEList<?>)getClonableSnippets()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -172,6 +246,10 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return getTags();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				return getContributorURI();
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA:
+				return getTranientData();
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
+				return getClonableSnippets();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -195,6 +273,13 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				setContributorURI((String)newValue);
 				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA:
+				setTranientData((Map<String, Object>)newValue);
+				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
+				getClonableSnippets().clear();
+				getClonableSnippets().addAll((Collection<? extends MApplicationElement>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -216,6 +301,12 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				setContributorURI(CONTRIBUTOR_URI_EDEFAULT);
 				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA:
+				setTranientData((Map<String, Object>)null);
+				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
+				getClonableSnippets().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -234,6 +325,10 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return tags != null && !tags.isEmpty();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				return CONTRIBUTOR_URI_EDEFAULT == null ? contributorURI != null : !CONTRIBUTOR_URI_EDEFAULT.equals(contributorURI);
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA:
+				return tranientData != null;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
+				return clonableSnippets != null && !clonableSnippets.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -254,6 +349,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 		result.append(tags);
 		result.append(", contributorURI: "); //$NON-NLS-1$
 		result.append(contributorURI);
+		result.append(", tranientData: "); //$NON-NLS-1$
+		result.append(tranientData);
 		result.append(')');
 		return result.toString();
 	}
