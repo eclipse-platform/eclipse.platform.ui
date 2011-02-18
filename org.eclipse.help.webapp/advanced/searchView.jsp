@@ -127,7 +127,7 @@ setTimeout('refresh()', 2000);
 <%
 	return;
 } else if (data.getResultsCount() == 0){
-	out.write(data.getNotFoundMessage());   
+	out.write(UrlUtil.htmlEncode(data.getNotFoundMessage()));   
     if (data.isScopeActive()) {
 %>
 <a class="showall" onclick="showAll();" ><%=ServletResources.getString("showAllLink", request)%></a>
@@ -135,7 +135,7 @@ setTimeout('refresh()', 2000);
     }
 } else { // data.getResultsCount() != 0
 %>
-<p><b><%=data.getMatchesInScopeMessage()%></b>
+<p><b><%=UrlUtil.htmlEncode(data.getMatchesInScopeMessage())%></b>
 <%
     if (data.isScopeActive()) {
 %>

@@ -71,7 +71,7 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 <p>
 <tr>
 		<td colspan="2">
-<%= searchData.getScopeActiveMessage() %>
+<%= UrlUtil.htmlEncode(searchData.getScopeActiveMessage()) %>
 <a class="showall" onclick="showAll();" ><%=ServletResources.getString("showAllLink", request)%></a>
 </p></td></tr>
 <%

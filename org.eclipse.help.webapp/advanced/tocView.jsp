@@ -136,7 +136,7 @@ if (requestData.isIE()){
     if (searchData.isScopeActive()) {
 %>
 <p>
-<%= searchData.getScopeActiveMessage() %>
+<%= UrlUtil.htmlEncode(searchData.getScopeActiveMessage()) %>
 <a class="showall" onclick="showAll();" ><%=ServletResources.getString("showAllLink", request)%></a>
 </p>
 <%
