@@ -49,8 +49,13 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
      */
     protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
-        fShell.setSize(300, 100);
+        // Tests end in DNF on Mac (bug 325465)
+        if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+            fShell = new Shell(fDisplay);
+        } else {
+            fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
+        }
+        fShell.setSize(300, 80);
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);

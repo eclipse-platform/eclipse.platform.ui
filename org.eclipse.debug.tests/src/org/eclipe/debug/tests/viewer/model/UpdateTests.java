@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -45,10 +46,15 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
      */
     protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
-        fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
-        // Maximizing a shell with SWT.ON_TOP doesn't work on Linux (bug 325465)
-        //fShell.setMaximized(true);
-        fShell.setSize(800, 600);
+        // Tests end in DNF on Mac (bug 325465)
+        if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+            fShell = new Shell(fDisplay);
+            fShell.setMaximized(true);
+        } else {
+            fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
+            // Maximizing a shell with SWT.ON_TOP doesn't work on Linux (bug 325465)
+            fShell.setSize(800, 600);
+        }
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);
