@@ -117,8 +117,7 @@ public class VBindingTableEditor extends AbstractComponentEditor {
 			bindingViewer = new TableViewer(parent);
 			ObservableListContentProvider cp = new ObservableListContentProvider();
 			bindingViewer.setContentProvider(cp);
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 300;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			bindingViewer.getControl().setLayoutData(gd);
 			bindingViewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
 

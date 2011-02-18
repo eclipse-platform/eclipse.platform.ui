@@ -114,8 +114,7 @@ public class VModelImportsEditor extends AbstractComponentEditor {
 			viewer = new TableViewer(parent);
 			viewer.setContentProvider(new ObservableListContentProvider());
 			viewer.setLabelProvider(new ComponentLabelProvider(getEditor(), Messages));
-			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-			gd.heightHint = 300;
+			GridData gd = new GridData(GridData.FILL_BOTH);
 			viewer.getControl().setLayoutData(gd);
 
 			Composite buttonComp = new Composite(parent, SWT.NONE);
