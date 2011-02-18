@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,10 @@
  *     Michael Williamson (eclipse-bugs@magnaworks.com) - patch (see Bugzilla #92545) 
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
@@ -197,33 +201,42 @@ public class FormToolkit {
 	}
 
 	private class BoldFontHolder {
-		private Font normalFont;
-
-		private Font boldFont;
+		private Map fontMap;
 
 		public BoldFontHolder() {
 		}
 
 		public Font getBoldFont(Font font) {
-			createBoldFont(font);
-			return boldFont;
-		}
+			if (font == null ) {
+				return null;
+			}
+			
+			if (fontMap == null) {
+				fontMap = new HashMap();
+			}
+			
+			if (fontMap.containsKey(font)) {
+				return (Font) fontMap.get(font);
+			}
 
-		private void createBoldFont(Font font) {
-			if (normalFont == null || !normalFont.equals(font)) {
-				normalFont = font;
-				dispose();
-			}
-			if (boldFont == null) {
-				boldFont = FormFonts.getInstance().getBoldFont(colors.getDisplay(),
-						normalFont);
-			}
+			Font boldFont = FormFonts.getInstance().getBoldFont(colors.getDisplay(),
+						font);
+			fontMap.put(font, boldFont);
+			return boldFont;
+
 		}
 
 		public void dispose() {
-			if (boldFont != null && colors.getDisplay() != null) {
-				FormFonts.getInstance().markFinished(boldFont, colors.getDisplay());
-				boldFont = null;
+			if (fontMap == null) {
+				return;
+			}
+			for (Iterator iter = fontMap.values().iterator(); iter.hasNext();) {
+				Font boldFont = (Font) iter.next();
+				if (boldFont != null && colors.getDisplay() != null) {
+					FormFonts.getInstance().markFinished(boldFont,
+							colors.getDisplay());
+					boldFont = null;
+				}
 			}
 		}
 	}
