@@ -150,7 +150,7 @@ public class TrimContributionEditor extends AbstractComponentEditor {
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
-			return parent;
+			return folder;
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));

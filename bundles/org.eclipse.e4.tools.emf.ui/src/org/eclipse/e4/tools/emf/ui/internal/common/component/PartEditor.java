@@ -170,7 +170,7 @@ public class PartEditor extends AbstractComponentEditor {
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
-			return parent;
+			return folder;
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));
@@ -314,7 +314,7 @@ public class PartEditor extends AbstractComponentEditor {
 		item.setControl(container);
 
 		ObjectViewer objectViewer = new ObjectViewer();
-		TreeViewer viewer = objectViewer.createViewer(container, ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool);
+		TreeViewer viewer = objectViewer.createViewer(container, ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool, Messages);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 	}

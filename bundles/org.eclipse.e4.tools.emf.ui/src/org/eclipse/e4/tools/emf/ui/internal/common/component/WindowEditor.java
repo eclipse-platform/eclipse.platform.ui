@@ -179,7 +179,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
-			return parent;
+			return folder;
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, getMaster(), context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));

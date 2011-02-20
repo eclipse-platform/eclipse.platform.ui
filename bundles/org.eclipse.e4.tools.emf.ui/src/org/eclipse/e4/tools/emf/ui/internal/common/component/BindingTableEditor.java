@@ -150,7 +150,7 @@ public class BindingTableEditor extends AbstractComponentEditor {
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
-			return parent;
+			return folder;
 		}
 
 		{

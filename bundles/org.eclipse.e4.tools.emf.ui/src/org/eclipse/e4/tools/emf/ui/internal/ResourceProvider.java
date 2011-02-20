@@ -94,6 +94,7 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Obj16_chart_organisation = "IMG_org.eclipse.e4.tools.emf.ui.obj16.chart_organisation"; //$NON-NLS-1$
 	public static final String IMG_Obj16_error_obj = "IMG_org.eclipse.e4.tools.emf.ui.obj16.error_obj"; //$NON-NLS-1$
 	public static final String IMG_Obj16_world_edit = "IMG_org.eclipse.e4.tools.emf.ui.obj16.world_edit"; //$NON-NLS-1$
+	public static final String IMG_Obj16_bullet_go = "IMG_org.eclipse.e4.tools.emf.ui.obj16.bullet_go"; //$NON-NLS-1$
 
 	public static final String IMG_Wizban16_fieldrefact_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.fieldrefact_wiz"; //$NON-NLS-1$
 	public static final String IMG_Wizban16_import_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.import_wiz"; //$NON-NLS-1$

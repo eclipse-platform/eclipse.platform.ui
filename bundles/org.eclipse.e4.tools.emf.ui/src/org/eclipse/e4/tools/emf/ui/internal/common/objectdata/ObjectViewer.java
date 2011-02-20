@@ -5,11 +5,15 @@ import java.util.Collections;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -17,10 +21,16 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.window.ToolTip;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 
 public class ObjectViewer {
-	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, IObservableValue master, IResourcePool resourcePool) {
+	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, IObservableValue master, IResourcePool resourcePool, Messages messages) {
 		final TreeViewer viewer = new TreeViewer(parent);
 		viewer.setContentProvider(new ContentProviderImpl());
 		viewer.setLabelProvider(new LabelProviderImpl(resourcePool));
@@ -37,7 +47,64 @@ public class ObjectViewer {
 				}
 			}
 		});
+		new TooltipSupportImpl(viewer, ToolTip.NO_RECREATE, false, resourcePool, messages);
 		return viewer;
+	}
+
+	class TooltipSupportImpl extends ColumnViewerToolTipSupport {
+		private IResourcePool resourcePool;
+		private Messages messages;
+
+		protected TooltipSupportImpl(ColumnViewer viewer, int style, boolean manualActivation, IResourcePool resourcePool, Messages messages) {
+			super(viewer, style, manualActivation);
+			this.resourcePool = resourcePool;
+			this.messages = messages;
+		}
+
+		@Override
+		protected Composite createViewerToolTipContentArea(Event event, ViewerCell cell, Composite parent) {
+			JavaAttribute attribute = (JavaAttribute) cell.getElement();
+
+			Composite container = new Composite(parent, SWT.NONE);
+			container.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			container.setLayout(new GridLayout(2, false));
+
+			{
+				Composite headerContainer = new Composite(container, SWT.NONE);
+				headerContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
+				headerContainer.setData(ModelEditor.CSS_CLASS_KEY, "headerSectionContainer"); //$NON-NLS-1$
+				GridLayout fl = new GridLayout();
+				fl.marginHeight = 5;
+				fl.marginWidth = 5;
+				headerContainer.setLayout(fl);
+				headerContainer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false, 2, 1));
+
+				Label iconLabel = new Label(parent, SWT.NONE);
+				iconLabel.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_bullet_go));
+
+				Label textLabel = new Label(headerContainer, SWT.NONE);
+				textLabel.setText(attribute.getName());
+				textLabel.setData(ModelEditor.CSS_CLASS_KEY, "sectionHeader"); //$NON-NLS-1$
+			}
+
+			{
+				Label l = new Label(container, SWT.NONE);
+				l.setText(messages.ObjectViewer_Tooltip_Value);
+
+				l = new Label(container, SWT.NONE);
+				l.setText(attribute.getValue());
+			}
+
+			{
+				Label l = new Label(container, SWT.NONE);
+				l.setText(messages.ObjectViewer_Tooltip_InjectionKey);
+
+				l = new Label(container, SWT.NONE);
+				l.setText(attribute.getContextKey());
+			}
+
+			return container;
+		}
 	}
 
 	class ViewerComparatorImpl extends ViewerComparator {
@@ -77,6 +144,14 @@ public class ObjectViewer {
 		}
 
 		@Override
+		public String getToolTipText(Object element) {
+			if (element instanceof JavaAttribute && ((JavaAttribute) element).isInjected()) {
+				return "Show Tooltip"; //$NON-NLS-1$
+			}
+			return super.getToolTipText(element);
+		}
+
+		@Override
 		public void update(ViewerCell cell) {
 			if (cell.getElement() instanceof JavaObject) {
 				JavaObject o = (JavaObject) cell.getElement();
@@ -86,7 +161,7 @@ public class ObjectViewer {
 				JavaAttribute o = (JavaAttribute) cell.getElement();
 				StyledString string = new StyledString();
 				if (o.isInjected()) {
-					string.append("<injected> ", StyledString.COUNTER_STYLER);
+					string.append("<injected> ", StyledString.COUNTER_STYLER); //$NON-NLS-1$
 				}
 				string.append(o.getName());
 				string.append(" : " + o.getType() + " - " + o.getValue(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$ //$NON-NLS-2$
