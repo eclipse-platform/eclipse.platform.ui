@@ -144,7 +144,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 		return composite;
 	}
 
-	private Composite createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
+	protected CTabFolder createForm(Composite parent, EMFDataBindingContext context, WritableValue master, boolean isImport) {
 		CTabFolder folder = new CTabFolder(parent, SWT.BOTTOM);
 
 		CTabItem item = new CTabItem(folder, SWT.NONE);
@@ -163,7 +163,7 @@ public abstract class MenuItemEditor extends AbstractComponentEditor {
 
 		if (isImport) {
 			ControlFactory.createFindImport(parent, Messages, this, context);
-			return parent;
+			return folder;
 		}
 
 		ControlFactory.createTextField(parent, Messages.ModelTooling_Common_Id, master, context, textProp, EMFEditProperties.value(getEditingDomain(), ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__ELEMENT_ID));

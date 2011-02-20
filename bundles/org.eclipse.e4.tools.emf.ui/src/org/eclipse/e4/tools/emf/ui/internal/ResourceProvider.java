@@ -79,9 +79,13 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Obj16_arrow_down = "IMG_org.eclipse.e4.tools.emf.ui.obj16.arrow_down"; //$NON-NLS-1$
 	public static final String IMG_Obj16_arrow_up = "IMG_org.eclipse.e4.tools.emf.ui.obj16.arrow_up"; //$NON-NLS-1$
 	public static final String IMG_Obj16_class_obj = "IMG_org.eclipse.e4.tools.emf.ui.obj16.class_obj"; //$NON-NLS-1$
+	public static final String IMG_Obj16_class_default_obj = "IMG_org.eclipse.e4.tools.emf.ui.obj16.class_default_obj"; //$NON-NLS-1$
 	public static final String IMG_Obj16_cross = "IMG_org.eclipse.e4.tools.emf.ui.obj16.cross"; //$NON-NLS-1$
 	public static final String IMG_Obj16_EPackage = "IMG_org.eclipse.e4.tools.emf.ui.obj16.EPackage"; //$NON-NLS-1$
 	public static final String IMG_Obj16_field_public_obj = "IMG_org.eclipse.e4.tools.emf.ui.obj16.field_public_obj"; //$NON-NLS-1$
+	public static final String IMG_Obj16_field_default_obj = "IMG_org.eclipse.e4.tools.emf.ui.obj16.field_default_obj"; //$NON-NLS-1$
+	public static final String IMG_Obj16_field_private_obj = "IMG_org.eclipse.e4.tools.emf.ui.obj16.field_private_obj"; //$NON-NLS-1$
+	public static final String IMG_Obj16_field_protected_obj = "IMG_org.eclipse.e4.tools.emf.ui.obj16.field_protected_obj"; //$NON-NLS-1$
 	public static final String IMG_Obj16_headermenu = "IMG_org.eclipse.e4.tools.emf.ui.obj16.headermenu"; //$NON-NLS-1$
 	public static final String IMG_Obj16_table_add = "IMG_org.eclipse.e4.tools.emf.ui.obj16.table_add"; //$NON-NLS-1$
 	public static final String IMG_Obj16_table_delete = "IMG_org.eclipse.e4.tools.emf.ui.obj16.table_delete"; //$NON-NLS-1$

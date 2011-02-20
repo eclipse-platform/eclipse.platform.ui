@@ -25,6 +25,7 @@ import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ContributionClassDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.objectdata.ObjectViewer;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -32,6 +33,7 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.IWidgetValueProperty;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -39,6 +41,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -188,9 +191,26 @@ public class AddonsEditor extends AbstractComponentEditor {
 
 		ControlFactory.createStringListWidget(parent, Messages, this, Messages.AddonsEditor_Tags, ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__TAGS, VERTICAL_LIST_WIDGET_INDENT);
 
+		if (project == null) {
+			createInstanceInspection(folder);
+		}
+
 		folder.setSelection(0);
 
 		return folder;
+	}
+
+	private void createInstanceInspection(CTabFolder folder) {
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_TabRuntime);
+		Composite container = new Composite(folder, SWT.NONE);
+		container.setLayout(new GridLayout());
+		item.setControl(container);
+
+		ObjectViewer objectViewer = new ObjectViewer();
+		TreeViewer viewer = objectViewer.createViewer(container, ApplicationPackageImpl.Literals.CONTRIBUTION__OBJECT, getMaster(), resourcePool);
+		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+
 	}
 
 	@Override
