@@ -42,6 +42,7 @@ public class ObjectViewer {
 			public void handleValueChange(ValueChangeEvent event) {
 				if (event.diff.getNewValue() != null) {
 					viewer.setInput(Collections.singleton(new JavaObject(event.diff.getNewValue())));
+					viewer.expandToLevel(2);
 				} else {
 					viewer.setInput(Collections.emptyList());
 				}
@@ -73,13 +74,13 @@ public class ObjectViewer {
 				Composite headerContainer = new Composite(container, SWT.NONE);
 				headerContainer.setBackgroundMode(SWT.INHERIT_DEFAULT);
 				headerContainer.setData(ModelEditor.CSS_CLASS_KEY, "headerSectionContainer"); //$NON-NLS-1$
-				GridLayout fl = new GridLayout();
+				GridLayout fl = new GridLayout(2, false);
 				fl.marginHeight = 5;
 				fl.marginWidth = 5;
 				headerContainer.setLayout(fl);
 				headerContainer.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false, 2, 1));
 
-				Label iconLabel = new Label(parent, SWT.NONE);
+				Label iconLabel = new Label(headerContainer, SWT.NONE);
 				iconLabel.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_bullet_go));
 
 				Label textLabel = new Label(headerContainer, SWT.NONE);
