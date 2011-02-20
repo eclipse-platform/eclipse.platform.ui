@@ -17,7 +17,7 @@
  *                    246103, 249992, 256150, 256543, 262269, 175735, 262946,
  *                    255734, 263693, 169876, 266038, 268336, 270461, 271720,
  *                    283204, 281723, 283428
- *     Ovidio Mallo - bugs 237163, 235195, 299619, 306611
+ *     Ovidio Mallo - bugs 237163, 235195, 299619, 306611, 305367
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -143,6 +143,9 @@ import org.eclipse.core.tests.internal.databinding.observable.masterdetail.Detai
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
+import org.eclipse.core.tests.internal.databinding.observable.masterdetail.ListDetailValueObservableListTest;
+import org.eclipse.core.tests.internal.databinding.observable.masterdetail.MapDetailValueObservableMapTest;
+import org.eclipse.core.tests.internal.databinding.observable.masterdetail.SetDetailValueObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.property.value.ListSimpleValueObservableListTest;
 import org.eclipse.core.tests.internal.databinding.property.value.MapSimpleValueObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.property.value.SetSimpleValueObservableMapTest;
@@ -386,6 +389,9 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(DetailObservableMapTest.class);
 		addTest(DetailObservableSetTest.suite());
 		addTest(DetailObservableValueTest.suite());
+		addTest(ListDetailValueObservableListTest.suite());
+		addTest(MapDetailValueObservableMapTest.suite());
+		addTest(SetDetailValueObservableMapTest.suite());
 
 		// org.eclipse.core.tests.internal.databinding.property.value
 		addTestSuite(MapSimpleValueObservableMapTest.class);

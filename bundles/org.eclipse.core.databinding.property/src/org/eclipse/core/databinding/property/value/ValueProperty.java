@@ -8,15 +8,18 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
  *     Matthew Hall - bug 195222
- *     Ovidio Mallo - bug 331348
+ *     Ovidio Mallo - bugs 331348, 305367
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property.value;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.map.IMapProperty;
@@ -122,6 +125,30 @@ public abstract class ValueProperty implements IValueProperty {
 
 	public IObservableValue observeDetail(IObservableValue master) {
 		return MasterDetailObservables.detailValue(master,
+				valueFactory(master.getRealm()), getValueType());
+	}
+
+	/**
+	 * @since 1.4
+	 */
+	public IObservableList observeDetail(IObservableList master) {
+		return MasterDetailObservables.detailValues(master,
+				valueFactory(master.getRealm()), getValueType());
+	}
+
+	/**
+	 * @since 1.4
+	 */
+	public IObservableMap observeDetail(IObservableSet master) {
+		return MasterDetailObservables.detailValues(master,
+				valueFactory(master.getRealm()), getValueType());
+	}
+
+	/**
+	 * @since 1.4
+	 */
+	public IObservableMap observeDetail(IObservableMap master) {
+		return MasterDetailObservables.detailValues(master,
 				valueFactory(master.getRealm()), getValueType());
 	}
 
