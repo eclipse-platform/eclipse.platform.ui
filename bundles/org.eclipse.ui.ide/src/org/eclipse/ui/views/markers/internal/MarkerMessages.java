@@ -213,6 +213,7 @@ public class MarkerMessages extends NLS {
 	public static String MarkerFilter_cloneFilterName;
 	public static String MarkerFilter_editFilterName;
 	public static String MarkerFilter_deleteSelectedName;
+	public static String MarkerFilter_renameName;
 	public static String MarkerFilter_showAllCommand_title;
 	public static String MarkerFilter_ConfigureContentsCommand_title;
 	
@@ -252,8 +253,8 @@ public class MarkerMessages extends NLS {
 	public static String FieldMessage_NullMessage;
 	public static String FieldCategory_Uncategorized;
 	public static String FieldMessage_WrongType;
-	public static String ConfigurationEditDialog_title;
-	public static String ConfigurationEditDialog_message;
+	public static String FiltersConfigurationDialog_title;
+	public static String FiltersConfigurationDialog_message;
 	public static String Category_Label;
 	public static String Category_Limit_Label;
 	public static String Category_One_Item_Label;
@@ -304,6 +305,7 @@ public class MarkerMessages extends NLS {
 	public static String ALL_Title;
 	public static String AND_Title;
 	public static String OR_Title;
+	public static String MarkerConfigurationsLabel;
 
 	public static String ContentGenerator_NoGrouping;
 	public static String newViewTitle;
