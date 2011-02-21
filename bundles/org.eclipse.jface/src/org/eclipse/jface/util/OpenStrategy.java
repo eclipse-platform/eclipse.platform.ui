@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,16 @@ public class OpenStrategy {
     // Time used in FILE_EXPLORER and ACTIVE_DESKTOP
     // Not declared final, see bug 246209
     private static int TIME = 500;
+
+	/**
+	 * Returns the delay for post selection events.
+	 * 
+	 * @return the delay for post selection events in milliseconds
+	 * @since 3.7
+	 */
+	public static final int getPostSelectionDelay() {
+		return TIME;
+	}
 
     /* SINGLE_CLICK or DOUBLE_CLICK;
      * In case of SINGLE_CLICK, the bits SELECT_ON_HOVER and ARROW_KEYS_OPEN
