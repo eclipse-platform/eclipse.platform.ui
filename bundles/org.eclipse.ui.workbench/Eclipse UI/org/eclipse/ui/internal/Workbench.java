@@ -1576,11 +1576,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			public void runWithException() {
 
-				Menu appMenu = getAppMenu();
-				if (appMenu == null)
-					return;
-
-				createApplicationMenu(appMenu);
+				createApplicationMenu();
 			}
 		});
 
@@ -2190,7 +2186,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			display.syncExec(new Runnable() {
 				public void run() {
 					// return error if there is no appMenu
-					shouldReturn[0] = display.getAppMenuBar() == null;
+					shouldReturn[0] = hasAppMenu();
 				}
 			});
 		}
@@ -3884,11 +3880,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 		};
 	}
 
-	private void createApplicationMenu(Menu appMenu) {
+	private void createApplicationMenu() {
 
-		applicationMenuMgr = new ApplicationMenuManager(appMenu);
+		if (!hasAppMenu())
+			return;
+
+		applicationMenuMgr = new ApplicationMenuManager(getAppMenu());
 		IMenuService menuService = (IMenuService) serviceLocator.getService(IMenuService.class);
-		menuService.populateContributionManager(applicationMenuMgr, MenuUtil.APPLICATION_MENU);
+		menuService.populateContributionManager(applicationMenuMgr, MenuUtil.WORKBENCH_MENU);
 		applicationMenuMgr.update(true);
 	}
 
@@ -3904,7 +3903,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private void activateWorkbenchContext() {
 		IContextService contextService = (IContextService) serviceLocator
 				.getService(IContextService.class);
-		workbenchContext = contextService.activateContext(IContextService.CONTEXT_ID_WORKBENCH);
+		workbenchContext = contextService.activateContext(IContextService.CONTEXT_ID_WORKBENCH_MENU);
 	}
 
 	private void deactivateWorkbenchContext() {
@@ -3914,9 +3913,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 	}
 
 
+	public boolean hasAppMenu() {
+		if (getAppMenu() == null)
+			return false;
+		return !getWorkbenchConfigurer().getExitOnLastWindowClose();
+	}
+
 	private Menu getAppMenu() {
-		IWorkbench workbench = getWorkbenchConfigurer().getWorkbench();
-		return workbench.getDisplay().getAppMenuBar();
+		return getDisplay().getAppMenuBar();
 	}
 
 }

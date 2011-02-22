@@ -21,12 +21,13 @@ package org.eclipse.ui.menus;
 public class MenuUtil {
 	/**
 	 * 
-	 * Application Menu
+	 * Workbench Menu. On supported platforms, this menu is shown when no
+	 * workbench windows are active
 	 * 
 	 * @since 3.7
 	 * 
 	 * */
-	public final static String APPLICATION_MENU = "menu:org.eclipse.ui.application.menu"; //$NON-NLS-1$
+	public final static String WORKBENCH_MENU = "menu:org.eclipse.ui.workbench.menu"; //$NON-NLS-1$
 	/** Main Menu */
 	public final static String MAIN_MENU = "menu:org.eclipse.ui.main.menu"; //$NON-NLS-1$
 	/** Main ToolBar (CoolBar) */

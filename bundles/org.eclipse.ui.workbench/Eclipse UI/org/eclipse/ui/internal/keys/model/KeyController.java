@@ -466,11 +466,12 @@ public class KeyController {
 	 * @param actionSets
 	 *            <code>true</code> to filter action set contexts
 	 * @param internal
-	 *            <code>false</code> to filter internal contexts
-	 * 
+	 *            <code>true</code> to filter internal contexts
+	 * @param workbenchMenu
+	 *            <code>true</code> to filter Workbench Menu Context
 	 */
-	public void filterContexts(boolean actionSets, boolean internal) {
-		contextModel.filterContexts(actionSets, internal);
+	public void filterContexts(boolean actionSets, boolean internal, boolean workbenchMenu) {
+		contextModel.filterContexts(actionSets, internal, workbenchMenu);
 	}
 
 	/**

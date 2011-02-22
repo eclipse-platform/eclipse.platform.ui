@@ -104,8 +104,10 @@ public class ContextModel extends CommonModel {
 	 *            <code>true</code> to filter action set contexts.
 	 * @param internal
 	 *            <code>true</code> to filter internal contexts
+	 * @param workbenchMenu
+	 *            <code>true</code> to filter Workbench Menu Context
 	 */
-	public void filterContexts(boolean actionSets, boolean internal) {
+	public void filterContexts(boolean actionSets, boolean internal, boolean workbenchMenu) {
 		// Remove undesired contexts
 		for (int i = 0; i < contexts.size(); i++) {
 			boolean removeContext = false;
@@ -134,6 +136,10 @@ public class ContextModel extends CommonModel {
 
 			if (internal == true
 					&& contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
+			}
+
+			if (workbenchMenu == true
+					&& contextElement.getId().equals(IContextService.CONTEXT_ID_WORKBENCH_MENU)) {
 				removeContext = true;
 			}
 
@@ -166,6 +172,11 @@ public class ContextModel extends CommonModel {
 			}
 			if (internal == false
 					&& contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
+				restoreContext = true;
+			}
+
+			if (workbenchMenu == false
+					&& contextElement.getId().equals(IContextService.CONTEXT_ID_WORKBENCH_MENU)) {
 				restoreContext = true;
 			}
 

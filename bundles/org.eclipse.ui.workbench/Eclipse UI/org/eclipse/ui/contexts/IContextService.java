@@ -44,7 +44,7 @@ public interface IContextService extends IServiceWithSources {
 	 * @since 3.7
 	 * 
 	 */
-	public static final String CONTEXT_ID_WORKBENCH = "org.eclipse.ui.contexts.workbench"; //$NON-NLS-1$
+	public static final String CONTEXT_ID_WORKBENCH_MENU = "org.eclipse.ui.contexts.workbenchMenu"; //$NON-NLS-1$
 
 	/**
 	 * The identifier for the context that is active when a shell registered as
