@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
  *     Stephan Wahlbrink <stephan.wahlbrink@walware.de> - Wrong operations mode/feedback for text drag over/drop in text editors - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206043
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
+ *     Nick Sandonato <nsandona@us.ibm.com> - [implementation] AbstractTextEditor does not prompt when out of sync in MultiPageEditorPart - http://bugs.eclipse.org/337719
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -977,7 +978,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (fIsHandlingActivation)
 				return;
 
-			if (fActivePart == AbstractTextEditor.this) {
+			if (fActivePart == AbstractTextEditor.this || fActivePart.getAdapter(AbstractTextEditor.class) == AbstractTextEditor.this) {
 				fIsHandlingActivation= true;
 				try {
 					safelySanityCheckState(getEditorInput());
