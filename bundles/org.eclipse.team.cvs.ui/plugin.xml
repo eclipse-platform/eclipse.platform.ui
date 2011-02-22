@@ -2057,6 +2057,13 @@
          <keywordReference id="org.eclipse.team.cvs.ui.cvs.annotate"/>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.team.ui.scmUrlImportPages">
+      <scmUrlImportPage
+            page="org.eclipse.team.internal.ccvs.ui.wizards.CVSScmUrlImportWizardPage"
+            repository="org.eclipse.team.cvs.core.cvsnature">
+      </scmUrlImportPage>
+   </extension>
    
    <!-- Commented out awaiting menu support from UI
    <extension

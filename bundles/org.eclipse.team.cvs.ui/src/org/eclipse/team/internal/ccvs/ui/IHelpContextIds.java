@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,6 +79,8 @@ public interface IHelpContextIds {
     public static final String COMMIT_FILE_TYPES_PAGE = PREFIX + "commit_file_types_page_context"; //$NON-NLS-1$
     public static final String COMMIT_COMMENT_PAGE = PREFIX + "commit_comment_page_context"; //$NON-NLS-1$
     
+	public static final String CVS_SCM_URL_IMPORT_PAGE = PREFIX + "cvs_scm_url_import_page"; //$NON-NLS-1$
+
 	// Preference Pages
 	public static final String PREF_DEBUG_PROTOCOL = PREFIX + "debug_protocol_pref"; //$NON-NLS-1$
 	public static final String PREF_PRUNE = PREFIX + "prune_empty_directories_pref"; //$NON-NLS-1$

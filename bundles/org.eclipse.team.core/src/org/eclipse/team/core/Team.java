@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,10 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.team.core.mapping.IStorageMerger;
 import org.eclipse.team.internal.core.*;
+import org.eclipse.team.internal.core.importing.BundleImporterExtension;
 
 /**
  * The Team class provides a global point of reference for the global ignore set
@@ -63,6 +65,8 @@ public final class Team {
     
     private final static FileContentManager fFileContentManager;
     
+	private static List fBundleImporters;
+
     static {
         fFileContentManager= new FileContentManager();
     }
@@ -523,4 +527,31 @@ public final class Team {
     public IStorageMerger createStorageMerger(String extension) {
     	return createMerger(extension);
     }
+
+	/**
+	 * Returns the available bundle importers.
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This interface has been added as part of a
+	 * work in progress. There is no guarantee that this API will work or that
+	 * it will remain the same. Please do not use this API without consulting
+	 * with the Team team.
+	 * </p>
+	 * 
+	 * @return IBundleImporter[] returns the available bundle importers
+	 * @since 3.6
+	 */
+	public synchronized static IBundleImporter[] getBundleImporters() {
+		if (fBundleImporters == null) {
+			fBundleImporters = new ArrayList();
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.EXTENSION_POINT_BUNDLE_IMPORTERS);
+			if (point != null) {
+				IConfigurationElement[] infos = point.getConfigurationElements();
+				for (int i = 0; i < infos.length; i++) {
+					fBundleImporters.add(new BundleImporterExtension(infos[i]));
+				}
+			}
+		}
+		return (IBundleImporter[]) fBundleImporters.toArray(new IBundleImporter[fBundleImporters.size()]);
+	}
 }

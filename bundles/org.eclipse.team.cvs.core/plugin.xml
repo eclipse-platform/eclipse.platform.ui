@@ -239,5 +239,12 @@
          <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
       </factory>
    </extension>
-
+   <extension
+         point="org.eclipse.team.core.bundleImporters">
+      <importer
+            class="org.eclipse.team.internal.ccvs.core.CvsBundleImporterDelegate"
+            name="%cvsBundleImporter"
+            id="org.eclipse.team.core.cvs.importer">
+      </importer>
+   </extension>
 </plugin>

@@ -55,7 +55,10 @@ final public class TeamPlugin extends Plugin {
     // The id used to associate a provider with a project
     public final static QualifiedName PROVIDER_PROP_KEY = 
         new QualifiedName("org.eclipse.team.core", "repository");  //$NON-NLS-1$  //$NON-NLS-2$
-    
+
+	// The id for the Bundle Import extension point
+	public static final String EXTENSION_POINT_BUNDLE_IMPORTERS = ID + ".bundleImporters"; //$NON-NLS-1$
+
 	// The one and only plug-in instance
 	private static TeamPlugin plugin;	
 	

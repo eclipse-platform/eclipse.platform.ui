@@ -7,6 +7,7 @@
    <extension-point id="synchronizeWizards" name="%synchronizeWizards" schema="schema/synchronizeWizards.exsd"/>
    <extension-point id="teamContentProviders" name="%TeamContentProvider" schema="schema/teamContentProviders.exsd"/>
    <extension-point id="teamDecorators" name="%TeamDecorators" schema="schema/teamDecorators.exsd"/>
+   <extension-point id="scmUrlImportPages" name="%scmUrlImportPages" schema="schema/scmUrlImportPages.exsd"/>
 
 <!-- **************** PREFERENCES ******************* -->
    <extension

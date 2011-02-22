@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,22 +17,37 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.ProjectSetSerializationContext;
 import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.ScmUrlImportDescription;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CvsBundleImporterDelegate;
+import org.eclipse.team.internal.ccvs.ui.wizards.CVSScmUrlImportWizardPage;
 import org.eclipse.team.internal.ui.ProjectSetImporter;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
+import org.eclipse.team.ui.IScmUrlImportWizardPage;
+import org.eclipse.team.ui.TeamUI;
 
 public class ProjectSetImporterTests extends EclipseTest {
 
@@ -216,5 +231,120 @@ public class ProjectSetImporterTests extends EclipseTest {
 		c.addToWorkspace(referenceStrings,
 				new ProjectSetSerializationContext(), null);
 		// If we got here and no NPE was thrown, we're good.
+	}
+
+	public void testScmUrlImport() throws TeamException, CoreException {
+		IProject project = createProject("ProjectSetImporterTests-testScmUrlImport", new String[0]);
+		project.delete(true, true, null);
+		ensureDoesNotExistInWorkspace(project);
+
+		String s = ProjectSetCapability.SCHEME_SCM + ":cvs:" + CVSTestSetup.REPOSITORY_LOCATION + ":" + project.getName();
+		ScmUrlImportDescription d = new ScmUrlImportDescription(s, project.getName());
+		IScmUrlImportWizardPage[] pages = TeamUI.getPages(new ScmUrlImportDescription[] {d});
+		assertEquals(1, pages.length);
+		// the URIs haven't been changed in the UI so it's basically the same collection as the one passed to TeamUI.getPages(...)
+		ScmUrlImportDescription[] selection = pages[0].getSelection();
+		ProjectSetCapability c = pages[0].getProvider().getProjectSetCapability();
+		
+		// this is what every bundle importer should do, should this be in PDE?
+		List references = new ArrayList();
+		for (int i = 0; i < selection.length; i++) {
+			references.add(c.asReference(selection[i].getUri(), selection[i].getProject()));
+		}
+		c.addToWorkspace((String[]) references.toArray(new String[references.size()]), new ProjectSetSerializationContext(), null);
+		assertExistsInWorkspace(project);
+	}
+
+	public void testScmUrlImportWithName() throws TeamException, CoreException {
+		IProject project = createProject("ProjectSetImporterTests-testScmUrlImportWithName", new String[0]);
+		project.delete(true, true, null);
+		ensureDoesNotExistInWorkspace(project);
+
+		String s = ProjectSetCapability.SCHEME_SCM + ":cvs:" + CVSTestSetup.REPOSITORY_LOCATION + ":" + project.getName()	+ ";project=project1";
+		ScmUrlImportDescription d = new ScmUrlImportDescription(s, project.getName());
+		IScmUrlImportWizardPage[] pages = TeamUI.getPages(new ScmUrlImportDescription[] {d});
+		assertEquals(1, pages.length);
+		// the URIs haven't been changed in the UI so it's basically the same collection as the one passed to TeamUI.getPages(...)
+		ScmUrlImportDescription[] selection = pages[0].getSelection();
+		ProjectSetCapability c = pages[0].getProvider().getProjectSetCapability();
+
+		// this is what every bundle importer should do, should this be in PDE?
+		List references = new ArrayList();
+		for (int i = 0; i < selection.length; i++) {
+			references.add(c.asReference(selection[i].getUri(), /*selection[i].getProject()*/ null));
+		}
+		c.addToWorkspace((String[]) references.toArray(new String[references.size()]), new ProjectSetSerializationContext(), null);
+		IProject project1 = ResourcesPlugin.getWorkspace().getRoot().getProject("project1");
+		assertExistsInWorkspace(project1);
+	}
+
+	public void testScmUrlImportWithTag() throws TeamException, CoreException, IOException {
+		IProject project = createProject("ProjectSetImporterTests-testScmUrlImportWithTag", new String[0]);
+		tagProject(project, new CVSTag("tag", CVSTag.VERSION), false);
+		project.delete(true, true, null);
+		ensureDoesNotExistInWorkspace(project);
+
+		String s = ProjectSetCapability.SCHEME_SCM + ":cvs:" + CVSTestSetup.REPOSITORY_LOCATION + ":" + project.getName()+";tag=tag";
+		ScmUrlImportDescription d = new ScmUrlImportDescription(s, project.getName());
+		final IScmUrlImportWizardPage[] pages = TeamUI.getPages(new ScmUrlImportDescription[] {d});
+		assertEquals(1, pages.length);
+
+		assertTrue(pages[0] instanceof CVSScmUrlImportWizardPage);
+		Wizard wizard = new Wizard() {
+			public boolean performFinish() {
+				// update SCM URLs in descriptions
+				pages[0].finish();
+				return true;
+			}
+		};
+		wizard.addPage(pages[0]);
+		WizardDialog wizardDialog = new WizardDialog(new Shell(Display.getCurrent()), wizard);
+		wizardDialog.setBlockOnOpen(false);
+		wizardDialog.open();
+		// simulate clicking "Import from HEAD" on the CVS import page
+		Button useHead = (Button) ReflectionUtils.getField(pages[0], "useHead");
+		useHead.setSelection(true);
+		wizard.performFinish();
+		wizardDialog.close();
+
+		// altered selection, check out from HEAD
+		ScmUrlImportDescription[] selection = pages[0].getSelection();
+		IBundleImporter cvsBundleImporter = Team.getBundleImporters()[0];
+		cvsBundleImporter.performImport(selection, null);
+
+		assertExistsInWorkspace(project);
+		IProject copy = checkoutCopy(project, CVSTag.DEFAULT);
+		// expecting the project to be checked out from HEAD
+		assertEquals(project, copy, false, false);
+	}
+
+	public void testCvsBundleImporter() throws TeamException, CoreException {
+		IBundleImporter[] bundleImporters = Team.getBundleImporters();
+		assertEquals(1, bundleImporters.length);
+		IBundleImporter cvsBundleImporter = null;
+		for (int i = 0; i < bundleImporters.length; i++) {
+			if (bundleImporters[i].getId().equals("org.eclipse.team.core.cvs.importer")) {
+				cvsBundleImporter = bundleImporters[i];
+			} 
+		}
+		// CVS Bundle Importer should be available
+		assertNotNull(cvsBundleImporter);
+
+		IProject project = createProject("ProjectSetImporterTests-testCvsBundleImporter", new String[0]);
+		project.delete(true, true, null);
+		ensureDoesNotExistInWorkspace(project);
+
+		String s = ProjectSetCapability.SCHEME_SCM + ":cvs:" + CVSTestSetup.REPOSITORY_LOCATION + ":" + project.getName();
+
+		Map[] manifests = new Map[1];
+		Map map = new HashMap();
+		map.put(CvsBundleImporterDelegate.ECLIPSE_SOURCE_REFERENCES, s);
+		manifests[0] = map;
+
+		ScmUrlImportDescription[] descriptions = cvsBundleImporter.validateImport(manifests);
+		assertEquals(1, descriptions.length);
+
+		cvsBundleImporter.performImport(descriptions, null);
+		assertExistsInWorkspace(project);
 	}
 }

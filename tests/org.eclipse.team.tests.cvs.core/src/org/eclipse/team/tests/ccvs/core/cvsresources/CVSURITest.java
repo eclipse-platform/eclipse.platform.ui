@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.team.core.ScmUrlImportDescription;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProjectSetCapability;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -265,4 +266,25 @@ public class CVSURITest extends EclipseTest {
 		assertNull(refString);
 	}
 	
+	public void testScmUri14() {
+		try {
+			URI.create("scm:cvs:pserver:host.com:/cvsroot/path:path/to/module;tag=\"tag\"");
+		} catch (IllegalArgumentException e) {
+			// expected, " are not allowed in a URI reference
+		}
+	}
+	
+	public void testScmUri15() throws CVSException {
+		// ScmUrlImportDescription can handle " in Strings expected to be URI refs
+		ScmUrlImportDescription description = new ScmUrlImportDescription("scm:cvs:pserver:host.com:/cvsroot/path:path/to/module;tag=\"tag\"", null);
+		URI uri = description.getUri();
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("path/to/module", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:host.com:/cvsroot/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getTag(), new CVSTag("tag", CVSTag.VERSION));
+
+		String refString = new CVSProjectSetCapability().asReference(uri, null);
+		assertEquals("1.0,:pserver:host.com:/cvsroot/path,path/to/module,module,tag", refString);
+	}
 }
