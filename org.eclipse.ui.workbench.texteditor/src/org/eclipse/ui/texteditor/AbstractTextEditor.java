@@ -978,7 +978,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (fIsHandlingActivation)
 				return;
 
-			if (fActivePart == AbstractTextEditor.this || fActivePart.getAdapter(AbstractTextEditor.class) == AbstractTextEditor.this) {
+			if (fActivePart == AbstractTextEditor.this || fActivePart != null && fActivePart.getAdapter(AbstractTextEditor.class) == AbstractTextEditor.this) {
 				fIsHandlingActivation= true;
 				try {
 					safelySanityCheckState(getEditorInput());
