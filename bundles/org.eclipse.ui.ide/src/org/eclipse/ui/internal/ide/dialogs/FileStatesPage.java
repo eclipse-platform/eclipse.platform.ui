@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,6 +99,7 @@ public class FileStatesPage extends PreferencePage implements
         button.addListener(SWT.Selection, this);
         GridData data = new GridData();
         data.horizontalSpan = 2;
+        data.horizontalIndent= -10;
         button.setLayoutData(data);
         button.setText(label);
         button.setSelection(selected);
@@ -122,7 +123,7 @@ public class FileStatesPage extends PreferencePage implements
         while (iter.hasNext())
 			((Control)iter.next()).setEnabled(newState);
 
-        if (validateLongTextEntry(longevityText) == FAILED_VALUE) {
+        if (validateLongTextEntry(longevityText, DAY_LENGTH) == FAILED_VALUE) {
             setValid(false);
             return;
         }
@@ -164,9 +165,6 @@ public class FileStatesPage extends PreferencePage implements
 			megabytes = 1;
 		}
 
-		this.applyPolicyButton = addCheckBox(IDEWorkbenchMessages.FileHistory_applyPolicy, description
-						.isApplyFileStatePolicy(), parent);
-
 		// button group
 		Composite composite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
@@ -174,10 +172,9 @@ public class FileStatesPage extends PreferencePage implements
 		layout.marginLeft= 10;
 		layout.marginWidth= 0;
 		composite.setLayout(layout);
-		GridData gd= new GridData();
-		gd.horizontalIndent= 200;
-		composite.setLayoutData(gd);
 
+		this.applyPolicyButton = addCheckBox(IDEWorkbenchMessages.FileHistory_applyPolicy, description
+				.isApplyFileStatePolicy(), composite);
 
 		this.longevityText= addDependentLabelAndText(IDEWorkbenchMessages.FileHistory_longevity, String
                 .valueOf(days), composite);
@@ -264,7 +261,7 @@ public class FileStatesPage extends PreferencePage implements
      */
     public boolean performOk() {
 
-        long longevityValue = validateLongTextEntry(longevityText);
+        long longevityValue = validateLongTextEntry(longevityText, DAY_LENGTH);
         int maxFileStates = validateMaxFileStates();
         long maxStateSize = validateMaxFileStateSize();
         boolean applyPolicy = applyPolicyButton.getSelection();
@@ -322,14 +319,18 @@ public class FileStatesPage extends PreferencePage implements
     /**
      * Validate a text entry for a long field. Return the result if there are
      * no errors, otherwise return -1 and set the entry field error.
+     * @param scale the scale (factor by which the value is multiplied when it is persisted) 
      * @return long
      */
-    private long validateLongTextEntry(Text text) {
+    private long validateLongTextEntry(Text text, long scale) {
 
         long value;
 
         try {
-            value = Long.parseLong(text.getText());
+            String string = text.getText();
+			value = Long.parseLong(string);
+            if (value * scale / scale != value)
+            	throw new NumberFormatException(string);
 
         } catch (NumberFormatException exception) {
             setErrorMessage(MessageFormat.format(IDEWorkbenchMessages.FileHistory_invalid,
@@ -375,7 +376,7 @@ public class FileStatesPage extends PreferencePage implements
      * @return long
      */
     private long validateMaxFileStateSize() {
-        long maxFileStateSize = validateLongTextEntry(this.maxStateSizeText);
+        long maxFileStateSize = validateLongTextEntry(this.maxStateSizeText, MEGABYTES);
         if (maxFileStateSize == FAILED_VALUE) {
 			return maxFileStateSize;
 		}
