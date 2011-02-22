@@ -356,7 +356,7 @@ public class ExtendedMarkersView extends ViewPart {
 					preferredWidth = value.intValue();
 			}
 		}
-		if (preferredWidth < 0) {
+		if (preferredWidth <= 0) {
 			// Compute and store a font metric
 			GC gc = new GC(tree);
 			gc.setFont(tree.getFont());
