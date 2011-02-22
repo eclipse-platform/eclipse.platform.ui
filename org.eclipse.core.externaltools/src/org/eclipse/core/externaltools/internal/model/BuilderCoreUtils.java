@@ -124,7 +124,6 @@ public class BuilderCoreUtils {
 		newCommand.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
 		newCommand.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
 		newCommand.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
-		Map args = newCommand.getArguments();
 		String buildKinds = config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) null);
 		int[] triggers = buildTypesToArray(buildKinds);
 		boolean isfull = false, isinc = false;
@@ -147,6 +146,10 @@ public class BuilderCoreUtils {
 			}
 		}
 		if(!isfull && isinc) {
+			Map args = newCommand.getArguments();
+			if(args == null) {
+				args = new HashMap();
+			}
 			newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
 			args.put(INC_CLEAN, Boolean.TRUE.toString());
 			newCommand.setArguments(args);
