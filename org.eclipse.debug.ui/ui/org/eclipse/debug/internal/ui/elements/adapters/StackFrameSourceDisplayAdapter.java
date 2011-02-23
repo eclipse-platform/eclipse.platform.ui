@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -82,7 +83,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 	/**
 	 * A job to perform source lookup on the currently selected stack frame.
 	 */
-	class SourceLookupJob extends Job {
+	class SourceLookupJob extends Job implements ISchedulingRule {
 		
 		private IStackFrame fTarget;
 		private ISourceLocator fLocator;
@@ -93,11 +94,12 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		 */
 		public SourceLookupJob(IStackFrame frame, ISourceLocator locator, IWorkbenchPage page) {
 			super("Debug Source Lookup");  //$NON-NLS-1$
-			setPriority(Job.INTERACTIVE);
-			setSystem(true);	
-			fTarget = frame;
-			fLocator = locator;
-			fPage = page;
+            setPriority(Job.INTERACTIVE);
+            setSystem(true);    
+            fPage = page;
+            fTarget = frame;
+            fLocator = locator;
+			setRule(this);
 		}
 		
 		/* (non-Javadoc)
@@ -131,6 +133,20 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 			return false;
 		}
 		
+        
+        public boolean contains(ISchedulingRule rule) {
+            // Avoid running multiple source lookup jobs at the same time.
+            // Even if a job was canceled it may still be running for a while.
+            // (Bug 327497)
+            if (rule instanceof SourceLookupJob) {
+                return fPage.equals(((SourceLookupJob)rule).fPage);
+            }
+            return false;
+        }
+        
+        public boolean isConflicting(ISchedulingRule rule) {
+            return contains(rule);
+        }
 	}
 	
 	class SourceDisplayJob extends UIJob {
