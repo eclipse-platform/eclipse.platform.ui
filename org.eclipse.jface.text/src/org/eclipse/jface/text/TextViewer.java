@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,6 +74,7 @@ import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.internal.text.SelectionProcessor;
 import org.eclipse.jface.internal.text.StickyHoverManager;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -1992,20 +1993,22 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * The delay in milliseconds before an empty selection
-	 * changed event is sent by the cursor listener.
+	 * The delay in milliseconds before an empty selection changed event is sent by the cursor
+	 * listener.
 	 * <p>
-	 * Note: The return value is used to initialize the cursor
-	 * listener. To return a non-constant value has no effect.</p>
+	 * Note: The return value is used to initialize the cursor listener. To return a non-constant
+	 * value has no effect.
+	 * </p>
 	 * <p>
-	 * The same value (<code>500</code>) is used in <code>OpenStrategy.TIME</code>.</p>
-	 *
+	 * This implementation returns {@link OpenStrategy#getPostSelectionDelay()}.
+	 * </p>
+	 * 
 	 * @return delay in milliseconds
 	 * @see org.eclipse.jface.util.OpenStrategy
 	 * @since 3.0
 	 */
 	protected int getEmptySelectionChangedEventDelay() {
-		return 500;
+		return OpenStrategy.getPostSelectionDelay();
 	}
 
 	/**

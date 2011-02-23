@@ -41,6 +41,8 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.util.OpenStrategy;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IEventConsumer;
@@ -1014,13 +1016,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		fInternalListener= new InternalListener();
 
 		AdditionalInfoController2 controller= null;
-		if (fInformationControlCreator != null) {
-			int delay= fAutoActivationDelay;
-			if (delay == 0)
-				delay= DEFAULT_AUTO_ACTIVATION_DELAY;
-			delay= Math.round(delay * 1.5f);
-			controller= new AdditionalInfoController2(fInformationControlCreator, delay);
-		}
+		if (fInformationControlCreator != null)
+			controller= new AdditionalInfoController2(fInformationControlCreator, OpenStrategy.getPostSelectionDelay());
+
 		fContextInfoPopup= new ContextInformationPopup2(this, fViewer);
 		fProposalPopup= new CompletionProposalPopup2(this, fViewer, controller);
 

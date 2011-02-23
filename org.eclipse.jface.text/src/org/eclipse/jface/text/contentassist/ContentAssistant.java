@@ -1,5 +1,5 @@
 /*******************************************************************************
-f * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,6 +55,7 @@ import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.util.OpenStrategy;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -849,9 +850,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	public static final int WIDGET_PRIORITY= 20;
-
 	private static final int DEFAULT_AUTO_ACTIVATION_DELAY= 500;
-	private static final int ADDITIONAL_INFO_DELAY= 500; // The same value as used in OpenStrategy.TIME
 
 
 	private IInformationControlCreator fInformationControlCreator;
@@ -1371,7 +1370,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 		AdditionalInfoController controller= null;
 		if (fInformationControlCreator != null)
-			controller= new AdditionalInfoController(fInformationControlCreator, ADDITIONAL_INFO_DELAY);
+			controller= new AdditionalInfoController(fInformationControlCreator, OpenStrategy.getPostSelectionDelay());
 
 		fContextInfoPopup= fContentAssistSubjectControlAdapter.createContextInfoPopup(this);
 		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller);
