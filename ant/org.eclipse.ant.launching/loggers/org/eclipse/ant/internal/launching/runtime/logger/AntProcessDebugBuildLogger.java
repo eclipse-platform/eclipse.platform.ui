@@ -79,7 +79,6 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		}
 		if(fDebugState != null) {
 			fDebugState.buildFinished();
-			fDebugState = null;
 		}
 		if(fBreakpoints != null) {
 			fBreakpoints.clear();

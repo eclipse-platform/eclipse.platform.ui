@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2009 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ import org.eclipse.debug.core.model.IProcess;
 
 /**
  * Parts adapted from org.eclipse.jdt.internal.junit.ui.RemoteTestRunnerClient
- * The client side of the RemoteAntBuildLogger. Handles the marshalling of the
+ * The client side of the RemoteAntBuildLogger. Handles the marshaling of the
  * different messages.
  */
 public class RemoteAntBuildListener implements ILaunchesListener {
@@ -78,20 +78,15 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 			Exception exception = null;
 			try {
 				fServerSocket = new ServerSocket(fServerPort);
-
-				int socketTimeout = Platform
-						.getPreferencesService()
-						.getInt(
-								AntLaunching.getUniqueIdentifier(),
-								IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
-								20000, null);
+				int socketTimeout = Platform.getPreferencesService().getInt(
+						AntLaunching.getUniqueIdentifier(),	
+						IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
+						20000, null);
 				fServerSocket.setSoTimeout(socketTimeout);
 				fSocket = fServerSocket.accept();
-				fBufferedReader = new BufferedReader(new InputStreamReader(
-						fSocket.getInputStream(), "UTF-8")); //$NON-NLS-1$
+				fBufferedReader = new BufferedReader(new InputStreamReader(fSocket.getInputStream(), "UTF-8")); //$NON-NLS-1$
 				String message;
-				while (fBufferedReader != null
-						&& (message = fBufferedReader.readLine()) != null) {
+				while (fLaunch != null && fBufferedReader != null && (message = fBufferedReader.readLine()) != null) {
 					receiveMessage(message);
 				}
 			} catch (SocketException e) {
@@ -129,8 +124,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	protected synchronized void shutDown() {
 		fLaunch = null;
 		if (DebugPlugin.getDefault() != null) {
-			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(
-					this);
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		}
 		try {
 			if (fBufferedReader != null) {
@@ -161,23 +155,20 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		} else if (message.startsWith(MessageIds.TARGET)) {
 			receiveTargetMessage(message);
 		} else if (message.startsWith(MessageIds.PROCESS_ID)) {
-			message = message.substring(MessageIds.PROCESS_ID.length());
-			fProcessId = message;
+			fProcessId = message.substring(MessageIds.PROCESS_ID.length());
 		} else {
 			int index = message.indexOf(',');
 			if (index > 0) {
 				int priority = Integer.parseInt(message.substring(0, index));
-				message = message.substring(index + 1);
-				writeMessage(
-						message + System.getProperty("line.separator"), priority); //$NON-NLS-1$
-				if (message.startsWith("BUILD FAILED")) { //$NON-NLS-1$
+				String msg = message.substring(index + 1);
+				writeMessage(msg + System.getProperty("line.separator"), priority); //$NON-NLS-1$
+				if (msg.startsWith("BUILD FAILED")) { //$NON-NLS-1$
 					fBuildFailed = true;
 				} else if (fBuildFailed) {
-					if (message.startsWith("Total time:")) { //$NON-NLS-1$
+					if (msg.startsWith("Total time:")) { //$NON-NLS-1$
 						fBuildFailed = false;
 					} else {
-						AntLaunchingUtil.linkBuildFailedMessage(message,
-								getProcess());
+						AntLaunchingUtil.linkBuildFailedMessage(msg, getProcess());
 					}
 				}
 
@@ -186,9 +177,9 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	}
 
 	private void receiveTargetMessage(String message) {
-		message = message.substring(MessageIds.TARGET.length());
-		StringTokenizer tokenizer = new StringTokenizer(message, ","); //$NON-NLS-1$
-		message = tokenizer.nextToken();
+		String msg = message.substring(MessageIds.TARGET.length());
+		StringTokenizer tokenizer = new StringTokenizer(msg, ","); //$NON-NLS-1$
+		msg = tokenizer.nextToken();
 		if (tokenizer.hasMoreTokens()) {
 			int locationLength = Integer.parseInt(tokenizer.nextToken());
 			String location = tokenizer.nextToken();
@@ -198,73 +189,60 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 				location += tokenizer.nextToken();
 			}
 			int lineNumber = Integer.parseInt(tokenizer.nextToken());
-			generateLink(message, location, lineNumber, 0, message.length() - 1);
+			generateLink(msg, location, lineNumber, 0, msg.length() - 1);
 		}
-		writeMessage(
-				message + System.getProperty("line.separator"), Project.MSG_INFO); //$NON-NLS-1$
+		writeMessage(msg + System.getProperty("line.separator"), Project.MSG_INFO); //$NON-NLS-1$
 	}
 
 	private void receiveTaskMessage(String message) {
-		message = message.substring(MessageIds.TASK.length());
-
-		int index = message.indexOf(',');
-		int priority = Integer.parseInt(message.substring(0, index));
-		int index2 = message.indexOf(',', index + 1);
-		String taskName = message.substring(index + 1, index2);
+		String msg = message.substring(MessageIds.TASK.length());
+		int index = msg.indexOf(',');
+		int priority = Integer.parseInt(msg.substring(0, index));
+		int index2 = msg.indexOf(',', index + 1);
+		String taskName = msg.substring(index + 1, index2);
 		if (taskName.length() == 0) {
 			taskName = fLastTaskName;
 		}
-		int index3 = message.indexOf(',', index2 + 1);
-		int lineLength = Integer
-				.parseInt(message.substring(index2 + 1, index3));
+		int index3 = msg.indexOf(',', index2 + 1);
+		int lineLength = Integer.parseInt(msg.substring(index2 + 1, index3));
 		int index4 = index3 + 1 + lineLength;
-
-		String line = message.substring(index3 + 1, index4);
+		String line = msg.substring(index3 + 1, index4);
 		StringBuffer labelBuff = new StringBuffer();
 		labelBuff.append('[');
 		labelBuff.append(taskName);
 		labelBuff.append("] "); //$NON-NLS-1$
 		labelBuff.append(line);
 		line = labelBuff.toString();
-
 		fLastTaskName = taskName;
-
-		int locationIndex = message.indexOf(',', index4 + 1);
+		int locationIndex = msg.indexOf(',', index4 + 1);
 		int finalIndex = locationIndex + 1;
-		String fileName = message.substring(index4 + 1, locationIndex);
+		String fileName = msg.substring(index4 + 1, locationIndex);
 		int locationLength = 0;
 		if (fileName.length() == 0) {
 			fileName = fLastFileName;
 		} else {
-			finalIndex = message.indexOf(',', locationIndex) + 1;
+			finalIndex = msg.indexOf(',', locationIndex) + 1;
 			locationLength = Integer.parseInt(fileName);
-			fileName = message.substring(finalIndex, finalIndex
-					+ locationLength);
+			fileName = msg.substring(finalIndex, finalIndex	+ locationLength);
 			locationLength += 1; // set past delimiter
 		}
 		fLastFileName = fileName;
-		int lineNumber = Integer.parseInt(message.substring(finalIndex
-				+ locationLength));
-
-		int size = AntLaunching.LEFT_COLUMN_SIZE
-				- (taskName.length() + 3);
+		int lineNumber = Integer.parseInt(msg.substring(finalIndex + locationLength));
+		int size = AntLaunching.LEFT_COLUMN_SIZE - (taskName.length() + 3);
 		int offset = Math.max(size - 2, 1);
 		int length = AntLaunching.LEFT_COLUMN_SIZE - size - 3;
 		if (fileName != null) {
 			generateLink(line, fileName, lineNumber, offset, length);
 		}
-
 		StringBuffer fullMessage = new StringBuffer();
 		adornMessage(taskName, line, fullMessage);
-		writeMessage(
-				fullMessage
-						.append(System.getProperty("line.separator")).toString(), priority); //$NON-NLS-1$
+		writeMessage(fullMessage.append(System.getProperty("line.separator")).toString(), priority); //$NON-NLS-1$
 	}
 
-	private void generateLink(String line, String fileName, int lineNumber,
-			int offset, int length) {
-		((AntLaunch) fLaunch).addLinkDescriptor(line, fileName, lineNumber,
-				offset, length);
+	private void generateLink(String line, String fileName, int lineNumber,	int offset, int length) {
+		if(fLaunch != null) {
+			((AntLaunch) fLaunch).addLinkDescriptor(line, fileName, lineNumber, offset, length);
+		}
 	}
 
 	/**
@@ -273,13 +251,10 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	protected IProcess getProcess() {
 		if (fProcess == null) {
 			if (fProcessId != null) {
-				IProcess[] all = DebugPlugin.getDefault().getLaunchManager()
-						.getProcesses();
+				IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
 				for (int i = 0; i < all.length; i++) {
 					IProcess process = all[i];
-					if (fProcessId
-							.equals(process
-									.getAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID))) {
+					if (fProcessId.equals(process.getAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID))) {
 						fProcess = process;
 						break;
 					}
@@ -323,19 +298,17 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	 * Builds a right justified task prefix for the given build event, placing
 	 * it in the given string buffer.
 	 * 
-	 * @param event
-	 *            build event
-	 * @param fullMessage
-	 *            buffer to place task prefix in
+	 * @param taskName the name of the task, can be <code>null</code>
+	 * @param line the line of text
+	 * @param fullMessage buffer to place task prefix in
 	 */
-	private void adornMessage(String taskName, String line,
-			StringBuffer fullMessage) {
-		if (taskName == null) {
-			taskName = "null"; //$NON-NLS-1$
+	private void adornMessage(String taskName, String line, StringBuffer fullMessage) {
+		String tname = taskName;
+		if (tname == null) {
+			tname = "null"; //$NON-NLS-1$
 		}
 
-		int size = AntLaunching.LEFT_COLUMN_SIZE
-				- (taskName.length() + 6);
+		int size = AntLaunching.LEFT_COLUMN_SIZE - (tname.length() + 6);
 		for (int i = 0; i < size; i++) {
 			fullMessage.append(' ');
 		}
