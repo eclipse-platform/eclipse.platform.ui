@@ -2186,7 +2186,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			display.syncExec(new Runnable() {
 				public void run() {
 					// return error if there is no appMenu
-					shouldReturn[0] = hasAppMenu();
+					shouldReturn[0] = !hasAppMenu();
 				}
 			});
 		}
