@@ -224,7 +224,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         fListener.reset();
         fListener.setFailOnRedundantUpdates(false);
         fViewer.reveal(model.findElement("1"), 500);
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         
         // Create delta to refresh the "1" element.
         TestElement rootElement = model.getRootElement();
