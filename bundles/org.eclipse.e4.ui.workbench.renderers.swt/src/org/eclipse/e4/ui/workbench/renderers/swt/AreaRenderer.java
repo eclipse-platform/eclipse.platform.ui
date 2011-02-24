@@ -85,7 +85,8 @@ public class AreaRenderer extends SWTPartRenderer {
 		CTabFolder ctf = new CTabFolder(parentComp, SWT.BORDER | SWT.SINGLE);
 		ctf.setMaximizeVisible(true);
 		ctf.setMinimizeVisible(true);
-
+		//TODO: add CSS support
+		ctf.setBackground(ctf.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		// Hack(ish)...in compatibility we base the area's state off of the
 		// perspective
 		MPerspective persp = modelService.getPerspectiveFor(element);
