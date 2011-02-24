@@ -53,7 +53,6 @@ public class ProjectSetImporterTests extends EclipseTest {
 
 	private final static String PSF_FILENAME = "temp.psf";
 	private final static File PSF_FILE = new File(PSF_FILENAME);
-	private static final int PROJECTS_NO = 30;
 
 	private final static String psf_header_0 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 	private final static String psf_header_1 = "<psf version=\"2.0\">";
@@ -83,9 +82,12 @@ public class ProjectSetImporterTests extends EclipseTest {
 		PSF_FILE.delete();
 	}
 
-	public void testImportOneProject() throws TeamException, CoreException {
-		IProject project = createProject("ProjectSetImporterTests",
+	public void testImportProject() throws TeamException, CoreException {
+		IProject project1 = createProject("testImportProject",
 				new String[] { "file.txt", "folder1/", "folder1/a.txt" });
+		IProject project2 = createProject("testImportProject",
+				new String[] { "file.txt", "folder1/", "folder1/a.txt" });
+
 		PrintWriter out = null;
 		try {
 			out = new PrintWriter(new BufferedWriter(new FileWriter(PSF_FILE)),
@@ -94,18 +96,22 @@ public class ProjectSetImporterTests extends EclipseTest {
 			out.println(psf_header_0);
 			out.println(psf_header_1);
 			out.println("\t" + psf_header_2);
-			out.println("\t\t" + psf_0 + project.getName() /* module */+ psf_1
-					+ project.getName() /* project */+ psf_2);
+			out.println("\t\t" + psf_0 + project1.getName() /* module */+ psf_1
+					+ project1.getName() /* project */+ psf_2);
+			out.println("\t\t" + psf_0 + project2.getName() /* module */+ psf_1
+					+ project2.getName() /* project */+ psf_2);
 			out.println("\t" + psf_footer_0);
 			out.println(psf_footer_1);
 
-			project.delete(true, null);
+			project1.delete(true, null);
+			project2.delete(true, null);
 
-			IProject[] importProjectSet = null;
-			importProjectSet = ProjectSetImporter.importProjectSet(
+			IProject[] importProjectSet = ProjectSetImporter.importProjectSet(
 					PSF_FILENAME, Display.getDefault().getActiveShell(), null);
-
-			assertEquals(project, importProjectSet[0]);
+			
+			assertEquals(2, importProjectSet.length);
+			assertEquals(project1, importProjectSet[0]);
+			assertEquals(project2, importProjectSet[1]);
 		} catch (InvocationTargetException e) {
 			fail("1.", e.getCause());
 		} catch (IOException e) {
@@ -116,61 +122,11 @@ public class ProjectSetImporterTests extends EclipseTest {
 		}
 	}
 
-	public void testImportMultipleProjects() throws TeamException,
+	public void testBug234149_aFewProviders() throws TeamException,
 			CoreException {
-
-		List projects = new ArrayList(PROJECTS_NO);
-
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < PROJECTS_NO; i++) {
-			IProject project = createProject("ProjectSetImporterTests",
-					new String[] { "file.txt", "folder1/", "folder1/a.txt" });
-
-			projects.add(project);
-
-			sb.append("\t\t" + psf_0 + project.getName() /* module */+ psf_1
-					+ project.getName() /* project */+ psf_2);
-			if (i < PROJECTS_NO - 1)
-				sb.append("\n");
-
-			project.delete(true, null);
-		}
-
-		PrintWriter out = null;
-		try {
-			out = new PrintWriter(new BufferedWriter(new FileWriter(PSF_FILE)),
-					true);
-
-			out.println(psf_header_0);
-			out.println(psf_header_1);
-			out.println("\t" + psf_header_2);
-			out.println(sb.toString());
-			out.println("\t" + psf_footer_0);
-			out.println(psf_footer_1);
-
-			IProject[] importProjectSet = null;
-			importProjectSet = ProjectSetImporter.importProjectSet(
-					PSF_FILENAME, Display.getDefault().getActiveShell(), null);
-
-			for (int i = 0; i < importProjectSet.length; i++) {
-				if (!projects.contains(importProjectSet[i]))
-					fail();
-			}
-		} catch (InvocationTargetException e) {
-			fail("1.", e.getCause());
-		} catch (IOException e) {
-			fail("2.", e);
-		} finally {
-			if (out != null)
-				out.close();
-		}
-	}
-
-	public void testBug234149_AFewProviders() throws TeamException,
-			CoreException {
-		IProject project = createProject("ProjectSetImporterTests",
+		IProject project = createProject("testBug234149_aFewProviders",
 				new String[0]);
-		IProject project2 = createProject("ProjectSetImporterTests",
+		IProject project2 = createProject("testBug234149_aFewProviders",
 				new String[0]);
 
 		// create psf with two providers
@@ -215,7 +171,7 @@ public class ProjectSetImporterTests extends EclipseTest {
 	}
 
 	public void testBug298925_noToAll() throws TeamException, CoreException {
-		IProject project = createProject("ProjectSetImporterTests",
+		IProject project = createProject("testBug298925_noToAll",
 				new String[0]);
 		String[] referenceStrings = new String[] { "1.0,"
 				+ CVSTestSetup.REPOSITORY_LOCATION + "," + project.getName() /* module */
@@ -234,7 +190,7 @@ public class ProjectSetImporterTests extends EclipseTest {
 	}
 
 	public void testScmUrlImport() throws TeamException, CoreException {
-		IProject project = createProject("ProjectSetImporterTests-testScmUrlImport", new String[0]);
+		IProject project = createProject("testScmUrlImport", new String[0]);
 		project.delete(true, true, null);
 		ensureDoesNotExistInWorkspace(project);
 
@@ -256,7 +212,7 @@ public class ProjectSetImporterTests extends EclipseTest {
 	}
 
 	public void testScmUrlImportWithName() throws TeamException, CoreException {
-		IProject project = createProject("ProjectSetImporterTests-testScmUrlImportWithName", new String[0]);
+		IProject project = createProject("testScmUrlImportWithName", new String[0]);
 		project.delete(true, true, null);
 		ensureDoesNotExistInWorkspace(project);
 
@@ -279,7 +235,7 @@ public class ProjectSetImporterTests extends EclipseTest {
 	}
 
 	public void testScmUrlImportWithTag() throws TeamException, CoreException, IOException {
-		IProject project = createProject("ProjectSetImporterTests-testScmUrlImportWithTag", new String[0]);
+		IProject project = createProject("testScmUrlImportWithTag", new String[0]);
 		tagProject(project, new CVSTag("tag", CVSTag.VERSION), false);
 		project.delete(true, true, null);
 		ensureDoesNotExistInWorkspace(project);
@@ -330,7 +286,7 @@ public class ProjectSetImporterTests extends EclipseTest {
 		// CVS Bundle Importer should be available
 		assertNotNull(cvsBundleImporter);
 
-		IProject project = createProject("ProjectSetImporterTests-testCvsBundleImporter", new String[0]);
+		IProject project = createProject("testCvsBundleImporter", new String[0]);
 		project.delete(true, true, null);
 		ensureDoesNotExistInWorkspace(project);
 
