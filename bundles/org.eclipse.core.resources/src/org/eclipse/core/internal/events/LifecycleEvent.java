@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IResource;
 public class LifecycleEvent {
 	//constants for kinds of internal workspace lifecycle events
 	public static final int PRE_PROJECT_CLOSE = 0x01;
-	public static final int PRE_PROJECT_CHANGE = 0x02;
+	public static final int POST_PROJECT_CHANGE = 0x02;
 	public static final int PRE_PROJECT_COPY = 0x04;
 	public static final int PRE_PROJECT_CREATE = 0x08;
 

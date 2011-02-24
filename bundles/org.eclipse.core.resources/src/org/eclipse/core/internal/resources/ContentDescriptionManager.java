@@ -457,7 +457,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	public void handleEvent(LifecycleEvent event) {
 		//TODO are these the only events we care about?
 		switch (event.kind) {
-			case LifecycleEvent.PRE_PROJECT_CHANGE :
+			case LifecycleEvent.POST_PROJECT_CHANGE :
 			// if the project changes, its natures may have changed as well (content types may be associated to natures)
 			case LifecycleEvent.PRE_PROJECT_DELETE :
 			// if the project gets deleted, we may get confused if it is recreated again (content ids might match)
