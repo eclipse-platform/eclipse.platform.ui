@@ -125,7 +125,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 
 	public void handleEvent(LifecycleEvent event) {
 		switch (event.kind) {
-			case LifecycleEvent.POST_PROJECT_CHANGE :
+			case LifecycleEvent.PRE_PROJECT_CHANGE :
 			case LifecycleEvent.PRE_PROJECT_CLOSE :
 			case LifecycleEvent.PRE_PROJECT_DELETE :
 			case LifecycleEvent.PRE_PROJECT_MOVE :
