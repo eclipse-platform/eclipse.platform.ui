@@ -158,7 +158,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
      * then selected and replaced, that no extra elements are retrieved.
      * (bug 304277 comment #24, and bug 305739 comment #9).
      */
-    public void testReplaceAndSelectInSubTreeTree() {
+    public void _x_testReplaceAndSelectInSubTreeTree() {
         // Create test model with lots of children.
         TestModel model = largeSubtreeModel(1000); 
         
