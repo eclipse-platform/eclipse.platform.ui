@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,9 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.internal.resources.Project;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.internal.resources.SimpleNature;
@@ -29,6 +30,7 @@ import org.eclipse.core.tests.internal.resources.SimpleNature;
  * APIs on IWorkspace are tested by IWorkspaceTest.
  */
 public class NatureTest extends ResourceTest {
+
 	/**
 	 * Constructor for NatureTest.
 	 */
@@ -345,4 +347,105 @@ public class NatureTest extends ResourceTest {
 		out.close();
 	}
 
+	//	private class CheckNatureThread extends Thread {
+	//		private boolean finished = false;
+	//
+	//		//		public CheckNatureThread(boolean[] finished) {
+	//		//			super();
+	//		//			this.finished = finished;
+	//		//		}
+	//
+	//		public void run() {
+	//			Project project = (Project) ResourcesPlugin.getWorkspace().getRoot().getProject(testProjectName);
+	//
+	//			try {
+	//				while (finished == false) {
+	//					if (project.exists() && project.isOpen())
+	//						project.isNatureEnabled(nature);
+	//					sleep(0);
+	//				}
+	//			} catch (CoreException e) {
+	//				e.printStackTrace();
+	//				fail("3.0", e);
+	//			} catch (InterruptedException e) {
+	//				e.printStackTrace();
+	//				fail("3.1", e);
+	//			}
+	//		}
+	//
+	//		public void finish() {
+	//			finished = true;
+	//		}
+	//
+	//	}
+
+	/**
+	 * Changes project description and parallel checks {@link IProject#isNatureEnabled(String)},
+	 * to check if natures value is cached properly.
+	 * 
+	 * See discussion on Bug 307587.
+	 * @throws Exception
+	 */
+	public void testConcurrentNatures() throws Exception {
+		final boolean finished[] = new boolean[] {false};
+		final Project project = (Project) ResourcesPlugin.getWorkspace().getRoot().getProject(getUniqueString());
+
+		ensureExistsInWorkspace(project, true);
+
+		new Job("CheckNatureJob") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					if (finished[0] == false) {
+						if (project.exists() && project.isOpen())
+							project.isNatureEnabled(NATURE_SIMPLE);
+						schedule();
+					}
+				} catch (CoreException e) {
+					fail("CheckNatureJob failed", e);
+				}
+				return Status.OK_STATUS;
+			}
+		}.schedule();
+
+		try {
+			// Make sure enough time has past to bump file's
+			// timestamp during the copy  
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			fail("2.0", e);
+		}
+
+		IFileStore descStore = ((File) project.getFile(IProjectDescription.DESCRIPTION_FILE_NAME)).getStore();
+
+		// create a description with many natures, this will make updating description longer
+		StringBuffer description = new StringBuffer();
+		description.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><projectDescription><name></name><comment></comment><projects></projects><buildSpec></buildSpec><natures>");
+		description.append("<nature>" + NATURE_SIMPLE + "</nature>");
+		for (int i = 0; i < 100; i++) {
+			description.append("<nature>nature" + i + "</nature>");
+		}
+		description.append("</natures></projectDescription>\n");
+
+		// write the description
+		OutputStream output = null;
+		try {
+			output = descStore.openOutputStream(EFS.NONE, getMonitor());
+			output.write(description.toString().getBytes());
+		} catch (CoreException e) {
+			fail("1.0");
+		} finally {
+			FileUtil.safeClose(output);
+		}
+
+		try {
+			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		finished[0] = true;
+
+		assertTrue("4.0", project.hasNature(NATURE_SIMPLE));
+		assertTrue("5.0", project.isNatureEnabled(NATURE_SIMPLE));
+	}
 }
