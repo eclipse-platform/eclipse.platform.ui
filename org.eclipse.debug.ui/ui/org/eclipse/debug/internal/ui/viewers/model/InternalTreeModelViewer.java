@@ -2486,7 +2486,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	            	    item.setData(PREV_CHECKED_KEY, new Boolean(checked));
 	            	}
 	            } else {
-		            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.SELECT);
+		            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.SELECT|IModelDelta.REVEAL);
 	    		}
 	        }
         }
