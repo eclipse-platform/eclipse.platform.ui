@@ -113,7 +113,8 @@ public class MinMaxAddon {
 			if (changedElement instanceof MPartStack && widget instanceof CTabFolder
 					&& changedElement.getElementId() != null) {
 				final CTabFolder folder = (CTabFolder) widget;
-				if (!changedElement.getTags().contains("EditorStack")) { //$NON-NLS-1$
+				int loc = modelService.getElementLocation(changedElement);
+				if (loc != EModelService.IN_SHARED_AREA) { //$NON-NLS-1$
 					folder.setMinimizeVisible(true);
 					folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
 						public void minimize(CTabFolderEvent event) {
@@ -361,7 +362,8 @@ public class MinMaxAddon {
 		List<MPartStack> stacks = modelService.findElements(persp, null, MPartStack.class, null,
 				EModelService.PRESENTATION);
 		for (MPartStack theStack : stacks) {
-			if (!theStack.getTags().contains("EditorStack") && theStack.getWidget() != null
+			int loc = modelService.getElementLocation(theStack);
+			if (loc != EModelService.IN_SHARED_AREA && theStack.getWidget() != null
 					&& !theStack.getTags().contains(MINIMIZED)) {
 				theStack.getTags().add(MINIMIZED_BY_ZOOM);
 				theStack.getTags().add(MINIMIZED);

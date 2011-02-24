@@ -21,27 +21,32 @@ import org.eclipse.swt.widgets.Display;
  *
  */
 abstract class DropAgent {
-	public abstract boolean canDrop(MUIElement dragElement, CursorInfo info);
+	protected DnDManager dndManager;
 
-	public abstract boolean drop(MUIElement dragElement, CursorInfo info);
+	/**
+	 * @param manager
+	 */
+	public DropAgent(DnDManager manager) {
+		dndManager = manager;
+	}
 
-	public Cursor getCursor(Display display, MUIElement dragElement,
-			CursorInfo info) {
+	public abstract boolean canDrop(MUIElement dragElement, DnDInfo info);
+
+	public abstract boolean drop(MUIElement dragElement, DnDInfo info);
+
+	public abstract boolean track(MUIElement dragElement, DnDInfo info);
+
+	public Cursor getCursor(Display display, MUIElement dragElement, DnDInfo info) {
 		return display.getSystemCursor(SWT.CURSOR_HAND);
 	}
 
-	public Rectangle getRectangle(MUIElement dragElement, CursorInfo info) {
+	public Rectangle getRectangle(MUIElement dragElement, DnDInfo info) {
 		return null;
 	}
 
-	public void dragEnter() {
+	public void dragEnter(MUIElement dragElement, DnDInfo info) {
 	}
 
-	public void dragLeave() {
-
-	}
-
-	public void track() {
-
+	public void dragLeave(MUIElement dragElement, DnDInfo info) {
 	}
 }

@@ -12,31 +12,40 @@
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 public class DetachedDropAgent extends DropAgent {
+	DnDManager manager;
 	private EModelService modelService;
 	private Rectangle curRect;
 
-	public DetachedDropAgent(EModelService modelSvc) {
-		modelService = modelSvc;
+	public DetachedDropAgent(DnDManager manager) {
+		super(manager);
+		this.manager = manager;
+		modelService = manager.getModelService();
 	}
 
 	@Override
-	public boolean canDrop(MUIElement dragElement, CursorInfo info) {
-		if (dragElement instanceof MPart && info.curElement == null)
+	public boolean canDrop(MUIElement dragElement, DnDInfo info) {
+		if (info.curElement != null)
+			return false;
+
+		if (dragElement instanceof MPart || dragElement instanceof MPlaceholder)
 			return true;
 
 		return false;
 	}
 
 	@Override
-	public boolean drop(MUIElement dragElement, CursorInfo info) {
+	public boolean drop(MUIElement dragElement, DnDInfo info) {
 		if (dragElement.getCurSharedRef() != null)
 			dragElement = dragElement.getCurSharedRef();
 
@@ -53,7 +62,7 @@ public class DetachedDropAgent extends DropAgent {
 	 * org.eclipse.e4.workbench.ui.renderers.swt.dnd.CursorInfo)
 	 */
 	@Override
-	public Rectangle getRectangle(MUIElement dragElement, CursorInfo info) {
+	public Rectangle getRectangle(MUIElement dragElement, DnDInfo info) {
 		if (dragElement.getCurSharedRef() != null)
 			dragElement = dragElement.getCurSharedRef();
 		MUIElement parentME = dragElement.getParent();
@@ -71,4 +80,45 @@ public class DetachedDropAgent extends DropAgent {
 		return curRect;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#track(org.eclipse.e4.ui.model.application
+	 * .ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
+	 */
+	@Override
+	public boolean track(MUIElement dragElement, DnDInfo info) {
+		if (info.curElement != null)
+			return false;
+
+		manager.frameRect(getRectangle(dragElement, info));
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragEnter(org.eclipse.e4.ui.model.
+	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
+	 */
+	@Override
+	public void dragEnter(MUIElement dragElement, DnDInfo info) {
+		super.dragEnter(dragElement, info);
+		dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragLeave(org.eclipse.e4.ui.model.
+	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
+	 */
+	@Override
+	public void dragLeave(MUIElement dragElement, DnDInfo info) {
+		manager.clearOverlay();
+		dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
+
+		super.dragLeave(dragElement, info);
+	}
 }

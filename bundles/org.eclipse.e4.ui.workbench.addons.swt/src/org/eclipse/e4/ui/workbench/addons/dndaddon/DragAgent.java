@@ -13,24 +13,19 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 
 /**
  *
  */
 abstract class DragAgent {
+	private static final String DRAG_PLACEHOLDER_ID = "Drag Placerholder";
 	protected MUIElement dragElement;
-
-	/**
-	 * @return the dragElement
-	 */
-	public MUIElement getDragElement() {
-		return dragElement;
-	}
 
 	protected MElementContainer<MUIElement> originalParent;
 	protected int originalIndex;
-
-	private DragHost dragHost = null;
+	protected DnDManager dndManager;
 
 	/**
 	 * Return the element that your agent would start to drag given the current cursor info.
@@ -41,7 +36,21 @@ abstract class DragAgent {
 	 * @return The element that this agent would drag or null if the agent is not appropriate for
 	 *         the given info
 	 */
-	public abstract MUIElement getElementToDrag(CursorInfo info);
+	public abstract MUIElement getElementToDrag(DnDInfo info);
+
+	/**
+	 * 
+	 */
+	public DragAgent(DnDManager manager) {
+		dndManager = manager;
+	}
+
+	/**
+	 * @return the dragElement
+	 */
+	public MUIElement getDragElement() {
+		return dragElement;
+	}
 
 	/**
 	 * Determine if a drag can be started on the given info. This allows a subclass to restrict the
@@ -55,7 +64,7 @@ abstract class DragAgent {
 	 * 
 	 * @return true iff it is OK to start a drag
 	 */
-	public boolean canDrag(CursorInfo info) {
+	public boolean canDrag(DnDInfo info) {
 		return getElementToDrag(info) != null;
 	}
 
@@ -65,14 +74,23 @@ abstract class DragAgent {
 	 * @param element
 	 *            The element to drag
 	 */
-	public void dragStart(MUIElement element) {
+	public void dragStart(MUIElement element, DnDInfo info) {
 		// Cache the element's current location in the model.
 		dragElement = element;
 		originalParent = element.getParent();
-		if (originalParent != null)
+		if (originalParent != null) {
 			originalIndex = element.getParent().getChildren().indexOf(element);
 
-		createDragFeedback();
+			// If there's only one child, add a placeholder to prevent the stack
+			// from being 'garbage collected'
+			if (originalParent.getChildren().size() == 1
+					&& dndManager.getFeedbackStyle() == DnDManager.HOSTED) {
+				MPlaceholder dragPH = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+				dragPH.setElementId(DRAG_PLACEHOLDER_ID);
+				dragPH.setToBeRendered(false);
+				originalParent.getChildren().add(dragPH);
+			}
+		}
 	}
 
 	/**
@@ -80,53 +98,25 @@ abstract class DragAgent {
 	 * original location in the model.
 	 */
 	public void cancelDrag() {
-		removeDragFeedback();
-
-		// MElementContainer<MUIElement> curParent = dragElement.getParent();
-		// int curIndex = -1;
-		// if (curParent != null)
-		// curIndex = curParent.getChildren().indexOf(dragElement);
-		//
-		// if (curParent != originalParent || curIndex != originalIndex) {
-		// if (curParent != null) {
-		// curParent.getChildren().remove(dragElement);
-		// }
-		// originalParent.getChildren().add(originalIndex, curParent);
-		// }
+		if (dragElement.getParent() != null)
+			dragElement.getParent().getChildren().remove(dragElement);
+		originalParent.getChildren().add(originalIndex, dragElement);
+		dndManager.getModelService().bringToTop(dragElement);
 	}
 
 	/**
 	 * Restore the DragAgent to a state where it will be ready to start a new drag
 	 */
 	public void dragFinished() {
+		if (originalParent != null && dndManager.getFeedbackStyle() == DnDManager.HOSTED) {
+			MUIElement dragPH = dndManager.getModelService().find(DRAG_PLACEHOLDER_ID,
+					originalParent);
+			if (dragPH != null)
+				originalParent.getChildren().remove(dragPH);
+		}
+
 		dragElement = null;
 		originalIndex = -1;
 		originalParent = null;
-	}
-
-	/**
-	 * Initialize the drag feedback. The default implementation will 'host' the drag element in a
-	 * semi-transparent window that will track with the cursor.
-	 */
-	public void createDragFeedback() {
-	}
-
-	/**
-	 * Remove any feedback used during the drag operation.
-	 */
-	public void removeDragFeedback() {
-		if (dragHost != null)
-			dragHost.dispose();
-	}
-
-	/**
-	 * Track the drag feedback. This is called during a drag operation when the mouse moves.
-	 * 
-	 * @param cursorInfo
-	 */
-	public void trackDragFeedback(CursorInfo cursorInfo) {
-		if (dragHost != null) {
-
-		}
 	}
 }

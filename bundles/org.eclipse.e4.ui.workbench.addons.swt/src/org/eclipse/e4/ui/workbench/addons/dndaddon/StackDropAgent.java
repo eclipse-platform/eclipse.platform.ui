@@ -11,161 +11,242 @@
 
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
+import java.util.ArrayList;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 
 /**
  *
  */
 public class StackDropAgent extends DropAgent {
-	// private MWindow window;
+	private Rectangle tabArea;
+	private MPartStack dropStack;
+	private CTabFolder dropCTF;
+
+	private ArrayList<Rectangle> itemRects;
+	private int curDropIndex = -2;
 
 	/**
-	 * @param window
+	 * @param manager
 	 */
-	public StackDropAgent(MWindow window) {
-		// this.window = window;
+	public StackDropAgent(DnDManager manager) {
+		super(manager);
 	}
 
 	@Override
-	public boolean canDrop(MUIElement dragElement, CursorInfo info) {
-		if (!(dragElement instanceof MPart))
+	public boolean canDrop(MUIElement dragElement, DnDInfo info) {
+		if (!(dragElement instanceof MStackElement))
 			return false;
 
-		if (info.curElement == dragElement.getParent()) {
-			if (info.curElement != null && info.curElement == dragElement.getParent()) {
-				CTabFolder ctf = (CTabFolder) dragElement.getParent().getWidget();
-				return ctf.getItemCount() > 1;
+		if (info.curElement instanceof MPartStack
+				&& info.curElement.getWidget() instanceof CTabFolder) {
+			Rectangle areaRect = getTabAreaRect((CTabFolder) info.curElement.getWidget());
+			boolean inArea = areaRect.contains(info.cursorPos);
+			if (inArea) {
+				tabArea = areaRect;
+				dropStack = (MPartStack) info.curElement;
+				dropCTF = (CTabFolder) dropStack.getWidget();
+				createInsertRects();
 			}
-		}
-
-		if (dragElement instanceof MPart && info.curElement instanceof MPartStack) {
-			MPartStack stack = (MPartStack) info.curElement;
-			boolean isView = !dragElement.getTags().contains("Editor"); //$NON-NLS-1$
-			boolean isEditorStack = stack.getTags().contains("EditorStack"); //$NON-NLS-1$
-
-			// special case...don't allow dropping views into an *enpty* Editor Stack
-			if (isView && isEditorStack && stack.getChildren().size() == 0) {
-				CTabFolder ctf = (CTabFolder) stack.getWidget();
-				Point stackPoint = ctf.getDisplay().map(null, ctf, info.cursorPos);
-
-				// If we're in the 'tab area' then allow the drop, else assume another
-				// agent, such as split, will handle it.
-				boolean canDrop = stackPoint.y <= ctf.getTabHeight();
-				return canDrop;
-			}
-
-			return true;
+			return inArea;
 		}
 
 		return false;
 	}
 
-	@Override
-	public boolean drop(MUIElement dragElement, CursorInfo info) {
-		MPartStack dropStack = (MPartStack) info.curElement;
+	private Rectangle getTabAreaRect(CTabFolder theCTF) {
+		Rectangle ctfBounds = theCTF.getBounds();
+		ctfBounds.height = theCTF.getTabHeight();
 
-		if (dragElement.getCurSharedRef() != null)
-			dragElement = dragElement.getCurSharedRef();
+		Rectangle displayBounds = Display.getCurrent().map(theCTF.getParent(), null, ctfBounds);
+		return displayBounds;
+	}
 
-		if (dragElement.getParent() == info.curElement) {
-			CTabFolder ctf = (CTabFolder) dropStack.getWidget();
-			for (CTabItem cti : ctf.getItems()) {
-				if (cti.getData(AbstractPartRenderer.OWNING_ME) == dragElement) {
-					if (info.itemIndex >= 0 && ctf.indexOf(cti) < info.itemIndex)
-						info.itemIndex--;
-				}
-			}
-		}
+	private void createInsertRects() {
+		itemRects = new ArrayList<Rectangle>();
+		if (dropCTF.getItems().length > 0) {
+			CTabItem[] items = dropCTF.getItems();
 
-		if (dragElement.getParent() != null) {
-			MElementContainer<MUIElement> dragParent = dragElement.getParent();
+			// First rect is from left to the center of the item
+			Rectangle itemRect = items[0].getBounds();
+			int centerX = itemRect.x + (itemRect.width / 2);
+			itemRect.width /= 2;
+			int curX = itemRect.x + itemRect.width;
+			Rectangle insertRect = dropCTF.getDisplay().map(dropCTF, null, itemRect);
+			itemRects.add(insertRect);
 
-			// If this was the last child in the stack it will go away so
-			// grab back its 'weight' if it's in the same sash container
-			int curCount = dragParent.getChildren().size();
-			if ((Object) dragParent instanceof MPartStack && curCount == 1
-					&& dragParent.getParent() == dropStack.getParent()) {
-				int dpWeight = -1;
-				try {
-					dpWeight = Integer.parseInt(dragParent.getContainerData());
-				} catch (NumberFormatException e) {
-				}
-				if (dpWeight != -1) {
-					int dropWeight = 0;
-					try {
-						dropWeight = Integer.parseInt(dropStack.getContainerData());
-					} catch (NumberFormatException e) {
-					}
-					dropWeight += dpWeight;
-					dropStack.setContainerData(Integer.toString(dropWeight));
-				}
+			// Process the other items
+			for (int i = 1; i < items.length; i++) {
+				itemRect = items[i].getBounds();
+				centerX = itemRect.x + (itemRect.width / 2);
+				itemRect.width = centerX - curX;
+				itemRect.x = curX;
+				curX = centerX;
+				insertRect = dropCTF.getDisplay().map(dropCTF, null, itemRect);
+				itemRects.add(insertRect);
 			}
 
-			dragParent.getChildren().remove(dragElement);
-		}
-
-		if (info.itemIndex == -1) {
-			dropStack.getChildren().add((MStackElement) dragElement);
+			// Finally, add a rectangle from the center of the last element to the end
+			itemRect.x = curX;
+			itemRect.width = dropCTF.getBounds().width - curX;
+			insertRect = dropCTF.getDisplay().map(dropCTF, null, itemRect);
+			itemRects.add(insertRect);
 		} else {
-			dropStack.getChildren().add(info.itemIndex, (MStackElement) dragElement);
+			// Empty stack, whole area is index == 0
+			itemRects.add(tabArea);
 		}
-		dropStack.setSelectedElement((MStackElement) dragElement);
+	}
 
-		if (dragElement.getWidget() instanceof Control) {
-			Control ctrl = (Control) dragElement.getWidget();
-			ctrl.getShell().layout();
+	private int getDropIndex(DnDInfo info) {
+		if (itemRects == null)
+			return -1;
+
+		for (Rectangle itemRect : itemRects) {
+			if (itemRect.contains(info.cursorPos))
+				return itemRects.indexOf(itemRect);
 		}
-
-		return true;
+		return -1;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.e4.workbench.ui.renderers.swt.dnd.DropAgent#getRectangle
-	 * (org.eclipse.e4.ui.model.application.ui.MUIElement,
-	 * org.eclipse.e4.workbench.ui.renderers.swt.dnd.CursorInfo)
+	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragLeave()
 	 */
 	@Override
-	public Rectangle getRectangle(MUIElement dragElement, CursorInfo info) {
-		CTabFolder ctf = (CTabFolder) info.curElement.getWidget();
-		if (info.itemElement != null) {
-			if (info.curElement.getWidget() instanceof CTabFolder) {
-				for (CTabItem cti : ctf.getItems()) {
-					if (cti.getData(AbstractPartRenderer.OWNING_ME) == info.itemElement
-							|| cti.getData(AbstractPartRenderer.OWNING_ME) == info.itemElementRef) {
-						Rectangle itemRect = cti.getBounds();
-						itemRect.width = 3;
-						return cti.getDisplay().map(cti.getParent(), null, itemRect);
-					}
-				}
-			}
-		} else {
-			if (ctf.getItemCount() == 0) {
-				Rectangle ctfBounds = ctf.getBounds();
-				ctfBounds.height = ctf.getTabHeight();
-				ctfBounds.width = 3;
-				return ctf.getDisplay().map(ctf, null, ctfBounds);
-			}
+	public void dragLeave(MUIElement dragElement, DnDInfo info) {
+		dndManager.clearOverlay();
 
-			CTabItem cti = ctf.getItem(ctf.getItemCount() - 1);
-			Rectangle itemRect = cti.getBounds();
-			itemRect.x = (itemRect.x + itemRect.width) - 3;
-			itemRect.width = 3;
-			return cti.getDisplay().map(cti.getParent(), null, itemRect);
+		if (dndManager.getFeedbackStyle() == DnDManager.HOSTED) {
+			if (dragElement.getParent() != null)
+				dndManager.hostElement(dragElement, 16, 10);
+		} else {
+			dndManager.setHostBounds(null);
 		}
-		return null;
+
+		tabArea = null;
+		curDropIndex = -2;
+
+		super.dragLeave(dragElement, info);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragLeave()
+	 */
+	@Override
+	public boolean track(MUIElement dragElement, DnDInfo info) {
+		if (!tabArea.contains(info.cursorPos) || dropStack == null || !dropStack.isToBeRendered())
+			return false;
+
+		int dropIndex = getDropIndex(info);
+		if (curDropIndex == dropIndex || dropIndex == -1)
+			return true;
+		curDropIndex = dropIndex;
+
+		dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND));
+
+		if (dropStack.getChildren().indexOf(dragElement) == dropIndex)
+			return true;
+
+		if (dndManager.getFeedbackStyle() == DnDManager.HOSTED) {
+			dock(dragElement, dropIndex);
+			Display.getCurrent().update();
+			showFrame(dragElement);
+		} else {
+			if (dropIndex < dropCTF.getItemCount()) {
+				Rectangle itemBounds = dropCTF.getItem(dropIndex).getBounds();
+				itemBounds.width = 2;
+				itemBounds = Display.getCurrent().map(dropCTF, null, itemBounds);
+				dndManager.frameRect(itemBounds);
+			} else if (dropCTF.getItemCount() > 0) {
+				Rectangle itemBounds = dropCTF.getItem(dropIndex - 1).getBounds();
+				itemBounds.x = itemBounds.x + itemBounds.width;
+				itemBounds.width = 2;
+				itemBounds = Display.getCurrent().map(dropCTF, null, itemBounds);
+				dndManager.frameRect(itemBounds);
+			} else {
+				Rectangle fr = tabArea;
+				fr.width = 2;
+				dndManager.frameRect(fr);
+			}
+
+			if (dndManager.getFeedbackStyle() == DnDManager.GHOSTED) {
+				Rectangle ca = dropCTF.getClientArea();
+				ca = Display.getCurrent().map(dropCTF, null, ca);
+				dndManager.setHostBounds(ca);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param dragElement
+	 * @param dropIndex
+	 */
+	private void dock(MUIElement dragElement, int dropIndex) {
+		// Adjust the index if necessary
+		int elementIndex = dropStack.getChildren().indexOf(dragElement);
+		if (elementIndex != -1) {
+			// Get the index of this CTF entry
+			Control dragCtrl = (Control) dragElement.getWidget();
+			for (CTabItem cti : dropCTF.getItems()) {
+				if (dragCtrl == cti.getControl()) {
+					int itemIndex = dropCTF.indexOf(cti);
+					if (itemIndex <= dropIndex)
+						dropIndex--;
+				}
+			}
+		}
+
+		if (dragElement.getParent() != null)
+			dragElement.getParent().getChildren().remove(dragElement);
+		if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size())
+			dropStack.getChildren().add(dropIndex, (MStackElement) dragElement);
+		else
+			dropStack.getChildren().add(dropIndex, (MStackElement) dragElement);
+		dropStack.setSelectedElement((MStackElement) dragElement);
+	}
+
+	/**
+	 * @param dragElement
+	 */
+	private void showFrame(MUIElement dragElement) {
+		CTabFolder ctf = (CTabFolder) dropStack.getWidget();
+		CTabItem[] items = ctf.getItems();
+		CTabItem item = null;
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getData(AbstractPartRenderer.OWNING_ME) == dragElement) {
+				item = items[i];
+				break;
+			}
+		}
+
+		Rectangle bounds = item.getBounds();
+		bounds = Display.getCurrent().map(dropCTF, null, bounds);
+		Rectangle outerBounds = new Rectangle(bounds.x - 3, bounds.y - 3, bounds.width + 6,
+				bounds.height + 6);
+
+		dndManager.frameRect(outerBounds);
+	}
+
+	@Override
+	public boolean drop(MUIElement dragElement, DnDInfo info) {
+		if (dndManager.getFeedbackStyle() != DnDManager.HOSTED) {
+			int dropIndex = getDropIndex(info);
+			if (dropIndex != -1)
+				dock(dragElement, dropIndex);
+		}
+		return true;
+	}
 }

@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
@@ -21,198 +20,198 @@ import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
 /**
  *
  */
 public class SplitDropAgent extends DropAgent {
-	EModelService modelService;
+	private static final int NOWHERE = -1;
+
+	private MPartStack dropStack;
+	private CTabFolder dropCTF;
+	private Rectangle clientBounds;
+	private String weight;
+	private MPartStack toInsert;
+	private int curDockLocation = NOWHERE;
+
+	private Rectangle ctfBounds;
 
 	/**
 	 * @param modelService
 	 *            The model service related to this agent
 	 * 
 	 */
-	public SplitDropAgent(EModelService modelService) {
-		this.modelService = modelService;
+	public SplitDropAgent(DnDManager manager) {
+		super(manager);
 	}
 
 	@Override
-	public boolean canDrop(MUIElement dragElement, CursorInfo info) {
-		if (!(dragElement instanceof MPart))
+	public boolean canDrop(MUIElement dragElement, DnDInfo info) {
+		if (!(dragElement instanceof MStackElement))
 			return false;
 
-		MPart part = (MPart) dragElement;
-		MStackElement stackElement = part.getCurSharedRef() != null ? part.getCurSharedRef() : part;
+		if (!(info.curElement instanceof MStackElement))
+			return false;
 
-		// Don't allow the split if we're the only part in our stack
-		if (info.curElement == part) {
-			if (stackElement.getParent().getWidget() instanceof CTabFolder) {
-				CTabFolder ctf = (CTabFolder) stackElement.getParent().getWidget();
-				return ctf.getItemCount() > 1;
-			}
-		}
+		// Detect placeholders
+		MUIElement parent = info.curElement.getParent();
+		if (info.curElement instanceof MPart && info.curElement.getCurSharedRef() != null)
+			parent = info.curElement.getCurSharedRef().getParent();
 
-		if (info.curElement instanceof MStackElement)
-			return true;
+		if (!(parent instanceof MPartStack) || !(parent.getWidget() instanceof CTabFolder))
+			return false;
 
-		// Allow a split of an empty Editor stack to allow re-docking views when
-		// no editors are open
-		if (info.curElement instanceof MPartStack
-				&& info.curElement.getTags().contains("EditorStack")) //$NON-NLS-1$
-			return true;
+		dropStack = (MPartStack) parent;
+		weight = dropStack.getContainerData();
+		dropCTF = (CTabFolder) parent.getWidget();
 
-		return false;
+		return true;
 	}
 
-	private int whereToDrop(Control ctrl, Point cursorPos) {
-		Rectangle bb = ctrl.getBounds();
-		Rectangle displayBB = ctrl.getDisplay().map(ctrl.getParent(), null, bb);
-		int dxl = cursorPos.x - displayBB.x;
-		int dxr = (displayBB.x + displayBB.width) - cursorPos.x;
-		int dx = Math.min(dxl, dxr);
-		int dyl = cursorPos.y - displayBB.y;
-		int dyr = (displayBB.y + displayBB.height) - cursorPos.y;
-		int dy = Math.min(dyl, dyr);
-		int where;
-		if (dx < dy) {
-			if (dxl < dxr)
-				where = EModelService.LEFT_OF;
-			else
-				where = EModelService.RIGHT_OF;
-		} else {
-			if (dyl < dyr)
-				where = EModelService.ABOVE;
-			else
-				where = EModelService.BELOW;
-		}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragEnter(org.eclipse.e4.ui.model.
+	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
+	 */
+	@Override
+	public void dragEnter(MUIElement dragElement, DnDInfo info) {
+		super.dragEnter(dragElement, info);
 
-		return where;
+		clientBounds = dropCTF.getClientArea();
+		clientBounds = Display.getCurrent().map(dropCTF, null, clientBounds);
+		ctfBounds = dropCTF.getBounds();
+		ctfBounds = Display.getCurrent().map(dropCTF.getParent(), null, ctfBounds);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#dragLeave(org.eclipse.e4.ui.model.
+	 * application.ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
+	 */
+	@Override
+	public void dragLeave(MUIElement dragElement, DnDInfo info) {
+		if (dndManager.getFeedbackStyle() != DnDManager.SIMPLE)
+			unDock(dragElement);
+		dndManager.clearOverlay();
+
+		curDockLocation = NOWHERE;
+
+		super.dragLeave(dragElement, info);
 	}
 
 	@Override
-	public boolean drop(MUIElement dragElement, CursorInfo info) {
-		MPart part = (MPart) dragElement;
-		MStackElement stackElement = part.getCurSharedRef() != null ? part.getCurSharedRef() : part;
-
-		MUIElement relTo = info.curElement;
-		Control ctrl = (Control) relTo.getWidget();
-		int where = whereToDrop(ctrl, info.cursorPos);
-
-		if (relTo.getCurSharedRef() != null)
-			relTo = relTo.getCurSharedRef();
-
-		MUIElement relParent = relTo.getParent();
-
-		// Special case...dragging into an empty editor area
-		if (relParent instanceof MPartSashContainer && !part.getTags().contains("Editor")) {
-			relTo = getEditorArea(relParent);
+	public boolean drop(MUIElement dragElement, DnDInfo info) {
+		if (dndManager.getFeedbackStyle() != DnDManager.HOSTED && curDockLocation != NOWHERE) {
+			dock(dragElement, curDockLocation);
 		}
-		if (relParent instanceof MPartStack) {
-			if (!(stackElement.getTags().contains("Editor")) && relParent.getTags().contains("EditorStack")) { //$NON-NLS-1$ //$NON-NLS-2$
-				relTo = getEditorArea(relParent);
-			} else {
-				relTo = relParent;
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.addons.dndaddon.DropAgent#track(org.eclipse.e4.ui.model.application
+	 * .ui.MUIElement, org.eclipse.e4.ui.workbench.addons.dndaddon.DnDInfo)
+	 */
+	@Override
+	public boolean track(MUIElement dragElement, DnDInfo info) {
+		if (!clientBounds.contains(info.cursorPos))
+			return false;
+
+		int dockLocation = getDockLocation(info);
+		if (dockLocation == curDockLocation)
+			return true;
+
+		curDockLocation = dockLocation;
+
+		if (curDockLocation != NOWHERE) {
+			Rectangle dockBounds = getDockBounds(curDockLocation);
+			if (dndManager.getFeedbackStyle() == DnDManager.HOSTED) {
+				dock(dragElement, curDockLocation);
+			} else if (dndManager.getFeedbackStyle() == DnDManager.GHOSTED) {
+				dndManager.setHostBounds(dockBounds);
 			}
+			dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND));
+			dndManager.frameRect(dockBounds);
+		} else {
+			unDock(dragElement);
+			dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
 		}
-
-		// Remove the element (or its placeholder) from its current container
-		stackElement.getParent().getChildren().remove(stackElement);
-
-		// If we're dropping a part wrap it in a stack
-		MUIElement toInsert = stackElement;
-		if (dragElement instanceof MStackElement) {
-			MPartStack newPS = BasicFactoryImpl.eINSTANCE.createPartStack();
-			if (relTo.getTags().contains("EditorStack")) { //$NON-NLS-1$
-				newPS.getTags().add("EditorStack"); //$NON-NLS-1$
-				newPS.getTags().add("org.eclipse.e4.primaryDataStack"); //$NON-NLS-1$
-			}
-			newPS.getChildren().add((MStackElement) stackElement);
-			newPS.setSelectedElement((MStackElement) stackElement);
-			toInsert = newPS;
-		}
-
-		modelService.insert((MPartSashContainerElement) toInsert,
-				(MPartSashContainerElement) relTo, where, 50);
-
-		MUIElement tmp = relTo;
-		while (!(tmp.getWidget() instanceof Control))
-			tmp = tmp.getParent();
-		Control theCtrl = (Control) tmp.getWidget();
-		theCtrl.getParent().layout(true, true);
 
 		return true;
 	}
 
 	/**
-	 * @param relParent
+	 * @param curDockLocation2
 	 * @return
 	 */
-	private MUIElement getEditorArea(MUIElement relParent) {
-		// Find the placeholder for the editor area
-		while (relParent != null && relParent.getCurSharedRef() == null)
-			relParent = relParent.getParent();
-		return relParent != null ? relParent.getCurSharedRef() : null;
+	private Rectangle getDockBounds(int location) {
+		Rectangle bounds = new Rectangle(ctfBounds.x, ctfBounds.y, ctfBounds.width,
+				ctfBounds.height);
+
+		if (location == EModelService.ABOVE) {
+			bounds.height /= 2;
+		} else if (location == EModelService.BELOW) {
+			bounds.height /= 2;
+			bounds.y += bounds.height;
+		} else if (location == EModelService.LEFT_OF) {
+			bounds.width /= 2;
+		} else if (location == EModelService.RIGHT_OF) {
+			bounds.width /= 2;
+			bounds.x += bounds.width;
+		}
+		return bounds;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.workbench.ui.renderers.swt.dnd.DropAgent#getCursor
-	 * (org.eclipse.swt.widgets.Display, org.eclipse.e4.ui.model.application.ui.MUIElement,
-	 * org.eclipse.e4.workbench.ui.renderers.swt.dnd.CursorInfo)
+	/**
+	 * @param info
+	 * @return
 	 */
-	@Override
-	public Cursor getCursor(Display display, MUIElement dragElement, CursorInfo info) {
-		Control ctrl = (Control) info.curElement.getWidget();
-		int where = whereToDrop(ctrl, info.cursorPos);
-		if (where == EModelService.ABOVE)
-			return display.getSystemCursor(SWT.CURSOR_SIZEN);
-		if (where == EModelService.BELOW)
-			return display.getSystemCursor(SWT.CURSOR_SIZES);
-		if (where == EModelService.LEFT_OF)
-			return display.getSystemCursor(SWT.CURSOR_SIZEW);
-		if (where == EModelService.RIGHT_OF)
-			return display.getSystemCursor(SWT.CURSOR_SIZEE);
+	private int getDockLocation(DnDInfo info) {
+		int dx = info.cursorPos.x - clientBounds.x;
+		int dy = info.cursorPos.y - clientBounds.y;
+		int dxr = (clientBounds.x + clientBounds.width) - info.cursorPos.x;
+		int dyr = (clientBounds.y + clientBounds.height) - info.cursorPos.y;
+		int minDx = Math.min(dx, dxr);
+		int minDy = Math.min(dy, dyr);
 
-		return display.getSystemCursor(SWT.CURSOR_HELP);
+		if (minDx < minDy)
+			return dx < dxr ? EModelService.LEFT_OF : EModelService.RIGHT_OF;
+
+		return dy < dyr ? EModelService.ABOVE : EModelService.BELOW;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.e4.workbench.ui.renderers.swt.dnd.DropAgent#getRectangle
-	 * (org.eclipse.e4.ui.model.application.ui.MUIElement,
-	 * org.eclipse.e4.workbench.ui.renderers.swt.dnd.CursorInfo)
-	 */
-	@Override
-	public Rectangle getRectangle(MUIElement dragElement, CursorInfo info) {
-		Control ctrl = (Control) info.curElement.getWidget();
+	protected void unDock(MUIElement dragElement) {
+		dndManager.clearOverlay();
+		dndManager.setHostBounds(null);
+		dndManager.setDragHostVisibility(true);
+	}
 
-		// Show the affordance on the CTF if possible
-		if (ctrl.getParent() instanceof CTabFolder)
-			ctrl = ctrl.getParent();
-		if (ctrl.getParent() != null && ctrl.getParent().getParent() instanceof CTabFolder)
-			ctrl = ctrl.getParent().getParent();
+	protected boolean dock(MUIElement dragElement, int where) {
+		dndManager.setDragHostVisibility(false);
+		MUIElement relTo = dropStack;
 
-		Rectangle bounds = ctrl.getBounds();
-		int where = whereToDrop(ctrl, info.cursorPos);
-		if (where == EModelService.ABOVE)
-			bounds = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height / 2);
-		if (where == EModelService.BELOW)
-			bounds = new Rectangle(bounds.x, bounds.y + (bounds.height / 2), bounds.width,
-					bounds.height / 2);
-		if (where == EModelService.LEFT_OF)
-			bounds = new Rectangle(bounds.x, bounds.y, bounds.width / 2, bounds.height);
-		if (where == EModelService.RIGHT_OF)
-			bounds = new Rectangle(bounds.x + (bounds.width / 2), bounds.y, bounds.width / 2,
-					bounds.height);
+		// wrap it in a stack
+		MStackElement stackElement = (MStackElement) dragElement;
+		toInsert = BasicFactoryImpl.eINSTANCE.createPartStack();
+		toInsert.getChildren().add(stackElement);
+		toInsert.setSelectedElement(stackElement);
 
-		return ctrl.getDisplay().map(ctrl.getParent(), null, bounds);
+		MUIElement relToParent = relTo.getParent();
+
+		dndManager.getModelService().insert((MPartSashContainerElement) toInsert,
+				(MPartSashContainerElement) relTo, where, 50);
+
+		// Force the new sash to have the same weight as the original
+		if (relTo.getParent() != relToParent)
+			relTo.getParent().setContainerData(weight);
+		dndManager.update();
+
+		return true;
 	}
 }
