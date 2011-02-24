@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -21,7 +21,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * </p>
  * @since 3.2
  */
-public abstract class AbstractColumnPresentation implements IColumnPresentation {
+public abstract class AbstractColumnPresentation implements IColumnPresentation2 {
 	
 	private IPresentationContext fContext;
 	
@@ -58,5 +58,12 @@ public abstract class AbstractColumnPresentation implements IColumnPresentation 
 	 */
 	protected IPresentationContext getPresentationContext() {
 		return fContext;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation2#getInitialColumnWidth(java.lang.String, int, java.lang.String[])
+	 */
+	public int getInitialColumnWidth(String id, int treeWidgetWidth, String[] visibleColumnIds) {
+		return -1;
 	}
 }
