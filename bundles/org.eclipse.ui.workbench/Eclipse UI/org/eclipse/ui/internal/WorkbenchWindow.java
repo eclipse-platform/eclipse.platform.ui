@@ -612,6 +612,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		glueControl.getTags().add(TrimBarLayout.GLUE);
 
 		MToolControl switcherControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+		switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
 		switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
 		switcherControl
 				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
