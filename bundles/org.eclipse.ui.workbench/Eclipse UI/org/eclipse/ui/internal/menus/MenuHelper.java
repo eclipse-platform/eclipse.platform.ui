@@ -73,7 +73,6 @@ import org.eclipse.ui.internal.PluginAction;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -352,34 +351,6 @@ public class MenuHelper {
 		element.setIconURI(MenuHelper
 				.getIconUrl(menuAddition, IWorkbenchRegistryConstants.ATT_ICON));
 		element.setLabel(Util.safeString(text));
-
-		for (final IConfigurationElement child : menuAddition.getChildren()) {
-			if (child.getName().equals(IWorkbenchRegistryConstants.TAG_DYNAMIC)) {
-				ContextFunction generator = new ContextFunction() {
-					@Override
-					public Object compute(IEclipseContext context) {
-						ServiceLocator sl = new ServiceLocator();
-						sl.setContext(context);
-						DynamicMenuContributionItem item = new DynamicMenuContributionItem(
-								getId(child), sl, child);
-						return item;
-					}
-				};
-
-				MRenderedMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createRenderedMenuItem();
-				menuItem.setElementId(getId(child));
-				menuItem.setContributionItem(generator);
-				// IRendererFactory factory =
-				// application.getContext().get(IRendererFactory.class);
-				// AbstractPartRenderer renderer = factory.getRenderer(element,
-				// null);
-				// if (renderer instanceof MenuManagerRenderer) {
-				// ((MenuManagerRenderer)
-				// renderer).linkModelToContribution(menuItem, item);
-				// }
-				element.getChildren().add(menuItem);
-			}
-		}
 
 		return element;
 	}

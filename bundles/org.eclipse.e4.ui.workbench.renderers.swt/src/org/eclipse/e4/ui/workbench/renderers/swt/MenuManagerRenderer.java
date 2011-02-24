@@ -51,7 +51,6 @@ import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -82,6 +81,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	private Map<IContributionItem, MMenuElement> contributionToModel = new HashMap<IContributionItem, MMenuElement>();
 
 	private Map<MMenuElement, ContributionRecord> modelContributionToRecord = new HashMap<MMenuElement, ContributionRecord>();
+	private Map<MMenuElement, ArrayList<ContributionRecord>> sharedElementToRecord = new HashMap<MMenuElement, ArrayList<ContributionRecord>>();
 
 	@Inject
 	private Logger logger;
@@ -333,25 +333,33 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			if (record.menuModel == menuModel) {
 				record.dispose();
 				for (MMenuElement copy : record.generatedElements) {
-					modelContributionToRecord.remove(copy);
-					if (copy instanceof MMenu) {
-						MMenu menuCopy = (MMenu) copy;
-						cleanUp(menuCopy);
-						MenuManager copyManager = getManager(menuCopy);
-						clearModelToManager(menuCopy, copyManager);
-						if (copyManager != null) {
-							record.getManagerForModel().remove(copyManager);
-							copyManager.dispose();
-						}
-					} else {
-						IContributionItem ici = getContribution(copy);
-						clearModelToContribution(copy, ici);
-						if (ici != null) {
-							record.getManagerForModel().remove(ici);
-						}
-					}
+					cleanUpCopy(record, copy);
+				}
+				for (MMenuElement copy : record.sharedElements) {
+					cleanUpCopy(record, copy);
 				}
 				record.generatedElements.clear();
+				record.sharedElements.clear();
+			}
+		}
+	}
+
+	public void cleanUpCopy(ContributionRecord record, MMenuElement copy) {
+		modelContributionToRecord.remove(copy);
+		if (copy instanceof MMenu) {
+			MMenu menuCopy = (MMenu) copy;
+			cleanUp(menuCopy);
+			MenuManager copyManager = getManager(menuCopy);
+			clearModelToManager(menuCopy, copyManager);
+			if (copyManager != null) {
+				record.getManagerForModel().remove(copyManager);
+				copyManager.dispose();
+			}
+		} else {
+			IContributionItem ici = getContribution(copy);
+			clearModelToContribution(copy, ici);
+			if (ici != null) {
+				record.getManagerForModel().remove(ici);
 			}
 		}
 	}
@@ -427,31 +435,10 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			MMenuContribution menuContribution,
 			final HashSet<String> existingMenuIds,
 			HashSet<String> existingSeparatorNames, boolean menuBar) {
-		int idx = getIndex(menuModel, menuContribution.getPositionInParent());
-		if (idx == -1) {
-			return false;
-		}
 		final ContributionRecord record = new ContributionRecord(menuModel,
 				menuContribution, this);
-		record.generate();
-		for (MMenuElement copy : record.generatedElements) {
-			modelContributionToRecord.put(copy, record);
-			if (copy instanceof MMenu
-					&& existingMenuIds.contains(copy.getElementId())) {
-				// skip this, it's already there
-				continue;
-			} else if (copy instanceof MMenuSeparator
-					&& existingSeparatorNames.contains(copy.getElementId())) {
-				// skip this, it's already there
-				continue;
-			}
-			menuModel.getChildren().add(idx++, copy);
-			if (copy instanceof MMenu && copy.getElementId() != null) {
-				existingMenuIds.add(copy.getElementId());
-			} else if (copy instanceof MMenuSeparator
-					&& copy.getElementId() != null) {
-				existingSeparatorNames.add(copy.getElementId());
-			}
+		if (!record.mergeIntoModel()) {
+			return false;
 		}
 		if (menuBar) {
 			if (menuContribution.getVisibleWhen() != null) {
@@ -470,81 +457,13 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		return true;
 	}
 
-	private static int getIndex(MElementContainer<?> menuModel,
-			String positionInParent) {
-		String id = null;
-		String modifier = null;
-		if (positionInParent != null && positionInParent.length() > 0) {
-			String[] array = positionInParent.split("="); //$NON-NLS-1$
-			modifier = array[0];
-			id = array[1];
+	public ArrayList<ContributionRecord> getList(MMenuElement item) {
+		ArrayList<ContributionRecord> tmp = sharedElementToRecord.get(item);
+		if (tmp == null) {
+			tmp = new ArrayList<ContributionRecord>();
+			sharedElementToRecord.put(item, tmp);
 		}
-		if (id == null) {
-			return menuModel.getChildren().size();
-		}
-
-		int idx = 0;
-		int size = menuModel.getChildren().size();
-		while (idx < size) {
-			if (id.equals(menuModel.getChildren().get(idx).getElementId())) {
-				if ("after".equals(modifier)) { //$NON-NLS-1$
-					idx++;
-				}
-				return idx;
-			}
-			idx++;
-		}
-		return id.equals("additions") ? menuModel.getChildren().size() : -1; //$NON-NLS-1$
-	}
-
-	static class ContributionRecord {
-		MMenu menuModel;
-		MMenuContribution menuContribution;
-		ArrayList<MMenuElement> generatedElements = new ArrayList<MMenuElement>();
-		MenuManagerRenderer renderer;
-
-		public ContributionRecord(MMenu menuModel,
-				MMenuContribution contribution, MenuManagerRenderer renderer) {
-			this.menuModel = menuModel;
-			this.menuContribution = contribution;
-			this.renderer = renderer;
-		}
-
-		public MenuManager getManagerForModel() {
-			return renderer.getManager(menuModel);
-		}
-
-		/**
-		 * @param context
-		 */
-		public void updateVisibility(IEclipseContext context) {
-			ExpressionContext exprContext = new ExpressionContext(context);
-			boolean isVisible = ContributionsAnalyzer.isVisible(
-					menuContribution, exprContext);
-			for (MMenuElement item : generatedElements) {
-				if (isVisible && item.getVisibleWhen() != null) {
-					MenuManagerRenderer.updateVisibility(getManagerForModel(),
-							item, exprContext);
-				} else {
-					item.setVisible(isVisible);
-				}
-			}
-			getManagerForModel().markDirty();
-		}
-
-		public void generate() {
-			for (MMenuElement item : menuContribution.getChildren()) {
-				MMenuElement copy = (MMenuElement) EcoreUtil
-						.copy((EObject) item);
-				generatedElements.add(copy);
-			}
-		}
-
-		public void dispose() {
-			for (MMenuElement copy : generatedElements) {
-				menuModel.getChildren().remove(copy);
-			}
-		}
+		return tmp;
 	}
 
 	void removeMenuContributions(final MMenu menuModel,
@@ -808,6 +727,11 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	public ContributionRecord getContributionRecord(MMenuElement element) {
 		return modelContributionToRecord.get(element);
+	}
+
+	public void linkElementToContributionRecord(MMenuElement element,
+			ContributionRecord record) {
+		modelContributionToRecord.put(element, record);
 	}
 
 	/**

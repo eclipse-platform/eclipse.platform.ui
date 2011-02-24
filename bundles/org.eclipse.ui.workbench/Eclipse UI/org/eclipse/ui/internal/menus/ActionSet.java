@@ -266,6 +266,7 @@ public class ActionSet {
 		}
 		menuContributionGroupIds.add(parentId + group);
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		menuContribution.setVisibleWhen(createVisibleWhen());
 		menuContribution.getTags().add(ContributionsAnalyzer.MC_MENU);
 		menuContribution.getTags().add("scheme:menu"); //$NON-NLS-1$
 		menuContribution.setParentId(parentId);
