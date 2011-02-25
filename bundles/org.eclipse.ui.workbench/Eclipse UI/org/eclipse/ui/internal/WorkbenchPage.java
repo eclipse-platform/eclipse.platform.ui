@@ -1163,7 +1163,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public boolean closeAllSavedEditors() {
         // get the Saved editors
-        IEditorReference editors[] = getEditorReferences();
+		IEditorReference editors[] = getAllEditorReferences();
         IEditorReference savedEditors[] = new IEditorReference[editors.length];
         int j = 0;
         for (int i = 0; i < editors.length; i++) {
@@ -1185,7 +1185,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * See IWorkbenchPage
      */
     public boolean closeAllEditors(boolean save) {
-        return closeEditors(getEditorReferences(), save);
+		return closeEditors(getAllEditorReferences(), save);
     }
 
     private void updateActivePart() {
@@ -1376,6 +1376,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	            IEditorReference ref = editorRefs[i];
 	            
 	            // Remove editor from the presentation
+				removedEditors.remove(ref);
                 editorPresentation.closeEditor(ref);
 	            
                 partRemoved((WorkbenchPartReference)ref);                
@@ -2115,6 +2116,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public IEditorReference[] getEditorReferences() {
         return editorPresentation.getEditors();
     }
+
+	public IEditorReference[] getAllEditorReferences() {
+		ArrayList allRefs = new ArrayList(removedEditors);
+		allRefs.addAll(Arrays.asList(editorPresentation.getEditors()));
+		return (IEditorReference[]) allRefs.toArray(new IEditorReference[allRefs.size()]);
+	}
 
     /**
      * Returns the docked views.
@@ -4839,16 +4846,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	IWorkbenchPartReference[] getAllParts() {
 		ArrayList allParts = new ArrayList();
 		IViewReference[] views = viewFactory.getViews();
-		IEditorReference[] editors = getEditorReferences();
+		IEditorReference[] editors = getAllEditorReferences();
 
 		if (views.length > 0) {
 			allParts.addAll(Arrays.asList(views));
 		}
 		if (editors.length > 0) {
 			allParts.addAll(Arrays.asList(editors));
-		}
-		if (removedEditors.size() > 0) {
-			allParts.addAll(removedEditors);
 		}
 
 		return (IWorkbenchPartReference[]) allParts

@@ -59,6 +59,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
@@ -2835,6 +2836,8 @@ public class IWorkbenchPageTest extends UITestCase {
 		fActivePage.closeAllEditors(false);
 		assertEquals(getMessage(), 0, logCount);
 		assertEquals(0, fActivePage.getEditorReferences().length);
+		((WorkbenchPage)fActivePage).resetHiddenEditors();
+		assertEquals(0, fActivePage.getEditorReferences().length);
 	}
 	
 	/**
@@ -3000,6 +3003,62 @@ public class IWorkbenchPageTest extends UITestCase {
 		// since it's maximized, it should not be a fast view
 		assertFalse("A restored view should not be a fast view", facade
 				.isFastView(fActivePage, reference));
+	}
+
+	/**
+	 * Create and hide a single editor in a new window.  Close the window.
+	 * Make sure there are no editor errors.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor11() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a.mock1", proj);
+		
+		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchPage page = window.getActivePage();
+		
+		IEditorPart editor = IDE.openEditor(page, file1);
+		assertTrue(editor instanceof MockEditorPart);
+		IEditorReference editorRef = (IEditorReference) page
+				.getReference(editor);
+		page.hideEditor(editorRef);
+		assertEquals(0, page.getEditorReferences().length);
+		page.showEditor(editorRef);
+		assertEquals(1, page.getEditorReferences().length);
+		page.hideEditor(editorRef);
+		processEvents();
+		window.close();
+		processEvents();
+		assertEquals(getMessage(), 0, logCount);
+		assertEquals(0, page.getEditorReferences().length);
+	}
+
+	/**
+	 * Create and hide a single editor.  Close it while it's hidden
+	 * and make sure that it doesn't die.
+	 * 
+	 * @throws Exception
+	 */
+	public void testOpenAndHideEditor12() throws Exception {
+		proj = FileUtil.createProject("testOpenAndHideEditor");
+		IFile file1 = FileUtil.createFile("a.mock1", proj);
+		IEditorPart editor = IDE.openEditor(fActivePage, file1);
+		assertTrue(editor instanceof MockEditorPart);
+		IEditorReference editorRef = (IEditorReference) fActivePage
+				.getReference(editor);
+		fActivePage.hideEditor(editorRef);
+		assertEquals(0, fActivePage.getEditorReferences().length);
+		fActivePage.showEditor(editorRef);
+		assertEquals(1, fActivePage.getEditorReferences().length);
+		fActivePage.hideEditor(editorRef);
+		processEvents();
+		fActivePage.closeEditor(editor, false);
+		processEvents();
+		((WorkbenchPage)fActivePage).resetHiddenEditors();
+		assertEquals(0, fActivePage.getEditorReferences().length);
+		assertEquals(getMessage(), 0, logCount);
+		assertEquals(0, fActivePage.getEditorReferences().length);
 	}
 
 }

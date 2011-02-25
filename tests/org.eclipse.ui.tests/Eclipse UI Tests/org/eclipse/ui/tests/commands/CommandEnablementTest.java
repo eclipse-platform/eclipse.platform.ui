@@ -518,8 +518,9 @@ public class CommandEnablementTest extends UITestCase {
 			IConfigurationElement[] configElements = extensions[i]
 					.getConfigurationElements();
 			for (int j = 0; j < configElements.length && !found; j++) {
-				if (configElements[j].getAttribute(
-						IWorkbenchRegistryConstants.ATT_CLASS).equals(
+				String attrClass = configElements[j].getAttribute(
+						IWorkbenchRegistryConstants.ATT_CLASS);
+				if (attrClass != null && attrClass.equals(
 						"org.eclipse.ui.tests.menus.HelloEHandler")) {
 					handlerProxyConfig = configElements[j];
 					commandId = handlerProxyConfig
