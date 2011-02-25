@@ -53,6 +53,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
@@ -283,6 +285,78 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 	private IExtensionPoint getPerspectiveExtensionPoint() {
 		return Platform.getExtensionRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_PERSPECTIVE_EXTENSIONS);
+	}
+
+	class MnemonicDisabler implements Listener {
+		private final Composite root;
+		private boolean enabled = false;
+
+		public MnemonicDisabler(Composite root) {
+			this.root = root;
+			root.getShell().addListener(SWT.Activate, this);
+			root.getShell().addListener(SWT.Deactivate, this);
+			root.addListener(SWT.Dispose, this);
+			root.getDisplay().addFilter(SWT.Traverse, this);
+		}
+
+		public void handleEvent(Event event) {
+			switch (event.type) {
+			case SWT.Activate:
+				enabled = true;
+				break;
+
+			case SWT.Dispose:
+				root.getDisplay().removeFilter(SWT.Traverse, this);
+				root.getShell().removeListener(SWT.Activate, this);
+				root.getShell().removeListener(SWT.Deactivate, this);
+			case SWT.Deactivate:
+				enabled = false;
+				break;
+
+			case SWT.Traverse:
+				if (!enabled) {
+					return;
+				}
+				handleTraverse(event);
+				break;
+			}
+		}
+
+		private void handleTraverse(Event event) {
+			if (event.detail != SWT.TRAVERSE_MNEMONIC || event.doit != true)
+				return;
+			Control candidate = (Control) event.widget;
+
+			// List of Controls which define the active part's "context".
+			List activeContexts = new ArrayList();
+			activeContexts.add(((PartSite) getActivePart().getSite()).getPane().getControl());
+			// $TODO need to also add the parts toolbar to the list
+
+			IWorkbenchPartReference allParts[] = getSortedParts();
+			List otherContexts = new ArrayList();
+			for (int i = 0; i < allParts.length; i++) {
+				IWorkbenchPartReference partReference = allParts[i];
+				IWorkbenchPart part = partReference.getPart(false);
+				if (part != null && isPartVisible(part))
+					otherContexts.add(((PartSite) part.getSite()).getPane().getControl());
+				// $TODO need to also add the toolbar's control for the part
+			}
+			otherContexts.removeAll(activeContexts);
+
+			// walk up the candidate's parent chain
+			while (candidate != null) {
+				if (activeContexts.contains(candidate))
+					return;
+				else if (otherContexts.contains(candidate)) {
+					event.doit = false;
+					return;
+				}
+				candidate = candidate.getParent();
+			}
+			// Candidate was not inside any context, so it is some global
+			// Control.
+		}
+
 	}
 
     /**
@@ -1651,6 +1725,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 			public void runWithException() {
 				composite = new Composite(parent, SWT.NONE);
+				new MnemonicDisabler(composite);
 				composite.setVisible(false); // Make visible on activate.
 				// force the client composite to be layed out
 				parent.layout();
