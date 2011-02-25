@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,6 +119,12 @@ public class ModeledPageLayout implements IPageLayout {
 			sharedArea.setElementId(getEditorArea());
 
 			window.getSharedElements().add(sharedArea);
+		} else {
+			List<MPartStack> stacks = modelService.findElements(sharedArea, null, MPartStack.class,
+					null);
+			if (!stacks.isEmpty()) {
+				editorStack = stacks.get(0);
+			}
 		}
 
 		eaRef = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
@@ -564,7 +570,8 @@ public class ModeledPageLayout implements IPageLayout {
 	}
 
 	public void stackView(String id, String refId, boolean visible) {
-		MUIElement refModel = findElement(perspModel, refId);
+		MUIElement refModel = refId.equals(getEditorArea()) ? editorStack : findElement(perspModel,
+				refId);
 		if (refModel instanceof MPart || refModel instanceof MPlaceholder) {
 			refModel = refModel.getParent();
 		}
@@ -575,8 +582,15 @@ public class ModeledPageLayout implements IPageLayout {
 		MStackElement viewModel = createViewModel(application, id, visible, page, partService,
 				createReferences);
 		if (viewModel != null) {
-			((MPartStack) refModel).getChildren().add(viewModel);
-			
+			MPartStack stack = (MPartStack) refModel;
+			boolean wasEmpty = stack.getChildren().isEmpty();
+			stack.getChildren().add(viewModel);
+			if (wasEmpty) {
+				// the stack didn't originally have any children, set this as
+				// the selected element
+				stack.setSelectedElement(viewModel);
+			}
+
 			if (visible) {
 				// ensure that the parent is being rendered, it may have been a
 				// placeholder folder so its flag may actually be false
