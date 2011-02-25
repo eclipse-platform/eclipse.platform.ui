@@ -102,7 +102,7 @@ public class HtmlCoderTest extends TestCase {
 		String encoded = UrlUtil.htmlEncode(source);
 		assertNotSame(source, encoded);
 	}
-	
+
 	/**
 	 * Verify that CR is encoded
 	 */
@@ -110,6 +110,24 @@ public class HtmlCoderTest extends TestCase {
 		final String source = "\r";
 		String encoded = UrlUtil.htmlEncode(source);
 		assertNotSame(source, encoded);
+	}
+
+	/**
+	 * Verify that accented character is not encoded
+	 */
+	public void testNoEncodeAccented() {
+		final String source = "\u00c1";
+		String encoded = UrlUtil.htmlEncode(source);
+		assertEquals(source, encoded);
+	}
+	
+	/**
+	 * Verify that Chinese character is not encoded
+	 */
+	public void testNoEncodeChinese() {
+		final String source = "\u4e01";
+		String encoded = UrlUtil.htmlEncode(source);
+		assertEquals(source, encoded);
 	}
 
 }
