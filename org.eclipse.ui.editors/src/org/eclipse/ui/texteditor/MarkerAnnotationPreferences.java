@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -210,9 +210,9 @@ public class MarkerAnnotationPreferences {
 
 
 	/** The list of extension fragments. */
-	private List fFragments;
+	private List/*<AnnotationPreference>*/ fFragments;
 	/** The list of extensions. */
-	private List fPreferences;
+	private List/*<AnnotationPreference>*/ fPreferences;
 
 	/**
 	 * Creates a new marker annotation preferences to access
@@ -238,6 +238,7 @@ public class MarkerAnnotationPreferences {
 	 * Returns all extensions provided for the <code>markerAnnotationSpecification</code> extension point.
 	 *
 	 * @return all extensions provided for the <code>markerAnnotationSpecification</code> extension point
+	 *         (element type: {@link AnnotationPreference})
 	 */
 	public List getAnnotationPreferences() {
 		if (fPreferences == null)
@@ -252,7 +253,7 @@ public class MarkerAnnotationPreferences {
 	 * change the presentation part.
 	 *
 	 * @return all extensions provided for the <code>markerAnnotationSpecification</code>
-	 *         extension point including fragments
+	 *         extension point including fragments (element type: {@link AnnotationPreference})
 	 */
 	public List getAnnotationPreferenceFragments() {
 		if (fFragments == null)
