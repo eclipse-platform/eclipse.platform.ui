@@ -51,7 +51,9 @@ public class TestModelUpdatesListener
     private IStatus fJobError;
     
     private boolean fFailOnRedundantUpdates;
+    private boolean fFailOnRedundantLabelUpdates;
     private Set fRedundantUpdates = new HashSet();
+    private Set fRedundantLabelUpdates = new HashSet();
     private Set fRedundantHasChildrenUpdateExceptions = new HashSet();
     private Set fRedundantChildCountUpdateExceptions = new HashSet();
     private Set fRedundantChildrenUpdateExceptions = new HashSet();
@@ -130,6 +132,10 @@ public class TestModelUpdatesListener
         fFailOnRedundantUpdates = failOnRedundantUpdates;
     }
 
+    public void setFailOnRedundantLabelUpdates(boolean failOnRedundantLabelUpdates) {
+        fFailOnRedundantLabelUpdates = failOnRedundantLabelUpdates;
+    }
+
     public void setFailOnMultipleModelUpdateSequences(boolean failOnMultipleLabelUpdateSequences) {
         fFailOnMultipleModelUpdateSequences = failOnMultipleLabelUpdateSequences;
     }
@@ -165,6 +171,7 @@ public class TestModelUpdatesListener
     public void reset() {
         fJobError = null;
         fRedundantUpdates.clear();
+        fRedundantLabelUpdates.clear();
         fRedundantHasChildrenUpdateExceptions.clear();
         fRedundantChildCountUpdateExceptions.clear();
         fRedundantChildrenUpdateExceptions.clear();
@@ -368,6 +375,9 @@ public class TestModelUpdatesListener
         if (fFailOnRedundantUpdates && !fRedundantUpdates.isEmpty()) {
             Assert.fail("Redundant Updates: " + fRedundantUpdates.toString());
         }
+        if (fFailOnRedundantLabelUpdates && !fRedundantLabelUpdates.isEmpty()) {
+            Assert.fail("Redundant Label Updates: " + fRedundantLabelUpdates.toString());
+        }        
         if (fFailOnMultipleLabelUpdateSequences && !fMultipleLabelUpdateSequencesObserved) {
             Assert.fail("Multiple label update sequences detected");
         }
@@ -524,9 +534,10 @@ public class TestModelUpdatesListener
         	fLabelUpdatesCounter--;
         }
         if (!fLabelUpdates.remove(update.getElementPath()) && 
-            fFailOnRedundantUpdates && 
+            fFailOnRedundantLabelUpdates && 
             !fRedundantLabelUpdateExceptions.contains(update.getElementPath())) 
         {
+        	fRedundantLabelUpdates.add(update);
             Assert.fail("Redundant update: " + update);
         }
     }
