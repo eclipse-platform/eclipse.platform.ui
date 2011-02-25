@@ -14,7 +14,7 @@
       <annotation>
          <documentation>
             A generic root element. The element can be used inside an extension point to define its enablement expression.
-            The children of an enablement expression are combined using the and operator.
+            The children of an enablement expression are combined using the &quot;and&quot; operator.
          </documentation>
       </annotation>
       <complexType>
@@ -39,7 +39,7 @@
    <element name="not">
       <annotation>
          <documentation>
-            This element represent a NOT operation on the result of evaluating it&apos;s sub-element expression.
+            This element represents a NOT operation on the result of evaluating its sub-element expression.
          </documentation>
       </annotation>
       <complexType>
@@ -64,7 +64,7 @@
    <element name="and">
       <annotation>
          <documentation>
-            This element represent an AND operation on the result of evaluating all it&apos;s sub-elements expressions.
+            This element represents an AND operation on the result of evaluating all its sub-elements expressions.
          </documentation>
       </annotation>
       <complexType>
@@ -89,7 +89,7 @@
    <element name="or">
       <annotation>
          <documentation>
-            This element represent an  OR operation on the result of evaluating all it&apos;s sub-element expressions.
+            This element represent an  OR operation on the result of evaluating all its sub-element expressions.
          </documentation>
       </annotation>
       <complexType>
@@ -142,13 +142,7 @@
             <meta.element labelAttribute="property"/>
          </appInfo>
          <documentation>
-            This element is used to evaluate the property state of the object in focus. The set of
-            testable properties can be extended using the propery tester extension point. The test
-            expression returns EvaluationResult.NOT_LOADED if the property tester doing the actual
-            testing isn&apos;t loaded yet and the attribute forcePluginActivation is set to false. 
-            If forcePluginActivation is set to true and the evaluation context used to evaluate
-            this expression support plug-in activation then evaluating the property will result in 
-            activating the plug-in defining the tester.
+            This element is used to evaluate the property state of the object in focus. The set of testable properties can be extended using the &lt;b&gt;org.eclipse.core.expressions.propertyTesters&lt;/b&gt; extension point. The test expression returns EvaluationResult.NOT_LOADED if the property tester doing the actual testing isn&apos;t loaded yet and the attribute forcePluginActivation is set to false.  If forcePluginActivation is set to true and the evaluation context used to evaluate this expression support plug-in activation then evaluating the property will result in activating the plug-in defining the tester.
          </documentation>
       </annotation>
       <complexType>
@@ -183,7 +177,7 @@ rules:
  the value into a Float object. If this fails the string is treated as a
  java.lang.String&lt;/li&gt;
  &lt;li&gt;if the string only consists of numbers then the interpreter
- converts the value in an Integer object.&lt;/li&gt;
+ converts the value into an Integer object.&lt;/li&gt;
  &lt;li&gt;in all other cases the string is treated as a java.lang.String&lt;/li&gt;
  &lt;li&gt;the conversion of the string into a Boolean, Float, or Integer can
  be suppressed by surrounding the string with single quotes. For
@@ -297,7 +291,7 @@ rules:
             This element changes the object to be inspected for all its child element to the object
             referenced by the given variable. If the variable can not be resolved then the expression
             will throw an ExpressionException when evaluating it. The children of a with expression 
-            are combined using the and operator.
+            are combined using the &quot;and&quot; operator.
          </documentation>
       </annotation>
       <complexType>
@@ -336,7 +330,7 @@ rules:
             This element changes the object to be inspected for all its child element to the object
             referenced by the given variable. If the variable can not be resolved then the expression
             will throw an ExpressionException when evaluating it. The children of a resolve expression 
-            are combined using the and operator.
+            are combined using the &quot;and&quot; operator.
          </documentation>
       </annotation>
       <complexType>
@@ -384,9 +378,9 @@ rules:
          </appInfo>
          <documentation>
             This element is used to adapt the object in focus to the type specified by the attribute
-            type. The expression returns not loaded if either the adapter or the type referenced isn&apos;t
+            type. The expression returns EvaluationResult.NOT_LOADED if either the adapter or the type referenced isn&apos;t
             loaded yet. It throws an ExpressionException during evaluation if the type name doesn&apos;t exist 
-            at all. The children of an adapt expression are combined using the and operator.
+            at all. The children of an adapt expression are combined using the &quot;and&quot; operator.
          </documentation>
       </annotation>
       <complexType>
@@ -424,7 +418,7 @@ rules:
             This element is used to iterate over a variable that is of type java.util.Collection, or a variable that
             adapts to org.eclipse.core.expressions.IIterable. If the object in focus is not one of the above then a
             CoreException with an ExpressionStatus will be thrown while evaluating the expression.
-            The child expressions of an iterate expression are combined using the and operator.
+            The child expressions of an iterate expression are combined using the &quot;and&quot; operator.
          </documentation>
       </annotation>
       <complexType>
@@ -463,9 +457,9 @@ rules:
          <attribute name="ifEmpty" type="boolean">
             <annotation>
                <documentation>
-                  the value return from the iterate expression if the collection is empty. If
-                 not specified then true is returned when the operator equals &quot;and&quot; 
-                 and false is return if the operator equals &quot;or&quot;.
+                  the value returned from the &quot;iterate&quot; expression if the collection is empty. If
+                 not specified then EvaluationResult.TRUE is returned when the operator equals &quot;and&quot; 
+                 and EvaluationResult.FALSE is returned if the operator equals &quot;or&quot;.
                </documentation>
             </annotation>
          </attribute>
@@ -512,7 +506,7 @@ rules:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2008 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
