@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public class TemplateContextType {
 	private /* final */ String fId= null;
 
 	/** Variable resolvers used by this content type. */
-	private final Map fResolvers= new HashMap();
+	private final Map/*<String, TemplateVariableResolver>*/ fResolvers= new HashMap();
 
 	/** The name of the context type. */
 	private String fName= null;
@@ -172,7 +172,7 @@ public class TemplateContextType {
 	/**
 	 * Returns an iterator for the variables known to the context type.
 	 *
-	 * @return an iterator over the variables in this context type
+	 * @return an iterator over the variables in this context type (element type: {@link TemplateVariableResolver})
 	 */
 	public Iterator resolvers() {
 	 	return Collections.unmodifiableMap(fResolvers).values().iterator();
