@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -431,7 +431,8 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * Returns the attributes with which a newly created marker will be
 	 * initialized.
 	 *
-	 * @return the initial marker attributes
+	 * @return the initial marker attributes (key type: <code>String</code>, value type:
+	 *         <code>Object</code>)
 	 */
 	protected Map getInitialAttributes() {
 
