@@ -76,7 +76,6 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -112,21 +111,16 @@ public class ControlFactory {
 			}
 
 			if (validate(o.toString())) {
-				t.insert(o.toString());
+				t.paste();
 			}
 		}
 
 		public void cut() {
-			Clipboard cp = new Clipboard(t.getDisplay());
-			cp.setContents(new Object[] { t.getSelectionText() }, new Transfer[] { TextTransfer.getInstance() });
-			cp.dispose();
-			t.insert(""); //$NON-NLS-1$
+			t.cut();
 		}
 
 		public void copy() {
-			Clipboard cp = new Clipboard(t.getDisplay());
-			cp.setContents(new Object[] { t.getSelectionText() }, new Transfer[] { TextTransfer.getInstance() });
-			cp.dispose();
+			t.copy();
 		}
 
 		public boolean validate(String text) {
