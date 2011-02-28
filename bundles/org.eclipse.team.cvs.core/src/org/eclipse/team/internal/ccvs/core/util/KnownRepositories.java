@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
@@ -158,9 +155,9 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 	 * the same as that returned by ICVSRepositoryLocation#getLocation().
 	 * The format is:
 	 * 
-	 *   connection:user[:password]@host[#port]:root
+	 *   :connection:user[:password]@host[#port]:root
 	 * 
-	 * where [] indicates optional and the identier meanings are:
+	 * where [] indicates optional and the identifier meanings are:
 	 * 
 	 * 	 connection The connection method to be used
 	 *   user The username for the connection
@@ -169,7 +166,7 @@ public class KnownRepositories implements INodeChangeListener, IPreferenceChange
 	 *   port The port to connect to (optional)
 	 *   root The server directory where the repository is located
 	 * 
-	 * If the repository is already registered, the cahced instance is returned.
+	 * If the repository is already registered, the cached instance is returned.
 	 * Otherwise, a new uncached instance is returned.
 	 * 
 	 * WARNING: Providing the password as part of the String will result in the password being part
