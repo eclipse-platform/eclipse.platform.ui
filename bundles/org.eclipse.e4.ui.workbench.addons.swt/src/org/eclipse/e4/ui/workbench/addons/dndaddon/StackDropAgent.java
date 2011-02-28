@@ -214,7 +214,7 @@ public class StackDropAgent extends DropAgent {
 		if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size())
 			dropStack.getChildren().add(dropIndex, (MStackElement) dragElement);
 		else
-			dropStack.getChildren().add(dropIndex, (MStackElement) dragElement);
+			dropStack.getChildren().add((MStackElement) dragElement);
 		dropStack.setSelectedElement((MStackElement) dragElement);
 	}
 
