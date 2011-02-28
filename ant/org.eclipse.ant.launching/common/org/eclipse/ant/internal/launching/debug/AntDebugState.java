@@ -245,34 +245,38 @@ public class AntDebugState {
 		
 		setCurrentTask(event.getTask());
 		setConsiderTargetBreakpoints(false);
-		if (!getTasks().isEmpty()) {
+		Stack tasks = getTasks();
+		if (!tasks.isEmpty()) {
 			//cache the parent task proxy as when that task is started or finished the
 			//proxy is not yet available or is nulled out
-			Task parentTask = (Task) getTasks().peek();
+			Task parentTask = (Task) tasks.peek();
 			Object proxy = parentTask.getRuntimeConfigurableWrapper().getProxy();
 			if (proxy != null) {
 				fTaskToProxies.put(parentTask, proxy);
 			}
 		}
-		getTasks().push(getCurrentTask());
+		tasks.push(getCurrentTask());
 		waitIfSuspended();
 	}
 	
 
     public void taskFinished() {
-    	Task lastTask= (Task)getTasks().pop();
-        setLastTaskFinished(lastTask);
-        setCurrentTask(null);
-        String taskName= lastTask.getTaskName();
-       
-        if (getStepOverTask() != null) {
-        	if ((fgAntCallTaskName.equals(taskName) || fgAntTaskName.equals(taskName)) && (!fgAntCallTaskName.equals(getStepOverTask().getTaskName()) && !fgAntTaskName.equals(getStepOverTask().getTaskName()))) {
-        		setShouldSuspend(true);
-        	} else if (fTaskToProxies.remove(lastTask) instanceof MacroInstance) {
-        		setShouldSuspend(true);
-        	}
-        }
-        waitIfSuspended();
+    	Stack tasks = getTasks();
+    	if(!tasks.empty()) {
+	    	Task lastTask= (Task)tasks.pop();
+	        setLastTaskFinished(lastTask);
+	        setCurrentTask(null);
+	        String taskName= lastTask.getTaskName();
+	       
+	        if (getStepOverTask() != null) {
+	        	if ((fgAntCallTaskName.equals(taskName) || fgAntTaskName.equals(taskName)) && (!fgAntCallTaskName.equals(getStepOverTask().getTaskName()) && !fgAntTaskName.equals(getStepOverTask().getTaskName()))) {
+	        		setShouldSuspend(true);
+	        	} else if (fTaskToProxies.remove(lastTask) instanceof MacroInstance) {
+	        		setShouldSuspend(true);
+	        	}
+	        }
+    	}
+    	 waitIfSuspended();
     }
 
     public void stepOver() {
@@ -396,7 +400,7 @@ public class AntDebugState {
         Project projectExecuting= null;
         if (targetExecuting != null) {
             projectExecuting= targetExecuting.getProject();
-        } else { //no target...must be a task
+        } else if(!tasks.empty()) { //no target...must be a task
             Task task= (Task) tasks.peek();
             projectExecuting= task.getProject();
         }
@@ -449,13 +453,14 @@ public class AntDebugState {
     }
 
 	public void marshallProperties(StringBuffer propertiesRepresentation, boolean escapeLineSep) {
-		if (getTasks().isEmpty()) {
+		Stack tasks = getTasks();
+		if (tasks.isEmpty()) {
 			return;
 		}
 	    propertiesRepresentation.append(DebugMessageIds.PROPERTIES);
 	    propertiesRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 		
-		Project project= ((Task)getTasks().peek()).getProject();
+		Project project= ((Task)tasks.peek()).getProject();
 		Map lastProperties= getProperties(); 
 		
 	    Map currentProperties= project.getProperties();
