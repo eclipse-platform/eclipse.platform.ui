@@ -2533,6 +2533,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (activate) {
 				activate(editor);
 			}
+
+			recordEditor(input, descriptor);
 			return editor;
 		} else if (descriptor.isOpenExternal()) {
 			openExternalEditor(descriptor, input);
@@ -2557,9 +2559,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			legacyWindow.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
 		}
 
+		recordEditor(input, descriptor);
 		return compatibilityEditor.getEditor();
     }
 
+	private void recordEditor(IEditorInput input, IEditorDescriptor descriptor) {
+		EditorHistory history = ((Workbench) legacyWindow.getWorkbench()).getEditorHistory();
+		history.add(input, descriptor);
+	}
 
     /**
      * See IWorkbenchPage.
@@ -3816,6 +3823,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					desc.getId()), ex[0]);
 		}
 
+		recordEditor(input, desc);
 		// we do not have an editor part for external editors
 		return null;
 	}

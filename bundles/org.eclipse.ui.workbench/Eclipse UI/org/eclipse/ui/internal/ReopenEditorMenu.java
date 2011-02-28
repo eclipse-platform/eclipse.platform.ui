@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.Window;
@@ -43,15 +40,6 @@ public class ReopenEditorMenu extends ContributionItem {
     private EditorHistory history;
 
     private boolean showSeparator;
-
-    private boolean dirty = true;
-
-    private IMenuListener menuListener = new IMenuListener() {
-        public void menuAboutToShow(IMenuManager manager) {
-            manager.markDirty();
-            dirty = true;
-        }
-    };
 
     // the maximum length for a file name; must be >= 4
     private static final int MAX_TEXT_LENGTH = 40;
@@ -209,10 +197,6 @@ public class ReopenEditorMenu extends ContributionItem {
             return;
         }
 
-        if (getParent() instanceof MenuManager) {
-            ((MenuManager) getParent()).addMenuListener(menuListener);
-        }
-
         int itemsToShow = WorkbenchPlugin.getDefault().getPreferenceStore()
                 .getInt(IPreferenceConstants.RECENT_FILES);
 		if (itemsToShow == 0 || history == null) {
@@ -257,14 +241,6 @@ public class ReopenEditorMenu extends ContributionItem {
                 }
             });
         }
-        dirty = false;
-    }
-
-    /**
-     * Overridden to always return true and force dynamic menu building.
-     */
-    public boolean isDirty() {
-        return dirty;
     }
 
     /**
