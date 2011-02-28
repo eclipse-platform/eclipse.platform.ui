@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -302,7 +302,8 @@ public class TextUtilities {
 	 * the given document is no longer connected to any document partitioner.
 	 *
 	 * @param document the document
-	 * @return the map containing the removed partitioners
+	 * @return the map containing the removed partitioners (key type: {@link String}, value type:
+	 *         {@link IDocumentPartitioner})
 	 */
 	public static Map removeDocumentPartitioners(IDocument document) {
 		Map partitioners= new HashMap();
@@ -333,7 +334,8 @@ public class TextUtilities {
 	 * their partitioning name. This method cleans the given map.
 	 *
 	 * @param document the document
-	 * @param partitioners the map containing the partitioners to be connected
+	 * @param partitioners the map containing the partitioners to be connected (key type: {@link String}, value type:
+	 *         {@link IDocumentPartitioner})
 	 * @since 3.0
 	 */
 	public static void addDocumentPartitioners(IDocument document, Map partitioners) {
