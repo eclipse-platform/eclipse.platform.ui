@@ -2527,6 +2527,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				((IShowEditorInput) editor).showEditorInput(input);
 			}
 
+			partService.showPart(((EditorReference) editorReferences[0]).getModel(),
+					PartState.VISIBLE);
+
 			if (activate) {
 				activate(editor);
 			}
