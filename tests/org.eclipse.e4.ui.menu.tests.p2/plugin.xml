@@ -47,6 +47,46 @@
                style="push">
          </action>
       </actionSet>
+      <actionSet
+            id="org.eclipse.e4.ui.menu.tests.p2.testToolbar"
+            label="Test Toolbar"
+            visible="true">
+         <action
+               class="org.eclipse.e4.ui.menu.tests.p2.TestActionDelegate"
+               id="org.eclipse.e4.ui.menu.tests.p2.tb1"
+               label="TBone"
+               style="push"
+               toolbarPath="p2.tb1/group1">
+         </action>
+         <action
+               class="org.eclipse.e4.ui.menu.tests.p2.TestActionDelegate"
+               id="org.eclipse.e4.ui.menu.tests.p2.tb2"
+               label="TBtwo"
+               style="push"
+               toolbarPath="p2.tb1/group1">
+         </action>
+         <action
+               class="org.eclipse.e4.ui.menu.tests.p2.TestActionDelegate"
+               id="org.eclipse.e4.ui.menu.tests.p2.tb3"
+               label="TBthree"
+               style="push"
+               toolbarPath="p2.tb1/group1">
+         </action>
+         <action
+               class="org.eclipse.e4.ui.menu.tests.p2.TestActionDelegate"
+               id="org.eclipse.e4.ui.menu.tests.p2.tb4"
+               label="TBfour"
+               style="push"
+               toolbarPath="p2.tb1/group2">
+         </action>
+         <action
+               class="org.eclipse.e4.ui.menu.tests.p2.TestActionDelegate"
+               id="org.eclipse.e4.ui.menu.tests.p2.tb5"
+               label="TBfive"
+               style="push"
+               toolbarPath="p2.tb1/group2">
+         </action>
+      </actionSet>
    </extension>
 
 </plugin>

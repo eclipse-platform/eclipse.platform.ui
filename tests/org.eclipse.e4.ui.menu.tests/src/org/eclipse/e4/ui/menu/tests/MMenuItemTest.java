@@ -2,24 +2,10 @@ package org.eclipse.e4.ui.menu.tests;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.commands.Category;
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandManager;
-import org.eclipse.core.commands.IExecutionListener;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.commands.ParameterType;
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.SerializationException;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -79,164 +65,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.commands.ICommandImageService;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.internal.commands.CommandImageManager;
 import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.menus.MenuPersistence;
-import org.eclipse.ui.menus.UIElement;
 import org.osgi.framework.ServiceReference;
 
 public class MMenuItemTest extends TestCase {
-	
-	static class CmdService implements ICommandService {
 
-		private Category category;
-		
-		@Inject
-		private CommandManager manager;
-		
-		@Override
-		public void addExecutionListener(IExecutionListener listener) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void defineUncategorizedCategory(String name, String description) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public ParameterizedCommand deserialize(
-				String serializedParameterizedCommand)
-				throws NotDefinedException, SerializationException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void dispose() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public Category getCategory(String categoryId) {
-			return manager.getCategory(categoryId);
-		}
-
-		@Override
-		public Command getCommand(String commandId) {
-			Command cmd = manager.getCommand(commandId);
-			if (!cmd.isDefined()) {
-				cmd.define(commandId, null, category);
-			}
-			return cmd;
-		}
-
-		@Override
-		public Category[] getDefinedCategories() {
-			return manager.getDefinedCategories();
-		}
-
-		@Override
-		public Collection getDefinedCategoryIds() {
-			return manager.getDefinedCategoryIds();
-		}
-
-		@Override
-		public Collection getDefinedCommandIds() {
-			return manager.getDefinedCommandIds();
-		}
-
-		@Override
-		public Command[] getDefinedCommands() {
-			return manager.getDefinedCommands();
-		}
-
-		@Override
-		public Collection getDefinedParameterTypeIds() {
-			return manager.getDefinedParameterTypeIds();
-		}
-
-		@Override
-		public ParameterType[] getDefinedParameterTypes() {
-			return manager.getDefinedParameterTypes();
-		}
-
-		@Override
-		public String getHelpContextId(Command command)
-				throws NotDefinedException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public String getHelpContextId(String commandId)
-				throws NotDefinedException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public ParameterType getParameterType(String parameterTypeId) {
-			return manager.getParameterType(parameterTypeId);
-		}
-
-		@PostConstruct
-		public void init() {
-			category = manager.getCategory("fake.category");
-			category.define("Fake Cat", null);
-		}
-
-		@Override
-		public void readRegistry() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void refreshElements(String commandId, Map filter) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void registerElement(IElementReference elementReference) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public IElementReference registerElementForCommand(
-				ParameterizedCommand command, UIElement element)
-				throws NotDefinedException {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void removeExecutionListener(IExecutionListener listener) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void setHelpContextId(IHandler handler, String helpContextId) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void unregisterElement(IElementReference elementReference) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
-	private static final String ORG_ECLIPSE_UI_CONTEXTS_ACTION_SET = "org.eclipse.ui.contexts.actionSet";
 	final static String PDE_SEARCH_AS_ID = "org.eclipse.pde.ui.SearchActionSet";
 
 	final static String SEARCH_AS_ID = "org.eclipse.search.searchActionSet";
@@ -317,7 +152,7 @@ public class MMenuItemTest extends TestCase {
 					+ mc.getPositionInParent());
 			printMenuOut(1, mc);
 		}
-		
+
 		for (MToolBarContribution tbc : application.getToolBarContributions()) {
 			System.out.print("\n\nTC: " + tbc.getParentId() + "?"
 					+ tbc.getPositionInParent());
@@ -326,11 +161,12 @@ public class MMenuItemTest extends TestCase {
 	}
 
 	private void printIcon(int level, MUILabel item) {
-		printTabs(level+2);
+		printTabs(level + 2);
 		System.out.print("icon: " + item.getIconURI());
 	}
 
-	private void printMenuOut(int level, MElementContainer<MMenuElement> container) {
+	private void printMenuOut(int level,
+			MElementContainer<MMenuElement> container) {
 		for (MMenuElement child : container.getChildren()) {
 			printTabs(level);
 			System.out.print(child.getClass().getSimpleName() + ": "
@@ -390,192 +226,6 @@ public class MMenuItemTest extends TestCase {
 				PartRenderingEngine.engineURI);
 	}
 
-	private void setupActionBuilderStructure(MMenu menuBar) {
-		MMenu file = MenuFactoryImpl.eINSTANCE.createMenu();
-		file.setElementId("file");
-		file.setLabel("&File");
-		menuBar.getChildren().add(file);
-		
-		MDirectMenuItem item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
-		item.setElementId("refresh");
-		item.setLabel("Re&fresh");
-		file.getChildren().add(item);
-		
-		item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
-		item.setElementId("exit");
-		item.setLabel("&Exit");
-		file.getChildren().add(item);
-		
-		MMenu edit = MenuFactoryImpl.eINSTANCE.createMenu();
-		edit.setElementId("edit");
-		edit.setLabel("&Edit");
-		menuBar.getChildren().add(edit);
-		
-		
-		item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
-		item.setElementId("cut");
-		item.setLabel("Cu&t");
-		edit.getChildren().add(item);
-		
-		item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
-		item.setElementId("copy");
-		item.setLabel("&Copy");
-		edit.getChildren().add(item);
-		
-		item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
-		item.setElementId("paste");
-		item.setLabel("&Paste");
-		edit.getChildren().add(item);
-
-		MMenuSeparator sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
-		sep.setElementId("copy.ext");
-		sep.setVisible(false);
-		edit.getChildren().add(sep);
-		
-		sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
-		sep.setElementId("additions");
-		sep.setVisible(false);
-		menuBar.getChildren().add(sep);
-		
-		MMenu window = MenuFactoryImpl.eINSTANCE.createMenu();
-		window.setElementId("window");
-		window.setLabel("&Window");
-		menuBar.getChildren().add(window);
-		
-		item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
-		item.setElementId("newWindow");
-		item.setLabel("&New Window");
-		window.getChildren().add(item);
-		
-		item = MenuFactoryImpl.eINSTANCE.createDirectMenuItem();
-		item.setElementId("preferences");
-		item.setLabel("&Preferences");
-		window.getChildren().add(item);
-	}
-
-	private void setupCommandImageService(IEclipseContext ctx) {
-		CmdService cs = ContextInjectionFactory.make(CmdService.class, ctx);
-		CommandImageService service = new CommandImageService(new CommandImageManager(), cs);
-		service.readRegistry();
-		ctx.set(ICommandImageService.class, service);
-	}
-
-	private MApplication setupRenderer() {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		application.setContext(appContext);
-		appContext.set(MApplication.class, application);
-		
-		MBindingContext rootContext = CommandsFactoryImpl.eINSTANCE.createBindingContext();
-		rootContext.setElementId(ORG_ECLIPSE_UI_CONTEXTS_ACTION_SET);
-		rootContext.setName("ActionSets");
-		application.getRootContext().add(rootContext);
-		EContextService ecs = appContext.get(EContextService.class);
-		Context actionSet = ecs.getContext(ORG_ECLIPSE_UI_CONTEXTS_ACTION_SET);
-		if (!actionSet.isDefined()) {
-			actionSet.define("ActionSets", null, null);
-		}
-
-		setupRendererServices(appContext);
-
-		setupCommandImageService(appContext);
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		window.setContext(appContext.createChild("MWindowContext"));
-		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
-		menuBar.setElementId("org.eclipse.ui.main.menu");
-		window.setMainMenu(menuBar);
-
-		application.getChildren().add(window);
-		application.setSelectedElement(window);
-		window.getContext().activate();
-
-		assertNotNull(appContext.get(Logger.class));
-		assertNotNull(appContext.get(IEventBroker.class));
-		
-		Display display = Display.getDefault();
-		appContext.set(Display.class, display);
-		
-		final MenuManagerRenderer renderer = new MenuManagerRenderer();
-		appContext.set(IRendererFactory.class, new IRendererFactory() {
-			@Override
-			public AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
-				return renderer;
-			}
-		});
-		renderer.init(appContext);
-		ContextInjectionFactory.inject(renderer, appContext);
-
-		((Notifier) application).eAdapters().add(
-				new UIEventPublisher(appContext));
-		return application;
-	}
-
-	private void setupRendererServices(IEclipseContext appContext) {
-		appContext.set(Logger.class, new Logger() {
-
-			@Override
-			public String getName() {
-				// TODO Auto-generated method stub
-				return "Fake Logger";
-			}
-
-			@Override
-			public boolean isLoggable(int level) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public void log(int level, String message) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void log(int level, String message, Throwable exception) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void log(Object context, int level, String message) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void log(Object context, int level, String message,
-					Throwable exception) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void log(ServiceReference<?> sr, int level, String message) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void log(ServiceReference<?> sr, int level, String message,
-					Throwable exception) {
-				// TODO Auto-generated method stub
-				
-			}});
-		appContext.set(IResourceUtilities.class, new ISWTResourceUtilities() {
-
-			@Override
-			public ImageDescriptor imageDescriptorFromURI(URI iconPath) {
-				try {
-					return ImageDescriptor.createFromURL(new URL(iconPath.toString()));
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				return null;
-			} });
-	}
-
 	@Override
 	protected void tearDown() throws Exception {
 		if (wb != null) {
@@ -585,279 +235,311 @@ public class MMenuItemTest extends TestCase {
 	}
 
 	public void testActionSetGeneration() throws Exception {
-		MApplication application = setupRenderer();
-		MenuManagerRenderer renderer = appContext.get(MenuManagerRenderer.class);
+		MApplication application = TestUtil.setupRenderer(appContext);
+		MenuManagerRenderer renderer = appContext
+				.get(MenuManagerRenderer.class);
 		MMenu menuBar = application.getChildren().get(0).getMainMenu();
-		
+
 		// setup structure for actionSet test
-		setupActionBuilderStructure(menuBar);
+		TestUtil.setupActionBuilderStructure(menuBar);
 
 		// read in the relevant extensions.
-		MenuPersistence mp = new MenuPersistence(application, appContext, "org.eclipse.e4.ui.menu.tests.p2");
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p2");
 		mp.reRead();
-		
-		
+
 		// render the main menu bar
 		Shell shell = new Shell();
 		Menu menu = (Menu) renderer.createWidget(menuBar, shell);
 		assertNotNull(menu);
 		Object obj = menuBar;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
-		
+
 		MenuManager manager = renderer.getManager(menuBar);
 		assertNotNull(manager);
 		assertEquals(5, manager.getSize());
-		
+
 		MenuManager editManager = (MenuManager) manager.getItems()[1];
 		assertEquals(5, editManager.getSize());
 		IContributionItem[] editItems = editManager.getItems();
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.action4", editItems[4].getId());
-		
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.action4",
+				editItems[4].getId());
+
 		MenuManager actionManager = (MenuManager) manager.getItems()[3];
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.menu1", actionManager.getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.menu1",
+				actionManager.getId());
 		assertEquals(5, actionManager.getSize());
-		
+
 		IContributionItem[] actionItems = actionManager.getItems();
 		assertEquals("group1", actionItems[0].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.action2", actionItems[1].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.action1", actionItems[2].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.action2",
+				actionItems[1].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.action1",
+				actionItems[2].getId());
 		assertEquals("group2", actionItems[3].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.p2.action3", actionItems[4].getId());
-		
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.action3",
+				actionItems[4].getId());
+
 	}
 
 	public void testActionSetSharedBothActive() throws Exception {
-		MApplication application = setupRenderer();
-		MenuManagerRenderer renderer = appContext.get(MenuManagerRenderer.class);
+		MApplication application = TestUtil.setupRenderer(appContext);
+		MenuManagerRenderer renderer = appContext
+				.get(MenuManagerRenderer.class);
 		MWindow window = application.getChildren().get(0);
 		MMenu menuBar = window.getMainMenu();
-		
+
 		// setup structure for actionSet test
-		setupActionBuilderStructure(menuBar);
-	
+		TestUtil.setupActionBuilderStructure(menuBar);
+
 		// read in the relevant extensions.
-		MenuPersistence mp = new MenuPersistence(application, appContext, "org.eclipse.e4.ui.menu.tests.p3");
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p3");
 		mp.reRead();
-		//printContributions(application);
-		
-		
+		// printContributions(application);
+
 		// render the main menu bar
 		Shell shell = new Shell();
 		Menu menu = (Menu) renderer.createWidget(menuBar, shell);
 		assertNotNull(menu);
 		Object obj = menuBar;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
-		
+
 		MenuManager manager = renderer.getManager(menuBar);
 		assertNotNull(manager);
 		assertEquals(6, manager.getSize());
-		
+
 		MenuManager editManager = (MenuManager) manager.getItems()[1];
 		assertEquals(4, editManager.getSize());
-		
+
 		MenuManager searchManager = (MenuManager) manager.getItems()[4];
 		assertEquals("org.eclipse.search.menu", searchManager.getId());
 		assertFalse(searchManager.isVisible());
-		
+
 		IEclipseContext windowContext = window.getContext();
 		EContextService ecs = windowContext.get(EContextService.class);
 		ecs.activateContext(SEARCH_AS_ID);
 		ecs.activateContext(PDE_SEARCH_AS_ID);
 		assertTrue(searchManager.isVisible());
-		
+
 		assertEquals(10, searchManager.getSize());
 		IContributionItem[] searchItems = searchManager.getItems();
 		assertEquals("internalDialogGroup", searchItems[0].getId());
-		assertEquals("org.eclipse.search.OpenSearchDialog", searchItems[1].getId());
-		assertEquals("org.eclipse.search.OpenFileSearchPage", searchItems[2].getId());
+		assertEquals("org.eclipse.search.OpenSearchDialog",
+				searchItems[1].getId());
+		assertEquals("org.eclipse.search.OpenFileSearchPage",
+				searchItems[2].getId());
 		assertEquals("dialogGroup", searchItems[3].getId());
-		assertEquals("org.eclipse.pde.ui.actions.OpenPluginSearchPage", searchItems[4].getId());
-		assertEquals("fileSearchContextMenuActionsGroup", searchItems[5].getId());
+		assertEquals("org.eclipse.pde.ui.actions.OpenPluginSearchPage",
+				searchItems[4].getId());
+		assertEquals("fileSearchContextMenuActionsGroup",
+				searchItems[5].getId());
 		assertEquals("textSearchSubMenu", searchItems[6].getId());
 		assertEquals("contextMenuActionsGroup", searchItems[7].getId());
 		assertEquals("occurencesActionsGroup", searchItems[8].getId());
 		assertEquals("extraSearchGroup", searchItems[9].getId());
-		
+
 	}
 
 	public void testActionSetSharedMenuGeneration() throws Exception {
-		MApplication application = setupRenderer();
-		MenuManagerRenderer renderer = appContext.get(MenuManagerRenderer.class);
+		MApplication application = TestUtil.setupRenderer(appContext);
+		MenuManagerRenderer renderer = appContext
+				.get(MenuManagerRenderer.class);
 		MWindow window = application.getChildren().get(0);
 		MMenu menuBar = window.getMainMenu();
-		
+
 		// setup structure for actionSet test
-		setupActionBuilderStructure(menuBar);
-	
+		TestUtil.setupActionBuilderStructure(menuBar);
+
 		// read in the relevant extensions.
-		MenuPersistence mp = new MenuPersistence(application, appContext, "org.eclipse.e4.ui.menu.tests.p3");
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p3");
 		mp.reRead();
-		//printContributions(application);
-		
-		
+		// printContributions(application);
+
 		// render the main menu bar
 		Shell shell = new Shell();
 		Menu menu = (Menu) renderer.createWidget(menuBar, shell);
 		assertNotNull(menu);
 		Object obj = menuBar;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
-		
+
 		MenuManager manager = renderer.getManager(menuBar);
 		assertNotNull(manager);
 		assertEquals(6, manager.getSize());
-		
+
 		MenuManager editManager = (MenuManager) manager.getItems()[1];
 		assertEquals(4, editManager.getSize());
-		
+
 		MenuManager searchManager = (MenuManager) manager.getItems()[4];
 		assertEquals("org.eclipse.search.menu", searchManager.getId());
 		assertFalse(searchManager.isVisible());
-		
+
 		assertEquals(10, searchManager.getSize());
 		IContributionItem[] searchItems = searchManager.getItems();
 		assertEquals("internalDialogGroup", searchItems[0].getId());
-		assertEquals("org.eclipse.search.OpenSearchDialog", searchItems[1].getId());
-		assertEquals("org.eclipse.search.OpenFileSearchPage", searchItems[2].getId());
+		assertEquals("org.eclipse.search.OpenSearchDialog",
+				searchItems[1].getId());
+		assertEquals("org.eclipse.search.OpenFileSearchPage",
+				searchItems[2].getId());
 		assertEquals("dialogGroup", searchItems[3].getId());
-		assertEquals("org.eclipse.pde.ui.actions.OpenPluginSearchPage", searchItems[4].getId());
-		assertEquals("fileSearchContextMenuActionsGroup", searchItems[5].getId());
+		assertEquals("org.eclipse.pde.ui.actions.OpenPluginSearchPage",
+				searchItems[4].getId());
+		assertEquals("fileSearchContextMenuActionsGroup",
+				searchItems[5].getId());
 		assertEquals("textSearchSubMenu", searchItems[6].getId());
 		assertEquals("contextMenuActionsGroup", searchItems[7].getId());
 		assertEquals("occurencesActionsGroup", searchItems[8].getId());
 		assertEquals("extraSearchGroup", searchItems[9].getId());
-		
+
 	}
 
 	public void testActionSetSharedPDEActive() throws Exception {
-		MApplication application = setupRenderer();
-		MenuManagerRenderer renderer = appContext.get(MenuManagerRenderer.class);
+		MApplication application = TestUtil.setupRenderer(appContext);
+		MenuManagerRenderer renderer = appContext
+				.get(MenuManagerRenderer.class);
 		MWindow window = application.getChildren().get(0);
 		MMenu menuBar = window.getMainMenu();
-		
+
 		// setup structure for actionSet test
-		setupActionBuilderStructure(menuBar);
-	
+		TestUtil.setupActionBuilderStructure(menuBar);
+
 		// read in the relevant extensions.
-		MenuPersistence mp = new MenuPersistence(application, appContext, "org.eclipse.e4.ui.menu.tests.p3");
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p3");
 		mp.reRead();
 		printContributions(application);
-		
-		
+
 		// render the main menu bar
 		Shell shell = new Shell();
 		Menu menu = (Menu) renderer.createWidget(menuBar, shell);
 		assertNotNull(menu);
 		Object obj = menuBar;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
-		
+
 		MenuManager manager = renderer.getManager(menuBar);
 		assertNotNull(manager);
 		assertEquals(6, manager.getSize());
-		
+
 		MenuManager editManager = (MenuManager) manager.getItems()[1];
 		assertEquals(4, editManager.getSize());
-		
+
 		MenuManager searchManager = (MenuManager) manager.getItems()[4];
 		assertEquals("org.eclipse.search.menu", searchManager.getId());
 		assertFalse(searchManager.isVisible());
-		
+
 		IEclipseContext windowContext = window.getContext();
 		EContextService ecs = windowContext.get(EContextService.class);
 		ecs.activateContext(PDE_SEARCH_AS_ID);
 		assertTrue(searchManager.isVisible());
-		
+
 		assertEquals(10, searchManager.getSize());
 		IContributionItem[] searchItems = searchManager.getItems();
 		assertEquals("internalDialogGroup", searchItems[0].getId());
-		assertEquals("org.eclipse.search.OpenSearchDialog", searchItems[1].getId());
-		assertEquals("org.eclipse.search.OpenFileSearchPage", searchItems[2].getId());
+		assertEquals("org.eclipse.search.OpenSearchDialog",
+				searchItems[1].getId());
+		assertEquals("org.eclipse.search.OpenFileSearchPage",
+				searchItems[2].getId());
 		assertEquals("dialogGroup", searchItems[3].getId());
-		assertEquals("org.eclipse.pde.ui.actions.OpenPluginSearchPage", searchItems[4].getId());
-		assertEquals("fileSearchContextMenuActionsGroup", searchItems[5].getId());
+		assertEquals("org.eclipse.pde.ui.actions.OpenPluginSearchPage",
+				searchItems[4].getId());
+		assertEquals("fileSearchContextMenuActionsGroup",
+				searchItems[5].getId());
 		assertEquals("textSearchSubMenu", searchItems[6].getId());
 		assertEquals("contextMenuActionsGroup", searchItems[7].getId());
 		assertEquals("occurencesActionsGroup", searchItems[8].getId());
 		assertEquals("extraSearchGroup", searchItems[9].getId());
-		
+
 	}
-	
+
 	public void testActionSetSharedSearchActive() throws Exception {
-		MApplication application = setupRenderer();
-		MenuManagerRenderer renderer = appContext.get(MenuManagerRenderer.class);
+		MApplication application = TestUtil.setupRenderer(appContext);
+		MenuManagerRenderer renderer = appContext
+				.get(MenuManagerRenderer.class);
 		MWindow window = application.getChildren().get(0);
 		MMenu menuBar = window.getMainMenu();
-		
+
 		// setup structure for actionSet test
-		setupActionBuilderStructure(menuBar);
-	
+		TestUtil.setupActionBuilderStructure(menuBar);
+
 		// read in the relevant extensions.
-		MenuPersistence mp = new MenuPersistence(application, appContext, "org.eclipse.e4.ui.menu.tests.p3");
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p3");
 		mp.reRead();
-		//printContributions(application);
-		
-		
+		// printContributions(application);
+
 		// render the main menu bar
 		Shell shell = new Shell();
 		Menu menu = (Menu) renderer.createWidget(menuBar, shell);
 		assertNotNull(menu);
 		Object obj = menuBar;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
-		
+
 		MenuManager manager = renderer.getManager(menuBar);
 		assertNotNull(manager);
 		assertEquals(6, manager.getSize());
-		
+
 		MenuManager editManager = (MenuManager) manager.getItems()[1];
 		assertEquals(4, editManager.getSize());
-		
+
 		MenuManager searchManager = (MenuManager) manager.getItems()[4];
 		assertEquals("org.eclipse.search.menu", searchManager.getId());
 		assertFalse(searchManager.isVisible());
-		
+
 		IEclipseContext windowContext = window.getContext();
 		EContextService ecs = windowContext.get(EContextService.class);
 		ecs.activateContext(SEARCH_AS_ID);
 		assertTrue(searchManager.isVisible());
-		
+
 		assertEquals(10, searchManager.getSize());
 		IContributionItem[] searchItems = searchManager.getItems();
 		assertEquals("internalDialogGroup", searchItems[0].getId());
-		assertEquals("org.eclipse.search.OpenSearchDialog", searchItems[1].getId());
-		assertEquals("org.eclipse.search.OpenFileSearchPage", searchItems[2].getId());
+		assertEquals("org.eclipse.search.OpenSearchDialog",
+				searchItems[1].getId());
+		assertEquals("org.eclipse.search.OpenFileSearchPage",
+				searchItems[2].getId());
 		assertEquals("dialogGroup", searchItems[3].getId());
-		assertEquals("org.eclipse.pde.ui.actions.OpenPluginSearchPage", searchItems[4].getId());
-		assertEquals("fileSearchContextMenuActionsGroup", searchItems[5].getId());
+		assertEquals("org.eclipse.pde.ui.actions.OpenPluginSearchPage",
+				searchItems[4].getId());
+		assertEquals("fileSearchContextMenuActionsGroup",
+				searchItems[5].getId());
 		assertEquals("textSearchSubMenu", searchItems[6].getId());
 		assertEquals("contextMenuActionsGroup", searchItems[7].getId());
 		assertEquals("occurencesActionsGroup", searchItems[8].getId());
 		assertEquals("extraSearchGroup", searchItems[9].getId());
-		
+
 	}
+
 	public void testContributionRecordMerging() throws Exception {
-		MApplication application = setupRenderer();
-		MenuManagerRenderer renderer = appContext.get(MenuManagerRenderer.class);
+		MApplication application = TestUtil.setupRenderer(appContext);
+		MenuManagerRenderer renderer = appContext
+				.get(MenuManagerRenderer.class);
 		MMenu menuBar = application.getChildren().get(0).getMainMenu();
-	
+
 		// read in the relevant extensions.
-		MenuPersistence mp = new MenuPersistence(application, appContext, "org.eclipse.e4.ui.menu.tests.p1");
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p1");
 		mp.reRead();
 		// printContributions(application);
-		
-		List<MMenuContribution> menuContributions = application.getMenuContributions();
+
+		List<MMenuContribution> menuContributions = application
+				.getMenuContributions();
 		assertEquals(6, menuContributions.size());
-		
-		ContributionRecord twoMenus = new ContributionRecord(menuBar, menuContributions.get(0), renderer);
+
+		ContributionRecord twoMenus = new ContributionRecord(menuBar,
+				menuContributions.get(0), renderer);
 		assertTrue(twoMenus.mergeIntoModel());
 		assertEquals(2, menuBar.getChildren().size());
-		
+
 		MMenu withHandlers = (MMenu) menuBar.getChildren().get(1);
 		assertEquals(0, withHandlers.getChildren().size());
-		
-		ContributionRecord handlers = new ContributionRecord(withHandlers, menuContributions.get(2), renderer);
+
+		ContributionRecord handlers = new ContributionRecord(withHandlers,
+				menuContributions.get(2), renderer);
 		assertTrue(handlers.mergeIntoModel());
 		assertEquals(4, withHandlers.getChildren().size());
 	}
-	
+
 	public void testMenuContribution() throws Exception {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menuBar = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -902,93 +584,102 @@ public class MMenuItemTest extends TestCase {
 
 		assertEquals("mmc.item1", fileManager.getItems()[3].getId());
 	}
-	
+
 	public void testMenuContributionGeneration() throws Exception {
-		MApplication application = setupRenderer();
-		MenuManagerRenderer renderer = appContext.get(MenuManagerRenderer.class);
+		MApplication application = TestUtil.setupRenderer(appContext);
+		MenuManagerRenderer renderer = appContext
+				.get(MenuManagerRenderer.class);
 		MMenu menuBar = application.getChildren().get(0).getMainMenu();
 
 		// read in the relevant extensions.
-		MenuPersistence mp = new MenuPersistence(application, appContext, "org.eclipse.e4.ui.menu.tests.p1");
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p1");
 		mp.reRead();
-		
-		
+
 		// render the main menu bar
 		Shell shell = new Shell();
 		Menu menu = (Menu) renderer.createWidget(menuBar, shell);
 		assertNotNull(menu);
 		Object obj = menuBar;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
-		
+
 		MenuManager manager = renderer.getManager(menuBar);
 		assertNotNull(manager);
 		assertEquals(2, manager.getSize());
-		
+
 		MenuManager withGroup = (MenuManager) manager.getItems()[0];
 		assertEquals("WithGroup", withGroup.getId());
 		assertEquals(4, withGroup.getSize());
-		
+
 		IContributionItem[] withGroupItems = withGroup.getItems();
 		assertEquals("group1", withGroupItems[0].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne", withGroupItems[1].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne",
+				withGroupItems[1].getId());
 		assertEquals("group2", withGroupItems[2].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandTwo", withGroupItems[3].getId());
-		
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandTwo",
+				withGroupItems[3].getId());
+
 		MenuManager withHandlers = (MenuManager) manager.getItems()[1];
 		assertEquals("WithHandlers", withHandlers.getId());
 		assertEquals(5, withHandlers.getSize());
-		
+
 		IContributionItem[] withHandlerItems = withHandlers.getItems();
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne", withHandlerItems[0].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandTwo", withHandlerItems[1].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne",
+				withHandlerItems[0].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandTwo",
+				withHandlerItems[1].getId());
 		assertEquals("group1", withHandlerItems[2].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandFour", withHandlerItems[3].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandThree", withHandlerItems[4].getId());
-		
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandFour",
+				withHandlerItems[3].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandThree",
+				withHandlerItems[4].getId());
+
 	}
-	
+
 	public void testMenuContributionVisibility() throws Exception {
-		MApplication application = setupRenderer();
-		MenuManagerRenderer renderer = appContext.get(MenuManagerRenderer.class);
+		MApplication application = TestUtil.setupRenderer(appContext);
+		MenuManagerRenderer renderer = appContext
+				.get(MenuManagerRenderer.class);
 		MMenu menuBar = application.getChildren().get(0).getMainMenu();
-	
+
 		// read in the relevant extensions.
-		MenuPersistence mp = new MenuPersistence(application, appContext, "org.eclipse.e4.ui.menu.tests.p4");
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p4");
 		mp.reRead();
-		
-		
+
 		// render the main menu bar
 		Shell shell = new Shell();
 		Menu menu = (Menu) renderer.createWidget(menuBar, shell);
 		assertNotNull(menu);
 		Object obj = menuBar;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
-		
+
 		MenuManager manager = renderer.getManager(menuBar);
 		assertNotNull(manager);
 		assertEquals(2, manager.getSize());
-		
+
 		MenuManager withGroup = (MenuManager) manager.getItems()[0];
 		assertEquals("WithGroup", withGroup.getId());
 		assertEquals(5, withGroup.getSize());
-		
+
 		IContributionItem[] withGroupItems = withGroup.getItems();
 		assertEquals("group1", withGroupItems[0].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne", withGroupItems[1].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne",
+				withGroupItems[1].getId());
 		IContributionItem p4InvOne = withGroupItems[2];
 		assertEquals("p4.invisible.commandOne", p4InvOne.getId());
 		assertEquals("group2", withGroupItems[3].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandTwo", withGroupItems[4].getId());
-		
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandTwo",
+				withGroupItems[4].getId());
+
 		assertTrue(p4InvOne.isVisible());
-		
+
 		Menu withGroupMenu = withGroup.getMenu();
 		assertNotNull(withGroupMenu);
-		
+
 		Event show = new Event();
 		show.widget = withGroupMenu;
 		show.type = SWT.Show;
-
 
 		withGroupMenu.notifyListeners(SWT.Show, show);
 
@@ -997,62 +688,71 @@ public class MMenuItemTest extends TestCase {
 		hide.type = SWT.Hide;
 
 		withGroupMenu.notifyListeners(SWT.Hide, hide);
-		
+
 		assertFalse(p4InvOne.isVisible());
-		
+
 		MWindow window = application.getChildren().get(0);
 		IEclipseContext context = window.getContext();
-		
-		context.set("selection", new StructuredSelection("show.p4.invisible.commandOne"));
+
+		context.set("selection", new StructuredSelection(
+				"show.p4.invisible.commandOne"));
 		withGroupMenu.notifyListeners(SWT.Show, show);
 		withGroupMenu.notifyListeners(SWT.Hide, hide);
-		
+
 		assertTrue(p4InvOne.isVisible());
-		
-		context.set("selection", new StructuredSelection(new Object[] { "show.p4.invisible.commandOne", "show.p4.invisible.commandOne"}));
+
+		context.set("selection", new StructuredSelection(
+				new Object[] { "show.p4.invisible.commandOne",
+						"show.p4.invisible.commandOne" }));
 		withGroupMenu.notifyListeners(SWT.Show, show);
 		withGroupMenu.notifyListeners(SWT.Hide, hide);
-		
+
 		assertFalse(p4InvOne.isVisible());
-		
-		context.set("selection", new StructuredSelection("show.p4.invisible.commandOne"));
+
+		context.set("selection", new StructuredSelection(
+				"show.p4.invisible.commandOne"));
 		withGroupMenu.notifyListeners(SWT.Show, show);
 		withGroupMenu.notifyListeners(SWT.Hide, hide);
-		
+
 		assertTrue(p4InvOne.isVisible());
-		
-		context.set("selection", new StructuredSelection("hide.p4.invisible.commandOne"));
+
+		context.set("selection", new StructuredSelection(
+				"hide.p4.invisible.commandOne"));
 		withGroupMenu.notifyListeners(SWT.Show, show);
 		withGroupMenu.notifyListeners(SWT.Hide, hide);
-		
+
 		assertFalse(p4InvOne.isVisible());
-		
-		context.set("selection", new StructuredSelection("show.p4.invisible.commandOne"));
+
+		context.set("selection", new StructuredSelection(
+				"show.p4.invisible.commandOne"));
 		withGroupMenu.notifyListeners(SWT.Show, show);
 		withGroupMenu.notifyListeners(SWT.Hide, hide);
-		
+
 		assertTrue(p4InvOne.isVisible());
-		
+
 		context.remove("selection");
 		withGroupMenu.notifyListeners(SWT.Show, show);
 		withGroupMenu.notifyListeners(SWT.Hide, hide);
-		
+
 		assertFalse(p4InvOne.isVisible());
-		
+
 		MenuManager withHandlers = (MenuManager) manager.getItems()[1];
 		assertEquals("WithHandlers", withHandlers.getId());
 		assertEquals(5, withHandlers.getSize());
-		
+
 		IContributionItem[] withHandlerItems = withHandlers.getItems();
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne", withHandlerItems[0].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandTwo", withHandlerItems[1].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne",
+				withHandlerItems[0].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandTwo",
+				withHandlerItems[1].getId());
 		assertEquals("group1", withHandlerItems[2].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandFour", withHandlerItems[3].getId());
-		assertEquals("org.eclipse.e4.ui.menu.tests.commandThree", withHandlerItems[4].getId());
-		
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandFour",
+				withHandlerItems[3].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandThree",
+				withHandlerItems[4].getId());
+
 	}
 
-	
 	public void testMHandledMenuItem_Check_Bug316752() {
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		MMenu menu = MenuFactoryImpl.eINSTANCE.createMenu();
@@ -1191,12 +891,11 @@ public class MMenuItemTest extends TestCase {
 	public void testMMenuItem_Text_EmptyNull() {
 		testMMenuItem_Text("", "", null, "");
 	}
-	
 
 	public void testMMenuItem_Text_EmptyString() {
 		testMMenuItem_Text("", "", "label", "label");
 	}
-	
+
 	public void testMMenuItem_Text_NullEmpty() {
 		testMMenuItem_Text(null, "", "", "");
 	}
@@ -1212,14 +911,10 @@ public class MMenuItemTest extends TestCase {
 	public void testMMenuItem_Text_StringEmpty() {
 		testMMenuItem_Text("label", "label", "", "");
 	}
-	
-
 
 	public void testMMenuItem_Text_StringNull() {
 		testMMenuItem_Text("label", "label", null, "");
 	}
-
-
 
 	public void testMMenuItem_Text_StringStringChanged() {
 		testMMenuItem_Text("label", "label", "label2", "label2");
@@ -1379,7 +1074,6 @@ public class MMenuItemTest extends TestCase {
 		Event show = new Event();
 		show.widget = fileWidget;
 		show.type = SWT.Show;
-
 
 		fileWidget.notifyListeners(SWT.Show, show);
 
