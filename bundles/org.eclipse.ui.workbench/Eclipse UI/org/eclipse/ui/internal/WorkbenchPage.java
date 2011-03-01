@@ -3877,4 +3877,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 	};
+
+	/**
+	 * this should work with hide and show editors.
+	 */
+	public void resetHiddenEditors() {
+		E4Util.unsupported("resetHiddenEditors not supported yet"); //$NON-NLS-1$
+	}
 }
