@@ -48,7 +48,6 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.handlers.HandlerPersistence;
-import org.eclipse.ui.internal.services.SlaveEvaluationService;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
@@ -320,7 +319,7 @@ public class EvaluationServiceTest extends UITestCase {
 		IEvaluationService service = (IEvaluationService) window
 				.getService(IEvaluationService.class);
 		assertNotNull(service);
-		assertTrue(service instanceof SlaveEvaluationService);
+		//assertTrue(service instanceof SlaveEvaluationService);
 
 		MyEval listener = new MyEval();
 		IContextActivation context1 = null;
