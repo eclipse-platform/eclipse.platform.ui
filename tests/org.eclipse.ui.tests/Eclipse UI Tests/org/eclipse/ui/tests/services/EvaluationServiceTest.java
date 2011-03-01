@@ -48,7 +48,6 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.handlers.HandlerPersistence;
-import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.services.SlaveEvaluationService;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
@@ -413,8 +412,11 @@ public class EvaluationServiceTest extends UITestCase {
 	}
 	
 	public void testSourceProviderPriority() throws Exception {
-		HandlerService hs = (HandlerService) getWorkbench().getService(IHandlerService.class);
-		HandlerPersistence hp = hs.getHandlerPersistence();
+		IHandlerService hs = (IHandlerService) getWorkbench().getService(IHandlerService.class);
+		Field hpField = hs.getClass().getDeclaredField("handlerPersistence");
+		hpField.setAccessible(true);
+
+		HandlerPersistence hp = (HandlerPersistence) hpField.get(hs);
 		IHandlerActivation activation = null;
 		
 		Field activationsField = hp.getClass().getDeclaredField("handlerActivations");
