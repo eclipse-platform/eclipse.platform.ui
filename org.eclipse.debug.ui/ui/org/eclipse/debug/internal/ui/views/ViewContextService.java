@@ -369,6 +369,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          * Set of perspectives this view was closed in by the user
          */
         private Set fUserClosed = new HashSet();
+        /**
+         * Set of perspectives this view was auto-opened by view management.
+         */
+        private Set fAutoOpened = new HashSet();
         
         public ViewBinding(IConfigurationElement element) {
             fElement = element;
@@ -438,6 +442,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         protected void userOpened() {
             if (isTrackingViews()) {
                 String id = getActivePerspective().getId();
+                fAutoOpened.remove(id);
                 fUserOpened.add(id);
                 fUserClosed.remove(id);
                 saveViewBindings();
@@ -447,6 +452,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         protected void userClosed() {
             if (isTrackingViews()) {
                 String id = getActivePerspective().getId();
+                fAutoOpened.remove(id);
                 fUserClosed.add(id);
                 fUserOpened.remove(id);
                 saveViewBindings();
@@ -472,6 +478,11 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
                 if (isAutoOpen()) {
                     try {
                         fIgnoreChanges = true;
+                        // Remember whether the view was opened by view management.
+                        // (Bug 128065)
+                        if (page.findViewReference(getViewId()) == null) {
+                            fAutoOpened.add(perspective.getId());
+                        }
                         page.showView(getViewId(), null, IWorkbenchPage.VIEW_CREATE);
                     } catch (PartInitException e) {
                         DebugUIPlugin.log(e);
@@ -519,7 +530,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
          */
         public void deactivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
             if (!isUserOpened(perspective)) {
-                if (isAutoClose() && !isDefault(perspective)) {
+                if (fAutoOpened.remove(perspective.getId()) && isAutoClose() && !isDefault(perspective)) {
                     IViewReference reference = page.findViewReference(getViewId());
                     if (reference != null) {
                         try {
@@ -933,11 +944,18 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		if (!fIgnoreChanges && page.getWorkbenchWindow().equals(fWindow)) {
 			if(partRef != null) {
                 if (IWorkbenchPage.CHANGE_VIEW_SHOW == changeId || IWorkbenchPage.CHANGE_VIEW_HIDE == changeId) {
-                	Iterator iterator = fContextIdsToBindings.values().iterator();
-                	while (iterator.hasNext()) {
-                		DebugContextViewBindings bindings = (DebugContextViewBindings) iterator.next();
-                		bindings.setViewOpened(IWorkbenchPage.CHANGE_VIEW_SHOW == changeId, partRef.getId());
-                	}
+                    // Update only the contexts which are currently active (Bug 128065)
+                    Set activatedContexts = (Set)fPerspectiveToActivatedContexts.get(perspective);
+                    if (activatedContexts != null) {
+                    	Iterator iterator = activatedContexts.iterator();
+                    	while (iterator.hasNext()) {
+                    	    DebugContextViewBindings bindings = 
+                    	        (DebugContextViewBindings)fContextIdsToBindings.get(iterator.next());
+                    	    if (bindings != null) {
+                    	        bindings.setViewOpened(IWorkbenchPage.CHANGE_VIEW_SHOW == changeId, partRef.getId());
+                    	    }
+                    	}
+                    }
                 }
 			}
         }	
