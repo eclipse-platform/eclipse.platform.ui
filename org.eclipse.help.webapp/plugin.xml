@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?><!--
-    Copyright (c) 2005, 2010 IBM Corporation and others.
+    Copyright (c) 2005, 2011 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
     http://www.eclipse.org/legal/epl-v10.html
-   
+    
     Contributors:
          IBM Corporation - initial API and implementation
  -->
@@ -15,6 +15,7 @@
    <extension-point id="view" name="View" schema="schema/view.exsd"/>
    <extension-point id="frame" name="Webapp Frame" schema="schema/frame.exsd"/> 
    <extension-point id="toolbarButton" name="Toolbar Button" schema="schema/toolbarButton.exsd"/>
+   <extension-point id="validatedServlet" name="Validated Servlet" schema="schema/validatedServlet.exsd"/>
   <extension
          point="org.eclipse.equinox.http.registry.httpcontexts">
       <httpcontext
@@ -140,6 +141,11 @@
       <serviceSelector
             filter="(other.info=org.eclipse.help)">
       </serviceSelector>
+      <servlet
+            alias="/vs"
+            class="org.eclipse.help.internal.webapp.servlet.ValidatorServlet"
+            httpcontextId="help">
+      </servlet>
    </extension>
    <extension
          id="org.eclipse.help.webapp.remoteStatusProducer"
@@ -148,5 +154,80 @@
       <contentProducer
             producer="org.eclipse.help.internal.webapp.StatusProducer">
       </contentProducer>
+   </extension>
+   <extension
+         point="org.eclipse.help.webapp.validatedServlet">
+      <servlet
+            alias="/service/control"
+            class="org.eclipse.help.internal.webapp.service.ControlService">
+      </servlet>
+      <servlet
+            alias="/service/content"
+            class="org.eclipse.help.internal.webapp.service.ContentService">
+      </servlet>
+      <servlet
+            alias="/service/topic"
+            class="org.eclipse.help.internal.webapp.service.ContentService">
+      </servlet>
+      <servlet
+            alias="/service/nftopic"
+            class="org.eclipse.help.internal.webapp.service.ContentService">
+      </servlet>
+      <servlet
+            alias="/service/ntopic"
+            class="org.eclipse.help.internal.webapp.service.ContentService">
+      </servlet>
+      <servlet
+            alias="/service/rtopic"
+            class="org.eclipse.help.internal.webapp.service.ContentService">
+      </servlet>
+      <servlet
+            alias="/service/nav"
+            class="org.eclipse.help.internal.webapp.service.NavService">
+      </servlet>
+      <servlet
+            alias="/service/livehelp"
+            class="org.eclipse.help.internal.webapp.service.LiveHelpService">
+      </servlet>
+      <servlet
+            alias="/service/toc"
+            class="org.eclipse.help.internal.webapp.service.TocService">
+      </servlet>
+      <servlet
+            alias="/service/tocfragment"
+            class="org.eclipse.help.internal.webapp.service.TocFragmentService">
+      </servlet>
+      <servlet
+            alias="/service/index"
+            class="org.eclipse.help.internal.webapp.service.IndexService">
+      </servlet>
+      <servlet
+            alias="/service/indexfragment"
+            class="org.eclipse.help.internal.webapp.service.IndexFragmentService">
+      </servlet>
+      <servlet
+            alias="/service/advancedsearch"
+            class="org.eclipse.help.internal.webapp.service.AdvancedSearchService">
+      </servlet>
+      <servlet
+            alias="/service/search"
+            class="org.eclipse.help.internal.webapp.service.SearchService">
+      </servlet>
+      <servlet
+            alias="/service/context"
+            class="org.eclipse.help.internal.webapp.service.ContextService">
+      </servlet>
+      <servlet
+            alias="/service/extension"
+            class="org.eclipse.help.internal.webapp.service.ExtensionService">
+      </servlet>
+      <servlet
+            alias="/service/about.html"
+            class="org.eclipse.help.internal.webapp.service.AboutService">
+      </servlet>
+      <servlet
+            alias="/service/state"
+            class="org.eclipse.help.internal.webapp.service.SearchStateService">
+      </servlet>
    </extension>
 </plugin>

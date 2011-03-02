@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,6 +39,17 @@ public class ContextServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		String response = processRequest(req, resp);
+		if ("400".equals(response)) //$NON-NLS-1$
+			resp.sendError(400); // bad request; missing parameter
+		else if ("404".equals(response)) //$NON-NLS-1$
+			resp.sendError(404); // Wrong context id; not found
+		else
+			resp.getWriter().write(response);
+	}
+	
+	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		BaseHelpSystem.checkMode();
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
@@ -48,15 +58,13 @@ public class ContextServlet extends HttpServlet {
 		if (id != null) {
 			IContext context = getContext(locale, id);
 			if (context != null) {
-				serialize(context, resp.getWriter());
+				return serialize(context);
 			}
-			else {
-				resp.sendError(404);
-			}
+			// Wrong context id; not found
+			return "404"; //$NON-NLS-1$
 		}
-		else {
-			resp.sendError(400); // bad request; missing parameter
-		}
+		// bad request; missing parameter
+		return "400"; //$NON-NLS-1$
 	}
 
 	protected IContext getContext(String locale, String id) {
@@ -64,32 +72,34 @@ public class ContextServlet extends HttpServlet {
 		return context;
 	}
 	
-	private void serialize(IContext context, Writer out) throws IOException {
-		out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
-		out.write('<' + Context.NAME );
+	private String serialize(IContext context) throws IOException {
+		StringBuffer buff = new StringBuffer();
+		buff.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
+		buff.append('<' + Context.NAME );
 		if (context instanceof IContext2) {
 			String title = ((IContext2)context).getTitle();
 			if (title != null && title.length() > 0) {
-				out.write(" title=\"" + title + "\""); //$NON-NLS-1$ //$NON-NLS-2$			
+				buff.append(" title=\"" + title + "\""); //$NON-NLS-1$ //$NON-NLS-2$			
 			}
 		}
-		out.write(">\n"); //$NON-NLS-1$
+		buff.append(">\n"); //$NON-NLS-1$
 		String description = context.getText();
 		if (description != null) {
-			out.write("   <description>" + UrlUtil.htmlEncode(description) + "</description>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			buff.append("   <description>" + UrlUtil.htmlEncode(description) + "</description>\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		IHelpResource[] topics = context.getRelatedTopics();
 		for (int i=0;i<topics.length;++i) {
-			out.write("   <" + Topic.NAME); //$NON-NLS-1$
+			buff.append("   <" + Topic.NAME); //$NON-NLS-1$
 			if (topics[i].getLabel() != null) {
-				out.write("\n         " + Topic.ATTRIBUTE_LABEL + "=\"" + topics[i].getLabel() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
+				buff.append("\n         " + Topic.ATTRIBUTE_LABEL + "=\"" + topics[i].getLabel() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (topics[i].getHref() != null) {
-				out.write("\n         " + Topic.ATTRIBUTE_HREF + "=\"" + topics[i].getHref() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
+				buff.append("\n         " + Topic.ATTRIBUTE_HREF + "=\"" + topics[i].getHref() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			out.write(">\n   </topic>"); //$NON-NLS-1$
+			buff.append(">   </" + Topic.NAME + ">\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		out.write("</" + Context.NAME + ">\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		buff.append("</" + Context.NAME + ">\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		return buff.toString();
 	}
 }

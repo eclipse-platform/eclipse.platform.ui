@@ -100,8 +100,16 @@ public class SearchData extends ActivitiesData {
 		} 
 		
 		// try loading search results or get the indexing progress info.
-		if (isSearchRequest() && !isScopeRequest()) {
+		readSearchResults();
+	}
 
+	public void readSearchResults() {
+		
+		// try loading search results or get the indexing progress info.
+		if (isSearchRequest() && !isScopeRequest()) {
+			
+			altList.clear();
+			
 			AbstractSearchProcessor processors[] = SearchManager.getSearchProcessors();
 			for (int p=0;p<processors.length;p++)
 			{
@@ -156,12 +164,9 @@ public class SearchData extends ActivitiesData {
 				}
 				if (reset)
 					hits = SearchManager.convertResultsToHits(results);
-				
-				
 			}
 		}
 	}
-
 
 	/**
 	 * Returns true when there is a search request
@@ -229,6 +234,10 @@ public class SearchData extends ActivitiesData {
 	 */
 	public int getResultsCount() {
 		return hits.length;
+	}
+	
+	public SearchHit[] getResults() {
+		return hits;
 	}
 
 	public String getSelectedTopicId() {

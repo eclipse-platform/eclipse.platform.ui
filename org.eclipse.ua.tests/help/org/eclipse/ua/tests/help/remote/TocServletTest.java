@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Snehasish Paul <snehpaul@in.ibm.com> - Eclipse help public API services
  *******************************************************************************/
 package org.eclipse.ua.tests.help.remote;
 
@@ -110,7 +111,7 @@ public class TocServletTest extends TestCase {
 	}
 	 
 
-	private Node getTocContributions( String locale)
+	protected Node getTocContributions( String locale)
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/toc?lang=" + locale);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,10 +44,16 @@ public class IndexServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		// set the character-set to UTF-8 before calling resp.getWriter()
+		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
+		resp.getWriter().write(processRequest(req, resp));
+	}
+	
+	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		BaseHelpSystem.checkMode();
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		
 		if (responseByLocale == null) {
 			responseByLocale = new WeakHashMap();
@@ -63,7 +69,8 @@ public class IndexServlet extends HttpServlet {
 			}
 			responseByLocale.put(locale, response);
 		}
-		resp.getWriter().write(response);
+		
+		return (response != null) ? response : ""; //$NON-NLS-1$
 	}
 		
 	public String serialize(IndexContribution[] contributions, String locale) throws TransformerException {

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Snehasish Paul <snehpaul@in.ibm.com> - Eclipse help public API services
  *******************************************************************************/
 package org.eclipse.ua.tests.help.remote;
 
@@ -97,14 +98,14 @@ public class SearchServletTest extends TestCase {
 		assertEquals(0, hits.length);
 	}
 
-	private Node[] getSearchHitsFromServlet(String phrase)
+	protected Node[] getSearchHitsFromServlet(String phrase)
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/search?phrase=" + URLEncoder.encode(phrase, "UTF-8"));
 		return makeServletCall(url);
 	}
 	
-	private Node[] getSearchHitsUsingLocale(String phrase, String locale)
+	protected Node[] getSearchHitsUsingLocale(String phrase, String locale)
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/search?phrase="
@@ -112,7 +113,7 @@ public class SearchServletTest extends TestCase {
 		return makeServletCall(url);
 	}
 
-	private Node[] makeServletCall(URL url) throws IOException,
+	protected Node[] makeServletCall(URL url) throws IOException,
 			ParserConfigurationException, FactoryConfigurationError,
 			SAXException {
 		InputStream is = url.openStream();

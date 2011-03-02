@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Snehasish Paul <snehpaul@in.ibm.com> - Eclipse help public API services
  *******************************************************************************/
 package org.eclipse.ua.tests.help.remote;
 
@@ -70,14 +71,14 @@ public class ContextServletTest extends TestCase {
 		}
 	}
 
-	private Element[] getContextsFromServlet(String phrase)
+	protected Element[] getContextsFromServlet(String phrase)
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/context?id=" + URLEncoder.encode(phrase, "UTF-8"));
 		return makeServletCall(url);
 	}
 	
-	private Element[] getContextsUsingLocale(String phrase, String locale)
+	protected Element[] getContextsUsingLocale(String phrase, String locale)
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/context?id="
@@ -85,7 +86,7 @@ public class ContextServletTest extends TestCase {
 		return makeServletCall(url);
 	}
 
-	private Element[] makeServletCall(URL url) throws IOException,
+	protected Element[] makeServletCall(URL url) throws IOException,
 			ParserConfigurationException, FactoryConfigurationError,
 			SAXException {
 		InputStream is = url.openStream();

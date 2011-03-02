@@ -45,10 +45,16 @@ public class TocServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		// set the character-set to UTF-8 before calling resp.getWriter()
+		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
+		resp.getWriter().write(processRequest(req, resp));
+	}
+
+	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		BaseHelpSystem.checkMode();
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		
 		if (clearCache){
 			responseByLocale = new WeakHashMap();
@@ -69,7 +75,8 @@ public class TocServlet extends HttpServlet {
 			}
 			responseByLocale.put(locale, response);
 		}
-		resp.getWriter().write(response);
+		
+		return (response != null) ? response : ""; //$NON-NLS-1$
 	}
 		
 	protected String serialize(TocContribution[] contributions, String locale) throws TransformerException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.ua.tests.help.scope.AllScopeTests;
 import org.eclipse.ua.tests.help.search.AllSearchTests;
 import org.eclipse.ua.tests.help.toc.AllTocTests;
 import org.eclipse.ua.tests.help.webapp.AllWebappTests;
+import org.eclipse.ua.tests.help.webapp.service.AllWebappServiceTests;
 
 /*
  * Tests help functionality (automated).
@@ -50,5 +51,6 @@ public class AllHelpTests extends TestSuite {
 		addTest(AllOtherHelpTests.suite());
 		addTest(AllRemoteTests.suite());
 		addTest(AllScopeTests.suite());
+		addTest(AllWebappServiceTests.suite());
 	}
 }

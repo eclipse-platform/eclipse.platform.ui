@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,13 @@ public class IndexFragmentServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		// set the character-set to UTF-8 before calling resp.getWriter()
+		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
+		resp.getWriter().write(processRequest(req, resp));
+	}
+	
+	protected String processRequest(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
 		String locale = UrlUtil.getLocale(req, resp);
 		startParameter = req.getParameter("start"); //$NON-NLS-1$
 		if (startParameter != null) {
@@ -100,7 +107,6 @@ public class IndexFragmentServlet extends HttpServlet {
 		}
 		
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
-		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		// Cache suppression required because the set of in scope
 		// topics could change between requests
 
@@ -112,7 +118,8 @@ public class IndexFragmentServlet extends HttpServlet {
 		Serializer serializer = new Serializer(locale, scope);
 		String response = serializer.generateIndexXml();	
 		locale2Response.put(locale, response);
-		resp.getWriter().write(response);
+		
+		return response;
 	}
 	
 	/*

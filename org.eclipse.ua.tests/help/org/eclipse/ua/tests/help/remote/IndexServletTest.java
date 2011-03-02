@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Snehasish Paul <snehpaul@in.ibm.com> - Eclipse help public API services
  *******************************************************************************/
 package org.eclipse.ua.tests.help.remote;
 
@@ -146,7 +147,7 @@ public class IndexServletTest extends TestCase {
 		}
 	}
 
-	private Node getIndexContributions( String locale)
+	protected Node getIndexContributions( String locale)
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/index?lang=" + locale);
