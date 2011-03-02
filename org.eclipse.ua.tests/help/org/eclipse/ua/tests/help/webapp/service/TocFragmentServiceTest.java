@@ -20,9 +20,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.TestCase;
 
+import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.eclipse.help.internal.server.WebappManager;
+import org.eclipse.help.internal.toc.Toc;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -72,19 +75,17 @@ public class TocFragmentServiceTest extends TestCase {
 		assertEquals(1, results.length);
 	}
 	
-	/*
-	 * These tests are still failing - see Bug 338732
-	 * 
-	 * 
 	public void testReadEnToc() throws Exception {
+		int uaSearch = findUATopicIndex("search", "en");
+		assertTrue(uaSearch >= 0);
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, 
-				"/help/vs/service/tocfragment?lang=en&toc=/org.eclipse.ua.tests/data/help/toc/root.xml&path=7");
+				"/help/vs/service/tocfragment?lang=en&toc=/org.eclipse.ua.tests/data/help/toc/root.xml&path=" + uaSearch);
 		Node root = getTreeData(url);
 		Element[] UARoot = findNodeById(root, 
 				"/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertEquals(1, UARoot.length);
-		Element[] searchNode = findNodeById(UARoot[0], "7");
+		Element[] searchNode = findChildren(UARoot[0], "node", "title", "search");
 		assertEquals(1, searchNode.length);
 		Element[] topicEn = findChildren(searchNode[0], "node", "href", 
 				"../topic/org.eclipse.ua.tests/data/help/search/test_en.html");
@@ -92,26 +93,45 @@ public class TocFragmentServiceTest extends TestCase {
 		Element[] topicDe = findChildren(searchNode[0], "node", "href", 
 				"../topic/org.eclipse.ua.tests/data/help/search/test_de.html");
 		assertEquals(0, topicDe.length);
+	}
+
+	private int findUATopicIndex(String title, String locale) {
+		int index = -1;
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
+		for (int i = 0; i < tocs.length; i++) {
+			if ("/org.eclipse.ua.tests/data/help/toc/root.xml".equals(tocs[i].getHref())) {
+				ITopic[] topics = tocs[i].getTopics();
+				for (int j = 0; j < topics.length; j++) {
+					if (title.equals(topics[j].getLabel())) {
+						index = j;
+					}
+				}
+			}
+		}
+		return index;
 	}	
 	
 	public void testReadDeToc() throws Exception {
+		int helpMode = BaseHelpSystem.getMode();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		int uaSearch = findUATopicIndex("search", "de");
+		assertTrue(uaSearch >= 0);
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, 
-				"/help/vs/service/tocfragment?lang=de&toc=/org.eclipse.ua.tests/data/help/toc/root.xml&path=7");
+				"/help/vs/service/tocfragment?lang=de&toc=/org.eclipse.ua.tests/data/help/toc/root.xml&path=" + uaSearch);
 		Node root = getTreeData(url);
 		Element[] UARoot = findNodeById(root, 
 				"/org.eclipse.ua.tests/data/help/toc/root.xml");
 		assertEquals(1, UARoot.length);
-		Element[] searchNode = findNodeById(UARoot[0], "7");
+		Element[] searchNode = findChildren(UARoot[0], "node", "title", "search");
 		Element[] topicEn = findChildren(searchNode[0], "node", "href", 
 				"../topic/org.eclipse.ua.tests/data/help/search/test_en.html");
 		assertEquals(0, topicEn.length);
 		Element[] topicDe = findChildren(searchNode[0], "node", "href", 
 				"../topic/org.eclipse.ua.tests/data/help/search/test_de.html");
 		assertEquals(1, topicDe.length);
+		BaseHelpSystem.setMode(helpMode);
 	}
-	
-	*/
 	
 	private Element[] findNodeById(Node root, String id) {
 		return findChildren(root, "node", "id", id);

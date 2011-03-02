@@ -63,7 +63,7 @@ public class TocFragmentServlet extends HttpServlet {
 		readParameters(req);
 		
 		AbstractHelpScope scope = RequestScope.getScope(req, resp, false);
-		Serializer serializer = new Serializer(data, req.getLocale(), scope);
+		Serializer serializer = new Serializer(data, UrlUtil.getLocaleObj(req, resp), scope);
 		String response = serializer.generateTreeXml();	
 		locale2Response.put(locale, response);
 		
