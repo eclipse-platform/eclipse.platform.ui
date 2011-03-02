@@ -154,12 +154,15 @@ public class ContextModel extends CommonModel {
 					.get(iterator.next());
 
 			try {
-				if (actionSets == false
-						&& (contextElement.getId().equalsIgnoreCase(
-								CONTEXT_ID_ACTION_SETS) || ((Context) contextElement
-								.getModelObject()).getParentId()
-								.equalsIgnoreCase(CONTEXT_ID_ACTION_SETS))) {
-					restoreContext = true;
+				if (actionSets == false) {
+					if (contextElement.getId().equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
+						restoreContext = true;
+					} else {
+						String parentId = ((Context) contextElement.getModelObject()).getParentId();
+						if (parentId != null && parentId.equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
+							restoreContext = true;
+						}
+					}
 				}
 			} catch (NotDefinedException e) {
 				// No parentId to check
