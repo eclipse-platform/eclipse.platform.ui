@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MKeyBinding;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
@@ -1318,6 +1319,81 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		assertEquals(1, window.getChildren().size());
 		assertTrue(window.getChildren().get(0) instanceof MPart);
+	}
+
+	public void testBug338707() {
+		MApplication application = createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartSashContainer container = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		window.getChildren().add(container);
+		window.setSelectedElement(container);
+
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		container.getChildren().add(partStackA);
+
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		container.getChildren().add(partStackB);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPartSashContainer newContainer = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		MPartStack partStackC = BasicFactoryImpl.eINSTANCE.createPartStack();
+		newContainer.getChildren().add(partStackC);
+		newContainer.getChildren().add(partStackB);
+
+		container.getChildren().add(newContainer);
+		container.getChildren().remove(partStackA);
+
+		container.getChildren().remove(newContainer);
+		window.getChildren().add(newContainer);
+		window.getChildren().remove(container);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		container = (MPartSashContainer) window.getChildren().get(0);
+		partStackA = (MPartStack) container.getChildren().get(0);
+		partStackB = (MPartStack) container.getChildren().get(1);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(container, window.getChildren().get(0));
+
+		assertEquals(2, container.getChildren().size());
+		assertEquals(partStackA, container.getChildren().get(0));
+		assertEquals(partStackB, container.getChildren().get(1));
+
+		applyAll(deltas);
+
+		newContainer = (MPartSashContainer) window.getChildren().get(0);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertNotNull(newContainer);
+		assertFalse(container == newContainer);
+
+		assertEquals(0, container.getChildren().size());
+
+		assertEquals(2, newContainer.getChildren().size());
+		assertNotNull(newContainer.getChildren().get(0));
+		assertFalse(partStackA == newContainer.getChildren().get(0));
+		assertEquals(partStackB, newContainer.getChildren().get(1));
 	}
 
 	/**

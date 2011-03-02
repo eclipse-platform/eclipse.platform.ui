@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.WeakHashMap;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -133,6 +134,25 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private EObject rootObject;
 
+	/**
+	 * A map of all the objects that were originally defined in the model.
+	 */
+	private WeakHashMap<EObject, EObject> originalObjects = new WeakHashMap<EObject, EObject>();
+
+	/**
+	 * Records all of the objects in the original model so that we can determine whether an element
+	 * was originally a part of the defined model or not.
+	 */
+	private void record() {
+		originalObjects.clear();
+		originalObjects.put(rootObject, null);
+		Iterator<EObject> it = rootObject.eAllContents();
+		while (it.hasNext()) {
+			EObject object = it.next();
+			originalObjects.put(object, null);
+		}
+	}
+
 	public void recordChanges(Object object) {
 		Assert.isNotNull(object);
 		rootObject = (EObject) object;
@@ -148,6 +168,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			}
 		};
 		changeDescription = null;
+		record();
 	}
 
 	static List<Object> getReferences(Object object) {
@@ -966,6 +987,27 @@ public class XMLModelReconciler extends ModelReconciler {
 		throw new IllegalStateException(object + " could not be identified"); //$NON-NLS-1$
 	}
 
+	private String findResourceId(EObject object, EObject container) {
+		Resource resource = object.eResource();
+		if (resource instanceof XMLResource) {
+			return ((XMLResource) resource).getID(object);
+		}
+
+		resource = container.eResource();
+		if (resource instanceof XMLResource) {
+			return ((XMLResource) resource).getID(object);
+		}
+
+		if (originalObjects.containsKey(object)) {
+			resource = rootObject.eResource();
+			if (resource instanceof XMLResource) {
+				return ((XMLResource) resource).getID(object);
+			}
+		}
+
+		throw new IllegalStateException(object + " could not be identified"); //$NON-NLS-1$
+	}
+
 	private static String getLocalId(Object object) {
 		EObject reference = (EObject) object;
 		return getResourceId(reference, reference.eContainer());
@@ -984,6 +1026,8 @@ public class XMLModelReconciler extends ModelReconciler {
 		if (changeDescription == null) {
 			// no changes have been recorded, just ask the container through EMF directly
 			return reference.eContainer();
+		} else if (!originalObjects.containsKey(reference)) {
+			return null;
 		}
 
 		if (reference instanceof MCommandParameter) {
@@ -1518,7 +1562,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			}
 		}
 
-		return getResourceId(reference, originalContainer);
+		return findResourceId(reference, originalContainer);
 	}
 
 	/**
