@@ -15,12 +15,14 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.tweaklets.Tweaklets.TweakKey;
 
@@ -75,6 +77,8 @@ public abstract class TestFacade {
 			IViewReference viewRef);
 
 	public abstract boolean isViewPaneVisible(IViewReference viewRef);
+	
+	public abstract Control getPaneControl(IWorkbenchPartSite site);
 
 	public abstract boolean isViewToolbarVisible(IViewReference viewRef);
 

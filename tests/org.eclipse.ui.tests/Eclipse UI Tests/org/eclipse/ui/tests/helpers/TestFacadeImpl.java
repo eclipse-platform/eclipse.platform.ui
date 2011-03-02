@@ -24,6 +24,7 @@ import org.eclipse.ui.IPartService;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.FastViewBar;
 import org.eclipse.ui.internal.FastViewBarContextMenuContribution;
 import org.eclipse.ui.internal.PartSite;
@@ -241,5 +242,12 @@ public class TestFacadeImpl extends TestFacade {
 	public boolean isMoveableInPerspective(IViewReference ref) {
 		return ((WorkbenchPage) ref.getPage()).getActivePerspective()
 				.isMoveable(ref);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.helpers.TestFacade#getPaneControl(org.eclipse.ui.IWorkbenchPartSite)
+	 */
+	public Control getPaneControl(IWorkbenchPartSite site) {
+		return ((PartSite)site).getPane().getControl();
 	}
 }

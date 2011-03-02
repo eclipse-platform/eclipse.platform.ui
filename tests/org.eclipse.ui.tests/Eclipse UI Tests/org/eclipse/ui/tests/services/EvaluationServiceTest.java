@@ -12,6 +12,7 @@
 package org.eclipse.ui.tests.services;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -412,15 +413,35 @@ public class EvaluationServiceTest extends UITestCase {
 	
 	public void testSourceProviderPriority() throws Exception {
 		IHandlerService hs = (IHandlerService) getWorkbench().getService(IHandlerService.class);
-		Field hpField = hs.getClass().getDeclaredField("handlerPersistence");
-		hpField.setAccessible(true);
-
-		HandlerPersistence hp = (HandlerPersistence) hpField.get(hs);
-		IHandlerActivation activation = null;
 		
-		Field activationsField = hp.getClass().getDeclaredField("handlerActivations");
-		activationsField.setAccessible(true);
-		Collection activations = (Collection) activationsField.get(hp);
+		Collection activations = null;
+		// fill in a set of activations
+		String hsClassName = hs.getClass().getName();
+		if (hsClassName.equals("org.eclipse.ui.internal.handlers.HandlerService")) {
+			Field hpField = hs.getClass().getDeclaredField("handlerPersistence");
+			hpField.setAccessible(true);
+
+			HandlerPersistence hp = (HandlerPersistence) hpField.get(hs);
+			
+			Field activationsField = hp.getClass().getDeclaredField("handlerActivations");
+			activationsField.setAccessible(true);
+			activations = (Collection) activationsField.get(hp);
+			assertNotNull(activations);
+		} else if (hsClassName.equals("org.eclipse.ui.internal.handlers.LegacyHandlerService")) {
+			Field hsField = hs.getClass().getDeclaredField("LEGACY_H_ID");
+			String LEGACY_H_ID = (String) hsField.get(null);
+			Field hpField = hs.getClass().getDeclaredField("eclipseContext");
+			hpField.setAccessible(true);
+			Object eclipseContext = hpField.get(hs);
+			assertNotNull(eclipseContext);
+			Method getMethod = eclipseContext.getClass().getDeclaredMethod("get", new Class[] { String.class });
+			activations = (Collection) getMethod.invoke(eclipseContext, new Object[] { LEGACY_H_ID + CHECK_HANDLER_ID});
+			assertNotNull(activations);
+		} else {
+			fail("Incorrect handler service: " + hsClassName);
+		}
+		
+		IHandlerActivation activation = null;
 		Iterator i = activations.iterator();
 		while (i.hasNext()) {
 			IHandlerActivation ha = (IHandlerActivation) i.next();
@@ -428,6 +449,8 @@ public class EvaluationServiceTest extends UITestCase {
 				activation = ha;
 			}
 		}
+		
+		
 		assertNotNull("Could not find activation for " + CHECK_HANDLER_ID, activation);
 		
 		assertEquals(ISources.ACTIVE_CONTEXT<<1, activation.getSourcePriority());
