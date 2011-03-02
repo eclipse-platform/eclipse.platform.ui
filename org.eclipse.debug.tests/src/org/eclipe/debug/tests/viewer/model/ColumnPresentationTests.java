@@ -15,7 +15,6 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -65,15 +64,8 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 
 	void createViewer() {
 		fDisplay = PlatformUI.getWorkbench().getDisplay();
-        // Tests end in DNF on Mac and Windows (bug 325465)
-        if (Platform.getOS().equals(Platform.OS_MACOSX) || Platform.getOS().equals(Platform.OS_WIN32)) {
-            fShell = new Shell(fDisplay);
-        } else {
-            fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
-            // Maximizing a shell with SWT.ON_TOP doesn't work on Linux (bug 325465)
-        }
+        fShell = new Shell(fDisplay);
         fShell.setSize(800, 600);
-		fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
 		fShell.setLayout(new FillLayout());
 		fViewer = new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
         fViewer.getTree().addControlListener(new ControlListener() {

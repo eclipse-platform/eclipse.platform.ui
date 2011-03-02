@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -27,7 +26,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -55,20 +53,8 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
     protected void setUp() throws Exception {
         fDisplay = PlatformUI.getWorkbench().getDisplay();
 
-        // Tests end in DNF on Mac and Windows (bug 325465)
-        if (Platform.getOS().equals(Platform.OS_MACOSX) || Platform.getOS().equals(Platform.OS_WIN32)) {
-            fShell = new Shell(fDisplay);
-            fShell.setMaximized(true);
-        } else {
-            fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
-            // Maximizing a shell with SWT.ON_TOP doesn't work on Linux (bug 325465)
-            fShell.setSize(800, 600);
-        }
-        
-        fShell = new Shell(fDisplay, SWT.ON_TOP | SWT.SHELL_TRIM);
-        // Maximizing a shell with SWT.ON_TOP doesn't work on Linux (bug 325465)
-        //fShell.setMaximized(true);
-        fShell.setSize(800, 600);
+        fShell = new Shell(fDisplay);
+        fShell.setMaximized(true);
         fShell.setLayout(new FillLayout());
 
         fViewer = createViewer(fDisplay, fShell);
