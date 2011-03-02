@@ -94,13 +94,12 @@ class MarkerCategory extends MarkerSupportItem {
 		//			new Object[] { getName() });
 		//}
 		int size = getChildrenCount();
-		int limit = MarkerSupportInternalUtilities.getMarkerLimit();
+		int limit = markers.getBuilder().getGenerator().getMarkerLimits();
 
 		if (limit > 0 && size > limit) {
 			return NLS.bind(MarkerMessages.Category_Limit_Label, new Object[] {
 					name,
-					String.valueOf(MarkerSupportInternalUtilities
-							.getMarkerLimit()),
+					String.valueOf(markers.getBuilder().getGenerator().getMarkerLimits()),
 					String.valueOf(getChildrenCount()) });
 		}
 		if (size == 1)

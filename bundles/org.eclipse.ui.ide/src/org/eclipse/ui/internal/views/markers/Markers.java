@@ -186,7 +186,8 @@ class Markers {
 	 * @param avaliable
 	 */
 	private int getShowingLimit(int avaliable) {
-		int limit = MarkerSupportInternalUtilities.getMarkerLimit();
+		
+		int limit = builder.getGenerator().getMarkerLimits();
 		int effLimit = limit;
 		if (avaliable < effLimit || limit <= 0) {
 			effLimit = avaliable;

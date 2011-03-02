@@ -24,6 +24,14 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 
 	// private MarkersTreeViewer viewer;
 	private Object input;
+	private final ExtendedMarkersView markersView;
+
+	/**
+	 * @param extendedMarkersView
+	 */
+	public MarkerViewerContentProvider(ExtendedMarkersView extendedMarkersView) {
+		this.markersView = extendedMarkersView;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -76,7 +84,8 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 	 * @return Object[]
 	 */
 	private Object[] getLimitedChildren(Object[] children) {
-		int newLength = MarkerSupportInternalUtilities.getMarkerLimit();
+		
+		int newLength = markersView.getGenerator().getMarkerLimits();
 		if (newLength > 0 && newLength < children.length) {
 			Object[] newChildren = new Object[newLength];
 			System.arraycopy(children, 0, newChildren, 0, newLength);

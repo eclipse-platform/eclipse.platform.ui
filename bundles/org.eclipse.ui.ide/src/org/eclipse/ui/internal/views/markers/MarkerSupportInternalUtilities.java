@@ -310,23 +310,6 @@ public class MarkerSupportInternalUtilities {
 
 	}
 
-	/**
-	 * Get the marker limit for the receiver.
-	 * 
-	 * @return int
-	 */
-	static int getMarkerLimit() {
-
-		// If limits are enabled return it. Otherwise return -1
-		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
-				IDEInternalPreferences.USE_MARKER_LIMITS)) {
-			return IDEWorkbenchPlugin.getDefault().getPreferenceStore().getInt(
-					IDEInternalPreferences.MARKER_LIMITS_VALUE);
-
-		}
-		return -1;
-
-	}
 
 	/**
 	 * Return the severity value for item. A value of -1 indicates

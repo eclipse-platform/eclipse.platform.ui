@@ -75,6 +75,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 	private Button toVisibleBtt, toNonVisibleBtt;
 
+	private Label widthLabel;
 	private Spinner widthSpinner;
 
 	/**
@@ -172,9 +173,9 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 * @return {@link Control}
 	 */
 	Control createWidthArea(Composite parent) {
-		Label widthLabel = new Label(parent, SWT.NONE);
-		widthLabel.setText(JFaceResources
-				.getString("ConfigureColumnsDialog_WidthOfSelectedColumn")); //$NON-NLS-1$
+		
+		widthLabel = new Label(parent, SWT.NONE);
+		widthLabel.setText(MarkerMessages.MarkerPreferences_WidthOfShownColumn);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_END);
 		gridData.horizontalSpan = 3;
@@ -197,8 +198,13 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 				}
 			}
 		});
-		widthSpinner.setEnabled(false);
+		setWidthEnabled(false);
 		return widthSpinner;
+	}
+	
+	private void setWidthEnabled(boolean enabled) {
+		widthLabel.setEnabled(enabled);
+		widthSpinner.setEnabled(enabled);
 	}
 
 	/**
@@ -348,7 +354,6 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	void handleNonVisibleSelection(ISelection selection) {
 		Object[] nvKeys = ((IStructuredSelection) selection).toArray();
 		toVisibleBtt.setEnabled(nvKeys.length > 0);
-		widthSpinner.setEnabled(false);
 		if (visibleViewer.getControl().isFocusControl()
 				&& getVisible().size() <= 1) {
 			handleStatusUdpate(IStatus.INFO,
@@ -399,7 +404,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 		boolean edit = selVCols.size() == 1 ? infoProvider
 				.isColumnResizable(selVCols.get(0)) : false;
-		widthSpinner.setEnabled(edit);
+		setWidthEnabled(edit);
 		if (edit) {
 			widthSpinner.setSelection(infoProvider
 					.getColumnWidth(selVCols.get(0)));

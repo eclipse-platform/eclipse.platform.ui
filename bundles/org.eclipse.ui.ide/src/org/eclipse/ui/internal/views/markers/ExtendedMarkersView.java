@@ -711,7 +711,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 */
 	private IContentProvider getContentProvider() {
-		return new MarkerViewerContentProvider();
+		return new MarkerViewerContentProvider(this);
 	}
 
 	/**
@@ -913,7 +913,7 @@ public class ExtendedMarkersView extends ViewPart {
 		MarkerSupportItem[] categories = markers.getCategories();
 		// Categories might be null if building is still happening
 		if (categories != null && builder.isShowingHierarchy()) {
-			int markerLimit = MarkerSupportInternalUtilities.getMarkerLimit();
+			int markerLimit = generator.getMarkerLimits();
 
 			for (int i = 0; i < categories.length; i++) {
 				filteredCount += markerLimit < 0 ? categories[i]
@@ -921,7 +921,7 @@ public class ExtendedMarkersView extends ViewPart {
 						.getChildrenCount(), markerLimit);
 			}
 		} else {
-			filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
+			filteredCount = generator.getMarkerLimits();
 		}
 
 		// Any errors or warnings? If not then send the filtering message
