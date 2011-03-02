@@ -121,8 +121,7 @@ final class HandlerActivation implements IHandlerActivation {
 	 * )
 	 */
 	public void setResult(boolean result) {
-		// TODO Auto-generated method stub
-
+		active = result;
 	}
 
 	/*

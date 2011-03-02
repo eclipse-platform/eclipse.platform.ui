@@ -63,7 +63,7 @@ public class LegacyHandlerService implements IHandlerService {
 			ISources.ACTIVE_MENU_EDITOR_INPUT_NAME, ISources.ACTIVE_MENU_NAME,
 			ISources.ACTIVE_MENU_SELECTION_NAME };
 
-	final static String LEGACY_H_ID = "legacy::handler::"; //$NON-NLS-1$
+	public final static String LEGACY_H_ID = "legacy::handler::"; //$NON-NLS-1$
 
 	static class HandlerSelectionFunction extends ContextFunction {
 

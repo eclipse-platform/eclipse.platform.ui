@@ -37,6 +37,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 	boolean cache;
 	boolean participating = true;
 	boolean postingChanges = true;
+	boolean hasRun = false;
 
 	public EvaluationReference(IEclipseContext context, Expression expression,
 			IPropertyChangeListener listener, String property) {
@@ -105,8 +106,7 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 	 * )
 	 */
 	public void setResult(boolean result) {
-		// TODO Auto-generated method stub
-
+		cache = result;
 	}
 
 	/*
@@ -131,12 +131,19 @@ public class EvaluationReference extends RunAndTrack implements IEvaluationRefer
 		if (!postingChanges) {
 			return;
 		}
-
+		if (!hasRun) {
+			getListener().propertyChange(
+					new PropertyChangeEvent(this, getProperty(), null, Boolean.valueOf(cache)));
+		} else if (!participating) {
+			getListener().propertyChange(
+					new PropertyChangeEvent(this, getProperty(), Boolean.valueOf(value), null));
+		}
 		if (value != cache) {
 			getListener().propertyChange(
 					new PropertyChangeEvent(this, getProperty(), Boolean.valueOf(value), Boolean
 							.valueOf(cache)));
 		}
+		hasRun = true;
 	}
 
 	/*
