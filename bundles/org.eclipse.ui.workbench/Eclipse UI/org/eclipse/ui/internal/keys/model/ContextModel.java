@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.ui.contexts.IContextService;
@@ -136,6 +135,7 @@ public class ContextModel extends CommonModel {
 
 			if (internal == true
 					&& contextElement.getId().indexOf(CONTEXT_ID_INTERNAL) != -1) {
+				removeContext = true;
 			}
 
 			if (workbenchMenu == true
