@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler.Save;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPartService;
@@ -32,7 +33,9 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.SlavePageService;
 import org.eclipse.ui.internal.SlavePartService;
 import org.eclipse.ui.internal.SlaveSelectionService;
@@ -195,6 +198,11 @@ public class TestFacadeE4Impl extends TestFacade {
 	public boolean isMoveableInPerspective(IViewReference ref) {
 		E4Util.unsupported("isMoveableInPerspective");
 		return false;
+	}
+
+	@Override
+	public Control getPaneControl(IWorkbenchPartSite site) {
+		return (Control) ((PartSite)site).getModel().getWidget();
 	}
 
 }
