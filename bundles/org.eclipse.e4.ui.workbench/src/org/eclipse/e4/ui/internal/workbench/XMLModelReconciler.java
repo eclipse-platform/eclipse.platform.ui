@@ -104,9 +104,17 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	/**
 	 * The version of the model deltas.
+	 * 
+	 * <ul>
+	 * <li>1.1 - introduced direct references to binding contexts instead of using string ids (see
+	 * bug 320171 and bug 338444)</li>
+	 * <li>1.0 (no change) - the model was updated with MArea, code was inserted to handle this case
+	 * so the version number was not actually increased (see bug 328388)</li>
+	 * <li>1.0 - first version of the model that went out for 4.0</li>
+	 * </ul>
 	 */
 	// a new string is constructed because we do not know want the value to be inlined
-	private static final String VERSION_NUMBER = new String("1.0"); //$NON-NLS-1$
+	private static final String VERSION_NUMBER = new String("1.1"); //$NON-NLS-1$
 
 	/**
 	 * An attribute for describing the type of the object in question (value is <code>type</code>).
