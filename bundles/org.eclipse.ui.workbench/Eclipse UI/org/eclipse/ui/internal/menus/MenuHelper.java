@@ -602,9 +602,11 @@ public class MenuHelper {
 					switch (action.getStyle()) {
 					case IAction.AS_CHECK_BOX:
 						menuItem.setType(ItemType.CHECK);
+						menuItem.setSelected(action.isChecked());
 						break;
 					case IAction.AS_RADIO_BUTTON:
 						menuItem.setType(ItemType.RADIO);
+						menuItem.setSelected(action.isChecked());
 						break;
 					default:
 						menuItem.setType(ItemType.PUSH);
@@ -637,9 +639,11 @@ public class MenuHelper {
 					switch (action.getStyle()) {
 					case IAction.AS_CHECK_BOX:
 						menuItem.setType(ItemType.CHECK);
+						menuItem.setSelected(action.isChecked());
 						break;
 					case IAction.AS_RADIO_BUTTON:
 						menuItem.setType(ItemType.RADIO);
+						menuItem.setSelected(action.isChecked());
 						break;
 					default:
 						menuItem.setType(ItemType.PUSH);
@@ -662,9 +666,11 @@ public class MenuHelper {
 			switch (action.getStyle()) {
 			case IAction.AS_CHECK_BOX:
 				menuItem.setType(ItemType.CHECK);
+				menuItem.setSelected(action.isChecked());
 				break;
 			case IAction.AS_RADIO_BUTTON:
 				menuItem.setType(ItemType.RADIO);
+				menuItem.setSelected(action.isChecked());
 				break;
 			default:
 				menuItem.setType(ItemType.PUSH);
