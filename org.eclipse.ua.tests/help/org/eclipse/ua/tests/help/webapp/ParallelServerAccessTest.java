@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,8 +64,8 @@ public class ParallelServerAccessTest extends TestCase {
 		do {
 			complete = true;
 			iterations++;
-			if (iterations > 100) {
-				fail("Test did not complete within 10 seconds");
+			if (iterations > 1000) {
+				fail("Test did not complete within 100 seconds");
 			}
 			for (int i = 0; i < numberOfThreads && complete; i++) {
 				if (readers[i].isAlive()) {
