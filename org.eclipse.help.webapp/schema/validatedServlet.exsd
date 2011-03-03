@@ -83,16 +83,7 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         Here is an example where a servlet &apos;ControlService&apos; will be called and validated with the URL:
-(path)/vs/service/control
-
-&lt;extension
-      point=&quot;org.eclipse.help.webapp.validatedServlet&quot;&gt;
-   &lt;servlet
-         alias=&quot;/service/control&quot;
-         class=&quot;org.eclipse.help.internal.webapp.service.ControlService&quot;&gt;
-   &lt;/servlet&gt;
-&lt;/extension&gt;
+      	None provided.
       </documentation>
    </annotation>
 
