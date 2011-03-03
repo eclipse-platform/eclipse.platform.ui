@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
@@ -36,6 +37,37 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class TrimBarRenderer extends SWTPartRenderer {
 	private MApplication application;
+
+	private class LayoutJob implements Runnable {
+		public List<MTrimBar> barsToLayout = new ArrayList<MTrimBar>();
+
+		public void run() {
+			layoutJob = null;
+			if (barsToLayout.size() == 0)
+				return;
+			for (MTrimBar bar : barsToLayout) {
+				Composite trimCtrl = (Composite) bar.getWidget();
+				if (trimCtrl != null && !trimCtrl.isDisposed())
+					trimCtrl.layout();
+			}
+		}
+	}
+
+	private LayoutJob layoutJob = null;
+
+	synchronized private void layoutTrim(MTrimBar trimBar) {
+		Composite comp = (Composite) trimBar.getWidget();
+		if (comp == null || comp.isDisposed())
+			return;
+
+		if (layoutJob == null) {
+			layoutJob = new LayoutJob();
+			layoutJob.barsToLayout.add(trimBar);
+			comp.getDisplay().asyncExec(layoutJob);
+		} else if (!layoutJob.barsToLayout.contains(trimBar)) {
+			layoutJob.barsToLayout.add(trimBar);
+		}
+	}
 
 	private HashMap<MTrimBar, ArrayList<ArrayList<MTrimElement>>> pendingCleanup = new HashMap<MTrimBar, ArrayList<ArrayList<MTrimElement>>>();
 
@@ -101,9 +133,8 @@ public class TrimBarRenderer extends SWTPartRenderer {
 			MUIElement child) {
 		super.hideChild(parentElement, child);
 
-		Composite trimCtrl = (Composite) parentElement.getWidget();
-		if (trimCtrl != null && !trimCtrl.isDisposed())
-			trimCtrl.layout();
+		Object downCast = parentElement;
+		layoutTrim((MTrimBar) downCast);
 	}
 
 	/*
