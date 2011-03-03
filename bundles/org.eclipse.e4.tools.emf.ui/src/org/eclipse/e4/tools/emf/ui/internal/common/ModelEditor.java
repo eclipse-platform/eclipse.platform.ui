@@ -267,6 +267,8 @@ public class ModelEditor {
 
 	private AbstractComponentEditor currentEditor;
 
+	private ControlHighlighter currentControlHighlighter;
+
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
 		this.modelProvider = modelProvider;
@@ -565,6 +567,29 @@ public class ModelEditor {
 						}
 					};
 					manager.add(nlsAction);
+				} else {
+					if (addSeparator) {
+						manager.add(new Separator());
+					}
+
+					if (s.getFirstElement() instanceof MUIElement) {
+						final MUIElement el = (MUIElement) s.getFirstElement();
+						if (el.getWidget() instanceof Control) {
+							manager.add(new Action("Show control") {
+
+								public void run() {
+									if (currentControlHighlighter != null) {
+										currentControlHighlighter.hide();
+									}
+
+									currentControlHighlighter = new ControlHighlighter((Control) el.getWidget());
+									currentControlHighlighter.show(viewer.getTree().getShell());
+								}
+							});
+
+						}
+					}
+
 				}
 			}
 		});
