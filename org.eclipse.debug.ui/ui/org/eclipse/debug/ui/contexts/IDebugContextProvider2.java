@@ -11,22 +11,33 @@
  *****************************************************************/
 package org.eclipse.debug.ui.contexts;
 
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+
+
 /**
- * IDebugContextProvider extension.
+ * This extension to {@link IDebugContextProvider} allows clients to specify the scope that the context 
+ * provider will apply to. With {@link IDebugContextProvider2}, a provider indicate if it should be a context
+ * provider for the entire {@link IWorkbenchWindow} or only for is given {@link IWorkbenchPart}. 
+ * 
+ * <p>
+ * This interface is intended to be implemented by clients
+ * </p>
  * 
  * @since 3.7
  */
 public interface IDebugContextProvider2 extends IDebugContextProvider {
 	/**
-	 * Return whether the provider can be set a an active provider for the 
+	 * Return whether the provider can be set as an active provider for the 
 	 * window.  
 	 * <p>
-	 * If <code>true</code> then upon the provider's part is 
-	 * activation this provider will become the active debug context provider
-	 * for the whole window.  If <code>false</code>, then this provider will
+	 * If <code>true</code>, when the provider's part is 
+	 * activated this provider will become the active debug context provider
+	 * for the whole window.  If <code>false</code>, this provider will
 	 * only set the active context in a given workbench part.
 	 *  
-	 * @return <code>true</code> if capable to be the active debug context 
+	 * @return <code>true</code> if this provider can act as the provider for the entire window, <code>false</code> if it can
+	 * only be the provider for its given part.
 	 * provider for a window.
 	 */
 	boolean isWindowContextProvider();
