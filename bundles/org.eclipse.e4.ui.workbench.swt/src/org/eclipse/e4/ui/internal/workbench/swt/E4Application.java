@@ -36,8 +36,9 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.ILoggerProvider;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
-import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.core.services.translation.TranslationProviderFactory;
+import org.eclipse.e4.core.services.translation.TranslationService;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.ActiveChildLookupFunction;
 import org.eclipse.e4.ui.internal.workbench.ActivePartLookupFunction;
 import org.eclipse.e4.ui.internal.workbench.DefaultLoggerProvider;
@@ -159,12 +160,22 @@ public class E4Application implements IApplication {
 	}
 
 	public E4Workbench createE4Workbench(
-			IApplicationContext applicationContext, Display display) {
+			IApplicationContext applicationContext, final Display display) {
 		args = (String[]) applicationContext.getArguments().get(
 				IApplicationContext.APPLICATION_ARGS);
 
 		IEclipseContext appContext = createDefaultContext();
 		appContext.set(Realm.class, SWTObservables.getRealm(display));
+		appContext.set(UISynchronize.class, new UISynchronize() {
+
+			public void syncExec(Runnable runnable) {
+				display.syncExec(runnable);
+			}
+
+			public void asyncExec(Runnable runnable) {
+				display.asyncExec(runnable);
+			}
+		});
 		appContext.set(IApplicationContext.class, applicationContext);
 
 		// Check if DS is running
@@ -437,8 +448,7 @@ public class E4Application implements IApplication {
 		appContext.set(TranslationService.LOCALE, locale);
 		TranslationService bundleTranslationProvider = TranslationProviderFactory
 				.bundleTranslationService(appContext);
-		appContext.set(TranslationService.class,
-				bundleTranslationProvider);
+		appContext.set(TranslationService.class, bundleTranslationProvider);
 
 		appContext.set(Adapter.class.getName(),
 				ContextInjectionFactory.make(EclipseAdapter.class, appContext));

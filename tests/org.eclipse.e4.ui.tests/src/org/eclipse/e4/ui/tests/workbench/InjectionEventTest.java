@@ -23,6 +23,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.core.di.extensions.EventUtils;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
@@ -131,7 +132,19 @@ public class InjectionEventTest extends TestCase {
 		injector.addBinding(MyBinding.class);
 
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set(Realm.class, SWTObservables.getRealm(Display.getDefault()));
+		final Display d = Display.getDefault();
+
+		context.set(Realm.class, SWTObservables.getRealm(d));
+		context.set(UISynchronize.class, new UISynchronize() {
+
+			public void syncExec(Runnable runnable) {
+				d.syncExec(runnable);
+			}
+
+			public void asyncExec(Runnable runnable) {
+				d.asyncExec(runnable);
+			}
+		});
 		InjectTarget target = ContextInjectionFactory.make(InjectTarget.class,
 				context);
 
@@ -207,7 +220,19 @@ public class InjectionEventTest extends TestCase {
 
 	public void testInjectWildCard() {
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set(Realm.class, SWTObservables.getRealm(Display.getDefault()));
+		final Display d = Display.getDefault();
+
+		context.set(Realm.class, SWTObservables.getRealm(d));
+		context.set(UISynchronize.class, new UISynchronize() {
+
+			public void syncExec(Runnable runnable) {
+				d.syncExec(runnable);
+			}
+
+			public void asyncExec(Runnable runnable) {
+				d.asyncExec(runnable);
+			}
+		});
 
 		InjectStarEvent target = ContextInjectionFactory.make(
 				InjectStarEvent.class, context);

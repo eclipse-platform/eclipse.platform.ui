@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.internal.events;
 
+import org.eclipse.e4.ui.di.UISynchronize;
+
+import org.eclipse.e4.core.di.annotations.Optional;
+
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -38,6 +42,10 @@ public class EventBroker implements IEventBroker {
 
 	@Inject
 	Logger logger;
+	
+	@Inject
+	@Optional
+	UISynchronize uiSync;
 	
 	// This is a temporary code to ensure that bundle containing
 	// EventAdmin implementation is started. This code it to be removed once
@@ -117,7 +125,7 @@ public class EventBroker implements IEventBroker {
 		d.put(EventConstants.EVENT_TOPIC, topics);
 		if (filter != null)
 			d.put(EventConstants.EVENT_FILTER, filter);
-		EventHandler wrappedHandler = new UIEventHandler(eventHandler, headless);
+		EventHandler wrappedHandler = new UIEventHandler(eventHandler, headless ? null : uiSync);
 		ServiceRegistration registration = bundleContext.registerService(EventHandler.class.getName(), wrappedHandler, d);
 		registrations.put(eventHandler, registration);
 		return true;

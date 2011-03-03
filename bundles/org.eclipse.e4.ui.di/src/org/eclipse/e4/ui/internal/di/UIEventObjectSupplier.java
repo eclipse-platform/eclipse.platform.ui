@@ -12,14 +12,15 @@ package org.eclipse.e4.ui.internal.di;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.inject.Inject;
 
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.internal.extensions.EventObjectSupplier;
 import org.eclipse.e4.core.di.suppliers.IObjectDescriptor;
 import org.eclipse.e4.core.di.suppliers.IRequestor;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.osgi.service.event.EventHandler;
 
 public class UIEventObjectSupplier extends EventObjectSupplier {
@@ -38,12 +39,12 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 			addCurrentEvent(topic, event);
 			requestor.resolveArguments(false);
 			removeCurrentEvent(topic);
-			if( contextRealm == null ) {
+			if( uiSync == null ) {
 				if (logger != null)
 					logger.log(Level.WARNING, "No realm found to process UI event " + event);
 				return;
 			} else {
-				contextRealm.exec(new Runnable() {
+				uiSync.syncExec(new Runnable() {
 					public void run() {
 						requestor.execute();
 					}
@@ -53,7 +54,7 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 	}
 	
 	@Inject
-	protected Realm contextRealm;
+	protected UISynchronize uiSync;
 	
 	@Inject @Optional
 	protected Logger logger;

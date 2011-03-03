@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.internal.events;
 
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.e4.ui.di.UISynchronize;
+
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -20,28 +21,22 @@ import org.osgi.service.event.EventHandler;
 public class UIEventHandler implements EventHandler {
 	
 	final private EventHandler eventHandler;
-	final private boolean headless;
+	final private UISynchronize uiSync;
 	
-	public UIEventHandler(EventHandler eventHandler, boolean headless) {
+	public UIEventHandler(EventHandler eventHandler, UISynchronize uiSync) {
 		this.eventHandler = eventHandler;
-		this.headless = headless;
+		this.uiSync = uiSync;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.osgi.service.event.EventHandler#handleEvent(org.osgi.service.event.Event)
 	 */
 	public void handleEvent(final Event event) {
-		if (headless)
+		if (uiSync == null)
 			eventHandler.handleEvent(event);
 		else {
-			// This is very close to a no-op if run on the main thread.
-			// Effectively, after some sanity checks, if the display thread
-			// is the same as the current thread, the SWT does runnable.run().
-			if (Display.getCurrent() != null) {
-				eventHandler.handleEvent(event);
-				return;
-			}
-			Display.getDefault().syncExec(new Runnable() { 
+			uiSync.syncExec(new Runnable() {
+				
 				public void run() {
 					eventHandler.handleEvent(event);
 				}
