@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,24 +8,31 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River) -  [296800] UI build actions should not lock the workspace
+ *     Broadcom Corporation - [335960]  Update BuildAction to use new Workspace Build Configurations API
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -38,9 +45,11 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
+import org.eclipse.ui.progress.IProgressConstants2;
 
 /**
- * Standard actions for full and incremental builds of the selected project(s).
+ * Standard actions for full and incremental builds of the selected project(s)
+ * and their references project build configurations.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -62,9 +71,15 @@ public class BuildAction extends WorkspaceAction {
     private int buildType;
 
     /**
-     * The list of IProjects to build (computed lazily).
+     * The list of IProjects to build (computed lazily). This is computed from the
+     * list of project build configurations that are to be built.
      */
     private List projectsToBuild = null;
+
+    /**
+     * The list of {@link IBuildConfiguration} to build (computed lazily).
+     */
+    private List/*<IBuildConfiguration>*/ projectConfigsToBuild = null;
 
     /**
      * Creates a new action of the appropriate type. The action id is 
@@ -121,26 +136,6 @@ public class BuildAction extends WorkspaceAction {
         this.buildType = type;
 	}
 
-    /**
-     * Adds the given project and all of its prerequisities, transitively,
-     * to the provided set.
-     */
-    private void addAllProjects(IProject project, HashSet projects) {
-        if (project == null || !project.isAccessible()
-                || projects.contains(project)) {
-			return;
-		}
-        projects.add(project);
-        try {
-            IProject[] preReqs = project.getReferencedProjects();
-            for (int i = 0; i < preReqs.length; i++) {
-				addAllProjects(preReqs[i], projects);
-			}
-        } catch (CoreException e) {
-            //ignore inaccessible projects
-        }
-    }
-
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
@@ -169,27 +164,47 @@ public class BuildAction extends WorkspaceAction {
         return IDEWorkbenchMessages.BuildAction_problemTitle;
     }
 
-    /**
-     * Returns the projects to build.
-     * This contains the set of projects which have builders, across all selected resources.
-     */
-    List getProjectsToBuild() {
-        if (projectsToBuild == null) {
-            projectsToBuild = new ArrayList(3);
-            for (Iterator i = getSelectedResources().iterator(); i.hasNext();) {
-                IResource resource = (IResource) i.next();
-                IProject project = resource.getProject();
-                if (project != null) {
-                    if (!projectsToBuild.contains(project)) {
-                        if (hasBuilder(project)) {
-                            projectsToBuild.add(project);
-                        }
-                    }
-                }
-            }
-        }
-        return projectsToBuild;
-    }
+	/**
+	 * Returns the projects to build.
+	 * This contains the set of projects which have builders, across all selected resources.
+	 */
+	List getProjectsToBuild() {
+		if (projectsToBuild == null) {
+			Set projects = new HashSet(3);
+			List configurations = getBuildConfigurationsToBuild();
+			for (Iterator it = configurations.iterator(); it.hasNext();) {
+				projects.add(((IBuildConfiguration) it.next()).getProject());
+			}
+			projectsToBuild = new ArrayList(projects);
+		}
+		return projectsToBuild;
+	}
+
+	/**
+	 * This collection of project build configs, derived from the selected 
+	 * resources, is passed to the workspace for building.  The Workspace
+	 * is responsible for resolving references.
+	 * @return List of project build configurations to build.
+	 * @since 3.7
+	 */
+	protected List getBuildConfigurationsToBuild() {
+		if (projectConfigsToBuild == null) {
+			Set configs = new HashSet(3);
+			for (Iterator i = getSelectedResources().iterator(); i.hasNext();) {
+				IResource resource = (IResource) i.next();
+				IProject project = resource.getProject();
+				if (project != null && hasBuilder(project)) {
+					try {
+						configs.add(project.getActiveBuildConfig());
+					} catch(CoreException e) {
+						// Ignore project
+					}
+				}
+			}
+			projectConfigsToBuild = new ArrayList(configs);
+		}
+		return projectConfigsToBuild;
+	}
 
     /**
      * Returns whether there are builders configured on the given project.
@@ -215,14 +230,6 @@ public class BuildAction extends WorkspaceAction {
     }
 
     /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     */
-    protected void invokeOperation(IResource resource, IProgressMonitor monitor)
-            throws CoreException {
-        ((IProject) resource).build(buildType, monitor);
-    }
-    
-    /* (non-Javadoc)
      * Method declared on Action
      */
     public boolean isEnabled() {
@@ -247,67 +254,68 @@ public class BuildAction extends WorkspaceAction {
     }
 
     /* (non-Javadoc)
-     * Method declared on WorkspaceAction.
-     *
-     * Change the order of the resources so that
-     * it matches the build order. Closed and
-     * non existant projects are eliminated. Also,
-     * any projects in cycles are eliminated.
-     */
-    List pruneResources(List resourceCollection) {
-        //recursively compute project prerequisites
-        HashSet toBuild = new HashSet();
-        for (Iterator it = resourceCollection.iterator(); it.hasNext();) {
-			addAllProjects((IProject) it.next(), toBuild);
-		}
-
-        // Optimize...
-        if (toBuild.size() < 2) {
-			return resourceCollection;
-		}
-
-        // Try the workspace's description build order if specified
-        String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription()
-                .getBuildOrder();
-        if (orderedNames != null) {
-            List orderedProjects = new ArrayList(toBuild.size());
-            IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-            for (int i = 0; i < orderedNames.length; i++) {
-                IProject handle = root.getProject(orderedNames[i]);
-                if (toBuild.contains(handle)) {
-                    orderedProjects.add(handle);
-                    toBuild.remove(handle);
-                }
-            }
-            //Add anything not specified before we return
-            orderedProjects.addAll(toBuild);
-            return orderedProjects;
-        }
-
-        // Try the project prerequisite order then
-        IProject[] projects = new IProject[toBuild.size()];
-        projects = (IProject[]) toBuild.toArray(projects);
-        IWorkspace.ProjectOrder po = ResourcesPlugin.getWorkspace()
-                .computeProjectOrder(projects);
-        ArrayList orderedProjects = new ArrayList();
-        orderedProjects.addAll(Arrays.asList(po.projects));
-        return orderedProjects;
-    }
-
-    /* (non-Javadoc)
      * Method declared on IAction; overrides method on WorkspaceAction.
      * This override allows the user to save the contents of selected
      * open editors so that the updated contents will be used for building.
+     * The build is run as a background job.
      */
     public void run() {
-	    List projects = getProjectsToBuild();
-	    if (projects == null || projects.isEmpty()) {
+	    final List buildConfigurations = getBuildConfigurationsToBuild();
+	    if (buildConfigurations == null || buildConfigurations.isEmpty())
 			return;
-		}
 
 	    // Save all resources prior to doing build
-        BuildUtilities.saveEditors(projects);
+        BuildUtilities.saveEditors(getProjectsToBuild());
         runInBackground(null, ResourcesPlugin.FAMILY_MANUAL_BUILD);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.ui.actions.WorkspaceAction#runInBackground(org.eclipse.core.runtime.jobs.ISchedulingRule, java.lang.Object[])
+     */
+    public void runInBackground(ISchedulingRule rule, Object[] jobFamilies) {
+        // Get immutable copies of the build settings
+		final int kind = buildType;
+	    List buildConfigurations = getBuildConfigurationsToBuild();
+	    if (buildConfigurations == null || buildConfigurations.isEmpty())
+			return;
+	    final IBuildConfiguration[] configs = (IBuildConfiguration[])buildConfigurations.toArray(new IBuildConfiguration[buildConfigurations.size()]);
+
+		// Schedule a Workspace Job to perform the build
+		Job job = new WorkspaceJob(removeMnemonics(getText())) {
+			/*
+			 * (non-Javadoc)
+			 * @see Job#belongsTo(Object)
+			 */
+			public boolean belongsTo(Object family) {
+				return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * @see WorkspaceJob#runInWorkspace(IProgressMonitor)
+			 */
+			public IStatus runInWorkspace(IProgressMonitor monitor) {
+				IStatus status = null;
+				monitor.beginTask("", 10000); //$NON-NLS-1$
+				monitor.setTaskName(getOperationMessage());
+				try {
+					// Backwards compatibility: check shouldPerformResourcePruning(). 
+					// Previously if this returned true, the full reference graph is built, otherwise just build the selected configurations
+					ResourcesPlugin.getWorkspace().build(configs, kind, shouldPerformResourcePruning(), new SubProgressMonitor(monitor, 10000));
+				} catch (CoreException e) {
+					status = e.getStatus();
+				}
+				if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+				monitor.done();
+				return status == null ? Status.OK_STATUS : status;
+			}
+		};
+		job.setProperty(IProgressConstants2.SHOW_IN_TASKBAR_ICON_PROPERTY, Boolean.TRUE);
+		job.setUser(true);
+		job.schedule();
     }
 
     /* (non-Javadoc)
@@ -323,6 +331,7 @@ public class BuildAction extends WorkspaceAction {
      * enabled only if all of the selected resources have buildable projects.
      */
     protected boolean updateSelection(IStructuredSelection s) {
+        projectConfigsToBuild = null;
         projectsToBuild = null;
         IProject[] projects = (IProject[]) getProjectsToBuild().toArray(new IProject[0]);
         return BuildUtilities.isEnabled(projects, IncrementalProjectBuilder.INCREMENTAL_BUILD);
