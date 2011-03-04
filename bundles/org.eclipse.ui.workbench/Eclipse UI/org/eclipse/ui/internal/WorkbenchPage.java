@@ -1704,6 +1704,61 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return (IEditorPart) activePart;
 		}
 
+		if (!activationList.isEmpty()) {
+			IEditorPart editor = findActiveEditor();
+			if (editor != null) {
+				return editor;
+			}
+		}
+
+		MUIElement area = findSharedArea();
+		if (area instanceof MPlaceholder) {
+			area = ((MPlaceholder) area).getRef();
+		}
+		if (area != null && area.isVisible() && area.isToBeRendered()) {
+			// we have a shared area, try iterating over its editors first
+			List<MPart> editors = modelService.findElements(area,
+					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
+			for (MPart model : editors) {
+				Object object = model.getObject();
+				if (object instanceof CompatibilityEditor) {
+					CompatibilityEditor editor = (CompatibilityEditor) object;
+					// see bug 308492
+					if (!editor.isBeingDisposed() && isInArea(area, model)) {
+						return ((CompatibilityEditor) object).getEditor();
+					}
+				}
+			}
+		}
+
+		MPerspective perspective = getPerspectiveStack().getSelectedElement();
+		List<MPart> parts = modelService.findElements(perspective,
+				CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
+		for (MPart part : parts) {
+			Object object = part.getObject();
+			if (object instanceof CompatibilityEditor) {
+				CompatibilityEditor editor = (CompatibilityEditor) object;
+				// see bug 308492
+				if (!editor.isBeingDisposed()) {
+					if (isValid(perspective, part) || isValid(window, part)) {
+						return ((CompatibilityEditor) object).getEditor();
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Searches and returns an editor from the activation list that is being
+	 * displayed in the current presentation. If an editor is in the
+	 * presentation but is behind another part it will not be returned.
+	 * 
+	 * @return an editor that is being shown in the current presentation and was
+	 *         previously activated, editors that are behind another part in a
+	 *         stack will not be returned
+	 */
+	private IEditorPart findActiveEditor() {
 		List<MPart> candidates = new ArrayList<MPart>(activationList);
 		MUIElement area = findSharedArea();
 		if (area instanceof MPlaceholder) {
