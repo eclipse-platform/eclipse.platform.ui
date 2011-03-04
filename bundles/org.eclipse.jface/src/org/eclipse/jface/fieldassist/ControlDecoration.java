@@ -897,9 +897,9 @@ public class ControlDecoration {
 	}
 
 	/**
-	 * Set the image shown in this control decoration. Update the rendered
-	 * decoration.
-	 * 
+	 * Set the description text that may be shown in a hover for this
+	 * decoration. Update the rendered decoration.
+	 *
 	 * @param text
 	 *            the text to be shown as a description for the decoration, or
 	 *            <code>null</code> if none has been set.
