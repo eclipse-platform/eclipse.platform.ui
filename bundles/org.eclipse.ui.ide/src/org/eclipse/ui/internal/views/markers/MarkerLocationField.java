@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ public class MarkerLocationField extends MarkerField {
 	 * @return int
 	 */
 	public int getDefaultColumnWidth(Control control) {
-		return 10 * MarkerSupportInternalUtilities.getFontWidth(control);
+		return 15 * MarkerSupportInternalUtilities.getFontWidth(control);
 	}
 
 	/*
