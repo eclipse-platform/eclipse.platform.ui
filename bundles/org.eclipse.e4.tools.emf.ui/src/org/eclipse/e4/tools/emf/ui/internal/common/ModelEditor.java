@@ -163,6 +163,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
@@ -346,6 +347,7 @@ public class ModelEditor {
 		SourceViewer viewer = new SourceViewer(composite, verticalRuler, styles);
 		viewer.configure(new XMLConfiguration(resourcePool));
 		viewer.setEditable(project != null);
+		viewer.getTextWidget().setFont(JFaceResources.getTextFont());
 
 		final IDocument document = emfDocumentProvider.getDocument();
 		IDocumentPartitioner partitioner = new FastPartitioner(new XMLPartitionScanner(), new String[] { XMLPartitionScanner.XML_TAG, XMLPartitionScanner.XML_COMMENT });
