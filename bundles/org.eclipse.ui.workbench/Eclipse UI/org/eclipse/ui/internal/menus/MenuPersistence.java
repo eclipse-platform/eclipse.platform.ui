@@ -125,7 +125,16 @@ final public class MenuPersistence extends RegistryPersistence {
 		menuContributions.clear();
 		ContributionsAnalyzer.mergeContributions(tmp, menuContributions);
 		application.getMenuContributions().addAll(menuContributions);
+
+		ArrayList<MToolBarContribution> tmpToolbar = new ArrayList<MToolBarContribution>(
+				toolBarContributions);
+		toolBarContributions.clear();
+		ContributionsAnalyzer.mergeToolBarContributions(tmpToolbar, toolBarContributions);
 		application.getToolBarContributions().addAll(toolBarContributions);
+
+		ArrayList<MTrimContribution> tmpTrim = new ArrayList<MTrimContribution>(trimContributions);
+		trimContributions.clear();
+		ContributionsAnalyzer.mergeTrimContributions(tmpTrim, trimContributions);
 		application.getTrimContributions().addAll(trimContributions);
 	}
 

@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.ToolBar;
 
 public class TrimBarLayout extends Layout {
 	class TrimLine {
@@ -146,10 +147,14 @@ public class TrimBarLayout extends Layout {
 		if (isStatusLine(ctrl))
 			ctrlSize.x = 375;
 
-		// SWT composites return (64,64) for empty composites ??
-		if (ctrl instanceof Composite
-				&& ((Composite) ctrl).getChildren().length == 0)
-			ctrlSize = new Point(0, 0);
+		if (ctrl instanceof ToolBar) {
+			ToolBar tb = (ToolBar) ctrl;
+			if (tb.getItemCount() == 0)
+				return new Point(0, 0);
+		} else if (ctrl instanceof Composite
+				&& ((Composite) ctrl).getChildren().length == 0) {
+			return new Point(0, 0);
+		}
 
 		return ctrlSize;
 	}
