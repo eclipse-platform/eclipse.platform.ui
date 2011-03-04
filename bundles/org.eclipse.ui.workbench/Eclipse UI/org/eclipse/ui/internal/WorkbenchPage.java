@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
@@ -70,8 +71,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -539,6 +543,34 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private EModelService modelService;
 
 	private IEventBroker broker;
+
+	/**
+	 * An event handler that listens for an MArea's widget being set so that we
+	 * can install DND support into its control.
+	 */
+	private EventHandler areaWidgetHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+			// we are only interested in MAreas
+			if (element instanceof MArea) {
+				// make sure this area is contained within this window
+				if (modelService.findElements(window, null, MArea.class, null).contains(element)) {
+					Object newValue = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+					if (newValue instanceof Control) {
+						installAreaDropSupport((Control) newValue);
+					}
+				}
+			}
+		}
+	};
+
+	/**
+	 * Boolean field to determine whether DND support has been added to the
+	 * shared area yet.
+	 * 
+	 * @see #installAreaDropSupport(Control)
+	 */
+	private boolean dndSupportInstalled = false;
 
     /**
      * Constructs a page. <code>restoreState(IMemento)</code> should be
@@ -1381,6 +1413,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			legacyWindow.setActivePage(null);
 			partService.removePartListener(e4PartListener);
 			broker.unsubscribe(selectionHandler);
+			broker.unsubscribe(areaWidgetHandler);
 			broker.unsubscribe(referenceRemovalEventHandler);
 
 			ISelectionService selectionService = getWorkbenchWindow().getSelectionService();
@@ -2196,6 +2229,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		broker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.SELECTEDELEMENT), selectionHandler);
+		broker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
+				areaWidgetHandler);
 		broker.subscribe(
 				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.TOBERENDERED),
 				referenceRemovalEventHandler);
@@ -2276,6 +2311,24 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (!tags.contains(extendedTag)) {
 				tags.add(extendedTag);
 			}
+		}
+	}
+
+	/**
+	 * Installs drop support into the shared area so that editors can be opened
+	 * by dragging and dropping files into it.
+	 * 
+	 * @param control
+	 *            the control to attach the drop support to
+	 */
+	private void installAreaDropSupport(Control control) {
+		if (!dndSupportInstalled) {
+			WorkbenchWindowConfigurer configurer = legacyWindow.getWindowConfigurer();
+			DropTarget dropTarget = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY
+					| DND.DROP_LINK);
+			dropTarget.setTransfer(configurer.getTransfers());
+			dropTarget.addDropListener(configurer.getDropTargetListener());
+			dndSupportInstalled = true;
 		}
 	}
 
