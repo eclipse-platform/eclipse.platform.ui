@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -229,6 +229,45 @@ public class IWorkingSetManagerTest extends UITestCase {
         fWorkingSetManager.removeWorkingSet(workingSet2);
         assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
                 fWorkingSetManager.getRecentWorkingSets()));
+    }
+    
+    public void testRecentWorkingSetsLength() throws Throwable {
+        int oldMRULength =  fWorkingSetManager.getRecentWorkingSetsLength();
+        try {
+	        fWorkingSetManager.setRecentWorkingSetsLength(10);
+	        
+	        IWorkingSet[] workingSets = new IWorkingSet[10];
+	        for (int i = 0 ; i < 10; i++) {
+	            IWorkingSet workingSet = fWorkingSetManager.createWorkingSet(
+	                    "ws_" + Integer.toString(i + 1), new IAdaptable[] { fWorkspace.getRoot() });
+	            fWorkingSetManager.addRecentWorkingSet(workingSet);
+	            fWorkingSetManager.addWorkingSet(workingSet);
+	            workingSets[9 - i] = workingSet;
+	        }
+	        assertTrue(ArrayUtil.equals(workingSets, fWorkingSetManager.getRecentWorkingSets()));
+	        
+	        fWorkingSetManager.setRecentWorkingSetsLength(7);
+	        IWorkingSet[] workingSets7 = new IWorkingSet[7];
+	        System.arraycopy(workingSets, 0, workingSets7, 0, 7);
+	        assertTrue(ArrayUtil.equals(workingSets7, fWorkingSetManager.getRecentWorkingSets()));
+	        
+	        fWorkingSetManager.setRecentWorkingSetsLength(9);
+	        IWorkingSet[] workingSets9 = new IWorkingSet[9];
+	        System.arraycopy(workingSets, 0, workingSets9, 2, 7);
+	        
+	        for (int i = 7 ; i < 9; i++) {
+	            IWorkingSet workingSet = fWorkingSetManager.createWorkingSet(
+	                    "ws_addded_" + Integer.toString(i + 1), new IAdaptable[] { fWorkspace.getRoot() });
+	            fWorkingSetManager.addRecentWorkingSet(workingSet);
+	            fWorkingSetManager.addWorkingSet(workingSet);
+	            workingSets9[8 - i] = workingSet;
+	        }
+	        
+	        assertTrue(ArrayUtil.equals(workingSets9, fWorkingSetManager.getRecentWorkingSets()));
+        } finally {
+        	if (oldMRULength > 0)
+        		fWorkingSetManager.setRecentWorkingSetsLength(oldMRULength);
+        }
     }
 
     public void testGetWorkingSet() throws Throwable {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
@@ -46,6 +47,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetElementAdapter;
 import org.eclipse.ui.IWorkingSetManager;
@@ -63,6 +65,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
@@ -95,12 +98,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 					((AbstractWorkingSet) o2).getUniqueId());
 		}
 	});
-    
-    /**
-     * Size of the list of most recently used working sets.
-     */
-    private static final int MRU_SIZE = 5;
-    private List recentWorkingSets = new ArrayList();
+
+	private List recentWorkingSets = new ArrayList();
 
     private BundleContext bundleContext;
     private Map/*<String, IWorkingSetUpdater>*/ updaters= new HashMap();
@@ -319,9 +318,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			}
         recentWorkingSets.remove(workingSet);
         recentWorkingSets.add(0, workingSet);
-        if (recentWorkingSets.size() > MRU_SIZE) {
-            recentWorkingSets.remove(MRU_SIZE);
-        }
+        sizeRecentWorkingSets();
     }
 
     //---- equals and hash code -----------------------------------------------
@@ -917,4 +914,27 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 				}});
 		}
 	}
+
+	public void setRecentWorkingSetsLength(int length) {
+		if (length < 1 || length > 99)
+			throw new IllegalArgumentException("Invalid recent working sets length: " + length); //$NON-NLS-1$
+		IPreferenceStore store = PrefUtil.getAPIPreferenceStore();
+		store.setValue(IWorkbenchPreferenceConstants.RECENTLY_USED_WORKINGSETS_SIZE, length);
+		// adjust length
+		sizeRecentWorkingSets();
+	}
+	
+	private void sizeRecentWorkingSets() {
+		int maxLength = getRecentWorkingSetsLength();
+		while (recentWorkingSets.size() > maxLength) {
+			int lastPosition = recentWorkingSets.size() - 1;
+			recentWorkingSets.remove(lastPosition);
+		}
+	}
+
+	public int getRecentWorkingSetsLength() {
+		IPreferenceStore store = PrefUtil.getAPIPreferenceStore();
+		return store.getInt(IWorkbenchPreferenceConstants.RECENTLY_USED_WORKINGSETS_SIZE);
+	}
+
 }

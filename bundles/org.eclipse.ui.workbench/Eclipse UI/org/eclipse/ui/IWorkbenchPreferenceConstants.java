@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -596,5 +596,16 @@ public interface IWorkbenchPreferenceConstants {
 	 * 
 	 * @since 3.4
 	 */
-	public static final String DISABLE_OPEN_EDITOR_IN_PLACE = "DISABLE_OPEN_EDITOR_IN_PLACE"; //$NON-NLS-1$	
+	public static final String DISABLE_OPEN_EDITOR_IN_PLACE = "DISABLE_OPEN_EDITOR_IN_PLACE"; //$NON-NLS-1$
+
+	/**
+	 * Workbench preference id for indicating the size of the list of most
+	 * recently used working sets.
+	 * <p>
+	 * Integer-valued. The default value for this preference is: <code>5</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String RECENTLY_USED_WORKINGSETS_SIZE = "RECENTLY_USED_WORKINGSETS_SIZE"; //$NON-NLS-1$
 }
