@@ -93,6 +93,32 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.workbench.file?after=print.ext">
+         <command
+               commandId="org.eclipse.e4.ui.menu.tests.commandOne"
+               id="p4.invisible.commandOne"
+               label="Invisible Command One"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <equals
+                           value="show.p4.invisible.commandOne">
+                     </equals>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>

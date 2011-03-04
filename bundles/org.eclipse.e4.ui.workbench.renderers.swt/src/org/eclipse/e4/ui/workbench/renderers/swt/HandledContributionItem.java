@@ -2,11 +2,13 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.Activator;
@@ -19,12 +21,16 @@ import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -33,6 +39,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -162,9 +173,14 @@ public class HandledContributionItem extends ContributionItem {
 		if (widget != null) {
 			return;
 		}
+		boolean isDropdown = false;
+		if (model instanceof MToolItem) {
+			MMenu menu = ((MToolItem) model).getMenu();
+			isDropdown = menu != null;
+		}
 		int style = SWT.PUSH;
-		if (model.getType() == ItemType.PUSH)
-			style = SWT.PUSH;
+		if (isDropdown)
+			style = SWT.DROP_DOWN;
 		else if (model.getType() == ItemType.CHECK)
 			style = SWT.CHECK;
 		else if (model.getType() == ItemType.RADIO)
@@ -261,10 +277,56 @@ public class HandledContributionItem extends ContributionItem {
 		} else {
 			item.setText(""); //$NON-NLS-1$
 		}
-		final String tooltip = model.getLocalizedTooltip();
+		final String tooltip = getToolTipText(model);
 		item.setToolTipText(tooltip);
 		item.setSelection(model.isSelected());
 		item.setEnabled(model.isEnabled());
+	}
+
+	private String getToolTipText(MItem item) {
+		String text = item.getLocalizedTooltip();
+		if (item instanceof MHandledItem) {
+			MHandledItem handledItem = (MHandledItem) item;
+			IEclipseContext context = getContext(item);
+			EBindingService bs = (EBindingService) context
+					.get(EBindingService.class.getName());
+			ParameterizedCommand cmd = handledItem.getWbCommand();
+			if (cmd == null) {
+				cmd = generateParameterizedCommand(handledItem, context);
+			}
+			TriggerSequence sequence = bs.getBestSequenceFor(handledItem
+					.getWbCommand());
+			if (sequence != null) {
+				if (text == null) {
+					try {
+						text = cmd.getName();
+					} catch (NotDefinedException e) {
+						return null;
+					}
+				}
+				text = text + " (" + sequence.format() + ')'; //$NON-NLS-1$
+			}
+			return text;
+		}
+		return text;
+	}
+
+	private ParameterizedCommand generateParameterizedCommand(
+			final MHandledItem item, final IEclipseContext lclContext) {
+		ECommandService cmdService = (ECommandService) lclContext
+				.get(ECommandService.class.getName());
+		Map<String, Object> parameters = null;
+		List<MParameter> modelParms = item.getParameters();
+		if (modelParms != null && !modelParms.isEmpty()) {
+			parameters = new HashMap<String, Object>();
+			for (MParameter mParm : modelParms) {
+				parameters.put(mParm.getName(), mParm.getValue());
+			}
+		}
+		ParameterizedCommand cmd = cmdService.createCommand(item.getCommand()
+				.getElementId(), parameters);
+		item.setWbCommand(cmd);
+		return cmd;
 	}
 
 	private void updateIcons() {
@@ -360,6 +422,9 @@ public class HandledContributionItem extends ContributionItem {
 
 	private void handleWidgetSelection(Event event) {
 		if (widget != null && !widget.isDisposed()) {
+			if (dropdownEvent(event)) {
+				return;
+			}
 			if (model.getType() == ItemType.CHECK
 					|| model.getType() == ItemType.RADIO) {
 				boolean selection = false;
@@ -374,6 +439,73 @@ public class HandledContributionItem extends ContributionItem {
 				executeItem();
 			}
 		}
+	}
+
+	/**
+	 * @param event
+	 * @return
+	 */
+	private boolean dropdownEvent(Event event) {
+		if (event.detail == SWT.ARROW && model instanceof MToolItem) {
+			ToolItem ti = (ToolItem) event.widget;
+			MMenu mmenu = ((MToolItem) model).getMenu();
+			if (mmenu == null) {
+				return false;
+			}
+			Menu menu = getMenu(mmenu, ti);
+			if (menu == null) {
+				return true;
+			}
+			Rectangle itemBounds = ti.getBounds();
+			Point displayAt = ti.getParent().toDisplay(itemBounds.x,
+					itemBounds.y + itemBounds.height);
+			menu.setLocation(displayAt);
+			menu.setVisible(true);
+
+			Display display = menu.getDisplay();
+			while (menu.isVisible()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	protected Menu getMenu(final MMenu mmenu, ToolItem toolItem) {
+		Object obj = mmenu.getWidget();
+		if (obj instanceof Menu && !((Menu) obj).isDisposed()) {
+			return (Menu) obj;
+		}
+		// this is a temporary passthrough of the IMenuCreator
+		if (mmenu instanceof MRenderedMenu) {
+			obj = ((MRenderedMenu) mmenu).getContributionManager();
+			if (obj instanceof IContextFunction) {
+				final IEclipseContext lclContext = getContext(mmenu);
+				obj = ((IContextFunction) obj).compute(lclContext);
+				((MRenderedMenu) mmenu).setContributionManager(obj);
+			}
+			if (obj instanceof IMenuCreator) {
+				final IMenuCreator creator = (IMenuCreator) obj;
+				final Menu menu = creator.getMenu(toolItem.getParent()
+						.getShell());
+				if (menu != null) {
+					toolItem.addDisposeListener(new DisposeListener() {
+						public void widgetDisposed(DisposeEvent e) {
+							if (menu != null && !menu.isDisposed()) {
+								creator.dispose();
+								((MRenderedMenu) mmenu).setWidget(null);
+							}
+						}
+					});
+					// mmenu.setWidget(menu);
+					menu.setData(AbstractPartRenderer.OWNING_ME, menu);
+					return menu;
+				}
+			}
+		}
+		return null;
 	}
 
 	private void executeItem() {

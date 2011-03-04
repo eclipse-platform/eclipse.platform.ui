@@ -67,6 +67,22 @@
                style="push">
          </command>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.workbench.file?after=additions">
+         <command
+               commandId="org.eclipse.e4.ui.menu.tests.commandOne"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.workbench.file?after=print.ext">
+         <command
+               commandId="org.eclipse.e4.ui.menu.tests.commandTwo"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
 
 </plugin>

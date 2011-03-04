@@ -1,74 +1,49 @@
 package org.eclipse.e4.ui.menu.tests;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.bindings.BindingServiceAddon;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
-import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.renderers.swt.ContributionRecord;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
-import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
-import org.eclipse.emf.common.notify.Notifier;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.equinox.log.Logger;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.commands.ICommandImageService;
-import org.eclipse.ui.internal.commands.CommandImageManager;
-import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.internal.menus.MenuPersistence;
-import org.osgi.framework.ServiceReference;
 
 public class MMenuItemTest extends TestCase {
 
@@ -144,76 +119,6 @@ public class MMenuItemTest extends TestCase {
 				null);
 		assertEquals(MenuManagerRenderer.class, renderer.getClass());
 		return (MenuManagerRenderer) renderer;
-	}
-
-	private void printContributions(MApplication application) {
-		for (MMenuContribution mc : application.getMenuContributions()) {
-			System.out.print("\n\nMC: " + mc.getParentId() + "?"
-					+ mc.getPositionInParent());
-			printMenuOut(1, mc);
-		}
-
-		for (MToolBarContribution tbc : application.getToolBarContributions()) {
-			System.out.print("\n\nTC: " + tbc.getParentId() + "?"
-					+ tbc.getPositionInParent());
-			printToolOut(1, tbc);
-		}
-	}
-
-	private void printIcon(int level, MUILabel item) {
-		printTabs(level + 2);
-		System.out.print("icon: " + item.getIconURI());
-	}
-
-	private void printMenuOut(int level,
-			MElementContainer<MMenuElement> container) {
-		for (MMenuElement child : container.getChildren()) {
-			printTabs(level);
-			System.out.print(child.getClass().getSimpleName() + ": "
-					+ child.getElementId());
-			if (child instanceof MMenu) {
-				printMenuOut(level + 1, (MElementContainer<MMenuElement>) child);
-			} else if (child instanceof MHandledMenuItem) {
-				System.out.print(": cmd "
-						+ ((MHandledMenuItem) child).getCommand()
-								.getElementId());
-				printIcon(level, (MUILabel) child);
-			} else if (child instanceof MDirectMenuItem) {
-				System.out.print(": cmd "
-						+ ((MDirectMenuItem) child).getContributionURI());
-				printIcon(level, (MUILabel) child);
-			} else if (child instanceof MMenuSeparator) {
-				System.out.print(": label "
-						+ ((MMenuSeparator) child).getLabel());
-			}
-		}
-	}
-
-	private void printTabs(int level) {
-		System.out.print("\n");
-		for (int i = 0; i < level; i++) {
-			System.out.print("   ");
-		}
-	}
-
-	private void printToolOut(int level, MToolBarContribution tbc) {
-		for (MToolBarElement child : tbc.getChildren()) {
-			printTabs(level);
-			System.out.print(child.getClass().getSimpleName() + ": "
-					+ child.getElementId());
-			if (child instanceof MDirectToolItem) {
-				System.out.print(": cmd "
-						+ ((MDirectToolItem) child).getContributionURI());
-				printIcon(level, (MUILabel) child);
-			} else if (child instanceof MHandledToolItem) {
-				System.out.print(": cmd "
-						+ ((MHandledToolItem) child).getCommand()
-								.getElementId());
-				printIcon(level, (MUILabel) child);
-			} else if (child instanceof MToolBarSeparator) {
-				System.out.print(": separator ");
-			}
-		}
 	}
 
 	@Override
@@ -408,7 +313,7 @@ public class MMenuItemTest extends TestCase {
 		MenuPersistence mp = new MenuPersistence(application, appContext,
 				"org.eclipse.e4.ui.menu.tests.p3");
 		mp.reRead();
-		printContributions(application);
+		// printContributions(application);
 
 		// render the main menu bar
 		Shell shell = new Shell();

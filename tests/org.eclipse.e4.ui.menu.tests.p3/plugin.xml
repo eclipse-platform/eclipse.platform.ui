@@ -131,4 +131,19 @@
 
 		</actionSet>
 	</extension>
+ <extension
+       point="org.eclipse.ui.actionSets">
+    <actionSet
+          id="org.eclipse.e4.ui.menu.tests.p3.toolSet"
+          label="ToolActionSet"
+          visible="true">
+       <action
+             class="org.eclipse.e4.ui.menu.tests.p3.TestActionDelegate"
+             id="org.eclipse.e4.ui.menu.tests.p3.toolAction1"
+             label="ToolActionOne"
+             style="push"
+             toolbarPath="org.eclipse.ui.workbench.file/save.group">
+       </action>
+    </actionSet>
+ </extension>
 </plugin>

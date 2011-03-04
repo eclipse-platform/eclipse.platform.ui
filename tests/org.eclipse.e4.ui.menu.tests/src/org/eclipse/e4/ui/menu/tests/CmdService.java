@@ -22,26 +22,26 @@ import org.eclipse.ui.menus.UIElement;
 class CmdService implements ICommandService {
 
 	private Category category;
-	
+
 	@Inject
 	private CommandManager manager;
-	
+
 	@Override
 	public void addExecutionListener(IExecutionListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public void defineUncategorizedCategory(String name, String description) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public ParameterizedCommand deserialize(
-			String serializedParameterizedCommand)
-			throws NotDefinedException, SerializationException {
+			String serializedParameterizedCommand) throws NotDefinedException,
+			SerializationException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -49,7 +49,7 @@ class CmdService implements ICommandService {
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -97,15 +97,13 @@ class CmdService implements ICommandService {
 	}
 
 	@Override
-	public String getHelpContextId(Command command)
-			throws NotDefinedException {
+	public String getHelpContextId(Command command) throws NotDefinedException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getHelpContextId(String commandId)
-			throws NotDefinedException {
+	public String getHelpContextId(String commandId) throws NotDefinedException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -124,19 +122,19 @@ class CmdService implements ICommandService {
 	@Override
 	public void readRegistry() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void refreshElements(String commandId, Map filter) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void registerElement(IElementReference elementReference) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -150,19 +148,19 @@ class CmdService implements ICommandService {
 	@Override
 	public void removeExecutionListener(IExecutionListener listener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setHelpContextId(IHandler handler, String helpContextId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void unregisterElement(IElementReference elementReference) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

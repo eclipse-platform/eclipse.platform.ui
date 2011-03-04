@@ -20,15 +20,14 @@ import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 
 public class WorkbenchRendererFactory implements IRendererFactory {
 
 	private AreaRenderer areaRenderer;
 	private MenuManagerRenderer menuRenderer;
-	private ToolBarRenderer toolbarRenderer;
-	private ToolItemRenderer toolItemRenderer;
+	private ToolBarManagerRenderer toolbarRenderer;
+	// private ToolItemRenderer toolItemRenderer;
 	private SeparatorRenderer separatorRenderer;
 	private ContributedPartRenderer contributedPartRenderer;
 	private ElementReferenceRenderer elementRefRenderer;
@@ -70,16 +69,10 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 			return renderedToolbarRenderer;
 		} else if (uiElement instanceof MToolBar) {
 			if (toolbarRenderer == null) {
-				toolbarRenderer = new ToolBarRenderer();
+				toolbarRenderer = new ToolBarManagerRenderer();
 				initRenderer(toolbarRenderer);
 			}
 			return toolbarRenderer;
-		} else if (uiElement instanceof MToolItem) {
-			if (toolItemRenderer == null) {
-				toolItemRenderer = new ToolItemRenderer();
-				initRenderer(toolItemRenderer);
-			}
-			return toolItemRenderer;
 		} else if (uiElement instanceof MMenuSeparator
 				|| uiElement instanceof MToolBarSeparator) {
 			if (separatorRenderer == null) {

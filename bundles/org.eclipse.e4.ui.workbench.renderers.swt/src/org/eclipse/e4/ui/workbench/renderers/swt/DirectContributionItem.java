@@ -2,6 +2,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -15,12 +16,16 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtilities;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.DeviceResourceException;
@@ -28,6 +33,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -124,9 +134,14 @@ public class DirectContributionItem extends ContributionItem {
 		if (widget != null) {
 			return;
 		}
+		boolean isDropdown = false;
+		if (model instanceof MToolItem) {
+			MMenu menu = ((MToolItem) model).getMenu();
+			isDropdown = menu != null;
+		}
 		int style = SWT.PUSH;
-		if (model.getType() == ItemType.PUSH)
-			style = SWT.PUSH;
+		if (isDropdown)
+			style = SWT.DROP_DOWN;
 		else if (model.getType() == ItemType.CHECK)
 			style = SWT.CHECK;
 		else if (model.getType() == ItemType.RADIO)
@@ -205,7 +220,6 @@ public class DirectContributionItem extends ContributionItem {
 		}
 		final String tooltip = model.getLocalizedTooltip();
 		item.setToolTipText(tooltip);
-
 		item.setSelection(model.isSelected());
 		item.setEnabled(model.isEnabled());
 	}
@@ -303,6 +317,9 @@ public class DirectContributionItem extends ContributionItem {
 
 	private void handleWidgetSelection(Event event) {
 		if (widget != null && !widget.isDisposed()) {
+			if (dropdownEvent(event)) {
+				return;
+			}
 			if (model.getType() == ItemType.CHECK
 					|| model.getType() == ItemType.RADIO) {
 				boolean selection = false;
@@ -317,6 +334,69 @@ public class DirectContributionItem extends ContributionItem {
 				executeItem();
 			}
 		}
+	}
+
+	private boolean dropdownEvent(Event event) {
+		if (event.detail == SWT.ARROW && model instanceof MToolItem) {
+			ToolItem ti = (ToolItem) event.widget;
+			MMenu mmenu = ((MToolItem) model).getMenu();
+			if (mmenu == null) {
+				return false;
+			}
+			Menu menu = getMenu(mmenu, ti);
+			if (menu == null) {
+				return true;
+			}
+			Rectangle itemBounds = ti.getBounds();
+			Point displayAt = ti.getParent().toDisplay(itemBounds.x,
+					itemBounds.y + itemBounds.height);
+			menu.setLocation(displayAt);
+			menu.setVisible(true);
+
+			Display display = menu.getDisplay();
+			while (menu.isVisible()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	protected Menu getMenu(final MMenu mmenu, ToolItem toolItem) {
+		Object obj = mmenu.getWidget();
+		if (obj instanceof Menu && !((Menu) obj).isDisposed()) {
+			return (Menu) obj;
+		}
+		// this is a temporary passthrough of the IMenuCreator
+		if (mmenu instanceof MRenderedMenu) {
+			obj = ((MRenderedMenu) mmenu).getContributionManager();
+			if (obj instanceof IContextFunction) {
+				final IEclipseContext lclContext = getContext(mmenu);
+				obj = ((IContextFunction) obj).compute(lclContext);
+				((MRenderedMenu) mmenu).setContributionManager(obj);
+			}
+			if (obj instanceof IMenuCreator) {
+				final IMenuCreator creator = (IMenuCreator) obj;
+				final Menu menu = creator.getMenu(toolItem.getParent()
+						.getShell());
+				if (menu != null) {
+					toolItem.addDisposeListener(new DisposeListener() {
+						public void widgetDisposed(DisposeEvent e) {
+							if (menu != null && !menu.isDisposed()) {
+								creator.dispose();
+								((MRenderedMenu) mmenu).setWidget(null);
+							}
+						}
+					});
+					// mmenu.setWidget(menu);
+					menu.setData(AbstractPartRenderer.OWNING_ME, menu);
+					return menu;
+				}
+			}
+		}
+		return null;
 	}
 
 	private void executeItem() {

@@ -917,6 +917,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			} else if (item instanceof AbstractGroupMarker) {
 				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
 				separator.setToBeRendered(item.isVisible());
+				separator.setVisible(item.isVisible());
 				separator.setElementId(item.getId());
 				container.getChildren().add(separator);
 			} else if (item instanceof ActionContributionItem) {

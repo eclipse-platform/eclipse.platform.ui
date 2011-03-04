@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -120,12 +121,26 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		default:
 			return null;
 		}
+		processContents(trimModel);
 		result.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				cleanUp(trimModel);
 			}
 		});
 		return result;
+	}
+
+	/**
+	 * @param trimModel
+	 */
+	private void processContents(MTrimBar trimModel) {
+		IEclipseContext ctx = getContext(trimModel);
+		ExpressionContext eContext = new ExpressionContext(ctx);
+		ArrayList<MTrimContribution> toContribute = new ArrayList<MTrimContribution>();
+		ContributionsAnalyzer.gatherTrimContributions(trimModel,
+				application.getTrimContributions(), trimModel.getElementId(),
+				toContribute, eContext);
+		addTrimContributions(trimModel, toContribute, ctx, eContext);
 	}
 
 	@Override
@@ -145,19 +160,25 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	 * (org.eclipse.e4.ui.model.application.MPart)
 	 */
 	@Override
-	public void processContents(MElementContainer<MUIElement> me) {
-		if (!(((MUIElement) me) instanceof MTrimBar))
+	public void processContents(MElementContainer<MUIElement> container) {
+		if (!(((MUIElement) container) instanceof MTrimBar))
 			return;
-		super.processContents(me);
-		IEclipseContext ctx = getContext(me);
-		ExpressionContext eContext = new ExpressionContext(ctx);
-		MElementContainer<?> trimObj = me;
-		MTrimBar trimModel = (MTrimBar) trimObj;
-		ArrayList<MTrimContribution> toContribute = new ArrayList<MTrimContribution>();
-		ContributionsAnalyzer.gatherTrimContributions(trimModel,
-				application.getTrimContributions(), trimModel.getElementId(),
-				toContribute, eContext);
-		addTrimContributions(trimModel, toContribute, ctx, eContext);
+
+		// Process any contents of the newly created ME
+		List<MUIElement> parts = container.getChildren();
+		if (parts != null) {
+			// loading a legacy app will add children to the window while it is
+			// being rendered.
+			// this is *not* the correct place for this
+			// hope that the ADD event will pick up the new part.
+			IPresentationEngine renderer = (IPresentationEngine) context
+					.get(IPresentationEngine.class.getName());
+			MUIElement[] plist = parts.toArray(new MUIElement[parts.size()]);
+			for (int i = 0; i < plist.length; i++) {
+				MUIElement childME = plist[i];
+				renderer.createGui(childME);
+			}
+		}
 	}
 
 	private void addTrimContributions(final MTrimBar trimModel,

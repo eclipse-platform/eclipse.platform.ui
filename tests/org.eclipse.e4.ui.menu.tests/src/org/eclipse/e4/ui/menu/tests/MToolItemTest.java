@@ -11,24 +11,45 @@ import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
+import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.ContextServiceAddon;
-import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
+import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.workbench.renderers.swt.DirectContributionItem;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.internal.menus.MenuPersistence;
 
 public class MToolItemTest extends TestCase {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
+
+	private ToolBar getToolBar(Composite intermediate) {
+		for (Control child : intermediate.getChildren()) {
+			if (child.getData() instanceof ToolBarManager) {
+				return (ToolBar) child;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -48,24 +69,286 @@ public class MToolItemTest extends TestCase {
 		appContext.dispose();
 	}
 
-	public void testActionSetGeneration() throws Exception {
+	public void test01Children() throws Exception {
+		MToolBar toolbarModel = MenuFactoryImpl.eINSTANCE.createToolBar();
+		toolbarModel.setElementId("p2.tb1");
+
+		MToolBar toolbarModel2 = MenuFactoryImpl.eINSTANCE.createToolBar();
+		toolbarModel2.setElementId("p2.tb2");
+
+		MToolBarSeparator sep = MenuFactoryImpl.eINSTANCE
+				.createToolBarSeparator();
+		sep.setElementId("additions");
+		toolbarModel.getChildren().add(sep);
+		assertEquals(1, toolbarModel.getChildren().size());
+		assertEquals(0, toolbarModel2.getChildren().size());
+
+		toolbarModel2.getChildren().addAll(toolbarModel.getChildren());
+		assertEquals(0, toolbarModel.getChildren().size());
+		assertEquals(1, toolbarModel2.getChildren().size());
+	}
+
+	public void testActionSetAddedToFile() throws Exception {
 		MApplication application = TestUtil.setupRenderer(appContext);
-//		MenuManagerRenderer renderer = appContext
-//				.get(MenuManagerRenderer.class);
-		MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(0);
+		// MenuManagerRenderer renderer = appContext
+		// .get(MenuManagerRenderer.class);
+		MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(
+				0);
 		MTrimBar coolbar = window.getTrimBars().get(0);
 		assertNotNull(coolbar);
-		
 
 		// setup structure for actionSet test
 		TestUtil.setupActionBuilderStructure(coolbar);
+
+		MToolBar file = (MToolBar) coolbar.getChildren().get(1);
+		assertEquals(5, coolbar.getChildren().size());
+
+		// read in the relevant extensions.
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p3");
+		mp.reRead();
+
+		ToolBarManagerRenderer renderer = appContext
+				.get(ToolBarManagerRenderer.class);
+		Shell shell = new Shell();
+		Composite parent = new Composite(shell, SWT.NONE);
+		Composite intermediate = (Composite) renderer
+				.createWidget(file, parent);
+
+		ToolBar toolbar = getToolBar(intermediate);
+		assertNotNull(toolbar);
+		Object obj = file;
+		renderer.processContents((MElementContainer<MUIElement>) obj);
+
+		ToolBarManager tbm = renderer.getManager(file);
+		assertNotNull(tbm);
+
+		IContributionItem[] tbItems = tbm.getItems();
+		assertEquals(12, tbItems.length);
+
+		IContributionItem actionSetAction = tbItems[2];
+		assertEquals("org.eclipse.e4.ui.menu.tests.p3.toolAction1",
+				actionSetAction.getId());
+		assertFalse(actionSetAction.isVisible());
+
+		IEclipseContext windowContext = window.getContext();
+		EContextService ecs = windowContext.get(EContextService.class);
+		ecs.activateContext("org.eclipse.e4.ui.menu.tests.p3.toolSet");
+		assertTrue(actionSetAction.isVisible());
+
+		ecs.deactivateContext("org.eclipse.e4.ui.menu.tests.p3.toolSet");
+		assertFalse(actionSetAction.isVisible());
+	}
+
+	public void testActionSetAddedToMyToolbar() throws Exception {
+		MApplication application = TestUtil.setupRenderer(appContext);
+		// MenuManagerRenderer renderer = appContext
+		// .get(MenuManagerRenderer.class);
+		MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(
+				0);
+		MTrimBar coolbar = window.getTrimBars().get(0);
+		assertNotNull(coolbar);
+
+		// setup structure for actionSet test
+		TestUtil.setupActionBuilderStructure(coolbar);
+
+		int idx = 0;
+		for (MTrimElement child : coolbar.getChildren()) {
+			if (child.getElementId().equals("additions")) {
+				break;
+			}
+			idx++;
+		}
+
+		MToolBar toolbarModel = MenuFactoryImpl.eINSTANCE.createToolBar();
+		toolbarModel.setElementId("p2.tb1");
+		coolbar.getChildren().add(idx, toolbarModel);
 
 		// read in the relevant extensions.
 		MenuPersistence mp = new MenuPersistence(application, appContext,
 				"org.eclipse.e4.ui.menu.tests.p2");
 		mp.reRead();
-		
-		assertEquals(7, application.getToolBarContributions().size());
+
+		TestUtil.printContributions(application);
+
+		ToolBarManagerRenderer renderer = appContext
+				.get(ToolBarManagerRenderer.class);
+		Shell shell = new Shell();
+		Composite parent = new Composite(shell, SWT.NONE);
+		Composite intermediate = (Composite) renderer.createWidget(
+				toolbarModel, parent);
+
+		ToolBar toolbar = getToolBar(intermediate);
+		assertNotNull(toolbar);
+		Object obj = toolbarModel;
+		renderer.processContents((MElementContainer<MUIElement>) obj);
+
+		ToolBarManager tbm = renderer.getManager(toolbarModel);
+		assertNotNull(tbm);
+
+		IContributionItem[] tbItems = tbm.getItems();
+		assertEquals(7, tbItems.length);
+
+		assertEquals("group2", tbItems[0].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb5", tbItems[1].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb4", tbItems[2].getId());
+		assertEquals("group1", tbItems[3].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb3", tbItems[4].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb2", tbItems[5].getId());
+		assertEquals("org.eclipse.e4.ui.menu.tests.p2.tb1", tbItems[6].getId());
+	}
+
+	public void testFileItemContributionVisibility() throws Exception {
+		MApplication application = TestUtil.setupRenderer(appContext);
+		// MenuManagerRenderer renderer = appContext
+		// .get(MenuManagerRenderer.class);
+		MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(
+				0);
+		MTrimBar coolbar = window.getTrimBars().get(0);
+		assertNotNull(coolbar);
+
+		// setup structure for actionSet test
+		TestUtil.setupActionBuilderStructure(coolbar);
+
+		MToolBar file = (MToolBar) coolbar.getChildren().get(1);
+		assertEquals(5, coolbar.getChildren().size());
+
+		// read in the relevant extensions.
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p4");
+		mp.reRead();
+
+		ToolBarManagerRenderer renderer = appContext
+				.get(ToolBarManagerRenderer.class);
+		Shell shell = new Shell();
+		Composite parent = new Composite(shell, SWT.NONE);
+		Composite intermediate = (Composite) renderer
+				.createWidget(file, parent);
+
+		ToolBar toolbar = getToolBar(intermediate);
+		assertNotNull(toolbar);
+		Object obj = file;
+		renderer.processContents((MElementContainer<MUIElement>) obj);
+
+		ToolBarManager tbm = renderer.getManager(file);
+		assertNotNull(tbm);
+
+		IContributionItem[] tbItems = tbm.getItems();
+		assertEquals(12, tbItems.length);
+		IContributionItem p4InvOne = tbItems[8];
+		assertEquals("p4.invisible.commandOne", p4InvOne.getId());
+		assertFalse(p4InvOne.isVisible());
+
+		IEclipseContext context = window.getContext();
+
+		context.set("selection", new StructuredSelection(
+				"show.p4.invisible.commandOne"));
+
+		assertTrue(p4InvOne.isVisible());
+
+		context.set("selection", new StructuredSelection(
+				new Object[] { "show.p4.invisible.commandOne",
+						"show.p4.invisible.commandOne" }));
+		assertFalse(p4InvOne.isVisible());
+
+		context.set("selection", new StructuredSelection(
+				"show.p4.invisible.commandOne"));
+		assertTrue(p4InvOne.isVisible());
+
+		context.set("selection", new StructuredSelection(
+				"hide.p4.invisible.commandOne"));
+		assertFalse(p4InvOne.isVisible());
+		context.set("selection", new StructuredSelection(
+				"show.p4.invisible.commandOne"));
+		assertTrue(p4InvOne.isVisible());
+
+		context.remove("selection");
+		assertFalse(p4InvOne.isVisible());
+	}
+
+	public void testFileItemGeneration() throws Exception {
+		MApplication application = TestUtil.setupRenderer(appContext);
+		// MenuManagerRenderer renderer = appContext
+		// .get(MenuManagerRenderer.class);
+		MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(
+				0);
+		MTrimBar coolbar = window.getTrimBars().get(0);
+		assertNotNull(coolbar);
+
+		// setup structure for actionSet test
+		TestUtil.setupActionBuilderStructure(coolbar);
+
+		MToolBar file = (MToolBar) coolbar.getChildren().get(1);
+		assertEquals(5, coolbar.getChildren().size());
+
+		// read in the relevant extensions.
+		MenuPersistence mp = new MenuPersistence(application, appContext,
+				"org.eclipse.e4.ui.menu.tests.p1");
+		mp.reRead();
+
+		ToolBarManagerRenderer renderer = appContext
+				.get(ToolBarManagerRenderer.class);
+		Shell shell = new Shell();
+		Composite parent = new Composite(shell, SWT.NONE);
+		Composite intermediate = (Composite) renderer
+				.createWidget(file, parent);
+
+		ToolBar toolbar = getToolBar(intermediate);
+		assertNotNull(toolbar);
+		Object obj = file;
+		renderer.processContents((MElementContainer<MUIElement>) obj);
+
+		ToolBarManager tbm = renderer.getManager(file);
+		assertNotNull(tbm);
+
+		assertEquals(13, tbm.getItems().length);
+		IContributionItem saveAll = tbm.find("saveAll");
+		assertNotNull(saveAll);
+		assertTrue(saveAll instanceof DirectContributionItem);
+
+		IContributionItem cmdTwo = tbm.getItems()[8];
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandTwo", cmdTwo.getId());
+
+		IContributionItem cmdOne = tbm.getItems()[12];
+		assertEquals("org.eclipse.e4.ui.menu.tests.commandOne", cmdOne.getId());
+	}
+
+	public void testFileToolbarRendered() throws Exception {
+		MApplication application = TestUtil.setupRenderer(appContext);
+		// MenuManagerRenderer renderer = appContext
+		// .get(MenuManagerRenderer.class);
+		MTrimmedWindow window = (MTrimmedWindow) application.getChildren().get(
+				0);
+		MTrimBar coolbar = window.getTrimBars().get(0);
+		assertNotNull(coolbar);
+
+		// setup structure for actionSet test
+		TestUtil.setupActionBuilderStructure(coolbar);
+
+		MToolBar file = (MToolBar) coolbar.getChildren().get(1);
+		assertEquals(5, coolbar.getChildren().size());
+
+		// read in the relevant extensions.
+
+		ToolBarManagerRenderer renderer = appContext
+				.get(ToolBarManagerRenderer.class);
+		Shell shell = new Shell();
+		Composite parent = new Composite(shell, SWT.NONE);
+		Composite intermediate = (Composite) renderer
+				.createWidget(file, parent);
+
+		ToolBar toolbar = getToolBar(intermediate);
+		assertNotNull(toolbar);
+		Object obj = file;
+		renderer.processContents((MElementContainer<MUIElement>) obj);
+
+		ToolBarManager tbm = renderer.getManager(file);
+		assertNotNull(tbm);
+
+		assertEquals(11, tbm.getItems().length);
+		IContributionItem saveAll = tbm.find("saveAll");
+		assertNotNull(saveAll);
+		assertTrue(saveAll instanceof DirectContributionItem);
 	}
 
 	public void testMToolItem_RadioItems() {
