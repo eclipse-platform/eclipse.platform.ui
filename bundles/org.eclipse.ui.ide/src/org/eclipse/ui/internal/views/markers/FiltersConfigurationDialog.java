@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -261,7 +260,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
 		GridData compositeData = new GridData(GridData.FILL_HORIZONTAL);
-		compositeData.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.INDENT);
+		compositeData.horizontalIndent = 20;
 		composite.setLayoutData(compositeData);
 
 		limitsLabel = new Label(composite, SWT.NONE);
@@ -531,7 +530,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 			}
 		});
 		GridData andData = new GridData();
-		andData.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.INDENT);
+		andData.horizontalIndent = 20;
 		andButton.setLayoutData(andData);
 
 		orButton = new Button(parent, SWT.RADIO);
@@ -542,7 +541,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 			}
 		});
 		GridData orData = new GridData();
-		orData.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.INDENT);
+		orData.horizontalIndent = 20;
 		orButton.setLayoutData(orData);
 
 	}
