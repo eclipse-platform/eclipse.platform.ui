@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -70,6 +71,12 @@ public class IDEApplication implements IApplication, IExecutableExtension {
     private static final Integer EXIT_RELAUNCH = new Integer(24);
 
     /**
+     * A special return code that will be recognized by the PDE launcher and used to
+     * show an error dialog if the workspace is locked.
+     */
+    private static final Integer EXIT_WORKSPACE_LOCKED = new Integer(15);
+    
+    /**
      * The ID of the application plug-in
      */
 	public static final String PLUGIN_ID = "org.eclipse.ui.ide.application"; //$NON-NLS-1$
@@ -102,10 +109,11 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         		shell.setImages(Dialog.getDefaultImages());
         	}
            
-            if (!checkInstanceLocation(shell)) {
+            Object instanceLocationCheck = checkInstanceLocation(shell, appContext.getArguments());
+			if (instanceLocationCheck != null) {
             	WorkbenchPlugin.unsetSplashShell(display);
                 Platform.endSplash();
-                return EXIT_OK;
+                return instanceLocationCheck;
             }
 
             // create the workbench with this advisor and run it until it exits
@@ -154,13 +162,14 @@ public class IDEApplication implements IApplication, IExecutableExtension {
     }
 
     /**
-     * Return true if a valid workspace path has been set and false otherwise.
+     * Return <code>null</code> if a valid workspace path has been set and an exit code otherwise.
      * Prompt for and set the path if possible and required.
      * 
-     * @return true if a valid instance location has been set and false
+     * @param applicationArguments the command line arguments
+     * @return <code>null</code> if a valid instance location has been set and an exit code
      *         otherwise
      */
-    private boolean checkInstanceLocation(Shell shell) {
+    private Object checkInstanceLocation(Shell shell, Map applicationArguments) {
         // -data @none was specified but an ide requires workspace
         Location instanceLoc = Platform.getInstanceLocation();
         if (instanceLoc == null) {
@@ -169,7 +178,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
                             shell,
                             IDEWorkbenchMessages.IDEApplication_workspaceMandatoryTitle,
                             IDEWorkbenchMessages.IDEApplication_workspaceMandatoryMessage);
-            return false;
+            return EXIT_OK;
         }
 
         // -data "/valid/path", workspace already set
@@ -177,7 +186,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
             // make sure the meta data version is compatible (or the user has
             // chosen to overwrite it).
             if (!checkValidWorkspace(shell, instanceLoc.getURL())) {
-				return false;
+				return EXIT_OK;
 			}
 
             // at this point its valid, so try to lock it and update the
@@ -185,7 +194,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
             try {
                 if (instanceLoc.lock()) {
                     writeWorkspaceVersion();
-                    return true;
+                    return null;
                 }
                 
                 // we failed to create the directory.  
@@ -194,6 +203,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
                 // 2. directory could not be created
                 File workspaceDirectory = new File(instanceLoc.getURL().getFile());
                 if (workspaceDirectory.exists()) {
+                	if (isDevLaunchMode(applicationArguments)) {
+                		return EXIT_WORKSPACE_LOCKED;
+                	}
 	                MessageDialog.openError(
 	                        shell,
 	                        IDEWorkbenchMessages.IDEApplication_workspaceCannotLockTitle,
@@ -213,7 +225,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
                         IDEWorkbenchMessages.InternalError,
                         e.getMessage());                
             }            
-            return false;
+            return EXIT_OK;
         }
 
         // -data @noDefault or -data not specified, prompt and set
@@ -224,7 +236,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         while (true) {
             URL workspaceUrl = promptForWorkspace(shell, launchData, force);
             if (workspaceUrl == null) {
-				return false;
+				return EXIT_OK;
 			}
 
             // if there is an error with the first selection, then force the
@@ -237,7 +249,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
                 if (instanceLoc.setURL(workspaceUrl, true)) {
                     launchData.writePersistedData();
                     writeWorkspaceVersion();
-                    return true;
+                    return null;
                 }
             } catch (IllegalStateException e) {
                 MessageDialog
@@ -245,7 +257,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
                                 shell,
                                 IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetTitle,
                                 IDEWorkbenchMessages.IDEApplication_workspaceCannotBeSetMessage);
-                return false;
+                return EXIT_OK;
             }
 
             // by this point it has been determined that the workspace is
@@ -255,6 +267,13 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         }
     }
 
+	private static boolean isDevLaunchMode(Map args) {
+		// see org.eclipse.pde.internal.core.PluginPathFinder.isDevLaunchMode()
+		if (Boolean.getBoolean("eclipse.pde.launch")) //$NON-NLS-1$
+			return true;
+		return args.containsKey("-pdelaunch"); //$NON-NLS-1$
+	}
+	
     /**
      * Open a workspace selection dialog on the argument shell, populating the
      * argument data with the user's selection. Perform first level validation
