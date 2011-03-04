@@ -1911,9 +1911,9 @@
             commandId="org.eclipse.ui.file.closeAll">
          <enabledWhen>
             <with
-                  variable="activeEditor">
+                  variable="activeWorkbenchWindow">
                <instanceof
-                     value="org.eclipse.ui.IEditorPart">
+                     value="org.eclipse.ui.IWorkbenchWindow">
                </instanceof>
             </with>
          </enabledWhen>
