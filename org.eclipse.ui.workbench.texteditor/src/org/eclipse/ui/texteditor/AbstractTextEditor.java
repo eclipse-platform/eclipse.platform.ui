@@ -4060,7 +4060,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Converts the {link #PREFERENCE_HOVER_ENRICH_MODE} preference value to
-	 * {@link ITextViewerExtension8.EnrichMode}.
+	 * {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode}.
 	 *
 	 * @param mode the preference value
 	 * @return the enrich mode, can be <code>null</code>
