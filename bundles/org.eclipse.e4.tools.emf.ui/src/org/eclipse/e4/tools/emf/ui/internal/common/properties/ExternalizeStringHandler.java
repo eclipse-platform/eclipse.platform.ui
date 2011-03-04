@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Properties;
 import javax.inject.Named;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -203,25 +205,29 @@ public class ExternalizeStringHandler {
 			if (els.length > 0) {
 				try {
 					IFile f = getBasePropertyFile();
+
+					StringBuilder b = new StringBuilder(System.getProperty("line.separator"));
+					for (Object o : els) {
+						Entry e = (Entry) o;
+						b.append(e.key + " = " + e.value + System.getProperty("line.separator")); //$NON-NLS-1$//$NON-NLS-2$
+					}
+
+					ByteArrayInputStream stream = new ByteArrayInputStream(b.toString().getBytes());
 					if (f.exists()) {
-						StringBuilder b = new StringBuilder(System.getProperty("line.separator"));
-						for (Object o : els) {
-							Entry e = (Entry) o;
-							b.append(e.key + " = " + e.value + System.getProperty("line.separator")); //$NON-NLS-1$//$NON-NLS-2$
-						}
-
-						System.err.println("Appending: " + b);
-
-						ByteArrayInputStream stream = new ByteArrayInputStream(b.toString().getBytes());
 						f.appendContents(stream, IFile.KEEP_HISTORY, new NullProgressMonitor());
+					} else {
+						createParent(f.getParent());
+						f.create(stream, IFile.KEEP_HISTORY, new NullProgressMonitor());
+					}
 
-						for (Object o : els) {
-							Entry e = (Entry) o;
-							Command cmd = SetCommand.create(resource.getEditingDomain(), e.object, e.feature, "%" + e.key);
+					stream.close();
 
-							if (cmd.canExecute()) {
-								resource.getEditingDomain().getCommandStack().execute(cmd);
-							}
+					for (Object o : els) {
+						Entry e = (Entry) o;
+						Command cmd = SetCommand.create(resource.getEditingDomain(), e.object, e.feature, "%" + e.key); //$NON-NLS-1$
+
+						if (cmd.canExecute()) {
+							resource.getEditingDomain().getCommandStack().execute(cmd);
 						}
 					}
 					super.okPressed();
@@ -233,6 +239,18 @@ public class ExternalizeStringHandler {
 					e.printStackTrace();
 				}
 
+			}
+		}
+
+		private void createParent(IContainer container) throws CoreException {
+			if (!container.exists()) {
+
+				createParent(container.getParent());
+
+				if (container instanceof IFolder) {
+					IFolder f = (IFolder) container;
+					f.create(true, true, new NullProgressMonitor());
+				}
 			}
 		}
 
