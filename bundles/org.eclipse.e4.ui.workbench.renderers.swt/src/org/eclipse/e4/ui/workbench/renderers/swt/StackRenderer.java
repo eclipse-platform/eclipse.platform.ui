@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -27,6 +28,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
@@ -40,6 +42,7 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
@@ -101,7 +104,7 @@ public class StackRenderer extends LazyStackRenderer {
 					return;
 
 				MUIElement selElement = stackToActivate.getSelectedElement();
-				if (!selElement.isToBeRendered())
+				if (!isValid(selElement))
 					return;
 
 				if (selElement instanceof MPlaceholder)
@@ -109,6 +112,31 @@ public class StackRenderer extends LazyStackRenderer {
 				activate((MPart) selElement);
 			}
 		}
+	}
+
+	private boolean isValid(MUIElement element) {
+		if (element == null || !element.isToBeRendered()) {
+			return false;
+		}
+
+		if (element instanceof MApplication) {
+			return true;
+		}
+
+		MUIElement parent = element.getParent();
+		if (parent == null && element instanceof MWindow) {
+			// might be a detached window
+			parent = (MUIElement) ((EObject) element).eContainer();
+		}
+
+		if (parent == null) {
+			// might be a shared part, try to find the placeholder
+			MWindow window = modelService.getTopLevelWindowFor(element);
+			return window == null ? false : isValid(modelService
+					.findPlaceholderFor(window, element));
+		}
+
+		return isValid(parent);
 	}
 
 	private ActivationJob activationJob = null;
