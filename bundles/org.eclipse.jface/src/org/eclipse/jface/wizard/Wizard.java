@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -418,7 +418,11 @@ public abstract class Wizard implements IWizard {
 	 * </p>
 	 * <p>
 	 * <strong>Note:</strong> This wizard's container might be a {@link TrayDialog} which provides
-	 * its own help support.
+	 * its own help support that is independent of this property.
+	 * </p>
+	 * <p>
+	 * <strong>Note 2:</strong> In the default {@link WizardDialog} implementation, the "Help"
+	 * button only works when {@link org.eclipse.jface.dialogs.IDialogPage#performHelp()} is implemented.
 	 * </p>
 	 * 
 	 * @param b <code>true</code> if help is available, <code>false</code> otherwise
