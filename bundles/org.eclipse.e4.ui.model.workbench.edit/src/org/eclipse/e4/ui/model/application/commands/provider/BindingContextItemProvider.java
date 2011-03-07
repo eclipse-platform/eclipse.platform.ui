@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.provider.ApplicationElementItemProvider;
 import org.eclipse.e4.ui.model.application.provider.UIElementsEditPlugin;
 import org.eclipse.emf.common.notify.AdapterFactory;
@@ -210,6 +211,29 @@ public class BindingContextItemProvider
 			(createChildParameter
 				(CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN,
 				 MCommandsFactory.INSTANCE.createBindingContext()));
+	}
+
+	/**
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
+		Object childFeature = feature;
+		Object childObject = child;
+
+		boolean qualify =
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__CLONABLE_SNIPPETS ||
+			childFeature == CommandsPackageImpl.Literals.BINDING_CONTEXT__CHILDREN;
+
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2", //$NON-NLS-1$
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 	/**

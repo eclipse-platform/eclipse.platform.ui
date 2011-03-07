@@ -445,6 +445,29 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected OpaqueToolItemItemProvider opaqueToolItemItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createOpaqueToolItemAdapter() {
+		if (opaqueToolItemItemProvider == null) {
+			opaqueToolItemItemProvider = new OpaqueToolItemItemProvider(this);
+		}
+
+		return opaqueToolItemItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -628,6 +651,7 @@ public class MenuItemProviderAdapterFactory extends MenuAdapterFactory implement
 		if (toolBarContributionItemProvider != null) toolBarContributionItemProvider.dispose();
 		if (trimContributionItemProvider != null) trimContributionItemProvider.dispose();
 		if (renderedMenuItemItemProvider != null) renderedMenuItemItemProvider.dispose();
+		if (opaqueToolItemItemProvider != null) opaqueToolItemItemProvider.dispose();
 		if (opaqueMenuItemItemProvider != null) opaqueMenuItemItemProvider.dispose();
 		if (opaqueMenuSeparatorItemProvider != null) opaqueMenuSeparatorItemProvider.dispose();
 		if (opaqueMenuItemProvider != null) opaqueMenuItemProvider.dispose();

@@ -12,6 +12,8 @@ package org.eclipse.e4.ui.model.application.ui.basic.provider;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
@@ -164,10 +166,13 @@ public class TrimmedWindowItemProvider extends WindowItemProvider implements
 		Object childObject = child;
 
 		boolean qualify =
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__CLONABLE_SNIPPETS ||
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__WINDOWS ||
 			childFeature == BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS ||
+			childFeature == CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS ||
+			childFeature == UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__MAIN_MENU;
 
 		if (qualify) {

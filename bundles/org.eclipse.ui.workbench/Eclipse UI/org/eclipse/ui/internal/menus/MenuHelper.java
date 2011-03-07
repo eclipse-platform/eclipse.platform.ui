@@ -42,6 +42,7 @@ import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -50,6 +51,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -584,6 +586,119 @@ public class MenuHelper {
 				menuItem.setElementId(itemId == null ? id : itemId);
 				return menuItem;
 			}
+		}
+		return null;
+	}
+
+	public static MToolItem createToolItem(MApplication application, CommandContributionItem cci) {
+		String id = cci.getCommand().getId();
+		for (MCommand command : application.getCommands()) {
+			if (id.equals(command.getElementId())) {
+				CommandContributionItemParameter data = cci.getData();
+				MHandledToolItem toolItem = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
+				toolItem.setCommand(command);
+
+				String iconURI = null;
+				if (data.icon != null) {
+					iconURI = getIconURI(data.icon);
+				}
+				if (iconURI == null) {
+					iconURI = getIconURI(id, application.getContext());
+				}
+				if (iconURI == null) {
+					toolItem.setLabel(command.getCommandName());
+				} else {
+					toolItem.setIconURI(iconURI);
+				}
+				if (data.tooltip != null) {
+					toolItem.setTooltip(data.tooltip);
+				} else if (data.label != null) {
+					toolItem.setTooltip(data.label);
+				}
+
+				return toolItem;
+			}
+		}
+		return null;
+	}
+
+	public static MToolItem createToolItem(MApplication application, ActionContributionItem item) {
+		IAction action = item.getAction();
+		String id = action.getActionDefinitionId();
+		if (id != null) {
+			for (MCommand command : application.getCommands()) {
+				if (id.equals(command.getElementId())) {
+					MHandledToolItem toolItem = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
+					toolItem.setCommand(command);
+
+					String iconURI = getIconURI(action.getImageDescriptor());
+					if (iconURI == null) {
+						iconURI = getIconURI(id, application.getContext());
+						if (iconURI == null) {
+							toolItem.setLabel(command.getCommandName());
+						} else {
+							toolItem.setIconURI(iconURI);
+						}
+					} else {
+						toolItem.setIconURI(iconURI);
+					}
+					if (action.getToolTipText() != null) {
+						toolItem.setTooltip(action.getToolTipText());
+					}
+
+					switch (action.getStyle()) {
+					case IAction.AS_CHECK_BOX:
+						toolItem.setType(ItemType.CHECK);
+						toolItem.setSelected(action.isChecked());
+						break;
+					case IAction.AS_RADIO_BUTTON:
+						toolItem.setType(ItemType.RADIO);
+						toolItem.setSelected(action.isChecked());
+						break;
+					default:
+						toolItem.setType(ItemType.PUSH);
+						break;
+					}
+					String itemId = item.getId();
+					toolItem.setElementId(itemId == null ? id : itemId);
+
+					return toolItem;
+				}
+			}
+		} else {
+			MDirectToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
+			String itemId = item.getId();
+			toolItem.setElementId(itemId == null ? id : itemId);
+			String iconURI = getIconURI(action.getImageDescriptor());
+			if (iconURI == null) {
+				iconURI = getIconURI(id, application.getContext());
+				if (iconURI == null) {
+					if (action.getText() != null) {
+						toolItem.setLabel(action.getText());
+					}
+				} else {
+					toolItem.setIconURI(iconURI);
+				}
+			} else {
+				toolItem.setIconURI(iconURI);
+			}
+
+			switch (action.getStyle()) {
+			case IAction.AS_CHECK_BOX:
+				toolItem.setType(ItemType.CHECK);
+				toolItem.setSelected(action.isChecked());
+				break;
+			case IAction.AS_RADIO_BUTTON:
+				toolItem.setType(ItemType.RADIO);
+				toolItem.setSelected(action.isChecked());
+				break;
+			default:
+				toolItem.setType(ItemType.PUSH);
+				break;
+			}
+			toolItem.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/programmic.contribution"); //$NON-NLS-1$
+			toolItem.setObject(new DirectProxy(action));
+			return toolItem;
 		}
 		return null;
 	}

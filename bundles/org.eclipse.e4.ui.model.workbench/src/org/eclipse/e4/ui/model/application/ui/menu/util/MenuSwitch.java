@@ -364,6 +364,18 @@ public class MenuSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MenuPackageImpl.OPAQUE_TOOL_ITEM: {
+				MOpaqueToolItem opaqueToolItem = (MOpaqueToolItem)theEObject;
+				T1 result = caseOpaqueToolItem(opaqueToolItem);
+				if (result == null) result = caseToolItem(opaqueToolItem);
+				if (result == null) result = caseItem(opaqueToolItem);
+				if (result == null) result = caseToolBarElement(opaqueToolItem);
+				if (result == null) result = caseUIElement(opaqueToolItem);
+				if (result == null) result = caseUILabel(opaqueToolItem);
+				if (result == null) result = caseApplicationElement(opaqueToolItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MenuPackageImpl.OPAQUE_MENU_ITEM: {
 				MOpaqueMenuItem opaqueMenuItem = (MOpaqueMenuItem)theEObject;
 				T1 result = caseOpaqueMenuItem(opaqueMenuItem);
@@ -775,6 +787,21 @@ public class MenuSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseRenderedMenuItem(MRenderedMenuItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Opaque Tool Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Opaque Tool Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseOpaqueToolItem(MOpaqueToolItem object) {
 		return null;
 	}
 

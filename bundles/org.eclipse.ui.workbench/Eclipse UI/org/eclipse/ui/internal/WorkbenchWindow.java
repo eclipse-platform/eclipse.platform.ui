@@ -12,8 +12,6 @@
 package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,7 +41,6 @@ import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -55,15 +52,15 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -72,6 +69,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.AbstractGroupMarker;
@@ -86,6 +84,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
@@ -94,7 +93,6 @@ import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -127,7 +125,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
-import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -158,16 +155,12 @@ import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.menus.CommandContributionItem;
-import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -878,6 +871,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	private void fill(MToolBar container, IContributionManager manager) {
+		ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) rendererFactory.getRenderer(
+				container, null);
+		if (manager instanceof ToolBarManager) {
+			renderer.linkModelToManager(container, (ToolBarManager) manager);
+		}
+
 		for (IContributionItem item : manager.getItems()) {
 			if (item instanceof IToolBarContributionItem) {
 				IToolBarManager manager2 = ((IToolBarContributionItem) item).getToolBarManager();
@@ -886,33 +885,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				fill(container, (IContributionManager) item);
 			} else if (item instanceof CommandContributionItem) {
 				CommandContributionItem cci = (CommandContributionItem) item;
-				String id = cci.getCommand().getId();
-				for (MCommand command : application.getCommands()) {
-					if (id.equals(command.getElementId())) {
-						CommandContributionItemParameter data = cci.getData();
-						MHandledToolItem menuItem = MenuFactoryImpl.eINSTANCE
-								.createHandledToolItem();
-						menuItem.setCommand(command);
-
-						String iconURI = null;
-						if (data.icon != null) {
-							iconURI = getIconURI(data.icon);
-						}
-						if (iconURI == null) {
-							iconURI = getIconURI(id);
-						}
-						if (iconURI == null) {
-							menuItem.setLabel(command.getCommandName());
-						} else {
-							menuItem.setIconURI(iconURI);
-						}
-						if (data.tooltip != null) {
-							menuItem.setTooltip(data.tooltip);
-						}
-
-						container.getChildren().add(menuItem);
-						break;
-					}
+				MToolItem toolItem = MenuHelper.createToolItem(application, cci);
+				manager.remove(item);
+				if (toolItem != null) {
+					container.getChildren().add(toolItem);
 				}
 			} else if (item instanceof AbstractGroupMarker) {
 				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
@@ -920,84 +896,21 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				separator.setVisible(item.isVisible());
 				separator.setElementId(item.getId());
 				container.getChildren().add(separator);
+				manager.remove(item);
 			} else if (item instanceof ActionContributionItem) {
-				IAction action = ((ActionContributionItem) item).getAction();
-				String id = action.getActionDefinitionId();
-				if (id != null) {
-					for (MCommand command : application.getCommands()) {
-						if (id.equals(command.getElementId())) {
-							MHandledToolItem toolItem = MenuFactoryImpl.eINSTANCE
-									.createHandledToolItem();
-							toolItem.setCommand(command);
-							container.getChildren().add(toolItem);
-
-							String iconURI = getIconURI(action.getImageDescriptor());
-							if (iconURI == null) {
-								iconURI = getIconURI(id);
-								if (iconURI == null) {
-									toolItem.setLabel(command.getCommandName());
-								} else {
-									toolItem.setIconURI(iconURI);
-								}
-							} else {
-								toolItem.setIconURI(iconURI);
-							}
-							if (action.getToolTipText() != null) {
-								toolItem.setTooltip(action.getToolTipText());
-							}
-
-							switch (action.getStyle()) {
-							case IAction.AS_CHECK_BOX:
-								toolItem.setType(ItemType.CHECK);
-								break;
-							case IAction.AS_RADIO_BUTTON:
-								toolItem.setType(ItemType.RADIO);
-								break;
-							default:
-								toolItem.setType(ItemType.PUSH);
-								break;
-							}
-							break;
-						}
-					}
+				MToolItem toolItem = MenuHelper.createToolItem(application,
+						(ActionContributionItem) item);
+				manager.remove(item);
+				if (toolItem != null) {
+					container.getChildren().add(toolItem);
 				}
+			} else {
+				MOpaqueToolItem toolItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
+				toolItem.setElementId(item.getId());
+				container.getChildren().add(toolItem);
+				renderer.linkModelToContribution(toolItem, item);
 			}
 		}
-	}
-
-	private String getIconURI(ImageDescriptor descriptor) {
-		if (descriptor == null) {
-			return null;
-		}
-
-		String string = descriptor.toString();
-		if (string.startsWith("URLImageDescriptor(")) { //$NON-NLS-1$
-			string = string.substring("URLImageDescriptor(".length()); //$NON-NLS-1$
-			string = string.substring(0, string.length() - 1);
-
-			BundleContext ctxt = FrameworkUtil.getBundle(WorkbenchWindow.class).getBundleContext();
-
-			try {
-				URI uri = new URI(string);
-				String host = uri.getHost();
-				String bundleId = host.substring(0, host.indexOf('.'));
-				Bundle bundle = ctxt.getBundle(Long.parseLong(bundleId));
-				StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
-				builder.append(bundle.getSymbolicName());
-				builder.append(uri.getPath());
-				return builder.toString();
-			} catch (URISyntaxException e) {
-				// ignored
-			}
-		}
-		return null;
-	}
-
-	private String getIconURI(String commandId) {
-		ICommandImageService imageService = (ICommandImageService) workbench
-				.getService(ICommandImageService.class);
-		ImageDescriptor descriptor = imageService.getImageDescriptor(commandId);
-		return getIconURI(descriptor);
 	}
 
 	public static String getId(IConfigurationElement element) {

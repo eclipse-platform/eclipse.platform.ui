@@ -32,6 +32,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenuItem;
@@ -4745,6 +4746,232 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int RENDERED_MENU_ITEM_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 1;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.OpaqueToolItemImpl <em>Opaque Tool Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.OpaqueToolItemImpl
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getOpaqueToolItem()
+	 * @generated
+	 */
+	public static final int OPAQUE_TOOL_ITEM = 25;
+
+	/**
+	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__ELEMENT_ID = TOOL_ITEM__ELEMENT_ID;
+
+	/**
+	 * The feature id for the '<em><b>Tags</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__TAGS = TOOL_ITEM__TAGS;
+
+	/**
+	 * The feature id for the '<em><b>Contributor URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__CONTRIBUTOR_URI = TOOL_ITEM__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__TRANIENT_DATA = TOOL_ITEM__TRANIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__CLONABLE_SNIPPETS = TOOL_ITEM__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__WIDGET = TOOL_ITEM__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__RENDERER = TOOL_ITEM__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__TO_BE_RENDERED = TOOL_ITEM__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__ON_TOP = TOOL_ITEM__ON_TOP;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__VISIBLE = TOOL_ITEM__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__PARENT = TOOL_ITEM__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__CONTAINER_DATA = TOOL_ITEM__CONTAINER_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Cur Shared Ref</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__CUR_SHARED_REF = TOOL_ITEM__CUR_SHARED_REF;
+
+	/**
+	 * The feature id for the '<em><b>Visible When</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__VISIBLE_WHEN = TOOL_ITEM__VISIBLE_WHEN;
+
+	/**
+	 * The feature id for the '<em><b>Accessibility Phrase</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__ACCESSIBILITY_PHRASE = TOOL_ITEM__ACCESSIBILITY_PHRASE;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__LABEL = TOOL_ITEM__LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__ICON_URI = TOOL_ITEM__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__TOOLTIP = TOOL_ITEM__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__ENABLED = TOOL_ITEM__ENABLED;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__SELECTED = TOOL_ITEM__SELECTED;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__TYPE = TOOL_ITEM__TYPE;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__MENU = TOOL_ITEM__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Opaque Item</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM__OPAQUE_ITEM = TOOL_ITEM_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Opaque Tool Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int OPAQUE_TOOL_ITEM_FEATURE_COUNT = TOOL_ITEM_FEATURE_COUNT + 1;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.OpaqueMenuItemImpl <em>Opaque Menu Item</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4752,7 +4979,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getOpaqueMenuItem()
 	 * @generated
 	 */
-	public static final int OPAQUE_MENU_ITEM = 25;
+	public static final int OPAQUE_MENU_ITEM = 26;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -4978,7 +5205,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getOpaqueMenuSeparator()
 	 * @generated
 	 */
-	public static final int OPAQUE_MENU_SEPARATOR = 26;
+	public static final int OPAQUE_MENU_SEPARATOR = 27;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -5177,7 +5404,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getOpaqueMenu()
 	 * @generated
 	 */
-	public static final int OPAQUE_MENU = 27;
+	public static final int OPAQUE_MENU = 28;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -5394,7 +5621,7 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getItemType()
 	 * @generated
 	 */
-	public static final int ITEM_TYPE = 28;
+	public static final int ITEM_TYPE = 29;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -5570,6 +5797,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass renderedMenuItemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass opaqueToolItemEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -6279,6 +6513,33 @@ public class MenuPackageImpl extends EPackageImpl {
 
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem <em>Opaque Tool Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Opaque Tool Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem
+	 * @generated
+	 */
+	public EClass getOpaqueToolItem() {
+		return opaqueToolItemEClass;
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem#getOpaqueItem <em>Opaque Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Opaque Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem#getOpaqueItem()
+	 * @see #getOpaqueToolItem()
+	 * @generated
+	 */
+	public EAttribute getOpaqueToolItem_OpaqueItem() {
+		return (EAttribute)opaqueToolItemEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem <em>Opaque Menu Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6458,6 +6719,9 @@ public class MenuPackageImpl extends EPackageImpl {
 		renderedMenuItemEClass = createEClass(RENDERED_MENU_ITEM);
 		createEAttribute(renderedMenuItemEClass, RENDERED_MENU_ITEM__CONTRIBUTION_ITEM);
 
+		opaqueToolItemEClass = createEClass(OPAQUE_TOOL_ITEM);
+		createEAttribute(opaqueToolItemEClass, OPAQUE_TOOL_ITEM__OPAQUE_ITEM);
+
 		opaqueMenuItemEClass = createEClass(OPAQUE_MENU_ITEM);
 		createEAttribute(opaqueMenuItemEClass, OPAQUE_MENU_ITEM__OPAQUE_ITEM);
 
@@ -6556,6 +6820,7 @@ public class MenuPackageImpl extends EPackageImpl {
 		g1.getETypeArguments().add(g2);
 		trimContributionEClass.getEGenericSuperTypes().add(g1);
 		renderedMenuItemEClass.getESuperTypes().add(this.getMenuItem());
+		opaqueToolItemEClass.getESuperTypes().add(this.getToolItem());
 		opaqueMenuItemEClass.getESuperTypes().add(this.getMenuItem());
 		opaqueMenuSeparatorEClass.getESuperTypes().add(this.getMenuSeparator());
 		opaqueMenuEClass.getESuperTypes().add(this.getMenu());
@@ -6631,6 +6896,9 @@ public class MenuPackageImpl extends EPackageImpl {
 
 		initEClass(renderedMenuItemEClass, MRenderedMenuItem.class, "RenderedMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getRenderedMenuItem_ContributionItem(), ecorePackage.getEJavaObject(), "contributionItem", null, 0, 1, MRenderedMenuItem.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(opaqueToolItemEClass, MOpaqueToolItem.class, "OpaqueToolItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getOpaqueToolItem_OpaqueItem(), ecorePackage.getEJavaObject(), "opaqueItem", null, 0, 1, MOpaqueToolItem.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(opaqueMenuItemEClass, MOpaqueMenuItem.class, "OpaqueMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getOpaqueMenuItem_OpaqueItem(), ecorePackage.getEJavaObject(), "opaqueItem", null, 0, 1, MOpaqueMenuItem.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -7077,6 +7345,24 @@ public class MenuPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute RENDERED_MENU_ITEM__CONTRIBUTION_ITEM = eINSTANCE.getRenderedMenuItem_ContributionItem();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.OpaqueToolItemImpl <em>Opaque Tool Item</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.OpaqueToolItemImpl
+		 * @see org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl#getOpaqueToolItem()
+		 * @generated
+		 */
+		public static final EClass OPAQUE_TOOL_ITEM = eINSTANCE.getOpaqueToolItem();
+
+		/**
+		 * The meta object literal for the '<em><b>Opaque Item</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute OPAQUE_TOOL_ITEM__OPAQUE_ITEM = eINSTANCE.getOpaqueToolItem_OpaqueItem();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.menu.impl.OpaqueMenuItemImpl <em>Opaque Menu Item</em>}' class.

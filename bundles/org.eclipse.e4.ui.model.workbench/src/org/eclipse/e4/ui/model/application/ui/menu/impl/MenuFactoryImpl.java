@@ -107,6 +107,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 			case MenuPackageImpl.TOOL_BAR_CONTRIBUTION: return (EObject)createToolBarContribution();
 			case MenuPackageImpl.TRIM_CONTRIBUTION: return (EObject)createTrimContribution();
 			case MenuPackageImpl.RENDERED_MENU_ITEM: return (EObject)createRenderedMenuItem();
+			case MenuPackageImpl.OPAQUE_TOOL_ITEM: return (EObject)createOpaqueToolItem();
 			case MenuPackageImpl.OPAQUE_MENU_ITEM: return (EObject)createOpaqueMenuItem();
 			case MenuPackageImpl.OPAQUE_MENU_SEPARATOR: return (EObject)createOpaqueMenuSeparator();
 			case MenuPackageImpl.OPAQUE_MENU: return (EObject)createOpaqueMenu();
@@ -303,6 +304,16 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	public MRenderedMenuItem createRenderedMenuItem() {
 		RenderedMenuItemImpl renderedMenuItem = new RenderedMenuItemImpl();
 		return renderedMenuItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MOpaqueToolItem createOpaqueToolItem() {
+		OpaqueToolItemImpl opaqueToolItem = new OpaqueToolItemImpl();
+		return opaqueToolItem;
 	}
 
 	/**

@@ -600,6 +600,11 @@ public class WindowItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
+				 MMenuFactory.INSTANCE.createOpaqueToolItem()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS,
 				 MMenuFactory.INSTANCE.createOpaqueMenuItem()));
 
 		newChildDescriptors.add
@@ -645,9 +650,12 @@ public class WindowItemProvider
 		Object childObject = child;
 
 		boolean qualify =
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__CLONABLE_SNIPPETS ||
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__SHARED_ELEMENTS ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__WINDOWS ||
+			childFeature == CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS ||
+			childFeature == UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN ||
 			childFeature == BasicPackageImpl.Literals.WINDOW__MAIN_MENU;
 
 		if (qualify) {

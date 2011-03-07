@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009,2011 IBM Corporation and others.
+ * Copyright (c) 2009,2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class UIEvents {
 
 	public static interface BindingTable {
 		public static final String TOPIC = UITopicBase + "/commands/BindingTable"; //$NON-NLS-1$
-		public static final String BINDINGCONTEXTID = "bindingContextId"; //$NON-NLS-1$
+		public static final String BINDINGCONTEXT = "bindingContext"; //$NON-NLS-1$
 		public static final String BINDINGS = "bindings"; //$NON-NLS-1$
 	}
 
@@ -129,9 +129,11 @@ public class UIEvents {
 
 	public static interface ApplicationElement {
 		public static final String TOPIC = UITopicBase + "/application/ApplicationElement"; //$NON-NLS-1$
+		public static final String CLONABLESNIPPETS = "clonableSnippets"; //$NON-NLS-1$
 		public static final String CONTRIBUTORURI = "contributorURI"; //$NON-NLS-1$
 		public static final String ELEMENTID = "elementId"; //$NON-NLS-1$
 		public static final String TAGS = "tags"; //$NON-NLS-1$
+		public static final String TRANIENTDATA = "tranientData"; //$NON-NLS-1$
 	}
 
 	public static interface Contribution {
@@ -154,6 +156,7 @@ public class UIEvents {
 
 	public static interface Placeholder {
 		public static final String TOPIC = UITopicBase + "/advanced/Placeholder"; //$NON-NLS-1$
+		public static final String CLOSEABLE = "closeable"; //$NON-NLS-1$
 		public static final String REF = "ref"; //$NON-NLS-1$
 	}
 
@@ -238,9 +241,6 @@ public class UIEvents {
 		public static final String TOPIC = UITopicBase + "/ui/UILabel"; //$NON-NLS-1$
 		public static final String ICONURI = "iconURI"; //$NON-NLS-1$
 		public static final String LABEL = "label"; //$NON-NLS-1$
-		public static final String LOCALIMAGE = "localImage"; //$NON-NLS-1$
-		public static final String LOCALLABEL = "localLabel"; //$NON-NLS-1$
-		public static final String LOCALTOOLTIP = "localTooltip"; //$NON-NLS-1$
 		public static final String TOOLTIP = "tooltip"; //$NON-NLS-1$
 	}
 
@@ -286,6 +286,11 @@ public class UIEvents {
 
 	public static interface OpaqueMenuSeparator {
 		public static final String TOPIC = UITopicBase + "/menu/OpaqueMenuSeparator"; //$NON-NLS-1$
+		public static final String OPAQUEITEM = "opaqueItem"; //$NON-NLS-1$
+	}
+
+	public static interface OpaqueToolItem {
+		public static final String TOPIC = UITopicBase + "/menu/OpaqueToolItem"; //$NON-NLS-1$
 		public static final String OPAQUEITEM = "opaqueItem"; //$NON-NLS-1$
 	}
 

@@ -232,7 +232,7 @@ public final class WorkbenchWindowConfigurer implements
 			if (proxy != null) {
 				return proxy.createToolBarManager();
 			}
-			return new ToolBarManager2();
+			return new ToolBarManager2(SWT.WRAP | SWT.FLAT | SWT.RIGHT);
 		}
 
 		/* (non-Javadoc)

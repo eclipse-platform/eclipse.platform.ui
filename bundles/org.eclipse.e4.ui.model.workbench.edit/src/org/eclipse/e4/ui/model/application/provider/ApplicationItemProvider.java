@@ -319,10 +319,19 @@ public class ApplicationItemProvider extends ElementContainerItemProvider
 		Object childObject = child;
 
 		boolean qualify =
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION_ELEMENT__CLONABLE_SNIPPETS ||
 			childFeature == UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN ||
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION__ADDONS ||
+			childFeature == CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__ROOT_CONTEXT ||
+			childFeature == CommandsPackageImpl.Literals.BINDING_TABLE_CONTAINER__BINDING_TABLES ||
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION__COMMANDS ||
+			childFeature == CommandsPackageImpl.Literals.HANDLER_CONTAINER__HANDLERS ||
+			childFeature == ApplicationPackageImpl.Literals.APPLICATION__CATEGORIES ||
+			childFeature == UiPackageImpl.Literals.UI_ELEMENT__VISIBLE_WHEN ||
 			childFeature == MenuPackageImpl.Literals.MENU_CONTRIBUTIONS__MENU_CONTRIBUTIONS ||
 			childFeature == MenuPackageImpl.Literals.TOOL_BAR_CONTRIBUTIONS__TOOL_BAR_CONTRIBUTIONS ||
-			childFeature == MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS;
+			childFeature == MenuPackageImpl.Literals.TRIM_CONTRIBUTIONS__TRIM_CONTRIBUTIONS ||
+			childFeature == BasicPackageImpl.Literals.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
 
 		if (qualify) {
 			return getString
