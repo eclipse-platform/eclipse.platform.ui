@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -175,9 +175,6 @@ public class AddMarkerAction extends TextEditorAction {
 
 		Object o= attributes.get("message"); //$NON-NLS-1$
 		String proposal= (o instanceof String) ? (String) o : ""; //$NON-NLS-1$
-		if (proposal == null)
-			proposal= ""; //$NON-NLS-1$
-
 		String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 		IInputValidator inputValidator= new IInputValidator() {
