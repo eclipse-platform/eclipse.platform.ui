@@ -17,11 +17,11 @@ import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
@@ -106,12 +106,13 @@ public class CompatibilityView extends CompatibilityPart {
 		// Construct the toolbar (if necessary)
 		MToolBar toolbar = part.getToolbar();
 		if (toolbar == null) {
-			toolbar = MenuFactoryImpl.eINSTANCE.createRenderedToolBar();
+			toolbar = MenuFactoryImpl.eINSTANCE.createToolBar();
 			toolbar.setElementId(part.getElementId());
 			part.setToolbar(toolbar);
 		}
-		if (toolbar instanceof MRenderedToolBar) {
-			((MRenderedToolBar) toolbar).setContributionManager(tbm);
+		apr = rendererFactory.getRenderer(toolbar, parent);
+		if (apr instanceof ToolBarManagerRenderer) {
+			((ToolBarManagerRenderer) apr).linkModelToManager(toolbar, tbm);
 		}
 	}
 }

@@ -16,7 +16,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -40,7 +39,8 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private WBWRenderer wbwRenderer;
 
 	private IEclipseContext context;
-	private RenderedToolBarRenderer renderedToolbarRenderer;
+
+	// private RenderedToolBarRenderer renderedToolbarRenderer;
 
 	public AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
 		if (uiElement instanceof MArea) {
@@ -61,12 +61,6 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(menuRenderer);
 			}
 			return menuRenderer;
-		} else if (uiElement instanceof MRenderedToolBar) {
-			if (renderedToolbarRenderer == null) {
-				renderedToolbarRenderer = new RenderedToolBarRenderer();
-				initRenderer(renderedToolbarRenderer);
-			}
-			return renderedToolbarRenderer;
 		} else if (uiElement instanceof MToolBar) {
 			if (toolbarRenderer == null) {
 				toolbarRenderer = new ToolBarManagerRenderer();

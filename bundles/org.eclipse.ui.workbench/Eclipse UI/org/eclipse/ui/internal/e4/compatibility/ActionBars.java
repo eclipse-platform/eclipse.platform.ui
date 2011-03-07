@@ -11,14 +11,10 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.menu.MRenderedToolBar;
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -81,23 +77,14 @@ public class ActionBars extends SubActionBars {
 			if (toolbarManager instanceof ToolBarManager) {
 				ToolBarManager tbm = (ToolBarManager) toolbarManager;
 				Control tbCtrl = tbm.getControl();
-				if (tbCtrl != null && !tbCtrl.isDisposed()) {
-					MUIElement tbModel = (MUIElement) tbCtrl
-							.getData(AbstractPartRenderer.OWNING_ME);
-					if (tbModel instanceof MRenderedToolBar) {
-						// only force a rerender if the toolbar can be seen
-						if (isSelected(part)) {
-							if (part.getContext() != null) {
-								IPresentationEngine renderer = part.getContext().get(
-										IPresentationEngine.class);
-								if (renderer != null) {
-									renderer.removeGui(tbModel);
-									renderer.createGui(tbModel, tbCtrl.getParent(),
-											part.getContext());
-									tbCtrl.getParent().layout();
-								}
-							}
-						}
+				if (tbCtrl == null || tbCtrl.isDisposed()) {
+					if (part.getContext() != null) {
+						// TODO what to do
+					}
+				} else {
+					tbm.update(true);
+					if (!tbCtrl.isDisposed()) {
+						tbCtrl.getShell().layout(new Control[] { tbCtrl }, SWT.DEFER);
 					}
 				}
 			} else {
@@ -107,7 +94,7 @@ public class ActionBars extends SubActionBars {
 		super.updateActionBars();
 	}
 
-	private boolean isSelected(MPart part) {
+	boolean isSelected(MPart part) {
 		MElementContainer<?> parent = part.getParent();
 		if (parent == null) {
 			MPlaceholder placeholder = part.getCurSharedRef();

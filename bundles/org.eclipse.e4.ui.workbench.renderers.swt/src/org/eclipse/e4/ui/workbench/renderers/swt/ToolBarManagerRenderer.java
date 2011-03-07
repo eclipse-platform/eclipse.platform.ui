@@ -386,7 +386,11 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			linkModelToManager((MToolBar) element, manager);
 		}
 		ToolBar bar = manager.createControl(parent);
+		if (bar.getParent() != parent) {
+			Thread.dumpStack();
+		}
 		bar.setData(manager);
+		bar.setData(AbstractPartRenderer.OWNING_ME, element);
 		bar.getShell().layout(new Control[] { bar }, SWT.DEFER);
 		bar.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -469,7 +473,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				modelProcessSwitch(parentManager, (MToolBarElement) childME);
 			}
 		}
-		parentManager.update(false);
+		parentManager.update(true);
 
 		ToolBar tb = getToolbarFrom(container.getWidget());
 		if (tb != null) {
@@ -685,9 +689,14 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	@Override
 	public void disposeWidget(MUIElement element) {
 		ToolBar tb = getToolbarFrom(element.getWidget());
-		tb.setVisible(false);
-		unbindWidget(element);
-		tb.setData(AbstractPartRenderer.OWNING_ME, element);
+		if (tb != null) {
+			unbindWidget(element);
+			tb.setData(AbstractPartRenderer.OWNING_ME, element);
+		}
+		ToolBarManager manager = getManager((MToolBar) element);
+		if (manager != null) {
+			manager.dispose();
+		}
 	}
 
 	@Override
