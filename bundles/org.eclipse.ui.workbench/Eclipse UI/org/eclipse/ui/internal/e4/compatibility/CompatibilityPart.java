@@ -15,6 +15,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
@@ -112,6 +114,29 @@ public abstract class CompatibilityPart {
 			legacyPart.createPartControl(parent);
 		} catch (RuntimeException e) {
 			logger.error(e);
+
+			try {
+				// couldn't create the part, dispose of it
+				legacyPart.dispose();
+			} catch (Exception ex) {
+				// client code may have errors so we need to catch it
+				logger.error(ex);
+			}
+
+			// create a new error part notifying the user of the failure
+			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+					"Failed to create the part's controls", e); //$NON-NLS-1$
+			WorkbenchPartReference reference = getReference();
+			wrapped = reference.createErrorPart(status);
+			try {
+				reference.initialize(wrapped);
+				wrapped.createPartControl(parent);
+			} catch (RuntimeException ex) {
+				// failed to create the error part, log it
+				logger.error(ex);
+			} catch (PartInitException ex) {
+				WorkbenchPlugin.log("Unable to initialize error part", ex.getStatus()); //$NON-NLS-1$
+			}
 		}
 	}
 
