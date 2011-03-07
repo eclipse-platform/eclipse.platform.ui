@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,11 +35,11 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.wizard.IWizardContainer;
@@ -48,7 +48,7 @@ import org.eclipse.jface.wizard.ProgressMonitorPart;
 
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
-public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer {
+public class RefactoringWizardDialog2 extends TrayDialog implements IWizardContainer {
 
 	private RefactoringWizard fWizard;
 	private IWizardPage fCurrentPage;
@@ -165,6 +165,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 			settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 			wizard.setDialogSettings(settings);
 		}
+		setHelpAvailable((wizard.getWizardFlags() & RefactoringWizard.SHOW_HELP_CONTROL) != 0);
 		fWizard= wizard;
 		fWizard.setContainer(this);
 		fWizard.addPages();

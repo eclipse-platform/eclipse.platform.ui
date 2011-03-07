@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -134,16 +134,27 @@ public abstract class RefactoringWizard extends Wizard {
 
 	/**
 	 * Flag (value 64) indicating that the dialog representing the refactoring
-	 * status to the user will not contain a back button. The flag
-	 * is ignored if the flag (@link #WIZARD_BASED_USER_INTERFACE}
+	 * status to the user will not contain a back button.
+	 * The flag is ignored if the flag {@link #WIZARD_BASED_USER_INTERFACE}
 	 * is specified.
 	 */
 	public static final int NO_BACK_BUTTON_ON_STATUS_DIALOG= 1 << 6;
 
-	private static final int LAST= 1 << 7;
+	/**
+	 * Flag (value 128) indicating that a help control should be shown.
+	 * The flag is ignored if the flag {@link #WIZARD_BASED_USER_INTERFACE}
+	 * is specified (the '?' button is always shown there).
+	 * 
+	 * @see org.eclipse.jface.dialogs.TrayDialog#setHelpAvailable(boolean)
+	 * 
+	 * @since 3.6
+	 */
+	public static final int SHOW_HELP_CONTROL= 1 << 7;
+	
+	private static final int LAST= 1 << 8;
 
-	private int fFlags;
-	private Refactoring fRefactoring;
+	private final int fFlags;
+	private final Refactoring fRefactoring;
 	private String fDefaultPageTitle;
 
 	private Change fChange;
@@ -193,6 +204,18 @@ public abstract class RefactoringWizard extends Wizard {
 		return fRefactoring;
 	}
 
+	/**
+	 * Returns the refactoring wizard flags that have been set for this wizard.
+	 * Note that the set of valid flags may grow in the future.
+	 *
+	 * @return the wizard's flags
+	 * 
+	 * @since 3.6
+	 */
+	public final int getWizardFlags(){
+		return fFlags;
+	}
+	
 	/**
 	 * Sets the default page title to the given value. This value is used
 	 * as a page title for wizard pages which don't provide their own
@@ -288,6 +311,15 @@ public abstract class RefactoringWizard extends Wizard {
 	 */
 	public final Change getChange() {
 		return fChange;
+	}
+	
+    /**
+	 * @param b {@inheritDoc}
+     * @deprecated {@link #WIZARD_BASED_USER_INTERFACE} always shows a '?' button.
+	 *  To show the button with {@link #DIALOG_BASED_USER_INTERFACE}, add the {@link #SHOW_HELP_CONTROL} flag.
+	 */
+	public void setHelpAvailable(boolean b) {
+		super.setHelpAvailable(b);
 	}
 
 	/**
