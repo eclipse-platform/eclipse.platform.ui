@@ -24,7 +24,7 @@ import java.util.Map;
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getContributorURI <em>Contributor URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTranientData <em>Tranient Data</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getClonableSnippets <em>Clonable Snippets</em>}</li>
  * </ul>
  * </p>
@@ -99,29 +99,29 @@ public interface MApplicationElement {
 	void setContributorURI(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Tranient Data</b></em>' attribute.
+	 * Returns the value of the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Tranient Data</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Transient Data</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Tranient Data</em>' attribute.
-	 * @see #setTranientData(Map)
+	 * @return the value of the '<em>Transient Data</em>' attribute.
+	 * @see #setTransientData(Map)
 	 * @model transient="true"
 	 * @generated
 	 */
-	Map<String, Object> getTranientData();
+	Map<String, Object> getTransientData();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTranientData <em>Tranient Data</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Tranient Data</em>' attribute.
-	 * @see #getTranientData()
+	 * @param value the new value of the '<em>Transient Data</em>' attribute.
+	 * @see #getTransientData()
 	 * @generated
 	 */
-	void setTranientData(Map<String, Object> value);
+	void setTransientData(Map<String, Object> value);
 
 	/**
 	 * Returns the value of the '<em><b>Clonable Snippets</b></em>' containment reference list.

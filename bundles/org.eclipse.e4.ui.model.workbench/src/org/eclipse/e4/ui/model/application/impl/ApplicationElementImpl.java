@@ -35,7 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getContributorURI <em>Contributor URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTranientData <em>Tranient Data</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTransientData <em>Transient Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getClonableSnippets <em>Clonable Snippets</em>}</li>
  * </ul>
  * </p>
@@ -94,14 +94,14 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	protected String contributorURI = CONTRIBUTOR_URI_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getTranientData() <em>Tranient Data</em>}' attribute.
+	 * The cached value of the '{@link #getTransientData() <em>Transient Data</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getTranientData()
+	 * @see #getTransientData()
 	 * @generated
 	 * @ordered
 	 */
-	protected Map<String, Object> tranientData;
+	protected Map<String, Object> transientData;
 
 	/**
 	 * The cached value of the '{@link #getClonableSnippets() <em>Clonable Snippets</em>}' containment reference list.
@@ -190,8 +190,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map<String, Object> getTranientData() {
-		return tranientData;
+	public Map<String, Object> getTransientData() {
+		return transientData;
 	}
 
 	/**
@@ -199,11 +199,11 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setTranientData(Map<String, Object> newTranientData) {
-		Map<String, Object> oldTranientData = tranientData;
-		tranientData = newTranientData;
+	public void setTransientData(Map<String, Object> newTransientData) {
+		Map<String, Object> oldTransientData = transientData;
+		transientData = newTransientData;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA, oldTranientData, tranientData));
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA, oldTransientData, transientData));
 	}
 
 	/**
@@ -246,8 +246,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return getTags();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				return getContributorURI();
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA:
-				return getTranientData();
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
+				return getTransientData();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
 				return getClonableSnippets();
 		}
@@ -273,8 +273,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				setContributorURI((String)newValue);
 				return;
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA:
-				setTranientData((Map<String, Object>)newValue);
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
+				setTransientData((Map<String, Object>)newValue);
 				return;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
 				getClonableSnippets().clear();
@@ -301,8 +301,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				setContributorURI(CONTRIBUTOR_URI_EDEFAULT);
 				return;
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA:
-				setTranientData((Map<String, Object>)null);
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
+				setTransientData((Map<String, Object>)null);
 				return;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
 				getClonableSnippets().clear();
@@ -325,8 +325,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return tags != null && !tags.isEmpty();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				return CONTRIBUTOR_URI_EDEFAULT == null ? contributorURI != null : !CONTRIBUTOR_URI_EDEFAULT.equals(contributorURI);
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA:
-				return tranientData != null;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
+				return transientData != null;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
 				return clonableSnippets != null && !clonableSnippets.isEmpty();
 		}
@@ -349,8 +349,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 		result.append(tags);
 		result.append(", contributorURI: "); //$NON-NLS-1$
 		result.append(contributorURI);
-		result.append(", tranientData: "); //$NON-NLS-1$
-		result.append(tranientData);
+		result.append(", transientData: "); //$NON-NLS-1$
+		result.append(transientData);
 		result.append(')');
 		return result.toString();
 	}

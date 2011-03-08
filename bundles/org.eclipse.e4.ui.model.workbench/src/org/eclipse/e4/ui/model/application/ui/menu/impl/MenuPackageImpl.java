@@ -141,13 +141,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int ITEM__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ITEM__TRANIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANIENT_DATA;
+	public static final int ITEM__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -349,13 +349,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_ITEM__CONTRIBUTOR_URI = ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int HANDLED_ITEM__TRANIENT_DATA = ITEM__TRANIENT_DATA;
+	public static final int HANDLED_ITEM__TRANSIENT_DATA = ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -584,13 +584,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_ELEMENT__TRANIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANIENT_DATA;
+	public static final int MENU_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -774,13 +774,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_ITEM__CONTRIBUTOR_URI = ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_ITEM__TRANIENT_DATA = ITEM__TRANIENT_DATA;
+	public static final int MENU_ITEM__TRANSIENT_DATA = ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -991,13 +991,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_SEPARATOR__CONTRIBUTOR_URI = MENU_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_SEPARATOR__TRANIENT_DATA = MENU_ELEMENT__TRANIENT_DATA;
+	public static final int MENU_SEPARATOR__TRANSIENT_DATA = MENU_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -1181,13 +1181,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU__CONTRIBUTOR_URI = MENU_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU__TRANIENT_DATA = MENU_ELEMENT__TRANIENT_DATA;
+	public static final int MENU__TRANSIENT_DATA = MENU_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -1398,13 +1398,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int MENU_CONTRIBUTION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MENU_CONTRIBUTION__TRANIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANIENT_DATA;
+	public static final int MENU_CONTRIBUTION__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -1588,13 +1588,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int POPUP_MENU__CONTRIBUTOR_URI = MENU__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int POPUP_MENU__TRANIENT_DATA = MENU__TRANIENT_DATA;
+	public static final int POPUP_MENU__TRANSIENT_DATA = MENU__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -1832,13 +1832,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_MENU_ITEM__CONTRIBUTOR_URI = MENU_ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_MENU_ITEM__TRANIENT_DATA = MENU_ITEM__TRANIENT_DATA;
+	public static final int DIRECT_MENU_ITEM__TRANSIENT_DATA = MENU_ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -2076,13 +2076,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_MENU_ITEM__CONTRIBUTOR_URI = MENU_ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int HANDLED_MENU_ITEM__TRANIENT_DATA = MENU_ITEM__TRANIENT_DATA;
+	public static final int HANDLED_MENU_ITEM__TRANSIENT_DATA = MENU_ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -2320,13 +2320,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_ITEM__CONTRIBUTOR_URI = ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_ITEM__TRANIENT_DATA = ITEM__TRANIENT_DATA;
+	public static final int TOOL_ITEM__TRANSIENT_DATA = ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -2537,13 +2537,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_BAR__TRANIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANIENT_DATA;
+	public static final int TOOL_BAR__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -2709,13 +2709,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_BAR_ELEMENT__TRANIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANIENT_DATA;
+	public static final int TOOL_BAR_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -2863,13 +2863,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_CONTROL__CONTRIBUTOR_URI = TOOL_BAR_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_CONTROL__TRANIENT_DATA = TOOL_BAR_ELEMENT__TRANIENT_DATA;
+	public static final int TOOL_CONTROL__TRANSIENT_DATA = TOOL_BAR_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -3044,13 +3044,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int HANDLED_TOOL_ITEM__CONTRIBUTOR_URI = TOOL_ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int HANDLED_TOOL_ITEM__TRANIENT_DATA = TOOL_ITEM__TRANIENT_DATA;
+	public static final int HANDLED_TOOL_ITEM__TRANSIENT_DATA = TOOL_ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -3288,13 +3288,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int DIRECT_TOOL_ITEM__CONTRIBUTOR_URI = TOOL_ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DIRECT_TOOL_ITEM__TRANIENT_DATA = TOOL_ITEM__TRANIENT_DATA;
+	public static final int DIRECT_TOOL_ITEM__TRANSIENT_DATA = TOOL_ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -3532,13 +3532,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_SEPARATOR__CONTRIBUTOR_URI = TOOL_BAR_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_BAR_SEPARATOR__TRANIENT_DATA = TOOL_BAR_ELEMENT__TRANIENT_DATA;
+	public static final int TOOL_BAR_SEPARATOR__TRANSIENT_DATA = TOOL_BAR_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -3714,13 +3714,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int RENDERED_MENU__CONTRIBUTOR_URI = MENU__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int RENDERED_MENU__TRANIENT_DATA = MENU__TRANIENT_DATA;
+	public static final int RENDERED_MENU__TRANSIENT_DATA = MENU__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -3940,13 +3940,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int RENDERED_TOOL_BAR__CONTRIBUTOR_URI = TOOL_BAR__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int RENDERED_TOOL_BAR__TRANIENT_DATA = TOOL_BAR__TRANIENT_DATA;
+	public static final int RENDERED_TOOL_BAR__TRANSIENT_DATA = TOOL_BAR__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -4121,13 +4121,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TOOL_BAR_CONTRIBUTION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TOOL_BAR_CONTRIBUTION__TRANIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANIENT_DATA;
+	public static final int TOOL_BAR_CONTRIBUTION__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -4339,13 +4339,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int TRIM_CONTRIBUTION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int TRIM_CONTRIBUTION__TRANIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANIENT_DATA;
+	public static final int TRIM_CONTRIBUTION__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -4557,13 +4557,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int RENDERED_MENU_ITEM__CONTRIBUTOR_URI = MENU_ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int RENDERED_MENU_ITEM__TRANIENT_DATA = MENU_ITEM__TRANIENT_DATA;
+	public static final int RENDERED_MENU_ITEM__TRANSIENT_DATA = MENU_ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -4783,13 +4783,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int OPAQUE_TOOL_ITEM__CONTRIBUTOR_URI = TOOL_ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int OPAQUE_TOOL_ITEM__TRANIENT_DATA = TOOL_ITEM__TRANIENT_DATA;
+	public static final int OPAQUE_TOOL_ITEM__TRANSIENT_DATA = TOOL_ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -5009,13 +5009,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int OPAQUE_MENU_ITEM__CONTRIBUTOR_URI = MENU_ITEM__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int OPAQUE_MENU_ITEM__TRANIENT_DATA = MENU_ITEM__TRANIENT_DATA;
+	public static final int OPAQUE_MENU_ITEM__TRANSIENT_DATA = MENU_ITEM__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -5235,13 +5235,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int OPAQUE_MENU_SEPARATOR__CONTRIBUTOR_URI = MENU_SEPARATOR__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int OPAQUE_MENU_SEPARATOR__TRANIENT_DATA = MENU_SEPARATOR__TRANIENT_DATA;
+	public static final int OPAQUE_MENU_SEPARATOR__TRANSIENT_DATA = MENU_SEPARATOR__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -5434,13 +5434,13 @@ public class MenuPackageImpl extends EPackageImpl {
 	public static final int OPAQUE_MENU__CONTRIBUTOR_URI = MENU__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int OPAQUE_MENU__TRANIENT_DATA = MENU__TRANIENT_DATA;
+	public static final int OPAQUE_MENU__TRANSIENT_DATA = MENU__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.

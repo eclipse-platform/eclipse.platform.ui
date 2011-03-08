@@ -154,13 +154,13 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION_ELEMENT__CONTRIBUTOR_URI = 2;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_ELEMENT__TRANIENT_DATA = 3;
+	public static final int APPLICATION_ELEMENT__TRANSIENT_DATA = 3;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -218,13 +218,13 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION__TRANIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANIENT_DATA;
+	public static final int APPLICATION__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -516,13 +516,13 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int CONTRIBUTION__CONTRIBUTOR_URI = APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int CONTRIBUTION__TRANIENT_DATA = APPLICATION_ELEMENT__TRANIENT_DATA;
+	public static final int CONTRIBUTION__TRANSIENT_DATA = APPLICATION_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -607,13 +607,13 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int ADDON__CONTRIBUTOR_URI = CONTRIBUTION__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ADDON__TRANIENT_DATA = CONTRIBUTION__TRANIENT_DATA;
+	public static final int ADDON__TRANSIENT_DATA = CONTRIBUTION__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -939,15 +939,15 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTranientData <em>Tranient Data</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Tranient Data</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTranientData()
+	 * @return the meta object for the attribute '<em>Transient Data</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData()
 	 * @see #getApplicationElement()
 	 * @generated
 	 */
-	public EAttribute getApplicationElement_TranientData() {
+	public EAttribute getApplicationElement_TransientData() {
 		return (EAttribute)applicationElementEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -1085,7 +1085,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TAGS);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__CONTRIBUTOR_URI);
-		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TRANIENT_DATA);
+		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TRANSIENT_DATA);
 		createEReference(applicationElementEClass, APPLICATION_ELEMENT__CLONABLE_SNIPPETS);
 
 		contributionEClass = createEClass(CONTRIBUTION);
@@ -1181,7 +1181,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
-		initEAttribute(getApplicationElement_TranientData(), g1, "tranientData", null, 0, 1, MApplicationElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getApplicationElement_TransientData(), g1, "transientData", null, 0, 1, MApplicationElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getApplicationElement_ClonableSnippets(), this.getApplicationElement(), null, "clonableSnippets", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(contributionEClass, MContribution.class, "Contribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1306,12 +1306,12 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		public static final EAttribute APPLICATION_ELEMENT__CONTRIBUTOR_URI = eINSTANCE.getApplicationElement_ContributorURI();
 
 		/**
-		 * The meta object literal for the '<em><b>Tranient Data</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Transient Data</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EAttribute APPLICATION_ELEMENT__TRANIENT_DATA = eINSTANCE.getApplicationElement_TranientData();
+		public static final EAttribute APPLICATION_ELEMENT__TRANSIENT_DATA = eINSTANCE.getApplicationElement_TransientData();
 
 		/**
 		 * The meta object literal for the '<em><b>Clonable Snippets</b></em>' containment reference list feature.

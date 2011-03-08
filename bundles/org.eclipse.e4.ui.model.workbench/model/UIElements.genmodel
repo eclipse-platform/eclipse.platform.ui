@@ -26,6 +26,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/elementId"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/tags"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/contributorURI"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ApplicationElement/transientData"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ApplicationElement/clonableSnippets"/>
     </genClasses>
     <genClasses image="false" ecoreClass="UIElements.ecore#//Contribution" labelFeature="#//application/Contribution/contributionURI">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//Contribution/contributionURI"/>
@@ -33,7 +35,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EReference UIElements.ecore#//Contribution/persistedState"/>
     </genClasses>
     <genClasses ecoreClass="UIElements.ecore#//Addon" labelFeature="#//application/Contribution/contributionURI"/>
-    <nestedGenPackages prefix="Commands" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//commands">
+    <nestedGenPackages prefix="Commands" basePackage="org.eclipse.e4.ui.model.application"
+        disposableProviderFactory="true" ecorePackage="UIElements.ecore#//commands">
       <genDataTypes ecoreDataType="UIElements.ecore#//commands/ParameterizedCommand"/>
       <genClasses image="false" ecoreClass="UIElements.ecore#//commands/BindingTableContainer">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/BindingTableContainer/bindingTables"/>
@@ -88,8 +91,8 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Category/description"/>
       </genClasses>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Ui" disposableProviderFactory="true" contentTypeIdentifier=""
-        ecorePackage="UIElements.ecore#//ui">
+    <nestedGenPackages prefix="Ui" basePackage="org.eclipse.e4.ui.model.application"
+        disposableProviderFactory="true" contentTypeIdentifier="" ecorePackage="UIElements.ecore#//ui">
       <genEnums typeSafeEnumCompatible="false" ecoreEnum="UIElements.ecore#//ui/SideValue">
         <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/SideValue/Top"/>
         <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/SideValue/Bottom"/>
@@ -150,7 +153,8 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/CoreExpression/coreExpressionId"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/CoreExpression/coreExpression"/>
       </genClasses>
-      <nestedGenPackages prefix="Menu" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/menu">
+      <nestedGenPackages prefix="Menu" basePackage="org.eclipse.e4.ui.model.application.ui"
+          disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/menu">
         <genEnums typeSafeEnumCompatible="false" ecoreEnum="UIElements.ecore#//ui/menu/ItemType">
           <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/menu/ItemType/Push"/>
           <genEnumLiterals ecoreEnumLiteral="UIElements.ecore#//ui/menu/ItemType/Check"/>
@@ -218,6 +222,9 @@
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/RenderedMenuItem">
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/RenderedMenuItem/contributionItem"/>
         </genClasses>
+        <genClasses ecoreClass="UIElements.ecore#//ui/menu/OpaqueToolItem">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/OpaqueToolItem/opaqueItem"/>
+        </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/OpaqueMenuItem">
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/OpaqueMenuItem/opaqueItem"/>
         </genClasses>
@@ -226,7 +233,8 @@
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/OpaqueMenu"/>
       </nestedGenPackages>
-      <nestedGenPackages prefix="Basic" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/basic">
+      <nestedGenPackages prefix="Basic" basePackage="org.eclipse.e4.ui.model.application.ui"
+          disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/basic">
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/Part" labelFeature="#//application/Contribution/contributionURI">
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/menus"/>
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/toolbar"/>
@@ -254,10 +262,12 @@
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/TrimBar"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/StackElement"/>
       </nestedGenPackages>
-      <nestedGenPackages prefix="Advanced" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/advanced">
+      <nestedGenPackages prefix="Advanced" basePackage="org.eclipse.e4.ui.model.application.ui"
+          disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/advanced">
         <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Placeholder">
           <genFeatures notify="false" createChild="false" propertySortChoices="true"
               ecoreFeature="ecore:EReference UIElements.ecore#//ui/advanced/Placeholder/ref"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/advanced/Placeholder/closeable"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Perspective" labelFeature="#//application/ui/UILabel/label">
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/advanced/Perspective/windows"/>
@@ -266,8 +276,10 @@
         <genClasses ecoreClass="UIElements.ecore#//ui/advanced/Area"/>
       </nestedGenPackages>
     </nestedGenPackages>
-    <nestedGenPackages prefix="Descriptor" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//descriptor">
-      <nestedGenPackages prefix="Basic" disposableProviderFactory="true" ecorePackage="UIElements.ecore#//descriptor/basic">
+    <nestedGenPackages prefix="Descriptor" basePackage="org.eclipse.e4.ui.model.application"
+        disposableProviderFactory="true" ecorePackage="UIElements.ecore#//descriptor">
+      <nestedGenPackages prefix="Basic" basePackage="org.eclipse.e4.ui.model.application.descriptor"
+          disposableProviderFactory="true" ecorePackage="UIElements.ecore#//descriptor/basic">
         <genClasses ecoreClass="UIElements.ecore#//descriptor/basic/PartDescriptor">
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/allowMultiple"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/category"/>

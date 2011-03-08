@@ -188,13 +188,13 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_CONTEXT__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int BINDING_CONTEXT__TRANIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA;
+	public static final int BINDING_CONTEXT__TRANSIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -279,13 +279,13 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int BINDING_TABLE__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int BINDING_TABLE__TRANIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA;
+	public static final int BINDING_TABLE__TRANSIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -361,13 +361,13 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int COMMAND__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND__TRANIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA;
+	public static final int COMMAND__TRANSIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -461,13 +461,13 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int COMMAND_PARAMETER__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int COMMAND_PARAMETER__TRANIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA;
+	public static final int COMMAND_PARAMETER__TRANSIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -552,13 +552,13 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int HANDLER__CONTRIBUTOR_URI = ApplicationPackageImpl.CONTRIBUTION__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int HANDLER__TRANIENT_DATA = ApplicationPackageImpl.CONTRIBUTION__TRANIENT_DATA;
+	public static final int HANDLER__TRANSIENT_DATA = ApplicationPackageImpl.CONTRIBUTION__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -690,13 +690,13 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int KEY_BINDING__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int KEY_BINDING__TRANIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA;
+	public static final int KEY_BINDING__TRANSIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -799,13 +799,13 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int PARAMETER__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PARAMETER__TRANIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA;
+	public static final int PARAMETER__TRANSIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -881,13 +881,13 @@ public class CommandsPackageImpl extends EPackageImpl {
 	public static final int CATEGORY__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int CATEGORY__TRANIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANIENT_DATA;
+	public static final int CATEGORY__TRANSIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.

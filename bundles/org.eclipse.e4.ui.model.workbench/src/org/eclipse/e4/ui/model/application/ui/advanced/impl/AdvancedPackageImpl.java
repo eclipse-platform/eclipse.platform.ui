@@ -114,13 +114,13 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PLACEHOLDER__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PLACEHOLDER__TRANIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANIENT_DATA;
+	public static final int PLACEHOLDER__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -286,13 +286,13 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE__TRANIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANIENT_DATA;
+	public static final int PERSPECTIVE__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -521,13 +521,13 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int PERSPECTIVE_STACK__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int PERSPECTIVE_STACK__TRANIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANIENT_DATA;
+	public static final int PERSPECTIVE_STACK__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
@@ -693,13 +693,13 @@ public class AdvancedPackageImpl extends EPackageImpl {
 	public static final int AREA__CONTRIBUTOR_URI = BasicPackageImpl.PART_SASH_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Tranient Data</b></em>' attribute.
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int AREA__TRANIENT_DATA = BasicPackageImpl.PART_SASH_CONTAINER__TRANIENT_DATA;
+	public static final int AREA__TRANSIENT_DATA = BasicPackageImpl.PART_SASH_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
