@@ -11,6 +11,10 @@
 
 package org.eclipse.e4.ui.workbench.swt.util;
 
+import org.eclipse.e4.ui.model.application.commands.MBindingContext;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,6 +30,7 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.internal.BindingCopies;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.internal.workbench.Activator;
@@ -79,6 +84,7 @@ public class BindingProcessingAddon {
 	@PostConstruct
 	public void init() {
 		defineBindingTables();
+		cleanTables();
 		activateContexts(application);
 		registerModelListeners();
 	}
@@ -105,6 +111,71 @@ public class BindingProcessingAddon {
 				activateContexts(e);
 			}
 		}
+	}
+
+	// goes through the entire active bindings list and replaces SYSTEM
+	// bindings with any USER bindings that were persisted
+	private void cleanTables() {
+		ArrayList<Binding> dirtyBindings = new ArrayList<Binding>();
+		Binding dirtyBinding;
+
+		Binding[] userBindings = BindingCopies.getUserDefinedBindings();
+		Binding curr;
+
+		// go through all USER bindings and check if there is an "equal" SYSTEM
+		// binding
+		for (int i = 0; i < userBindings.length; i++) {
+			curr = userBindings[i];
+
+			// they should all be USER bindings, but double check anyway
+			if (curr.getType() == Binding.USER) {
+				dirtyBinding = checkDirty(curr);
+
+				// if the SYSTEM binding is marked as dirty, then throw it in a
+				// list and we'll remove it later
+				if (dirtyBinding != null) {
+					dirtyBindings.add(dirtyBinding);
+				}
+			}
+		}
+
+		//System.out.println("@@@ dirty bindings -> " + dirtyBindings.size());
+
+		// go through the list of bindings that are marked as dirty (if any) and
+		// remove them from the BindingTableManager
+		for (int i = 0; i < dirtyBindings.size(); i++) {
+			dirtyBinding = dirtyBindings.get(i);
+			bindingTables.getTable(dirtyBinding.getContextId()).removeBinding(
+					dirtyBinding);
+		}
+	}
+
+	private Binding checkDirty(Binding b) {
+		Collection<Binding> activeBindings = bindingTables.getActiveBindings();
+		Iterator<Binding> iter = activeBindings.iterator();
+		Binding curr;
+		Binding dirtyBinding = null;
+
+		while (iter.hasNext() && dirtyBinding == null) {
+			curr = iter.next();
+
+			// make sure we're only comparing SYSTEM bindings so that we don't
+			// remove the wrong ones, and make sure the bindings we're comparing
+			// actually have a command
+			if (curr.getType() == Binding.SYSTEM
+					&& curr.getParameterizedCommand() != null
+					&& b.getParameterizedCommand() != null) {
+				if (curr.getContextId().equals(b.getContextId())
+						&& curr.getParameterizedCommand().equals(
+								b.getParameterizedCommand())
+						&& curr.getSchemeId().equals(b.getSchemeId())) {
+
+					// mark this binding as dirty, and it will be removed
+					dirtyBinding = curr;
+				}
+			}
+		}
+		return dirtyBinding;
 	}
 
 	private void defineBindingTables() {
@@ -142,6 +213,7 @@ public class BindingProcessingAddon {
 				binding.getCommand(), binding.getParameters(),
 				binding.getKeySequence(), binding);
 		if (keyBinding != null) {
+			// if (keyBinding.getType() == Binding.USER)
 			bindingTable.addBinding(keyBinding);
 		}
 	}
@@ -168,11 +240,22 @@ public class BindingProcessingAddon {
 			System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
 		} else {
 			try {
+				int bindingType = Binding.SYSTEM;
+
+				// go thru the copied list of USER defined bindings to see if
+				// this particular binding being created matches any of them
+				if (BindingCopies.isUserBinding(sequence, cmd,
+						"org.eclipse.ui.defaultAcceleratorConfiguration",
+						bindingContext.getId())) {
+					bindingType = Binding.USER;
+				}
+
+				// TODO: NEED TO CHANGE THIS!!!
 				keyBinding = bindingService
 						.createBinding(
 								sequence,
 								cmd,
-								"org.eclipse.ui.defaultAcceleratorConfiguration", bindingContext.getId()); //$NON-NLS-1$
+								"org.eclipse.ui.defaultAcceleratorConfiguration", bindingContext.getId(), null, null, bindingType); //$NON-NLS-1$
 			} catch (IllegalArgumentException e) {
 				Activator.trace(Policy.DEBUG_MENUS,
 						"failed to create: " + binding, e); //$NON-NLS-1$

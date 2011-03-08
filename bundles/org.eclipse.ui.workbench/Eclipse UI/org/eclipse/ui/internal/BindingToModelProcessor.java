@@ -19,6 +19,7 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.ui.bindings.internal.BindingCopies;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
@@ -78,6 +79,11 @@ public class BindingToModelProcessor {
 	}
 
 	public final void addBinding(final MApplication application, final Binding binding) {
+
+		if (binding.getType() == Binding.USER) {
+			BindingCopies.addUserBinding(binding);
+		}
+
 		MBindingTable table = tables.get(binding.getContextId());
 		if (table == null) {
 			table = createTable(application, binding.getContextId());

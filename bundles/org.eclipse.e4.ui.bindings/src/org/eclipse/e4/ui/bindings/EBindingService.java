@@ -19,8 +19,10 @@ public interface EBindingService {
 
 	public static final String DIALOG_CONTEXT_ID = "org.eclipse.ui.contexts.dialog"; //$NON-NLS-1$
 
+	// TODO perhaps use a map of attributes for things
+	// that aren't important to the model
 	Binding createBinding(TriggerSequence sequence, ParameterizedCommand command, String schemeId,
-			String contextId);
+			String contextId, String locale, String platform, int bindingType);
 
 	void activateBinding(Binding binding);
 

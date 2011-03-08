@@ -473,9 +473,8 @@ public class BindingLookupTest extends TestCase {
 	private Binding createDefaultBinding(EBindingService bs,
 			TriggerSequence sequence, ParameterizedCommand command,
 			String contextId) {
-		return bs.createBinding(sequence, command,
-				"org.eclipse.ui.defaultAcceleratorConfiguration", //$NON-NLS-1$
-				contextId);
+		return bs.createBinding(sequence, command, "org.eclipse.ui.defaultAcceleratorConfiguration",
+				contextId, null, null, Binding.SYSTEM);
 	}
 
 }

@@ -98,9 +98,7 @@ public class KeyDispatcherTest extends TestCase {
 
 	private Binding createDefaultBinding(EBindingService bs,
 			TriggerSequence sequence, ParameterizedCommand command) {
-		return bs.createBinding(sequence, command,
-				"org.eclipse.ui.defaultAcceleratorConfiguration", //$NON-NLS-1$
-				ID_WINDOW);
+		return bs.createBinding(sequence, command, "org.eclipse.ui.defaultAcceleratorConfiguration", ID_WINDOW, null, null, Binding.SYSTEM);
 	}
 
 	@Override

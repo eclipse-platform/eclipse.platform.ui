@@ -86,7 +86,6 @@ public class BindingTable {
 	};
 
 	private Context tableId;
-
 	private ArrayList<Binding> bindings = new ArrayList<Binding>();
 	private Map<TriggerSequence, Binding> bindingsByTrigger = new HashMap<TriggerSequence, Binding>();
 	private Map<ParameterizedCommand, ArrayList<Binding>> bindingsByCommand = new HashMap<ParameterizedCommand, ArrayList<Binding>>();
@@ -143,7 +142,10 @@ public class BindingTable {
 		bindings.remove(binding);
 		bindingsByTrigger.remove(binding.getTriggerSequence());
 		ArrayList<Binding> sequences = bindingsByCommand.get(binding.getParameterizedCommand());
-		sequences.remove(binding);
+
+		if (sequences != null) {
+			sequences.remove(binding);
+		}
 		TriggerSequence[] prefs = binding.getTriggerSequence().getPrefixes();
 		for (int i = 1; i < prefs.length; i++) {
 			ArrayList<Binding> bindings = bindingsByPrefix.get(prefs[i]);
@@ -174,6 +176,10 @@ public class BindingTable {
 
 	public boolean isPartialMatch(TriggerSequence seq) {
 		return bindingsByPrefix.get(seq) != null;
+	}
+
+	public Collection<Binding> getBindings() {
+		return Collections.unmodifiableCollection(bindings);
 	}
 
 }

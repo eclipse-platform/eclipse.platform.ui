@@ -18,10 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.internal.BindingCopies;
+import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
@@ -65,6 +68,12 @@ public final class BindingService implements IBindingService {
 
 	@Inject
 	private BindingManager manager;
+
+	@Inject
+	private CommandManager cmdManager;
+
+	@Inject
+	private BindingTableManager bindingTableManager;
 
 	@Inject
 	@Optional
@@ -338,6 +347,16 @@ public final class BindingService implements IBindingService {
 	 * .ui.commands.ICommandService)
 	 */
 	public void readRegistryAndPreferences(ICommandService commandService) {
+
+
+		// TODO: shouldn't be using BindingPersistence here, but if we don't,
+		// then the keys pref page will crash when loading!
+		BindingPersistence bindingPersistence = new BindingPersistence(manager, cmdManager);
+		bindingPersistence.reRead();
+
+		Collection<Binding> bindings = bindingTableManager.getActiveBindings();
+		manager.setBindings(bindings.toArray(new Binding[bindings.size()]));
+
 		// BindingPersistence reader = new BindingPersistence(manager,
 		// commandService);
 		// reader.reRead();
@@ -347,6 +366,8 @@ public final class BindingService implements IBindingService {
 		// Binding binding = (Binding) i.next();
 		// addBinding(binding);
 		// }
+
+		bindingPersistence.dispose();
 	}
 
 	private MCommand findCommand(String id) {
@@ -366,8 +387,107 @@ public final class BindingService implements IBindingService {
 	 * .bindings.Scheme, org.eclipse.jface.bindings.Binding[])
 	 */
 	public void savePreferences(Scheme activeScheme, Binding[] bindings) throws IOException {
-		// TODO compat savePreferences
-		E4Util.unsupported("savePreferences"); //$NON-NLS-1$
+
+		Collection<Binding> activeBindings = bindingTableManager.getActiveBindings();
+		Binding[] activeBindingsArray = activeBindings.toArray(new Binding[activeBindings.size()]);
+
+		Binding b;
+
+		Collection<Binding> activeUserBindings = new ArrayList<Binding>();
+
+		boolean madeChanges = false; // flag to actually save the prefs
+
+		// go through the list of active bindings (from the BTM) and DEACTIVATE
+		// any bindings that are not included in the list of bindings passed
+		// from the new keys pref page
+		for (int i = 0; i < activeBindingsArray.length; i++) {
+			b = getEqualBinding(bindings, activeBindingsArray[i]);
+
+			// if we didn't find the binding, then it wasn't included in the
+			// list passed from the new keys pref page, so this binding needs to
+			// be deactivated
+			if (b == null) {
+				bindingService.deactivateBinding(activeBindingsArray[i]);
+
+				// make sure we keep this binding manager consistent with the
+				// BTM since the keys pref page will read off this
+				manager.removeBinding(activeBindingsArray[i]);
+
+				// if we're deactivating a SYSTEM binding, then keep it in the
+				// list of bindings to write to xml, but make sure it gets
+				// flagged as disabled
+				if (activeBindingsArray[i].getType() == Binding.SYSTEM) {
+					// inactiveSystemBindings.add(activeBindingsArray[i]);
+					BindingCopies.addInactiveSysBinding(activeBindingsArray[i]);
+				}
+
+				// flag that changes were made to the bindings so that we need
+				// to save
+				madeChanges = true;
+			}
+		}
+
+		// go though the list of bindings passed from the new keys pref page and
+		// ACTIVATE the NEW bindings added
+		for (int i = 0; i < bindings.length; i++) {
+			b = getEqualBinding(activeBindingsArray, bindings[i]);
+
+			// if we didn't find the binding, that means it's a new one, so
+			// let's activate it (as long as the command isn't null)
+			if (b == null && bindings[i].getParameterizedCommand() != null) {
+
+				bindingService.activateBinding(bindings[i]);
+
+				// make sure we keep this binding manager consistent with the
+				// BTM since the keys pref page will read off this
+				manager.addBinding(bindings[i]);
+
+				// flag that changes were made to the bindings, so we need
+				// to persist them
+				madeChanges = true;
+
+				// Since the binding persistence only writes out active USER
+				// bindings and deactivated SYSTEM bindings, there's no point in
+				// sending the entire bindings list and searching USER bindings.
+				if (bindings[i].getType() == Binding.USER) {
+					activeUserBindings.add(bindings[i]);
+				} else {
+					BindingCopies.removeInactiveSysBinding(bindings[i]);
+				}
+
+				// since we've activated a new binding, we need to see if it's
+				// replacing one of the old bindings (in which case the old
+				// binding needs to be deactivated)
+				// ... but not right now
+			}
+			// else if the binding was already activated AND it's a USER
+			// binding, then we'll need to persist it as well
+			else if (bindings[i].getType() == Binding.USER) {
+				activeUserBindings.add(bindings[i]);
+				madeChanges = true;
+			}
+		}
+
+		// if we made any changes, then they need to be persisted
+		if (madeChanges) {
+			// BindingPersistence.write(activeScheme, bindings);
+			BindingPersistence.write(activeScheme,
+					activeUserBindings.toArray(new Binding[activeUserBindings.size()]),
+					BindingCopies.getInactiveSysBindings());
+			// TODO: these numbers don't make sense... dig a litter deeper
+		}
+
+	}
+
+	private Binding getEqualBinding(Binding[] bindings, Binding target) {
+		Binding theBinding = null;
+
+		for (int i = 0; i < bindings.length && theBinding == null; i++) {
+			if (bindings[i].equals(target)) {
+				theBinding = bindings[i];
+			}
+		}
+		return theBinding;
 	}
 
 	/*

@@ -11,16 +11,16 @@
 
 package org.eclipse.e4.ui.bindings.internal;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 
@@ -31,6 +31,8 @@ public class BindingTableManager {
 	@Inject
 	private IEclipseContext eclipseContext;
 
+	HashSet<String> definedTables = new HashSet<String>();
+
 	public void addTable(BindingTable table) {
 		String contextId = table.getId();
 		if (eclipseContext.containsKey(contextId)) {
@@ -38,6 +40,7 @@ public class BindingTableManager {
 			//			throw new IllegalArgumentException("Already contains table " + contextId); //$NON-NLS-1$
 		}
 		eclipseContext.set(contextId, table);
+		definedTables.add(contextId);
 	}
 
 	public void removeTable(BindingTable table) {
@@ -46,10 +49,24 @@ public class BindingTableManager {
 			throw new IllegalArgumentException("Does not contains table " + contextId); //$NON-NLS-1$
 		}
 		eclipseContext.remove(contextId);
+		definedTables.remove(contextId);
 	}
 
 	public BindingTable getTable(String id) {
 		return (BindingTable) eclipseContext.get(id);
+	}
+
+	// we're just going through each binding table, and returning a
+	// flat list of bindings here
+	public Collection<Binding> getActiveBindings() {
+		ArrayList<Binding> bindings = new ArrayList<Binding>();
+		for (String id : definedTables) {
+			Object obj = eclipseContext.get(id);
+			if (obj instanceof BindingTable) {
+				bindings.addAll(((BindingTable) obj).getBindings());
+			}
+		}
+		return bindings;
 	}
 
 	public ContextSet createContextSet(Collection<Context> contexts) {

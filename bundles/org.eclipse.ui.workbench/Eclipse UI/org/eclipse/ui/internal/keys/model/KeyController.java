@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Map;
 import java.util.ResourceBundle;
 import org.eclipse.core.commands.CommandManager;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.ui.bindings.internal.BindingCopies;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -379,16 +381,6 @@ public class KeyController {
 							activeBinding);
 
 					// Remove binding for any system conflicts
-					Object[] keys = bindingToElement.keySet().toArray();
-					for (int i = 0; i < keys.length; i++) {
-						Binding bindingKey = (Binding) keys[i];
-						if (oldSequence.equals(bindingKey.getTriggerSequence())
-								&& bindingKey.getType() == Binding.SYSTEM) {
-							BindingElement be = (BindingElement) bindingToElement
-									.get(bindingKey);
-							bindingModel.remove(be);
-						}
-					}
 
 					bindingModel.setSelectedElement(activeBinding);
 				} else {
@@ -433,8 +425,15 @@ public class KeyController {
 	 */
 	public void saveBindings(IBindingService bindingService) {
 		try {
-			bindingService.savePreferences(fBindingManager.getActiveScheme(),
-					fBindingManager.getBindings());
+
+			Collection<Binding> activeBindingsCollection = fBindingManager
+					.getActiveBindingsDisregardingContextFlat();
+			Binding[] activeBindingsArray = activeBindingsCollection
+					.toArray(new Binding[activeBindingsCollection.size()]);
+
+			bindingService.savePreferences(fBindingManager.getActiveScheme(), activeBindingsArray);
+			// bindingService.savePreferences(fBindingManager.getActiveScheme(),fBindingManager.getBindings());
+
 		} catch (IOException e) {
 			logPreferenceStoreException(e);
 		}
@@ -486,6 +485,7 @@ public class KeyController {
 			fBindingManager.setActiveScheme(defaultScheme);
 		} catch (final NotDefinedException e) {
 			// At least we tried....
+			e.printStackTrace();
 		}
 
 		// Restore any User defined bindings
@@ -495,6 +495,18 @@ public class KeyController {
 				fBindingManager.removeBinding(bindings[i]);
 			}
 		}
+		// Re-add the deactivated SYSTEM bindings
+		bindings = BindingCopies.getInactiveSysBindings();
+		for (int i = 0; i < bindings.length; i++) {
+			fBindingManager.addBinding(bindings[i]);
+		}
+		// reset the binding copies
+		BindingCopies.init();
+
+		// set the binding manager's bindings array our copy of the system
+		// bindings
+		// fBindingManager.setBindings(BindingCopies.getSystemBindings().toArray(
+		// new Binding[BindingCopies.getSystemBindings().size()]));
 
 		bindingModel.refresh(contextModel);
 		saveBindings(bindingService);
