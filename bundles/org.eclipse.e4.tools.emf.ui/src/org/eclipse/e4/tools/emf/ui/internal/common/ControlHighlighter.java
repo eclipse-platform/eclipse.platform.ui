@@ -8,14 +8,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 public class ControlHighlighter {
-	private Control control;
-	private Shell s;
+	private static Shell s;
 
-	public ControlHighlighter(Control control) {
-		this.control = control;
-	}
-
-	public void show(Shell dialog) {
+	public static void show(Control control) {
+		if (s != null && !s.isDisposed()) {
+			s.dispose();
+		}
 		s = new Shell(control.getShell(), SWT.NO_TRIM);
 		Point p1 = control.toDisplay(0, 0);
 		Point p2 = control.getSize();
@@ -31,7 +29,7 @@ public class ControlHighlighter {
 		});
 	}
 
-	public void hide() {
+	public static void hide() {
 		if (s != null) {
 			s.dispose();
 			s = null;

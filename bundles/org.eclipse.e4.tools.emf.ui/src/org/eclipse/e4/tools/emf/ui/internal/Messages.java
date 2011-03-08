@@ -588,6 +588,8 @@ public class Messages {
 	public String ModelEditor_Form;
 	public String ModelEditor_XMI;
 	public String ModelEditor_ExternalizeStrings;
+	public String ModelEditor_Script;
+	public String ModelEditor_ShowControl;
 
 	public String ExternalizeStringHandler_Dialog_ElementName;
 	public String ExternalizeStringHandler_Dialog_AttributeName;

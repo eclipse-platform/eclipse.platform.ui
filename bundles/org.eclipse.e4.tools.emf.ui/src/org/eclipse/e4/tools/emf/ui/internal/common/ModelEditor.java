@@ -269,8 +269,6 @@ public class ModelEditor {
 
 	private AbstractComponentEditor currentEditor;
 
-	private ControlHighlighter currentControlHighlighter;
-
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
 		this.modelProvider = modelProvider;
@@ -557,6 +555,36 @@ public class ModelEditor {
 					}
 				}
 
+				IExtensionRegistry registry = RegistryFactory.getRegistry();
+				IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
+				final IConfigurationElement[] elements = extPoint.getConfigurationElements();
+
+				if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement) {
+					if (addSeparator) {
+						manager.add(new Separator());
+					}
+
+					addSeparator = false;
+
+					MenuManager scriptExecute = new MenuManager(messages.ModelEditor_Script);
+					manager.add(scriptExecute);
+					for (IConfigurationElement e : elements) {
+						final IConfigurationElement le = e;
+						scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
+							@Override
+							public void run() {
+								try {
+									IScriptingSupport support = (IScriptingSupport) le.createExecutableExtension("class"); //$NON-NLS-1$
+									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), new HashMap<String, Object>());
+								} catch (CoreException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						});
+					}
+				}
+
 				if (project != null) {
 
 					if (addSeparator) {
@@ -575,42 +603,13 @@ public class ModelEditor {
 						manager.add(new Separator());
 					}
 
-					IExtensionRegistry registry = RegistryFactory.getRegistry();
-					IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
-					final IConfigurationElement[] elements = extPoint.getConfigurationElements();
-
-					if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement) {
-						MenuManager scriptExecute = new MenuManager(messages.ObjectViewer_Script);
-						manager.add(scriptExecute);
-						for (IConfigurationElement e : elements) {
-							final IConfigurationElement le = e;
-							scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
-								@Override
-								public void run() {
-									try {
-										IScriptingSupport support = (IScriptingSupport) le.createExecutableExtension("class"); //$NON-NLS-1$
-										support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), new HashMap<String, Object>());
-									} catch (CoreException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-								}
-							});
-						}
-					}
-
 					if (s.getFirstElement() instanceof MUIElement) {
 						final MUIElement el = (MUIElement) s.getFirstElement();
 						if (el.getWidget() instanceof Control) {
-							manager.add(new Action("Show control") {
+							manager.add(new Action(messages.ModelEditor_ShowControl) {
 
 								public void run() {
-									if (currentControlHighlighter != null) {
-										currentControlHighlighter.hide();
-									}
-
-									currentControlHighlighter = new ControlHighlighter((Control) el.getWidget());
-									currentControlHighlighter.show(viewer.getTree().getShell());
+									ControlHighlighter.show((Control) el.getWidget());
 								}
 							});
 
