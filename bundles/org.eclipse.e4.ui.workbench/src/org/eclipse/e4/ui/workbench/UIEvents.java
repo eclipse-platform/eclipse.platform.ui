@@ -133,7 +133,7 @@ public class UIEvents {
 		public static final String CONTRIBUTORURI = "contributorURI"; //$NON-NLS-1$
 		public static final String ELEMENTID = "elementId"; //$NON-NLS-1$
 		public static final String TAGS = "tags"; //$NON-NLS-1$
-		public static final String TRANIENTDATA = "tranientData"; //$NON-NLS-1$
+		public static final String TRANSIENTDATA = "transientData"; //$NON-NLS-1$
 	}
 
 	public static interface Contribution {
