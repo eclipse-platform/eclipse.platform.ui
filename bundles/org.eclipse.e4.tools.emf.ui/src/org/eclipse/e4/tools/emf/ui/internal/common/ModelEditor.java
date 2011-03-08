@@ -48,6 +48,7 @@ import org.eclipse.e4.tools.emf.ui.common.IEditorFeature;
 import org.eclipse.e4.tools.emf.ui.common.IEditorFeature.FeatureClass;
 import org.eclipse.e4.tools.emf.ui.common.IExtensionLookup;
 import org.eclipse.e4.tools.emf.ui.common.IModelResource;
+import org.eclipse.e4.tools.emf.ui.common.IScriptingSupport;
 import org.eclipse.e4.tools.emf.ui.common.ISelectionProviderService;
 import org.eclipse.e4.tools.emf.ui.common.MemoryTransfer;
 import org.eclipse.e4.tools.emf.ui.common.Util;
@@ -502,7 +503,7 @@ public class ModelEditor {
 		mgr.addMenuListener(new IMenuListener() {
 
 			public void menuAboutToShow(IMenuManager manager) {
-				IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 				boolean addSeparator = false;
 				if (!s.isEmpty()) {
 					List<Action> actions;
@@ -572,6 +573,30 @@ public class ModelEditor {
 				} else {
 					if (addSeparator) {
 						manager.add(new Separator());
+					}
+
+					IExtensionRegistry registry = RegistryFactory.getRegistry();
+					IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
+					final IConfigurationElement[] elements = extPoint.getConfigurationElements();
+
+					if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement) {
+						MenuManager scriptExecute = new MenuManager(messages.ObjectViewer_Script);
+						manager.add(scriptExecute);
+						for (IConfigurationElement e : elements) {
+							final IConfigurationElement le = e;
+							scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
+								@Override
+								public void run() {
+									try {
+										IScriptingSupport support = (IScriptingSupport) le.createExecutableExtension("class"); //$NON-NLS-1$
+										support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), new HashMap<String, Object>());
+									} catch (CoreException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+								}
+							});
+						}
 					}
 
 					if (s.getFirstElement() instanceof MUIElement) {
