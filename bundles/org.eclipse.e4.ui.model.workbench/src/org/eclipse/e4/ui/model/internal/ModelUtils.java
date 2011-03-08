@@ -140,22 +140,22 @@ public class ModelUtils {
 		return Collections.emptyList();
 	}
 
-	public static IEclipseContext getContainingContext(MUIElement element) {
-		MUIElement curParent = null;
-		if (element.getCurSharedRef() != null)
-			curParent = element.getCurSharedRef().getParent();
+	public static IEclipseContext getContainingContext(MApplicationElement element) {
+		MApplicationElement curParent = null;
+		if ( element instanceof MUIElement && ((MUIElement)element).getCurSharedRef() != null)
+			curParent = ((MUIElement)element).getCurSharedRef().getParent();
 		else
-			curParent = (MUIElement) ((EObject) element).eContainer();
+			curParent = (MApplicationElement) ((EObject) element).eContainer();
 
 		while (curParent != null) {
 			if (curParent instanceof MContext) {
 				return ((MContext) curParent).getContext();
 			}
 
-			if (curParent.getCurSharedRef() != null)
-				curParent = curParent.getCurSharedRef().getParent();
+			if ( (curParent instanceof MUIElement) && ((MUIElement)curParent).getCurSharedRef() != null)
+				curParent = ((MUIElement)curParent).getCurSharedRef().getParent();
 			else
-				curParent = (MUIElement) ((EObject) curParent).eContainer();
+				curParent = (MApplicationElement) ((EObject) curParent).eContainer();
 		}
 
 		return null;

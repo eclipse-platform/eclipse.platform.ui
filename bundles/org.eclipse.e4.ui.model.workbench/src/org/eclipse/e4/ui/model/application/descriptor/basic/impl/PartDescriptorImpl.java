@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.descriptor.basic.impl;
 
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindings;
 import org.eclipse.e4.ui.model.application.commands.MHandler;
@@ -29,7 +30,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -572,7 +572,7 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * <!-- end-user-doc -->
 	 */
 	public String getLocalizedLabel() {
-		throw new UnsupportedOperationException("Please use LocalizationHelper");
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__LABEL, this);
 	}
 
 	/**
@@ -580,7 +580,7 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * <!-- end-user-doc -->
 	 */
 	public String getLocalizedTooltip() {
-		throw new UnsupportedOperationException("Please use LocalizationHelper");
+		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__TOOLTIP, this);
 	}
 
 	/**
