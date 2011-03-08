@@ -2,9 +2,16 @@ package org.eclipse.e4.tools.emf.ui.internal.common.objectdata;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.e4.tools.emf.ui.common.IScriptingSupport;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
@@ -12,8 +19,13 @@ import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
@@ -30,7 +42,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 
 public class ObjectViewer {
-	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, IObservableValue master, IResourcePool resourcePool, Messages messages) {
+	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, IObservableValue master, IResourcePool resourcePool, final Messages messages) {
 		final TreeViewer viewer = new TreeViewer(parent);
 		viewer.setContentProvider(new ContentProviderImpl());
 		viewer.setLabelProvider(new LabelProviderImpl(resourcePool));
@@ -48,6 +60,54 @@ public class ObjectViewer {
 				}
 			}
 		});
+
+		IExtensionRegistry registry = RegistryFactory.getRegistry();
+		IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
+		final IConfigurationElement[] elements = extPoint.getConfigurationElements();
+
+		if (elements.length > 0) {
+			final MenuManager mgr = new MenuManager();
+			mgr.setRemoveAllWhenShown(true);
+			mgr.addMenuListener(new IMenuListener() {
+
+				public void menuAboutToShow(IMenuManager manager) {
+					if (viewer.getSelection().isEmpty()) {
+						return;
+					}
+
+					MenuManager scriptExecute = new MenuManager(messages.ObjectViewer_Script);
+					mgr.add(scriptExecute);
+					for (IConfigurationElement e : elements) {
+						final IConfigurationElement le = e;
+						scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
+							@Override
+							public void run() {
+								try {
+									IScriptingSupport support = (IScriptingSupport) le.createExecutableExtension("class"); //$NON-NLS-1$
+									Object o = ((IStructuredSelection) viewer.getSelection()).getFirstElement();
+									Object mainObject = null;
+									if (o instanceof JavaObject) {
+										mainObject = ((JavaObject) o).getInstance();
+									} else if (o instanceof JavaAttribute) {
+										mainObject = ((JavaAttribute) o).getFieldValue();
+									}
+
+									if (mainObject != null) {
+										support.openEditor(viewer.getControl().getShell(), mainObject, new HashMap<String, Object>());
+									}
+								} catch (CoreException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						});
+					}
+				}
+			});
+
+			viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
+		}
+
 		new TooltipSupportImpl(viewer, ToolTip.NO_RECREATE, false, resourcePool, messages);
 		return viewer;
 	}

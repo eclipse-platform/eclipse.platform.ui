@@ -599,5 +599,6 @@ public class Messages {
 
 	public String ObjectViewer_Tooltip_Value;
 	public String ObjectViewer_Tooltip_InjectionKey;
+	public String ObjectViewer_Script;
 
 }

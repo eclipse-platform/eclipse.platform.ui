@@ -138,7 +138,7 @@ public class JavaAttribute {
 		return ""; //$NON-NLS-1$
 	}
 
-	private Object getFieldValue() {
+	public Object getFieldValue() {
 		try {
 			return field.get(object.getInstance());
 		} catch (IllegalArgumentException e) {
