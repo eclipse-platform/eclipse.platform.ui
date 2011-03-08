@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><component id="org.eclipse.jface" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.swt.browser.WebKit">
+        <filter id="305426566">
+            <message_arguments>
+                <message_argument value="org.eclipse.swt.browser.WebKit"/>
+                <message_argument value="org.eclipse.jface_3.6.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
