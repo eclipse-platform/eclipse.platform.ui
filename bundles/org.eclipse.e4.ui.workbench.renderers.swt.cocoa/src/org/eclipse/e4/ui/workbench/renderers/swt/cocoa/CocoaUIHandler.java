@@ -60,16 +60,7 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.internal.C;
 import org.eclipse.swt.internal.Callback;
-import org.eclipse.swt.internal.cocoa.NSApplication;
-import org.eclipse.swt.internal.cocoa.NSButton;
-import org.eclipse.swt.internal.cocoa.NSControl;
-import org.eclipse.swt.internal.cocoa.NSMenu;
-import org.eclipse.swt.internal.cocoa.NSMenuItem;
-import org.eclipse.swt.internal.cocoa.NSString;
-import org.eclipse.swt.internal.cocoa.NSToolbar;
-import org.eclipse.swt.internal.cocoa.NSWindow;
-import org.eclipse.swt.internal.cocoa.OS;
-import org.eclipse.swt.internal.cocoa.id;
+import org.eclipse.swt.internal.gtk.OS;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -428,7 +419,7 @@ public class CocoaUIHandler {
 				COMMAND_ID_CLOSE_DIALOG, null);
 		Binding binding = bindingService.createBinding(sequence, cmd,
 				DEFAULT_ACCELERATOR_CONFIGURATION,
-				EBindingService.DIALOG_CONTEXT_ID);
+				EBindingService.DIALOG_CONTEXT_ID, null, null, Binding.SYSTEM);
 		bindingService.deactivateBinding(binding);
 		bindingService.activateBinding(binding);
 	}
