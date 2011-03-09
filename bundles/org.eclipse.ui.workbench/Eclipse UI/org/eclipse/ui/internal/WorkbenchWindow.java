@@ -898,11 +898,19 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				container.getChildren().add(separator);
 				manager.remove(item);
 			} else if (item instanceof ActionContributionItem) {
-				MToolItem toolItem = MenuHelper.createToolItem(application,
-						(ActionContributionItem) item);
-				manager.remove(item);
-				if (toolItem != null) {
+				IAction action = ((ActionContributionItem) item).getAction();
+				if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
+					MOpaqueToolItem toolItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
+					toolItem.setElementId(item.getId());
 					container.getChildren().add(toolItem);
+					renderer.linkModelToContribution(toolItem, item);
+				} else {
+					MToolItem toolItem = MenuHelper.createToolItem(application,
+							(ActionContributionItem) item);
+					manager.remove(item);
+					if (toolItem != null) {
+						container.getChildren().add(toolItem);
+					}
 				}
 			} else {
 				MOpaqueToolItem toolItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
