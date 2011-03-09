@@ -649,6 +649,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		if (tb != null && !tb.isDisposed()) {
 			tb.setVisible(true);
 			tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
+			tb.getShell().layout(
+					new Control[] { (Control) element.getWidget() });
 		}
 	}
 
@@ -666,7 +668,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			cleanUp = tb.getItemCount() == 0 || hasOnlySeparators(tb);
 		}
 		if (cleanUp) {
-			if (tb != null && !tb.isDisposed()) {
+			if (tb != null && !tb.isDisposed() && !needsViewMenu(element)) {
 				tb.dispose();
 			}
 			if (parent != null) {
