@@ -68,6 +68,7 @@ public class MarkerContentGenerator {
 	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
 	private static final String TAG_LEGACY_FILTER_ENTRY = "filter"; //$NON-NLS-1$
 	private static final String TAG_MARKER_LIMIT = "markerLimit"; //$NON-NLS-1$
+	private static final String TAG_MARKER_LIMIT_ENABLED = "markerLimitEnabled"; //$NON-NLS-1$
 	
 	/*Use this to indicate filter change rather than a null*/
 	private final Collection FILTERS_CHANGED = Collections.EMPTY_SET;
@@ -83,6 +84,7 @@ public class MarkerContentGenerator {
 	private Collection filters;
 	private boolean andFilters = false;
 	private int markerLimits = 100;
+	private boolean markerLimitsEnabled = true;
 
 	/**
 	 * focusResources
@@ -204,6 +206,7 @@ public class MarkerContentGenerator {
 	void saveState(IMemento memento, MarkerField[] displayedFields) {
 
 		memento.putInteger(TAG_MARKER_LIMIT, markerLimits);
+		memento.putBoolean(TAG_MARKER_LIMIT_ENABLED, markerLimitsEnabled);
 
 		for (int i = 0; i < displayedFields.length; i++) {
 			memento.createChild(TAG_COLUMN_VISIBILITY, displayedFields[i]
@@ -221,8 +224,13 @@ public class MarkerContentGenerator {
 		}
 		
 		Integer limits = memento.getInteger(TAG_MARKER_LIMIT);
-		if(limits != null) {
+		if (limits != null) {
 			markerLimits = limits.intValue();
+		}
+
+		Boolean limitsEnabled = memento.getBoolean(TAG_MARKER_LIMIT_ENABLED);
+		if (limitsEnabled != null) {
+			markerLimitsEnabled = limitsEnabled.booleanValue();
 		}
 		
 		if (memento.getChildren(TAG_COLUMN_VISIBILITY).length != 0) {
@@ -252,9 +260,11 @@ public class MarkerContentGenerator {
 
 	private void initDefaults() {
 		
-		IPreferenceStore preferenceStore = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-		if(preferenceStore.getBoolean(IDEInternalPreferences.USE_MARKER_LIMITS))
-			markerLimits = preferenceStore.getInt(IDEInternalPreferences.MARKER_LIMITS_VALUE);
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault()
+				.getPreferenceStore();
+		markerLimitsEnabled = store
+				.getBoolean(IDEInternalPreferences.USE_MARKER_LIMITS);
+		markerLimits = store.getInt(IDEInternalPreferences.MARKER_LIMITS_VALUE);
 
 		MarkerField[] initialFields = getInitialVisible();
 
@@ -411,6 +421,20 @@ public class MarkerContentGenerator {
 	 */
 	public void setMarkerLimits(int markerLimits) {
 		this.markerLimits = markerLimits;
+	}
+	
+	/**
+	 * @return Returns the markerLimitsEnabled.
+	 */
+	public boolean isMarkerLimitsEnabled() {
+		return markerLimitsEnabled;
+	}
+	
+	/**
+	 * @param markerLimitsEnabled The markerLimitsEnabled to set.
+	 */
+	public void setMarkerLimitsEnabled(boolean markerLimitsEnabled) {
+		this.markerLimitsEnabled = markerLimitsEnabled;
 	}
 
 	/**

@@ -85,13 +85,15 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 	 */
 	private Object[] getLimitedChildren(Object[] children) {
 		
-		int newLength = markersView.getGenerator().getMarkerLimits();
-		if (newLength > 0 && newLength < children.length) {
-			Object[] newChildren = new Object[newLength];
-			System.arraycopy(children, 0, newChildren, 0, newLength);
-			return newChildren;
-		}
-		return children;
+		boolean limitsEnabled = markersView.getGenerator().isMarkerLimitsEnabled();
+		int limits = markersView.getGenerator().getMarkerLimits();
+		
+		if(!limitsEnabled || limits > children.length)
+			return children;
+		
+		Object[] newChildren = new Object[limits];
+		System.arraycopy(children, 0, newChildren, 0, limits);
+		return newChildren;
 	}
 
 	/*

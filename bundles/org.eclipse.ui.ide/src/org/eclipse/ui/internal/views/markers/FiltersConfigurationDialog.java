@@ -202,14 +202,11 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		orButton.setSelection(!andFilters);
 		updateRadioButtonsFromTable();
 		int limits = generator.getMarkerLimits();
-		boolean limitsEnabled = limits != -1;
+		boolean limitsEnabled = generator.isMarkerLimitsEnabled();
 		limitButton.setSelection(limitsEnabled);
 		limitsLabel.setEnabled(limitsEnabled);
 		limitSpinner.setEnabled(limitsEnabled);
-		if (limitsEnabled)
-			limitSpinner.setSelection(limits);
-		else
-			limitSpinner.setSelection(1);
+		limitSpinner.setSelection(limits);
 		configsTable.getTable().setFocus();
 
 	}
@@ -671,14 +668,8 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	 */
 	protected void okPressed() {
 
-		int limits;
-
-		if (limitButton.getSelection())
-			limits = limitSpinner.getSelection();
-		else
-			limits = -1;
-
-		generator.setMarkerLimits(limits);
+		generator.setMarkerLimitsEnabled(limitButton.getSelection());
+		generator.setMarkerLimits(limitSpinner.getSelection());
 
 		Iterator filterGroupIterator = filterGroups.iterator();
 		while (filterGroupIterator.hasNext()) {

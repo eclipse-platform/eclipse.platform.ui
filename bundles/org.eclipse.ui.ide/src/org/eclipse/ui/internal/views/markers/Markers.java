@@ -183,14 +183,18 @@ class Markers {
 	/**
 	 * get marker limit to show, if any.
 	 * 
-	 * @param avaliable
+	 * @param available
 	 */
-	private int getShowingLimit(int avaliable) {
+	private int getShowingLimit(int available) {
+		
+		boolean limitsEnabled = builder.getGenerator().isMarkerLimitsEnabled();
+		if(!limitsEnabled)
+			return available;
 		
 		int limit = builder.getGenerator().getMarkerLimits();
 		int effLimit = limit;
-		if (avaliable < effLimit || limit <= 0) {
-			effLimit = avaliable;
+		if (available < effLimit || limit <= 0) {
+			effLimit = available;
 		}
 		return effLimit;
 	}

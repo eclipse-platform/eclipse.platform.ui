@@ -910,18 +910,26 @@ public class ExtendedMarkersView extends ViewPart {
 		String status = MarkerSupportInternalUtilities.EMPTY_STRING;
 		int totalCount = builder.getTotalMarkerCount(markers);
 		int filteredCount = 0;
+		boolean markerLimitsEnabled = generator.isMarkerLimitsEnabled();
+		int markerLimit = generator.getMarkerLimits();
 		MarkerSupportItem[] categories = markers.getCategories();
 		// Categories might be null if building is still happening
 		if (categories != null && builder.isShowingHierarchy()) {
-			int markerLimit = generator.getMarkerLimits();
 
 			for (int i = 0; i < categories.length; i++) {
-				filteredCount += markerLimit < 0 ? categories[i]
-						.getChildrenCount() : Math.min(categories[i]
-						.getChildrenCount(), markerLimit);
+				
+				int childCount = categories[i].getChildrenCount();
+				if (markerLimitsEnabled)
+					childCount = Math.min(childCount, markerLimit);
+
+				filteredCount += childCount;
+				
 			}
 		} else {
-			filteredCount = generator.getMarkerLimits();
+			if(markerLimitsEnabled)
+				filteredCount = markerLimit;
+			else
+				filteredCount = -1;
 		}
 
 		// Any errors or warnings? If not then send the filtering message
