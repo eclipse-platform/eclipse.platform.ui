@@ -248,20 +248,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 				// If the element being added is a placeholder, check to see if
 				// it's 'globally visible' and, if so, remove all other
-				// placeholders referencing the same element.
+				// 'local' placeholders referencing the same element.
 				int newLocation = modelService.getElementLocation(added);
-				if (added instanceof MPlaceholder
-						&& (newLocation == EModelService.IN_SHARED_AREA || newLocation == EModelService.OUTSIDE_PERSPECTIVE)) {
+				if (newLocation == EModelService.IN_SHARED_AREA
+						|| newLocation == EModelService.OUTSIDE_PERSPECTIVE) {
 					MWindow topWin = modelService.getTopLevelWindowFor(added);
-					MPlaceholder addedPH = (MPlaceholder) added;
-					List<MPlaceholder> phList = modelService.findElements(
-							topWin, null, MPlaceholder.class, null);
-					for (MPlaceholder ph : phList) {
-						if (ph == addedPH)
-							continue; // skip ourselves
-						if (ph.getRef() == addedPH.getRef())
-							ph.getParent().getChildren().remove(ph);
-					}
+					modelService.removeLocalPlaceholders(topWin, null);
 				}
 			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$

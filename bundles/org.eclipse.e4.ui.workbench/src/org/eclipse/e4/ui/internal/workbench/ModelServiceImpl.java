@@ -805,14 +805,24 @@ public class ModelServiceImpl implements EModelService {
 	public void removeLocalPlaceholders(MWindow window, MPerspective perspective) {
 		List<MPlaceholder> globals = findElements(window, null, MPlaceholder.class, null,
 				OUTSIDE_PERSPECTIVE | IN_SHARED_AREA);
-		List<MPlaceholder> locals = findElements(perspective, null, MPlaceholder.class, null,
-				IN_ANY_PERSPECTIVE);
-		for (MPlaceholder local : locals) {
-			for (MPlaceholder global : globals) {
-				if (global.getRef() == local.getRef()) {
-					MElementContainer<MUIElement> localParent = local.getParent();
-					local.getParent().getChildren().remove(local);
-					setStackVisibility(localParent);
+
+		// Iterate across the perspective(s) removing any 'local' placeholders
+		List<MPerspective> persps = new ArrayList<MPerspective>();
+		if (perspective != null)
+			persps.add(perspective);
+		else
+			persps = findElements(window, null, MPerspective.class, null);
+
+		for (MPerspective persp : persps) {
+			List<MPlaceholder> locals = findElements(persp, null, MPlaceholder.class, null,
+					IN_ANY_PERSPECTIVE);
+			for (MPlaceholder local : locals) {
+				for (MPlaceholder global : globals) {
+					if (global.getRef() == local.getRef()) {
+						MElementContainer<MUIElement> localParent = local.getParent();
+						local.getParent().getChildren().remove(local);
+						setStackVisibility(localParent);
+					}
 				}
 			}
 		}
