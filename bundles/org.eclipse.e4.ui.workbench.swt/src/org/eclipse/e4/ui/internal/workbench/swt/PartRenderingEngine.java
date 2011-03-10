@@ -468,9 +468,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (parentWidget instanceof Composite) {
 					Composite currentParent = control.getParent();
 					if (currentParent != parentWidget) {
-						// the parents are different so we should reparent it
-						control.setParent((Composite) parentWidget);
-
 						// check if the original parent was a tab folder
 						if (currentParent instanceof CTabFolder) {
 							CTabFolder folder = (CTabFolder) currentParent;
@@ -480,6 +477,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 								folder.setTopRight(null);
 							}
 						}
+
+						// the parents are different so we should reparent it
+						control.setParent((Composite) parentWidget);
 					}
 				}
 			}
