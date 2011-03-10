@@ -41,6 +41,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 
 public class PartRenderingEngineTests extends TestCase {
 	protected IEclipseContext appContext;
@@ -2115,6 +2116,53 @@ public class PartRenderingEngineTests extends TestCase {
 
 		IPresentationEngine engine = appContext.get(IPresentationEngine.class);
 		engine.createGui(toolBar);
+	}
+
+	public void testBug339286() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MToolBar toolBarA = MenuFactoryImpl.eINSTANCE.createToolBar();
+		partA.setToolbar(toolBarA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+
+		MToolBar toolBarB = MenuFactoryImpl.eINSTANCE.createToolBar();
+		partB.setToolbar(toolBarB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		Widget widgetA = (Widget) toolBarA.getWidget();
+		Widget widgetB = (Widget) toolBarB.getWidget();
+		assertNotNull(widgetA);
+		assertFalse(widgetA.isDisposed());
+		assertNull(widgetB);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partB);
+
+		widgetA = (Widget) toolBarA.getWidget();
+		widgetB = (Widget) toolBarB.getWidget();
+		assertNotNull(widgetA);
+		assertFalse(widgetA.isDisposed());
+		assertNotNull(widgetB);
+		assertFalse(widgetB.isDisposed());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
