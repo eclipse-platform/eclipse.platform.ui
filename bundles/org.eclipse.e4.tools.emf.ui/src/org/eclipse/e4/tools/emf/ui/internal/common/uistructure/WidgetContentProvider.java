@@ -11,6 +11,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -33,7 +35,21 @@ public class WidgetContentProvider implements ITreeContentProvider {
 	}
 
 	public Object[] getChildren(Object parentElement) {
-		if (parentElement instanceof ToolBar) {
+		if (parentElement instanceof Menu) {
+			Menu m = (Menu) parentElement;
+			MenuItem[] items = m.getItems();
+			Object[] rv = new Object[items.length];
+			System.arraycopy(items, 0, rv, 0, rv.length);
+			return rv;
+		} else if (parentElement instanceof MenuItem) {
+			MenuItem item = (MenuItem) parentElement;
+			if (item.getMenu() != null) {
+				MenuItem[] items = item.getMenu().getItems();
+				Object[] rv = new Object[items.length];
+				System.arraycopy(items, 0, rv, 0, rv.length);
+				return rv;
+			}
+		} else if (parentElement instanceof ToolBar) {
 			ToolBar toolbar = (ToolBar) parentElement;
 			ToolItem[] items = toolbar.getItems();
 			Object[] rv = new Object[items.length];

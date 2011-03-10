@@ -128,6 +128,10 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Widgets_toolitemseparator_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.toolitemseparator_obj"; //$NON-NLS-1$
 	public static final String IMG_Widgets_checkbox_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.checkbox_obj"; //$NON-NLS-1$
 	public static final String IMG_Widgets_radiobutton_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.radiobutton_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_menu_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.menu_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_menubar_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.menubar_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_menuitem_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.menuitem_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_menuseparator_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.menuseparator_obj"; //$NON-NLS-1$
 
 	public static final String COLOR_XML_COMMENT = "COLOR_org.eclipse.e4.tools.emf.ui.XML_COMMENT"; //$NON-NLS-1$
 	public static final String COLOR_PROC_INSTR = "COLOR_org.eclipse.e4.tools.emf.ui.PROC_INSTR"; //$NON-NLS-1$

@@ -11,12 +11,20 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.uistructure;
 
 import java.util.Collections;
+import java.util.HashMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.e4.tools.emf.ui.common.IScriptingSupport;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ControlHighlighter;
 import org.eclipse.e4.tools.services.IResourcePool;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -48,7 +56,7 @@ public class UIViewer {
 			}
 		});
 
-		MenuManager mgr = new MenuManager();
+		final MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
 
@@ -61,6 +69,32 @@ public class UIViewer {
 							ControlHighlighter.show((Control) o);
 						}
 					});
+				}
+
+				IExtensionRegistry registry = RegistryFactory.getRegistry();
+				IExtensionPoint extPoint = registry.getExtensionPoint("org.eclipse.e4.tools.emf.ui.scripting"); //$NON-NLS-1$
+				final IConfigurationElement[] elements = extPoint.getConfigurationElements();
+
+				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+
+				if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement) {
+					MenuManager scriptExecute = new MenuManager(messages.ModelEditor_Script);
+					manager.add(scriptExecute);
+					for (IConfigurationElement e : elements) {
+						final IConfigurationElement le = e;
+						scriptExecute.add(new Action(e.getAttribute("label")) { //$NON-NLS-1$
+							@Override
+							public void run() {
+								try {
+									IScriptingSupport support = (IScriptingSupport) le.createExecutableExtension("class"); //$NON-NLS-1$
+									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), new HashMap<String, Object>());
+								} catch (CoreException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						});
+					}
 				}
 			}
 		});

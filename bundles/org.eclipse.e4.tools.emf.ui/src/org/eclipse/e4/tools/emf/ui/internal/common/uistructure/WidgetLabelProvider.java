@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
@@ -38,7 +40,29 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 	@Override
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
-		if (element instanceof CLabel) {
+		if (element instanceof Menu) {
+			Menu m = (Menu) element;
+			if ((m.getStyle() & SWT.BAR) == SWT.BAR) {
+				cell.setText("MenuBar"); //$NON-NLS-1$
+				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_menubar_obj));
+			} else {
+				cell.setText("Menu"); //$NON-NLS-1$
+				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_menu_obj));
+			}
+		} else if (element instanceof MenuItem) {
+			MenuItem item = (MenuItem) element;
+			if ((item.getStyle() & SWT.SEPARATOR) == SWT.SEPARATOR) {
+				cell.setText("Separator"); //$NON-NLS-1$
+				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_menuseparator_obj));
+			} else {
+				StyledString s = new StyledString("MenuItem"); //$NON-NLS-1$
+				s.append(" - " + ((MenuItem) element).getText(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+				cell.setStyleRanges(s.getStyleRanges());
+				cell.setText(s.getString());
+				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_menuitem_obj));
+			}
+
+		} else if (element instanceof CLabel) {
 			StyledString s = new StyledString("Label"); //$NON-NLS-1$
 			s.append(" - " + ((CLabel) element).getText(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			cell.setStyleRanges(s.getStyleRanges());
