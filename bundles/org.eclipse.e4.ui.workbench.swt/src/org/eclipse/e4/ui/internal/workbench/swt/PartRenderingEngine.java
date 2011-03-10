@@ -54,6 +54,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.IWorkbench;
@@ -457,12 +458,29 @@ public class PartRenderingEngine implements IPresentationEngine {
 			return null;
 		}
 
-		if (element.getWidget() != null) {
-			if (element.getWidget() instanceof Control
-					&& parentWidget instanceof Composite) {
-				Control ctrl = (Control) element.getWidget();
-				if (ctrl.getParent() != parentWidget) {
-					ctrl.setParent((Composite) parentWidget);
+		Object currentWidget = element.getWidget();
+		if (currentWidget != null) {
+			if (currentWidget instanceof Control) {
+				Control control = (Control) currentWidget;
+				// make sure the control is visible
+				control.setVisible(true);
+
+				if (parentWidget instanceof Composite) {
+					Composite currentParent = control.getParent();
+					if (currentParent != parentWidget) {
+						// the parents are different so we should reparent it
+						control.setParent((Composite) parentWidget);
+
+						// check if the original parent was a tab folder
+						if (currentParent instanceof CTabFolder) {
+							CTabFolder folder = (CTabFolder) currentParent;
+							// if we used to be the tab folder's top right
+							// control, unset it
+							if (folder.getTopRight() == control) {
+								folder.setTopRight(null);
+							}
+						}
+					}
 				}
 			}
 

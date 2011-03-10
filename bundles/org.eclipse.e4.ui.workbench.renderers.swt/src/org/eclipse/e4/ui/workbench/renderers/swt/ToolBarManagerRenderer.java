@@ -690,14 +690,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	@Override
 	public void disposeWidget(MUIElement element) {
-		ToolBar tb = getToolbarFrom(element.getWidget());
-		if (tb != null) {
-			unbindWidget(element);
-			tb.setData(AbstractPartRenderer.OWNING_ME, element);
-		}
-		ToolBarManager manager = getManager((MToolBar) element);
-		if (manager != null) {
-			manager.dispose();
+		Object widget = element.getWidget();
+		if (widget instanceof Control) {
+			// hide ourselves from the user interface
+			((Control) widget).setVisible(false);
 		}
 	}
 
