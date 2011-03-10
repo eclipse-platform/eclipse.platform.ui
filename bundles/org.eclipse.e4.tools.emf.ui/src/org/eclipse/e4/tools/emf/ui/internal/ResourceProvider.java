@@ -103,6 +103,32 @@ public class ResourceProvider extends BasicResourceProvider {
 	public static final String IMG_Wizban16_typerefact_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.typerefact_wiz"; //$NON-NLS-1$
 	public static final String IMG_Wizban16_extstr_wiz = "IMG_org.eclipse.e4.tools.emf.ui.wizban.extstr_wiz"; //$NON-NLS-1$
 
+	public static final String IMG_Widgets_ctabfolder_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.ctabfolder_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_tabfolder_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.tabfolder_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_shell_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.shell_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_group_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.group_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_ccombo_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.ccombo_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_comboviewer_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.comboviewer_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_table_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.table_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_tree_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.tree_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_sashform_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.sashform_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_text_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.text_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_label_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.label_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_button_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.button_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_composite_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.composite_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_progressbar_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.progressbar_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_separator_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.separator_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_clabel_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.clabel_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_coolbar_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.coolbar_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_toolbar_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.toolbar_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_toolitemcheck_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.toolitemcheck_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_toolitemdrop_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.toolitemdrop_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_toolitempush_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.toolitempush_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_toolitemradio_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.toolitemradio_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_toolitemseparator_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.toolitemseparator_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_checkbox_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.checkbox_obj"; //$NON-NLS-1$
+	public static final String IMG_Widgets_radiobutton_obj = "IMG_org.eclipse.e4.tools.emf.ui.widgets.radiobutton_obj"; //$NON-NLS-1$
+
 	public static final String COLOR_XML_COMMENT = "COLOR_org.eclipse.e4.tools.emf.ui.XML_COMMENT"; //$NON-NLS-1$
 	public static final String COLOR_PROC_INSTR = "COLOR_org.eclipse.e4.tools.emf.ui.PROC_INSTR"; //$NON-NLS-1$
 	public static final String COLOR_STRING = "COLOR_org.eclipse.e4.tools.emf.ui.STRING"; //$NON-NLS-1$

@@ -88,7 +88,7 @@ public class DirectMenuItemEditor extends MenuItemEditor {
 
 	private void createInstanceInspection(CTabFolder folder) {
 		CTabItem item = new CTabItem(folder, SWT.NONE);
-		item.setText(Messages.ModelTooling_Common_TabRuntime);
+		item.setText(Messages.ModelTooling_Common_RuntimeContributionInstance);
 		Composite container = new Composite(folder, SWT.NONE);
 		container.setLayout(new GridLayout());
 		item.setControl(container);

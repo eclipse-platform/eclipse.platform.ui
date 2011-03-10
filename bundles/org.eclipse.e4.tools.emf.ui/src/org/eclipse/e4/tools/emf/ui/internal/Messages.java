@@ -23,7 +23,8 @@ public class Messages {
 	public String ModelTooling_Common_TabDefault;
 	public String ModelTooling_Common_TabSupplementary;
 	public String ModelEditor_AddChild;
-	public String ModelTooling_Common_TabRuntime;
+	public String ModelTooling_Common_RuntimeContributionInstance;
+	public String ModelTooling_Common_RuntimeWidgetTree;
 
 	public String ModelTooling_UIElement_ToBeRendered;
 	public String ModelTooling_UIElement_Visible;

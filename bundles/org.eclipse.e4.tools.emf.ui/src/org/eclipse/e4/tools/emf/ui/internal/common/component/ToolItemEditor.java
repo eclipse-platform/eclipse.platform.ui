@@ -28,6 +28,7 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ToolItemIconDialogEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -47,12 +48,14 @@ import org.eclipse.jface.databinding.viewers.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -130,9 +133,25 @@ public abstract class ToolItemEditor extends AbstractComponentEditor {
 
 		createFormSubTypeForm(parent, folder, context, master);
 
+		if (project == null) {
+			createUITreeInspection(folder);
+		}
+
 		folder.setSelection(0);
 
 		return folder;
+	}
+
+	private void createUITreeInspection(CTabFolder folder) {
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setText(Messages.ModelTooling_Common_RuntimeWidgetTree);
+		Composite container = new Composite(folder, SWT.NONE);
+		container.setLayout(new GridLayout());
+		item.setControl(container);
+
+		UIViewer objectViewer = new UIViewer();
+		TreeViewer viewer = objectViewer.createViewer(container, UiPackageImpl.Literals.UI_ELEMENT__WIDGET, getMaster(), resourcePool, Messages);
+		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 	}
 
 	protected void createFormSubTypeForm(Composite parent, CTabFolder folder, EMFDataBindingContext context, final WritableValue master) {
