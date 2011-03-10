@@ -10,6 +10,7 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -140,6 +141,9 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 			cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_text_obj));
 		} else if (element instanceof Sash) {
 			cell.setText("Sash"); //$NON-NLS-1$
+			cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_separator_obj));
+		} else if (element instanceof SashForm) {
+			cell.setText("Sash Form"); //$NON-NLS-1$
 			cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_sashform_obj));
 		} else if (element instanceof Label) {
 			Label l = (Label) element;
@@ -149,23 +153,28 @@ public class WidgetLabelProvider extends StyledCellLabelProvider {
 			} else {
 				StyledString s = new StyledString("Label"); //$NON-NLS-1$
 				s.append(" - " + l.getText(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+				cell.setStyleRanges(s.getStyleRanges());
+				cell.setText(s.getString());
 				cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_label_obj));
 			}
 
 		} else if (element instanceof TabItem) {
-			cell.setText("TabItem"); //$NON-NLS-1$
+			StyledString s = new StyledString("TabItem"); //$NON-NLS-1$
+			s.append(" - " + ((TabItem) element).getText(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
+			cell.setStyleRanges(s.getStyleRanges());
+			cell.setText(s.getString());
 		} else if (element instanceof CTabItem) {
 			StyledString s = new StyledString("CTabItem"); //$NON-NLS-1$
 			s.append(" - " + ((CTabItem) element).getText(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			cell.setStyleRanges(s.getStyleRanges());
 			cell.setText(s.getString());
-			cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_clabel_obj));
+			// cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_clabel_obj));
 		} else if (element instanceof org.eclipse.e4.ui.widgets.CTabItem) {
 			StyledString s = new StyledString("CTabItem"); //$NON-NLS-1$
 			s.append(" - " + ((org.eclipse.e4.ui.widgets.CTabItem) element).getText(), StyledString.DECORATIONS_STYLER); //$NON-NLS-1$
 			cell.setStyleRanges(s.getStyleRanges());
 			cell.setText(s.getString());
-			cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_clabel_obj));
+			// cell.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Widgets_clabel_obj));
 		} else if (element instanceof Button) {
 			Button b = (Button) element;
 			if ((b.getStyle() & SWT.PUSH) == SWT.PUSH) {
