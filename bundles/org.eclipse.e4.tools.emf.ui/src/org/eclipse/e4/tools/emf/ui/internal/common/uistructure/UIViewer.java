@@ -24,7 +24,6 @@ import org.eclipse.e4.tools.emf.ui.common.IScriptingSupport;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ControlHighlighter;
 import org.eclipse.e4.tools.services.IResourcePool;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -77,7 +76,7 @@ public class UIViewer {
 
 				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 
-				if (elements.length > 0 && !s.isEmpty() && s.getFirstElement() instanceof MApplicationElement) {
+				if (elements.length > 0 && !s.isEmpty()) {
 					MenuManager scriptExecute = new MenuManager(messages.ModelEditor_Script);
 					manager.add(scriptExecute);
 					for (IConfigurationElement e : elements) {
