@@ -383,9 +383,6 @@ public class ActionSet {
 		trimContribution.setPositionInParent("after=additions"); //$NON-NLS-1$		trimContribution.setVisibleWhen(createVisibleWhen());
 		MToolBar tb = MenuFactoryImpl.eINSTANCE.createToolBar();
 		tb.setElementId(tpath);
-		MToolBarSeparator sep = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
-		sep.setElementId("starting.toolbar.separator"); //$NON-NLS-1$
-		tb.getChildren().add(sep);
 		trimContribution.getChildren().add(tb);
 		trimContributions.add(trimContribution);
 	}
