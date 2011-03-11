@@ -166,6 +166,13 @@ public class MinMaxAddon {
 					ctf.setMaximized(isMax);
 				}
 			}
+
+			final Shell winShell = (Shell) modelService.getTopLevelWindowFor(ps).getWidget();
+			winShell.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					winShell.layout(true, true);
+				}
+			});
 		}
 	};
 
