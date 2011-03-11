@@ -1732,6 +1732,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		MPerspective perspective = getPerspectiveStack().getSelectedElement();
+		if (perspective == null) {
+			return null;
+		}
+
 		List<MPart> parts = modelService.findElements(perspective,
 				CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null);
 		for (MPart part : parts) {
@@ -2475,7 +2479,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     
 	private MUIElement findSharedArea() {
 		MPerspective perspective = getPerspectiveStack().getSelectedElement();
-		return modelService.find(IPageLayout.ID_EDITOR_AREA, perspective);
+		return perspective == null ? null : modelService.find(IPageLayout.ID_EDITOR_AREA,
+				perspective);
 	}
 
     /**
