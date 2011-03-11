@@ -453,7 +453,7 @@ public class HandledContributionItem extends ContributionItem {
 				return false;
 			}
 			Menu menu = getMenu(mmenu, ti);
-			if (menu == null) {
+			if (menu == null || menu.isDisposed()) {
 				return true;
 			}
 			Rectangle itemBounds = ti.getBounds();
@@ -463,7 +463,7 @@ public class HandledContributionItem extends ContributionItem {
 			menu.setVisible(true);
 
 			Display display = menu.getDisplay();
-			while (menu.isVisible()) {
+			while (!menu.isDisposed() && menu.isVisible()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
