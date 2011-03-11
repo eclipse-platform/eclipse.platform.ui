@@ -1382,6 +1382,9 @@ void onMouseDoubleClick(Event event) {
 	}
 }
 void onMouse(Event event) {
+	if( isDisposed() ) {
+		return;
+	}
 	int x = event.x, y = event.y;
 	switch (event.type) {
 		case SWT.MouseEnter: {
