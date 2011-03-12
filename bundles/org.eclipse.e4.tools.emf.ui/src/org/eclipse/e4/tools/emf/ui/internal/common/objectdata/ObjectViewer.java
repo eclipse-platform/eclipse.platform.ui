@@ -2,7 +2,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.objectdata;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -16,6 +15,8 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.services.IResourcePool;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -42,7 +43,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 
 public class ObjectViewer {
-	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, IObservableValue master, IResourcePool resourcePool, final Messages messages) {
+	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, final IObservableValue master, IResourcePool resourcePool, final Messages messages) {
 		final TreeViewer viewer = new TreeViewer(parent);
 		viewer.setContentProvider(new ContentProviderImpl());
 		viewer.setLabelProvider(new LabelProviderImpl(resourcePool));
@@ -93,7 +94,8 @@ public class ObjectViewer {
 									}
 
 									if (mainObject != null) {
-										support.openEditor(viewer.getControl().getShell(), mainObject, new HashMap<String, Object>());
+										MApplicationElement value = (MApplicationElement) master.getValue();
+										support.openEditor(viewer.getControl().getShell(), mainObject, ModelUtils.getContainingContext(value));
 									}
 								} catch (CoreException e) {
 									// TODO Auto-generated catch block

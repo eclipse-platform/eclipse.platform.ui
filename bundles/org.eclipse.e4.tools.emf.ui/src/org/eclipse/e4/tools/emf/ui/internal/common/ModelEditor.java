@@ -134,6 +134,7 @@ import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
@@ -198,7 +199,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
 
 public class ModelEditor {
@@ -269,6 +273,8 @@ public class ModelEditor {
 
 	private AbstractComponentEditor currentEditor;
 
+	private Listener keyListener;
+
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
 		this.modelProvider = modelProvider;
@@ -295,6 +301,18 @@ public class ModelEditor {
 
 	@PostConstruct
 	void postCreate(Composite composite) {
+		if (project == null) {
+			keyListener = new Listener() {
+
+				public void handleEvent(Event event) {
+					if ((event.stateMask & SWT.ALT) == SWT.ALT) {
+						findAndHighlight(context.get(Display.class).getFocusControl());
+					}
+				}
+			};
+			context.get(Display.class).addFilter(SWT.MouseUp, keyListener);
+		}
+
 		context.set(ModelEditor.class, this);
 		context.set(IResourcePool.class, resourcePool);
 		context.set(EditingDomain.class, modelProvider.getEditingDomain());
@@ -336,6 +354,38 @@ public class ModelEditor {
 		});
 
 		folder.setSelection(0);
+	}
+
+	private void findAndHighlight(Control control) {
+		if (control != null) {
+			MApplicationElement m = findModelElement(control);
+			MApplicationElement o = m;
+			if (m != null) {
+				List<MApplicationElement> l = new ArrayList<MApplicationElement>();
+				do {
+					l.add(m);
+					m = (MApplicationElement) ((EObject) m).eContainer();
+				} while (m != null);
+
+				if (o instanceof MPart) {
+					System.err.println(o);
+					System.err.println(((EObject) o).eContainingFeature());
+				}
+
+				viewer.setSelection(new StructuredSelection(o));
+			}
+		}
+	}
+
+	private MApplicationElement findModelElement(Control control) {
+		do {
+			if (control.getData("modelElement") != null) { //$NON-NLS-1$
+				return (MApplicationElement) control.getData("modelElement"); //$NON-NLS-1$
+			}
+			control = control.getParent();
+		} while (control != null);
+
+		return null;
 	}
 
 	private Control createXMITab(Composite composite) {
@@ -574,8 +624,9 @@ public class ModelEditor {
 							@Override
 							public void run() {
 								try {
+									MApplicationElement o = (MApplicationElement) s.getFirstElement();
 									IScriptingSupport support = (IScriptingSupport) le.createExecutableExtension("class"); //$NON-NLS-1$
-									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), new HashMap<String, Object>());
+									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), project == null ? ModelUtils.getContainingContext(o) : null);
 								} catch (CoreException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -975,6 +1026,10 @@ public class ModelEditor {
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
+		}
+
+		if (project == null) {
+			context.get(Display.class).removeFilter(SWT.MouseUp, keyListener);
 		}
 	}
 

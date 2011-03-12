@@ -11,7 +11,6 @@
 package org.eclipse.e4.tools.emf.ui.internal.common.uistructure;
 
 import java.util.Collections;
-import java.util.HashMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -24,6 +23,8 @@ import org.eclipse.e4.tools.emf.ui.common.IScriptingSupport;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.common.ControlHighlighter;
 import org.eclipse.e4.tools.services.IResourcePool;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.emf.databinding.EMFProperties;
 import org.eclipse.emf.databinding.IEMFValueProperty;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -37,7 +38,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 public class UIViewer {
-	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, IObservableValue master, IResourcePool resourcePool, final Messages messages) {
+	public TreeViewer createViewer(Composite parent, EStructuralFeature feature, final IObservableValue master, IResourcePool resourcePool, final Messages messages) {
 		final TreeViewer viewer = new TreeViewer(parent);
 		viewer.setContentProvider(new WidgetContentProvider());
 		viewer.setLabelProvider(new WidgetLabelProvider(resourcePool));
@@ -85,8 +86,9 @@ public class UIViewer {
 							@Override
 							public void run() {
 								try {
+									MApplicationElement o = (MApplicationElement) master.getValue();
 									IScriptingSupport support = (IScriptingSupport) le.createExecutableExtension("class"); //$NON-NLS-1$
-									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), new HashMap<String, Object>());
+									support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), ModelUtils.getContainingContext(o));
 								} catch (CoreException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
