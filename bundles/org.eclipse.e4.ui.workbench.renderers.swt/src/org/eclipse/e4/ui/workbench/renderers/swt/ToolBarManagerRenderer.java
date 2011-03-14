@@ -701,18 +701,21 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public void hideChild(MElementContainer<MUIElement> parentElement,
 			MUIElement child) {
 		super.hideChild(parentElement, child);
-
-		// Since there's no place to 'store' a child that's not in a menu
-		// we'll blow it away and re-create on an add
-		Widget widget = (Widget) child.getWidget();
-		if (widget != null && !widget.isDisposed()) {
-			widget.dispose();
+		// only handle the disposal of this element if it was actually rendered
+		// by the engine
+		if (child.getRenderer() != null) {
+			// Since there's no place to 'store' a child that's not in a menu
+			// we'll blow it away and re-create on an add
+			Widget widget = (Widget) child.getWidget();
+			if (widget != null && !widget.isDisposed()) {
+				widget.dispose();
+			}
+			ToolBar toolbar = (ToolBar) getUIContainer(child);
+			if (toolbar != null && !toolbar.isDisposed()) {
+				toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
+			}
+			// disposeToolbarIfNecessary(parentElement);
 		}
-		ToolBar toolbar = (ToolBar) getUIContainer(child);
-		if (toolbar != null && !toolbar.isDisposed()) {
-			toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
-		}
-		// disposeToolbarIfNecessary(parentElement);
 	}
 
 	@Override
