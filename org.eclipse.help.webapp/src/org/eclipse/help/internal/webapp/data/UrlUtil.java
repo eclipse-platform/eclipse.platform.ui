@@ -118,7 +118,7 @@ public class UrlUtil {
 		if (Character.isLetterOrDigit(ch)) {
 			return false;
 		}
-		if ( ch == ' ' || ch == '_') {
+		if ( ch == ' ' || ch == '_' || ch  == '%' || ch == '+') {
 			return false;
 		}
 		return true;
