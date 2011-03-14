@@ -160,8 +160,12 @@ public abstract class TrayDialog extends Dialog {
 		}
 		Shell shell = getShell();
 		Control focusControl = shell.getDisplay().getFocusControl();
-		if (focusControl!= null && isContained(trayControl, focusControl) && nonTrayFocusControl!= null && !nonTrayFocusControl.isDisposed()) {
-			nonTrayFocusControl.setFocus();
+		if (focusControl!= null && isContained(trayControl, focusControl)) {
+			if (nonTrayFocusControl!= null && !nonTrayFocusControl.isDisposed()) {
+				nonTrayFocusControl.setFocus();
+			} else {
+				shell.setFocus();
+			}
 		}
 		nonTrayFocusControl= null;
 		shell.removeControlListener (resizeListener);
@@ -368,7 +372,8 @@ public abstract class TrayDialog extends Dialog {
 	 * any help listener.
 	 */
 	private void helpPressed() {
-		if (getTray() == null) {
+		if (getTray() == null ||
+				fHelpButton != null && fHelpButton.getSelection()) { // help button was not selected before
 			if (getShell() != null) {
 				Control c = getShell().getDisplay().getFocusControl();
 				while (c != null) {
@@ -377,6 +382,9 @@ public abstract class TrayDialog extends Dialog {
 						break;
 					}
 					c = c.getParent();
+				}
+				if (fHelpButton != null && getTray() != null) {
+					fHelpButton.setSelection(true);
 				}
 			}
 
@@ -441,9 +449,6 @@ public abstract class TrayDialog extends Dialog {
 		shell.addControlListener (resizeListener);
 		   
 		this.tray = tray;
-		if (fHelpButton != null) {
-			fHelpButton.setSelection(true);
-		}
 	}
 	
 	/**
