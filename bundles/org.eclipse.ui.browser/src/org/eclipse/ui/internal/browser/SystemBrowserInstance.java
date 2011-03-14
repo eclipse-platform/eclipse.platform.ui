@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
-import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.PartInitException;
@@ -28,14 +26,7 @@ public class SystemBrowserInstance extends AbstractWebBrowser {
 	}
 
 	public void openURL(URL url) throws PartInitException {
-		String urlText= null;
-		if (url != null) {
-			try {
-				urlText = URIUtil.toURI(url).toASCIIString();
-			} catch (URISyntaxException e) {
-				urlText = url.toExternalForm();
-			}
-		}
+		String urlText = url.toExternalForm();
 		Trace.trace(Trace.FINEST, "Launching system Web browser: " + urlText); //$NON-NLS-1$
 		Program program = Program.findProgram("html"); //$NON-NLS-1$
 		if (program != null) {
@@ -43,6 +34,6 @@ public class SystemBrowserInstance extends AbstractWebBrowser {
 				return;
 		}
 		if (!Program.launch(urlText))
-			throw new PartInitException(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, url.toExternalForm()));
+			throw new PartInitException(NLS.bind(Messages.errorCouldNotLaunchWebBrowser, urlText));
 	}
 }
