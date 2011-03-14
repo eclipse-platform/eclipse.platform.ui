@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2010 IBM Corporation and others.
+* Copyright (c) 2010, 2011 IBM Corporation and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -179,7 +179,7 @@ public class PreferenceManager {
 	 * @param node node
 	 * @param listener the preference change listener to register
 	 * @see #removePreferenceChangeListener(String, IEclipsePreferences.IPreferenceChangeListener)
-	 * @see IEclipsePreferences.IPreferenceChangeListener
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void addPreferenceChangeListener(String node, IPreferenceChangeListener listener) {
 		((IEclipsePreferences)currentScope.node(node)).addPreferenceChangeListener(listener);
@@ -192,7 +192,7 @@ public class PreferenceManager {
 	 * @param node node
 	 * @param listener the preference change listener to remove
 	 * @see #addPreferenceChangeListener(String, IEclipsePreferences.IPreferenceChangeListener)
-	 * @see IEclipsePreferences.IPreferenceChangeListener
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void removePreferenceChangeListener(String node, IPreferenceChangeListener listener) {
 		((IEclipsePreferences)currentScope.node(node)).removePreferenceChangeListener(listener);
@@ -206,7 +206,7 @@ public class PreferenceManager {
 	 * @param node node
 	 * @param listener the preference change listener to register
 	 * @see #removeNodeChangeListener(String, IEclipsePreferences.INodeChangeListener)
-	 * @see IEclipsePreferences.IPreferenceChangeListener
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void addNodeChangeListener(String node, INodeChangeListener listener) {
 		((IEclipsePreferences)currentScope.node(node)).addNodeChangeListener(listener);
@@ -219,7 +219,7 @@ public class PreferenceManager {
 	 * @param node node
 	 * @param listener the preference change listener to remove
 	 * @see #addPreferenceChangeListener(String, IEclipsePreferences.IPreferenceChangeListener)
-	 * @see IEclipsePreferences.IPreferenceChangeListener
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener
 	 */
 	public void removeNodeChangeListener(String node, INodeChangeListener listener) {
 		((IEclipsePreferences)currentScope.node(node)).removeNodeChangeListener(listener);
