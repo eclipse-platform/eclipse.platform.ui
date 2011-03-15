@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,11 @@ public class OpenSearchPreferencesAction extends Action {
 	 */
 	public void run() {
 		Shell shell= SearchPlugin.getActiveWorkbenchShell();
-		PreferencesUtil.createPreferenceDialogOn(shell, SearchPreferencePage.PAGE_ID, null, null).open();
+		String[] displayedPages= { SearchPreferencePage.PAGE_ID,
+				"org.eclipse.ui.editors.preferencePages.Annotations", //$NON-NLS-1$
+				"org.eclipse.ui.preferencePages.ColorsAndFonts" //$NON-NLS-1$
+		};
+		PreferencesUtil.createPreferenceDialogOn(shell, SearchPreferencePage.PAGE_ID, displayedPages, null).open();
 	}
 
 }
