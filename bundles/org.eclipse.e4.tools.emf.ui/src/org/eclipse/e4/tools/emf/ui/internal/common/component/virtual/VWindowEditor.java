@@ -13,7 +13,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.e4.tools.emf.ui.common.Util;
@@ -24,11 +23,11 @@ import org.eclipse.e4.tools.emf.ui.internal.common.VirtualEntry;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
@@ -53,15 +52,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
-public class VWindowEditor extends AbstractComponentEditor {
+public abstract class VWindowEditor extends AbstractComponentEditor {
 	private Composite composite;
 	private EMFDataBindingContext context;
 	private TableViewer viewer;
 	private List<Action> actions = new ArrayList<Action>();
+	private EStructuralFeature targetFeature;
 
-	@Inject
-	public VWindowEditor() {
+	public VWindowEditor(EStructuralFeature targetFeature) {
 		super();
+		this.targetFeature = targetFeature;
 	}
 
 	@PostConstruct
@@ -147,16 +147,18 @@ public class VWindowEditor extends AbstractComponentEditor {
 		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_up));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
 					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 					if (s.size() == 1) {
 						Object obj = s.getFirstElement();
-						MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
-						int idx = container.getChildren().indexOf(obj) - 1;
+						EObject container = (EObject) getMaster().getValue();
+						List<Object> l = (List<Object>) container.eGet(targetFeature);
+						int idx = l.indexOf(obj) - 1;
 						if (idx >= 0) {
-							if (Util.moveElementByIndex(getEditingDomain(), (MUIElement) obj, getEditor().isLiveModel(), idx)) {
+							if (Util.moveElementByIndex(getEditingDomain(), (MUIElement) obj, getEditor().isLiveModel(), idx, targetFeature)) {
 								viewer.setSelection(new StructuredSelection(obj));
 							}
 						}
@@ -171,16 +173,18 @@ public class VWindowEditor extends AbstractComponentEditor {
 		b.setImage(createImage(ResourceProvider.IMG_Obj16_arrow_down));
 		b.setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
 		b.addSelectionListener(new SelectionAdapter() {
+			@SuppressWarnings("unchecked")
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (!viewer.getSelection().isEmpty()) {
 					IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
 					if (s.size() == 1) {
 						Object obj = s.getFirstElement();
-						MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
-						int idx = container.getChildren().indexOf(obj) + 1;
-						if (idx < container.getChildren().size()) {
-							if (Util.moveElementByIndex(getEditingDomain(), (MUIElement) obj, getEditor().isLiveModel(), idx)) {
+						EObject container = (EObject) getMaster().getValue();
+						List<Object> l = (List<Object>) container.eGet(targetFeature);
+						int idx = l.indexOf(obj) + 1;
+						if (idx < l.size()) {
+							if (Util.moveElementByIndex(getEditingDomain(), (MUIElement) obj, getEditor().isLiveModel(), idx, targetFeature)) {
 								viewer.setSelection(new StructuredSelection(obj));
 							}
 						}
@@ -223,7 +227,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 				if (!viewer.getSelection().isEmpty()) {
 					List<?> windows = ((IStructuredSelection) viewer.getSelection()).toList();
 					MElementContainer<?> container = (MElementContainer<?>) getMaster().getValue();
-					Command cmd = RemoveCommand.create(getEditingDomain(), container, UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, windows);
+					Command cmd = RemoveCommand.create(getEditingDomain(), container, targetFeature, windows);
 					if (cmd.canExecute()) {
 						getEditingDomain().getCommandStack().execute(cmd);
 						if (container.getChildren().size() > 0) {
@@ -255,7 +259,7 @@ public class VWindowEditor extends AbstractComponentEditor {
 		EObject handler = EcoreUtil.create(eClass);
 		setElementId(handler);
 
-		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), UiPackageImpl.Literals.ELEMENT_CONTAINER__CHILDREN, handler);
+		Command cmd = AddCommand.create(getEditingDomain(), getMaster().getValue(), targetFeature, handler);
 
 		if (cmd.canExecute()) {
 			getEditingDomain().getCommandStack().execute(cmd);

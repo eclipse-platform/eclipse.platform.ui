@@ -99,6 +99,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.TrimmedWindowEditor
 import org.eclipse.e4.tools.emf.ui.internal.common.component.WindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationAddons;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationCategoriesEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
@@ -109,13 +110,15 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelImpor
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptorMenuEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartMenuEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveControlEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveWindowsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VRootBindingContexts;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VToolBarContributionsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VTrimContributionsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowControlEditor;
-import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowSharedElementsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowTrimEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VWindowWindowsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ExternalizeStringHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.properties.ProjectOSGiTranslationProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.xml.AnnotationAccess;
@@ -212,7 +215,9 @@ public class ModelEditor {
 	public static final String VIRTUAL_HANDLER = ModelEditor.class.getName() + ".VIRTUAL_HANDLER"; //$NON-NLS-1$
 	public static final String VIRTUAL_BINDING_TABLE = ModelEditor.class.getName() + ".VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
 	public static final String VIRTUAL_COMMAND = ModelEditor.class.getName() + ".VIRTUAL_COMMAND"; //$NON-NLS-1$
-	public static final String VIRTUAL_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_WINDOWS"; //$NON-NLS-1$
+	public static final String VIRTUAL_APPLICATION_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_APPLICATION_WINDOWS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PERSPECTIVE_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_PERSPECTIVE_WINDOWS"; //$NON-NLS-1$
+	public static final String VIRTUAL_WINDOW_WINDOWS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_WINDOWS"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOW_CONTROLS = ModelEditor.class.getName() + ".VIRTUAL_WINDOW_CONTROLS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PART_DESCRIPTORS = ModelEditor.class.getName() + ".VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = ModelEditor.class.getName() + ".VIRTUAL_PARTDESCRIPTOR_MENU"; //$NON-NLS-1$
@@ -228,6 +233,7 @@ public class ModelEditor {
 	public static final String VIRTUAL_PARAMETERS = ModelEditor.class.getName() + ".VIRTUAL_PARAMETERS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MENUELEMENTS = ModelEditor.class.getName() + ".VIRTUAL_MENUELEMENTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_ROOT_CONTEXTS = ModelEditor.class.getName() + ".VIRTUAL_ROOT_CONTEXTS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PERSPECTIVE_CONTROLS = ModelEditor.class.getName() + "VIRTUAL_PERSPECTIVE_CONTROLS"; //$NON-NLS-1$
 
 	private static final int VERTICAL_RULER_WIDTH = 20;
 
@@ -855,7 +861,9 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_HANDLER, ContextInjectionFactory.make(VHandlerEditor.class, context));
 		registerVirtualEditor(VIRTUAL_BINDING_TABLE, ContextInjectionFactory.make(VBindingTableEditor.class, context));
 		registerVirtualEditor(VIRTUAL_COMMAND, ContextInjectionFactory.make(VCommandEditor.class, context));
-		registerVirtualEditor(VIRTUAL_WINDOWS, ContextInjectionFactory.make(VWindowEditor.class, context));
+		registerVirtualEditor(VIRTUAL_APPLICATION_WINDOWS, ContextInjectionFactory.make(VApplicationWindowEditor.class, context));
+		registerVirtualEditor(VIRTUAL_WINDOW_WINDOWS, ContextInjectionFactory.make(VWindowWindowsEditor.class, context));
+		registerVirtualEditor(VIRTUAL_PERSPECTIVE_WINDOWS, ContextInjectionFactory.make(VPerspectiveWindowsEditor.class, context));
 		registerVirtualEditor(VIRTUAL_WINDOW_CONTROLS, ContextInjectionFactory.make(VWindowControlEditor.class, context));
 		registerVirtualEditor(VIRTUAL_PART_DESCRIPTORS, ContextInjectionFactory.make(VPartDescriptor.class, context));
 		registerVirtualEditor(VIRTUAL_PARTDESCRIPTOR_MENU, ContextInjectionFactory.make(VPartDescriptorMenuEditor.class, context));
@@ -870,6 +878,7 @@ public class ModelEditor {
 		registerVirtualEditor(VIRTUAL_CATEGORIES, ContextInjectionFactory.make(VApplicationCategoriesEditor.class, context));
 		registerVirtualEditor(VIRTUAL_PARAMETERS, ContextInjectionFactory.make(VItemParametersEditor.class, context));
 		registerVirtualEditor(VIRTUAL_ROOT_CONTEXTS, ContextInjectionFactory.make(VRootBindingContexts.class, context));
+		registerVirtualEditor(VIRTUAL_PERSPECTIVE_CONTROLS, ContextInjectionFactory.make(VPerspectiveControlEditor.class, context));
 	}
 
 	private void registerVirtualEditor(String id, AbstractComponentEditor editor) {

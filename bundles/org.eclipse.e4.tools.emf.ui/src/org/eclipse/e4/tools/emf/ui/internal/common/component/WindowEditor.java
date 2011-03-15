@@ -348,7 +348,7 @@ public class WindowEditor extends AbstractComponentEditor {
 
 		});
 
-		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOWS, WINDOW__WINDOWS, element, Messages.WindowEditor_Windows) {
+		list.add(new VirtualEntry<Object>(ModelEditor.VIRTUAL_WINDOW_WINDOWS, WINDOW__WINDOWS, element, Messages.WindowEditor_Windows) {
 
 			@Override
 			protected boolean accepted(Object o) {

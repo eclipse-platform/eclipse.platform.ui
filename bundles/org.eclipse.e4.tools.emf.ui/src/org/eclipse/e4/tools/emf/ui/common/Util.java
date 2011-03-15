@@ -146,6 +146,31 @@ public class Util {
 		return packs;
 	}
 
+	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel, int index, EStructuralFeature feature) {
+		if (liveModel) {
+			EObject container = ((EObject) element).eContainer();
+			List<Object> l = (List<Object>) container.eGet(feature);
+			l.remove(element);
+
+			if (index >= 0) {
+				l.add(index, element);
+			} else {
+				l.add(element);
+			}
+
+			return true;
+		} else {
+			EObject container = ((EObject) element).eContainer();
+			Command cmd = MoveCommand.create(editingDomain, container, feature, element, index);
+
+			if (cmd.canExecute()) {
+				editingDomain.getCommandStack().execute(cmd);
+				return true;
+			}
+			return false;
+		}
+	}
+
 	public static boolean moveElementByIndex(EditingDomain editingDomain, MUIElement element, boolean liveModel, int index) {
 		if (liveModel) {
 			MElementContainer<MUIElement> container = element.getParent();
