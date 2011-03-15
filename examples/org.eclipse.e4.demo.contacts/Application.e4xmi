@@ -21,6 +21,9 @@
       <children xsi:type="menu:ToolBar" xmi:id="toolbar:org.eclipse.ui.main.toolbar" elementId="toolbar:org.eclipse.ui.main.toolbar">
         <children xsi:type="menu:DirectToolItem" xmi:id="_SeXUBO8EEd6FC9cDb6iV7g" elementId="_SeXUBO8EEd6FC9cDb6iV7g" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" tooltip="%toolbarSaveTooltip" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler"/>
       </children>
+      <children xsi:type="menu:ToolBar" xmi:id="_6RnVUE8FEeCyZoR8urPqaw" elementId="toolbar:org.eclipse.ui.main.toolbar">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_Vw4jUE8FEeCyZoR8urPqaw" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_delete.png" tooltip="%menuLabelDelete" command="contacts.delete"/>
+      </children>
     </trimBars>
   </children>
   <handlers xmi:id="_SeXUF-8EEd6FC9cDb6iV7g" elementId="_SeXUF-8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" command="contacts.exit"/>
@@ -28,9 +31,9 @@
   <handlers xmi:id="_SeXUGe8EEd6FC9cDb6iV7g" elementId="_SeXUGe8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DeleteContactHandler" command="contacts.delete"/>
   <handlers xmi:id="_SeXUG=8EEd6FC9cDb6iV7g" elementId="_SeXUG=8EEd6FC9cDb6iV7g" contributionURI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SwitchThemeHandler" command="contacts.switchTheme"/>
   <bindingTables xmi:id="_SeXUEO8EEd6FC9cDb6iV7x" elementId="_SeXUEO8EEd6FC9cDb6iV7x" bindingContext="_SeXUHO8EEd6FC9cDb6iV7y">
-    <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="CTRL+S" elementId="_SeXUHu8EEd6FC9cDb6iV7g" command="contacts.save"/>
-    <bindings xmi:id="_SeXUH-8EEd6FC9cDb6iV7g" keySequence="Delete" elementId="_SeXUH-8EEd6FC9cDb6iV7g" command="contacts.delete"/>
-    <bindings xmi:id="_SeXUIO8EEd6FC9cDb6iV7g" keySequence="CTRL+5 X" elementId="_SeXUIO8EEd6FC9cDb6iV7g" command="contacts.exit"/>
+    <bindings xmi:id="_SeXUHu8EEd6FC9cDb6iV7g" elementId="_SeXUHu8EEd6FC9cDb6iV7g" keySequence="CTRL+S" command="contacts.save"/>
+    <bindings xmi:id="_SeXUH-8EEd6FC9cDb6iV7g" elementId="_SeXUH-8EEd6FC9cDb6iV7g" keySequence="Delete" command="contacts.delete"/>
+    <bindings xmi:id="_SeXUIO8EEd6FC9cDb6iV7g" elementId="_SeXUIO8EEd6FC9cDb6iV7g" keySequence="CTRL+5 X" command="contacts.exit"/>
   </bindingTables>
   <rootContext xmi:id="_SeXUHO8EEd6FC9cDb6iV7y" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
     <children xmi:id="_SeXUEO8EEd6FC9cDb6iV7w" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
