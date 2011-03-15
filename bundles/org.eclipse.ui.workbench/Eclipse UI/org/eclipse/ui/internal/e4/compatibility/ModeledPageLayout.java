@@ -585,7 +585,7 @@ public class ModeledPageLayout implements IPageLayout {
 			MPartStack stack = (MPartStack) refModel;
 			boolean wasEmpty = stack.getChildren().isEmpty();
 			stack.getChildren().add(viewModel);
-			if (wasEmpty) {
+			if (wasEmpty && visible) {
 				// the stack didn't originally have any children, set this as
 				// the selected element
 				stack.setSelectedElement(viewModel);
