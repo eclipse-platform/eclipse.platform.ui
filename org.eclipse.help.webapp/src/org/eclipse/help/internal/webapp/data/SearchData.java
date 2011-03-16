@@ -22,6 +22,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
@@ -30,6 +31,7 @@ import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.QueryTooComplexException;
 import org.eclipse.help.internal.search.SearchHit;
@@ -55,6 +57,8 @@ import org.eclipse.osgi.util.NLS;
  * Helper class for searchView.jsp initialization
  */
 public class SearchData extends ActivitiesData {
+	private static final String SHOW_CATEGORIES = "showSearchCategories"; //$NON-NLS-1$
+
 	private WebappWorkingSetManager wsmgr;
 
 	// Request parameters
@@ -78,6 +82,8 @@ public class SearchData extends ActivitiesData {
 	// List of alternate search terms
 	private List altList = new ArrayList();
 
+	private boolean showCategories = false;
+
 	/**
 	 * Constructs the xml data for the search results page.
 	 * 
@@ -93,6 +99,7 @@ public class SearchData extends ActivitiesData {
 			topicHref = null;
 
 		searchWord = request.getParameter("searchWord"); //$NON-NLS-1$
+		readDisplayFlags(request, response);
 		
 		if (isScopeRequest()) {
 			workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
@@ -101,6 +108,16 @@ public class SearchData extends ActivitiesData {
 		
 		// try loading search results or get the indexing progress info.
 		readSearchResults();
+	}
+
+	private void readDisplayFlags(HttpServletRequest request, HttpServletResponse response) {
+		String showCategoriesParam = request.getParameter(SHOW_CATEGORIES); 
+		if (showCategoriesParam != null) {
+			showCategories = "true".equalsIgnoreCase(showCategoriesParam); //$NON-NLS-1$
+			RequestScope.setFlag(request, response, SHOW_CATEGORIES, showCategories);
+		} else {
+			showCategories = RequestScope.getFlag(request, SHOW_CATEGORIES);
+		}
 	}
 
 	public void readSearchResults() {
@@ -174,7 +191,8 @@ public class SearchData extends ActivitiesData {
 	 * @return boolean
 	 */
 	public boolean isSearchRequest() {
-		return (request.getParameter("searchWord") != null); //$NON-NLS-1$
+		String searchWordParam = request.getParameter("searchWord"); //$NON-NLS-1$
+		return (searchWordParam != null && searchWordParam.length() > 0);
 	}
 
 	/**
@@ -289,16 +307,7 @@ public class SearchData extends ActivitiesData {
 	}
 
 	public boolean isShowCategories() {
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-        		for (int i=0;i<cookies.length;++i) {
-        			if ("showCategories".equals(cookies[i].getName())) { //$NON-NLS-1$
-        				return String.valueOf(true).equals(cookies[i].getValue());
-        			}
-        		}
-		}
-		// default off
-		return false;
+		return showCategories;
 	}
 
 	public boolean isShowDescriptions() {
@@ -310,8 +319,9 @@ public class SearchData extends ActivitiesData {
         			}
         		}
 		}
-		// default on
-		return true;
+		// get default from preferences
+		return Platform.getPreferencesService().getBoolean
+			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_DESCRIPTION, true, null);
 	}
 
 	/**

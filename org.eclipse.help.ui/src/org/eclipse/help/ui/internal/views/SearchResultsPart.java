@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,15 @@ package org.eclipse.help.ui.internal.views;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.search.ISearchEngineResult;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -26,7 +30,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,10 +47,9 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
-	private static final String S_DESCRIPTION_OFF = "no-description"; //$NON-NLS-1$
-	private static final String S_SHOW_CATEGORIES = "show-categories"; //$NON-NLS-1$
 	ReusableHelpPart parent;
 
 	private Composite separator;
@@ -122,13 +124,19 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		 * removeAllAction); tbm.insertAfter("removeAll", new Separator());
 		 */
 
-		IDialogSettings settings = HelpUIPlugin.getDefault().getDialogSettings();
-		boolean descOff = settings.getBoolean(S_DESCRIPTION_OFF);
-		boolean showCategories = settings.getBoolean(S_SHOW_CATEGORIES);
+		boolean descOn = Platform.getPreferencesService().getBoolean
+			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_DESCRIPTION, false, null);			
+		boolean showCategories = Platform.getPreferencesService().getBoolean
+			    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_SHOW_SEARCH_CATEGORIES, false, null);			
 		showCategoriesAction = new Action() {
 			public void run() {
 				updateResultSections();
-				HelpUIPlugin.getDefault().getDialogSettings().put(S_SHOW_CATEGORIES, showCategoriesAction.isChecked());
+			    IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
+			    pref.putBoolean(IHelpBaseConstants.P_KEY_SHOW_SEARCH_CATEGORIES, showCategoriesAction.isChecked());
+			    try {
+					pref.flush();
+				} catch (BackingStoreException e) {
+				}
 			}
 		};
 		showCategoriesAction.setImageDescriptor(HelpUIResources
@@ -141,12 +149,17 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		showDescriptionAction = new Action() {
 			public void run() {
 				updateResultSections();
-				HelpUIPlugin.getDefault().getDialogSettings().put(S_DESCRIPTION_OFF, !showDescriptionAction.isChecked());
+				IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
+			    pref.putBoolean(IHelpBaseConstants.P_KEY_SHOW_SEARCH_DESCRIPTION, showDescriptionAction.isChecked());
+			    try {
+					pref.flush();
+				} catch (BackingStoreException e) {
+				}
 			}
 		};
 		showDescriptionAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_DESC));
-		showDescriptionAction.setChecked(!descOff);
+		showDescriptionAction.setChecked(descOn);
 		showDescriptionAction.setToolTipText(Messages.SearchResultsPart_showDescriptionAction_tooltip); 
 		showDescriptionAction.setId("description"); //$NON-NLS-1$
 		tbm.insertAfter("categories", showDescriptionAction); //$NON-NLS-1$

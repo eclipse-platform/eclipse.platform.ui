@@ -35,14 +35,11 @@
 <script language="JavaScript">	
 
 var cookiesRequired = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("cookiesRequired", request))%>";	
+var showCategories = <%=data.isShowCategories()%>;
+var scope ="<%=UrlUtil.JavaScriptEncode(data.getScope())%>";
 
 function refresh() { 
 	window.location.replace("searchView.jsp?<%=UrlUtil.JavaScriptEncode(request.getQueryString())%>");
-}
-
-function isShowCategories() {
-	var value = getCookie("showCategories");
-	return value ? value == "true" : false;
 }
 
 function isShowDescriptions() {
@@ -50,15 +47,12 @@ function isShowDescriptions() {
 	return value ? value == "true" : true;
 }
 
-function setShowCategories(value) {
-	setCookie("showCategories", value);
-	var newValue = isShowCategories();   	    
-	parent.searchToolbarFrame.setButtonState("show_categories", newValue);
-	if (value != newValue) {
-	    alert(cookiesRequired);
-	} else { 	    
-	    window.location.reload();
-	}
+function setShowCategories(value) { 	    
+	parent.searchToolbarFrame.setButtonState("show_categories", value);
+	var searchWord = "<%=UrlUtil.JavaScriptEncode(data.getSearchWord())%>";
+	    window.location="searchView.jsp?searchWord=" + encodeURIComponent(searchWord) 
+	       + "&showSearchCategories=" + value +
+	       "&scope=" + encodeURIComponent(scope);    
 }
 
 function setShowDescriptions(value) {
@@ -73,7 +67,7 @@ function setShowDescriptions(value) {
 }
 
 function toggleShowCategories() {
-	setShowCategories(!isShowCategories());
+	setShowCategories(!showCategories);
 }
 
 function toggleShowDescriptions() {

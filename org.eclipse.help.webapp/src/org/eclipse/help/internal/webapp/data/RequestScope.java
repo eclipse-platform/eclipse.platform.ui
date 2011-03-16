@@ -140,9 +140,8 @@ public class RequestScope {
 				CookieUtil.setCookieValue(SCOPE_COOKIE_NAME, URLCoder.compactEncode(scope), request, response);
 			}
 		} else {
-			InstanceScope instanceScope = new InstanceScope();
-			IEclipsePreferences pref = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
-			pref.put(IHelpBaseConstants.P_KEY_HELP_SCOPE, scope);
+			IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
+		    pref.put(IHelpBaseConstants.P_KEY_HELP_SCOPE, scope);
 			try {
 				pref.flush();
 			} catch (BackingStoreException e) {
@@ -151,11 +150,15 @@ public class RequestScope {
 	}
 	
 	private static String getScopeFromCookies(HttpServletRequest request) {
+		return getValueFromCookies(request, SCOPE_COOKIE_NAME);
+	}	
+	
+	private static String getValueFromCookies(HttpServletRequest request, String cookieName) {
 		// check if scope was passed earlier in this session
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (int c = 0; c < cookies.length; c++) {
-				if (SCOPE_COOKIE_NAME.equals(cookies[c].getName())) { 
+				if (cookieName.equals(cookies[c].getName())) { 
 					return URLCoder.decode(cookies[c].getValue());
 				}
 			}
@@ -171,6 +174,38 @@ public class RequestScope {
 	
 	public static boolean filterBySearchScope(HttpServletRequest request) {
         return true;
+	}
+	
+	public static boolean getFlag(HttpServletRequest request, String flagName ) {
+		String value;
+		if (HelpSystem.isShared()) {
+			value = getValueFromCookies(request, flagName);
+		} else {
+			value = Platform.getPreferencesService().getString
+				    (HelpBasePlugin.PLUGIN_ID, flagName + "Webapp", null, null); //$NON-NLS-1$
+		}
+		if (value == null) {
+			return Platform.getPreferencesService().getBoolean
+				    (HelpBasePlugin.PLUGIN_ID, flagName, false, null); 
+		}
+		return "true".equalsIgnoreCase(value); //$NON-NLS-1$
+	}
+	
+	public static void setFlag(HttpServletRequest request, 
+			                   HttpServletResponse response,
+			                   String flagName,
+			                   boolean value) 
+	{
+		if (HelpSystem.isShared()) {
+		  CookieUtil.setCookieValue(flagName, Boolean.toString(value), request, response);
+		} else {
+			IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
+		    pref.putBoolean(flagName  + "Webapp", value ); //$NON-NLS-1$
+		    try {
+				pref.flush();
+			} catch (BackingStoreException e) {
+			}
+		}
 	}
 
 }
