@@ -9,6 +9,7 @@
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 238956)
  *     IBM Corporation - ongoing enhancements and bug fixing
  *     Wind River Systems - ongoing enhancements and bug fixing
+ *     Wind River System (Randy Rohrbach) - non standard model breakpoint filtering (Bug 333517)
  *****************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
@@ -24,6 +25,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -834,12 +836,22 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                     if (target != null) {
                         debugTargets.add(target);
                     }
-                }   
+                } else if (next instanceof IAdaptable) {
+                    // Allow non-standard debug model element return an IDebugTarget
+                    // element that could be used for implementing breakpoint filtering.
+                    // Bug 333517.
+    				ILaunch launch = (ILaunch) ((IAdaptable)next).getAdapter(ILaunch.class);
+    				if (launch != null) {
+    					IDebugTarget[] targets= launch.getDebugTargets();
+    					for (int j = 0; j < targets.length; j++) {
+    						debugTargets.add(targets[j]);
+    					}
+    				}
+    			}
             }
         }
         return debugTargets;
     }
-
 
     /**
      * Maximum number of breakpoint manager input objects that this provider 
