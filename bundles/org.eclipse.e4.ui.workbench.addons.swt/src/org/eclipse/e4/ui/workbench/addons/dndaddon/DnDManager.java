@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,8 +141,6 @@ class DnDManager {
 		dropAgents.add(new SplitDropAgent(this));
 		dropAgents.add(new DetachedDropAgent(this));
 
-		Display.getCurrent().addFilter(SWT.KeyDown, keyListener);
-
 		setDisplayFilters(true);
 		getDragShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -229,7 +227,9 @@ class DnDManager {
 			dropAgent = getDropAgent(dragAgent.dragElement, downInfo);
 
 			// Run tracker until mouse up occurs or escape key pressed.
+			Display.getCurrent().addFilter(SWT.KeyDown, keyListener);
 			boolean performDrop = tracker.open();
+			Display.getCurrent().removeFilter(SWT.KeyDown, keyListener);
 			finishDrag(performDrop);
 		} finally {
 			getDragShell().setCursor(null);

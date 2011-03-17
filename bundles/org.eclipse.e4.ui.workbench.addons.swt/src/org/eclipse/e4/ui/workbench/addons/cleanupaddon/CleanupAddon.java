@@ -35,6 +35,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.renderers.swt.SashLayout;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -143,6 +144,25 @@ public class CleanupAddon {
 
 			if (changedObj.getWidget() instanceof Shell) {
 				((Shell) changedObj.getWidget()).setVisible(changedObj.isVisible());
+			} else if (changedObj.getWidget() instanceof Rectangle) {
+				if (changedObj.isVisible()) {
+					// Make all the parents visible
+					MUIElement parent = changedObj.getParent();
+					if (!parent.isVisible())
+						parent.setVisible(true);
+				} else {
+					// If there are no more 'visible' children then make the parent go away too
+					MElementContainer<MUIElement> parent = changedObj.getParent();
+					boolean makeInvisible = true;
+					for (MUIElement kid : parent.getChildren()) {
+						if (kid.isToBeRendered() && kid.isVisible()) {
+							makeInvisible = false;
+							break;
+						}
+					}
+					if (makeInvisible)
+						parent.setVisible(false);
+				}
 			} else if (changedObj.getWidget() instanceof Control) {
 				Control ctrl = (Control) changedObj.getWidget();
 				MElementContainer<MUIElement> parent = changedObj.getParent();
@@ -182,6 +202,10 @@ public class CleanupAddon {
 					curParent.layout(true);
 					if (curParent.getShell() != curParent)
 						curParent.getShell().layout(new Control[] { curParent }, SWT.DEFER);
+
+					// Always leave the perspective composite in the presentation
+					if ((Object) parent instanceof MPerspective)
+						return;
 
 					// If there are no more 'visible' children then make the parent go away too
 					boolean makeInvisible = true;

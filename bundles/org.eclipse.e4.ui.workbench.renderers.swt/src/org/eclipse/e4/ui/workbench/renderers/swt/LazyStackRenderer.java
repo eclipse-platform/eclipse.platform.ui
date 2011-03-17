@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2011 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
-import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -25,10 +22,8 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -57,9 +52,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				return;
 
 			MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
-			LazyStackRenderer lsr = (LazyStackRenderer) stack.getRenderer();
-			if (lsr != LazyStackRenderer.this)
+			if (stack.getRenderer() != LazyStackRenderer.this)
 				return;
+			LazyStackRenderer lsr = (LazyStackRenderer) stack.getRenderer();
 
 			// Gather up the elements that are being 'hidden' by this change
 			MUIElement oldSel = (MUIElement) event
@@ -184,26 +179,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			element.setVisible(false);
 		}
 
-		// Hide any minimized stacks
-		if (element instanceof MPartStack && !element.isVisible()) {
-			MWindow window = modelService.getTopLevelWindowFor(element);
-			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$
-			MPerspective persp = modelService.getPerspectiveFor(element);
-			if (persp != null)
-				trimId = element.getElementId() + '(' + persp.getElementId()
-						+ ')';
-			MToolControl trimCtrl = (MToolControl) modelService.find(trimId,
-					window);
-			if (trimCtrl != null && trimCtrl.getObject() != null) {
-				IEclipseContext ctxt = EclipseContextFactory.create();
-				ctxt.set("show", false); //$NON-NLS-1$
-				ContextInjectionFactory.invoke(trimCtrl.getObject(),
-						Execute.class, ctxt);
-
-				trimCtrl.setVisible(false);
-			}
-		}
-
 		goingHidden.add(element);
 
 		if (element instanceof MGenericStack<?>) {
@@ -291,20 +266,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					context.setParent(newParentContext);
 				}
 			}
-		}
-
-		// Show any minimized stacks
-		if (element instanceof MPartStack && !element.isVisible()) {
-			MWindow window = modelService.getTopLevelWindowFor(element);
-			String trimId = element.getElementId() + "(minimized)"; //$NON-NLS-1$
-			MPerspective persp = modelService.getPerspectiveFor(element);
-			if (persp != null)
-				trimId = element.getElementId() + '(' + persp.getElementId()
-						+ ')';
-			MToolControl trimCtrl = (MToolControl) modelService.find(trimId,
-					window);
-			if (trimCtrl != null)
-				trimCtrl.setVisible(true);
 		}
 
 		// Show any floating windows

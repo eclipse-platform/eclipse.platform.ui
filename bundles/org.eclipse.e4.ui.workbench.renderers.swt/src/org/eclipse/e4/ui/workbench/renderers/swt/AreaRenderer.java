@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -83,15 +82,6 @@ public class AreaRenderer extends SWTPartRenderer {
 		Composite parentComp = (Composite) parent;
 
 		CTabFolder ctf = new CTabFolder(parentComp, SWT.BORDER | SWT.SINGLE);
-		ctf.setMaximizeVisible(true);
-		ctf.setMinimizeVisible(true);
-		//TODO: add CSS support
-		ctf.setBackground(ctf.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		// Hack(ish)...in compatibility we base the area's state off of the
-		// perspective
-		MPerspective persp = modelService.getPerspectiveFor(element);
-		if (persp != null && persp.getTags().contains("EAMaximized")) //$NON-NLS-1$
-			ctf.setMaximized(true);
 
 		CTabItem cti = new CTabItem(ctf, SWT.NONE);
 		if (areaModel.getLabel() != null)

@@ -3323,12 +3323,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	public void toggleZoom(IWorkbenchPartReference ref) {
 		MPerspective curPersp = modelService.getActivePerspective(window);
+		MPlaceholder eaPH = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA, curPersp);
+
 		// HACK!! Constant is defined in MinMaxAddon
-		String EAMaximizedHack = "EAMaximized"; //$NON-NLS-1$
-		if (curPersp.getTags().contains(EAMaximizedHack)) {
-			curPersp.getTags().remove(EAMaximizedHack);
+		String EAMaximizedHack = "Maximized"; //$NON-NLS-1$
+		if (eaPH.getTags().contains(EAMaximizedHack)) {
+			eaPH.getTags().remove(EAMaximizedHack);
 		} else {
-			curPersp.getTags().add(EAMaximizedHack);
+			eaPH.getTags().add(EAMaximizedHack);
 		}
 	}
 

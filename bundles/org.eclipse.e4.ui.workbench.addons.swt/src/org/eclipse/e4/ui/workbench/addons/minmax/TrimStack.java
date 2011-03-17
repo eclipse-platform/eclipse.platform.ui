@@ -37,9 +37,12 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -78,7 +81,7 @@ public class TrimStack {
 	 */
 	private CTabItem selectedTabItem;
 	private boolean isShowing = false;
-	private MPartStack theStack;
+	private MUIElement minimizedElement;
 	private Composite hostPane;
 
 	ControlListener caResizeListener = new ControlListener() {
@@ -141,30 +144,31 @@ public class TrimStack {
 	private EventHandler selectionHandler = new EventHandler() {
 		public void handleEvent(org.osgi.service.event.Event event) {
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
-			if (changedElement != theStack)
+			if (changedElement != minimizedElement)
 				return;
 
-			if (hostPane != null && hostPane.isVisible())
-				updateSelection(theStack.getSelectedElement());
+			if (hostPane != null && hostPane.isVisible() && minimizedElement instanceof MPartStack) {
+				updateSelection(true);
+			}
 		}
 	};
 
 	private EventHandler toBeRenderedHandler = new EventHandler() {
 		public void handleEvent(org.osgi.service.event.Event event) {
-			if (theStack == null || trimStackTB == null)
+			if (minimizedElement == null || trimStackTB == null)
 				return;
 
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
 
 			// if our stack is going away, so should we
-			if (changedElement == theStack && !theStack.isToBeRendered()) {
+			if (changedElement == minimizedElement && !minimizedElement.isToBeRendered()) {
 				restoreStack();
 				return;
 			}
 
 			// if one of the kids changes state, re-scrape the CTF
 			MUIElement parentElement = changedElement.getParent();
-			if (parentElement == theStack) {
+			if (parentElement == minimizedElement) {
 				trimStackTB.getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						updateTrimStackItems();
@@ -176,13 +180,13 @@ public class TrimStack {
 
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(org.osgi.service.event.Event event) {
-			if (theStack == null || trimStackTB == null)
+			if (minimizedElement == null || trimStackTB == null)
 				return;
 
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 
 			// if a child has been added or removed, re-scape the CTF
-			if (changedObj == theStack) {
+			if (changedObj == minimizedElement) {
 				trimStackTB.getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						updateTrimStackItems();
@@ -196,10 +200,10 @@ public class TrimStack {
 		@SuppressWarnings("restriction")
 		public void handleEvent(org.osgi.service.event.Event event) {
 			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-			if (changedObj != theStack)
+			if (changedObj != minimizedElement)
 				return;
 
-			if (theStack.getWidget() != null) {
+			if (minimizedElement.getWidget() != null) {
 				trimStackTB.getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						updateTrimStackItems();
@@ -237,8 +241,8 @@ public class TrimStack {
 
 	@PostConstruct
 	void createWidget(Composite parent, MToolControl me) {
-		if (theStack == null) {
-			theStack = findStack();
+		if (minimizedElement == null) {
+			minimizedElement = findElement();
 		}
 
 		MUIElement meParent = me.getParent();
@@ -261,17 +265,19 @@ public class TrimStack {
 				}
 			}
 		});
-		createPopupMenu();
+
+		if (minimizedElement instanceof MPartStack)
+			createPopupMenu();
 
 		ToolItem restoreBtn = new ToolItem(trimStackTB, SWT.PUSH);
 		restoreBtn.setImage(getRestoreImage(parent.getDisplay()));
 		restoreBtn.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				theStack.getTags().remove(MinMaxAddon.MINIMIZED);
+				minimizedElement.getTags().remove(MinMaxAddon.MINIMIZED);
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				theStack.getTags().remove(MinMaxAddon.MINIMIZED);
+				minimizedElement.getTags().remove(MinMaxAddon.MINIMIZED);
 			}
 		});
 
@@ -281,14 +287,14 @@ public class TrimStack {
 	/**
 	 * @return
 	 */
-	private MPartStack findStack() {
+	private MUIElement findElement() {
 		List<MPerspectiveStack> ps = modelService.findElements(window, null,
 				MPerspectiveStack.class, null);
 		if (ps.size() == 0) {
 			String toolControlId = toolControl.getElementId();
 			int index = toolControlId.indexOf('(');
 			String stackId = toolControlId.substring(0, index);
-			theStack = (MPartStack) modelService.find(stackId, window);
+			minimizedElement = (MPartStack) modelService.find(stackId, window);
 		} else {
 			String toolControlId = toolControl.getElementId();
 			int index = toolControlId.indexOf('(');
@@ -296,13 +302,13 @@ public class TrimStack {
 			String perspId = toolControlId.substring(index + 1, toolControlId.length() - 1);
 			MPerspective persp = (MPerspective) modelService.find(perspId, ps.get(0));
 			if (persp != null) {
-				theStack = (MPartStack) modelService.find(stackId, persp);
+				minimizedElement = modelService.find(stackId, persp);
 			} else {
-				theStack = (MPartStack) modelService.find(stackId, window);
+				minimizedElement = modelService.find(stackId, window);
 			}
 		}
 
-		return theStack;
+		return minimizedElement;
 	}
 
 	private void updateTrimStackItems() {
@@ -310,56 +316,84 @@ public class TrimStack {
 		if (trimStackTB == null || trimStackTB.isDisposed())
 			return;
 
-		CTabFolder ctf = (CTabFolder) theStack.getWidget();
-		if (ctf == null)
-			return;
+		if (minimizedElement instanceof MPlaceholder) {
+			if (trimStackTB.getItemCount() == 1) {
+				ToolItem ti = new ToolItem(trimStackTB, SWT.PUSH);
+				ImageDescriptor desc = WorkbenchImages
+						.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE);
+				ti.setImage(desc.createImage());
+				ti.addSelectionListener(new SelectionListener() {
+					public void widgetSelected(SelectionEvent e) {
+						showStack(!isShowing);
+						ToolItem item = (ToolItem) e.widget;
+						item.setSelection(isShowing);
+					}
 
-		if (ctf.getItemCount() == 0) {
-			restoreStack();
-			return;
-		}
+					public void widgetDefaultSelected(SelectionEvent e) {
+						showStack(!isShowing);
+						ToolItem item = (ToolItem) e.widget;
+						item.setSelection(isShowing);
+					}
+				});
+			}
+		} else if (minimizedElement instanceof MPartStack) {
+			MPartStack theStack = (MPartStack) minimizedElement;
+			CTabFolder ctf = (CTabFolder) theStack.getWidget();
+			if (ctf == null)
+				return;
 
-		// Remove any current items except the 'restore' button
-		while (trimStackTB.getItemCount() > 1) {
-			trimStackTB.getItem(trimStackTB.getItemCount() - 1).dispose();
-		}
+			if (ctf.getItemCount() == 0) {
+				restoreStack();
+				return;
+			}
 
-		CTabItem[] items = ctf.getItems();
-		for (CTabItem item : items) {
-			ToolItem newItem = new ToolItem(trimStackTB, SWT.CHECK);
-			newItem.setData(item);
-			newItem.setImage(item.getImage());
-			newItem.setToolTipText(item.getText());
-			newItem.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
-					ToolItem item = (ToolItem) e.widget;
-					CTabItem cti = (CTabItem) item.getData();
-					MUIElement me = (MUIElement) cti.getData(AbstractPartRenderer.OWNING_ME);
-					if (me instanceof MPlaceholder)
-						me = ((MPlaceholder) me).getRef();
-					boolean show = item.getSelection();
-					partService.activate((MPart) me);
-					showStack(show);
-				}
+			// Remove any current items except the 'restore' button
+			while (trimStackTB.getItemCount() > 1) {
+				trimStackTB.getItem(trimStackTB.getItemCount() - 1).dispose();
+			}
 
-				public void widgetDefaultSelected(SelectionEvent e) {
-					ToolItem item = (ToolItem) e.widget;
-					CTabItem cti = (CTabItem) item.getData();
-					MUIElement me = (MUIElement) cti.getData(AbstractPartRenderer.OWNING_ME);
-					if (me instanceof MPlaceholder)
-						me = ((MPlaceholder) me).getRef();
-					boolean show = item.getSelection();
-					partService.activate((MPart) me);
-					showStack(show);
-				}
-			});
+			CTabItem[] items = ctf.getItems();
+			for (CTabItem item : items) {
+				ToolItem newItem = new ToolItem(trimStackTB, SWT.CHECK);
+				newItem.setData(item);
+				newItem.setImage(item.getImage());
+				newItem.setToolTipText(item.getText());
+				newItem.addSelectionListener(new SelectionListener() {
+					public void widgetSelected(SelectionEvent e) {
+						ToolItem item = (ToolItem) e.widget;
+						CTabItem cti = (CTabItem) item.getData();
+						MUIElement me = (MUIElement) cti.getData(AbstractPartRenderer.OWNING_ME);
+						if (me instanceof MPlaceholder)
+							me = ((MPlaceholder) me).getRef();
+						boolean show = item.getSelection();
+						partService.activate((MPart) me);
+						showStack(show);
+					}
+
+					public void widgetDefaultSelected(SelectionEvent e) {
+						ToolItem item = (ToolItem) e.widget;
+						CTabItem cti = (CTabItem) item.getData();
+						MUIElement me = (MUIElement) cti.getData(AbstractPartRenderer.OWNING_ME);
+						if (me instanceof MPlaceholder)
+							me = ((MPlaceholder) me).getRef();
+						boolean show = item.getSelection();
+						partService.activate((MPart) me);
+						showStack(show);
+					}
+				});
+			}
 		}
 
 		if (hostPane != null && hostPane.isVisible())
-			updateSelection(theStack.getSelectedElement());
+			updateSelection(true);
 
 		trimStackTB.pack();
 		trimStackTB.getShell().layout(new Control[] { trimStackTB }, SWT.DEFER);
+		trimStackTB.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				trimStackTB = null;
+			}
+		});
 	}
 
 	void restoreStack() {
@@ -368,17 +402,13 @@ public class TrimStack {
 		// ensure the filter is removed
 		Display.getCurrent().removeFilter(SWT.MouseDown, mouseDownListener);
 
-		theStack.setVisible(true);
-		theStack.getTags().remove(MinMaxAddon.MINIMIZED);
+		minimizedElement.setVisible(true);
+		minimizedElement.getTags().remove(MinMaxAddon.MINIMIZED);
 		toolControl.setToBeRendered(false);
 
 		if (hostPane != null && !hostPane.isDisposed())
 			hostPane.dispose();
 		hostPane = null;
-
-		if (trimStackTB != null && !trimStackTB.isDisposed())
-			trimStackTB.dispose();
-		trimStackTB = null;
 	}
 
 	/**
@@ -404,15 +434,19 @@ public class TrimStack {
 
 	@Execute
 	public void showStack(@Named("show") boolean show) {
-		CTabFolder ctf = (CTabFolder) theStack.getWidget();
+		Control ctf = (Control) minimizedElement.getWidget();
+		Composite clientArea = getShellClientComposite();
+		if (clientArea == null)
+			return;
+
 		if (show && !isShowing) {
 			hostPane = getHostPane();
 			ctf.setParent(hostPane);
 
 			hostPane.getDisplay().addFilter(SWT.MouseDown, mouseDownListener);
-			getShellClientComposite().addControlListener(caResizeListener);
+			clientArea.addControlListener(caResizeListener);
 
-			updateSelection(theStack.getSelectedElement());
+			updateSelection(true);
 
 			// Set the initial location
 			setPaneLocation(hostPane);
@@ -427,7 +461,6 @@ public class TrimStack {
 
 			// Check to ensure that the client area is non-null since the
 			// trimstack may be currently hosted in the limbo shell
-			Composite clientArea = getShellClientComposite();
 			if (clientArea != null)
 				clientArea.removeControlListener(caResizeListener);
 
@@ -435,7 +468,7 @@ public class TrimStack {
 				hostPane.setVisible(false);
 
 				// clear any selected item
-				updateSelection(null);
+				updateSelection(false);
 
 				// capture the current shell's bounds
 				Point size = hostPane.getSize();
@@ -485,8 +518,18 @@ public class TrimStack {
 		someShell.setLocation(loc);
 	}
 
-	private void updateSelection(MStackElement selectedElement) {
+	private void updateSelection(boolean showing) {
+		if (trimStackTB == null || trimStackTB.isDisposed())
+			return;
+
+		if (minimizedElement instanceof MPlaceholder) {
+			trimStackTB.getItem(1).setSelection(showing);
+			return;
+		}
+
 		// Show which view is up on the TB
+		MPartStack theStack = (MPartStack) minimizedElement;
+		MStackElement selectedElement = showing ? theStack.getSelectedElement() : null;
 		ToolItem[] items = trimStackTB.getItems();
 		for (ToolItem item : items) {
 			CTabItem cti = (CTabItem) item.getData();
