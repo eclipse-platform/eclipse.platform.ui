@@ -205,9 +205,6 @@ public class MarkerContentGenerator {
 
 	void saveState(IMemento memento, MarkerField[] displayedFields) {
 
-		memento.putInteger(TAG_MARKER_LIMIT, markerLimits);
-		memento.putBoolean(TAG_MARKER_LIMIT_ENABLED, markerLimitsEnabled);
-
 		for (int i = 0; i < displayedFields.length; i++) {
 			memento.createChild(TAG_COLUMN_VISIBILITY, displayedFields[i]
 					.getConfigurationElement().getAttribute(
@@ -472,6 +469,23 @@ public class MarkerContentGenerator {
 
 	}
 
+	private void loadLimitSettings(IMemento memento) {
+		
+		if (memento == null)
+			return;
+
+		Integer limits = memento.getInteger(TAG_MARKER_LIMIT);
+		if (limits != null) {
+			markerLimits = limits.intValue();
+		}
+
+		Boolean limitsEnabled = memento.getBoolean(TAG_MARKER_LIMIT_ENABLED);
+		if (limitsEnabled != null) {
+			markerLimitsEnabled = limitsEnabled.booleanValue();
+		}
+		
+	}
+	
 	/**
 	 * Load the settings from the memento.
 	 * 
@@ -510,8 +524,10 @@ public class MarkerContentGenerator {
 			return;
 
 		try {
-			loadFilterSettings(XMLMemento.createReadRoot(new StringReader(
-					mementoString)));
+			XMLMemento root = XMLMemento.createReadRoot(new StringReader(
+					mementoString));
+			loadLimitSettings(root);
+			loadFilterSettings(root);
 		} catch (WorkbenchException e) {
 			StatusManager.getManager().handle(e.getStatus());
 		}
@@ -642,6 +658,7 @@ public class MarkerContentGenerator {
 	private void writeFiltersPreference() {
 		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
 
+		writeLimitSettings(memento);
 		writeFiltersSettings(memento);
 
 		StringWriter writer = new StringWriter();
@@ -676,6 +693,13 @@ public class MarkerContentGenerator {
 		}
 	}
 
+	private void writeLimitSettings(XMLMemento memento) {
+		
+		memento.putInteger(TAG_MARKER_LIMIT, markerLimits);
+		memento.putBoolean(TAG_MARKER_LIMIT_ENABLED, markerLimitsEnabled);
+
+	}
+	
 	/**
 	 * Write the settings for the filters to the memento.
 	 * 
