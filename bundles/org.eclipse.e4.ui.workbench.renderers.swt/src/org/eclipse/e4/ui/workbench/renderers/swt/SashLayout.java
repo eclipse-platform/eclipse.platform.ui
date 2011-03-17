@@ -163,6 +163,9 @@ public class SashLayout extends Layout {
 
 			Rectangle leftRect = getRectangle(sr.left);
 			Rectangle rightRect = getRectangle(sr.right);
+			if (leftRect == null || rightRect == null)
+				continue;
+
 			int leftWeight;
 			int rightWeight;
 
