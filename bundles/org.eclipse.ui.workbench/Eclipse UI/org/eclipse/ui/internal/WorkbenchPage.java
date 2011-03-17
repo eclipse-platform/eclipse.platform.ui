@@ -3327,10 +3327,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		// HACK!! Constant is defined in MinMaxAddon
 		String EAMaximizedHack = "Maximized"; //$NON-NLS-1$
-		if (eaPH.getTags().contains(EAMaximizedHack)) {
-			eaPH.getTags().remove(EAMaximizedHack);
-		} else {
-			eaPH.getTags().add(EAMaximizedHack);
+
+		MPart model = ((WorkbenchPartReference) ref).getModel();
+		MPlaceholder placeholder = model.getCurSharedRef();
+		switch (modelService.getElementLocation(placeholder == null ? model : placeholder)) {
+		case EModelService.IN_ACTIVE_PERSPECTIVE:
+			MUIElement parent = placeholder == null ? model.getParent() : placeholder.getParent();
+			if (parent instanceof MPartStack) {
+				if (parent.getTags().contains(EAMaximizedHack)) {
+					parent.getTags().remove(EAMaximizedHack);
+				} else {
+					parent.getTags().add(EAMaximizedHack);
+				}
+			}
+			break;
+		case EModelService.IN_SHARED_AREA:
+			if (eaPH.getTags().contains(EAMaximizedHack)) {
+				eaPH.getTags().remove(EAMaximizedHack);
+			} else {
+				eaPH.getTags().add(EAMaximizedHack);
+			}
+			break;
 		}
 	}
 
