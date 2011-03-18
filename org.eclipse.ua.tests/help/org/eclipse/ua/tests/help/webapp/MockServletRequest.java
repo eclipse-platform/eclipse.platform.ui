@@ -47,8 +47,7 @@ public class MockServletRequest implements HttpServletRequest {
 	}
 
 	public String getContextPath() {
-		// TODO Auto-generated method stub
-		return null;
+		return "/help";
 	}
 
 	public Cookie[] getCookies() {
@@ -113,8 +112,7 @@ public class MockServletRequest implements HttpServletRequest {
 	}
 
 	public String getRequestURI() {
-		// TODO Auto-generated method stub
-		return null;
+		return "/help/context.jsp";
 	}
 
 	public StringBuffer getRequestURL() {
