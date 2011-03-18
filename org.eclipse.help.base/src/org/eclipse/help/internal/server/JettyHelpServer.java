@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class JettyHelpServer extends HelpServer {
 				d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
 
 				// set the base URL
-				d.put("context.path", "/help"); //$NON-NLS-1$ //$NON-NLS-2$
+				d.put("context.path", getContextPath()); //$NON-NLS-1$ 
 				d.put("other.info", getOtherInfo()); //$NON-NLS-1$ 
 
 				// suppress Jetty INFO/DEBUG messages to stderr
@@ -207,6 +207,10 @@ public class JettyHelpServer extends HelpServer {
 	protected String getOtherInfo() {
 		return "org.eclipse.help"; //$NON-NLS-1$
 	}	
+	
+	protected String getContextPath() {
+		return "/help"; //$NON-NLS-1$
+	}
 	
 	public boolean bindServerToHostname() {
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH) {

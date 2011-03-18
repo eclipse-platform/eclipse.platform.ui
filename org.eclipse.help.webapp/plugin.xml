@@ -129,6 +129,21 @@
             httpcontextId="help">
       </servlet>
       <servlet
+            alias="/index.jsp"
+            class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/index.jsp"
+            httpcontextId="help">
+      </servlet>
+      <servlet
+            alias="/scopeState.jsp"
+            class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/advancedstate/scopeState.jsp"
+            httpcontextId="help">
+      </servlet>
+      <servlet
+            alias="/workingSetState.jsp"
+            class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/advancedstate/workingSetState.jsp"
+            httpcontextId="help">
+      </servlet>
+      <servlet
             alias="/advanced/*.jsp"
             class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/advanced/"
             httpcontextId="help">

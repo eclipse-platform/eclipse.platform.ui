@@ -103,11 +103,19 @@ public class SearchData extends ActivitiesData {
 		
 		if (isScopeRequest()) {
 			workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
-			saveWorkingSet(workingSetName);
+			if ( canSaveScope() ) {
+			    saveWorkingSet(workingSetName);
+			}
 		} 
 		
 		// try loading search results or get the indexing progress info.
 		readSearchResults();
+	}
+
+	protected boolean canSaveScope() {
+        // Scope is only saved from scopeState.jsp
+		// This prevents cookies from being saved with a /advanced path
+		return false;
 	}
 
 	private void readDisplayFlags(HttpServletRequest request, HttpServletResponse response) {
@@ -397,16 +405,6 @@ public class SearchData extends ActivitiesData {
 				&& wsmgr.getWorkingSet(workingSetName) == null)
 			workingSetName = ServletResources.getString("All", request); //$NON-NLS-1$
 		return workingSetName;
-	}
-
-	/**
-	 * This method is used to persist the working set name and is called from
-	 * the search view, after each search
-	 */
-	public void saveScope() {
-		// if a working set is defined, set it in the preferences
-		String workingSet = request.getParameter("scope"); //$NON-NLS-1$
-		saveWorkingSet(workingSet);
 	}
 
 	private void saveWorkingSet(String workingSet) {

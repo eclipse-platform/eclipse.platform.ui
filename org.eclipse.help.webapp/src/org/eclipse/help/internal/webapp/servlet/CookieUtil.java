@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,30 +51,58 @@ public class CookieUtil {
 		}
 		return ret;
 	}
+
 	public static void setCookieValue(String name, String value,
 			HttpServletRequest request, HttpServletResponse response) {
 		Cookie cookie = new Cookie(name, value);
 		cookie.setMaxAge(COOKIE_LIFE);
-		cookie.setPath(getCookiePath(request)); 
+		
+		if ( needsCookiePath(request)) {
+			cookie.setPath(getCookiePath(request)); // Only set path if necessary
+		}
 		response.addCookie(cookie);
 		if (HelpWebappPlugin.DEBUG_WORKINGSETS) {
 			System.out
 					.println("CookieUtil.setCookieValue(" + name + ", " + value + ",...)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
-	protected static String getCookiePath(HttpServletRequest request) {
-		String path = request.getContextPath() + '/';
-		return path;
+	
+	public static void setCookieValueWithoutPath(String name, String value,
+			HttpServletRequest request, HttpServletResponse response ) {
+		Cookie cookie = new Cookie(name, value);
+		cookie.setMaxAge(COOKIE_LIFE);
+		
+		response.addCookie(cookie);
+		if (HelpWebappPlugin.DEBUG_WORKINGSETS) {
+			System.out
+					.println("CookieUtil.setCookieValueWithoutPath(" + name + ", " + value + ",...)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+	}
+	
+	private static boolean needsCookiePath(HttpServletRequest request) {
+		// All cookies should be at the same path level as the context ( /help )
+		// The cookie path needs to be set if there are more path segments
+		// between the context path and file name
+		String requestURI = request.getRequestURI();
+		String contextPath = request.getContextPath();
+		return requestURI.indexOf('/', contextPath.length() + 1) > 0;
+	}
+	
+	private static String getCookiePath(HttpServletRequest request) {
+		return request.getContextPath() + '/';
 	}
 
 	public static void deleteCookie(String name, HttpServletRequest request, HttpServletResponse response) {
-		deleteCookieUsingPath(name, response, getCookiePath(request));
+		deleteCookieUsingPath(name, request, response, getCookiePath(request));
 	}
 	
-	protected static void deleteCookieUsingPath(String name,
+	protected static void deleteCookieUsingPath(String name, HttpServletRequest request, 
 			HttpServletResponse response, String cookiePath) {
 		Cookie cookie = new Cookie(name, ""); //$NON-NLS-1$
-		cookie.setPath(cookiePath); 
+		String requestURI = request.getRequestURI();
+		if (!(requestURI.startsWith(cookiePath) && requestURI.indexOf('/', cookiePath.length() + 1) == -1)) {
+		     cookie.setPath(cookiePath); 
+	    }
 		cookie.setMaxAge(0);
 		response.addCookie(cookie);
 	}
@@ -95,8 +123,8 @@ public class CookieUtil {
 
 			for (Iterator iter = cookiesToDelete.iterator(); iter.hasNext();) {
 				String name = (String) iter.next();
-				deleteCookieUsingPath(name, response, request.getContextPath() + "/advanced/"); //$NON-NLS-1$
-				deleteCookieUsingPath(name, response, "/"); //$NON-NLS-1$
+				deleteCookieUsingPath(name, request, response, request.getContextPath() + "/advanced/"); //$NON-NLS-1$
+				deleteCookieUsingPath(name, request, response, "/"); //$NON-NLS-1$
 			}
 		}
 	}

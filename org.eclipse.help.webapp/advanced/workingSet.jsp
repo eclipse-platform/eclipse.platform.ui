@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2010 IBM Corporation and others.
+ Copyright (c) 2000, 2011 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -237,8 +237,8 @@ function doSubmit()
 
 		var criteria = getSelectedCriteriaResources();
 		var query = "operation="+'<%=UrlUtil.JavaScriptEncode(data.getOperation())%>'+"&workingSet="+encodeURIComponent(workingSet)+ hrefs+criteria+"&oldName="+encodeURIComponent(oldName);
-		window.opener.location.replace("workingSetManager.jsp?"+query);
-		window.opener.focus();
+		window.opener.location.replace("../workingSetState.jsp?"+query);
+	    window.opener.focus();
 		window.close();
 	} catch(ex) {alert("Error..." + ex.message)}
 }

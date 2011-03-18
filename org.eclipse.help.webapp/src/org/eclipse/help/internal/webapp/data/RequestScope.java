@@ -197,7 +197,7 @@ public class RequestScope {
 			                   boolean value) 
 	{
 		if (HelpSystem.isShared()) {
-		  CookieUtil.setCookieValue(flagName, Boolean.toString(value), request, response);
+		  CookieUtil.setCookieValueWithoutPath(flagName, Boolean.toString(value), request, response);
 		} else {
 			IEclipsePreferences pref = InstanceScope.INSTANCE.getNode(HelpBasePlugin.PLUGIN_ID);
 		    pref.putBoolean(flagName  + "Webapp", value ); //$NON-NLS-1$

@@ -14,7 +14,7 @@
 function showAll() {
     var searchFrame = parent.parent.parent.parent.parent.HelpToolbarFrame.SearchFrame;
     if (searchFrame.getSearchWord) {
-        searchFrame.location.replace("searchScoped.jsp?searchWord=" + searchFrame.getSearchWord() + "&workingSet=");
+        searchFrame.location.replace("../scopeState.jsp?searchWord=" + searchFrame.getSearchWord() + "&workingSet=");
     }      
 }
 

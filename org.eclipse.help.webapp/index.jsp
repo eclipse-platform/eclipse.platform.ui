@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2010 IBM Corporation and others.
+ Copyright (c) 2000, 2011 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 <%@ page import="org.eclipse.help.internal.webapp.data.*" errorPage="/advanced/err.jsp" contentType="text/html; charset=UTF-8"%>
 <%
 	request.setCharacterEncoding("UTF-8");
-	ServerState.webappStarted(application,request, response);
+	ServerState.webappStarted(application,request, response);	
+	// Read the scope parameter
+	RequestScope.setScopeFromRequest(request, response);
 	LayoutData data = new LayoutData(application,request, response);
 
 	if (request.getParameter("noscript") != null) {

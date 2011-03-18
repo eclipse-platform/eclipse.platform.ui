@@ -186,11 +186,7 @@ function selectWorkingSet() {
 	if (searchWord)
 		search += "&searchWord="+encodeURIComponent(searchWord);
 	
-	window.opener.location.replace(
-		window.opener.location.protocol +
-		"//" +
-		window.opener.location.host + 
-		window.opener.location.pathname +
+	window.opener.location.replace("../scopeState.jsp" +
 		search);
    
  	window.close();
@@ -198,7 +194,7 @@ function selectWorkingSet() {
 }
 
 function removeWorkingSet() {
-	window.location.replace("workingSetManager.jsp?operation=remove&workingSet="+encodeURIComponent(getWorkingSet()));
+	window.location.replace("../workingSetState.jsp?operation=remove&workingSet="+encodeURIComponent(getWorkingSet()));
 	if (getWorkingSet()==window.opener.document.getElementById("scope").firstChild.nodeValue){
 		window.opener.document.getElementById("scope").firstChild.nodeValue=
 		    "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("All", request))%>";
