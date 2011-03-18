@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +23,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import com.ibm.icu.text.Collator;
+
+import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -209,7 +212,9 @@ public class ReplaceRefactoring extends Refactoring {
 			FileMatch[] matches= lineElement.getMatches(fResult);
 			for (int i= 0; i < matches.length; i++) {
 				FileMatch fileMatch= matches[i];
-				getBucket(fileMatch.getFile()).add(fileMatch);
+				if (!isAlreadyCollected(fileMatch)) {
+					getBucket(fileMatch.getFile()).add(fileMatch);
+				}
 			}
 		} else if (object instanceof IContainer) {
 			IContainer container= (IContainer) object;
@@ -223,10 +228,12 @@ public class ReplaceRefactoring extends Refactoring {
 				Collection bucket= null;
 				for (int i= 0; i < matches.length; i++) {
 					FileMatch fileMatch= (FileMatch) matches[i];
-					if (bucket == null) {
-						bucket= getBucket((IFile)object);
-					}
+					if (!isAlreadyCollected(fileMatch)) {
+						if (bucket == null) {
+							bucket= getBucket((IFile)object);
+						}
 						bucket.add(fileMatch);
+					}
 				}
 			}
 		}
@@ -247,6 +254,19 @@ public class ReplaceRefactoring extends Refactoring {
 
 	public boolean hasMatches() {
 		return !fMatches.isEmpty();
+	}
+
+	private boolean isAlreadyCollected(FileMatch match) {
+		URI uri= match.getFile().getLocationURI();
+		if (uri == null)
+			return false;
+
+		for (Iterator iter= fAffectedLocations.iterator(); iter.hasNext();) {
+			if (URIUtil.equals((URI)iter.next(), uri))
+				return true;
+		}
+		fAffectedLocations.add(uri);
+		return false;
 	}
 
 	private Collection getBucket(IFile file) {
