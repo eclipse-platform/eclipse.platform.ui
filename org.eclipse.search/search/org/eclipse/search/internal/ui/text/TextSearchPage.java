@@ -270,7 +270,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 						ISearchResultPage page= view.getActivePage();
 						if (page instanceof FileSearchPage) {
 							FileSearchPage filePage= (FileSearchPage) page;
-							new ReplaceAction(filePage.getSite().getShell(), (FileSearchResult) filePage.getInput(), null, true).run();
+							new ReplaceAction(filePage.getSite().getShell(), (FileSearchResult)filePage.getInput(), null).run();
 						}
 					}
 				}

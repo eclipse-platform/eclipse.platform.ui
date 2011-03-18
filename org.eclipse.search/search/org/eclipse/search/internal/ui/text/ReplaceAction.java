@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,6 @@ public class ReplaceAction extends Action {
 
 	private final FileSearchResult fResult;
 	private final Object[] fSelection;
-	private final boolean fSkipFiltered;
 	private final Shell fShell;
 
 	/**
@@ -44,13 +43,11 @@ public class ReplaceAction extends Action {
 	 * @param shell the parent shell
 	 * @param result the file search page to
 	 * @param selection the selected entries or <code>null</code> to replace all
-	 * @param skipFiltered if set to <code>true</code>, filtered matches will not be replaced
 	 */
-	public ReplaceAction(Shell shell, FileSearchResult result, Object[] selection, boolean skipFiltered) {
+	public ReplaceAction(Shell shell, FileSearchResult result, Object[] selection) {
 		fShell= shell;
 		fResult= result;
 		fSelection= selection;
-		fSkipFiltered= skipFiltered;
 	}
 
 	/* (non-Javadoc)
@@ -58,7 +55,7 @@ public class ReplaceAction extends Action {
 	 */
 	public void run() {
 		try {
-			ReplaceRefactoring refactoring= new ReplaceRefactoring(fResult, fSelection, fSkipFiltered);
+			ReplaceRefactoring refactoring= new ReplaceRefactoring(fResult, fSelection);
 			ReplaceWizard refactoringWizard= new ReplaceWizard(refactoring);
 			if (fSelection == null) {
 				refactoringWizard.setDefaultPageTitle(SearchMessages.ReplaceAction_title_all);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -207,12 +207,12 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		if (query.getSearchString().length() > 0) {
 			IStructuredSelection selection= (IStructuredSelection) getViewer().getSelection();
 			if (!selection.isEmpty()) {
-				ReplaceAction replaceSelection= new ReplaceAction(getSite().getShell(), (FileSearchResult) getInput(), selection.toArray(), true);
+				ReplaceAction replaceSelection= new ReplaceAction(getSite().getShell(), (FileSearchResult)getInput(), selection.toArray());
 				replaceSelection.setText(SearchMessages.ReplaceAction_label_selected);
 				mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceSelection);
 
 			}
-			ReplaceAction replaceAll= new ReplaceAction(getSite().getShell(), (FileSearchResult) getInput(), null, true);
+			ReplaceAction replaceAll= new ReplaceAction(getSite().getShell(), (FileSearchResult)getInput(), null);
 			replaceAll.setText(SearchMessages.ReplaceAction_label_all);
 			mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceAll);
 		}

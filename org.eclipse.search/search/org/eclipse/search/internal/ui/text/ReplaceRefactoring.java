@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ import org.eclipse.ltk.core.refactoring.TextChange;
 import org.eclipse.ltk.core.refactoring.TextEditChangeGroup;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
+
 
 public class ReplaceRefactoring extends Refactoring {
 
@@ -144,22 +145,23 @@ public class ReplaceRefactoring extends Refactoring {
 
 	private final FileSearchResult fResult;
 	private final Object[] fSelection;
-	private final boolean fSkipFiltered;
 
 	private HashMap/*<IFile,Set<Match>*/ fMatches;
+
+	private ArrayList fAffectedLocations;
 
 	private String fReplaceString;
 
 	private Change fChange;
 
-	public ReplaceRefactoring(FileSearchResult result, Object[] selection, boolean skipFiltered) {
+	public ReplaceRefactoring(FileSearchResult result, Object[] selection) {
 		Assert.isNotNull(result);
 
 		fResult= result;
 		fSelection= selection;
-		fSkipFiltered= skipFiltered;
 
 		fMatches= new HashMap();
+		fAffectedLocations= new ArrayList(selection != null ? selection.length : result.getElements().length);
 
 		fReplaceString= null;
 	}
@@ -207,9 +209,7 @@ public class ReplaceRefactoring extends Refactoring {
 			FileMatch[] matches= lineElement.getMatches(fResult);
 			for (int i= 0; i < matches.length; i++) {
 				FileMatch fileMatch= matches[i];
-				if (!isSkipped(fileMatch)) {
-					getBucket(fileMatch.getFile()).add(fileMatch);
-				}
+				getBucket(fileMatch.getFile()).add(fileMatch);
 			}
 		} else if (object instanceof IContainer) {
 			IContainer container= (IContainer) object;
@@ -223,12 +223,10 @@ public class ReplaceRefactoring extends Refactoring {
 				Collection bucket= null;
 				for (int i= 0; i < matches.length; i++) {
 					FileMatch fileMatch= (FileMatch) matches[i];
-					if (!isSkipped(fileMatch)) {
-						if (bucket == null) {
-							bucket= getBucket((IFile) object);
-						}
-						bucket.add(fileMatch);
+					if (bucket == null) {
+						bucket= getBucket((IFile)object);
 					}
+						bucket.add(fileMatch);
 				}
 			}
 		}
@@ -249,10 +247,6 @@ public class ReplaceRefactoring extends Refactoring {
 
 	public boolean hasMatches() {
 		return !fMatches.isEmpty();
-	}
-
-	private boolean isSkipped(FileMatch match) {
-		return !fSkipFiltered && match.isFiltered();
 	}
 
 	private Collection getBucket(IFile file) {
