@@ -810,6 +810,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				
 			}
 			buildDetailPane(vertOrHoriz);
+			revealTreeSelection();
 		}
 	}
 	
@@ -860,7 +861,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fSashForm.setMaximizedControl(null);
 		fSashForm.setWeights(getLastSashWeights());
 		refreshDetailPaneContents();
-		revealTreeSelection();
 		fToggledDetailOnce = true;
 	}
 
