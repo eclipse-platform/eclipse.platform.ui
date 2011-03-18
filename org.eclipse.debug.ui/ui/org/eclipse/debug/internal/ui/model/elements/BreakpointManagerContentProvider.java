@@ -840,12 +840,9 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
                     // Allow non-standard debug model element return an IDebugTarget
                     // element that could be used for implementing breakpoint filtering.
                     // Bug 333517.
-    				ILaunch launch = (ILaunch) ((IAdaptable)next).getAdapter(ILaunch.class);
-    				if (launch != null) {
-    					IDebugTarget[] targets= launch.getDebugTargets();
-    					for (int j = 0; j < targets.length; j++) {
-    						debugTargets.add(targets[j]);
-    					}
+    				IDebugTarget target = (IDebugTarget) ((IAdaptable)next).getAdapter(IDebugTarget.class);
+    				if (target != null) {
+    				    debugTargets.add(target);
     				}
     			}
             }
