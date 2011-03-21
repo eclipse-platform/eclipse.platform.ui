@@ -202,7 +202,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 	protected final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 
 	/**
-	 * @see IContentTypeManager.IContentTypeChangeListener#contentTypeChanged(IContentTypeManager.ContentTypeChangeEvent)
+	 * @see org.eclipse.core.runtime.content.IContentTypeManager.IContentTypeChangeListener#contentTypeChanged(IContentTypeManager.ContentTypeChangeEvent)
 	 */
 	public void contentTypeChanged(ContentTypeChangeEvent event) {
 		if (Policy.DEBUG_CONTENT_TYPE)

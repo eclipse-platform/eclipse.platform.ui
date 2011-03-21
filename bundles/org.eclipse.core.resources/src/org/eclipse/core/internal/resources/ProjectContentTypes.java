@@ -26,7 +26,7 @@ import org.osgi.service.prefs.Preferences;
  * Manages project-specific content type behavior.
  * 
  * @see ContentDescriptionManager
- * @see IContentTypeManager.ISelectionPolicy
+ * @see org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy
  * @since 3.1
  */
 public class ProjectContentTypes {
@@ -214,7 +214,7 @@ public class ProjectContentTypes {
 	 * <li>otherwise, relative ordering should be preserved.</li>
 	 * </ol>
 	 * 
-	 *  @see IContentTypeManager.ISelectionPolicy
+	 *  @see org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy
 	 */
 	final IContentType[] select(Project project, IContentType[] candidates, boolean fileName, boolean content) {
 		// since no vetoing is done here, don't go further if there is nothing to sort
