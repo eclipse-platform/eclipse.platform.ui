@@ -25,8 +25,6 @@ public class BindingCopies {
 	private static Collection<Binding> userBindings;
 
 	public static void init() {
-		inactiveSystemBindings = new ArrayList<Binding>();
-		userBindings = new ArrayList<Binding>();
 	}
 
 	public static void setDefaultSysBindings(Collection<Binding> newSysBindings) {
@@ -34,34 +32,51 @@ public class BindingCopies {
 	}
 
 	public static Collection<Binding> getSystemBindings() {
+		if (sysBindings == null) {
+			sysBindings = new ArrayList<Binding>();
+		}
 		return sysBindings;
 	}
 
+	static Collection<Binding> getUserBindings() {
+		if (userBindings == null) {
+			userBindings = new ArrayList<Binding>();
+		}
+		return userBindings;
+	}
+
+	static Collection<Binding> getInactiveBindings() {
+		if (inactiveSystemBindings == null) {
+			inactiveSystemBindings = new ArrayList<Binding>();
+		}
+		return inactiveSystemBindings;
+	}
+
 	public static void addInactiveSysBinding(Binding binding) {
-		inactiveSystemBindings.add(binding);
+		getInactiveBindings().add(binding);
 	}
 
 	public static Binding[] getInactiveSysBindings() {
-		return inactiveSystemBindings.toArray(new Binding[inactiveSystemBindings.size()]);
+		return getInactiveBindings().toArray(new Binding[getInactiveBindings().size()]);
 	}
 
 	public static void removeInactiveSysBinding(Binding binding) {
-		inactiveSystemBindings.remove(binding);
+		getInactiveBindings().remove(binding);
 	}
 
 	public static void addUserBinding(Binding b) {
-		userBindings.add(b);
+		getUserBindings().add(b);
 	}
 
 	public static Binding[] getUserDefinedBindings() {
-		return userBindings.toArray(new Binding[userBindings.size()]);
+		return getUserBindings().toArray(new Binding[getUserBindings().size()]);
 	}
 
 	public static boolean isUserBinding(TriggerSequence sequence, ParameterizedCommand command,
 			String schemeId, String contextId) {
 		boolean isUserBinding = false;
 		Binding currBinding;
-		Iterator<Binding> iter = userBindings.iterator();
+		Iterator<Binding> iter = getUserBindings().iterator();
 		while (iter.hasNext() && !isUserBinding) {
 			currBinding = iter.next();
 			if (currBinding.getTriggerSequence().equals(sequence)
