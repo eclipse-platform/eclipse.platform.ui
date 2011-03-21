@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2011 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [183137] liblocalfile for solaris-sparc
  * Martin Oberhuber (Wind River) - [184433] liblocalfile for Linux x86_64
  * Martin Oberhuber (Wind River) - [232426] push up createSymLink() to CoreTest
+ * Martin Oberhuber (Wind River) - [331716] Symlink test failures on Windows 7
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
@@ -51,7 +52,7 @@ public class SymlinkTest extends FileSystemTest {
 		//currently we only support linux, solaris and mac os
 		if (os.equals(Platform.OS_LINUX) || os.equals(Platform.OS_SOLARIS) || os.equals(Platform.OS_MACOSX) || os.equals(Platform.OS_AIX)
 		//		  ||os.equals(Platform.OS_HPUX)
-		//		  ||isWindowsVista()
+		//		  || isWindowsVistaOrHigher()
 		) {
 			return true;
 		}
@@ -338,7 +339,7 @@ public class SymlinkTest extends FileSystemTest {
 	public void testSymlinkEnabled() {
 		String os = Platform.getOS();
 		String arch = Platform.getOSArch();
-		if (Platform.OS_LINUX.equals(os) || (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch)) || Platform.OS_MACOSX.equals(os) || Platform.OS_AIX.equals(os)) {
+		if (Platform.OS_LINUX.equals(os) || (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch)) || Platform.OS_MACOSX.equals(os) || Platform.OS_AIX.equals(os) || isWindowsVistaOrHigher()) {
 			assertTrue(haveSymlinks());
 		} else {
 			assertFalse(haveSymlinks());
