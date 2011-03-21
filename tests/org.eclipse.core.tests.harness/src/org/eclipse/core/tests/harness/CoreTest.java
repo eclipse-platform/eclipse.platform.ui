@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,15 +8,18 @@
  * Contributors:
  *	IBM Corporation - initial API and implementation
  *	Martin Oberhuber (Wind River) - [232426] createSymLink() method
+ *	Martin Oberhuber (Wind River) - [335864] ResourceAttributeTest fails on Win7
  *******************************************************************************/
 package org.eclipse.core.tests.harness;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import junit.framework.AssertionFailedError;
@@ -27,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.osgi.framework.Version;
 
 /**
  * @since 3.1
@@ -210,12 +214,12 @@ public class CoreTest extends TestCase {
 		String[] envp = {};
 		try {
 			Process p;
-			if (isWindowsVista() || isWindows7()) {
+			if (isWindowsVistaOrHigher()) {
 				if (isDir) {
-					String[] cmd = {"mklink", "/d", linkName, linkTgt};
+					String[] cmd = {"cmd", "/c", "mklink", "/d", linkName, linkTgt};
 					p = Runtime.getRuntime().exec(cmd, envp, basedir);
 				} else {
-					String[] cmd = {"mklink", linkName, linkTgt};
+					String[] cmd = {"cmd", "/c", "mklink", linkName, linkTgt};
 					p = Runtime.getRuntime().exec(cmd, envp, basedir);
 				}
 			} else {
@@ -223,7 +227,10 @@ public class CoreTest extends TestCase {
 				p = Runtime.getRuntime().exec(cmd, envp, basedir);
 			}
 			int exitcode = p.waitFor();
-			assertEquals(exitcode, 0);
+			if (exitcode != 0) {
+				String result = new BufferedReader(new InputStreamReader(p.getErrorStream())).readLine();
+				assertEquals("createSymLink: " + result + ", exitcode", 0, exitcode);
+			}
 		} catch (IOException e) {
 			fail("createSymLink", e);
 		} catch (InterruptedException e) {
@@ -314,19 +321,27 @@ public class CoreTest extends TestCase {
 		return System.currentTimeMillis() + "-" + Math.random();
 	}
 
-	/**
-	 * Test if running on Windows Vista.
-	 * @return <code>true</code> if running on Windows Vista.
-	 */
-	private static boolean isWindowsVista() {
-		return Platform.getOS().equals(Platform.OS_WIN32) && "6.0".equals(System.getProperty("org.osgi.framework.os.version")); //$NON-NLS-1$ //$NON-NLS-2$
+	protected static boolean isWindowsMinVersion(int major, int minor, int micro) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			try {
+				Version v = Version.parseVersion(System.getProperty("org.osgi.framework.os.version")); //$NON-NLS-1$ 
+				return v.compareTo(new Version(major, minor, micro)) >= 0;
+			} catch (IllegalArgumentException e) {
+				/* drop down to returning false */
+			}
+
+		}
+		return false;
 	}
 	
-	private static boolean isWindows7() {
-		return "Windows7".equals(System.getProperty("org.osgi.framework.os.name")) //$NON-NLS-1$ //$NON-NLS-2$
-				|| (Platform.getOS().equals(Platform.OS_WIN32) && "6.1.0".equals(System.getProperty("org.osgi.framework.os.version"))); //$NON-NLS-1$ //$NON-NLS-2$
+	/**
+	 * Test if running on Windows Vista or higher.
+	 * @return <code>true</code> if running on Windows Vista or higher.
+	 */
+	protected static boolean isWindowsVistaOrHigher() {
+		return isWindowsMinVersion(6, 0, 0);
 	}
-
+	
 	/**
 	 * Copy the data from the input stream to the output stream.
 	 * Close both streams when finished.
