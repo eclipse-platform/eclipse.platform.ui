@@ -2495,16 +2495,18 @@ public class InternalTreeModelViewer extends TreeViewer
 	protected void handleTreeExpand(TreeEvent event) {
         super.handleTreeExpand(event);
         IContentProvider contentProvider = getContentProvider();
-        if (contentProvider instanceof TreeModelContentProvider) {
+        if (contentProvider instanceof TreeModelContentProvider && event.item.getData() != null) {
             TreePath path = getTreePathFromItem((TreeItem)event.item);
             ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.COLLAPSE);
+        } else {
+            System.out.println("dude");
         }
 	}
 	
 	protected void handleTreeCollapse(TreeEvent event) {
 	    super.handleTreeCollapse(event);
         IContentProvider contentProvider = getContentProvider();
-        if (contentProvider instanceof TreeModelContentProvider) {
+        if (contentProvider instanceof TreeModelContentProvider && event.item.getData() != null) {
             TreePath path = getTreePathFromItem((TreeItem)event.item);
             ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.EXPAND);
         }
