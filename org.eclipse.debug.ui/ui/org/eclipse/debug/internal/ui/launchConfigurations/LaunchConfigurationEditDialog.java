@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,20 +74,14 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
-		if(buttonId == ID_LAUNCH_BUTTON) {
-			setReturnCode(IDialogConstants.OK_ID);
-			int status = shouldSaveCurrentConfig();
-			if(status != IDialogConstants.CANCEL_ID) {
-				if(status != ID_DISCARD_BUTTON) {
-					if(status == IDialogConstants.YES_ID) {
-						getTabViewer().handleApplyPressed();
-					}
+		int status = shouldSaveCurrentConfig();
+		if(status != IDialogConstants.CANCEL_ID) {
+			if(status != ID_DISCARD_BUTTON) {
+				if(status == IDialogConstants.YES_ID) {
+					getTabViewer().handleApplyPressed();
 				}
+				cancelPressed();
 			}
 		}
-		else if(buttonId == ID_CANCEL_BUTTON) {
-			setReturnCode(IDialogConstants.CANCEL_ID);
-		}
-		close();
 	}
 }
