@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -702,7 +701,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		if(resource != null) {
 			ctxt.add(resource);
 		}
-		IEvaluationContext context = new EvaluationContext(null, ctxt);
+		IEvaluationContext context = DebugUIPlugin.createEvaluationContext(ctxt);
 		context.addVariable("selection", ctxt); //$NON-NLS-1$
 		LaunchShortcutExtension ext = null;
 		for(Iterator iter = sc.iterator(); iter.hasNext();) {
@@ -734,7 +733,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		LaunchShortcutExtension ext = null;
 		List list = new ArrayList();
 		list.add(resource);
-		IEvaluationContext context = new EvaluationContext(null, list);
+		IEvaluationContext context = DebugUIPlugin.createEvaluationContext(list);
 		context.setAllowPluginActivation(true);
 		context.addVariable("selection", list); //$NON-NLS-1$
 		HashSet set = new HashSet();

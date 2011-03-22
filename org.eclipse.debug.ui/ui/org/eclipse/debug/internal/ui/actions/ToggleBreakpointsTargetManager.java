@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Wind River Systems and others.
+ * Copyright (c) 2008, 2011 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,11 +20,10 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Map.Entry;
 
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -44,14 +43,13 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
+import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetFactory;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Organizes the toggle breakpoints target factories contributed through the 
@@ -150,20 +148,14 @@ public class ToggleBreakpointsTargetManager {
          * Evaluate the given expression within the given context and return
          * the result. Returns <code>true</code> iff result is either TRUE.
          * 
-         * @param exp the enablement expression to evaluate or <code>null</code>
-         * @param context the context of the evaluation. Usually, the
-         *  user's selection.
+         * @param part the {@link IWorkbenchPart} context
+         * @param selection the current selection in the part
+         * @param exp the current expression
          * @return the result of evaluating the expression
          */
         private boolean evalEnablementExpression(IWorkbenchPart part, ISelection selection, Expression exp) {
             if (exp != null){
-        		IEvaluationContext parentContext = null;
-        		IEvaluationService evaluationService = (IEvaluationService)PlatformUI.getWorkbench().getService(IEvaluationService.class);
-        		if (evaluationService != null) {
-        			parentContext = evaluationService.getCurrentState();
-        		}
-                IEvaluationContext context = new EvaluationContext(parentContext, part);
-                
+                IEvaluationContext context = DebugUIPlugin.createEvaluationContext(part);
                 List debugContextList = getDebugContext(part).toList();
                 context.addVariable(IConfigurationElementConstants.DEBUG_CONTEXT, debugContextList); 
 

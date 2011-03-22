@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,10 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Map.Entry;
 
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -154,7 +153,7 @@ public class DetailPaneManager {
 			Expression expression = getEnablementExpression();
 			if (expression != null) {
 				List list = selection.toList();
-				IEvaluationContext context = new EvaluationContext(null, list);
+				IEvaluationContext context = DebugUIPlugin.createEvaluationContext(list);
 				context.addVariable("selection", list); //$NON-NLS-1$
 				enabled = evalEnablementExpression(context, expression);
 			} else {

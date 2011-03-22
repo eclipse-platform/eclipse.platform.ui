@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -96,6 +98,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -1300,6 +1303,24 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			}
 		}
 		return ret;
+	}
+	
+	/**
+	 * Creates a new {@link IEvaluationContext} initialized with the current platform state if the 
+	 * {@link IEvaluationService} can be acquired, otherwise the new context is created with no 
+	 * parent context
+	 * 
+	 * @param defaultvar the default variable for the new context
+	 * @return a new {@link IEvaluationContext}
+	 * @since 3.7
+	 */
+	public static IEvaluationContext createEvaluationContext(Object defaultvar) {
+		IEvaluationContext parent = null;
+		IEvaluationService esrvc = (IEvaluationService)PlatformUI.getWorkbench().getService(IEvaluationService.class);
+		if (esrvc != null) {
+			parent = esrvc.getCurrentState();
+		}
+		return new EvaluationContext(parent, defaultvar);
 	}
 }
 

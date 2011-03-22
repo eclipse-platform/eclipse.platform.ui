@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.memory;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -184,7 +183,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
     private boolean isBound(IMemoryBlock block) {
         Expression expression = getExpression();
         if (expression != null) {
-            IEvaluationContext context = new EvaluationContext(null, block);
+            IEvaluationContext context = DebugUIPlugin.createEvaluationContext(block);
             try {
                 return expression.evaluate(context) == EvaluationResult.TRUE;
             } catch (CoreException e) {
