@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.actions.expressions.EditWatchExpressinInPlaceAction;
 import org.eclipse.debug.internal.ui.actions.expressions.PasteWatchExpressionsAction;
 import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
@@ -49,6 +50,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
  
 /**
  * Displays expressions and their values with a detail
@@ -57,6 +59,7 @@ import org.eclipse.ui.PlatformUI;
 public class ExpressionView extends VariablesView {
 	
     private PasteWatchExpressionsAction fPasteAction;
+    private EditWatchExpressinInPlaceAction fEditInPlaceAction;
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getHelpContextId()
@@ -165,6 +168,14 @@ public class ExpressionView extends VariablesView {
     	super.createActions();
     	fPasteAction = new PasteWatchExpressionsAction(this);
     	configure(fPasteAction, IWorkbenchCommandConstants.EDIT_PASTE, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
+    	fEditInPlaceAction = new EditWatchExpressinInPlaceAction(this);
+        configure(fEditInPlaceAction, IWorkbenchCommandConstants.FILE_RENAME, ActionFactory.RENAME.getId(), null);
+    	
+    }
+    
+    public void dispose() {
+        fEditInPlaceAction.dispose();
+        super.dispose();
     }
     
     /**
@@ -185,7 +196,9 @@ public class ExpressionView extends VariablesView {
     	setAction(defId, action);
     	action.setActionDefinitionId(defId);
     	getViewSite().getActionBars().setGlobalActionHandler(globalId, action);
-    	action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
+    	if (imgId != null) {
+    	    action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
+    	}
     }
     
     /**

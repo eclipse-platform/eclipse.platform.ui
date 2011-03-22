@@ -1,0 +1,79 @@
+/*******************************************************************************
+ * Copyright (c) 2011 Wind River Systems and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     Wind River Systems - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.internal.ui.actions.expressions;
+
+import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.internal.ui.views.expression.ExpressionView;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
+/**
+ * This action activates the cell editor in the expressions view to edit the 
+ * expression string.  If no expression column found or for multi-line 
+ * expressions, revert to the 
+ */
+public class EditWatchExpressinInPlaceAction extends Action implements ISelectionChangedListener {
+
+    private ExpressionView fView;
+    private TreeModelViewer fViewer;
+    private EditWatchExpressionAction fEditActionDelegate = new EditWatchExpressionAction();
+    
+    public EditWatchExpressinInPlaceAction(ExpressionView view) {
+        fView = view;
+        fViewer = (TreeModelViewer)view.getViewer();
+        fEditActionDelegate.init(view);
+        ISelectionProvider selectionProvider = fView.getSite().getSelectionProvider(); 
+        selectionProvider.addSelectionChangedListener(this);
+        fEditActionDelegate.selectionChanged(this, selectionProvider.getSelection());
+    }
+    
+    public void selectionChanged(SelectionChangedEvent event) {
+        fEditActionDelegate.selectionChanged(this, event.getSelection());
+    }
+
+    public void dispose() {
+        fView.getSite().getSelectionProvider().removeSelectionChangedListener(this);
+    }
+    
+    public void run() {
+        IStructuredSelection selelection = fEditActionDelegate.getCurrentSelection();
+        
+        if (selelection.size() != 1) {
+            return;
+        }
+
+        // Always edit multi-line expressions in dialog.  Otherwise try to find the expression 
+        // column and activate cell editor there.
+        IWatchExpression[] expressions = fEditActionDelegate.getSelectedExpressions();
+        int expressionColumn = -1;
+        if (expressions[0].getExpressionText().indexOf('\n') == -1) {
+            Object[] columnProperties = fViewer.getColumnProperties();
+            for (int i = 0; i < columnProperties.length; i++) {
+                if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnProperties[i])) {
+                    expressionColumn = i;
+                    break;
+                }
+            }
+        }
+        if (expressionColumn != -1) {
+            fViewer.editElement(selelection.getFirstElement(), expressionColumn);
+        } else {
+            fEditActionDelegate.run(this);
+        }
+    }
+    
+    
+}
