@@ -380,30 +380,6 @@ public class ProjectPreferences extends EclipsePreferences {
 			super.flush();
 		} finally {
 			isWriting = false;
-			if ((segmentCount == 3) && (PREFS_DERIVED_QUALIFIER.equals(qualifier))) {
-				final IFile fileInWorkspace = getFile();
-				if (fileInWorkspace != null) {
-					IWorkspaceRunnable operation = new IWorkspaceRunnable() {
-						public void run(IProgressMonitor monitor) throws CoreException {
-							if (fileInWorkspace.exists())
-								fileInWorkspace.setDerived(true, monitor);
-						}
-					};
-					Workspace workspace = ((Workspace) ResourcesPlugin.getWorkspace());
-					try {
-						if (workspace.getWorkManager().isLockAlreadyAcquired())
-							operation.run(null);
-						else
-							workspace.run(operation, workspace.getRuleFactory().derivedRule(fileInWorkspace), IResource.NONE, null);
-					} catch (OperationCanceledException e) {
-						throw new BackingStoreException(Messages.preferences_operationCanceled);
-					} catch (CoreException e) {
-						String message = NLS.bind(Messages.preferences_setDerivedException, fileInWorkspace.getFullPath());
-						log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
-						throw new BackingStoreException(message);
-					}
-				}
-			}
 		}
 	}
 
@@ -613,6 +589,8 @@ public class ProjectPreferences extends EclipsePreferences {
 				FileUtil.safeClose(output);
 			}
 			final InputStream input = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
+			final int finalSegmentCount = segmentCount;
+			final String finalQualifier = qualifier;
 			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					if (fileInWorkspace.exists()) {
@@ -637,6 +615,8 @@ public class ProjectPreferences extends EclipsePreferences {
 							Policy.debug("Creating preference file: " + fileInWorkspace.getLocation()); //$NON-NLS-1$
 						fileInWorkspace.create(input, IResource.NONE, null);
 					}
+					if ((finalSegmentCount == 3) && (PREFS_DERIVED_QUALIFIER.equals(finalQualifier)))
+						fileInWorkspace.setDerived(true, null);
 				}
 			};
 			//don't bother with scheduling rules if we are already inside an operation
