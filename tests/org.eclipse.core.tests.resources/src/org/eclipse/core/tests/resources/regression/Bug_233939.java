@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class Bug_233939 extends ResourceTest {
 	 * Refresh the workspace and verify that the symbolic link attribute is set.
 	 */
 	protected void symLinkAndRefresh(IContainer container, String linkName, IPath linkTarget) {
-		createSymLink(container.getLocation().toFile(), linkName, linkTarget.toString(), false);
+		createSymLink(container.getLocation().toFile(), linkName, linkTarget.toOSString(), false);
 		try {
 			container.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 		} catch (CoreException e) {
