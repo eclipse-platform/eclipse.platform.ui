@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
@@ -211,7 +210,6 @@ public class FileEditorsPreferencePage extends PreferencePage implements
         addResourceTypeButton = new Button(groupComponent, SWT.PUSH);
         addResourceTypeButton.setText(WorkbenchMessages.FileEditorPreference_add); 
         addResourceTypeButton.addListener(SWT.Selection, this);
-        addResourceTypeButton.setLayoutData(data);
         setButtonLayoutData(addResourceTypeButton);
 
         removeResourceTypeButton = new Button(groupComponent, SWT.PUSH);
