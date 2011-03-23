@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
  *     											   fix in bug: 151295,178946,166500,195908,201906,207676,180504,216706,218336
+ *     Tony Juckel -  Bug 130854 - JFace TableViewer ignoring ICellEditor validator state
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -307,7 +308,7 @@ public abstract class ColumnViewerEditor {
 					Item t = (Item) this.cell.getItem();
 
 					// don't null out table item -- same item is still selected
-					if (t != null && !t.isDisposed()) {
+					if (t != null && !t.isDisposed() && c.isValueValid()) {
 						saveEditorValue(c);
 					}
 					if (!viewer.getControl().isDisposed()) {
