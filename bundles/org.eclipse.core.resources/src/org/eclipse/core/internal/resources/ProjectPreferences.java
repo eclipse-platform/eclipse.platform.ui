@@ -589,7 +589,6 @@ public class ProjectPreferences extends EclipsePreferences {
 				FileUtil.safeClose(output);
 			}
 			final InputStream input = new BufferedInputStream(new ByteArrayInputStream(output.toByteArray()));
-			final int finalSegmentCount = segmentCount;
 			final String finalQualifier = qualifier;
 			IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
@@ -615,7 +614,7 @@ public class ProjectPreferences extends EclipsePreferences {
 							Policy.debug("Creating preference file: " + fileInWorkspace.getLocation()); //$NON-NLS-1$
 						fileInWorkspace.create(input, IResource.NONE, null);
 					}
-					if ((finalSegmentCount == 3) && (PREFS_DERIVED_QUALIFIER.equals(finalQualifier)))
+					if (PREFS_DERIVED_QUALIFIER.equals(finalQualifier))
 						fileInWorkspace.setDerived(true, null);
 				}
 			};
@@ -624,8 +623,8 @@ public class ProjectPreferences extends EclipsePreferences {
 				if (((Workspace) workspace).getWorkManager().isLockAlreadyAcquired()) {
 					operation.run(null);
 				} else {
-					// we might: create the .settings folder, create the file, or modify the file.
-					ISchedulingRule rule = MultiRule.combine(factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace));
+					// we might: create the .settings folder, create the file, modify the file, or set derived flag for the file.
+					ISchedulingRule rule = MultiRule.combine(new ISchedulingRule[] {factory.createRule(fileInWorkspace.getParent()), factory.modifyRule(fileInWorkspace), factory.derivedRule(fileInWorkspace)});
 					workspace.run(operation, rule, IResource.NONE, null);
 				}
 			} catch (OperationCanceledException e) {
