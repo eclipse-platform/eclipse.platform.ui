@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,10 @@
 package org.eclipse.jface.text;
 
 import java.text.CharacterIterator;
+import java.util.Locale;
 
 import com.ibm.icu.text.BreakIterator;
+
 
 /**
  * Standard implementation of
@@ -166,6 +168,23 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 */
 	private DocumentCharacterIterator fDocIter= new DocumentCharacterIterator();
 
+	/**
+	 * The locale specific word break iterator.
+	 * @since 3.7
+	 */
+	private BreakIterator fWordBreakIterator= BreakIterator.getWordInstance();
+
+	/**
+	 * The POSIX word break iterator.
+	 * <p>
+	 * Used to workaround ICU bug not treating '.' as word boundary, see
+	 * http://bugs.icu-project.org/trac/ticket/8371 for details.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	private BreakIterator fPosixWordBreakIterator= BreakIterator.getWordInstance(new Locale("en", "US", "POSIX")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
 
 	/**
 	 * Creates a new default text double click strategy.
@@ -218,6 +237,19 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * @since 3.5
 	 */
 	protected IRegion findWord(IDocument document, int offset) {
+		return findWord(document, offset, fWordBreakIterator);
+	}
+
+	/**
+	 * Tries to find the word at the given offset.
+	 * 
+	 * @param document the document
+	 * @param offset the offset
+	 * @param wordBreakIterator the word break iterator
+	 * @return the word or <code>null</code> if none
+	 * @since 3.7
+	 */
+	private IRegion findWord(IDocument document, int offset, BreakIterator wordBreakIterator) {
 		IRegion line;
 		try {
 			line= document.getLineInformationOfOffset(offset);
@@ -230,18 +262,17 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 
 		fDocIter.setDocument(document, line);
 
-		BreakIterator breakIter= BreakIterator.getWordInstance();
-		breakIter.setText(fDocIter);
+		wordBreakIterator.setText(fDocIter);
 
-		int start= breakIter.preceding(offset);
+		int start= wordBreakIterator.preceding(offset);
 		if (start == BreakIterator.DONE)
 			start= line.getOffset();
 
-		int end= breakIter.following(offset);
+		int end= wordBreakIterator.following(offset);
 		if (end == BreakIterator.DONE)
 			end= line.getOffset() + line.getLength();
 
-		if (breakIter.isBoundary(offset)) {
+		if (wordBreakIterator.isBoundary(offset)) {
 			if (end - offset > offset - start)
 				start= offset;
 			else
@@ -251,7 +282,24 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 		if (end == start)
 			return null;
 
-		return new Region(start, end - start);
+		int length= end - start;
+		try {
+			// Workaround for ICU bug not treating '.' as word boundary, see http://bugs.icu-project.org/trac/ticket/8371 for details.
+			if (fPosixWordBreakIterator != wordBreakIterator && document.get(start, length).indexOf('.') != -1) {
+				IRegion wordRegion= findWord(document, offset, fPosixWordBreakIterator);
+				if (wordRegion != null) {
+					int wordStart= wordRegion.getOffset();
+					int wordEnd= wordStart + wordRegion.getLength();
+					// Check that no additional breaks besides '.' are introduced
+					if ((wordStart == start || wordStart > start && document.getChar(wordStart - 1) == '.') && (wordEnd == end || wordEnd < end && document.getChar(wordEnd) == '.'))
+						return wordRegion;
+				}
+			}
+		} catch (BadLocationException e) {
+			// Use previously computed word region
+		}
+
+		return new Region(start, length);
 		
 	}
 }
