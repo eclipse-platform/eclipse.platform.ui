@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,10 +74,10 @@ public class DiffListener extends CommandOutputListener {
 			ICVSRepositoryLocation location, 
 			ICVSFolder commandRoot,
 			IProgressMonitor monitor) {
-		// ignore server messages for now - this is used only with the diff
-		// request and the errors can be safely ignored.
+		// return all the server errors as CVSStatus.ERROR_LINE or
+		// CVSStatus.PROTOCOL_ERROR
 		if (getServerMessage(line, location) != null) {
-			return OK;
+			return super.errorLine(line, location, commandRoot, monitor);
 		}
 		
 		//Check to see if this is a no such directory message

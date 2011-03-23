@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -311,16 +311,24 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		IStatus status = ex.getStatus();
 		List toShow = new ArrayList();
 		IStatus children[] = status.getChildren();
+		boolean may = true;
 		for (int i = 0; i < children.length; i++) {
-			if (children[i].getCode() == CVSStatus.BINARY_FILES_DIFFER) {
+			// ignore all errors except those found by DiffListener
+			if (children[i].getCode() == CVSStatus.BINARY_FILES_DIFFER
+					|| children[i].getCode() == CVSStatus.PROTOCOL_ERROR
+					|| children[i].getCode() == CVSStatus.ERROR_LINE) {
 				toShow.add(children[i]);
+				if (children[i].getCode() == CVSStatus.BINARY_FILES_DIFFER)
+					// the patch does not contain some changes for sure
+					may = false;
 			}
 		}
 		if (toShow.size() > 0) {
+			String msg = may ? CVSMessages.ThePatchMayNotContainAllTheChanges
+					: CVSMessages.ThePatchDoesNotContainAllTheChanges;
 			status = new MultiStatus(CVSProviderPlugin.ID,
-					CVSStatus.SERVER_ERROR, (IStatus[]) toShow
-							.toArray(new IStatus[0]),
-					CVSMessages.ThePatchDoesNotContainAllTheChanges, null);
+					CVSStatus.SERVER_ERROR,
+					(IStatus[]) toShow.toArray(new IStatus[0]), msg, null);
 			CVSUIPlugin.openError(getShell(), null, null, status,
 					CVSUIPlugin.PERFORM_SYNC_EXEC
 							| CVSUIPlugin.LOG_OTHER_EXCEPTIONS);

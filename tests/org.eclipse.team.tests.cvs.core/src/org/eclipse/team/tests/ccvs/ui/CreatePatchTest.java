@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,12 @@
 package org.eclipse.team.tests.ccvs.ui;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.URL;
 
 import junit.framework.Test;
@@ -26,7 +29,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -35,6 +40,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -279,4 +290,72 @@ public class CreatePatchTest extends EclipseTest {
 		return event;
 	}
 
+	public void testBug319661() throws FileNotFoundException, CoreException {
+
+		Session session = new Session(getRepository(),
+				(ICVSFolder) getCVSResource(testProject)) {
+			// Override the session so it always returns response with an error.
+			private BufferedReader serverResp = new BufferedReader(
+					new InputStreamReader(
+							asInputStream("server_response_with_error.txt")));
+
+
+			public String readLine() throws CVSException {
+				try {
+					return serverResp.readLine();
+				} catch (IOException e) {
+					throw new CVSException(new Status(IStatus.ERROR, null,
+							null, e));
+				}
+			}
+
+			public void close() {
+				try {
+					super.close();
+					serverResp.close();
+				} catch (IOException e) {
+					fail(e.getMessage());
+				}
+			}
+		};
+
+		PrintStream stream = new PrintStream(new FileOutputStream(testProject
+				.getFile("/patch_with_error.txt").getLocation().toFile()));
+
+		try {
+			session.open(getMonitor());
+
+			DiffListener diffListener = new DiffListener(stream);
+
+			IStatus status = Command.DIFF.execute(session,
+					Command.NO_GLOBAL_OPTIONS, new Command.LocalOption[0],
+					new String[0], diffListener, getMonitor());
+
+			assertNotNull(
+					"Diff command did not report error when some changes were excluded",
+					status);
+			assertEquals("Diff command did not report server error",
+					CVSStatus.SERVER_ERROR, status.getCode());
+
+			IStatus children[] = status.getChildren();
+			assertTrue("Diff command did not report any server errors",
+					children.length > 0);
+			
+			boolean errorLineOccurred = false;
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].getCode() == CVSStatus.ERROR_LINE) {
+					errorLineOccurred = true;
+					break;
+				}
+			}
+
+			assertTrue("Diff command did not report error line",
+					errorLineOccurred);
+
+		} finally {
+			session.close();
+			stream.close();
+		}
+	}
+	
 }

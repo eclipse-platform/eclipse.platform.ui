@@ -258,6 +258,7 @@ public class CVSMessages extends NLS {
 	public static String CVSURI_InvalidURI;
 	public static String ThePatchDoesNotContainChangesFor_0;
 	public static String ThePatchDoesNotContainAllTheChanges;
+	public static String ThePatchMayNotContainAllTheChanges;
 
 	static {
 		// load message values from bundle file
