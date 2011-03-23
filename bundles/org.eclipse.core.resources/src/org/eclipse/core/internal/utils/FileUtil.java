@@ -45,6 +45,13 @@ public class FileUtil {
 		fileInfo.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, attributes.isExecutable());
 		fileInfo.setAttribute(EFS.ATTRIBUTE_ARCHIVE, attributes.isArchive());
 		fileInfo.setAttribute(EFS.ATTRIBUTE_HIDDEN, attributes.isHidden());
+		fileInfo.setAttribute(EFS.ATTRIBUTE_SYMLINK, attributes.isSymbolicLink());
+		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_READ, attributes.isSet(EFS.ATTRIBUTE_GROUP_READ));
+		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_WRITE, attributes.isSet(EFS.ATTRIBUTE_GROUP_WRITE));
+		fileInfo.setAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE, attributes.isSet(EFS.ATTRIBUTE_GROUP_EXECUTE));
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_READ, attributes.isSet(EFS.ATTRIBUTE_OTHER_READ));
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_WRITE, attributes.isSet(EFS.ATTRIBUTE_OTHER_WRITE));
+		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE, attributes.isSet(EFS.ATTRIBUTE_OTHER_EXECUTE));
 		return fileInfo;
 	}
 
@@ -145,6 +152,12 @@ public class FileUtil {
 		attributes.setExecutable(fileInfo.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
 		attributes.setHidden(fileInfo.getAttribute(EFS.ATTRIBUTE_HIDDEN));
 		attributes.setSymbolicLink(fileInfo.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+		attributes.set(EFS.ATTRIBUTE_GROUP_READ, fileInfo.getAttribute(EFS.ATTRIBUTE_GROUP_READ));
+		attributes.set(EFS.ATTRIBUTE_GROUP_WRITE, fileInfo.getAttribute(EFS.ATTRIBUTE_GROUP_WRITE));
+		attributes.set(EFS.ATTRIBUTE_GROUP_EXECUTE, fileInfo.getAttribute(EFS.ATTRIBUTE_GROUP_EXECUTE));
+		attributes.set(EFS.ATTRIBUTE_OTHER_READ, fileInfo.getAttribute(EFS.ATTRIBUTE_OTHER_READ));
+		attributes.set(EFS.ATTRIBUTE_OTHER_WRITE, fileInfo.getAttribute(EFS.ATTRIBUTE_OTHER_WRITE));
+		attributes.set(EFS.ATTRIBUTE_OTHER_EXECUTE, fileInfo.getAttribute(EFS.ATTRIBUTE_OTHER_EXECUTE));
 		return attributes;
 	}
 

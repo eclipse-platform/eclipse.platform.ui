@@ -56,7 +56,7 @@ public class ResourceAttributeTest extends ResourceTest {
 		attributes.setHidden(value);
 		resource.setResourceAttributes(attributes);
 	}
-	
+
 	private void setSymlink(IResource resource, boolean value) throws CoreException {
 		ResourceAttributes attributes = resource.getResourceAttributes();
 		assertNotNull("setSymlink for null attributes", attributes);
@@ -334,6 +334,44 @@ public class ResourceAttributeTest extends ResourceTest {
 			project.delete(true, getMonitor());
 		} catch (CoreException e) {
 			fail("7.0", e);
+		}
+	}
+
+	public void testAttributes() {
+		int[] attributes = new int[] {EFS.ATTRIBUTE_GROUP_READ, EFS.ATTRIBUTE_GROUP_WRITE, EFS.ATTRIBUTE_GROUP_EXECUTE, EFS.ATTRIBUTE_OTHER_READ, EFS.ATTRIBUTE_OTHER_WRITE, EFS.ATTRIBUTE_OTHER_EXECUTE};
+
+		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
+		IFile file = project.getFile(getUniqueString());
+		ensureExistsInWorkspace(file, getRandomContents());
+
+		try {
+			for (int attribute : attributes) {
+				// only activate this test on platforms that support it
+				if (!isAttributeSupported(attribute))
+					continue;
+
+				// file
+				ResourceAttributes resAttr = file.getResourceAttributes();
+				resAttr.set(attribute, true);
+				file.setResourceAttributes(resAttr);
+				assertTrue("1.0", file.getResourceAttributes().isSet(attribute));
+
+				resAttr.set(attribute, false);
+				file.setResourceAttributes(resAttr);
+				assertFalse("2.0", file.getResourceAttributes().isSet(attribute));
+
+				// folder
+				resAttr = project.getResourceAttributes();
+				resAttr.set(attribute, true);
+				project.setResourceAttributes(resAttr);
+				assertTrue("3.0", project.getResourceAttributes().isSet(attribute));
+
+				resAttr.set(attribute, false);
+				project.setResourceAttributes(resAttr);
+				assertFalse("4.0", project.getResourceAttributes().isSet(attribute));
+			}
+		} catch (CoreException e) {
+			fail("5.0", e);
 		}
 	}
 }

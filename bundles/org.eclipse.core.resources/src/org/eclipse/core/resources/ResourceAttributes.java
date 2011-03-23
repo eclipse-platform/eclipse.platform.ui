@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 Red Hat Incorporated and others
+ * Copyright (c) 2004, 2011 Red Hat Incorporated and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API 
  *     Red Hat Incorporated - initial implementation
- * 	Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
+ *     Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
  *******************************************************************************/
 
 package org.eclipse.core.resources;
@@ -127,12 +127,23 @@ public class ResourceAttributes {
 
 	/** 
 	 * Clears all of the bits indicated by the mask.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	private void set(int mask, boolean value) {
+	public void set(int mask, boolean value) {
 		if (value)
 			attributes |= mask;
 		else
 			attributes &= ~mask;
+	}
+
+	/** 
+	 * Returns whether this ResourceAttributes object has the given mask set.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public boolean isSet(int mask) {
+		return (attributes & mask) != 0;
 	}
 
 	/**
