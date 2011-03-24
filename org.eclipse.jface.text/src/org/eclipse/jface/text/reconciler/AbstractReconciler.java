@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,7 +235,7 @@ abstract public class AbstractReconciler implements IReconciler {
 		 */
 		public void documentChanged(DocumentEvent e) {
 
-			if (!fThread.isDirty() && fThread.isAlive()) {
+			if (fThread.isActive() || !fThread.isDirty() && fThread.isAlive()) {
 				if (!fIsAllowedToModifyDocument && Thread.currentThread() == fThread)
 					throw new UnsupportedOperationException("The reconciler thread is not allowed to modify the document"); //$NON-NLS-1$
 				aboutToBeReconciled();

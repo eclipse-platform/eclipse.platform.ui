@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -129,6 +132,9 @@ public class AbstractReconcilerTest extends TestCase {
 	protected AbstractReconciler fReconciler;
 	private Document fDocument;
 
+	private IProgressMonitor fProgressMonitor;
+
+
 	protected void setUp() {
 		fBarrier= new Barrier();
 		fCallLog= Collections.synchronizedList(new ArrayList());
@@ -156,6 +162,9 @@ public class AbstractReconcilerTest extends TestCase {
 				};
 		fReconciler.setIsIncrementalReconciler(false);
 		fReconciler.setDelay(50); // make tests run faster
+		
+		fProgressMonitor= new NullProgressMonitor();
+		fReconciler.setProgressMonitor(fProgressMonitor);
 
 		fViewer= new TestTextViewer();
 		fReconciler.install(fViewer);
@@ -230,8 +239,14 @@ public class AbstractReconcilerTest extends TestCase {
 		assertTrue(isDirty());
 		fCallLog.clear();
 		dirty();
-		// no aboutToBeReconciled since the reconciler is still running
-		// when the second edition comes in
+
+		if (fProgressMonitor.isCanceled())
+			assertEquals("aboutToBeReconciled", fCallLog.remove(0));
+		else {
+			// no aboutToBeReconciled since the reconciler is still running
+			// when the second edition comes in
+		}
+
 		assertEquals("reconcilerReset", fCallLog.remove(0));
 		fBarrier.wakeAll();
 
@@ -356,6 +371,11 @@ public class AbstractReconcilerTest extends TestCase {
 	boolean isActive() {
 		Object bool= fAccessor.invoke("isActive", null);
 		return ((Boolean) bool).booleanValue();
+	}
+
+	boolean isCanceled() {
+		Object bool= fAccessor.invoke("isCanceled", null);
+		return ((Boolean)bool).booleanValue();
 	}
 
 	boolean isDirty() {
