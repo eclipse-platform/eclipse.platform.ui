@@ -41,8 +41,8 @@ public class EditWatchExpressinInPlaceAction extends Action implements ISelectio
     }
     
     public void selectionChanged(SelectionChangedEvent event) {
-        IStructuredSelection selelection = fEditActionDelegate.getCurrentSelection();
-        setEnabled(selelection.size() == 1);
+        IStructuredSelection selection = fEditActionDelegate.getCurrentSelection();
+        setEnabled(selection != null && selection.size() == 1);
     }
 
     public void dispose() {
