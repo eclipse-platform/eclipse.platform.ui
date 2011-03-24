@@ -962,4 +962,11 @@ public abstract class ResourceTest extends CoreTest {
 		}
 		return devices;
 	}
+
+	/**
+	 * Returns true when run on Hudson Win7 at eclipse.org
+	 */
+	protected boolean isRunningOnHudson() {
+		return Boolean.TRUE.toString().equalsIgnoreCase(System.getProperty("hudson"));
+	}
 }

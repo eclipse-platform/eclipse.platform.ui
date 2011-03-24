@@ -66,6 +66,9 @@ public class Bug_233939 extends ResourceTest {
 	}
 
 	public void testBug() {
+		if (isRunningOnHudson())
+			return;
+
 		// only activate this test on platforms that support symbolic links
 		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK))
 			return;
@@ -102,6 +105,9 @@ public class Bug_233939 extends ResourceTest {
 	}
 
 	public void testMultipleLinksToFolder() {
+		if (isRunningOnHudson())
+			return;
+
 		// only activate this test on platforms that support symbolic links
 		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK))
 			return;

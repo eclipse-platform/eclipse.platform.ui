@@ -276,6 +276,9 @@ public class ResourceAttributeTest extends ResourceTest {
 	}
 
 	public void testAttributeSymlink() {
+		if (isRunningOnHudson())
+			return;
+
 		// only activate this test on platforms that support it
 		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK))
 			return;
