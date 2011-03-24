@@ -966,7 +966,7 @@ public abstract class ResourceTest extends CoreTest {
 	/**
 	 * Returns true when run on Hudson Win7 at eclipse.org
 	 */
-	protected boolean isRunningOnHudson() {
-		return Boolean.TRUE.toString().equalsIgnoreCase(System.getProperty("hudson"));
+	protected boolean isHudsonOnWin7() {
+		return isWindowsMinVersion(6, 1, 0) && Boolean.TRUE.toString().equalsIgnoreCase(System.getProperty("hudson"));
 	}
 }

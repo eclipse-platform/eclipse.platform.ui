@@ -75,7 +75,7 @@ public class SymlinkResourceTest extends LocalStoreTest {
 	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=232426">bug 232426</a> 
 	 */
 	public void testBug232426() throws Exception {
-		if (isRunningOnHudson())
+		if (isHudsonOnWin7())
 			return;
 
 		/* Only run the test if EFS supports symbolic links on this Platform */

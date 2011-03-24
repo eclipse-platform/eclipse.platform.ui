@@ -276,7 +276,7 @@ public class ResourceAttributeTest extends ResourceTest {
 	}
 
 	public void testAttributeSymlink() {
-		if (isRunningOnHudson())
+		if (isHudsonOnWin7())
 			return;
 
 		// only activate this test on platforms that support it

@@ -66,7 +66,7 @@ public class Bug_233939 extends ResourceTest {
 	}
 
 	public void testBug() {
-		if (isRunningOnHudson())
+		if (isHudsonOnWin7())
 			return;
 
 		// only activate this test on platforms that support symbolic links
@@ -105,7 +105,7 @@ public class Bug_233939 extends ResourceTest {
 	}
 
 	public void testMultipleLinksToFolder() {
-		if (isRunningOnHudson())
+		if (isHudsonOnWin7())
 			return;
 
 		// only activate this test on platforms that support symbolic links
