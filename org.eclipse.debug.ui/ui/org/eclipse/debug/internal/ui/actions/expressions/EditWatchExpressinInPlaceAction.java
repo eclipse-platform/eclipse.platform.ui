@@ -41,7 +41,8 @@ public class EditWatchExpressinInPlaceAction extends Action implements ISelectio
     }
     
     public void selectionChanged(SelectionChangedEvent event) {
-        fEditActionDelegate.selectionChanged(this, event.getSelection());
+        IStructuredSelection selelection = fEditActionDelegate.getCurrentSelection();
+        setEnabled(selelection.size() == 1);
     }
 
     public void dispose() {
@@ -55,25 +56,30 @@ public class EditWatchExpressinInPlaceAction extends Action implements ISelectio
             return;
         }
 
+
         // Always edit multi-line expressions in dialog.  Otherwise try to find the expression 
         // column and activate cell editor there.
-        IWatchExpression[] expressions = fEditActionDelegate.getSelectedExpressions();
-        int expressionColumn = -1;
-        if (expressions[0].getExpressionText().indexOf('\n') == -1) {
-            Object[] columnProperties = fViewer.getColumnProperties();
-            for (int i = 0; i < columnProperties.length; i++) {
-                if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnProperties[i])) {
-                    expressionColumn = i;
-                    break;
-                }
-            }
-        }
-        if (expressionColumn != -1) {
+        int expressionColumn = getExpressionColumnIndex();
+        if (expressionColumn != -1 || isWatchExpressionWithNewLine()) {
             fViewer.editElement(selelection.getFirstElement(), expressionColumn);
         } else {
             fEditActionDelegate.run(this);
         }
     }
     
+    private boolean isWatchExpressionWithNewLine() {
+        IWatchExpression[] expressions = fEditActionDelegate.getSelectedExpressions();
+        return expressions.length == 1 && 
+            expressions[0].getExpressionText().indexOf('\n') == -1;
+    }
     
+    private int getExpressionColumnIndex() {
+        Object[] columnProperties = fViewer.getColumnProperties();
+        for (int i = 0; i < columnProperties.length; i++) {
+            if (VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnProperties[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }
