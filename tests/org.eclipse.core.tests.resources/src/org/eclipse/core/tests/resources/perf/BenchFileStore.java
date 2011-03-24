@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2007 IBM Corporation and others.
+ *  Copyright (c) 2005, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -77,12 +77,14 @@ public class BenchFileStore extends ResourceTest {
 	}
 
 	public void testStoreIsReadOnly() {
-		new StoreTestRunner() {
+		StoreTestRunner storeTestRunner = new StoreTestRunner() {
 			protected void test() {
 				existingStore.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 				nonexistingStore.fetchInfo().getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 			}
-		}.run(this, REPEATS, LOOP_SIZE);
+		};
+		storeTestRunner.setRegressionReason("Performance slowed down because new functionality was added in Windows filessytem natives (see Bug 318170).");
+		storeTestRunner.run(this, REPEATS, LOOP_SIZE);
 	}
 
 	public void testStoreLastModified() {
