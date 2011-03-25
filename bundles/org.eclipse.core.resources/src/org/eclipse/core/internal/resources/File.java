@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -92,16 +93,6 @@ public class File extends Resource implements IFile {
 			workspace.createResource(result, false);
 		}
 		return result;
-	}
-
-	/**
-	 * Checks that this resource is synchronized with the local file system.
-	 */
-	private void checkSynchronized() throws CoreException {
-		if (!isSynchronized(IResource.DEPTH_ZERO)) {
-			String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, getFullPath());
-			throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, getFullPath(), message, null);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -252,7 +243,7 @@ public class File extends Resource implements IFile {
 		if (charset != null || !checkImplicit)
 			return charset;
 		// tries to obtain a description for the file contents
-		IContentDescription description = workspace.getContentDescriptionManager().getDescriptionFor(this, info);
+		IContentDescription description = workspace.getContentDescriptionManager().getDescriptionFor(this, info, true);
 		if (description != null) {
 			String contentCharset = description.getCharset();
 			if (contentCharset != null)
@@ -270,16 +261,21 @@ public class File extends Resource implements IFile {
 		ResourceInfo info = getResourceInfo(false, false);
 		int flags = getFlags(info);
 		checkAccessible(flags);
-		checkSynchronized();
 		checkLocal(flags, DEPTH_ZERO);
-		return workspace.getContentDescriptionManager().getDescriptionFor(this, info);
+		boolean isSynchronized = isSynchronized(IResource.DEPTH_ZERO);
+		// Throw an exception if out-of-sync and not auto-refresh enabled
+		if (!isSynchronized && !getLocalManager().isLightweightAutoRefreshEnabled()) {
+			String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, getFullPath());
+			throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, getFullPath(), message, null);
+		}
+		return workspace.getContentDescriptionManager().getDescriptionFor(this, info, isSynchronized);
 	}
 
 	/* (non-Javadoc)
 	 * @see IFile#getContents()
 	 */
 	public InputStream getContents() throws CoreException {
-		return getContents(false);
+		return getContents(getLocalManager().isLightweightAutoRefreshEnabled());
 	}
 
 	/* (non-Javadoc)

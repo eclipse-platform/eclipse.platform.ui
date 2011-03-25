@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.CancelingProgressMonitor;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
@@ -192,7 +193,7 @@ public class IResourceTest extends ResourceTest {
 		}
 		//out of sync
 		IResource[] unsynchronized = buildResources(root, new String[] {"1/2/3/3"});
-		ensureOutOfSync(unsynchronized[0]);
+		ensureOutOfSync((IFile) unsynchronized[0]);
 		unsynchronizedResources.add(unsynchronized[0]);
 
 		//file system only
@@ -424,6 +425,13 @@ public class IResourceTest extends ResourceTest {
 	/**
 	 * Sets up the workspace and file system for this test. */
 	protected void setupBeforeState(IResource receiver, IResource target, int state, int depth, boolean addVerifier) throws CoreException {
+		// Wait for any outstanding refresh to finish
+		try {
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, getMonitor());
+		} catch (InterruptedException e) {
+			fail("interrupted unexpectedly");
+		}
+
 		if (addVerifier) {
 			/* install the verifier */
 			if (verifier == null) {
@@ -466,7 +474,7 @@ public class IResourceTest extends ResourceTest {
 				break;
 			case S_CHANGED :
 				ensureExistsInWorkspace(target, true);
-				ensureOutOfSync(target);
+				touchInFilesystem(target);
 				if (addVerifier) {
 					verifier.reset();
 					// we only get a delta if the receiver of refreshLocal

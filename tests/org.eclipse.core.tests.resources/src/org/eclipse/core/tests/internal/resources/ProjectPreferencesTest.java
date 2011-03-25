@@ -546,18 +546,6 @@ public class ProjectPreferencesTest extends ResourceTest {
 		assertEquals("2.2", value2, node.get(emptyKey, null));
 	}
 
-	private void touchInFilesystem(IFile file) {
-		for (int count = 0; count < 30 && file.isSynchronized(IResource.DEPTH_ZERO); count++) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// ignore
-			}
-			file.getLocation().toFile().setLastModified(System.currentTimeMillis());
-		}
-		assertTrue("File not out of sync: " + file.getLocation().toOSString(), !file.isSynchronized(IResource.DEPTH_ZERO));
-	}
-
 	/*
 	 * Bug 61843 - Saving project preferences failed
 	 * 

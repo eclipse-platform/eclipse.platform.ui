@@ -71,7 +71,7 @@ public abstract class ResourceTest extends CoreTest {
 	 * test is complete
 	 * @see #getTempStore
 	 */
-	private final Set storesToDelete = new HashSet();
+	private final Set<IFileStore> storesToDelete = new HashSet<IFileStore>();
 
 	/**
 	 * Does some garbage collections to free unused resources
@@ -373,7 +373,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	protected void cleanup() throws CoreException {
-		final IFileStore[] toDelete = (IFileStore[]) storesToDelete.toArray(new IFileStore[0]);
+		final IFileStore[] toDelete = storesToDelete.toArray(new IFileStore[0]);
 		storesToDelete.clear();
 		getWorkspace().run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -658,22 +658,36 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Modifies the resource in the file system so that it is out of sync
+	 * Modifies the passed in IFile in the file system so that it is out of sync
 	 * with the workspace.
 	 */
-	public void ensureOutOfSync(final IResource resource) {
-		if (resource.getType() != IResource.FILE)
-			return;
-		IFile file = (IFile) resource;
-		ensureExistsInWorkspace(file, true);
-		while (file.isSynchronized(IResource.DEPTH_ZERO)) {
-			modifyInFileSystem(file);
+	public void ensureOutOfSync(final IFile file) {
+		touchInFilesystem(file);
+		modifyInFileSystem(file);
+		assertTrue("File not out of sync: " + file.getLocation().toOSString(), file.getLocation().toFile().lastModified() != file.getLocalTimeStamp());
+	}
+
+	/**
+	 * Touch (but don't modify) the resource in the filesystem so that it's modification stamp is newer than 
+	 * the cached value in the Workspace. 
+	 */
+	public void touchInFilesystem(IResource resource) {
+		java.io.File osFile = resource.getLocation().toFile();
+		// Ensure the resource exists in the filesystem
+		if (!osFile.exists())
+			ensureExistsInFileSystem(resource);
+		// Manually check that the core.resource time-stamp is out-of-sync
+		// with the java.io.File last modified. #isSynchronized() will schedule
+		// out-of-sync resources for refresh, so we don't use that here.
+		for (int count = 0; count < 30 && osFile.lastModified() == resource.getLocalTimeStamp(); count++) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// ignore
 			}
+			resource.getLocation().toFile().setLastModified(System.currentTimeMillis());
 		}
+		assertTrue("File not out of sync: " + resource.getLocation().toOSString(), osFile.lastModified() != resource.getLocalTimeStamp());
 	}
 
 	private boolean existsInFileSystem(IResource resource) {

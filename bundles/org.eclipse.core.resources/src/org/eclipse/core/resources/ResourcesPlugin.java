@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add PT_FILTER_PROVIDERS
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] add PT_VARIABLE_PROVIDERS
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -280,7 +281,9 @@ public final class ResourcesPlugin extends Plugin {
 
 	/**
 	 * Name of a preference for configuring whether the workspace performs auto-
-	 * refresh.
+	 * refresh.  Auto-refresh installs a file-system listener, or performs
+	 * periodic file-system polling to actively discover changes in the resource
+	 * hierarchy.
 	 * @since 3.0
 	 */
 	public static final String PREF_AUTO_REFRESH = "refresh.enabled"; //$NON-NLS-1$

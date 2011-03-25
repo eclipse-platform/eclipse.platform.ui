@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.refresh;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.core.internal.resources.IManager;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
@@ -27,6 +30,25 @@ import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
  * @since 3.0
  */
 public class RefreshManager implements IRefreshResult, IManager, Preferences.IPropertyChangeListener {
+
+	/**
+	 * Name of a preference for configuring whether out-of-sync resources are automatically
+	 * asynchronously refreshed, when discovered to be out-of-sync by the workspace.
+	 * <p>
+	 * This preference suppresses out-of-sync CoreException for some read methods, including:
+	 * {@link IFile#getContents()} & {@link IFile#getContentDescription()}. 
+	 * </p>
+	 * <p>
+	 * In the future the workspace may enable other lightweight auto-refresh mechanisms when this
+	 * preferece is true. (The existing {@link ResourcesPlugin#PREF_AUTO_REFRESH} will continue
+	 * to enable filesystem hooks and the existing polling based monitor.)
+	 * </p>
+	 * This is a is true by default. Integrators should take care when
+	 * changing this from the default. See the discussion: https://bugs.eclipse.org/303517
+	 * @since 3.7
+	 */
+	public static final String PREF_LIGHTWEIGHT_AUTO_REFRESH = "refresh.lightweight.enabled"; //$NON-NLS-1$
+
 	public static boolean DEBUG = Policy.DEBUG_AUTO_REFRESH;
 	public static final String DEBUG_PREFIX = "Auto-refresh: "; //$NON-NLS-1$
 	MonitorManager monitors;

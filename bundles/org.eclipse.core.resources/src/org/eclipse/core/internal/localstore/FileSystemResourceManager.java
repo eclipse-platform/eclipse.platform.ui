@@ -18,24 +18,28 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.xml.sax.InputSource;
 
 /**
  * Manages the synchronization between the workspace's view and the file system.  
  */
-public class FileSystemResourceManager implements ICoreConstants, IManager {
+public class FileSystemResourceManager implements ICoreConstants, IManager, Preferences.IPropertyChangeListener {
 
 	/**
 	 * The history store is initialized lazily - always use the accessor method
 	 */
 	protected IHistoryStore _historyStore;
 	protected Workspace workspace;
+
+	private volatile boolean lightweightAutoRefreshEnabled;
 
 	public FileSystemResourceManager(Workspace workspace) {
 		this.workspace = workspace;
@@ -122,6 +126,15 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			Policy.log(e);
 		}
 		return results;
+	}
+
+	/**
+	 * Asynchronously auto-refresh the requested resource if {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} is enabled.
+	 * @param target
+	 */
+	private void asyncRefresh(IResource target) {
+		if (lightweightAutoRefreshEnabled)
+			workspace.getRefreshManager().refresh(target);
 	}
 
 	private void findLinkedResourcesPaths(URI inputLocation, final ArrayList<IPath> results) throws CoreException {
@@ -621,10 +634,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return projectInfo.getLocalSyncInfo() == getStore(descriptionFile).fetchInfo().getLastModified();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * Returns true if the given resource is synchronized with the file system
 	 * to the given depth.  Returns false otherwise.
-	 * 
+	 *
+	 * Any discovered out-of-sync resources are scheduled to be brought 
+	 * back in sync, if {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
+	 * enabled.
+	 *
 	 * @see IResource#isSynchronized(int)
 	 */
 	public boolean isSynchronized(IResource target, int depth) {
@@ -661,10 +678,23 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			Policy.log(e);
 			return false;
 		} catch (IsSynchronizedVisitor.ResourceChangedException e) {
+			// Ask refresh manager to bring out-of-sync resource back into sync when convenient
+			asyncRefresh(e.target);
 			//visitor throws an exception if out of sync
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Check whether the preference {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
+	 * enabled.  When this preference is true the Resources plugin automatically refreshes
+	 * resources which are known to be out-of-sync, and may install lightweight filesystem
+	 * notification hooks.
+	 * @return whether this FSRM is automatically refreshing discovered out-of-sync resources
+	 */
+	public boolean isLightweightAutoRefreshEnabled() {
+		return lightweightAutoRefreshEnabled;
 	}
 
 	public void link(Resource target, URI location, IFileInfo fileInfo) throws CoreException {
@@ -716,18 +746,27 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return null;
 	}
 
+	public void propertyChange(PropertyChangeEvent event) {
+		if (RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH.equals(event.getProperty()))
+			lightweightAutoRefreshEnabled = (Boolean)Boolean.valueOf(event.getNewValue().toString());
+	}
+
 	public InputStream read(IFile target, boolean force, IProgressMonitor monitor) throws CoreException {
 		IFileStore store = getStore(target);
-		if (!force) {
-			final IFileInfo fileInfo = store.fetchInfo();
-			if (!fileInfo.exists()) {
+		final IFileInfo fileInfo = store.fetchInfo();
+		if (!fileInfo.exists()) {
+			asyncRefresh(target);
+			if (!force) {
 				String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 			}
-			ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
-			int flags = ((Resource) target).getFlags(info);
-			((Resource) target).checkExists(flags, true);
-			if (fileInfo.getLastModified() != info.getLocalSyncInfo()) {
+		}
+		ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
+		int flags = ((Resource) target).getFlags(info);
+		((Resource) target).checkExists(flags, true);
+		if (fileInfo.getLastModified() != info.getLocalSyncInfo()) {
+			asyncRefresh(target);
+			if (!force) {
 				String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 			}
@@ -894,7 +933,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	/**
-	 * Returns the resource corresponding to the given workspace path.  The 
+	 * Returns the resource corresponding to the given workspace path.  The
 	 * "files" parameter is used for paths of two or more segments.  If true,
 	 * a file is returned, otherwise a folder is returned.  Returns null if files is true
 	 * and the path is not of sufficient length.
@@ -962,10 +1001,13 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	public void shutdown(IProgressMonitor monitor) throws CoreException {
 		if (_historyStore != null)
 			_historyStore.shutdown(monitor);
+		ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(this);
 	}
 
 	public void startup(IProgressMonitor monitor) throws CoreException {
-		//nothing to do
+		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+		preferences.addPropertyChangeListener(this);
+		lightweightAutoRefreshEnabled = preferences.getBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH);
 	}
 
 	/**
@@ -1006,10 +1048,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 					ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 					// test if timestamp is the same since last synchronization
 					if (lastModified != info.getLocalSyncInfo()) {
+						asyncRefresh(target);
 						String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 						throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 					}
 					if (!fileInfo.exists()) {
+						asyncRefresh(target);
 						String message = NLS.bind(Messages.localstore_resourceDoesNotExist, target.getFullPath());
 						throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, target.getFullPath(), message, null);
 					}

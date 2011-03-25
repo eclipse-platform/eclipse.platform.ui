@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2010 IBM Corporation and others.
+ *  Copyright (c) 2004, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
@@ -14,9 +15,12 @@ import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class CharsetTest extends ResourceTest {
@@ -359,10 +363,21 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
-	public void testBug186984() {
+	/**
+	 * Test for getting charset on an IFile:
+	 * #getContentDescription() checks file sync state(), always returning the
+	 * correct content description, whereas getCharset() uses the cached charset if available.
+	 * @throws Exception
+	 */
+	public void testBug186984() throws Exception {
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
 		IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject(getUniqueString());
 		IFile file = project.getFile("file.xml");
+
+		// Test changing content types externally as per bug 186984 Comment 8
+		String ascii = "<?xml version=\"1.0\" encoding=\"ascii\"?>";
+		String utf = "<?xml version=\"1.0\" encoding=\"utf-8\"?>";
 
 		// test if we can get the charset, when the file doesn't exist in a file system
 		try {
@@ -389,21 +404,64 @@ public class CharsetTest extends ResourceTest {
 		} catch (CoreException ex) {
 			fail("3.0");
 		}
-		//getContentDescription checks synchronization state, so it should fail
+
+		// set the content type within the XML file, ensure that #getContentDescription (which respects sync state)
+		// returns the correct value.
+
+		// 1) first set the content type to ascii
+		file.setContents(new ByteArrayInputStream(ascii.getBytes("ascii")), IResource.FORCE, getMonitor());
+		assertTrue("4.0", file.getCharset().equals("ascii"));
+		assertTrue("4.1", file.getContentDescription().getCharset().equals("ascii"));
+
+		// 2) Make out of sync - Methods should still work, giving the previous value
+		touchInFilesystem(file);
+		assertTrue("4.2", file.getCharset().equals("ascii"));
 		try {
-			file.getContentDescription();
-			fail("3.1");
-		} catch (CoreException ex) {
-			assertEquals("3.2", IResourceStatus.OUT_OF_SYNC_LOCAL, ex.getStatus().getCode());
+			file.getContentDescription().getCharset().equals("ascii");
+			assertTrue("4.3", false);
+		} catch (CoreException e) {
+			// expected
 		}
 
-		// test if we can get the charset, when the file is refreshed
-		try {
-			file.refreshLocal(IResource.DEPTH_ZERO, null);
-			file.getCharset(true);
-		} catch (CoreException ex) {
-			fail("4.0");
-		}
+		// As we now know that #getContentDescription correctly checks sync state, just enable LIGHTWEIGHT refresh
+		// for the rest of the test.
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
+		assertTrue("4.4", file.getContentDescription().getCharset().equals("ascii"));
+
+		// getContentDescription will have noticed out-of-sync
+		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, getMonitor());
+		// Prime the cache...
+		assertTrue("4.5", file.getCharset().equals("ascii"));
+
+		// 3) Change the content type of the file under eclipse's feet
+		FileWriter writer = new FileWriter(file.getLocation().toFile());
+		writer.write(utf);
+		writer.close();
+		touchInFilesystem(file);
+		// #getCharset uses the cached value (bug 209167) - doesn't check sync state
+		assertTrue("5.4", file.getCharset().equals("ascii"));
+		// #getContentDescription checks sync and discovers the real content type
+		assertTrue("5.5", file.getContentDescription().getCharset().equals("UTF-8"));
+		// getContentDescription will have noticed out-of-sync
+		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, getMonitor());
+		// #getCharset will now have noticed that the file has changed.
+		assertTrue("5.6", file.getCharset().equals("UTF-8"));
+
+		// 4) Change the content type of the file under eclipse's feet once more (to non-default).
+		writer = new FileWriter(file.getLocation().toFile());
+		writer.write(ascii);
+		writer.close();
+		touchInFilesystem(file);
+		// #getCharset uses the cached value (bug 209167) - doesn't check sync state
+		assertTrue("6.7", file.getCharset().equals("UTF-8"));
+		// #getContentDescription checks sync and discovers the real content type
+		assertTrue("6.8", file.getContentDescription().getCharset().equals("ascii"));
+		// getContentDescription will have noticed out-of-sync
+		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, getMonitor());
+		assertTrue("6.9", file.getCharset().equals("ascii"));
+
+		// And disable lightweight refresh again before we leave
+		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
 	}
 
 	public void testBug207510() {

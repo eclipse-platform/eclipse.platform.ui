@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
+
+import org.eclipse.core.internal.refresh.RefreshManager;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.preferences.*;
@@ -24,6 +27,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	// DEFAULTS
 	public static final boolean PREF_AUTO_REFRESH_DEFAULT = false;
+	public static final boolean PREF_LIGHTWEIGHT_AUTO_REFRESH = false;
 	public static final boolean PREF_DISABLE_LINKING_DEFAULT = false;
 	public static final String PREF_ENCODING_DEFAULT = ""; //$NON-NLS-1$
 	public static final boolean PREF_AUTO_BUILDING_DEFAULT = true;
@@ -46,9 +50,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences node = new DefaultScope().getNode(ResourcesPlugin.PI_RESOURCES);
+		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 		// auto-refresh default
 		node.putBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, PREF_AUTO_REFRESH_DEFAULT);
+		node.putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, PREF_LIGHTWEIGHT_AUTO_REFRESH);
 
 		// linked resources default
 		node.putBoolean(ResourcesPlugin.PREF_DISABLE_LINKING, PREF_DISABLE_LINKING_DEFAULT);

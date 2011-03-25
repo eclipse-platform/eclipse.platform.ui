@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,8 +7,11 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James Blackburn (Broadcom Corp.) - ongoing development
  *******************************************************************************/
 package org.eclipse.core.resources;
+
+import org.eclipse.core.internal.refresh.RefreshManager;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -669,7 +672,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> The workspace is not in sync with the corresponding location
-	 *       in the local file system.</li>
+	 *       in the local file system and {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
+	 *       disabled.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul> 
@@ -681,8 +685,17 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 
 	/**
 	 * Returns an open input stream on the contents of this file.
-	 * This refinement of the corresponding <code>IStorage</code> method 
-	 * returns an open input stream on the contents of this file.
+	 * <p>
+	 * This refinement of the corresponding {@link IStorage} method
+	 * is a convenience method returning an open input stream.  It's equivalent to:
+	 * <pre>
+	 *   getContents(RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH);
+	 * </pre>
+	 * </p>
+	 * <p>
+	 * If lightweight auto-refresh is not enabled this method will throw a CoreException
+	 * when opening out-of-sync resources.
+	 * </p>
 	 * The client is responsible for closing the stream when finished.
 	 *
 	 * @return an input stream containing the contents of the file
@@ -690,8 +703,10 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <ul>
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource is not local.</li>
+	 * <li> The file-system resource is not a file.</li>
 	 * <li> The workspace is not in sync with the corresponding location
-	 *       in the local file system.</li>
+	 *       in the local file system (and {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} 
+	 *       is disabled).</li>
 	 * </ul>
 	 */
 	public InputStream getContents() throws CoreException;
