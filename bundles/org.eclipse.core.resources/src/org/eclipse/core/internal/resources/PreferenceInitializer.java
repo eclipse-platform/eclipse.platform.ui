@@ -27,7 +27,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	// DEFAULTS
 	public static final boolean PREF_AUTO_REFRESH_DEFAULT = false;
-	public static final boolean PREF_LIGHTWEIGHT_AUTO_REFRESH = false;
+	public static final boolean PREF_LIGHTWEIGHT_AUTO_REFRESH_DEFAULT = false;
 	public static final boolean PREF_DISABLE_LINKING_DEFAULT = false;
 	public static final String PREF_ENCODING_DEFAULT = ""; //$NON-NLS-1$
 	public static final boolean PREF_AUTO_BUILDING_DEFAULT = true;
@@ -53,7 +53,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 		// auto-refresh default
 		node.putBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, PREF_AUTO_REFRESH_DEFAULT);
-		node.putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, PREF_LIGHTWEIGHT_AUTO_REFRESH);
+		node.putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, PREF_LIGHTWEIGHT_AUTO_REFRESH_DEFAULT);
 
 		// linked resources default
 		node.putBoolean(ResourcesPlugin.PREF_DISABLE_LINKING, PREF_DISABLE_LINKING_DEFAULT);
