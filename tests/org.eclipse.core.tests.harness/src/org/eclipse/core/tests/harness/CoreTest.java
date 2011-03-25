@@ -325,6 +325,7 @@ public class CoreTest extends TestCase {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			try {
 				Version v = Version.parseVersion(System.getProperty("org.osgi.framework.os.version")); //$NON-NLS-1$ 
+				System.out.println("Windows version: " + Version.parseVersion(System.getProperty("org.osgi.framework.os.version")));
 				return v.compareTo(new Version(major, minor, micro)) >= 0;
 			} catch (IllegalArgumentException e) {
 				/* drop down to returning false */
