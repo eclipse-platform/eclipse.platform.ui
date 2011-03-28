@@ -11,16 +11,18 @@
 
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.ShellActivationListener;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
@@ -31,12 +33,12 @@ import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.widgets.CTabFolder;
-import org.eclipse.e4.ui.widgets.CTabItem;
+import org.eclipse.e4.ui.workbench.IResourceUtilities;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -77,12 +79,21 @@ public class TrimStack {
 	private Menu trimStackMenu;
 
 	/**
-	 * The underlying tab item that has been selected.
+	 * The tool item that the cursor is currently hovering over.
 	 */
-	private CTabItem selectedTabItem;
+	private ToolItem selectedToolItem;
 	private boolean isShowing = false;
 	private MUIElement minimizedElement;
 	private Composite hostPane;
+
+	@Inject
+	@Named("org.eclipse.e4.ui.workbench.IResourceUtilities")
+	private IResourceUtilities<ImageDescriptor> resUtils;
+
+	/**
+	 * A map of created images from a part's icon URI path.
+	 */
+	private Map<String, Image> imageMap = new HashMap<String, Image>();
 
 	ControlListener caResizeListener = new ControlListener() {
 		public void controlResized(ControlEvent e) {
@@ -259,10 +270,7 @@ public class TrimStack {
 				Point point = trimStackTB.getDisplay().map(null, trimStackTB,
 						new Point(event.x, event.y));
 				// get the selected item in question
-				ToolItem item = trimStackTB.getItem(point);
-				if (item != null) {
-					selectedTabItem = (CTabItem) item.getData();
-				}
+				selectedToolItem = trimStackTB.getItem(point);
 			}
 		});
 
@@ -282,6 +290,13 @@ public class TrimStack {
 		});
 
 		updateTrimStackItems();
+	}
+
+	@PreDestroy
+	void destroy() {
+		for (Image image : imageMap.values()) {
+			image.dispose();
+		}
 	}
 
 	/**
@@ -311,6 +326,31 @@ public class TrimStack {
 		return minimizedElement;
 	}
 
+	private String getLabel(MUILabel label) {
+		String string = label.getLabel();
+		return string == null ? "" : string; //$NON-NLS-1$
+	}
+
+	private Image getImage(MUILabel element) {
+		String iconURI = element.getIconURI();
+		if (iconURI != null && iconURI.length() > 0) {
+			Image image = imageMap.get(iconURI);
+			if (image == null) {
+				image = resUtils.imageDescriptorFromURI(URI.createURI(iconURI)).createImage();
+				imageMap.put(iconURI, image);
+			}
+			return image;
+		}
+		return null;
+	}
+
+	private MPart getPart(MStackElement element) {
+		if (element instanceof MPart) {
+			return (MPart) element;
+		}
+		return (MPart) ((MPlaceholder) element).getRef();
+	}
+
 	private void updateTrimStackItems() {
 		// Prevent exceptions on shutdown
 		if (trimStackTB == null || trimStackTB.isDisposed())
@@ -338,11 +378,21 @@ public class TrimStack {
 			}
 		} else if (minimizedElement instanceof MPartStack) {
 			MPartStack theStack = (MPartStack) minimizedElement;
-			CTabFolder ctf = (CTabFolder) theStack.getWidget();
-			if (ctf == null)
+			if (theStack.getWidget() == null) {
 				return;
+			}
 
-			if (ctf.getItemCount() == 0) {
+			// check to see if this stack has any valid elements
+			boolean check = false;
+			for (MStackElement stackElement : theStack.getChildren()) {
+				if (stackElement.isToBeRendered()) {
+					check = true;
+					break;
+				}
+			}
+
+			if (!check) {
+				// doesn't have any children that's showing, place it back in the presentation
 				restoreStack();
 				return;
 			}
@@ -352,17 +402,20 @@ public class TrimStack {
 				trimStackTB.getItem(trimStackTB.getItemCount() - 1).dispose();
 			}
 
-			CTabItem[] items = ctf.getItems();
-			for (CTabItem item : items) {
+			for (MStackElement stackElement : theStack.getChildren()) {
+				if (!stackElement.isToBeRendered()) {
+					continue;
+				}
+
+				MPart part = getPart(stackElement);
 				ToolItem newItem = new ToolItem(trimStackTB, SWT.CHECK);
-				newItem.setData(item);
-				newItem.setImage(item.getImage());
-				newItem.setToolTipText(item.getText());
+				newItem.setData(stackElement);
+				newItem.setImage(getImage(part));
+				newItem.setToolTipText(getLabel(part));
 				newItem.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e) {
 						ToolItem item = (ToolItem) e.widget;
-						CTabItem cti = (CTabItem) item.getData();
-						MUIElement me = (MUIElement) cti.getData(AbstractPartRenderer.OWNING_ME);
+						MUIElement me = (MUIElement) item.getData();
 						if (me instanceof MPlaceholder)
 							me = ((MPlaceholder) me).getRef();
 						boolean show = item.getSelection();
@@ -371,14 +424,7 @@ public class TrimStack {
 					}
 
 					public void widgetDefaultSelected(SelectionEvent e) {
-						ToolItem item = (ToolItem) e.widget;
-						CTabItem cti = (CTabItem) item.getData();
-						MUIElement me = (MUIElement) cti.getData(AbstractPartRenderer.OWNING_ME);
-						if (me instanceof MPlaceholder)
-							me = ((MPlaceholder) me).getRef();
-						boolean show = item.getSelection();
-						partService.activate((MPart) me);
-						showStack(show);
+						widgetSelected(e);
 					}
 				});
 			}
@@ -422,8 +468,7 @@ public class TrimStack {
 		closeItem.setText(WorkbenchMessages.WorkbenchWindow_close);
 		closeItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
-				MUIElement element = (MUIElement) selectedTabItem
-						.getData(AbstractPartRenderer.OWNING_ME);
+				MUIElement element = (MUIElement) selectedToolItem.getData();
 				if (element instanceof MPlaceholder) {
 					element = ((MPlaceholder) element).getRef();
 				}
@@ -532,11 +577,7 @@ public class TrimStack {
 		MStackElement selectedElement = showing ? theStack.getSelectedElement() : null;
 		ToolItem[] items = trimStackTB.getItems();
 		for (ToolItem item : items) {
-			CTabItem cti = (CTabItem) item.getData();
-			if (cti == null || cti.isDisposed())
-				continue;
-
-			item.setSelection(cti.getData(AbstractPartRenderer.OWNING_ME) == selectedElement);
+			item.setSelection(item.getData() == selectedElement);
 		}
 	}
 
