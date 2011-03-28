@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1450,6 +1450,25 @@ public class JobManager implements IJobManager {
 	}
 
 	/**
+	 * Invokes {@link Job#shouldRun()} while guarding against unexpected failures.
+	 */
+	private boolean shouldRun(Job job) {
+		Throwable t;
+		try {
+			return job.shouldRun();
+		} catch (Exception e) {
+			t = e;
+		} catch (LinkageError e) {
+			t = e;
+		} catch (AssertionError e) {
+			t = e;
+		}
+		RuntimeLog.log(new Status(IStatus.ERROR, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, "Error invoking shouldRun() method on: " + job, t)); //$NON-NLS-1$
+		//if the should is unexpectedly failing it is safer not to run it
+		return false;
+	}
+
+	/**
 	 * Returns the next job to be run, or null if no jobs are waiting to run.
 	 * The worker must call endJob when the job is finished running.  
 	 */
@@ -1460,7 +1479,7 @@ public class JobManager implements IJobManager {
 			if (job == null)
 				return null;
 			//must perform this outside sync block because it is third party code
-			boolean shouldRun = job.shouldRun();
+			boolean shouldRun = shouldRun(job);
 			//check for listener veto
 			if (shouldRun)
 				jobListeners.aboutToRun(job);
@@ -1494,7 +1513,7 @@ public class JobManager implements IJobManager {
 
 	}
 
-	/* non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#suspend()
 	 */
 	public final void suspend() {
@@ -1512,7 +1531,7 @@ public class JobManager implements IJobManager {
 		implicitJobs.suspend(rule, monitorFor(monitor));
 	}
 
-	/* non-Javadoc)
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#transferRule()
 	 */
 	public void transferRule(ISchedulingRule rule, Thread destinationThread) {

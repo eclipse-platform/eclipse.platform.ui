@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2003, 2010 IBM Corporation and others.
+ *  Copyright (c) 2003, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -384,6 +384,68 @@ public class JobTest extends AbstractJobTest {
 		assertEquals("1.0", 0, job.getRunCount());
 		assertEquals("1.1", 1, doneCount[0]);
 		assertEquals("1.2", 0, runningCount[0]);
+	}
+
+	/**
+	 * Basic test of {@link Job#shouldRun()}.
+	 */
+	public void testShouldRun() {
+		class ShouldRunJob extends Job {
+			public ShouldRunJob() {
+				super("ShouldRunJob");
+			}
+
+			int runCount = 0;
+
+			protected IStatus run(IProgressMonitor monitor) {
+				++runCount;
+				return Status.OK_STATUS;
+			}
+
+			public boolean shouldRun() {
+				return false;
+			}
+		}
+		ShouldRunJob j = new ShouldRunJob();
+		j.schedule();
+		try {
+			j.join();
+		} catch (InterruptedException e) {
+			fail("0.99", e);
+		}
+
+		//ensure the job never ran
+		assertEquals(0, j.runCount);
+
+	}
+
+	/**
+	 * Test of an ill-behaving {@link Job#shouldRun()}.
+	 */
+	public void testShouldRunFailure() {
+		class ShouldRunJob extends Job {
+			public ShouldRunJob() {
+				super("ShouldRunJob");
+			}
+
+			int runCount = 0;
+
+			protected IStatus run(IProgressMonitor monitor) {
+				++runCount;
+				return Status.OK_STATUS;
+			}
+
+			public boolean shouldRun() {
+				throw new RuntimeException("Exception thrown on purpose as part of a test");
+			}
+		}
+		ShouldRunJob j = new ShouldRunJob();
+		j.schedule();
+		waitForState(j, Job.NONE);
+
+		//ensure the job never ran
+		assertEquals(0, j.runCount);
+
 	}
 
 	/**
