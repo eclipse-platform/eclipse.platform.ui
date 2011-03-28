@@ -61,6 +61,11 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	private String fLastFileName = null;
 	private String fLastTaskName = null;
 	private boolean fBuildFailed = false;
+	/**
+	 * The encoding to use
+	 * @since 3.7
+	 */
+	private String fEncoding;
 
 	/**
 	 * Reads the message stream from the RemoteAntBuildLogger
@@ -79,12 +84,12 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 			try {
 				fServerSocket = new ServerSocket(fServerPort);
 				int socketTimeout = Platform.getPreferencesService().getInt(
-						AntLaunching.getUniqueIdentifier(),	
-						IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
-						20000, null);
+								AntLaunching.getUniqueIdentifier(),
+								IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
+								20000, null);
 				fServerSocket.setSoTimeout(socketTimeout);
 				fSocket = fServerSocket.accept();
-				fBufferedReader = new BufferedReader(new InputStreamReader(fSocket.getInputStream(), "UTF-8")); //$NON-NLS-1$
+				fBufferedReader = new BufferedReader(new InputStreamReader(fSocket.getInputStream(), fEncoding));
 				String message;
 				while (fLaunch != null && fBufferedReader != null && (message = fBufferedReader.readLine()) != null) {
 					receiveMessage(message);
@@ -103,12 +108,29 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		}
 	}
 
-	public RemoteAntBuildListener(ILaunch launch) {
+	/**
+	 * Constructor
+	 * 
+	 * @param launch the backing launch to listen to
+	 * @param encoding the encoding to use for communications
+	 */
+	public RemoteAntBuildListener(ILaunch launch, String encoding) {
 		super();
 		fLaunch = launch;
+		fEncoding = encoding;
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
-
+	
+	/**
+	 * Returns the encoding set on the listener
+	 * 
+	 * @return the encoding set on the listener
+	 * @since 3.7
+	 */
+	protected String getEncoding() {
+		return fEncoding;
+	}
+	
 	/**
 	 * Start listening to an Ant build. Start a server connection that the
 	 * RemoteAntBuildLogger can connect to.
@@ -213,6 +235,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		labelBuff.append("] "); //$NON-NLS-1$
 		labelBuff.append(line);
 		line = labelBuff.toString();
+
 		fLastTaskName = taskName;
 		int locationIndex = msg.indexOf(',', index4 + 1);
 		int finalIndex = locationIndex + 1;
@@ -234,6 +257,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		if (fileName != null) {
 			generateLink(line, fileName, lineNumber, offset, length);
 		}
+
 		StringBuffer fullMessage = new StringBuffer();
 		adornMessage(taskName, line, fullMessage);
 		writeMessage(fullMessage.append(System.getProperty("line.separator")).toString(), priority); //$NON-NLS-1$

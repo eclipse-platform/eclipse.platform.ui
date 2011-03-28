@@ -70,8 +70,14 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		}
 	}	
 	
-	public RemoteAntDebugBuildListener(ILaunch launch) {
-		super(launch);
+	/**
+	 * Constructor
+	 * 
+	 * @param launch the backing launch to listen to
+	 * @param encoding the encoding to use for communications
+	 */
+	public RemoteAntDebugBuildListener(ILaunch launch, String encoding) {
+		super(launch, encoding);
 		//fDebug= true;
 	}
 	
@@ -133,7 +139,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
     		try {
     			fRequestSocket = new Socket("localhost", fRequestPort); //$NON-NLS-1$
     			fRequestWriter = new PrintWriter(fRequestSocket.getOutputStream(), true);
-    			fResponseReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream()));
+    			fResponseReader = new BufferedReader(new InputStreamReader(fRequestSocket.getInputStream(), getEncoding()));
     			
     			fReaderThread= new ReaderThread();
     			fReaderThread.start();
