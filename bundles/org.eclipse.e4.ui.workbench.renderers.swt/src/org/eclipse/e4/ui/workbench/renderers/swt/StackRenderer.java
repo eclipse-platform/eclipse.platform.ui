@@ -571,7 +571,7 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		}
 
-		if (part.getToolbar() != null) {
+		if (part.getToolbar() != null && part.getToolbar().isToBeRendered()) {
 			Control c = (Control) renderer.createGui(part.getToolbar(), ctf,
 					part.getContext());
 			ctf.setTopRight(c, SWT.RIGHT | SWT.WRAP);
@@ -744,7 +744,7 @@ public class StackRenderer extends LazyStackRenderer {
 			return null;
 		}
 		for (MMenu menu : part.getMenus()) {
-			if (menu.getTags().contains(TAG_VIEW_MENU)) {
+			if (menu.getTags().contains(TAG_VIEW_MENU) && menu.isToBeRendered()) {
 				return menu;
 			}
 		}
