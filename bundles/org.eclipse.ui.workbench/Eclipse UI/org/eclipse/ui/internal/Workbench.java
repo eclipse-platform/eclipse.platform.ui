@@ -338,8 +338,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private Display display;
 
 
-	private WorkbenchWindow activatedWindow;
-
 	private EditorHistory editorHistory;
 
 	private boolean runEventLoop = true;
@@ -887,11 +885,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            The window which just closed; should not be <code>null</code>.
 	 */
 	protected void fireWindowClosed(final IWorkbenchWindow window) {
-		if (activatedWindow == window) {
-			// Do not hang onto it so it can be GC'ed
-			activatedWindow = null;
-		}
-
 		Object list[] = getListeners();
 		for (int i = 0; i < list.length; i++) {
 			final IWindowListener l = (IWindowListener) list[i];
@@ -2650,16 +2643,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	public IDecoratorManager getDecoratorManager() {
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
-	}
-
-
-	/*
-	 * Sets the workbench window which was last known being the active one, or
-	 * <code> null </code> .
-	 */
-	/* package */
-	void setActivatedWindow(WorkbenchWindow window) {
-		activatedWindow = window;
 	}
 
 	/**

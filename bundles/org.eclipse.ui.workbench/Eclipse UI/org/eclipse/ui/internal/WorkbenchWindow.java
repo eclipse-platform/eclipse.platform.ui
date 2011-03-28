@@ -116,7 +116,6 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -549,6 +548,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				windowWidgetHandler);
 
 		partService.setPage(page);
+
+		trackShellActivation();
 	}
 
 	private void removeTrimContributions() {
@@ -1703,26 +1704,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	/**
 	 * Hooks a listener to track the activation and deactivation of the window's
-	 * shell. Notifies the active part and editor of the change
+	 * shell.
 	 */
-	void trackShellActivation(Shell shell) {
+	private void trackShellActivation() {
 		getShell().addShellListener(new ShellAdapter() {
 			public void shellActivated(ShellEvent event) {
 				shellActivated = true;
 				serviceLocator.activate();
-				getWorkbenchImpl().setActivatedWindow(WorkbenchWindow.this);
-				WorkbenchPage currentPage = (WorkbenchPage) getActivePage();
-				if (currentPage != null) {
-					IWorkbenchPart part = currentPage.getActivePart();
-					if (part != null) {
-						// PartSite site = (PartSite) part.getSite();
-						// site.getPane().shellActivated();
-					}
-					IEditorPart editor = currentPage.getActiveEditor();
-					if (editor != null) {
-						// PartSite site = (PartSite) editor.getSite();
-						// site.getPane().shellActivated();
-					}
+				if (getActivePage() != null) {
 					getWorkbenchImpl().fireWindowActivated(WorkbenchWindow.this);
 				}
 				liftRestrictions();
@@ -1732,18 +1721,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				shellActivated = false;
 				imposeRestrictions();
 				serviceLocator.deactivate();
-				WorkbenchPage currentPage = (WorkbenchPage) getActivePage();
-				if (currentPage != null) {
-					IWorkbenchPart part = currentPage.getActivePart();
-					if (part != null) {
-						// PartSite site = (PartSite) part.getSite();
-						// site.getPane().shellDeactivated();
-					}
-					IEditorPart editor = currentPage.getActiveEditor();
-					if (editor != null) {
-						// PartSite site = (PartSite) editor.getSite();
-						// site.getPane().shellDeactivated();
-					}
+				if (getActivePage() != null) {
 					getWorkbenchImpl().fireWindowDeactivated(WorkbenchWindow.this);
 				}
 			}
