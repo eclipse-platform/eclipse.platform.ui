@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -49,6 +50,8 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.ide.dialogs.ImportTypeDialog;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
@@ -422,18 +425,25 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 			// if all sources are either links or groups, copy then normally,
 			// don't show the dialog
 			if (!allSourceAreLinksOrVirtualFolders) {
-				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources, target);
-				dialog.setResource(target);
-				if (dialog.open() == Window.OK) {
-					if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)
-						operation.setVirtualFolders(true);
-					if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
-						operation.setCreateLinks(true);
-					if (dialog.getVariable() != null)
-						operation.setRelativeVariable(dialog.getVariable());
+				IPreferenceStore store= IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+				String dndPreference= store.getString(target.isVirtual() ? IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_VIRTUAL_FOLDER_MODE : IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE);
+
+				if (dndPreference.equals(IDEInternalPreferences.IMPORT_FILES_AND_FOLDERS_MODE_PROMPT)) {
+					ImportTypeDialog dialog = new ImportTypeDialog(getShell(), dropAdapter.getCurrentOperation(), sources, target);
+					dialog.setResource(target);
+					if (dialog.open() == Window.OK) {
+						if (dialog.getSelection() == ImportTypeDialog.IMPORT_VIRTUAL_FOLDERS_AND_LINKS)
+							operation.setVirtualFolders(true);
+						if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
+							operation.setCreateLinks(true);
+						if (dialog.getVariable() != null)
+							operation.setRelativeVariable(dialog.getVariable());
+						operation.copyResources(sources, target);
+					} else
+						return problems;
+				}
+				else
 					operation.copyResources(sources, target);
-				} else
-					return problems;
 			} else
 				operation.copyResources(sources, target);
 		}
