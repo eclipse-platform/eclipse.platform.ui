@@ -369,9 +369,7 @@ public class ExtendedMarkersView extends ViewPart {
 			TreeColumn[] columns = tree.getColumns();
 			for (int i = 0; i < columns.length; i++) {
 				if (markerField.equals(columns[i].getData(MARKER_FIELD))) {
-					preferredWidth = Math.max(preferredWidth,
-							columns[i].getWidth());
-					return preferredWidth;
+					return columns[i].getWidth();
 				}
 			}
 		}

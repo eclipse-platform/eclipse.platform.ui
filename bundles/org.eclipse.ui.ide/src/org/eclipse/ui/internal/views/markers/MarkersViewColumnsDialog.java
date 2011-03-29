@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,5 +268,29 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog {
 			this.width = width;
 			visible = false;
 		}
+
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((field == null) ? 0 : field.hashCode());
+			return result;
+		}
+
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			FieldEntry other = (FieldEntry) obj;
+			if (field == null) {
+				if (other.field != null)
+					return false;
+			} else if (!field.equals(other.field))
+				return false;
+			return true;
+		}
+
 	}
 }

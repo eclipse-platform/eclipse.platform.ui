@@ -36,8 +36,12 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -47,7 +51,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
@@ -87,7 +91,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	private Button orButton;
 
 	private Button limitButton;
-	private Spinner limitSpinner;
+	private Text limitText;
 
 	private GroupFilterConfigurationArea scopeArea = new ScopeArea();
 	private ScrolledForm form;
@@ -205,8 +209,8 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		boolean limitsEnabled = generator.isMarkerLimitsEnabled();
 		limitButton.setSelection(limitsEnabled);
 		limitsLabel.setEnabled(limitsEnabled);
-		limitSpinner.setEnabled(limitsEnabled);
-		limitSpinner.setSelection(limits);
+		limitText.setEnabled(limitsEnabled);
+		limitText.setText(Integer.toString(limits));
 		configsTable.getTable().setFocus();
 
 	}
@@ -250,7 +254,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 			public void widgetSelected(SelectionEvent e) {
 				limitsLabel.setEnabled(limitButton.getSelection());
-				limitSpinner.setEnabled(limitButton.getSelection());
+				limitText.setEnabled(limitButton.getSelection());
 			}
 		});
 
@@ -263,14 +267,31 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		limitsLabel = new Label(composite, SWT.NONE);
 		limitsLabel.setText(MarkerMessages.MarkerPreferences_VisibleItems);
 
-		limitSpinner = new Spinner(composite, SWT.BORDER);
-		limitSpinner.setMinimum(1);
-		limitSpinner.setMaximum(Integer.MAX_VALUE);
-		limitSpinner.setIncrement(1);
-		limitSpinner.setPageIncrement(100);
-		GridData spinnerData = new GridData();
-		spinnerData.minimumWidth = convertWidthInCharsToPixels(6);
-		limitSpinner.setLayoutData(spinnerData);
+		limitText = new Text(composite, SWT.BORDER);
+		GridData textData = new GridData();
+		textData.widthHint = convertWidthInCharsToPixels(10);
+		limitText.setLayoutData(textData);
+		limitText.addVerifyListener(new VerifyListener() {
+
+			public void verifyText(VerifyEvent e) {
+				if (e.character != 0 && e.keyCode != SWT.BS
+						&& e.keyCode != SWT.DEL
+						&& !Character.isDigit(e.character)) {
+					e.doit = false;
+				}
+			}
+		});
+
+		limitText.addModifyListener(new ModifyListener() {
+
+			public void modifyText(ModifyEvent e) {
+				try {
+					Integer.parseInt(limitText.getText());
+				} catch (NumberFormatException ex) {
+					// ignore
+				}
+			}
+		});
 
 	}
 
@@ -422,7 +443,9 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		});
 
 		Composite sectionClient = toolkit.createComposite(expandable);
-		sectionClient.setLayout(new GridLayout());
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.verticalSpacing = 3;
+		sectionClient.setLayout(gridLayout);
 		sectionClient.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true,
 				false));
 		sectionClient.setBackground(form.getBackground());
@@ -669,7 +692,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	protected void okPressed() {
 
 		generator.setMarkerLimitsEnabled(limitButton.getSelection());
-		generator.setMarkerLimits(limitSpinner.getSelection());
+		generator.setMarkerLimits(Integer.parseInt(limitText.getText().trim()));
 
 		Iterator filterGroupIterator = filterGroups.iterator();
 		while (filterGroupIterator.hasNext()) {
@@ -707,8 +730,8 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 		limitButton.setSelection(useMarkerLimits);
 		limitsLabel.setEnabled(useMarkerLimits);
-		limitSpinner.setEnabled(useMarkerLimits);
-		limitSpinner.setSelection(markerLimits);
+		limitText.setEnabled(useMarkerLimits);
+		limitText.setText(Integer.toString(markerLimits));
 
 		updateRadioButtonsFromTable();
 	}
