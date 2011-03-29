@@ -168,27 +168,10 @@ public class ToolItemRenderer extends SWTPartRenderer {
 
 	private void setItemText(MToolItem model, ToolItem item) {
 		String text = model.getLocalizedLabel();
-		if (model instanceof MHandledItem) {
-			MHandledItem handledItem = (MHandledItem) model;
-			IEclipseContext context = getContext(model);
-			EBindingService bs = (EBindingService) context
-					.get(EBindingService.class.getName());
-			ParameterizedCommand cmd = handledItem.getWbCommand();
-			if (cmd == null) {
-				cmd = generateParameterizedCommand(handledItem, context);
-			}
-			TriggerSequence sequence = bs.getBestSequenceFor(handledItem
-					.getWbCommand());
-			if (sequence != null) {
-				text = text + '\t' + sequence.format();
-			}
-			item.setText(text);
-		} else {
-			if (text == null) {
-				text = ""; //$NON-NLS-1$
-			}
-			item.setText(text);
+		if (text == null) {
+			text = ""; //$NON-NLS-1$
 		}
+		item.setText(text);
 	}
 
 	private String getToolTipText(MItem item) {
