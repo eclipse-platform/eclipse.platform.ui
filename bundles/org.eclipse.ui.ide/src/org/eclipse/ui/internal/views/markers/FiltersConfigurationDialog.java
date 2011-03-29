@@ -288,7 +288,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 				try {
 					Integer.parseInt(limitText.getText());
 				} catch (NumberFormatException ex) {
-					// ignore
+					limitText.setText(Integer.toString(generator.getMarkerLimits()));
 				}
 			}
 		});
