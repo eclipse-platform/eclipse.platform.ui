@@ -1842,9 +1842,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	public void showHeapStatus(boolean show) {
 		MUIElement hsElement = modelService.find(
 				"org.eclipse.ui.HeapStatus", modelService.getTrim(model, SideValue.BOTTOM)); //$NON-NLS-1$
-		if (hsElement != null)
+		if (hsElement != null && hsElement.isToBeRendered() != show) {
 			hsElement.setToBeRendered(show);
-		getShell().layout(null, SWT.ALL | SWT.CHANGED | SWT.DEFER);
+			getShell().layout(null, SWT.ALL | SWT.CHANGED | SWT.DEFER);
+		}
 	}
 
 	/**
