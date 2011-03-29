@@ -103,6 +103,7 @@ public class E4Application implements IApplication {
 
 	private IModelResourceHandler handler;
 	private Display display = null;
+	private E4Workbench workbench = null;
 
 	public static final String THEME_ID = "cssTheme";
 
@@ -284,8 +285,7 @@ public class E4Application implements IApplication {
 
 		// Instantiate the Workbench (which is responsible for
 		// 'running' the UI (if any)...
-		E4Workbench workbench = new E4Workbench(appModel, appContext);
-		return workbench;
+		return workbench = new E4Workbench(appModel, appContext);
 	}
 
 	private MApplication loadApplicationModel(IApplicationContext appContext,
@@ -428,6 +428,9 @@ public class E4Application implements IApplication {
 	}
 
 	public void stop() {
+		if (workbench != null) {
+			workbench.close();
+		}
 	}
 
 	// FIXME We should have one place to setup the generic context stuff (see
