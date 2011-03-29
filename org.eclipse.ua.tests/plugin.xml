@@ -272,6 +272,10 @@
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
             id="org.eclipse.ua.tests.intro.static">
       </intro>
+      <introProductBinding
+            introId="org.eclipse.ua.tests.intro.static"
+            productId="org.eclipse.ua.tests.testproduct">
+      </introProductBinding>
    </extension>   
    <extension
          point="org.eclipse.ui.intro.config">
