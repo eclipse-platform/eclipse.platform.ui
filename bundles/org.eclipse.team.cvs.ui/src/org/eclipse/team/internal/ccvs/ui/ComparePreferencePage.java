@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,7 @@ package org.eclipse.team.internal.ccvs.ui;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.IPreferencePageContainer;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ui.SWTUtils;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -46,13 +43,7 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 		        ICVSUIConstants.PREF_CONSIDER_CONTENTS, 
 				CVSUIMessages.ComparePreferencePage_4,  
 				BooleanFieldEditor.DEFAULT, 
-				getFieldEditorParent()) {
-            protected Button getChangeControl(Composite parent) {
-                Button button = super.getChangeControl(parent);
-                PlatformUI.getWorkbench().getHelpSystem().setHelp(button, IHelpContextIds.PREF_CONSIDER_CONTENT);
-                return button;
-            }
-		});
+ getFieldEditorParent()));
 		addField(new BooleanFieldEditor(
 		        ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG, 
 		        CVSUIMessages.ComparePreferencePage_3,  
