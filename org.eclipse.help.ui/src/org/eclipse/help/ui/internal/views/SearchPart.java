@@ -340,7 +340,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	private void createRemoteStatusLink(FormToolkit toolkit){
 		TableWrapData td;
 		
-		
 		Image warningImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
 		
 		remoteStatusLink = toolkit.createImageHyperlink(container, SWT.NULL);
@@ -352,17 +351,21 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 				doRemoteStatus();
 			}
 		});
-		
 
-		if (wasHelpUnavailable = RemoteStatusData.isAnyRemoteHelpUnavailable())
-			remoteStatusLink.setVisible(true);
-		else
-			remoteStatusLink.setVisible(false);
-		
 		td = new TableWrapData();
 		td.colspan = 2;
 		td.align = TableWrapData.FILL;
 		remoteStatusLink.setLayoutData(td);
+
+		if (wasHelpUnavailable = RemoteStatusData.isAnyRemoteHelpUnavailable())
+		{
+			remoteStatusLink.setVisible(true);
+		}
+		else
+		{
+			remoteStatusLink.dispose();
+		}
+		
 	}	
 	
 	private void createAlternateQueriesSection(FormToolkit toolkit){
@@ -787,7 +790,10 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			doSearch(searchWordCombo.getText());
 		}
 		
-		remoteStatusLink.setVisible(RemoteStatusData.isAnyRemoteHelpUnavailable());
+		if(RemoteStatusData.isAnyRemoteHelpUnavailable())
+			createRemoteStatusLink(toolkit);
+		else
+			remoteStatusLink.dispose();
 	}
 
 	public String getId() {
