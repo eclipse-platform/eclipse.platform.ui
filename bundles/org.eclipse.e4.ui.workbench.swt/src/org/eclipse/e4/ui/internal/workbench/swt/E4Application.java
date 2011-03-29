@@ -23,6 +23,7 @@ import java.util.Properties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
@@ -116,6 +117,14 @@ public class E4Application implements IApplication {
 
 	public Object start(IApplicationContext applicationContext)
 			throws Exception {
+		// set the display name before the Display is
+		// created to ensure the app name is used in any
+		// platform menus, etc. See
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=329456#c14
+		IProduct product = Platform.getProduct();
+		if (product.getName() != null) {
+			Display.setAppName(product.getName());
+		}
 		Display display = getApplicationDisplay();
 		E4Workbench workbench = createE4Workbench(applicationContext, display);
 
