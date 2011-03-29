@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -981,6 +981,32 @@ public class ESelectionServiceTest extends TestCase {
 				@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Target selection) {
 			this.selection = selection;
 		}
+	}
+
+	public void testBug341273() throws Exception {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		InjectPart inject = new InjectPart();
+		ProviderPart p = new ProviderPart();
+
+		ContextInjectionFactory.inject(p, window.getContext());
+		ContextInjectionFactory.inject(inject, window.getContext());
+
+		assertNull(p.input);
+
+		Object selection = new Target("");
+		p.setSelection(selection);
+		assertEquals(selection, inject.selection);
+
+		p.setSelection(null);
+		assertNull(inject.selection);
 	}
 
 	public void testInjection() {

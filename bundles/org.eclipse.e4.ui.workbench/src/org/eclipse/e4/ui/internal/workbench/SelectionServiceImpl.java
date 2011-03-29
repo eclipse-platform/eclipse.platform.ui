@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -250,13 +250,13 @@ public class SelectionServiceImpl implements ESelectionService {
 		if (selection != null) {
 			context.set(OUT_SELECTION, selection);
 
-			if (activePart != null && activePart.getContext() == context) {
+			if (isMasterService() || (activePart != null && activePart.getContext() == context)) {
 				serviceRoot.getContext().set(IServiceConstants.ACTIVE_SELECTION, selection);
 			}
 		} else {
 			context.remove(OUT_SELECTION);
 
-			if (activePart != null && activePart.getContext() == context) {
+			if (isMasterService() || (activePart != null && activePart.getContext() == context)) {
 				serviceRoot.getContext().remove(IServiceConstants.ACTIVE_SELECTION);
 			}
 		}
