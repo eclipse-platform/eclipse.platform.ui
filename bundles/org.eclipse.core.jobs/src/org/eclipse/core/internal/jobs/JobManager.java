@@ -1460,9 +1460,9 @@ public class JobManager implements IJobManager {
 			t = e;
 		} catch (LinkageError e) {
 			t = e;
-		} /*catch (AssertionError e) {
+		} catch (AssertionError e) {
 			t = e;
-			}*/
+		}
 		RuntimeLog.log(new Status(IStatus.ERROR, JobManager.PI_JOBS, JobManager.PLUGIN_ERROR, "Error invoking shouldRun() method on: " + job, t)); //$NON-NLS-1$
 		//if the should is unexpectedly failing it is safer not to run it
 		return false;
