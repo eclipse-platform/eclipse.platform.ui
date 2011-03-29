@@ -75,13 +75,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			new ElementTreeIterator(workspace.getElementTree(), getFullPath()).iterate(elementVisitor);
 		} catch (WrappedRuntimeException e) {
 			throw (CoreException) e.getTargetException();
-		} catch (OperationCanceledException e) {
-			throw e;
-		} catch (RuntimeException e) {
-			String msg = Messages.resources_errorVisiting;
-			IResourceStatus errorStatus = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), msg, e);
-			Policy.log(errorStatus);
-			throw new ResourceException(errorStatus);
 		} finally {
 			proxy.requestor = null;
 			proxy.info = null;
