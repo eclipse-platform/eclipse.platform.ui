@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -229,7 +229,7 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	
 	/**
 	 * Prime the remote tree with the sync info from the local workspace.
-	 * This is done to ensure that we don't get a huge nimber of outgoing
+	 * This is done to ensure that we don't get a huge number of outgoing
 	 * changes before the first refresh.
 	 *
 	 */
