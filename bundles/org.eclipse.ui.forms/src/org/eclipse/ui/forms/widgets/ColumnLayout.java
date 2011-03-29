@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.ui.internal.forms.widgets.ColumnLayoutUtils;
 /**
  * This layout manager arranges children of the composite parent in vertical
  * columns. All the columns are identical size and children are stretched
@@ -112,9 +113,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 			ncolumns = Math.max(ncolumns, minNumColumns);
 			ncolumns = Math.min(ncolumns, maxNumColumns);
 		}
-		int perColHeight = cheight / ncolumns;
-		if (cheight % ncolumns != 0)
-			perColHeight++;
+		int perColHeight = ColumnLayoutUtils.computeColumnHeight(ncolumns, sizes, cheight, verticalSpacing);
 		int colHeight = 0;
 		int[] heights = new int[ncolumns];
 		int ncol = 0;
@@ -196,11 +195,9 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 //			childrenPerColumn++;
 //		int colWidth = 0;
 
-		int fillWidth = Math.max(cwidth, realWidth);
-		
-		int perColHeight = cheight / ncolumns;
-		if (cheight % ncolumns != 0)
-			perColHeight++;
+		int fillWidth = Math.max(cwidth, realWidth);	
+		int perColHeight = ColumnLayoutUtils.computeColumnHeight(ncolumns, sizes, cheight, verticalSpacing);
+
 		
 		int colHeight = 0;
 		int[] heights = new int[ncolumns];
