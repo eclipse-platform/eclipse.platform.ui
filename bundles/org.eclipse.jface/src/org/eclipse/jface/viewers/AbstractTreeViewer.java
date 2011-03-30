@@ -1412,6 +1412,41 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 	
 	/**
+	 * Asserts that the given array of elements is itself non- <code>null</code>
+	 * and contains no <code>null</code> elements.
+	 * 
+	 * @param parent
+	 *            the parent element
+	 * @param elements
+	 *            the array to check
+	 * 
+	 * @see #assertElementsNotNull(Object[])
+	 */
+	private void assertElementsNotNull(Object parent, Object[] elements) {
+		Assert.isNotNull(elements);
+		for (int i = 0, n = elements.length; i < n; ++i) {
+			Assert.isNotNull(elements[i]);
+		}
+		
+		if (InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS
+				&& elements.length > 1) {
+			CustomHashtable elementSet = newHashtable(elements.length * 2);
+			for (int i = 0; i < elements.length; i++) {
+				Object element = elements[i];
+				Object old = elementSet.put(element, element);
+				if (old != null) {
+					String message = "Sibling elements in viewer must not be equal:\n  " //$NON-NLS-1$
+							+ old + ",\n  " + element + ",\n  parent: " + parent; //$NON-NLS-1$ //$NON-NLS-2$
+					Policy.getLog().log(
+							new Status(IStatus.WARNING, Policy.JFACE, message,
+									new RuntimeException()));
+					return;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Returns all selected items for the given SWT control.
 	 *
 	 * @param control
