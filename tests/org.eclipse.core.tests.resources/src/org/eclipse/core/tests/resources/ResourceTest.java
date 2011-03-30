@@ -662,8 +662,8 @@ public abstract class ResourceTest extends CoreTest {
 	 * with the workspace.
 	 */
 	public void ensureOutOfSync(final IFile file) {
-		touchInFilesystem(file);
 		modifyInFileSystem(file);
+		touchInFilesystem(file);
 		assertTrue("File not out of sync: " + file.getLocation().toOSString(), file.getLocation().toFile().lastModified() != file.getLocalTimeStamp());
 	}
 
