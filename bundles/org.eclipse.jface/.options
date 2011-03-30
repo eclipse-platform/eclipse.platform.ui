@@ -9,6 +9,9 @@ org.eclipse.jface/debug/dialog/noparent=false
 # Always log reentrant calls to viewers (if set to false, it just logs the first reentrant call)
 org.eclipse.jface/debug/viewers/reentrantViewerCalls=false
 
+# Log illegal equal elements in a viewer
+org.eclipse.jface/debug/viewers/equalElements=false
+
 # Show the jface new look for the preferences dialog
 org.eclipse.jface/newlook/preferences/showNewLook=false
 

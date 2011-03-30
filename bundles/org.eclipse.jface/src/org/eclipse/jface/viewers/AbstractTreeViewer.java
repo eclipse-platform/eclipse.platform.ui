@@ -23,6 +23,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.internal.InternalPolicy;
+import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,11 +40,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * Abstract base implementation for tree-structure-oriented viewers (trees and
@@ -1349,12 +1351,14 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					}
 					Object[] result = tpcp.getChildren(path);
 					if (result != null) {
+						assertElementsNotNull(parent, result);
 						return result;
 					}
 				} else if (cp instanceof ITreeContentProvider) {
 					ITreeContentProvider tcp = (ITreeContentProvider) cp;
 					Object[] result = tcp.getChildren(parent);
 					if (result != null) {
+						assertElementsNotNull(parent, result);
 						return result;
 					}
 				}
@@ -1365,6 +1369,41 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 	}
 
+	/**
+	 * Asserts that the given array of elements is itself non- <code>null</code>
+	 * and contains no <code>null</code> elements.
+	 * 
+	 * @param parent
+	 *            the parent element
+	 * @param elements
+	 *            the array to check
+	 * 
+	 * @see #assertElementsNotNull(Object[])
+	 */
+	private void assertElementsNotNull(Object parent, Object[] elements) {
+		Assert.isNotNull(elements);
+		for (int i = 0, n = elements.length; i < n; ++i) {
+			Assert.isNotNull(elements[i]);
+		}
+		
+		if (InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS
+				&& elements.length > 1) {
+			CustomHashtable elementSet = newHashtable(elements.length * 2);
+			for (int i = 0; i < elements.length; i++) {
+				Object element = elements[i];
+				Object old = elementSet.put(element, element);
+				if (old != null) {
+					String message = "Sibling elements in viewer must not be equal:\n  " //$NON-NLS-1$
+							+ old + ",\n  " + element + ",\n  parent: " + parent; //$NON-NLS-1$ //$NON-NLS-2$
+					Policy.getLog().log(
+							new Status(IStatus.WARNING, Policy.JFACE, message,
+									new RuntimeException()));
+					return;
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Returns all selected items for the given SWT control.
 	 *

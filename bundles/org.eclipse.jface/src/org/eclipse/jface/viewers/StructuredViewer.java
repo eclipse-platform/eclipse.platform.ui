@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableTreeItem;
@@ -593,6 +597,23 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		Assert.isNotNull(elements);
 		for (int i = 0, n = elements.length; i < n; ++i) {
 			Assert.isNotNull(elements[i]);
+		}
+		
+		if (InternalPolicy.DEBUG_LOG_EQUAL_VIEWER_ELEMENTS
+				&& elements.length > 1) {
+			CustomHashtable elementSet = newHashtable(elements.length * 2);
+			for (int i = 0; i < elements.length; i++) {
+				Object element = elements[i];
+				Object old = elementSet.put(element, element);
+				if (old != null) {
+					String message = "Sibling elements in viewer must not be equal:\n  " //$NON-NLS-1$
+							+ old + ",\n  " + element; //$NON-NLS-1$
+					Policy.getLog().log(
+							new Status(IStatus.WARNING, Policy.JFACE, message,
+									new RuntimeException()));
+					return;
+				}
+			}
 		}
 	}
 

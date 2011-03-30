@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,13 @@ public class InternalPolicy {
 	 * @since 3.3
 	 */
 	public static boolean DEBUG_LOG_REENTRANT_VIEWER_CALLS = false;
+	
+	/**
+	 * (NON-API) A flag to indicate whether illegal equal elements in a viewer should be logged.
+	 * 
+	 * @since 3.7
+	 */
+	public static boolean DEBUG_LOG_EQUAL_VIEWER_ELEMENTS= false;
 
 	/**
 	 * (NON-API) A flag to indicate whether label provider changed notifications
