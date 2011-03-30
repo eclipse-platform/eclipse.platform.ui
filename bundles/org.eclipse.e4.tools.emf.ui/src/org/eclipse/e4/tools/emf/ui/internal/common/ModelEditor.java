@@ -281,6 +281,10 @@ public class ModelEditor {
 
 	private Listener keyListener;
 
+	private CTabFolder editorTabFolder;
+
+	private SourceViewer sourceViewer;
+
 	public ModelEditor(Composite composite, IEclipseContext context, IModelResource modelProvider, IProject project, final IResourcePool resourcePool) {
 		this.resourcePool = resourcePool;
 		this.modelProvider = modelProvider;
@@ -338,28 +342,28 @@ public class ModelEditor {
 
 		fragment = modelProvider.getRoot().get(0) instanceof MModelFragments;
 
-		final CTabFolder folder = new CTabFolder(composite, SWT.BOTTOM);
-		CTabItem item = new CTabItem(folder, SWT.NONE);
+		editorTabFolder = new CTabFolder(composite, SWT.BOTTOM);
+		CTabItem item = new CTabItem(editorTabFolder, SWT.NONE);
 		item.setText(messages.ModelEditor_Form);
-		item.setControl(createFormTab(folder));
+		item.setControl(createFormTab(editorTabFolder));
 		item.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_application_form));
 
 		emfDocumentProvider = new EMFDocumentResourceMediator(modelProvider);
 
-		item = new CTabItem(folder, SWT.NONE);
+		item = new CTabItem(editorTabFolder, SWT.NONE);
 		item.setText(messages.ModelEditor_XMI);
-		item.setControl(createXMITab(folder));
+		item.setControl(createXMITab(editorTabFolder));
 		item.setImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_chart_organisation));
-		folder.addSelectionListener(new SelectionAdapter() {
+		editorTabFolder.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (folder.getSelectionIndex() == 1) {
+				if (editorTabFolder.getSelectionIndex() == 1) {
 					emfDocumentProvider.updateFromEMF();
 				}
 			}
 		});
 
-		folder.setSelection(0);
+		editorTabFolder.setSelection(0);
 	}
 
 	private void findAndHighlight(Control control) {
@@ -399,16 +403,16 @@ public class ModelEditor {
 		final AnnotationModel model = new AnnotationModel();
 		VerticalRuler verticalRuler = new VerticalRuler(VERTICAL_RULER_WIDTH, new AnnotationAccess(resourcePool));
 		int styles = SWT.V_SCROLL | SWT.H_SCROLL | SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION;
-		SourceViewer viewer = new SourceViewer(composite, verticalRuler, styles);
-		viewer.configure(new XMLConfiguration(resourcePool));
-		viewer.setEditable(project != null);
-		viewer.getTextWidget().setFont(JFaceResources.getTextFont());
+		sourceViewer = new SourceViewer(composite, verticalRuler, styles);
+		sourceViewer.configure(new XMLConfiguration(resourcePool));
+		sourceViewer.setEditable(project != null);
+		sourceViewer.getTextWidget().setFont(JFaceResources.getTextFont());
 
 		final IDocument document = emfDocumentProvider.getDocument();
 		IDocumentPartitioner partitioner = new FastPartitioner(new XMLPartitionScanner(), new String[] { XMLPartitionScanner.XML_TAG, XMLPartitionScanner.XML_COMMENT });
 		partitioner.connect(document);
 		document.setDocumentPartitioner(partitioner);
-		viewer.setDocument(document);
+		sourceViewer.setDocument(document);
 		verticalRuler.setModel(model);
 
 		emfDocumentProvider.setValidationChangedCallback(new Runnable() {
@@ -431,7 +435,7 @@ public class ModelEditor {
 			}
 		});
 
-		return viewer.getControl();
+		return sourceViewer.getControl();
 	}
 
 	private Composite createFormTab(Composite composite) {
@@ -1049,10 +1053,14 @@ public class ModelEditor {
 	class ClipboardHandler implements Handler {
 
 		public void paste() {
-			if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
-				handleStructurePaste();
-			} else if (currentEditor != null) {
-				currentEditor.handlePaste();
+			if (editorTabFolder.getSelectionIndex() == 0) {
+				if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
+					handleStructurePaste();
+				} else if (currentEditor != null) {
+					currentEditor.handlePaste();
+				}
+			} else {
+				sourceViewer.getTextWidget().paste();
 			}
 		}
 
@@ -1114,10 +1122,14 @@ public class ModelEditor {
 		}
 
 		public void copy() {
-			if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
-				handleStructureCopy();
-			} else if (currentEditor != null) {
-				currentEditor.handleCopy();
+			if (editorTabFolder.getSelectionIndex() == 0) {
+				if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
+					handleStructureCopy();
+				} else if (currentEditor != null) {
+					currentEditor.handleCopy();
+				}
+			} else {
+				sourceViewer.getTextWidget().copy();
 			}
 		}
 
@@ -1131,10 +1143,14 @@ public class ModelEditor {
 		}
 
 		public void cut() {
-			if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
-				handleStructureCut();
-			} else if (currentEditor != null) {
-				currentEditor.handleCut();
+			if (editorTabFolder.getSelectionIndex() == 0) {
+				if (viewer.getControl().getDisplay().getFocusControl() == viewer.getControl()) {
+					handleStructureCut();
+				} else if (currentEditor != null) {
+					currentEditor.handleCut();
+				}
+			} else {
+				sourceViewer.getTextWidget().cut();
 			}
 		}
 
