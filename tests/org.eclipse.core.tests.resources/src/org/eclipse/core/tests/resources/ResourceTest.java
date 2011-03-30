@@ -984,6 +984,7 @@ public abstract class ResourceTest extends CoreTest {
 		boolean isWindows7 = isWindowsMinVersion(6, 1, 0);
 		String hudsonProp = System.getProperty("hudson");
 		System.out.println("Windows 7: " + isWindows7 + ", Hudson prop: " + hudsonProp);
-		return isWindows7 && Boolean.TRUE.toString().equalsIgnoreCase(hudsonProp);
+		// The check against Hudson is disabled temporarily, see Bug 341334
+		return isWindows7 /*&& Boolean.TRUE.toString().equalsIgnoreCase(hudsonProp)*/;
 	}
 }
