@@ -56,6 +56,11 @@ public class ListViewerRefreshTest extends TestCase {
 		shell.layout();
 		shell.open();
 	}
+	
+	protected void tearDown() throws Exception {
+		shell.dispose();
+		shell = null;
+	}
 
 	/**
 	 * Asserts the ability to refresh without a selection and preserve the
