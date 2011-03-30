@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class Messages extends NLS {
 	public static String RemoteSyncElement_auto;
 
 	public static String Team_Error_loading_ignore_state_from_disk_1;
+	public static String Team_Conflict_occured_for_ignored_resources_pattern;
 
 	public static String RemoteContentsCache_cacheDisposed;
 	public static String RemoteContentsCache_fileError;

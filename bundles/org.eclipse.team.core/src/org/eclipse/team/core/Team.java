@@ -18,6 +18,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.importing.provisional.IBundleImporter;
 import org.eclipse.team.core.mapping.IStorageMerger;
 import org.eclipse.team.internal.core.*;
@@ -295,16 +296,65 @@ public final class Team {
 								// Check for selected because this used to be the field name
 								selected = configElements[j].getAttribute("selected"); //$NON-NLS-1$
 							}
-							boolean enabled = selected != null && selected.equalsIgnoreCase("true"); //$NON-NLS-1$
-							pIgnore.put(pattern, Boolean.valueOf(enabled)); 
-							if (!gIgnore.containsKey(pattern)){
-								gIgnore.put(pattern, Boolean.valueOf(enabled));
+							boolean enabled = selected != null
+									&& selected.equalsIgnoreCase("true"); //$NON-NLS-1$
+							if (!pIgnore.containsKey(pattern)) {
+								pIgnore.put(pattern, Boolean.valueOf(enabled));
+							} else if (!Boolean.valueOf(enabled).equals(
+									pIgnore.get(pattern))) {
+								if(TeamPlugin.getPlugin().isDebugging()){
+									TeamPlugin
+											.log(IStatus.WARNING,
+													NLS.bind(
+															Messages.Team_Conflict_occured_for_ignored_resources_pattern,
+															new Object[] {
+																	pattern,
+																	collectContributingExtentionsToDisplay(
+																			pattern,
+																			extensions) }),
+													null);
+								}
+								// if another plug-in already added this pattern
+								// change the value only to disabled
+								if (!enabled) {
+									pIgnore.put(pattern,
+											Boolean.FALSE.toString());
+								}
 							}
 						}
 					}
 				}
-			}		
+
+				Iterator it = pIgnore.keySet().iterator();
+				while (it.hasNext()) {
+					Object pattern = it.next();
+					if (!gIgnore.containsKey(pattern)) {
+						gIgnore.put(pattern, pIgnore.get(pattern));
+					}
+				}
+			}
 		}
+	}
+
+	private static String collectContributingExtentionsToDisplay(
+			String patternToFind, IExtension[] extensions) {
+		StringBuffer sb = new StringBuffer();
+		boolean isFirst = true;
+		for (int i = 0; i < extensions.length; i++) {
+			IConfigurationElement[] configElements = extensions[i]
+					.getConfigurationElements();
+			for (int j = 0; j < configElements.length; j++) {
+				if (patternToFind.equals(configElements[j]
+						.getAttribute("pattern"))) { //$NON-NLS-1$
+					if (!isFirst) {
+						sb.append(", "); //$NON-NLS-1$
+					}
+					isFirst = false;
+					sb.append(extensions[i].getContributor().getName());
+				}
+			}
+		}
+		return sb.toString();
 	}
 
 	/*
