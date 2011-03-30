@@ -83,7 +83,7 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 				String cName = new String(simpleTypeName);
 				String pName = new String(packageName);
 //				String label = cName + " - " + pName; //$NON-NLS-1$
-				String content = pName + "." + cName; //$NON-NLS-1$
+				String content = pName.length() == 0 ? cName : pName + "." + cName; //$NON-NLS-1$
 				
 //				System.err.println("Found: " + label + " => " + pName + " => " + path);
 				
