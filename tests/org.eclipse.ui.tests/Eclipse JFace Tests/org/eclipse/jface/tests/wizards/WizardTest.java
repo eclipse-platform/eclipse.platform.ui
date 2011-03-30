@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 public class WizardTest extends TestCase {
 	/**
@@ -224,10 +225,7 @@ public class WizardTest extends TestCase {
 	
 	
 	public void testWizardDispose() {
-		wizard = new TheTestWizard();
 		wizard.setThrowExceptionOnDispose(true);
-        dialog = new TheTestWizardDialog(null, wizard);
-        dialog.create();
 
 		final boolean logged[] = new boolean[1];
 		Policy.setLog(new ILogger() {
@@ -235,16 +233,15 @@ public class WizardTest extends TestCase {
 				logged[0] = true;
 			}
 		});
+		Shell shell = dialog.getShell();
 		dialog.close();
         
         assertTrue(logged[0]);
-
+        
+        shell.dispose();
 	}
 	
 	public void testWizardPageDispose() {
-		wizard = new TheTestWizard();
-        dialog = new TheTestWizardDialog(null, wizard);
-        dialog.create();
         wizard.page2.setThrowExceptionOnDispose(true);
         final boolean logged[] = new boolean[1];
 		Policy.setLog(new ILogger() {
