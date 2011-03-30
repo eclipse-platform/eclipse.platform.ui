@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2010 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -706,7 +706,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 	int internalGetMinimumWidth(Composite parent, boolean changed) {
 		if (changed)
 			//calculateMinimumColumnWidths(parent, true);
-			calculateColumnWidths(parent, minColumnWidths, false, true);
+			calculateColumnWidths(parent, minColumnWidths, false, true, makeColumnsEqualWidth);
 		int minimumWidth = 0;
 		widestColumnWidth = 0;
 		if (makeColumnsEqualWidth) {
@@ -731,7 +731,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 	int internalGetMaximumWidth(Composite parent, boolean changed) {
 		if (changed)
 			//calculateMaximumColumnWidths(parent, true);
-			calculateColumnWidths(parent, maxColumnWidths, true, true);
+			calculateColumnWidths(parent, maxColumnWidths, true, true, makeColumnsEqualWidth);
 		int maximumWidth = 0;
 		for (int i = 0; i < numColumns; i++) {
 			if (i > 0)
@@ -756,8 +756,9 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		}
 	}
 	
-	void calculateColumnWidths(Composite parent, int [] columnWidths, boolean max, boolean changed) {
+	void calculateColumnWidths(Composite parent, int [] columnWidths, boolean max, boolean changed, boolean makeColumnsEqualWidth2) {
 		boolean secondPassNeeded=false;
+		int widestColumnWidth = 0;
 		for (int i = 0; i < grid.size(); i++) {
 			TableWrapData[] row = (TableWrapData[]) grid.elementAt(i);
 			for (int j = 0; j < numColumns; j++) {
@@ -781,6 +782,12 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 
 				width += td.indent;
 				columnWidths[j] = Math.max(columnWidths[j], width);
+				widestColumnWidth = Math.max(widestColumnWidth, columnWidths[j]);
+			}
+		}
+		if (makeColumnsEqualWidth) {
+			for (int i = 0; i < numColumns; i++) {
+				columnWidths[i] = widestColumnWidth;
 			}
 		}
 		if (!secondPassNeeded) return;
