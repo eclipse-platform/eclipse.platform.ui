@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionEvent;
@@ -36,6 +33,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+
+import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * Abstract base implementation for tree-structure-oriented viewers (trees and
@@ -2621,7 +2623,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			int i = 0;
 			while (numItemsToDispose > 0 && i < items.length) {
 				Object data = items[i].getData();
-				if (data == null || items.length - i <= numItemsToDispose || !children.containsKey(data)) {
+				if (data == null || !children.containsKey(data)) {
 					if (data != null) {
 						disassociate(items[i]);
 					}

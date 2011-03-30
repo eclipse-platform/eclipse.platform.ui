@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,9 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -19,12 +22,13 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeNode;
+import org.eclipse.jface.viewers.TreeNodeContentProvider;
 import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 
 /**
  * @since 3.2
@@ -106,15 +110,17 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		treeViewer.refresh();
 		treeViewer.removeSelectionChangedListener(listener);
 	}
-	
+
 	public void testBug184712() {
 		class TableAndTreeLabelProvider extends LabelProvider implements ITableLabelProvider {
 			public Image getColumnImage(Object element, int columnIndex) {
 				return null;
 			}
+
 			public String getColumnText(Object element, int columnIndex) {
 				return "wrong";
 			}
+
 			public String getText(Object element) {
 				return "right";
 			}
@@ -122,4 +128,30 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		treeViewer.setLabelProvider(new TableAndTreeLabelProvider());
 		assertEquals("right", treeViewer.getTree().getItem(0).getText());
 	}
+
+	public void test327004() {
+		treeViewer.setInput(null);
+		treeViewer.setContentProvider(new TreeNodeContentProvider());
+
+		final TreeNode[] children= new TreeNode[5];
+		children[0]= new TreeNode("0");
+		children[1]= new TreeNode("1");
+		children[2]= new TreeNode("1");
+		children[3]= new TreeNode("1");
+		children[4]= new TreeNode("1");
+		treeViewer.setInput(children);
+
+		ViewerFilter filter= new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if (element == children[0] || element == children[1] || element == children[2] || element == children[4])
+					return false;
+				return true;
+			}
+		};
+		treeViewer.setFilters(new ViewerFilter[] { filter });
+		int i= treeViewer.getTree().getItemCount();
+
+		assertEquals(4, i); // 4 because the filter doesn't work due to equal nodes
+	}
+
 }
