@@ -41,7 +41,7 @@
          <enablement>
 	  	  <with variable="affectedNatures">
 	  	    <iterate operator="or">
-	  	      <equals value="org.eclipse.jdt.core.javanature"/>
+	  	      <equals value="org.eclipse.pde.PluginNature"/>
 	  	    </iterate>
 	  	  </with>
 	  	  <with variable="element">
@@ -49,6 +49,24 @@
 	  	  </with>
 	  	</enablement>
       </renameParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.ltk.core.refactoring.moveParticipants">
+      <moveParticipant
+            class="org.eclipse.e4.tools.emf.editor3x.ClassMoveParticipant"
+            id="org.eclipse.e4.tools.emf.editor3x.moveParticipant"
+            name="Workbench Model Contribution Participant">
+         <enablement>
+	  	  <with variable="affectedNatures">
+	  	    <iterate operator="or">
+	  	      <equals value="org.eclipse.pde.PluginNature"/>
+	  	    </iterate>
+	  	  </with>
+	  	  <with variable="element">
+		  	 <instanceof value="org.eclipse.jdt.core.IType"/>
+	  	  </with>
+	  	</enablement>
+      </moveParticipant>
    </extension>
 
 </plugin>
