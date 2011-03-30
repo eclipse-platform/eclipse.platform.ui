@@ -36,8 +36,6 @@ public class PDEClassContributionProvider implements IClassContributionProvider 
 	
 	@SuppressWarnings("restriction")
 	public void findContribution(final Filter filter,  final ContributionResultHandler handler) {
-		System.err.println("Searching for: " + filter.namePattern);
-		
 		IJavaSearchScope scope = PDEJavaHelper.getSearchScope(filter.project);
 		
 		char[] packageName = null;
