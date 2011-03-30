@@ -96,7 +96,7 @@ public class PlaceholderEditor extends AbstractComponentEditor {
 					b.append(" (" + label.getTooltip() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					if (pl.getRef().getElementId() != null && pl.getRef().getElementId().trim().length() > 0) {
-						b.append(pl.getRef().getElementId());
+						b.append(" (" + pl.getRef().getElementId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 			} else {
