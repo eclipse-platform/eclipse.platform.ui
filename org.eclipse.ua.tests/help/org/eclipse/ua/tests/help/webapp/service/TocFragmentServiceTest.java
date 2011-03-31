@@ -75,7 +75,7 @@ public class TocFragmentServiceTest extends TestCase {
 		assertEquals(1, results.length);
 	}
 	
-	public void testReadEnToc() throws Exception {
+	public void testTocFragmentServiceReadEnToc() throws Exception {
 		int uaSearch = findUATopicIndex("search", "en");
 		assertTrue(uaSearch >= 0);
 		int port = WebappManager.getPort();
@@ -111,7 +111,7 @@ public class TocFragmentServiceTest extends TestCase {
 		return index;
 	}	
 	
-	public void testReadDeToc() throws Exception {
+	public void testTocFragmentServiceReadDeToc() throws Exception {
 		int helpMode = BaseHelpSystem.getMode();
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		int uaSearch = findUATopicIndex("search", "de");
@@ -181,9 +181,11 @@ public class TocFragmentServiceTest extends TestCase {
 		assertEquals("URL: \"" + uri + "\" is ", "valid", result);
 	}
 	
+	/*
 	public void testTocFragmentServiceJSONSchema() 
 			throws Exception {
-//		fail("Not yet implemented.");
+		fail("Not yet implemented.");
 	}
+	*/
 
 }
