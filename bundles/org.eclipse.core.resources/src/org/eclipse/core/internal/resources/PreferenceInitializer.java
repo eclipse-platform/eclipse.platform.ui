@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.refresh.RefreshManager;
-
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.preferences.*;
 
@@ -53,7 +51,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IEclipsePreferences node = DefaultScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
 		// auto-refresh default
 		node.putBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, PREF_AUTO_REFRESH_DEFAULT);
-		node.putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, PREF_LIGHTWEIGHT_AUTO_REFRESH_DEFAULT);
+		node.putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, PREF_LIGHTWEIGHT_AUTO_REFRESH_DEFAULT);
 
 		// linked resources default
 		node.putBoolean(ResourcesPlugin.PREF_DISABLE_LINKING, PREF_DISABLE_LINKING_DEFAULT);

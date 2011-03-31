@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.internal.refresh.RefreshManager;
-
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URI;
@@ -672,7 +670,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
 	 * <li> The workspace is not in sync with the corresponding location
-	 *       in the local file system and {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
+	 *       in the local file system and {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
 	 *       disabled.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
@@ -705,7 +703,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <li> This resource is not local.</li>
 	 * <li> The file-system resource is not a file.</li>
 	 * <li> The workspace is not in sync with the corresponding location
-	 *       in the local file system (and {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} 
+	 *       in the local file system (and {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} 
 	 *       is disabled).</li>
 	 * </ul>
 	 */

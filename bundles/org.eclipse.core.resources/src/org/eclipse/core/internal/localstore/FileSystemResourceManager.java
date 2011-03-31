@@ -18,7 +18,6 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.internal.utils.*;
@@ -129,7 +128,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	}
 
 	/**
-	 * Asynchronously auto-refresh the requested resource if {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} is enabled.
+	 * Asynchronously auto-refresh the requested resource if {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is enabled.
 	 * @param target
 	 */
 	private void asyncRefresh(IResource target) {
@@ -639,7 +638,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * to the given depth.  Returns false otherwise.
 	 *
 	 * Any discovered out-of-sync resources are scheduled to be brought 
-	 * back in sync, if {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
+	 * back in sync, if {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
 	 * enabled.
 	 *
 	 * @see IResource#isSynchronized(int)
@@ -687,7 +686,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	}
 
 	/**
-	 * Check whether the preference {@link RefreshManager#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
+	 * Check whether the preference {@link ResourcesPlugin#PREF_LIGHTWEIGHT_AUTO_REFRESH} is
 	 * enabled.  When this preference is true the Resources plugin automatically refreshes
 	 * resources which are known to be out-of-sync, and may install lightweight filesystem
 	 * notification hooks.
@@ -747,7 +746,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
-		if (RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH.equals(event.getProperty()))
+		if (ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH.equals(event.getProperty()))
 			lightweightAutoRefreshEnabled = (Boolean)Boolean.valueOf(event.getNewValue().toString());
 	}
 
@@ -1007,7 +1006,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	public void startup(IProgressMonitor monitor) throws CoreException {
 		Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 		preferences.addPropertyChangeListener(this);
-		lightweightAutoRefreshEnabled = preferences.getBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH);
+		lightweightAutoRefreshEnabled = preferences.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
 	}
 
 	/**

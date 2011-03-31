@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -41,13 +40,13 @@ public class Bug_303517 extends ResourceTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		super.setUp();
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
 	}
 
 	/**

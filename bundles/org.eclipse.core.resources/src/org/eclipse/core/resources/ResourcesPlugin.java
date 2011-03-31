@@ -289,6 +289,23 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PREF_AUTO_REFRESH = "refresh.enabled"; //$NON-NLS-1$
 
 	/**
+	 * Name of a preference for configuring whether out-of-sync resources are automatically
+	 * asynchronously refreshed, when discovered to be out-of-sync by the workspace.
+	 * <p>
+	 * This preference suppresses out-of-sync CoreException for some read methods, including:
+	 * {@link IFile#getContents()} & {@link IFile#getContentDescription()}. 
+	 * </p>
+	 * <p>
+	 * In the future the workspace may enable other lightweight auto-refresh mechanisms when this
+	 * preference is true. (The existing {@link ResourcesPlugin#PREF_AUTO_REFRESH} will continue
+	 * to enable filesystem hooks and the existing polling based monitor.)
+	 * </p>
+	 * See the discussion: https://bugs.eclipse.org/303517
+	 * @since 3.7
+	 */
+	public static final String PREF_LIGHTWEIGHT_AUTO_REFRESH = "refresh.lightweight.enabled"; //$NON-NLS-1$
+
+	/**
 	 * Name of a preference for configuring whether encodings for derived
 	 * resources within the project should be stored in a separate derived
 	 * preference file.

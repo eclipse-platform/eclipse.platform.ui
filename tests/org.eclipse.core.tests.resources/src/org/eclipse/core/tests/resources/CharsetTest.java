@@ -15,7 +15,7 @@ import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.internal.refresh.RefreshManager;
+import org.eclipse.core.internal.resources.PreferenceInitializer;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
@@ -370,7 +370,8 @@ public class CharsetTest extends ResourceTest {
 	 * @throws Exception
 	 */
 	public void testBug186984() throws Exception {
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
+		final boolean current_lightweight_refresh = InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, PreferenceInitializer.PREF_LIGHTWEIGHT_AUTO_REFRESH_DEFAULT);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
 		IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject(getUniqueString());
 		IFile file = project.getFile("file.xml");
@@ -425,7 +426,7 @@ public class CharsetTest extends ResourceTest {
 
 		// As we now know that #getContentDescription correctly checks sync state, just enable LIGHTWEIGHT refresh
 		// for the rest of the test.
-		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, true);
 		assertTrue("4.4", file.getContentDescription().getCharset().equals("ascii"));
 
 		// getContentDescription will have noticed out-of-sync
@@ -460,8 +461,8 @@ public class CharsetTest extends ResourceTest {
 		Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, getMonitor());
 		assertTrue("6.9", file.getCharset().equals("ascii"));
 
-		// And disable lightweight refresh again before we leave
-		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(RefreshManager.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);
+		// Restore the lightweight refresh preference before we leave
+		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, current_lightweight_refresh);
 	}
 
 	public void testBug207510() {
