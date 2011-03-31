@@ -1,6 +1,6 @@
 # Debugging options for the org.eclipse.jface plugin.
 
-# Turn on debugging for the org.eclipse.ui plugin.
+# Turn on debugging for the org.eclipse.jface plugin.
 org.eclipse.jface/debug=false
 
 # Log a message if a dialog is opened without a parent
