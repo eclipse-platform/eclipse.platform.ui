@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -532,6 +532,9 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 			if (oldSelectionProvider instanceof IPostSelectionProvider) {
 				((IPostSelectionProvider) oldSelectionProvider)
 						.removePostSelectionChangedListener(getPostSelectionChangedListener());
+			} else {
+				oldSelectionProvider
+						.removeSelectionChangedListener(getPostSelectionChangedListener());
 			}
 		}
 		if (selectionProvider != null) {
@@ -540,6 +543,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 			if (selectionProvider instanceof IPostSelectionProvider) {
 				((IPostSelectionProvider) selectionProvider)
 						.addPostSelectionChangedListener(getPostSelectionChangedListener());
+			} else {
+				selectionProvider.addSelectionChangedListener(getPostSelectionChangedListener());
 			}
 		}
 	}

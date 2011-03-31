@@ -741,6 +741,11 @@
             id="org.eclipse.ui.tests.multipageeditor.MultiVariablePageEditor"
             name="Multi Variable Page Editor"/>
       <editor
+            class="org.eclipse.ui.tests.multipageeditor.MultiPageResourceEditor"
+            icon="icons/mockeditorpart1.gif"
+            id="org.eclipse.ui.tests.multipageeditor.MultiPageResourceEditor"
+            name="Multi Page Resource Editor"/>
+      <editor
             class="org.eclipse.ui.tests.manual.TestBackgroundSaveEditor"
             default="false"
             extensions="background"
