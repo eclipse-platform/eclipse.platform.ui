@@ -27,6 +27,10 @@ org.eclipse.ui/debug/workingSets=false
 # Enable the trace of SWT graphics.
 org.eclipse.ui/trace/graphics=false
 
+#enable tracing of perspective debugging code
+org.eclipse.ui/trace/perspectives=false
+
+
 ## Note that logging of all performance events are controlled by a central flag
 ## Turn this flag on to enable tracking of performance events
 ## org.eclipse.core.runtime/perf=true

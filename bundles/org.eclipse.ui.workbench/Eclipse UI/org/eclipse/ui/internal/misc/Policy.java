@@ -34,6 +34,8 @@ public class Policy {
 
     public static boolean DEBUG_DRAG_DROP = DEFAULT;
 
+	public static boolean DEBUG_PERSPECTIVES = DEFAULT;
+
     /**
      * Flag to log stale jobs
      */
@@ -165,6 +167,7 @@ public class Policy {
         if (getDebugOption("/debug")) { //$NON-NLS-1$
 			DEBUG_UI_GLOBAL = true;
             DEBUG_SWT_GRAPHICS = getDebugOption("/trace/graphics"); //$NON-NLS-1$
+			DEBUG_PERSPECTIVES = getDebugOption("/trace/perspectives"); //$NON-NLS-1$
             DEBUG_SWT_DEBUG = getDebugOption("/debug/swtdebug"); //$NON-NLS-1$
             DEBUG_SWT_DEBUG_GLOBAL = getDebugOption("/debug/swtdebugglobal"); //$NON-NLS-1$
             DEBUG_DRAG_DROP = getDebugOption("/trace/dragDrop"); //$NON-NLS-1$

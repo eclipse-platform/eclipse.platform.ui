@@ -38,6 +38,7 @@ import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StringMatcher;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
@@ -374,20 +375,25 @@ public class PerspectiveHelper {
                         ILayoutContainer parentContainer = containerPlaceholder
                                 .getContainer();
 						if (parentContainer == null) {
-							WorkbenchPlugin.log("Previous ContainerPlaceholder for " + tmpViewId, //$NON-NLS-1$
-									tmpStackTrace);
-							tmpViewId = null;
-							tmpStackTrace = new Exception();
-							tmpStackTrace.fillInStackTrace();
-							WorkbenchPlugin.log(
-									"Current ContainerPlaceholder with null parent for " //$NON-NLS-1$
-											+ primaryId + ":" + secondaryId, tmpStackTrace); //$NON-NLS-1$
-							tmpStackTrace = null;
+							if (Policy.DEBUG_PERSPECTIVES) {
+								WorkbenchPlugin.log(
+										"Previous ContainerPlaceholder for " + tmpViewId, //$NON-NLS-1$
+										tmpStackTrace);
+								tmpViewId = null;
+								tmpStackTrace = new Exception();
+								tmpStackTrace.fillInStackTrace();
+								WorkbenchPlugin.log(
+										"Current ContainerPlaceholder with null parent for " //$NON-NLS-1$
+												+ primaryId + ":" + secondaryId, tmpStackTrace); //$NON-NLS-1$
+								tmpStackTrace = null;
+							}
 							return;
 						}
-						tmpViewId = primaryId + ":" + secondaryId; //$NON-NLS-1$
-						tmpStackTrace = new Exception();
-						tmpStackTrace.fillInStackTrace();
+						if (Policy.DEBUG_PERSPECTIVES) {
+							tmpViewId = primaryId + ":" + secondaryId; //$NON-NLS-1$
+							tmpStackTrace = new Exception();
+							tmpStackTrace.fillInStackTrace();
+						}
                         container = (ILayoutContainer) containerPlaceholder
                                 .getRealContainer();
                         if (container instanceof LayoutPart) {
