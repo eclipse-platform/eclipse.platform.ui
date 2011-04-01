@@ -275,7 +275,17 @@ public class ScopeSetDialog extends TrayDialog  {
     
 	private void enableTable() {
 		if (viewer != null) {
-		    viewer.getTable().setEnabled(showSelectedRadio.getSelection());
+		    boolean showSelected = showSelectedRadio.getSelection();
+			viewer.getTable().setEnabled(showSelected);
+		    viewer.refresh();
+		    // Ensure that a scope is selected unless there are no 
+		    // user defined scopes
+		    if (showSelected && viewer.getSelection().isEmpty()) {
+		    	Object firstElement = viewer.getElementAt(0);
+		    	if ( firstElement != null ) {
+		    		viewer.setSelection(new StructuredSelection(firstElement));
+		    	}
+		    }
 		}
 	}
     
@@ -347,6 +357,7 @@ public class ScopeSetDialog extends TrayDialog  {
 		switch (buttonId) {
 		case NEW_ID:
 			doNew();
+			doEdit();
 			break;
 		case EDIT_ID:
 			doEdit();
@@ -369,6 +380,7 @@ public class ScopeSetDialog extends TrayDialog  {
 			scheduleOperation(new AddOperation(newSet));
 			sets.add(newSet);
 			viewer.refresh();
+			viewer.setSelection(new StructuredSelection(newSet));
 			updateButtons();
 		}
 	}
