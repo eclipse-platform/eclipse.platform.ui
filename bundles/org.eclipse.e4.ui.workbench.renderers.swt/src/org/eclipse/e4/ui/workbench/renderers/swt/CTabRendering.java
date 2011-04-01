@@ -795,6 +795,11 @@ public class CTabRendering extends CTabFolderRenderer {
 		return kernel;
 	}
 
+	public Rectangle getPadding() {
+		return new Rectangle(paddingTop, paddingRight, paddingBottom,
+				paddingLeft);
+	}
+
 	public void setPadding(int paddingLeft, int paddingRight, int paddingTop,
 			int paddingBottom) {
 		this.paddingLeft = paddingLeft;
