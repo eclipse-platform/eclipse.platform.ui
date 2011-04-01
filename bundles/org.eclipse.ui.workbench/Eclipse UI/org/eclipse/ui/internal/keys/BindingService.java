@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.keys;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.Binding;
@@ -24,12 +27,17 @@ import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard.KeyDownFilter;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * <p>
@@ -61,6 +69,8 @@ public final class BindingService implements IBindingService {
 	private WorkbenchKeyboard keyboard;
 
 	private IWorkbench workbench;
+
+	private Listener backForwardListener;
 
 	/**
 	 * Constructs a new instance of <code>BindingService</code> using a JFace
@@ -101,6 +111,40 @@ public final class BindingService implements IBindingService {
 		// Initialize the key formatter.
 		KeyFormatterFactory.setDefault(SWTKeySupport
 				.getKeyFormatterForPlatform());
+
+		// Hook up the back/forward mouse buttons / special keys.
+		backForwardListener = new Listener() {
+			public void handleEvent(Event event) {
+				String commandId;
+				switch (event.button) {
+				case 4:
+					commandId = IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY;
+					break;
+				case 5:
+					commandId = IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY;
+					break;
+				default:
+					return;
+				}
+
+				final IHandlerService handlerService = (IHandlerService) workbench
+						.getService(IHandlerService.class);
+
+				try {
+					handlerService.executeCommand(commandId, event);
+					event.doit = false;
+				} catch (NotDefinedException e) {
+					// regular condition; do nothing
+				} catch (NotEnabledException e) {
+					// regular condition; do nothing
+				} catch (NotHandledException e) {
+					// regular condition; do nothing
+				} catch (ExecutionException ex) {
+					StatusUtil.handleStatus(ex, StatusManager.SHOW | StatusManager.LOG);
+				}
+			}
+		};
+		display.addFilter(SWT.MouseDown, backForwardListener);
 	}
 
 	/**
@@ -127,10 +171,12 @@ public final class BindingService implements IBindingService {
 		if (display != null) {
 			display.removeFilter(SWT.KeyDown, listener);
 			display.removeFilter(SWT.Traverse, listener);
+			display.removeFilter(SWT.MouseDown, backForwardListener);
 		}
 		workbench = null;
 		keyboard = null;
 		bindingPersistence.dispose();
+		backForwardListener = null;
 	}
 
 	public final TriggerSequence[] getActiveBindingsFor(
