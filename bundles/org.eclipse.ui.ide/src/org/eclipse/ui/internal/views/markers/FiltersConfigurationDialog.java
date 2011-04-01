@@ -259,7 +259,9 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		});
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = 0;
+		composite.setLayout(layout);
 		GridData compositeData = new GridData(GridData.FILL_HORIZONTAL);
 		compositeData.horizontalIndent = 20;
 		composite.setLayoutData(compositeData);
