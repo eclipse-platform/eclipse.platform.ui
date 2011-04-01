@@ -16,7 +16,6 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -167,9 +166,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
     private boolean queueEvents = false;
 
-    private static DisposeListener prematureDisposeListener = new DisposeListener() {
+	private DisposeListener prematureDisposeListener = new DisposeListener() {
         public void widgetDisposed(DisposeEvent e) {
-            WorkbenchPlugin.log(new RuntimeException("Widget disposed too early!")); //$NON-NLS-1$
+			WorkbenchPlugin.log(new RuntimeException("Widget disposed too early for part " //$NON-NLS-1$
+					+ getId()));
         }    
     };
     
