@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -36,8 +35,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -149,12 +146,8 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			detailsLabel.setText(IDEWorkbenchMessages.DeleteResourceAction_deleteContentsDetails);
 			detailsLabel.setFont(parent.getFont());
 			// indent the explanatory label
-			GC gc = new GC(detailsLabel);
-			gc.setFont(detailsLabel.getParent().getFont());
-			FontMetrics fontMetrics = gc.getFontMetrics();
-			gc.dispose();
 			GridData data = new GridData();
-			data.horizontalIndent = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.INDENT);
+			data.horizontalIndent = IDialogConstants.INDENT;
 			detailsLabel.setLayoutData(data);
 			// add a listener so that clicking on the label selects the
 			// corresponding radio button.
