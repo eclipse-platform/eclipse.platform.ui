@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Nikolay Botev - bug 240651
+ *     Markus Schorn - Bug 341327
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -19,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
@@ -359,7 +359,10 @@ public class EditorManager implements IExtensionChangeHandler {
 		actionBars.removeRef();
 		if (actionBars.getRef() <= 0) {
 			String type = actionBars.getEditorType();
-			actionCache.remove(type);
+			Object obj = actionCache.get(type);
+			if (actionBars == obj) {
+				actionCache.remove(type);
+			}
 			// refresh the cool bar manager before disposing of a cool item
 			ICoolBarManager2 coolBar = (ICoolBarManager2) window.getCoolBarManager2();
             if (coolBar != null) {
