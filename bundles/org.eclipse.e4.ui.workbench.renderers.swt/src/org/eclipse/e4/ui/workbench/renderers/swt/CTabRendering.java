@@ -60,6 +60,8 @@ public class CTabRendering extends CTabFolderRenderer {
 	Color selectedTabFillColor;
 	Color tabOutlineColor;
 
+	int paddingLeft = 0, paddingRight = 0, paddingTop = 0, paddingBottom = 0;
+
 	@Inject
 	public CTabRendering(CTabFolder parent) {
 		super(parent);
@@ -76,25 +78,42 @@ public class CTabRendering extends CTabFolderRenderer {
 		int sideDropWidth = shadowEnabled ? SIDE_DROP_WIDTH : 0;
 		switch (part) {
 		case PART_BODY:
-			x = x - marginWidth - OUTER_KEYLINE - INNER_KEYLINE - sideDropWidth
-					- (cornerSize / 2);
-			width = width + 2 * OUTER_KEYLINE + 2 * INNER_KEYLINE + 2
-					* marginWidth + 2 * sideDropWidth + cornerSize;
-			int tabHeight = parent.getTabHeight() + 1; // TODO: Figure out what
-														// to do about the +1
-			// TODO: Fix
-			if (parent.getMinimized()) {
-				y = /* parent.onBottom ? y - borderTop : */y - tabHeight
-						- borderTop - 5;
-				height = borderTop + borderBottom + tabHeight;
+			if (state == SWT.FILL) {
+				x = -1 - paddingLeft;
+				int tabHeight = parent.getTabHeight() + 1;
+				y = y - paddingTop - marginHeight - tabHeight - borderTop
+						- (cornerSize / 4);
+				width = 2 + paddingLeft + paddingRight;
+				height += paddingTop + paddingBottom;
+				height += tabHeight + (cornerSize / 4) + borderBottom
+						+ borderTop;
 			} else {
-				// y = tabFolder.onBottom ? y - marginHeight - highlight_margin
-				// - borderTop: y - marginHeight - highlight_header - tabHeight
-				// - borderTop;
-				y = y - marginHeight - tabHeight - borderTop - (cornerSize / 4);
-				height = height + borderBottom + borderTop + 2 * marginHeight
-						+ tabHeight + cornerSize / 2 + cornerSize / 4
-						+ (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
+				x = x - marginWidth - OUTER_KEYLINE - INNER_KEYLINE
+						- sideDropWidth - (cornerSize / 2);
+				width = width + 2 * OUTER_KEYLINE + 2 * INNER_KEYLINE + 2
+						* marginWidth + 2 * sideDropWidth + cornerSize;
+				int tabHeight = parent.getTabHeight() + 1; // TODO: Figure out
+															// what
+															// to do about the
+															// +1
+				// TODO: Fix
+				if (parent.getMinimized()) {
+					y = /* parent.onBottom ? y - borderTop : */y - tabHeight
+							- borderTop - 5;
+					height = borderTop + borderBottom + tabHeight;
+				} else {
+					// y = tabFolder.onBottom ? y - marginHeight -
+					// highlight_margin
+					// - borderTop: y - marginHeight - highlight_header -
+					// tabHeight
+					// - borderTop;
+					y = y - marginHeight - tabHeight - borderTop
+							- (cornerSize / 4);
+					height = height + borderBottom + borderTop + 2
+							* marginHeight + tabHeight + cornerSize / 2
+							+ cornerSize / 4
+							+ (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
+				}
 			}
 			break;
 		case PART_HEADER:
@@ -122,6 +141,8 @@ public class CTabRendering extends CTabFolderRenderer {
 	}
 
 	protected Point computeSize(int part, int state, GC gc, int wHint, int hHint) {
+		wHint += paddingLeft + paddingRight;
+		hHint += paddingTop + paddingBottom;
 		if (0 <= part && part < parent.getItemCount()) {
 			gc.setAdvanced(true);
 			Point result = super.computeSize(part, state, gc, wHint, hHint);
@@ -772,6 +793,15 @@ public class CTabRendering extends CTabFolderRenderer {
 			kernel[i] /= total;
 		}
 		return kernel;
+	}
+
+	public void setPadding(int paddingLeft, int paddingRight, int paddingTop,
+			int paddingBottom) {
+		this.paddingLeft = paddingLeft;
+		this.paddingRight = paddingRight;
+		this.paddingTop = paddingTop;
+		this.paddingBottom = paddingBottom;
+		parent.redraw();
 	}
 
 	public void setCornerRadius(int radius) {

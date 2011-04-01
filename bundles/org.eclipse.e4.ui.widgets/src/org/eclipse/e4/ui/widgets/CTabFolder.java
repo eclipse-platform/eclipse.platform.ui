@@ -546,7 +546,7 @@ public boolean getBorderVisible() {
 }
 public Rectangle getClientArea() {
 	checkWidget();
-	Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BODY, SWT.NONE, 0, 0, 0, 0);
+	Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BODY, SWT.FILL, 0, 0, 0, 0);
 	if (topRight != null && topRightAlignment == (SWT.RIGHT | SWT.WRAP)) {
 		Rectangle bounds = topRight.getBounds();
 		if (bounds.y >= getTabHeight()) { 

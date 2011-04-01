@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
+import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2PaddingPropertiesImpl;
+
+import java.lang.reflect.Method;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyPaddingHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyPaddingHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabFolderRenderer;
 import org.eclipse.swt.widgets.Widget;
 import org.w3c.css.sac.CSSException;
+import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
@@ -50,12 +56,11 @@ public class CSSPropertyPaddingSWTHandler extends
 	public void applyCSSPropertyPadding(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
 		
+		CSS2PaddingPropertiesImpl padding = new CSS2PaddingPropertiesImpl();
 		// If single value then assigned to all four paddings
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			setPadding(element, TOP, value, pseudo);
-			setPadding(element, RIGHT, value, pseudo);
-			setPadding(element, BOTTOM, value, pseudo);
-			setPadding(element, LEFT, value, pseudo);
+			padding.top = padding.bottom = padding.left = padding.right = value;
+			setPadding(element, padding, pseudo);
 			return;
 		}
 		
@@ -69,24 +74,27 @@ public class CSSPropertyPaddingSWTHandler extends
 			switch (length) {
 			case 4:
 				// If four values then assigned top/right/bottom/left
-				setPadding(element, TOP, valueList.item(0), pseudo);
-				setPadding(element, RIGHT, valueList.item(1), pseudo);
-				setPadding(element, BOTTOM, valueList.item(2), pseudo);
-				setPadding(element, LEFT, valueList.item(3), pseudo);				
+				padding.top = valueList.item(0);
+				padding.right = valueList.item(1);
+				padding.bottom = valueList.item(2);
+				padding.left = valueList.item(3);				
 				break;
 			case 3:
 				// If three values then assigned top=v1, left=v2, right=v2, bottom=v3
-				setPadding(element, TOP, valueList.item(0), pseudo);
-				setPadding(element, RIGHT, valueList.item(1), pseudo);
-				setPadding(element, BOTTOM, valueList.item(2), pseudo);
-				setPadding(element, LEFT, valueList.item(1), pseudo);
+				padding.top = valueList.item(0);
+				padding.right =  valueList.item(1);
+				padding.bottom = valueList.item(2);
+				padding.left = valueList.item(1);
+				break;
 			case 2:
 				// If two values then assigned top/bottom=v1, left/right=v2
-				setPadding(element, TOP, valueList.item(0), pseudo);
-				setPadding(element, RIGHT, valueList.item(1), pseudo);
-				setPadding(element, BOTTOM, valueList.item(0), pseudo);
-				setPadding(element, LEFT, valueList.item(1), pseudo);
+				padding.top = valueList.item(0);
+				padding.right = valueList.item(1);
+				padding.bottom = valueList.item(0);
+				padding.left = valueList.item(1);
 			}
+			
+			setPadding(element, padding, pseudo);
 		} else {
 			throw new CSSException("Invalid padding property value");
 		}
@@ -94,22 +102,22 @@ public class CSSPropertyPaddingSWTHandler extends
 
 	public void applyCSSPropertyPaddingTop(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setPadding(element, TOP, value, pseudo);
+		setPadding(element, value, pseudo);
 	}
 
 	public void applyCSSPropertyPaddingRight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setPadding(element, RIGHT, value, pseudo);
+		setPadding(element, value, pseudo);
 	}
 
 	public void applyCSSPropertyPaddingBottom(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setPadding(element, BOTTOM, value, pseudo);
+		setPadding(element, value, pseudo);
 	}
 
 	public void applyCSSPropertyPaddingLeft(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setPadding(element, LEFT, value, pseudo);
+		setPadding(element, value, pseudo);
 	}
 
 	public String retrieveCSSPropertyPadding(Object element, String pseudo,
@@ -142,10 +150,37 @@ public class CSSPropertyPaddingSWTHandler extends
 		return null;
 	}
 	
-	private void setPadding(Object element, int side, CSSValue value, String pseudo) {
-		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
-			return;
+	private void setPadding(Object element, CSSValue value, String pseudo) {
+//		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
+//			return;
 		Widget widget = SWTElementHelpers.getWidget(element);
 		 // TBD: is there a CTF equivalent ?
+		CSS2PaddingPropertiesImpl padding = (CSS2PaddingPropertiesImpl) value;
+		CSSValue vTop = padding.top;
+		CSSValue vRight = padding.right;
+		CSSValue vBottom = padding.bottom;
+		CSSValue vLeft = padding.left;
+		
+		if ((vTop.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vTop).getPrimitiveType() == CSSPrimitiveValue.CSS_PX &&
+			(vBottom.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vBottom).getPrimitiveType() == CSSPrimitiveValue.CSS_PX &&
+			(vLeft.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vLeft).getPrimitiveType() == CSSPrimitiveValue.CSS_PX &&
+			(vRight.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && ((CSSPrimitiveValue) vRight).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) {
+			
+			if (widget instanceof CTabFolder) {
+				CTabFolder folder = (CTabFolder) widget;
+				CTabFolderRenderer renderer = ((CTabFolder) folder).getRenderer();
+				if (renderer == null) return;
+				try {
+					int top = (int) ((CSSPrimitiveValue) vTop).getFloatValue(CSSPrimitiveValue.CSS_PX);
+					int right = (int) ((CSSPrimitiveValue) vRight).getFloatValue(CSSPrimitiveValue.CSS_PX);
+					int bottom = (int) ((CSSPrimitiveValue) vBottom).getFloatValue(CSSPrimitiveValue.CSS_PX);
+					int left = (int) ((CSSPrimitiveValue) vLeft).getFloatValue(CSSPrimitiveValue.CSS_PX);
+					Method m = renderer.getClass().getMethod("setPadding", new Class[]{int.class, int.class, int.class, int.class});
+					m.invoke(renderer, left, right, top, bottom);
+				} catch (Exception e) {
+					
+				}
+			}
+		}
 	}
 }
