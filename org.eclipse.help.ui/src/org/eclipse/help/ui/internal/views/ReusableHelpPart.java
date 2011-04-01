@@ -547,10 +547,14 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		}
 
 		public void setFocus() {
-			if (partRecs.size() == 0)
-				return;
-			PartRec rec = (PartRec) partRecs.get(0);
-			rec.part.setFocus();
+			// Focus on the first part that is not the see also links
+			for (int focusPart = 0; focusPart < partRecs.size(); focusPart++) {
+				PartRec rec = (PartRec) partRecs.get(focusPart);
+				if ( rec.part.getId() != IHelpUIConstants.HV_SEE_ALSO ) { 
+				    rec.part.setFocus();
+				    return;
+				}
+			}
 		}
 
 	}
