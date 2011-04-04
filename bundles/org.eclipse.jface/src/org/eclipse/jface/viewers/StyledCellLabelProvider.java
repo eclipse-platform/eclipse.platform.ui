@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -271,7 +271,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			return;
 		
 		ViewerCell cell= getViewerCell(event, element);
-		boolean applyColors = useColors(event); // returns false because of bug 228376
+		boolean applyColors = useColors(event);
 		
 		TextLayout layout = getSharedTextLayout(event.display);
 		
@@ -288,8 +288,8 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	 */
 	private int updateTextLayout(TextLayout layout, ViewerCell cell,
 			boolean applyColors) {
-		layout.setText(""); //$NON-NLS-1$  //make sure all previous ranges are cleared (see bug 226090)
-		
+		layout.setStyle(null, 0, Integer.MAX_VALUE); // clear old styles
+
 		layout.setText(cell.getText());
 		layout.setFont(cell.getFont()); // set also if null to clear previous usages
 		
@@ -361,19 +361,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 		Rectangle textBounds = cell.getTextBounds();
 		if (textBounds != null) {
 			TextLayout textLayout= getSharedTextLayout(event.display);
-
-			/* remove-begin if bug 228376 fixed */
-			if (!applyColors) {
-				// need to remove colors for selected elements: measure doesn't provide that information, see bug 228376
-				StyleRange[] styleRanges= cell.getStyleRanges();
-				if (styleRanges != null) {
-					for (int i= 0; i < styleRanges.length; i++) {
-						StyleRange curr = prepareStyleRange(styleRanges[i], applyColors);
-						textLayout.setStyle(curr, curr.start, curr.start + curr.length - 1);
-					}
-				}
-			}
-			/* remove-end if bug 228376 fixed */
+			// text layout already configured in measure(Event, Object)
 			
 			Rectangle layoutBounds = textLayout.getBounds();
 	
