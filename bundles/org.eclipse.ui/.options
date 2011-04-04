@@ -6,10 +6,10 @@ org.eclipse.ui/debug=false
 # Show all jobs in dialogs and the progress view including the support jobs
 org.eclipse.ui/debug/showAllJobs=false
 
-#Report if a stale job was found
+# Report if a stale job was found
 org.eclipse.ui/debug/job.stale=false
 
-#Report if an image cannot be resolved when it is declared
+# Report if an image cannot be resolved when it is declared
 org.eclipse.ui/debug/declaredImages=false
 
 # Enable extended SWT debugging of the Device.
@@ -27,7 +27,7 @@ org.eclipse.ui/debug/workingSets=false
 # Enable the trace of SWT graphics.
 org.eclipse.ui/trace/graphics=false
 
-#enable tracing of perspective debugging code
+# Enable tracing of perspective debugging code
 org.eclipse.ui/trace/perspectives=false
 
 
