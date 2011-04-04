@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
 
 /**
  *
@@ -35,6 +36,10 @@ public class PartDragAgent extends DragAgent {
 	public MUIElement getElementToDrag(DnDInfo info) {
 		if (info.curElement instanceof MPartStack
 				&& (info.itemElement instanceof MPlaceholder || info.itemElement instanceof MPart)) {
+			// Prevent dragging 'No Move' parts
+			if (info.itemElement.getTags().contains(IPresentationEngine.NO_MOVE))
+				return null;
+
 			dragElement = info.itemElement;
 			return info.itemElement;
 		}
