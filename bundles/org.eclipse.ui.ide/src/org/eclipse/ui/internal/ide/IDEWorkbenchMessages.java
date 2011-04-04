@@ -13,6 +13,7 @@
  * Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  * Serge Beauchamp (Freescale Semiconductor) - [252996] Resource filters
  *     Markus Schorn (Wind River Systems) -  bug 284447
+ *     James Blackburn (Broadcom Corp.)   -  bug 340978
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -502,6 +503,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_savePriorToBuildingToolTip;
 	public static String IDEWorkspacePreference_RefreshButtonText;
 	public static String IDEWorkspacePreference_RefreshButtonToolTip;
+	public static String IDEWorkspacePreference_RefreshPollingButtonText;
+	public static String IDEWorkspacePreference_RefreshPollingButtonToolTip;
 	public static String IDEWorkspacePreference_fileLineDelimiter;
 	public static String IDEWorkspacePreference_defaultLineDelim;
 	public static String IDEWorkspacePreference_defaultLineDelimProj;

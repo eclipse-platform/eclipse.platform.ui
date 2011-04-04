@@ -1,5 +1,5 @@
  /****************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  *     Markus Schorn (Wind River Systems) -  bug 284447
+ *     James Blackburn (Broadcom Corp.)   -  bug 340978
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -19,6 +20,7 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -29,6 +31,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -66,11 +70,13 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 
 	private FieldEditor workspaceName;
 
-    private Button autoRefreshButton;
-    
-    private Button closeUnrelatedProjectButton;
-    
-    private ResourceEncodingFieldEditor encodingEditor;
+	private Button autoRefreshButton;
+
+	private Button pollingRefreshButton;
+
+	private Button closeUnrelatedProjectButton;
+
+	private ResourceEncodingFieldEditor encodingEditor;
 
 	private LineDelimiterEditor lineSeparatorEditor;
 	
@@ -78,7 +84,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 	private boolean clearUserSettings = false;
 
 	private RadioGroupFieldEditor openReferencesEditor;
-
 
     /*
      * (non-Javadoc)
@@ -259,10 +264,35 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         this.autoRefreshButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshButtonText);
         this.autoRefreshButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshButtonToolTip);
 
+        this.pollingRefreshButton = new Button(parent, SWT.CHECK);
+        this.pollingRefreshButton.setText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshPollingButtonText);
+        this.pollingRefreshButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_RefreshPollingButtonToolTip);
+		GridData gd = new GridData();
+        gd.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.INDENT);
+        pollingRefreshButton.setLayoutData(gd);
+
+        this.pollingRefreshButton.addSelectionListener(new SelectionAdapter() {
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+        	 */
+        	public void widgetSelected(SelectionEvent e) {
+        		if (pollingRefreshButton.getSelection()) {
+        			autoRefreshButton.setSelection(true);
+        			autoRefreshButton.setEnabled(false);
+        		} else
+        			autoRefreshButton.setEnabled(true);
+        	}
+        });
+
         boolean autoRefresh = ResourcesPlugin.getPlugin()
                 .getPluginPreferences().getBoolean(
-                        ResourcesPlugin.PREF_AUTO_REFRESH);
+                		ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
+        boolean pollingRefresh = ResourcesPlugin.getPlugin()
+		        .getPluginPreferences().getBoolean(
+		                ResourcesPlugin.PREF_AUTO_REFRESH);
         this.autoRefreshButton.setSelection(autoRefresh);
+        this.pollingRefreshButton.setSelection(pollingRefresh);
+        this.autoRefreshButton.setEnabled(!this.pollingRefreshButton.getSelection());
     }
 
     /**
@@ -380,12 +410,15 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         boolean closeUnrelatedProj = store.getDefaultBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS);
         closeUnrelatedProjectButton.setSelection(closeUnrelatedProj);
 
-		
         boolean autoRefresh = ResourcesPlugin.getPlugin()
                 .getPluginPreferences().getDefaultBoolean(
-                        ResourcesPlugin.PREF_AUTO_REFRESH);
+                		ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH);
+        boolean pollingRefresh = ResourcesPlugin.getPlugin()
+		        .getPluginPreferences().getDefaultBoolean(
+		                ResourcesPlugin.PREF_AUTO_REFRESH);
         autoRefreshButton.setSelection(autoRefresh);
-        
+        pollingRefreshButton.setSelection(pollingRefresh);
+
         clearUserSettings = true;
 
 		List encodings = WorkbenchEncoding.getDefinedEncodings();
@@ -450,8 +483,10 @@ public class IDEWorkspacePreferencePage extends PreferencePage
                 .getPluginPreferences();
 
         boolean autoRefresh = autoRefreshButton.getSelection();
-        preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, autoRefresh);
-        
+        preferences.setValue(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, autoRefresh);
+        boolean pollingRefresh = pollingRefreshButton.getSelection();
+        preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, pollingRefresh);
+
         boolean closeUnrelatedProj = closeUnrelatedProjectButton.getSelection();
         getIDEPreferenceStore().setValue(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS, closeUnrelatedProj);
         
