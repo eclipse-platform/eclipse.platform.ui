@@ -946,6 +946,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			} finally {
 				fSettingInput = false;
 				updateButtons();
+				updateMessage();
 			}
  			if(getShell() != null && getShell().isVisible()) {
  				resize();
