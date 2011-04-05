@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -1179,7 +1180,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if(value != null) {
 				String[] nodes = value.split(DELIMITER);
 				TreeItem[] items = fLaunchConfigurationView.getTreeViewer().getTree().getItems();
-				ArrayList toexpand = new ArrayList();
+				HashSet toexpand = new HashSet();
 				// if we have a selection make sure it is expanded
 				if(fInitialSelection != null && !fInitialSelection.isEmpty()) {
 					Object obj = fInitialSelection.getFirstElement();
