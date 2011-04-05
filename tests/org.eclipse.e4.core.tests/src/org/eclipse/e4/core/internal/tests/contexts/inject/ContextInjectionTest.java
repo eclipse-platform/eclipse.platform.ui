@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.internal.tests.contexts.inject;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import junit.framework.Test;
@@ -227,6 +228,84 @@ public class ContextInjectionTest extends TestCase {
 
 		// check post processing
 		assertEquals(1, userObject.getFinalizedCalled());
+	}
+	
+	static public class BaseOverrideTest {
+		public String selectionString;
+		public String inputString;
+		public boolean finishCalled = false;
+		
+		@Inject
+		public void setSelection(String selectionString) {
+			this.selectionString = selectionString;
+		}
+		
+		@Inject
+		public void setInput(String inputString) {
+			this.inputString = inputString;
+		}
+		
+		@PostConstruct
+		public void finish() {
+			finishCalled = true;
+		}
+	}
+	
+	static public class OverrideTest extends BaseOverrideTest {
+		public Integer selectionNum;
+		public String inputStringSubclass;
+		public Double inputDouble;
+		public Boolean arg;
+		public boolean finishOverrideCalled = false;
+		
+		@Inject
+		public void setSelection(Integer selectionNum) {
+			this.selectionNum = selectionNum;
+		}
+		
+		@Inject
+		public void setInput(String inputString, Double inputDouble) {
+			this.inputStringSubclass = inputString;
+			this.inputDouble = inputDouble;
+			
+		}
+		
+		@PostConstruct
+		public void finish(Boolean arg) {
+			finishOverrideCalled = true;
+			this.arg = arg;
+		}
+	}
+
+	/**
+	 * Tests injection of similar, but not overridden methods
+	 */
+	public synchronized void testInjectionCloseOverride() {
+		Integer testInt = new Integer(123);
+		String testString = new String("abc");
+		Double testDouble = new Double(12.3);
+		Boolean testBoolean = new Boolean(true);
+
+		// create context
+		IEclipseContext context = EclipseContextFactory.create();
+		context.set(Integer.class, testInt);
+		context.set(String.class, testString);
+		context.set(Double.class, testDouble);
+		context.set(Boolean.class, testBoolean);
+
+		OverrideTest userObject = new OverrideTest();
+		ContextInjectionFactory.inject(userObject, context);
+
+		// check inherited portion
+		assertEquals(testString, userObject.selectionString);
+		assertEquals(testString, userObject.inputString);
+		assertTrue(userObject.finishCalled);
+		
+		// check similar methods portion
+		assertEquals(testInt, userObject.selectionNum);
+		assertEquals(testString, userObject.inputStringSubclass);
+		assertEquals(testDouble, userObject.inputDouble);
+		assertTrue(userObject.finishOverrideCalled);
 	}
 
 }
