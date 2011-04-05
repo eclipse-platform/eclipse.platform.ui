@@ -66,6 +66,8 @@ public class FileStatesPage extends PreferencePage implements
 
     private long STATE_SIZE_MAXIMUM = 100;
 
+    private static final int INDENT = 20;
+    
     /**
      * This method takes the string for the title of a text field and the value for the
      * text of the field.
@@ -99,7 +101,7 @@ public class FileStatesPage extends PreferencePage implements
         button.addListener(SWT.Selection, this);
         GridData data = new GridData();
         data.horizontalSpan = 2;
-        data.horizontalIndent= -10;
+        data.horizontalIndent= -INDENT;
         button.setLayoutData(data);
         button.setText(label);
         button.setSelection(selected);
@@ -169,7 +171,7 @@ public class FileStatesPage extends PreferencePage implements
 		Composite composite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
-		layout.marginLeft= 10;
+		layout.marginLeft= INDENT;
 		layout.marginWidth= 0;
 		composite.setLayout(layout);
 
@@ -234,7 +236,7 @@ public class FileStatesPage extends PreferencePage implements
 
     /**
      * Performs special processing when this page's Defaults button has been pressed.
-     * Reset the entries to thier default values.
+     * Reset the entries to their default values.
      */
     protected void performDefaults() {
         super.performDefaults();
