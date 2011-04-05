@@ -52,6 +52,8 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -144,6 +146,13 @@ public class ExtendedMarkersView extends ViewPart {
 	private UIUpdateJob uiUpdateJob;
 	
 	private MarkersTreeViewer viewer;
+
+	/**
+	 * Tells whether the tree has been painted.
+	 * @since 3.7
+	 */
+	private boolean treePainted= false;
+	
 	private ISelectionListener pageSelectionListener;
 	private IPartListener2 partListener;
 	private Clipboard clipboard;
@@ -254,6 +263,17 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer.setUseHashlookup(true);
 		createColumns(new TreeColumn[0], new int[0]);
 		viewer.setContentProvider(getContentProvider());
+
+		/*
+		 * Workaround for TeeColumn.getWidth() returning 0 in some cases, see
+		 * https://bugs.eclipse.org/341865 for details.
+		 */
+		viewer.getTree().addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				treePainted= true;
+				viewer.getTree().removePaintListener(this);
+			}
+		});
 	}
 
 	/**
@@ -341,9 +361,17 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param considerUIWidths
 	 * @return desired width for the column representing markerField
 	 */
-	int getFieldWidth(MarkerField markerField, int preferredWidth,
-			boolean considerUIWidths) {
+	int getFieldWidth(MarkerField markerField, int preferredWidth, boolean considerUIWidths) {
 		Tree tree = getViewer().getTree();
+
+		if (considerUIWidths) {
+			TreeColumn[] columns= tree.getColumns();
+			for (int i= 0; i < columns.length; i++) {
+				if (markerField.equals(columns[i].getData(MARKER_FIELD))) {
+					return columns[i].getWidth();
+				}
+			}
+		}
 
 		if (preferredWidth < 0 && memento != null) {
 			IMemento columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
@@ -364,14 +392,6 @@ public class ExtendedMarkersView extends ViewPart {
 			gc.dispose();
 			preferredWidth = Math.max(markerField.getDefaultColumnWidth(tree),
 					fontMetrics.getAverageCharWidth() * 5);
-		}
-		if (considerUIWidths) {
-			TreeColumn[] columns = tree.getColumns();
-			for (int i = 0; i < columns.length; i++) {
-				if (markerField.equals(columns[i].getData(MARKER_FIELD))) {
-					return columns[i].getWidth();
-				}
-			}
 		}
 		return preferredWidth;
 	}
@@ -1247,8 +1267,16 @@ public class ExtendedMarkersView extends ViewPart {
 		int[] positions = viewer.getTree().getColumnOrder();
 		for (int i = 0; i < fields.length; i++) {
 			TreeColumn column = viewer.getTree().getColumn(i);
-			columnEntry.putInteger(getFieldId(column), column.getWidth());
-			fields[positions[i]] = (MarkerField) column.getData(MARKER_FIELD);
+			MarkerField markerField= (MarkerField)column.getData(MARKER_FIELD);
+
+			/*
+			 * Workaround for TeeColumn.getWidth() returning 0 in some cases, see
+			 * https://bugs.eclipse.org/341865 for details.
+			 */
+			int width= getFieldWidth(markerField, -1, treePainted);
+
+			columnEntry.putInteger(getFieldId(column), width);
+			fields[positions[i]]= markerField;
 		}
 		if (generator != null) {
 			generator.saveState(memento, fields);
