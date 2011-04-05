@@ -1,7 +1,7 @@
 # Debugging options for the org.eclipse.jface plugin.
 
 # Turn on debugging for the org.eclipse.jface plugin.
-org.eclipse.jface/debug=false
+org.eclipse.jface/debug=true
 
 # Log a message if a dialog is opened without a parent
 org.eclipse.jface/debug/dialog/noparent=false
