@@ -156,7 +156,9 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		container.setFont(parent.getFont());
 		
 		Composite composite = new Composite(container, SWT.NONE);
-		composite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		composite.setBackground(container.getBackground());
 
@@ -166,7 +168,9 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		configComposite.setText(MarkerMessages.MarkerConfigurationsLabel);
 
 		configComposite.setLayout(new GridLayout(3, false));
-		configComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData configData = new GridData(GridData.FILL_BOTH);
+		configData.horizontalIndent = 20;
+		configComposite.setLayoutData(configData);
 		configComposite.setBackground(composite.getBackground());
 
 		createConfigs(configComposite);
@@ -261,6 +265,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		GridData compositeData = new GridData(GridData.FILL_HORIZONTAL);
 		compositeData.horizontalIndent = 20;
@@ -309,7 +314,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 		configsTable = CheckboxTableViewer.newCheckList(composite, SWT.BORDER);
 		GridData tableData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		tableData.widthHint = convertHorizontalDLUsToPixels(100);
+		tableData.widthHint = convertHorizontalDLUsToPixels(120);
 		configsTable.getControl().setLayoutData(tableData);
 
 		configsTable.setContentProvider(ArrayContentProvider.getInstance());

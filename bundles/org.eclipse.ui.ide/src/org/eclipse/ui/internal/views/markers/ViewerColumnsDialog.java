@@ -125,7 +125,9 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 */
 	protected Control createDialogContentArea(Composite dialogArea) {
 		Composite composite = new Composite(dialogArea, SWT.NONE);
-		composite.setLayout(new GridLayout(4, false));
+		GridLayout gridLayout = new GridLayout(4, false);
+		gridLayout.marginHeight = 0;
+		composite.setLayout(gridLayout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		createInvisibleTable(composite);
@@ -183,14 +185,21 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 */
 	Control createWidthArea(Composite parent) {
 
-		widthLabel = new Label(parent, SWT.NONE);
+		Label dummy = new Label(parent, SWT.NONE);
+		dummy.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false, 2, 1));
+		
+		Composite widthComposite = new Composite(parent, SWT.NONE);
+		GridLayout gridLayout = new GridLayout(2, false);
+		gridLayout.marginHeight = 0;
+		widthComposite.setLayout(gridLayout);
+		widthComposite.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false, 2, 1));
+		
+		widthLabel = new Label(widthComposite, SWT.NONE);
 		widthLabel.setText(MarkerMessages.MarkerPreferences_WidthOfShownColumn);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_END);
-		gridData.horizontalSpan = 3;
+		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		widthLabel.setLayoutData(gridData);
 
-		widthText = new Text(parent, SWT.BORDER);
+		widthText = new Text(widthComposite, SWT.BORDER);
 		widthText.addVerifyListener(new VerifyListener() {
 
 			public void verifyText(VerifyEvent e) {
@@ -331,9 +340,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		bttArea.setLayoutData(gridData);
 
 		toVisibleBtt = new Button(bttArea, SWT.PUSH);
-		toVisibleBtt
-				.setText(getDefaultOrientation() == SWT.RIGHT_TO_LEFT ? MarkerMessages.MarkerPreferences_MoveLeft
-						: MarkerMessages.MarkerPreferences_MoveRight);
+		toVisibleBtt.setText(MarkerMessages.MarkerPreferences_MoveLeft);
 		setButtonLayoutData(toVisibleBtt);
 		toVisibleBtt.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -343,9 +350,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		toVisibleBtt.setEnabled(false);
 
 		toNonVisibleBtt = new Button(bttArea, SWT.PUSH);
-		toNonVisibleBtt
-				.setText(getDefaultOrientation() == SWT.RIGHT_TO_LEFT ? MarkerMessages.MarkerPreferences_MoveRight
-						: MarkerMessages.MarkerPreferences_MoveLeft);
+		toNonVisibleBtt.setText(MarkerMessages.MarkerPreferences_MoveRight);
 		setButtonLayoutData(toNonVisibleBtt);
 
 		toNonVisibleBtt.addListener(SWT.Selection, new Listener() {
