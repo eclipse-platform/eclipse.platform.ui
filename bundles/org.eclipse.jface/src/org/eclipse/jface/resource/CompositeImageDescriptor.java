@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan Wahlbrink - fix for bug 341702 - incorrect mixing of images with alpha channel
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -130,10 +131,24 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 					dstRed = (dstPixel & 0xFF) >>> 0;
 					dstGreen = (dstPixel & 0xFF00) >>> 8;
 					dstBlue = (dstPixel & 0xFF0000) >>> 16;
-					dstRed += (srcRed - dstRed) * srcAlpha / 255;
-					dstGreen += (srcGreen - dstGreen) * srcAlpha / 255;
-					dstBlue += (srcBlue - dstBlue) * srcAlpha / 255;
-					dstAlpha += (srcAlpha - dstAlpha) * srcAlpha / 255;
+					if (dstAlpha == 255) { // simplified calculations for performance
+						dstRed += (srcRed - dstRed) * srcAlpha / 255;
+						dstGreen += (srcGreen - dstGreen) * srcAlpha / 255;
+						dstBlue += (srcBlue - dstBlue) * srcAlpha / 255;
+					} else {
+						// See Porter T., Duff T. 1984. "Compositing Digital Images". 
+						// Computer Graphics 18 (3): 253–259.
+						dstRed = srcRed * srcAlpha * 255 + dstRed * dstAlpha * (255 - srcAlpha);
+						dstGreen = srcGreen * srcAlpha * 255 + dstGreen * dstAlpha * (255 - srcAlpha);
+						dstBlue = srcBlue * srcAlpha * 255 + dstBlue * dstAlpha * (255 - srcAlpha);
+						dstAlpha = srcAlpha * 255 + dstAlpha * (255 - srcAlpha); 
+						if (dstAlpha != 0) { // if both original alphas == 0, then all colors are 0
+							dstRed /= dstAlpha;
+							dstGreen /= dstAlpha;
+							dstBlue /= dstAlpha;
+							dstAlpha /= 255;
+						}
+					}
 				}
 				dst.setPixel(dstX, dstY, ((dstRed & 0xFF) << 0) | ((dstGreen & 0xFF) << 8) | ((dstBlue & 0xFF) << 16));
 				dst.setAlpha(dstX, dstY, dstAlpha);
