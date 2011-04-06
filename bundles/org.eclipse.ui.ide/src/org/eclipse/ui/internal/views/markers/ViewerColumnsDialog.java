@@ -35,6 +35,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -80,6 +81,8 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 
 	private Label widthLabel;
 	private Text widthText;
+
+	private Point tableLabelSize;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -150,9 +153,9 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	Control createUpDownBtt(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(1, true);
+		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		GridData gridData = new GridData(GridData.FILL_VERTICAL);
-		gridData.verticalIndent = convertHeightInCharsToPixels(1);
 		composite.setLayoutData(gridData);
 		upButton = new Button(composite, SWT.PUSH);
 		upButton.setText(JFaceResources.getString("ConfigureColumnsDialog_up")); //$NON-NLS-1$
@@ -162,6 +165,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 			}
 		});
 		setButtonLayoutData(upButton);
+		((GridData)upButton.getLayoutData()).verticalIndent = tableLabelSize.y;
 		upButton.setEnabled(false);
 
 		downButton = new Button(composite, SWT.PUSH);
@@ -238,7 +242,9 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	Control createVisibleTable(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(1, false));
+		GridLayout gridLayout = new GridLayout(1, false);
+		gridLayout.marginHeight =0;
+		composite.setLayout(gridLayout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(composite, SWT.NONE);
@@ -286,11 +292,16 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	Control createInvisibleTable(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(1, false));
+		GridLayout gridLayout = new GridLayout(1, false);
+		gridLayout.marginHeight = 0;
+		composite.setLayout(gridLayout);
+
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label label = new Label(composite, SWT.NONE);
 		label.setText(MarkerMessages.MarkerPreferences_HiddenColumnsTitle);
+		applyDialogFont(label);
+		tableLabelSize = label.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 		final Table table = new Table(composite, SWT.BORDER | SWT.MULTI);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -334,14 +345,16 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 */
 	Control createMoveButtons(Composite parent) {
 		Composite bttArea = new Composite(parent, SWT.NONE);
-		bttArea.setLayout(new GridLayout(1, true));
+		GridLayout layout = new GridLayout(1, true);
+		layout.marginHeight = 0;
+		bttArea.setLayout(layout);
 		GridData gridData = new GridData(GridData.FILL_VERTICAL);
-		gridData.verticalIndent = convertHeightInCharsToPixels(1);
 		bttArea.setLayoutData(gridData);
 
 		toVisibleBtt = new Button(bttArea, SWT.PUSH);
-		toVisibleBtt.setText(MarkerMessages.MarkerPreferences_MoveLeft);
+		toVisibleBtt.setText(MarkerMessages.MarkerPreferences_MoveRight);
 		setButtonLayoutData(toVisibleBtt);
+		((GridData)toVisibleBtt.getLayoutData()).verticalIndent = tableLabelSize.y;
 		toVisibleBtt.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				handleToVisibleButton(event);
@@ -350,7 +363,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		toVisibleBtt.setEnabled(false);
 
 		toNonVisibleBtt = new Button(bttArea, SWT.PUSH);
-		toNonVisibleBtt.setText(MarkerMessages.MarkerPreferences_MoveRight);
+		toNonVisibleBtt.setText(MarkerMessages.MarkerPreferences_MoveLeft);
 		setButtonLayoutData(toNonVisibleBtt);
 
 		toNonVisibleBtt.addListener(SWT.Selection, new Listener() {
