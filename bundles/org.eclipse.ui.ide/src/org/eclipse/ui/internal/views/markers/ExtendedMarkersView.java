@@ -28,7 +28,6 @@ import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -269,14 +268,12 @@ public class ExtendedMarkersView extends ViewPart {
 		 * Workaround for TeeColumn.getWidth() returning 0 in some cases, see
 		 * https://bugs.eclipse.org/341865 for details.
 		 */
-		if (!Util.isGtk()) { // Currently not working on GTK, see bug 275910.
-			viewer.getTree().addPaintListener(new PaintListener() {
-				public void paintControl(PaintEvent e) {
-					treePainted= true;
-					viewer.getTree().removePaintListener(this);
-				}
-			});
-		}
+		viewer.getTree().addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				treePainted= true;
+				viewer.getTree().removePaintListener(this);
+			}
+		});
 	}
 
 	/**
@@ -1271,10 +1268,6 @@ public class ExtendedMarkersView extends ViewPart {
 		for (int i = 0; i < fields.length; i++) {
 			TreeColumn column = viewer.getTree().getColumn(i);
 			MarkerField markerField= (MarkerField)column.getData(MARKER_FIELD);
-
-			// Workaround for bug 275910.
-			if (Util.isGtk())
-				treePainted= viewer.getTree().getClientArea().width > 0;
 
 			/*
 			 * Workaround for TeeColumn.getWidth() returning 0 in some cases, see
