@@ -77,7 +77,7 @@ public class CVSScmUrlImportWizardPage extends WizardPage implements IScmUrlImpo
 				String version = getTag(scmUrl);
 				String host = getServer(scmUrl);
 				styledString.append(project);
-				if (version != null && !useHead.getSelection()) {
+				if (version != null) {
 					styledString.append(' ');
 					styledString.append(version, StyledString.DECORATIONS_STYLER);
 				}
@@ -132,37 +132,18 @@ public class CVSScmUrlImportWizardPage extends WizardPage implements IScmUrlImpo
 		setControl(comp);
 		setPageComplete(true);
 
-		// initialize versions versus HEAD
+		// Initialize versions versus HEAD
 		IDialogSettings settings = getWizard().getDialogSettings();
-		boolean head = false;
-		boolean found = false;
-		if (settings != null) {
-			String string = settings.get(CVS_PAGE_USE_HEAD);
-			if (string != null) {
-				found = true;
-				head = settings.getBoolean(CVS_PAGE_USE_HEAD);
-			}
-		}
-
-		if (!found) {
-			for (int i = 0; i < descriptions.length; i++) {
-				URI scmUrl = descriptions[i].getUri();
-				if (getTag(scmUrl) != null) {
-					head = false;
-					break;
-				}
-			}
-		}
-		useHead.setSelection(head);
-		versions.setSelection(!head);
+		boolean useHEAD= settings.getBoolean(CVS_PAGE_USE_HEAD);
+		useHead.setSelection(useHEAD);
+		versions.setSelection(!useHEAD);
 
 		if (descriptions != null) {
 			bundlesViewer.setInput(descriptions);
 			updateCount();
 		}
 
-		// TODO: add help
-		 PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.CVS_SCM_URL_IMPORT_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.CVS_SCM_URL_IMPORT_PAGE);
 	}
 
 	/* (non-Javadoc)
