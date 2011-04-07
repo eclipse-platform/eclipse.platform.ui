@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.prefs.BackingStoreException;
+import org.w3c.css.sac.InputSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
@@ -308,7 +309,10 @@ public class ThemeEngine implements IThemeEngine {
 				try {
 					url = FileLocator.resolve(new URL(stylesheet.toString()));
 					stream = url.openStream();
-					engine.parseStyleSheet(stream);
+					InputSource source = new InputSource();
+					source.setByteStream(stream);
+					source.setURI(url.toString());
+					engine.parseStyleSheet(source);
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

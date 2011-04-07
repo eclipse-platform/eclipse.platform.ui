@@ -20,11 +20,15 @@ import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.stylesheets.MediaList;
 
 public class CSSImportRuleImpl extends CSSRuleImpl implements CSSImportRule, Serializable {
-
+	
+	String uri;
+	MediaListImpl mediaList;
+	
 	public CSSImportRuleImpl(CSSStyleSheet parentStyleSheet, CSSRule parentRule,
 			String uri, MediaListImpl mediaListImpl) {
 		super(parentStyleSheet, parentRule);
-		// TODO Auto-generated constructor stub
+		this.uri = uri;
+		this.mediaList = mediaListImpl;
 	}
 	
 	/*
@@ -42,8 +46,7 @@ public class CSSImportRuleImpl extends CSSRuleImpl implements CSSImportRule, Ser
 	 * @see org.w3c.dom.css.CSSImportRule#getHref()
 	 */
 	public String getHref() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		return uri;
 	}
 
 	/*
@@ -51,8 +54,7 @@ public class CSSImportRuleImpl extends CSSRuleImpl implements CSSImportRule, Ser
 	 * @see org.w3c.dom.css.CSSImportRule#getMedia()
 	 */
 	public MediaList getMedia() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		return mediaList;
 	}
 
 	/*

@@ -11,19 +11,22 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.impl.engine;
 
-import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
+import org.eclipse.e4.ui.css.core.dom.ElementAdapter;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
@@ -38,6 +41,8 @@ import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSRuleListImpl;
+import org.eclipse.e4.ui.css.core.impl.dom.CSSStyleSheetImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.DocumentCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
 import org.eclipse.e4.ui.css.core.resources.CSSResourcesHelpers;
@@ -53,7 +58,9 @@ import org.w3c.css.sac.Selector;
 import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.css.CSSImportRule;
 import org.w3c.dom.css.CSSRule;
+import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
@@ -169,10 +176,43 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		checkInputSource(source);
 		CSSParser parser = makeCSSParser();
 		CSSStyleSheet styleSheet = parser.parseStyleSheet(source);
-		if (documentCSS instanceof ExtendedDocumentCSS) {
-			documentCSS.addStyleSheet(styleSheet);
+		
+		CSSRuleList rules = styleSheet.getCssRules();
+		int length = rules.getLength();
+		CSSRuleListImpl masterList = new CSSRuleListImpl();
+		int counter;
+		for (counter = 0; counter < length; counter++) {
+			CSSRule rule = rules.item(counter);
+			if (rule.getType() !=  CSSRule.IMPORT_RULE) {
+				break;
+			}
+			Path p = new Path(source.getURI());
+			IPath trim = p.removeLastSegments(1);
+			URL url = FileLocator.resolve(new URL(trim.addTrailingSeparator().toString() + ((CSSImportRule) rule).getHref()));
+			InputStream stream = url.openStream();
+			InputSource tempStream = new InputSource();
+			tempStream.setURI(url.toString());
+			tempStream.setByteStream(stream);
+			styleSheet = (CSSStyleSheet) this.parseStyleSheet(tempStream);
+			CSSRuleList tempRules = styleSheet.getCssRules();
+			for (int j = 0; j < tempRules.getLength(); j++) {
+				masterList.add(tempRules.item(j));
+			}
 		}
-		return styleSheet;
+		
+		//add remaining non import rules
+		for (int i = counter; i < length; i++) {
+			masterList.add(rules.item(i));
+		}
+		
+		//final stylesheet
+		CSSStyleSheetImpl s = new CSSStyleSheetImpl();
+		s.setRuleList(masterList);
+		if (documentCSS instanceof ExtendedDocumentCSS) {
+			documentCSS.removeAllStyleSheets();
+			documentCSS.addStyleSheet(s);
+		}
+		return s;
 	}
 
 	/**

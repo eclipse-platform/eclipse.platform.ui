@@ -13,46 +13,66 @@
 package org.eclipse.e4.ui.css.core.impl.dom;
 
 import java.io.Serializable;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.w3c.css.sac.SACMediaList;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.stylesheets.MediaList;
 
 public class MediaListImpl implements MediaList, Serializable {
 
+	private List mediaList = null;
+	
 	public MediaListImpl(SACMediaList media) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		mediaList = new ArrayList();
+		for (int i = 0; i < media.getLength(); i++) {
+			mediaList.add(media.item(i));
+		}
+		
 	}
 
-	public void appendMedium(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	public void appendMedium(String newMedium) throws DOMException {
+		if (mediaList.contains(newMedium)) mediaList.remove(newMedium);
+		mediaList.add(newMedium);
 	}
 
-	public void deleteMedium(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	public void deleteMedium(String oldMedium) throws DOMException {
+		mediaList.remove(oldMedium);
 	}
 
 	public int getLength() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		return (mediaList != null) ? mediaList.size() : 0;
 	}
 
 	public String getMediaText() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		String media = "";
+		int size = mediaList.size();
+		if (size > 0) {
+			media += mediaList.get(0);
+			for (int i = 1; i < mediaList.size(); i++) {
+					media += ", " + mediaList.get(i);
+			}
+		}
+		return media;
 	}
 
-	public String item(int arg0) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	public String item(int index) {
+		if (index > mediaList.size()) return null;
+		return (String) mediaList.get(index);
 	}
 
-	public void setMediaText(String arg0) throws DOMException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+	public void setMediaText(String mediaText) throws DOMException {
+		while (mediaText.length() > 0) {
+			int next = mediaText.indexOf(',');
+			if (next == -1) next = mediaText.length();
+			String media = mediaText.substring(0, next);
+			appendMedium(media.trim());
+			if (next + 1 < mediaText.length()) {
+				mediaText = mediaText.substring(next + 1, mediaText.length());
+			} else {
+				break;
+			}
+		}
 	}
 
 }
