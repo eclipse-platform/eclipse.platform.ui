@@ -40,22 +40,43 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.service.log.LogEntry;
+import org.osgi.service.log.LogListener;
+import org.osgi.service.log.LogReaderService;
+import org.osgi.service.log.LogService;
 
 public class PartRenderingEngineTests extends TestCase {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
+
+	private LogListener listener = new LogListener() {
+		public void logged(LogEntry entry) {
+			if (!logged) {
+				logged = entry.getLevel() == LogService.LOG_ERROR;
+			}
+		}
+	};
+	private boolean logged = false;
 
 	@Override
 	protected void setUp() throws Exception {
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
+		LogReaderService logReaderService = appContext
+				.get(LogReaderService.class);
+		logReaderService.addLogListener(listener);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
+		LogReaderService logReaderService = appContext
+				.get(LogReaderService.class);
+		logReaderService.removeLogListener(listener);
 		if (wb != null) {
 			wb.close();
 		}
@@ -2163,6 +2184,177 @@ public class PartRenderingEngineTests extends TestCase {
 		assertFalse(widgetA.isDisposed());
 		assertNotNull(widgetB);
 		assertFalse(widgetB.isDisposed());
+	}
+
+	public void testBug334580_01() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		part.setToolbar(toolBar);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveA.setElementId("perspectiveA"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspectiveA.getChildren().add(partStackA);
+		perspectiveA.setSelectedElement(partStackA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(part);
+		part.setCurSharedRef(placeholderA);
+		partStackA.getChildren().add(placeholderA);
+		partStackA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveB.setElementId("perspectiveB"); //$NON-NLS-1$
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspectiveB.getChildren().add(partStackB);
+		perspectiveB.setSelectedElement(partStackB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setRef(part);
+		partStackB.getChildren().add(placeholderB);
+		partStackB.setSelectedElement(placeholderB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		Shell limboShell = (Shell) appContext.get("limbo");
+		assertNotNull(limboShell);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.switchPerspective(perspectiveB);
+		partService.switchPerspective(perspectiveA);
+
+		Control control = (Control) toolBar.getWidget();
+		assertNotNull(control);
+		assertFalse(control.isDisposed());
+
+		partService.hidePart(part);
+		control = (Control) toolBar.getWidget();
+		assertNotNull(control);
+		assertFalse(control.isDisposed());
+		assertEquals(limboShell, control.getShell());
+
+		partService.switchPerspective(perspectiveB);
+		partService.hidePart(part);
+		assertTrue(control.isDisposed());
+		assertNull(toolBar.getWidget());
+	}
+
+	public void testBug334580_02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MToolBar toolBarA = MenuFactoryImpl.eINSTANCE.createToolBar();
+		partA.setToolbar(toolBarA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+
+		MToolBar toolBarB = MenuFactoryImpl.eINSTANCE.createToolBar();
+		partB.setToolbar(toolBarB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		Shell limboShell = (Shell) appContext.get("limbo");
+		assertNotNull(limboShell);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partB);
+		partService.activate(partA);
+
+		Control controlA = (Control) toolBarA.getWidget();
+		Control controlB = (Control) toolBarB.getWidget();
+		assertNotNull(controlA);
+		assertFalse(controlA.isDisposed());
+		assertNotNull(controlB);
+		assertFalse(controlB.isDisposed());
+
+		partService.hidePart(partA);
+		controlB = (Control) toolBarB.getWidget();
+		assertNull(toolBarA.getWidget());
+		assertTrue(controlA.isDisposed());
+		assertNotNull(controlB);
+		assertFalse(controlB.isDisposed());
+
+		partService.hidePart(partB);
+		assertNull(toolBarA.getWidget());
+		assertNull(toolBarB.getWidget());
+		assertTrue(controlB.isDisposed());
+	}
+
+	public void testBug334580_03() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+		partStack.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		Shell limboShell = (Shell) appContext.get("limbo");
+		assertNotNull(limboShell);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.activate(partB);
+		partService.activate(partA);
+		partService.hidePart(partA);
+
+		assertFalse(logged);
 	}
 
 	private MWindow createWindowWithOneView(String partName) {

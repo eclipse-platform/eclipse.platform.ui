@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,12 @@ import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -35,6 +40,9 @@ import org.eclipse.swt.widgets.Widget;
  * Create a contribute part.
  */
 public class ContributedPartRenderer extends SWTPartRenderer {
+
+	@Inject
+	private IPresentationEngine engine;
 
 	@Optional
 	@Inject
@@ -215,5 +223,43 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 			});
 		}
 
+	}
+
+	@Override
+	public Object getUIContainer(MUIElement element) {
+		if (element instanceof MToolBar) {
+			MUIElement container = (MUIElement) ((EObject) element)
+					.eContainer();
+			MUIElement parent = container.getParent();
+			if (parent == null) {
+				MPlaceholder placeholder = container.getCurSharedRef();
+				if (placeholder != null) {
+					return placeholder.getParent().getWidget();
+				}
+			} else {
+				return parent.getWidget();
+			}
+		}
+		return super.getUIContainer(element);
+	}
+
+	@Override
+	public void disposeWidget(MUIElement element) {
+		if (element instanceof MPart) {
+			MPart part = (MPart) element;
+			MToolBar toolBar = part.getToolbar();
+			if (toolBar != null) {
+				Widget widget = (Widget) toolBar.getWidget();
+				if (widget != null) {
+					unbindWidget(toolBar);
+					widget.dispose();
+				}
+			}
+
+			for (MMenu menu : part.getMenus()) {
+				engine.removeGui(menu);
+			}
+		}
+		super.disposeWidget(element);
 	}
 }

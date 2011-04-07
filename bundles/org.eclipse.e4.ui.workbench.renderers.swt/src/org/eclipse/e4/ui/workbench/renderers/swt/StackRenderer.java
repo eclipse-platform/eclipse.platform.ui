@@ -433,9 +433,20 @@ public class StackRenderer extends LazyStackRenderer {
 					MUIElement tbME = (MUIElement) curTB
 							.getData(AbstractPartRenderer.OWNING_ME);
 					if (tbME instanceof MToolBar)
-						renderer.removeGui(tbME);
+						tbME.setVisible(false);
 					else
 						curTB.dispose();
+				}
+			}
+		} else {
+			if (child instanceof MPlaceholder) {
+				child = ((MPlaceholder) child).getRef();
+			}
+
+			if (child instanceof MPart) {
+				MToolBar toolbar = ((MPart) child).getToolbar();
+				if (toolbar != null) {
+					toolbar.setVisible(false);
 				}
 			}
 		}
@@ -552,7 +563,7 @@ public class StackRenderer extends LazyStackRenderer {
 				MUIElement tbME = (MUIElement) curTB
 						.getData(AbstractPartRenderer.OWNING_ME);
 				if (tbME instanceof MToolBar)
-					renderer.removeGui(tbME);
+					tbME.setVisible(false);
 				else
 					curTB.dispose();
 			}
@@ -572,6 +583,7 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		if (part.getToolbar() != null && part.getToolbar().isToBeRendered()) {
+			part.getToolbar().setVisible(true);
 			Control c = (Control) renderer.createGui(part.getToolbar(), ctf,
 					part.getContext());
 			ctf.setTopRight(c, SWT.RIGHT | SWT.WRAP);

@@ -166,6 +166,9 @@ public class CleanupAddon {
 			} else if (changedObj.getWidget() instanceof Control) {
 				Control ctrl = (Control) changedObj.getWidget();
 				MElementContainer<MUIElement> parent = changedObj.getParent();
+				if (parent == null) {
+					return;
+				}
 				if (changedObj.isVisible()) {
 					if (parent.getRenderer() != null) {
 						Object myParent = ((AbstractPartRenderer) parent.getRenderer())
