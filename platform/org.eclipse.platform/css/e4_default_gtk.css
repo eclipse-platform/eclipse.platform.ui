@@ -1,27 +1,13 @@
 
+@import url("e4_basestyle.css");
+
 .MTrimmedWindow { 
     background-color: #E2E2E2; 
-    margin-top: 2px;
-    margin-bottom: 2px;
-    margin-left: 2px;
-    margin-right: 2px;
-}
-
-.MTrimmedWindow.topLevel { 
-    margin-top: 24px;
-    margin-bottom: 2px;
-    margin-left: 12px;
-    margin-right: 12px;
 }
 
 .MPartStack {
-    tab-renderer: url('platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
-    unselected-tabs-color: #FFFFFF #FFFFFF #FFFFFF 100% 100%;
-    outer-keyline-color: #FFFFFF;
-	inner-keyline-color: #FFFFFF;
 	font-size: 11;
 	simple: false;
-	padding: 0px 10px 11px;
 }
 
 .MTrimBar {
@@ -35,11 +21,8 @@
 .MPartStack.active {
 	unselected-tabs-color: #DCDCDC #E1E1E1 #FFFFFF 100% 100%;
     outer-keyline-color: #C4C5C1;
-	inner-keyline-color: #FFFFFF;
-	tab-outline: #B6BCCC;
 }
 
 #PerspectiveSwitcher {
 	background-color: #EBEBEB #E2E2E2 100%;
-	perspective-keyline-color: #AAB0BF #AAB0BF;
 }
