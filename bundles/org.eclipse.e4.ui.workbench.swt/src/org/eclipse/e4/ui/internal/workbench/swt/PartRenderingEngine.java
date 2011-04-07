@@ -144,9 +144,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 		public void handleEvent(Event event) {
 			MUIElement changedElement = (MUIElement) event
 					.getProperty(UIEvents.EventTags.ELEMENT);
-			MElementContainer<MUIElement> parent = changedElement.getParent();
-			if (parent == null)
-				return;
+			MUIElement parent = changedElement.getParent();
+			if (parent == null) {
+				parent = (MUIElement) ((EObject) changedElement).eContainer();
+				if (parent == null) {
+					return;
+				}
+			}
 
 			AbstractPartRenderer renderer = (AbstractPartRenderer) parent
 					.getRenderer();
@@ -163,14 +167,23 @@ public class PartRenderingEngine implements IPresentationEngine {
 				Control ctrl = (Control) changedElement.getWidget();
 				ctrl.setParent(realComp);
 				fixZOrder(changedElement);
-				renderer.childRendered(parent, changedElement);
+
+				if (parent instanceof MElementContainer<?>) {
+					renderer.childRendered(
+							(MElementContainer<MUIElement>) parent,
+							changedElement);
+				}
 			} else {
 				// Put the control under the 'limbo' shell
 				if (changedElement.getWidget() instanceof Control) {
 					Control ctrl = (Control) changedElement.getWidget();
 					ctrl.setParent(getLimboShell());
 				}
-				renderer.hideChild(parent, changedElement);
+
+				if (parent instanceof MElementContainer<?>) {
+					renderer.hideChild((MElementContainer<MUIElement>) parent,
+							changedElement);
+				}
 			}
 		}
 	};
