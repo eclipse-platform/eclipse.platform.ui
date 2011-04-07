@@ -80,17 +80,20 @@ public class MinMaxAddon {
 			if (changedElement instanceof MPlaceholder)
 				return;
 
+			MUIElement parentElement = changedElement.getParent();
+			final MUIElement elementToChange = parentElement instanceof MArea ? parentElement
+					: changedElement;
 			ctf.addCTabFolder2Listener(new CTabFolder2Adapter() {
 				public void maximize(CTabFolderEvent event) {
-					setState(changedElement, MAXIMIZED);
+					setState(elementToChange, MAXIMIZED);
 				}
 
 				public void minimize(CTabFolderEvent event) {
-					setState(changedElement, MINIMIZED);
+					setState(elementToChange, MINIMIZED);
 				}
 
 				public void restore(CTabFolderEvent event) {
-					setState(changedElement, null);
+					setState(elementToChange, null);
 				}
 			});
 
@@ -105,18 +108,18 @@ public class MinMaxAddon {
 					if (!ctf.getMaximizeVisible())
 						return;
 
-					if (changedElement instanceof MArea) {
-						MUIElement areaRef = changedElement.getCurSharedRef();
+					if (elementToChange instanceof MArea) {
+						MUIElement areaRef = elementToChange.getCurSharedRef();
 						if (!areaRef.getTags().contains(MAXIMIZED)) {
 							setState(areaRef, MAXIMIZED);
 						} else {
 							setState(areaRef, null);
 						}
 					} else {
-						if (!changedElement.getTags().contains(MAXIMIZED)) {
-							setState(changedElement, MAXIMIZED);
+						if (!elementToChange.getTags().contains(MAXIMIZED)) {
+							setState(elementToChange, MAXIMIZED);
 						} else {
-							setState(changedElement, null);
+							setState(elementToChange, null);
 						}
 					}
 				}
@@ -127,6 +130,10 @@ public class MinMaxAddon {
 	private void setState(MUIElement element, String state) {
 		if (element instanceof MArea)
 			element = element.getCurSharedRef();
+
+		MUIElement parentElement = element.getParent();
+		if (parentElement instanceof MArea)
+			element = parentElement.getCurSharedRef();
 
 		element.getTags().remove(MINIMIZED_BY_ZOOM);
 		if (MINIMIZED.equals(state)) {
@@ -307,7 +314,13 @@ public class MinMaxAddon {
 	}
 
 	private CTabFolder getCTFFor(MUIElement element) {
-		if (element.getWidget() instanceof CTabFolder)
+		if (element instanceof MArea) {
+			if (element.getWidget() instanceof CTabFolder)
+				return (CTabFolder) element.getWidget();
+			MUIElement theKid = ((MArea) element).getChildren().get(0);
+			if (theKid.getWidget() instanceof CTabFolder)
+				return (CTabFolder) theKid.getWidget();
+		} else if (element.getWidget() instanceof CTabFolder)
 			return (CTabFolder) element.getWidget();
 		else if (element instanceof MPlaceholder) {
 			MPlaceholder ph = (MPlaceholder) element;

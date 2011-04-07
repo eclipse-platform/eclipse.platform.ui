@@ -15,8 +15,10 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -78,9 +80,20 @@ public class AreaRenderer extends SWTPartRenderer {
 		if (!(element instanceof MArea) || !(parent instanceof Composite))
 			return null;
 
-		MArea areaModel = (MArea) element;
 		Composite parentComp = (Composite) parent;
 
+		Composite areaComp = new Composite(parentComp, SWT.NONE);
+		areaComp.setLayout(new FillLayout());
+
+		return areaComp;
+	}
+
+	private void ensureCTF(MArea areaModel) {
+		if (areaModel.getWidget() instanceof CTabFolder)
+			return;
+
+		Composite curComp = (Composite) areaModel.getWidget();
+		Composite parentComp = curComp.getParent();
 		CTabFolder ctf = new CTabFolder(parentComp, SWT.BORDER | SWT.SINGLE);
 
 		CTabItem cti = new CTabItem(ctf, SWT.NONE);
@@ -91,13 +104,28 @@ public class AreaRenderer extends SWTPartRenderer {
 		if (areaModel.getIconURI() != null)
 			cti.setImage(getImage(areaModel));
 
-		Composite areaComp = new Composite(ctf, SWT.NONE);
-		areaComp.setLayout(new FillLayout());
-		cti.setControl(areaComp);
-
+		curComp.setParent(ctf);
+		cti.setControl(curComp);
 		ctf.setSelection(cti);
 
-		return ctf;
+		curComp.setData(AbstractPartRenderer.OWNING_ME, null);
+		bindWidget(areaModel, ctf);
+	}
+
+	private void ensureComposite(MArea areaModel) {
+		if (areaModel.getWidget() instanceof CTabFolder) {
+			CTabFolder ctf = (CTabFolder) areaModel.getWidget();
+			CTabItem cti = ctf.getItem(0);
+			Composite innerComp = (Composite) cti.getControl();
+			innerComp.setParent(ctf.getParent());
+			cti.setControl(null);
+
+			ctf.setData(AbstractPartRenderer.OWNING_ME, null);
+			ctf.dispose();
+
+			bindWidget(areaModel, innerComp);
+			innerComp.setVisible(true);
+		}
 	}
 
 	/*
@@ -111,11 +139,18 @@ public class AreaRenderer extends SWTPartRenderer {
 	public Object getUIContainer(MUIElement element) {
 		MUIElement parentElement = element.getParent();
 
-		if (!(parentElement instanceof MArea)
-				|| !(parentElement.getWidget() instanceof CTabFolder))
+		if (!(parentElement instanceof MArea))
 			return null;
 
-		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
-		return ctf.getItem(0).getControl();
+		// If we're hosting an MPSC then we should show the CTF
+		if (element instanceof MPartSashContainer) {
+			ensureCTF((MArea) parentElement);
+			CTabFolder ctf = (CTabFolder) parentElement.getWidget();
+			return ctf.getItem(0).getControl();
+		}
+
+		// Otherwise we should show only the composite
+		ensureComposite((MArea) parentElement);
+		return parentElement.getWidget();
 	}
 }
