@@ -615,14 +615,13 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private boolean isClosable(MPart part) {
-		MUIElement presentationElement = part;
 		// if it's a shared part check its current ref
 		if (part.getCurSharedRef() != null) {
-			presentationElement = part.getCurSharedRef();
+			return !(part.getCurSharedRef().getTags()
+					.contains(IPresentationEngine.NO_CLOSE));
 		}
 
-		return !(presentationElement.getTags()
-				.contains(IPresentationEngine.NO_CLOSE));
+		return part.isCloseable();
 	}
 
 	private Menu createTabMenu(CTabFolder folder, MPart part) {
