@@ -130,6 +130,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	protected HashMap widgetsMap = new HashMap();
 	
+	private boolean parseImport;
+	
 	//Map containing k: ElementAdapters o: Map of PropertyHandlers (k: name o: handler))
 	public  HashMap propertyHandlerMap = new HashMap();
 
@@ -193,7 +195,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			InputSource tempStream = new InputSource();
 			tempStream.setURI(url.toString());
 			tempStream.setByteStream(stream);
+			parseImport = true;
 			styleSheet = (CSSStyleSheet) this.parseStyleSheet(tempStream);
+			parseImport = false;
 			CSSRuleList tempRules = styleSheet.getCssRules();
 			for (int j = 0; j < tempRules.getLength(); j++) {
 				masterList.add(tempRules.item(j));
@@ -209,8 +213,9 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		CSSStyleSheetImpl s = new CSSStyleSheetImpl();
 		s.setRuleList(masterList);
 		if (documentCSS instanceof ExtendedDocumentCSS) {
-			documentCSS.removeAllStyleSheets();
-			documentCSS.addStyleSheet(s);
+			if (!parseImport) {
+				documentCSS.addStyleSheet(s);
+			}
 		}
 		return s;
 	}
