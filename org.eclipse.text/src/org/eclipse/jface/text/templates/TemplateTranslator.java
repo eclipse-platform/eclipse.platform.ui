@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,10 +42,16 @@ import java.util.regex.Pattern;
  */
 public class TemplateTranslator {
 	/**
+	 * Regex pattern for identifier
+	 * @since 3.7
+	 */
+	private static final String IDENTIFIER= "(?:[\\p{javaJavaIdentifierStart}&&[^\\$]][\\p{javaJavaIdentifierPart}&&[^\\$]]*+)"; //$NON-NLS-1$
+
+	/**
 	 * Regex pattern for qualifiedname
 	 * @since 3.4
 	 */
-	private static final String QUALIFIED_NAME= "(?:\\w++\\.)*+\\w++"; //$NON-NLS-1$
+	private static final String QUALIFIED_NAME= "(?:" + IDENTIFIER + "\\.)*+" + IDENTIFIER; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
 	 * Regex pattern for argumenttext
@@ -78,7 +84,7 @@ public class TemplateTranslator {
 	private static final Pattern ESCAPE_PATTERN= Pattern.compile(
 			"\\$\\$|\\$\\{" + // $$|${											//$NON-NLS-1$
 			SPACES +
-			"(\\w*+)" + // variable id group (1)								//$NON-NLS-1$
+			"(" + IDENTIFIER + "?+)" + // variable id group (1)					//$NON-NLS-1$ //$NON-NLS-2$
 			SPACES +
 			"(?:" +																//$NON-NLS-1$
 				":" +															//$NON-NLS-1$

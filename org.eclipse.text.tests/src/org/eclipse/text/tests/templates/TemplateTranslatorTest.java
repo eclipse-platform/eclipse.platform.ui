@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,34 @@ public class TemplateTranslatorTest extends TestCase {
 		assertEquals("var", vars[0].getType());
 	}
 
+	public void testNonAsciiVarTemplate() throws Exception {
+		TemplateBuffer buffer= fTranslator.translate("System.out.println(${bl\u00F6d:var} + \" with element type \" + ${h\u00E4:elemType(bl\u00F6d)});");
+		assertNull(fTranslator.getErrorMessage());
+		assertEquals("System.out.println(bl\u00F6d + \" with element type \" + h\u00E4);", buffer.getString());
+		TemplateVariable[] vars= buffer.getVariables();
+		assertEquals(2, vars.length);
+		
+		assertEquals("bl\u00F6d", vars[0].getName());
+		assertEquals(1, vars[0].getOffsets().length);
+		assertEquals(19, vars[0].getOffsets()[0]);
+		assertEquals(4, vars[0].getLength());
+		assertEquals(false, vars[0].isUnambiguous());
+		assertEquals("bl\u00F6d", vars[0].getDefaultValue());
+		assertEquals(1, vars[0].getValues().length);
+		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
+		assertEquals("var", vars[0].getType());
+		
+		assertEquals("h\u00E4", vars[1].getName());
+		assertEquals(1, vars[1].getOffsets().length);
+		assertEquals(50, vars[1].getOffsets()[0]);
+		assertEquals(2, vars[1].getLength());
+		assertEquals(false, vars[1].isUnambiguous());
+		assertEquals("h\u00E4", vars[1].getDefaultValue());
+		assertEquals(1, vars[1].getValues().length);
+		assertEquals(vars[1].getDefaultValue(), vars[1].getValues()[0]);
+		assertEquals("elemType", vars[1].getType());
+	}
+	
 	public void testIllegalSyntax1() throws Exception {
 		ensureFailure("foo ${var");
 	}
