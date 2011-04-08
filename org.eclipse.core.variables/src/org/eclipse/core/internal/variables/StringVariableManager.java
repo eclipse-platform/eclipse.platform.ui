@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,9 +41,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -205,7 +205,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 			loadContributedValueVariables();
 			loadPersistedValueVariables();
 			loadDynamicVariables();
-			new InstanceScope().getNode(VariablesPlugin.PI_CORE_VARIABLES).addPreferenceChangeListener(this);
+			InstanceScope.INSTANCE.getNode(VariablesPlugin.PI_CORE_VARIABLES).addPreferenceChangeListener(this);
 			fInternalChange = false;
 		}
 	}
@@ -526,7 +526,7 @@ public class StringVariableManager implements IStringVariableManager, IPreferenc
 		}
 		fInternalChange = true;
 		try {
-			IEclipsePreferences prefs = new InstanceScope().getNode(VariablesPlugin.PI_CORE_VARIABLES);
+			IEclipsePreferences prefs = InstanceScope.INSTANCE.getNode(VariablesPlugin.PI_CORE_VARIABLES);
 			prefs.put(PREF_VALUE_VARIABLES, variableString);
 			prefs.flush();
 		}
