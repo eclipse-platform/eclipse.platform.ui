@@ -41,8 +41,9 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.ILaunchGroup;
-import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -160,7 +161,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * <li>The preference is turned on</li>
 	 * <li>the launch group id is not <code>org.eclipse.ui.externaltools.launchGroup</code></li>
 	 * </ul>
-	 * @param launchgroupid
+	 * @param launchgroupid the id of the {@link ILaunchGroup}
 	 * @return <code>true</code> if context launching is enabled <code>false</code> otherwise
 	 */
 	public static boolean isContextLaunchEnabled(String launchgroupid) {
@@ -170,9 +171,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Allows an <code>AbstractLaunchHistoryAction</code> to register with this manager to be notified
 	 * of a context (<code>IResource</code>) change and have its updateToolTip(..) method called back to.
-	 * @param action the action to add
-	 * @param group the launch group
-	 * @return true if the <code>AbstractLaunchHistoryAction</code> was added as a listener, false otherwise
+	 * <br><br>
+	 * Obeys the contract of listener addition as outlined in {@link ListenerList#add(Object)}
+	 * @param listener the {@link ILaunchLabelChangedListener} to add
 	 */
 	public void addLaunchLabelUpdateListener(ILaunchLabelChangedListener listener) {
 		fLabelListeners.add(listener);
@@ -181,10 +182,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Removes the specified <code>AbstractLaunchHistoryAction</code> from the listing of registered 
 	 * listeners
-	 * @param action the action to remove
-	 * @param group the launch group
-	 * @return true if the action was removed from the listing of <code>AbstractLaunchHistoryAction</code> listeners,
-	 * false otherwise
+	 * <br><br>
+	 * Obeys the contract of listener removal as outlined in {@link ListenerList#remove(Object)}
+	 * @param listener the {@link ILaunchLabelChangedListener} to remove
 	 */
 	public void removeLaunchLabelChangedListener(ILaunchLabelChangedListener listener) {
 		fLabelListeners.remove(listener);
@@ -265,7 +265,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Appends the text '(already running)' to the tooltip label if there is a launch currently
 	 * running (not terminated) with the same backing launch configuration as the one specified
-	 * @param config
+	 * @param config the {@link ILaunchConfiguration} to check for running state
 	 * @return the appended string for the tooltip label or the configuration name (default)
 	 */
 	private String appendLaunched(ILaunchConfiguration config) {
@@ -289,7 +289,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	
 	/**
 	 * Returns the label for the last launched configuration or and empty string if there was no last launch.
-	 * @param group
+	 * @param group the {@link ILaunchGroup} to get the label for
 	 * @return the name of the last launched configuration, altered with '(running)' if needed, or the empty
 	 * string if there is no last launch.
 	 */
@@ -303,8 +303,11 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	
 	/**
 	 * Returns the label for the specified resource or the empty string, never <code>null</code>
-	 * @param resource
-	 * @param group
+	 * 
+	 * @param selection the current {@link IStructuredSelection}
+	 * @param resource the backing {@link IResource} for the selection
+	 * @param shortcuts the list of {@link ILaunchShortcut}s to consider
+	 * @param group the {@link ILaunchGroup} to launch using
 	 * @return the label for the resource or the empty string, never <code>null</code>
 	 */
 	protected String getLabel(IStructuredSelection selection, IResource resource, List shortcuts, ILaunchGroup group) {
@@ -368,6 +371,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * Prunes the original listing of shortcuts
 	 * @param shortcuts the original listing of <code>LaunchShortcutExtension</code>s
 	 * @param resource the derived resource
+	 * @param mode the mode we are wanting to launch in
+	 * @return the list of {@link ILaunchShortcut}s to consider
 	 * 
 	 * @since 3.4
 	 */
@@ -391,8 +396,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Computes the current resources context, given all of the launch shortcut participants
 	 * and the current selection
-	 * @param shortcuts
-	 * @param selection
+	 * @param shortcuts the list of {@link ILaunchShortcut} to ask for mapped resources
+	 * @param selection the current workbench {@link IStructuredSelection}
 	 * @return The set of resources who care about this launch
 	 * 
 	 * @since 3.4
@@ -522,8 +527,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Adds all of the items in the given object array to the given collection.
 	 * Does nothing if either the collection or array is <code>null</code>.
-	 * @param list
-	 * @param values
+	 * @param list the {@link List} to append to
+	 * @param values the array of {@link Object}s to add to the list
 	 */
 	private void addAllToList(Collection list, Object[] values) {
 		if(list == null || values == null) {
@@ -628,10 +633,10 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Adds a mouse listener to the launch toolbar 
 	 * 
-	 * @param window
+	 * @param window the {@link IWorkbenchWindow} to work with
 	 */
 	private void addMouseListener(IWorkbenchWindow window) {
-		CoolBarManager cmgr = ((WorkbenchWindow)window).getCoolBarManager();
+		ICoolBarManager cmgr = ((WorkbenchWindow)window).getCoolBarManager2();
 		if(cmgr != null) {
 			IContributionItem item = cmgr.find("org.eclipse.debug.ui.launchActionSet"); //$NON-NLS-1$
 			if(item instanceof ToolBarContributionItem) {
