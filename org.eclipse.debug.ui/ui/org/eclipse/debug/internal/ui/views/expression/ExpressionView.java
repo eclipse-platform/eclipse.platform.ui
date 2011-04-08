@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -205,8 +205,6 @@ public class ExpressionView extends VariablesView {
      * Returns whether the given selection can be pasted into the expressions
      * view.
      * 
-     * @param selection
-     * 		the selection to paste
      * @return whether the given selection can be pasted into the given target
      */
     public boolean canPaste() {
@@ -220,8 +218,6 @@ public class ExpressionView extends VariablesView {
     /**
      * Pastes the selection into the given target
      * 
-     * @param selection
-     * 		breakpoints
      * @return whether successful
      */
     public boolean performPaste() {
