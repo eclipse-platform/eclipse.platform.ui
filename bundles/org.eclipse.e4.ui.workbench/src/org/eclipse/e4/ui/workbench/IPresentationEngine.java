@@ -33,12 +33,16 @@ public interface IPresentationEngine {
 	public static final String NO_TITLE = "NoTitle"; //$NON-NLS-1$
 
 	/**
-	 * When applied as a tag to an MStackElement inhibits the display of the close affordance
+	 * When applied as a tag to an MPlaceholder inhibits the display of the close affordance. This
+	 * allows a part to be closeable in one perspective but not in a different one.
+	 * 
+	 * <b>NOTE:</b> If you are not using perspectives then use the MPart's 'isCloseable' attribute
+	 * to control the affordance.
 	 */
 	public static final String NO_CLOSE = "NoClose"; //$NON-NLS-1$
 
 	/**
-	 * When applied as a tag to an MUIElement inhibits moveing the elemnt (ie. through DnD...
+	 * When applied as a tag to an MUIElement inhibits moving the element (ie. through DnD...
 	 */
 	public static final String NO_MOVE = "NoMove"; //$NON-NLS-1$
 
