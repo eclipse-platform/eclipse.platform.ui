@@ -2357,7 +2357,7 @@ public class PartRenderingEngineTests extends TestCase {
 		assertFalse(logged);
 	}
 
-	public void testBug342439() {
+	public void testBug342439_01() {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();
 		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
@@ -2395,6 +2395,44 @@ public class PartRenderingEngineTests extends TestCase {
 
 		assertEquals(2, folder.getItemCount());
 		assertNotNull(partA.getWidget());
+	}
+
+	public void testBug342439_02() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partA.setVisible(false);
+		partStack.getChildren().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+		partStack.setSelectedElement(partB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		CTabFolder folder = (CTabFolder) partStack.getWidget();
+		assertEquals(1, folder.getItemCount());
+
+		partA.setToBeRendered(false);
+		assertEquals(1, folder.getItemCount());
+
+		partA.setVisible(true);
+		assertEquals(1, folder.getItemCount());
+
+		partA.setVisible(false);
+		assertEquals(1, folder.getItemCount());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {

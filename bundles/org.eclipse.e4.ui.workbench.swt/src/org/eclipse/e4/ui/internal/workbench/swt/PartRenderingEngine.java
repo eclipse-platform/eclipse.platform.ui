@@ -159,20 +159,22 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 			// Re-parent the control based on the visible state
 			if (changedElement.isVisible()) {
-				if (changedElement.getWidget() instanceof Control) {
-					// Ensure that the control is under its 'real' parent if
-					// it's visible
-					Composite realComp = (Composite) renderer
-							.getUIContainer(changedElement);
-					Control ctrl = (Control) changedElement.getWidget();
-					ctrl.setParent(realComp);
-					fixZOrder(changedElement);
-				}
+				if (changedElement.isToBeRendered()) {
+					if (changedElement.getWidget() instanceof Control) {
+						// Ensure that the control is under its 'real' parent if
+						// it's visible
+						Composite realComp = (Composite) renderer
+								.getUIContainer(changedElement);
+						Control ctrl = (Control) changedElement.getWidget();
+						ctrl.setParent(realComp);
+						fixZOrder(changedElement);
+					}
 
-				if (parent instanceof MElementContainer<?>) {
-					renderer.childRendered(
-							(MElementContainer<MUIElement>) parent,
-							changedElement);
+					if (parent instanceof MElementContainer<?>) {
+						renderer.childRendered(
+								(MElementContainer<MUIElement>) parent,
+								changedElement);
+					}
 				}
 			} else {
 				// Put the control under the 'limbo' shell
