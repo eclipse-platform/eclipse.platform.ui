@@ -11,6 +11,7 @@
 package org.eclipse.text.tests.templates;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -127,6 +128,26 @@ public class TemplateTranslatorTest extends TestCase {
 		assertEquals(1, vars[1].getValues().length);
 		assertEquals(vars[1].getDefaultValue(), vars[1].getValues()[0]);
 		assertEquals("elemType", vars[1].getType());
+	}
+	
+	public void testNumberAsIdentifier() throws Exception {
+		TemplateBuffer buffer= fTranslator.translate("${0:link(1,'2 ',3)}\\n${0}");
+		assertNull(fTranslator.getErrorMessage());
+		assertEquals("0\\n0", buffer.getString());
+		TemplateVariable[] vars= buffer.getVariables();
+		assertEquals(1, vars.length);
+		assertEquals("0", vars[0].getName());
+		assertEquals(2, vars[0].getOffsets().length);
+		assertEquals(0, vars[0].getOffsets()[0]);
+		assertEquals(3, vars[0].getOffsets()[1]);
+		assertEquals(1, vars[0].getLength());
+		assertEquals(false, vars[0].isUnambiguous());
+		assertEquals("0", vars[0].getDefaultValue());
+		assertEquals(1, vars[0].getValues().length);
+		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
+		
+		assertEquals("link", vars[0].getType());
+		assertEquals(Arrays.asList(new Object[] { "1", "2 ", "3" }), vars[0].getVariableType().getParams());
 	}
 	
 	public void testIllegalSyntax1() throws Exception {

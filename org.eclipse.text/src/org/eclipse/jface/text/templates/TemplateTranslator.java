@@ -33,7 +33,8 @@ import java.util.regex.Pattern;
  * arguments := (argument ',')* argument.
  * argument := qualifiedname | argumenttext.
  * qualifiedname := (identifier '.')* identifier.
- * argumenttext := "'" (character - "'" | "'" "'")* "'".</pre>
+ * argumenttext := "'" (character - "'" | "'" "'")* "'".
+ * identifier := javaidentifierpart - "$".</pre>
  * <p>
  * Clients may only replace the <code>createVariable</code> method of this class.
  * </p>
@@ -42,10 +43,11 @@ import java.util.regex.Pattern;
  */
 public class TemplateTranslator {
 	/**
-	 * Regex pattern for identifier
+	 * Regex pattern for identifier.
+	 * Note: For historic reasons, this pattern <em>allows</em> numbers at the beginning of an identifier. 
 	 * @since 3.7
 	 */
-	private static final String IDENTIFIER= "(?:[\\p{javaJavaIdentifierStart}&&[^\\$]][\\p{javaJavaIdentifierPart}&&[^\\$]]*+)"; //$NON-NLS-1$
+	private static final String IDENTIFIER= "(?:[\\p{javaJavaIdentifierPart}&&[^\\$]]++)"; //$NON-NLS-1$
 
 	/**
 	 * Regex pattern for qualifiedname
