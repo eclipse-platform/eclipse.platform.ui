@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardContainer2;
 import org.eclipse.swt.SWT;
@@ -50,6 +51,7 @@ import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -132,6 +134,14 @@ class NewWizardNewPage implements ISelectionChangedListener {
         } else {
             needShowAll = !allActivityEnabled(wizardCategories);
         }
+
+		IWizard wizard = mainPage.getWizard();
+		if (wizard instanceof NewWizard) {
+			if (WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY.equals(((NewWizard) wizard)
+					.getCategoryId())) {
+				filter.setFilterPrimaryWizards(true);
+			}
+		}
     }
 
     /**

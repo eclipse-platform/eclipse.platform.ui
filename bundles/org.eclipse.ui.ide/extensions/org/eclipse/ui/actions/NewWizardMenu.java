@@ -21,9 +21,12 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -117,9 +120,36 @@ public class NewWizardMenu extends BaseNewWizardMenu {
      * 
      * @return boolean
      */
-    private boolean hasExamples() {
-        return registryHasCategory(WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY);
-    }
+	private boolean hasExamples() {
+		boolean hasCategory = registryHasCategory(WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY);
+		if (hasCategory) {
+			IWizardCategory exampleCategory = WorkbenchPlugin
+					.getDefault()
+					.getNewWizardRegistry()
+					.findCategory(
+							WizardsRegistryReader.FULL_EXAMPLES_WIZARD_CATEGORY);
+			return hasWizards(exampleCategory);
+		}
+		return false;
+	}
+	
+	private boolean hasWizards(IWizardCategory category) {
+		IWizardDescriptor[] wizards = category.getWizards();
+		if (wizards.length>0) {
+			for (int i = 0; i < wizards.length; i++) {
+				if (!WorkbenchActivityHelper.filterItem(wizards[i])) {
+					return true;
+				}
+			}
+		}
+		IWizardCategory[] categories = category.getCategories();
+		for (int i = 0; i < categories.length; i++) {
+			if (hasWizards(categories[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.actions.BaseNewWizardMenu#addItems(org.eclipse.jface.action.IContributionManager)
