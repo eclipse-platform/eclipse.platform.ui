@@ -134,7 +134,7 @@ public class CVSScmUrlImportWizardPage extends WizardPage implements IScmUrlImpo
 
 		// Initialize versions versus HEAD
 		IDialogSettings settings = getWizard().getDialogSettings();
-		boolean useHEAD= settings.getBoolean(CVS_PAGE_USE_HEAD);
+		boolean useHEAD= settings != null && settings.getBoolean(CVS_PAGE_USE_HEAD);
 		useHead.setSelection(useHEAD);
 		versions.setSelection(!useHEAD);
 
