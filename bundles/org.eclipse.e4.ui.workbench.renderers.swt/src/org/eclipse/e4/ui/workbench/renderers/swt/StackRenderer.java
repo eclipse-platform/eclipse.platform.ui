@@ -372,7 +372,7 @@ public class StackRenderer extends LazyStackRenderer {
 		for (MUIElement mPart : stack.getChildren()) {
 			if (mPart == part)
 				return index;
-			if (mPart.isToBeRendered())
+			if (mPart.isToBeRendered() && mPart.isVisible())
 				index++;
 		}
 		return index;
