@@ -245,26 +245,28 @@ public class LogListener extends CommandOutputListener {
     /**
      * Convert revision number to branch number.
      * 
-     * @param revision - revision number
+     * <table border="1">
+     * <tr><th>revision</th><th>branch</th><th>comment</th></tr>
+     * <tr><td>1.1.2.1</td><td>1.1.0.2</td><td>regular branch</td></tr>
+     * <tr><td>1.1.4.1</td><td>1.1.0.4</td><td>regular branch</td></tr>
+     * <tr><td>1.1.1.2</td><td>1.1.1</td><td>vendor branch</td></tr>
+     * <tr><td>1.1.2.1.2.3</td><td>1.1.2.1.0.2</td><td>branch created from another branch</td></tr>
+     * </table>
+     * 
+     * @param revision revision number
      * @return branch number
      * 
-     * @example
-     * <table border=1>
-     * <tr><th>revision</th><th>return</th><th>Notes</th></tr>
-     * <tr><td>1.1.2.1</td><td>1.1.0.2</td><td>Regular branch</td></tr>
-     * <tr><td>1.1.4.1</td><td>1.1.0.4</td><td>Regular branch</td></tr>
-     * <tr><td>1.1.1.2</td><td>1.1.1</td><td>vendor branch</td></tr>
-     * <tr><td>1.1.2.1.2.3</td><td>1.1.2.1.0.2</td><td>branch off the branch</td></tr>
-     * </table>
      */
-	public String getBranchRevision(String revision) {
-		if (revision.length() == 0 || revision.lastIndexOf(".")==-1)  //$NON-NLS-1$
-			throw new RuntimeException("Revision malformed: "+revision); //$NON-NLS-1$
+	private String getBranchRevision(String revision) {
+		if (revision.length() == 0 || revision.lastIndexOf(".") == -1) //$NON-NLS-1$
+			throw new IllegalArgumentException(
+					"Revision malformed: " + revision); //$NON-NLS-1$
 		String branchNumber = revision.substring(0, revision.lastIndexOf(".")); //$NON-NLS-1$
 		if (branchNumber.lastIndexOf(".") == -1 || branchNumber.equals(CVSTag.VENDOR_REVISION)) { //$NON-NLS-1$
 			return branchNumber;
 		}
-		String branchPrefix = branchNumber.substring(0,branchNumber.lastIndexOf(".")); //$NON-NLS-1$
+		String branchPrefix = branchNumber.substring(0,
+				branchNumber.lastIndexOf(".")); //$NON-NLS-1$
 		branchPrefix += ".0"; //$NON-NLS-1$
 		branchPrefix += branchNumber.substring(branchNumber.lastIndexOf(".")); //$NON-NLS-1$
 		return branchPrefix;
