@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -45,10 +46,11 @@ public class HistoryTableProvider {
 
 	//column constants
 	private static final int COL_REVISION = 0;
-	private static final int COL_TAGS = 1;
-	private static final int COL_DATE = 2;
-	private static final int COL_AUTHOR = 3;
-	private static final int COL_COMMENT = 4;
+	private static final int COL_BRANCHES = 1;
+	private static final int COL_TAGS = 2;
+	private static final int COL_DATE = 3;
+	private static final int COL_AUTHOR = 4;
+	private static final int COL_COMMENT = 5;
 
 	/**
 	 * The history label provider.
@@ -69,9 +71,19 @@ public class HistoryTableProvider {
 						revision = NLS.bind(CVSUIMessages.currentRevision, new String[] { revision }); 
 					}
 					return revision;
+				case COL_BRANCHES:
+					CVSTag[] branches = entry.getBranches();
+					StringBuffer result = new StringBuffer();
+					for (int i = 0; i < branches.length; i++) {
+						result.append(branches[i].getName());
+						if (i < branches.length - 1) {
+							result.append(", "); //$NON-NLS-1$
+						}
+					}
+					return result.toString();
 				case COL_TAGS:
 					CVSTag[] tags = entry.getTags();
-					StringBuffer result = new StringBuffer();
+					result = new StringBuffer();
 					for (int i = 0; i < tags.length; i++) {
 						result.append(tags[i].getName());
 						if (i < tags.length - 1) {
@@ -157,13 +169,14 @@ public class HistoryTableProvider {
 		
 		private VersionCollator versionCollator = new VersionCollator();
 		
-		// column headings:	"Revision" "Tags" "Date" "Author" "Comment"
+		// column headings:	"Revision" "Branches" "Tags" "Date" "Author" "Comment"
 		private int[][] SORT_ORDERS_BY_COLUMN = {
-			{COL_REVISION, COL_DATE, COL_AUTHOR, COL_COMMENT, COL_TAGS},	/* revision */ 
-			{COL_TAGS, COL_REVISION, COL_DATE, COL_AUTHOR, COL_COMMENT},	/* tags */
-			{COL_DATE, COL_REVISION, COL_AUTHOR, COL_COMMENT, COL_TAGS},	/* date */
-			{COL_AUTHOR, COL_REVISION, COL_DATE, COL_COMMENT, COL_TAGS},	/* author */
-			{COL_COMMENT, COL_REVISION, COL_DATE, COL_AUTHOR, COL_TAGS}		/* comment */
+			{COL_REVISION, COL_DATE, COL_AUTHOR, COL_COMMENT, COL_TAGS, COL_BRANCHES},	/* revision */ 
+			{COL_BRANCHES, COL_REVISION, COL_DATE, COL_AUTHOR, COL_COMMENT, COL_TAGS},	/* tags */
+			{COL_TAGS, COL_REVISION, COL_DATE, COL_AUTHOR, COL_COMMENT, COL_BRANCHES},	/* tags */
+			{COL_DATE, COL_REVISION, COL_AUTHOR, COL_COMMENT, COL_TAGS, COL_BRANCHES},	/* date */
+			{COL_AUTHOR, COL_REVISION, COL_DATE, COL_COMMENT, COL_TAGS, COL_BRANCHES},	/* author */
+			{COL_COMMENT, COL_REVISION, COL_DATE, COL_AUTHOR, COL_TAGS, COL_BRANCHES}		/* comment */
 		};
 		
 		/**
@@ -199,9 +212,19 @@ public class HistoryTableProvider {
 		 */
 		int compareColumnValue(int columnNumber, ILogEntry e1, ILogEntry e2) {
 			switch (columnNumber) {
-				case 0: /* revision */
+				case COL_REVISION: /* revision */
 					return versionCollator.compare(e1.getRevision(), e2.getRevision());
-				case 1: /* tags */
+				case COL_BRANCHES: /* branches */
+					CVSTag[] branches1 = e1.getBranches();
+					CVSTag[] branches2 = e2.getBranches();
+					if (branches2.length == 0) {
+						return -1;
+					}
+					if (branches1.length == 0) {
+						return 1;
+					}
+					return getComparator().compare(branches1[0].getName(), branches2[0].getName());
+				case COL_TAGS: /* tags */
 					CVSTag[] tags1 = e1.getTags();
 					CVSTag[] tags2 = e2.getTags();
 					if (tags2.length == 0) {
@@ -211,13 +234,13 @@ public class HistoryTableProvider {
 						return 1;
 					}
 					return getComparator().compare(tags1[0].getName(), tags2[0].getName());
-				case 2: /* date */
+				case COL_DATE: /* date */
 					Date date1 = e1.getDate();
 					Date date2 = e2.getDate();
 					return date1.compareTo(date2);
-				case 3: /* author */
+				case COL_AUTHOR: /* author */
 					return getComparator().compare(e1.getAuthor(), e2.getAuthor());
-				case 4: /* comment */
+				case COL_COMMENT: /* comment */
 					return getComparator().compare(e1.getComment(), e2.getComment());
 				default:
 					return 0;
@@ -347,6 +370,13 @@ public class HistoryTableProvider {
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 	
+		// branches
+		col = new TableColumn(table, SWT.NONE);
+		col.setResizable(true);
+		col.setText(CVSUIMessages.HistoryView_branches); 
+		col.addSelectionListener(headerListener);
+		layout.addColumnData(new ColumnWeightData(20, true));
+
 		// tags
 		col = new TableColumn(table, SWT.NONE);
 		col.setResizable(true);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
@@ -31,9 +32,13 @@ public class CVSTag implements ITag {
 	
 	public static final CVSTag DEFAULT = new CVSTag();
 	public static final CVSTag BASE = new CVSTag("BASE", VERSION); //$NON-NLS-1$
+	public static final String VENDOR_REVISION = "1.1.1";  //$NON-NLS-1$
+	public static final String HEAD_REVISION = "1";  //$NON-NLS-1$
+	public static final String UNKNOWN_BRANCH = CVSMessages.CVSTag_unknownBranch;
+	public static final String HEAD_BRANCH = "HEAD";  //$NON-NLS-1$
 	
 	protected String name;
-	protected String branchNumber;
+	protected String branchRevision;
 	protected int type;
 
 	private static final String DATE_TAG_NAME_FORMAT = "dd MMM yyyy HH:mm:ss Z";//$NON-NLS-1$
@@ -54,17 +59,18 @@ public class CVSTag implements ITag {
 	}
 	
 	public CVSTag() {
-		this("HEAD", HEAD); //$NON-NLS-1$
+		this("HEAD", HEAD_REVISION, HEAD); //$NON-NLS-1$
 	}
 
 	public CVSTag(String name, int type) {		
 		this.name = name;
 		this.type = type;
+		this.branchRevision = null;
 	}
 
-	public CVSTag(String name, String branchNumber, int type) {		
+	public CVSTag(String name, String branchRevision, int type) {
 		this.name = name;
-		this.branchNumber = branchNumber;
+		this.branchRevision = branchRevision;
 		this.type = type;
 	}
 
@@ -86,9 +92,16 @@ public class CVSTag implements ITag {
 	public String getName() {
 		return name;
 	}
-
-	public String getBranchNumber() {
-		return branchNumber;
+	
+	/**
+	 * Returns branch revision - unique number given for each branch. Each
+	 * number may have several names (aliases) and define next sequence of
+	 * commits For example HEAD branch revision is 1, branches created from HEAD
+	 * will have 1.1.0.2, 1.1.0.4, etc... Branches created from another branch
+	 * 1.1.1.2.0.2, 1.1.1.2.0.4, etc...
+	 */
+	public String getBranchRevision() {
+		return branchRevision;
 	}
 
 	public int getType() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - Bug 179977 CVS log command doesn't scale well with lots of tags and versions
  *     Brock Janiczak <brockj@tpg.com.au> - Bug 194396 Reduce retained memory usage of LogEntry objects
+ *     Olexiy Buyanskyy <olexiyb@gmail.com> - Bug 76386 - [History View] CVS Resource History shows revisions from all branches
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
@@ -192,18 +193,26 @@ public class LogListener extends CommandOutputListener {
     	if (state == DONE) {
     		// we are only interested in tag names for this revision, remove all others.
     		List thisRevisionTags = versions.isEmpty() ? Collections.EMPTY_LIST : new ArrayList(3);
+    		List thisRevisionBranches = new ArrayList(1);
     		//a parallel lists for revision tags (used only for branches with no commits on them)
     		List revisionVersions = versions.isEmpty() ? Collections.EMPTY_LIST : new ArrayList(3);
+    		String branchRevision = this.getBranchRevision(revision);
     		for (Iterator i = versions.iterator(); i.hasNext();) {
     			VersionInfo version = (VersionInfo) i.next();
     			String tagName = version.getTagName();
     			String tagRevision = version.getTagRevision();
+    			String tagBranchRevision = version.getBranchRevision();
+				int type = version.isBranch() ? CVSTag.BRANCH : CVSTag.VERSION;
+				if ( branchRevision.equals(tagBranchRevision) || 
+						(version.isBranch() && revision.equals(tagRevision))) {
+    				CVSTag cvsTag = new CVSTag(tagName, tagBranchRevision, type);
+    				thisRevisionBranches.add(cvsTag);
+    			}
     			
-    			if (tagRevision.equals(revision) ||
+				if (tagRevision.equals(revision) ||
     				revision.equals(BRANCH_REVISION)) {
-    				String branchNumber = version.getBranchNumber();
-    				int type = version.isBranch() ? CVSTag.BRANCH : CVSTag.VERSION;
-    				thisRevisionTags.add(new CVSTag(tagName, branchNumber, type));
+    				CVSTag cvsTag = new CVSTag(tagName, tagBranchRevision, type);
+    				thisRevisionTags.add(cvsTag);
     				if (revision.equals(BRANCH_REVISION)){
     					//also record the tag revision
     					revisionVersions.add(tagRevision);
@@ -211,9 +220,21 @@ public class LogListener extends CommandOutputListener {
     			}
     		}
     		
+    		if (branchRevision.equals(CVSTag.HEAD_REVISION)) {
+    			CVSTag tag = new CVSTag(CVSTag.HEAD_BRANCH, CVSTag.HEAD_REVISION, CVSTag.HEAD);
+				thisRevisionBranches.add(tag);
+    		} else {
+        		if ( thisRevisionBranches.size() == 0) {
+        			CVSTag cvsTag = new CVSTag(CVSTag.UNKNOWN_BRANCH, branchRevision, CVSTag.BRANCH);
+        			thisRevisionBranches.add(cvsTag);
+    			}			
+    		}
     		if (currentFile != null) {
     			LogEntry entry = new LogEntry(currentFile, revision, author, creationDate,
-    				internString(comment.toString()), fileState, !thisRevisionTags.isEmpty() ? (CVSTag[]) thisRevisionTags.toArray(new CVSTag[thisRevisionTags.size()]) : NO_TAGS, !revisionVersions.isEmpty() ? (String[]) revisionVersions.toArray(new String[revisionVersions.size()]) : NO_VERSIONS);
+    				internString(comment.toString()), fileState, 
+    				!thisRevisionTags.isEmpty() ? (CVSTag[]) thisRevisionTags.toArray(new CVSTag[thisRevisionTags.size()]) :NO_TAGS, 
+    				!thisRevisionBranches.isEmpty() ? (CVSTag[]) thisRevisionBranches.toArray(new CVSTag[thisRevisionBranches.size()]) :NO_TAGS, 
+    					!revisionVersions.isEmpty() ? (String[]) revisionVersions.toArray(new String[revisionVersions.size()]) : NO_VERSIONS);
     			addEntry(entry);
     		}
     		state = BEGIN;
@@ -221,6 +242,34 @@ public class LogListener extends CommandOutputListener {
     	return OK;
     }
 
+    /**
+     * Convert revision number to branch number.
+     * 
+     * @param revision - revision number
+     * @return branch number
+     * 
+     * @example
+     * <table border=1>
+     * <tr><th>revision</th><th>return</th><th>Notes</th></tr>
+     * <tr><td>1.1.2.1</td><td>1.1.0.2</td><td>Regular branch</td></tr>
+     * <tr><td>1.1.4.1</td><td>1.1.0.4</td><td>Regular branch</td></tr>
+     * <tr><td>1.1.1.2</td><td>1.1.1</td><td>vendor branch</td></tr>
+     * <tr><td>1.1.2.1.2.3</td><td>1.1.2.1.0.2</td><td>branch off the branch</td></tr>
+     * </table>
+     */
+	public String getBranchRevision(String revision) {
+		if (revision.length() == 0 || revision.lastIndexOf(".")==-1)  //$NON-NLS-1$
+			throw new RuntimeException("Revision malformed: "+revision); //$NON-NLS-1$
+		String branchNumber = revision.substring(0, revision.lastIndexOf(".")); //$NON-NLS-1$
+		if (branchNumber.lastIndexOf(".") == -1 || branchNumber.equals(CVSTag.VENDOR_REVISION)) { //$NON-NLS-1$
+			return branchNumber;
+		}
+		String branchPrefix = branchNumber.substring(0,branchNumber.lastIndexOf(".")); //$NON-NLS-1$
+		branchPrefix += ".0"; //$NON-NLS-1$
+		branchPrefix += branchNumber.substring(branchNumber.lastIndexOf(".")); //$NON-NLS-1$
+		return branchPrefix;
+	}
+    
     protected void beginFile(ICVSRepositoryLocation location, String fileName) {
     	currentFile = RemoteFile.create(fileName, location);
     	versions.clear();
@@ -273,7 +322,7 @@ public class LogListener extends CommandOutputListener {
     private static class VersionInfo {
 		private final boolean isBranch;
 		private String tagRevision;
-		private String branchNumber;
+		private String branchRevision;
 		private final String tagName;
 		
     	public VersionInfo(String version, String tagName) {
@@ -289,8 +338,8 @@ public class LogListener extends CommandOutputListener {
 					if (version.charAt(lastDot - 1) == '0' && version.charAt(lastDot - 2) == '.') {
 						lastDot = lastDot - 2;
 					}
+					this.branchRevision = version;
 					tagRevision = version.substring(0, lastDot);
-					branchNumber = version.substring(lastDot+1);
 				}
 			}
     	}
@@ -328,8 +377,8 @@ public class LogListener extends CommandOutputListener {
         	return false;
         }
 
-		public String getBranchNumber() {
-			return branchNumber;
+		public String getBranchRevision() {
+			return branchRevision;
 		}
     }
 }
