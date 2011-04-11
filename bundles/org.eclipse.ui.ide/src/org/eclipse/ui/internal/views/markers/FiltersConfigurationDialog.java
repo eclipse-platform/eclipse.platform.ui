@@ -261,6 +261,10 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 				limitText.setEnabled(limitButton.getSelection());
 			}
 		});
+		
+		GridData limitData = new GridData();
+		limitData.verticalIndent = 5;
+		limitButton.setLayoutData(limitData);
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
