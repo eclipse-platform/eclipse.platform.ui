@@ -2435,6 +2435,43 @@ public class PartRenderingEngineTests extends TestCase {
 		assertEquals(1, folder.getItemCount());
 	}
 
+	public void testBug342366() throws Exception {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack);
+		window.setSelectedElement(partStack);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partB);
+		partStack.setSelectedElement(partB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		CTabFolder folder = (CTabFolder) partStack.getWidget();
+		assertEquals(2, folder.getItemCount());
+
+		partA.setVisible(false);
+		assertEquals(1, folder.getItemCount());
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		partStack.getChildren().add(partC);
+		// sleep a bit because notifications are done on another thread
+		Thread.sleep(50);
+		assertFalse(logged);
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
