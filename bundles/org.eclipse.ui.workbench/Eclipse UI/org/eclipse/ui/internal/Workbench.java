@@ -523,6 +523,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 			public void run() {
 				ULocale.setDefault(new ULocale(Platform.getNL() + Platform.getNLExtensions()));
 
+				System.setProperty(E4Workbench.XMI_URI_ARG,
+						"org.eclipse.ui.workbench/LegacyIDE.e4xmi"); //$NON-NLS-1$
 				Object obj = getApplication(Platform.getCommandLineArgs());
 				if (obj instanceof E4Application) {
 					E4Application e4app = (E4Application) obj;

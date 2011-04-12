@@ -424,7 +424,9 @@ public class E4Application implements IApplication {
 			}
 		}
 
-		return appContext.getBrandingProperty(argName);
+		final String brandingProperty = appContext.getBrandingProperty(argName);
+		return brandingProperty == null ? System.getProperty(argName)
+				: brandingProperty;
 	}
 
 	public void stop() {
