@@ -2436,6 +2436,42 @@ boolean setItemLocation(GC gc) {
 	}
 	return changed;
 }
+/**
+ * Reorder the items of the receiver. 
+ * @param indices an array containing the new indices for all items
+ * 
+ * @exception IllegalArgumentException <ul>
+ *    <li>ERROR_NULL_ARGUMENT - if the indices array is null</li>
+ *    <li>ERROR_INVALID_ARGUMENT - if the indices array is not the same length as the number of items, 
+ *    if there are duplicate indices or an index is out of range.</li>
+ * </ul>
+ * 
+ * @exception SWTException <ul>
+ *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+ *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+ * </ul>
+ * @since 4.1
+ */
+public void setItemOrder (int[] indices) {
+	checkWidget();
+	if (indices == null) SWT.error (SWT.ERROR_NULL_ARGUMENT);
+	if (indices.length != items.length) SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+	int newSelectedIndex = -1;
+	boolean[] seen = new boolean[items.length];
+	CTabItem[] temp = new CTabItem[items.length];
+	for (int i=0; i<indices.length; i++) {
+		int index = indices[i];
+		if (!(0 <= index && index < items.length)) SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+		if (seen[index]) SWT.error (SWT.ERROR_INVALID_ARGUMENT);
+		seen[index] = true;
+		if (index == selectedIndex) newSelectedIndex = i;
+		temp[i] = items[index];
+	}
+	items = temp;
+	selectedIndex = newSelectedIndex;
+	updateItems();
+	redraw();
+}
 boolean setItemSize(GC gc) {
 	boolean changed = false;
 	if (isDisposed()) return changed;
