@@ -11,8 +11,6 @@
 
 package org.eclipse.e4.ui.workbench.addons.cleanupaddon;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -22,10 +20,10 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
@@ -60,10 +58,11 @@ public class CleanupAddon {
 			if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				final MElementContainer<?> container = (MElementContainer<?>) changedObj;
 				MUIElement containerParent = container.getParent();
+
 				// Determine the elements that should *not* ever be auto-destroyed
 				if (container instanceof MApplication || container instanceof MPerspectiveStack
 						|| container instanceof MMenuElement || container instanceof MTrimBar
-						|| container instanceof MToolBar) {
+						|| container instanceof MToolBar || container instanceof MArea) {
 					return;
 				}
 
@@ -295,32 +294,11 @@ public class CleanupAddon {
 	}
 
 	boolean isLastEditorStack(MUIElement element) {
-		if (!element.getTags().contains("EditorStack"))
+		MUIElement parent = element.getParent();
+		if (!(parent instanceof MArea))
 			return false;
 
-		// Don't remove the last editor stack (in the EA)
-		MWindow win = modelService.getTopLevelWindowFor(element);
-
-		List<String> editorStackTag = new ArrayList<String>();
-		editorStackTag.add("EditorStack");
-		List<MPartStack> editorStacks = modelService.findElements(win, null, MPartStack.class,
-				editorStackTag);
-
-		// See bug 320655 for details...
-		// When the last perspective closes the code above returns 0
-		// because the perspective has already been removed from the window's model
-		// So we'll try to walk up to the top of the editor stack's containment
-		// model and search there (when 'getParent' == null we're at the 'shared element
-		// which is the actual EA model element.
-		if (editorStacks.size() == 0) {
-			MUIElement container = element;
-			while (container.getParent() != null) {
-				container = container.getParent();
-			}
-			editorStacks = modelService.findElements(container, null, MPartStack.class,
-					editorStackTag);
-		}
-
-		return editorStacks.size() == 1;
+		MArea area = (MArea) parent;
+		return modelService.countRenderableChildren(area) == 1;
 	}
 }

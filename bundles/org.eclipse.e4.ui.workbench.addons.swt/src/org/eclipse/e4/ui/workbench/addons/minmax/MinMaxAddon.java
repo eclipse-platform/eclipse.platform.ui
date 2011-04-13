@@ -18,6 +18,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
@@ -68,9 +69,70 @@ public class MinMaxAddon {
 	@Inject
 	private IEclipseContext context;
 
+	private CTabFolder2Adapter CTFButtonListener = new CTabFolder2Adapter() {
+		private MUIElement getElementToChange(CTabFolderEvent event) {
+			CTabFolder ctf = (CTabFolder) event.widget;
+			MUIElement element = (MUIElement) ctf.getData(AbstractPartRenderer.OWNING_ME);
+			MUIElement parentElement = element.getParent();
+			return parentElement instanceof MArea ? parentElement : element;
+		}
+
+		public void maximize(CTabFolderEvent event) {
+			setState(getElementToChange(event), MAXIMIZED);
+		}
+
+		public void minimize(CTabFolderEvent event) {
+			setState(getElementToChange(event), MINIMIZED);
+		}
+
+		public void restore(CTabFolderEvent event) {
+			setState(getElementToChange(event), null);
+		}
+	};
+
+	private MouseListener CTFDblClickListener = new MouseListener() {
+		public void mouseUp(MouseEvent e) {
+		}
+
+		public void mouseDown(MouseEvent e) {
+		}
+
+		private MUIElement getElementToChange(MouseEvent event) {
+			CTabFolder ctf = (CTabFolder) event.widget;
+			MUIElement element = (MUIElement) ctf.getData(AbstractPartRenderer.OWNING_ME);
+			MUIElement parentElement = element.getParent();
+			return parentElement instanceof MArea ? parentElement : element;
+		}
+
+		public void mouseDoubleClick(MouseEvent e) {
+			CTabFolder ctf = (CTabFolder) e.widget;
+			if (!ctf.getMaximizeVisible())
+				return;
+
+			MUIElement elementToChange = getElementToChange(e);
+			if (elementToChange instanceof MArea) {
+				MUIElement areaRef = elementToChange.getCurSharedRef();
+				if (!areaRef.getTags().contains(MAXIMIZED)) {
+					setState(areaRef, MAXIMIZED);
+				} else {
+					setState(areaRef, null);
+				}
+			} else {
+				if (!elementToChange.getTags().contains(MAXIMIZED)) {
+					setState(elementToChange, MAXIMIZED);
+				} else {
+					setState(elementToChange, null);
+				}
+			}
+		}
+	};
+
 	private EventHandler widgetListener = new EventHandler() {
 		public void handleEvent(Event event) {
 			final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
+			if (!(changedElement instanceof MPartStack) && !(changedElement instanceof MArea))
+				return;
+
 			final CTabFolder ctf = getCTFFor(changedElement);
 			if (ctf == null)
 				return;
@@ -80,50 +142,11 @@ public class MinMaxAddon {
 			if (changedElement instanceof MPlaceholder)
 				return;
 
-			MUIElement parentElement = changedElement.getParent();
-			final MUIElement elementToChange = parentElement instanceof MArea ? parentElement
-					: changedElement;
-			ctf.addCTabFolder2Listener(new CTabFolder2Adapter() {
-				public void maximize(CTabFolderEvent event) {
-					setState(elementToChange, MAXIMIZED);
-				}
+			ctf.removeCTabFolder2Listener(CTFButtonListener); // Prevent multiple instances
+			ctf.addCTabFolder2Listener(CTFButtonListener);
 
-				public void minimize(CTabFolderEvent event) {
-					setState(elementToChange, MINIMIZED);
-				}
-
-				public void restore(CTabFolderEvent event) {
-					setState(elementToChange, null);
-				}
-			});
-
-			ctf.addMouseListener(new MouseListener() {
-				public void mouseUp(MouseEvent e) {
-				}
-
-				public void mouseDown(MouseEvent e) {
-				}
-
-				public void mouseDoubleClick(MouseEvent e) {
-					if (!ctf.getMaximizeVisible())
-						return;
-
-					if (elementToChange instanceof MArea) {
-						MUIElement areaRef = elementToChange.getCurSharedRef();
-						if (!areaRef.getTags().contains(MAXIMIZED)) {
-							setState(areaRef, MAXIMIZED);
-						} else {
-							setState(areaRef, null);
-						}
-					} else {
-						if (!elementToChange.getTags().contains(MAXIMIZED)) {
-							setState(elementToChange, MAXIMIZED);
-						} else {
-							setState(elementToChange, null);
-						}
-					}
-				}
-			});
+			ctf.removeMouseListener(CTFDblClickListener); // Prevent multiple instances
+			ctf.addMouseListener(CTFDblClickListener);
 		}
 	};
 
@@ -296,19 +319,30 @@ public class MinMaxAddon {
 			ctf.setMaximizeVisible(true);
 			ctf.setMaximized(true);
 		} else {
+			boolean showMinMax = true;
 			int loc = modelService.getElementLocation(element);
-			if (loc == EModelService.OUTSIDE_PERSPECTIVE) {
-				// We' only allow minimize of 'global' stacks for now (we need to be able to
-				// 'minimize'
-				// a whole perspective)
-				ctf.setMinimizeVisible(true);
-				ctf.setMinimized(element.getTags().contains(MINIMIZED));
-			} else if (loc != EModelService.IN_SHARED_AREA) {
+			if ((loc & EModelService.IN_SHARED_AREA) != 0) {
+				MUIElement parent = element.getParent();
+				if (!(element instanceof MArea) && !(parent instanceof MArea))
+					showMinMax = false;
+			}
+
+			if (showMinMax) {
 				// perspective stacks get both minimize and maximize
 				ctf.setMinimizeVisible(true);
 				ctf.setMinimized(false);
 				ctf.setMaximizeVisible(true);
 				ctf.setMaximized(false);
+			}
+
+			// If the MArea has a CTF then ensure that the min/max buttons are removed from all its
+			// child stacks
+			if (element instanceof MArea && ctf == element.getWidget()) {
+				List<MPartStack> stacks = modelService.findElements(element, null,
+						MPartStack.class, null);
+				for (MPartStack stack : stacks) {
+					adjustCTFButtons(stack);
+				}
 			}
 		}
 	}

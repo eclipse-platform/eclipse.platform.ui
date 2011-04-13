@@ -157,6 +157,15 @@ public interface EModelService {
 	public void bringToTop(MUIElement element);
 
 	/**
+	 * Return the count of the children whose 'toBeRendered' flag is true
+	 * 
+	 * @param element
+	 *            The element to test
+	 * @return the number of children with 'toBeRendered' == true
+	 */
+	public int countRenderableChildren(MUIElement element);
+
+	/**
 	 * Given a containing MWindow find the MPlaceholder that is currently being used to host the
 	 * given element (if any)
 	 * 

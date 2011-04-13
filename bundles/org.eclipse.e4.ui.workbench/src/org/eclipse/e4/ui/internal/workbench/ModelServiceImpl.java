@@ -208,6 +208,27 @@ public class ModelServiceImpl implements EModelService {
 	 * (non-Javadoc)
 	 * 
 	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#countRenderableChildren(org.eclipse.e4
+	 * .ui.model.application.ui.MUIElement)
+	 */
+	public int countRenderableChildren(MUIElement element) {
+		if (!(element instanceof MElementContainer<?>))
+			return 0;
+
+		MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
+		int count = 0;
+		List<MUIElement> kids = container.getChildren();
+		for (MUIElement kid : kids) {
+			if (kid.isToBeRendered())
+				count++;
+		}
+		return count;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
 	 * org.eclipse.e4.ui.workbench.modeling.EModelService#getContainingContext(org.eclipse.e4.ui
 	 * .model .application.MUIElement)
 	 */
