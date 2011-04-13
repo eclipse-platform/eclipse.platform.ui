@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Kiryl Kazakevich, Intel - bug 88359
  *     Tonny Madsen, RCP Company - bug 201055
  *     Mark Hoffmann <mark.hoffmann@web.de> - Fix for bug 84603
-*******************************************************************************/
+ *******************************************************************************/
 package org.eclipse.ui;
 
 import org.eclipse.swt.SWT;
@@ -481,9 +481,8 @@ public interface IWorkbenchPreferenceConstants {
 	/**
 	 * Stores whether or not the workbench prompts for saving when a dirty
 	 * editor or view is closed, but the Saveable objects are still open in
-	 * other parts. If
-	 * <code>true<code> (default), the user will be prompted. If <code>false</code>, there will be
-	 * no prompt.
+	 * other parts. If <code>true</code> (default), the user will be prompted.
+	 * If <code>false</code>, there will be no prompt.
 	 * 
 	 * @see Saveable
 	 * @since 3.2
@@ -597,5 +596,16 @@ public interface IWorkbenchPreferenceConstants {
 	 * 
 	 * @since 3.4
 	 */
-	public static final String DISABLE_OPEN_EDITOR_IN_PLACE = "DISABLE_OPEN_EDITOR_IN_PLACE"; //$NON-NLS-1$	
+	public static final String DISABLE_OPEN_EDITOR_IN_PLACE = "DISABLE_OPEN_EDITOR_IN_PLACE"; //$NON-NLS-1$
+
+	/**
+	 * Workbench preference id for indicating the size of the list of most
+	 * recently used working sets.
+	 * <p>
+	 * Integer-valued. The default value for this preference is: <code>5</code>.
+	 * </p>
+	 * 
+	 * @since 3.7
+	 */
+	public static final String RECENTLY_USED_WORKINGSETS_SIZE = "RECENTLY_USED_WORKINGSETS_SIZE"; //$NON-NLS-1$
 }
