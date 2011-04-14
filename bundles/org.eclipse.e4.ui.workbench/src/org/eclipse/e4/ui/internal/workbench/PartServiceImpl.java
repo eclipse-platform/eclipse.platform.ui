@@ -689,19 +689,37 @@ public class PartServiceImpl implements EPartService {
 				// no category, just add it to the end
 				addToLastContainer(null, providedPart);
 			} else {
-				List<MElementContainer> containers = modelService.findElements(getContainer(),
-						null, MElementContainer.class, Collections.singletonList(category));
-				if (containers.isEmpty()) {
-					// couldn't find any containers with the specified tag, just add it to the end
-					addToLastContainer(category, providedPart);
-				} else {
-					// add the part to the container
-					MElementContainer container = containers.get(0);
-					MPlaceholder placeholder = providedPart.getCurSharedRef();
-					if (placeholder == null) {
-						container.getChildren().add(providedPart);
+				if ("org.eclipse.e4.primaryDataStack".equals(category)) { //$NON-NLS-1$
+					MElementContainer<MUIElement> container = getContainer();
+					MUIElement area = modelService.find("org.eclipse.ui.editorss", container); //$NON-NLS-1$
+					List<MPartStack> sharedStacks = modelService.findElements(area, null,
+							MPartStack.class, null);
+					if (sharedStacks.size() > 0) {
+						for (MPartStack stack : sharedStacks) {
+							if (stack.isToBeRendered()) {
+								stack.getChildren().add(providedPart);
+								break;
+							}
+						}
 					} else {
-						container.getChildren().add(placeholder);
+						addToLastContainer(null, providedPart);
+					}
+				} else {
+					List<MElementContainer> containers = modelService.findElements(getContainer(),
+							null, MElementContainer.class, Collections.singletonList(category));
+					if (containers.isEmpty()) {
+						// couldn't find any containers with the specified tag, just add it to the
+						// end
+						addToLastContainer(category, providedPart);
+					} else {
+						// add the part to the container
+						MElementContainer container = containers.get(0);
+						MPlaceholder placeholder = providedPart.getCurSharedRef();
+						if (placeholder == null) {
+							container.getChildren().add(providedPart);
+						} else {
+							container.getChildren().add(placeholder);
+						}
 					}
 				}
 			}

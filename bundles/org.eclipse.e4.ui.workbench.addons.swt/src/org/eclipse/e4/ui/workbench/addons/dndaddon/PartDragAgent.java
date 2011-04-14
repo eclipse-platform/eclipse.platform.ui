@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -49,6 +50,11 @@ public class PartDragAgent extends DragAgent {
 		if (info.curElement instanceof MPartStack && info.itemElement == null) {
 			// Prevent dragging 'No Move' stacks
 			if (info.curElement.getTags().contains(IPresentationEngine.NO_MOVE))
+				return null;
+
+			// Prevent dragging the last stack out of the shared area
+			MUIElement parent = info.curElement.getParent();
+			if (parent instanceof MArea)
 				return null;
 
 			dragElement = info.curElement;

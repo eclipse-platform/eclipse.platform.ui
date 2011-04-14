@@ -244,7 +244,7 @@ public class CleanupAddon {
 				return;
 			}
 			// Don't mess with editor stacks (for now)
-			if (containerElement.getTags().contains("EditorStack")
+			if (isLastEditorStack(containerElement)
 					|| containerElement instanceof MPerspectiveStack) //$NON-NLS-1$
 				return;
 
@@ -254,11 +254,7 @@ public class CleanupAddon {
 				if (!container.isToBeRendered())
 					container.setToBeRendered(true);
 			} else {
-				int visCount = 0;
-				for (MUIElement element : container.getChildren()) {
-					if (element.isToBeRendered())
-						visCount++;
-				}
+				int visCount = modelService.countRenderableChildren(container);
 
 				// Remove stacks with no visible children from the display (but not the
 				// model)
