@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.osgi.service.environment.Constants;
@@ -199,7 +198,7 @@ public class TitleRegion extends Canvas {
 				}
 				if (titleLabel.getVisible()) {
 					int tw = width - HMARGIN * 2 - SPACING * 2;
-					String os = Platform.getOS();
+					String os = System.getProperty("os.name"); //$NON-NLS-1$
 					if (Constants.OS_LINUX.equalsIgnoreCase(os)) {
 						tw += 1; // See Bug 342610
 					}

@@ -14,7 +14,6 @@ package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -329,7 +328,7 @@ public class ExpandableComposite extends Canvas {
 						ty = tcsize.y / 2 - size.y / 2 + marginHeight
 								+ tvmargin;
 				}
-				String os = Platform.getOS();
+				String os = System.getProperty("os.name"); //$NON-NLS-1$
 				if (Constants.OS_LINUX.equalsIgnoreCase(os)) {
 					size.x += 1; // See Bug 342610
 				}
