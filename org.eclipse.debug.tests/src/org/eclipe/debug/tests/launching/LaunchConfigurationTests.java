@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1036,7 +1036,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		// rename project
 		IProjectDescription description = project.getDescription();
 		description.setName("SFEemaneR"); // reverse name
-		project.move(description, false, null);
+		project.move(description, IResource.SHALLOW, null);
 		
 		// original configuration should no longer exist - handle out of date
 		assertTrue("Configuration should not exist", !handle.exists()); //$NON-NLS-1$
