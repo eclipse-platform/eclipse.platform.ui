@@ -1176,6 +1176,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 				application.getContext().set(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, result);
 				application.getContext().set(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME, result.getShell());
 			}
+
+			fireWindowOpened(result);
+			result.fireWindowOpened();
 		}
 		return result;
 	}
@@ -2213,11 +2216,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	public WorkbenchWindow openWorkbenchWindow(IAdaptable input, IPerspectiveDescriptor descriptor,
 			MWindow window, boolean newWindow) {
-		WorkbenchWindow result = (WorkbenchWindow) createWorkbenchWindow(input, descriptor, window,
-				newWindow);
-		fireWindowOpened(result);
-		result.fireWindowOpened();
-		return result;
+		return (WorkbenchWindow) createWorkbenchWindow(input, descriptor, window, newWindow);
 	}
 
 	/*
