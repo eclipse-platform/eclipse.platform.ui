@@ -34,6 +34,7 @@ public class PartDragAgent extends DragAgent {
 	 */
 	@Override
 	public MUIElement getElementToDrag(DnDInfo info) {
+		// Drag a part that is in a stack
 		if (info.curElement instanceof MPartStack
 				&& (info.itemElement instanceof MPlaceholder || info.itemElement instanceof MPart)) {
 			// Prevent dragging 'No Move' parts
@@ -43,6 +44,17 @@ public class PartDragAgent extends DragAgent {
 			dragElement = info.itemElement;
 			return info.itemElement;
 		}
+
+		// Drag a complete stack
+		if (info.curElement instanceof MPartStack && info.itemElement == null) {
+			// Prevent dragging 'No Move' stacks
+			if (info.curElement.getTags().contains(IPresentationEngine.NO_MOVE))
+				return null;
+
+			dragElement = info.curElement;
+			return info.curElement;
+		}
+
 		return null;
 	}
 

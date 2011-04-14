@@ -33,7 +33,6 @@ public class SplitDropAgent extends DropAgent {
 	private CTabFolder dropCTF;
 	private Rectangle clientBounds;
 	private String weight;
-	private MPartStack toInsert;
 	private int curDockLocation = NOWHERE;
 
 	private Rectangle ctfBounds;
@@ -49,7 +48,7 @@ public class SplitDropAgent extends DropAgent {
 
 	@Override
 	public boolean canDrop(MUIElement dragElement, DnDInfo info) {
-		if (!(dragElement instanceof MStackElement))
+		if (!(dragElement instanceof MStackElement) && !(dragElement instanceof MPartStack))
 			return false;
 
 		if (!(info.curElement instanceof MStackElement))
@@ -194,20 +193,23 @@ public class SplitDropAgent extends DropAgent {
 
 	protected boolean dock(MUIElement dragElement, int where) {
 		dndManager.setDragHostVisibility(false);
-		MUIElement relTo = dropStack;
+		MPartSashContainerElement relTo = dropStack;
+		MPartStack toInsert;
 
-		// wrap it in a stack
-		MStackElement stackElement = (MStackElement) dragElement;
-		toInsert = BasicFactoryImpl.eINSTANCE.createPartStack();
-		toInsert.getChildren().add(stackElement);
-		toInsert.setSelectedElement(stackElement);
+		if (dragElement instanceof MPartStack) {
+			toInsert = (MPartStack) dragElement;
+		} else {
+			// wrap it in a stack if it's a part
+			MStackElement stackElement = (MStackElement) dragElement;
+			toInsert = BasicFactoryImpl.eINSTANCE.createPartStack();
+			toInsert.getChildren().add(stackElement);
+			toInsert.setSelectedElement(stackElement);
+		}
 
 		MUIElement relToParent = relTo.getParent();
+		dndManager.getModelService().insert(toInsert, relTo, where, 50);
 
-		dndManager.getModelService().insert((MPartSashContainerElement) toInsert,
-				(MPartSashContainerElement) relTo, where, 50);
-
-		// Force the new sash to have the same weight as the original
+		// Force the new sash to have the same weight as the original element
 		if (relTo.getParent() != relToParent)
 			relTo.getParent().setContainerData(weight);
 		dndManager.update();

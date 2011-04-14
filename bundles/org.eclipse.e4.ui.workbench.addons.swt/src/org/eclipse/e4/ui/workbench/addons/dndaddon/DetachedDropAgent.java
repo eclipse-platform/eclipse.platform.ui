@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -38,7 +39,8 @@ public class DetachedDropAgent extends DropAgent {
 		if (info.curElement != null)
 			return false;
 
-		if (dragElement instanceof MPart || dragElement instanceof MPlaceholder)
+		if (dragElement instanceof MPart || dragElement instanceof MPlaceholder
+				|| dragElement instanceof MPartStack)
 			return true;
 
 		return false;
@@ -65,15 +67,22 @@ public class DetachedDropAgent extends DropAgent {
 	public Rectangle getRectangle(MUIElement dragElement, DnDInfo info) {
 		if (dragElement.getCurSharedRef() != null)
 			dragElement = dragElement.getCurSharedRef();
-		MUIElement parentME = dragElement.getParent();
-		Control ctrl = (Control) parentME.getWidget();
-		curRect = ctrl.getBounds();
 
-		// Try to take the window's trim into account
-		curRect.width += 10;
-		curRect.height += 22;
+		if (dragElement instanceof MPartStack) {
+			Control ctrl = (Control) dragElement.getWidget();
+			curRect = ctrl.getBounds();
+		} else {
+			// Adjust the rectangle to account for the stack inside the new window
+			MUIElement parentME = dragElement.getParent();
+			Control ctrl = (Control) parentME.getWidget();
+			curRect = ctrl.getBounds();
 
-		Point cp = ctrl.getDisplay().getCursorLocation();
+			// Try to take the window's trim into account
+			curRect.width += 10;
+			curRect.height += 22;
+		}
+
+		Point cp = Display.getCurrent().getCursorLocation();
 		curRect.x = cp.x - 15;
 		curRect.y = cp.y - 15;
 
