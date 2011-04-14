@@ -7,7 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wojciech Galanciak - fix for Bug 294868 – [Forms] Problem with text 
+ *     Wojciech Galanciak - fix for Bug 294868 [Forms] Problem with text 
  *     wrapping in SharedScrolledComposite:
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
