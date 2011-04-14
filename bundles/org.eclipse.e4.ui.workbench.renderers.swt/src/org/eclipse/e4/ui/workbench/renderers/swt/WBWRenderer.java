@@ -326,8 +326,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			wbwShell = new Shell(parentShell, SWT.BORDER);
 			wbwShell.setAlpha(110);
 		} else {
-			wbwShell = new Shell(parentShell, SWT.TOOL | SWT.TITLE | SWT.RESIZE
-					| SWT.CLOSE);
+			wbwShell = new Shell(parentShell, SWT.TOOL | SWT.TITLE | SWT.RESIZE);
 		}
 
 		wbwShell.setBackgroundMode(SWT.INHERIT_DEFAULT);
