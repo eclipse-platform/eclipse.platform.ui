@@ -80,7 +80,8 @@ public class CTabFolderRenderer {
 	
 	static final RGB CLOSE_FILL = new RGB(252, 160, 160);
 	
-	static final int BUTTON_SIZE = 18;
+	static final int BUTTON_SIZE = 16;
+	static final int BUTTON_TRIM = 1;
 	
 	static final int BUTTON_BORDER = SWT.COLOR_WIDGET_DARK_SHADOW;
 	static final int BUTTON_FILL = SWT.COLOR_LIST_BACKGROUND;
@@ -349,6 +350,15 @@ public class CTabFolderRenderer {
 				break;
 			case PART_HEADER:
 				//no trim 
+				break;
+			case PART_MAX_BUTTON:
+			case PART_MIN_BUTTON:
+			case PART_CLOSE_BUTTON:
+			case PART_CHEVRON_BUTTON:
+				x -= BUTTON_TRIM;
+				y -= BUTTON_TRIM;
+				width += BUTTON_TRIM*2;
+				height += BUTTON_TRIM*2;
 				break;
 			case PART_BORDER:
 				x = x - borderLeft;

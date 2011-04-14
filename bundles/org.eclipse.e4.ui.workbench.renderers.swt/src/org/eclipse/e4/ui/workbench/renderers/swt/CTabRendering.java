@@ -343,7 +343,9 @@ public class CTabRendering extends CTabFolderRenderer {
 		int circX = bounds.x + radius;
 		int circY = bounds.y - 1 + radius;
 		int selectionX1, selectionY1, selectionX2, selectionY2;
-		if (itemIndex == 0) {
+		if (itemIndex == 0
+				&& bounds.x == -computeTrim(CTabFolderRenderer.PART_HEADER,
+						SWT.NONE, 0, 0, 0, 0).x) {
 			circX -= 1;
 			points[index++] = circX - radius;
 			points[index++] = bounds.y + bounds.height;
