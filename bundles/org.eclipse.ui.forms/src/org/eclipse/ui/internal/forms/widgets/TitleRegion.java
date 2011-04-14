@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceEffect;
@@ -197,6 +199,10 @@ public class TitleRegion extends Canvas {
 				}
 				if (titleLabel.getVisible()) {
 					int tw = width - HMARGIN * 2 - SPACING * 2;
+					String os = Platform.getOS();
+					if (Constants.OS_LINUX.equalsIgnoreCase(os)) {
+						tw += 1; // See Bug 342610
+					}
 					if (bsize != null)
 						tw -= bsize.x + SPACING;
 					if (msize != null)

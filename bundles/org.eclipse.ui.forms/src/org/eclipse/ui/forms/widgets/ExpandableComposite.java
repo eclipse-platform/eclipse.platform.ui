@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -326,6 +328,10 @@ public class ExpandableComposite extends Canvas {
 					if (size.y < tcsize.y)
 						ty = tcsize.y / 2 - size.y / 2 + marginHeight
 								+ tvmargin;
+				}
+				String os = Platform.getOS();
+				if (Constants.OS_LINUX.equalsIgnoreCase(os)) {
+					size.x += 1; // See Bug 342610
 				}
 				textLabelCache.setBounds(x, ty, size.x, size.y);
 			}
