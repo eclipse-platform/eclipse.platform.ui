@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 Oakland Software Incorporated and others.
+ * Copyright (c) 2008, 2011 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -164,6 +164,7 @@ public class WorkingSetTest extends NavigatorTestBase {
 		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		IWorkbenchPage activePage = activeWindow.getActivePage();
+		IWorkingSet[] activeWorkingSets = activePage.getWorkingSets();
 		activePage.setWorkingSets(new IWorkingSet[] { workingSet });
 
 		extensionStateModel.setBooleanProperty(
@@ -190,6 +191,9 @@ public class WorkingSetTest extends NavigatorTestBase {
 		items = _viewer.getTree().getItems();
 		assertTrue("First item needs to be working set", items[0].getData()
 				.equals(workingSet));
+		
+		// Restore active working sets
+		activePage.setWorkingSets(activeWorkingSets);
 	}
 
 
