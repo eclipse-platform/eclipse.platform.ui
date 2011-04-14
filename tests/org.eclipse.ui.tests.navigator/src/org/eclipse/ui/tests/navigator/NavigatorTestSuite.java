@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public final class NavigatorTestSuite extends TestSuite {
 		addTest(new TestSuite(ActionProviderTest.class));
 		addTest(new TestSuite(ExtensionsTest.class));
 		addTest(new TestSuite(FilterTest.class));
-		addTest(new TestSuite(WorkingSetTest.class));
+		addTest(WorkingSetTest.suite());
 		addTest(new TestSuite(ActivityTest.class));
 		addTest(new TestSuite(OpenTest.class));
 		addTest(new TestSuite(INavigatorContentServiceTests.class));

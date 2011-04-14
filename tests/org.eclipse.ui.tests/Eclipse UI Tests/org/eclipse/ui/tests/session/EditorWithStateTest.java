@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.session;
 
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -28,6 +29,13 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
  * @since 3.2
  */
 public class EditorWithStateTest extends TestCase {
+
+	public static TestSuite suite() {
+		TestSuite suite = new TestSuite("org.eclipse.ui.tests.session.EditorWithStateTest");
+		suite.addTest(new EditorWithStateTest("testInitialEditorOpen"));
+		suite.addTest(new EditorWithStateTest("testSecondEditorOpen"));
+		return suite;
+	}
 
 	/**
 	 * Constructs a new instance of <code>EditorWithStateTest</code>.

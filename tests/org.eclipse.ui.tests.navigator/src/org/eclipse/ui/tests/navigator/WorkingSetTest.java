@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
+import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -34,11 +36,26 @@ import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 
 public class WorkingSetTest extends NavigatorTestBase {
+	
+	public static TestSuite suite() {
+		TestSuite suite = new TestSuite("org.eclipse.ui.tests.navigator.WorkingSetTest");
+		suite.addTest(new WorkingSetTest("testEmptyWindowWorkingSet"));
+		suite.addTest(new WorkingSetTest("testMissingProjectsInWorkingSet"));
+		suite.addTest(new WorkingSetTest("testTopLevelWorkingSet"));
+		suite.addTest(new WorkingSetTest("testTopLevelChange"));
+		suite.addTest(new WorkingSetTest("testMultipleWorkingSets"));
+		suite.addTest(new WorkingSetTest("testWorkingSetFilter"));
+		return suite;
+	}
 
 	public WorkingSetTest() {
 		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
 	}
 
+	public WorkingSetTest(String name) {
+		super(name);
+		_navigatorInstanceId = ProjectExplorer.VIEW_ID;
+	}
 	// Bug 157877 when using empty window working set, it should show all
 	public void testEmptyWindowWorkingSet() throws Exception {
 
