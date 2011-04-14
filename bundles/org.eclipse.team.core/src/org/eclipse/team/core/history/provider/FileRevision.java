@@ -133,8 +133,8 @@ public abstract class FileRevision implements IFileRevision {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.history.IFileRevision#getBranches()
+	/**
+	 * {@inheritDoc}
 	 * @since 3.6
 	 */
 	public ITag[] getBranches() {
