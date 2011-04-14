@@ -98,6 +98,8 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	private Collection configAreas;
 	private Label limitsLabel;
+	
+	private Object[] previouslyChecked;
 
 	/**
 	 * Create a new instance of the receiver on builder.
@@ -233,12 +235,17 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		andButton.setEnabled(!showAll);
 		orButton.setEnabled(!showAll);
 		if (showAll) {
+			previouslyChecked = configsTable.getCheckedElements();
 			configsTable.setAllChecked(false);
 		} else {
-			// make the first entry checked
-			if (filterGroups.size() > 0) {
-				Object group = filterGroups.iterator().next();
-				configsTable.setChecked(group, true);
+			if (previouslyChecked != null && previouslyChecked.length > 0) {
+				configsTable.setCheckedElements(previouslyChecked);
+			} else {
+				// make the first entry checked
+				if (filterGroups.size() > 0) {
+					Object group = filterGroups.iterator().next();
+					configsTable.setChecked(group, true);
+				}
 			}
 		}
 	}
