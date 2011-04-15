@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.contentmergeviewer.ContentMergeViewer;
 import org.eclipse.compare.internal.ISavingSaveable;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
@@ -221,6 +222,11 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 * @see org.eclipse.team.ui.mapping.SaveableCompareModel#setDirty(boolean)
 	 */
 	protected void setDirty(boolean dirty) {
+		if (editorInput instanceof SaveablesCompareEditorInput) {
+			((SaveablesCompareEditorInput) editorInput).setDirty(dirty,
+					this);
+			return;
+		}
 		// We need to set the dirty state on the compare editor input
 		// since it is our only connection to the merge viewer
 		editorInput.setDirty(dirty);
@@ -279,7 +285,23 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 			Object newValue= e.getNewValue();
 			if (newValue instanceof Boolean)
 				changed= ((Boolean)newValue).booleanValue();
-			setDirty(changed);
+
+			ContentMergeViewer cmv = (ContentMergeViewer) e.getSource();
+
+			if (fileElement.equals(input.getLeft())) {
+				if (changed && cmv.internalIsLeftDirty())
+					setDirty(changed);
+				else if (!changed && !cmv.internalIsLeftDirty()) {
+					setDirty(changed);
+				}
+			}
+			if (fileElement.equals(input.getRight())) {
+				if (changed && cmv.internalIsRightDirty())
+					setDirty(changed);
+				else if (!changed && !cmv.internalIsRightDirty()) {
+					setDirty(changed);
+				}
+			}
 		}			
 	}
 	

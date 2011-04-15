@@ -143,7 +143,7 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 			fLeftPropertyListener = new IPropertyListener() {
 				public void propertyChanged(Object source, int propId) {
 					if (propId == SaveableComparison.PROP_DIRTY) {
-						setDirty(fLeftSaveable.isDirty());
+						setLeftDirty(fLeftSaveable.isDirty());
 					}
 				}
 			};
@@ -155,14 +155,15 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 			fRightPropertyListener = new IPropertyListener() {
 				public void propertyChanged(Object source, int propId) {
 					if (propId == SaveableComparison.PROP_DIRTY) {
-						setDirty(fRightSaveable.isDirty());
+						setRightDirty(fRightSaveable.isDirty());
 					}
 				}
 			};
 			rscm.addPropertyListener(fRightPropertyListener);
 		}
 
-		setDirty(fLeftSaveable.isDirty() || fRightSaveable.isDirty());
+		setLeftDirty(fLeftSaveable.isDirty());
+		setRightDirty(fRightSaveable.isDirty());
 	}
 
 	/*
@@ -383,6 +384,15 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 		// Fallback call returning true if there are unsaved changes in either
 		// left or right side
 		return isSaveNeeded();
+	}
+
+	void setDirty(boolean dirty, Saveable saveable) {
+		if (saveable.equals(fLeftSaveable)) {
+			setLeftDirty(dirty);
+		}
+		if (saveable.equals(fRightSaveable)) {
+			setRightDirty(dirty);
+		}
 	}
 
 	void saveChanges(IProgressMonitor monitor, Saveable saveable)

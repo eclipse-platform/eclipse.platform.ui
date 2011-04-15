@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1078,16 +1078,88 @@ public abstract class CompareEditorInput extends PlatformObject implements IEdit
 	 */
 	public void setDirty(boolean dirty) {
 		boolean oldDirty = isSaveNeeded();
-		boolean newDirty = dirty || isSaveNeeded();
+		boolean newDirty = dirty;
 		if (!newDirty) {
 			fLeftDirtyViewer = null;
 			fRightDirtyViewer = null;
+		} else {
+			if (fLeftDirtyViewer == null)
+				fLeftDirtyViewer = (ContentMergeViewer) fContentInputPane
+						.getViewer();
+			if (fRightDirtyViewer == null)
+				fRightDirtyViewer = (ContentMergeViewer) fContentInputPane
+						.getViewer();
 		}
 		if (oldDirty != isSaveNeeded()) {
 			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, Boolean.valueOf(oldDirty), Boolean.valueOf(isSaveNeeded()));
 		}
 	}
-	
+
+	/**
+	 * Sets the dirty state of left site of this input to the given value and
+	 * sends out a <code>PropertyChangeEvent</code> if the new value for whole
+	 * input differs from the old value. Direct calling this method with
+	 * parameter dirty equal to <code>false</code> when there are unsaved
+	 * changes in left viewer, results in inconsistent state. The dirty state of
+	 * compare input should be based only on the information if there are
+	 * changes in viewers for left side.
+	 * 
+	 * @param dirty
+	 *            the dirty state for this compare input
+	 * @since 3.7
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	protected void setLeftDirty(boolean dirty) {
+		boolean oldDirty = isSaveNeeded();
+		boolean newDirty = dirty;
+		if (!newDirty) {
+			fLeftDirtyViewer = null;
+		} else {
+			if (fLeftDirtyViewer == null)
+				fLeftDirtyViewer = (ContentMergeViewer) fContentInputPane
+						.getViewer();
+
+		}
+		if (oldDirty != isSaveNeeded()) {
+			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE,
+					Boolean.valueOf(oldDirty), Boolean.valueOf(isSaveNeeded()));
+		}
+	}
+
+	/**
+	 * Sets the dirty state of right site of this input to the given value and
+	 * sends out a <code>PropertyChangeEvent</code> if the new value for whole
+	 * input differs from the old value. Direct calling this method with
+	 * parameter dirty equal to <code>false</code> when there are unsaved
+	 * changes in right viewer, results in inconsistent state. The dirty state
+	 * of compare input should be based only on the information if there are
+	 * changes in viewers for right side.
+	 * 
+	 * @param dirty
+	 *            the dirty state for this compare input
+	 * @since 3.7
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	protected void setRightDirty(boolean dirty) {
+		boolean oldDirty = isSaveNeeded();
+		boolean newDirty = dirty;
+		if (!newDirty) {
+			fRightDirtyViewer = null;
+		} else {
+			if (fRightDirtyViewer == null)
+				fRightDirtyViewer = (ContentMergeViewer) fContentInputPane
+						.getViewer();
+		}
+		if (oldDirty != isSaveNeeded()) {
+			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE,
+					Boolean.valueOf(oldDirty), Boolean.valueOf(isSaveNeeded()));
+		}
+	}
+
 	/**
 	 * Method adds or removes viewers that changed left or right side of this
 	 * compare input. Any modification of any of the list of viewers may result
