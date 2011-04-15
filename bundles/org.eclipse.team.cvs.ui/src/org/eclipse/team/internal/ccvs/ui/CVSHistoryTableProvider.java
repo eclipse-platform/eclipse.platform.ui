@@ -646,11 +646,7 @@ public class CVSHistoryTableProvider {
 	private ColumnLayoutData[] getWeightData(int[] widths) {
 		ColumnLayoutData[] ret = new ColumnLayoutData[widths.length];
 		for (int i = 0; i < widths.length; i++) {
-			if (widths[i] < 0) {
-				ret[i] = new ColumnWeightData(20, true);
-			} else {
-				ret[i] = new ColumnPixelData(widths[i]);
-			}
+			ret[i] = new ColumnPixelData(widths[i] < 0 ? 60 : widths[i]);
 		}
 		return ret;
 	}
