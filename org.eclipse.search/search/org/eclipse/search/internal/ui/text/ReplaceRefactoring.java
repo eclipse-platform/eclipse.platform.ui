@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -151,7 +152,7 @@ public class ReplaceRefactoring extends Refactoring {
 
 	private HashMap/*<IFile,Set<Match>*/ fMatches;
 
-	private ArrayList fAffectedLocations;
+	private Map fAffectedLocations;
 
 	private String fReplaceString;
 
@@ -164,7 +165,7 @@ public class ReplaceRefactoring extends Refactoring {
 		fSelection= selection;
 
 		fMatches= new HashMap();
-		fAffectedLocations= new ArrayList(selection != null ? selection.length : result.getElements().length);
+		fAffectedLocations= new HashMap(selection != null ? selection.length : result.getElements().length);
 
 		fReplaceString= null;
 	}
@@ -257,15 +258,17 @@ public class ReplaceRefactoring extends Refactoring {
 	}
 
 	private boolean isAlreadyCollected(FileMatch match) {
-		URI uri= match.getFile().getLocationURI();
+		IFile file= match.getFile();
+		URI uri= file.getLocationURI();
 		if (uri == null)
 			return false;
 
-		for (Iterator iter= fAffectedLocations.iterator(); iter.hasNext();) {
+		for (Iterator iter= fAffectedLocations.keySet().iterator(); iter.hasNext();) {
 			if (URIUtil.equals((URI)iter.next(), uri))
-				return true;
+				return !file.equals(fAffectedLocations.get(uri));
 		}
-		fAffectedLocations.add(uri);
+
+		fAffectedLocations.put(uri, file);
 		return false;
 	}
 
