@@ -660,11 +660,15 @@ public class ESelectionServiceTest extends TestCase {
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(part);
+		window.setSelectedElement(part);
+
 		initialize(applicationContext, application);
 		getEngine().createGui(window);
 
 		ProviderPart p = new ProviderPart();
-		ContextInjectionFactory.inject(p, window.getContext());
+		ContextInjectionFactory.inject(p, part.getContext());
 
 		assertNull(p.input);
 
@@ -981,32 +985,6 @@ public class ESelectionServiceTest extends TestCase {
 				@Optional @Named(IServiceConstants.ACTIVE_SELECTION) Target selection) {
 			this.selection = selection;
 		}
-	}
-
-	public void testBug341273() throws Exception {
-		MApplication application = ApplicationFactoryImpl.eINSTANCE
-				.createApplication();
-		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
-		application.getChildren().add(window);
-		application.setSelectedElement(window);
-
-		initialize(applicationContext, application);
-		getEngine().createGui(window);
-
-		InjectPart inject = new InjectPart();
-		ProviderPart p = new ProviderPart();
-
-		ContextInjectionFactory.inject(p, window.getContext());
-		ContextInjectionFactory.inject(inject, window.getContext());
-
-		assertNull(p.input);
-
-		Object selection = new Target("");
-		p.setSelection(selection);
-		assertEquals(selection, inject.selection);
-
-		p.setSelection(null);
-		assertNull(inject.selection);
 	}
 
 	public void testInjection() {

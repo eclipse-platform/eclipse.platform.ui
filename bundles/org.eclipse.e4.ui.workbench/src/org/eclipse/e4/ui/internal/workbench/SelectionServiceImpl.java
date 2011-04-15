@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.internal.workbench;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -76,30 +75,6 @@ public class SelectionServiceImpl implements ESelectionService {
 
 	@PreDestroy
 	void preDestroy() {
-		IEclipseContext rootContext = serviceRoot.getContext();
-		if (rootContext != null && rootContext != context) {
-			if (!genericListeners.isEmpty()) {
-				ESelectionService selectionService = (ESelectionService) rootContext
-						.get(ESelectionService.class.getName());
-				Object[] listeners = genericListeners.getListeners();
-				for (Object listener : listeners) {
-					selectionService.removeSelectionListener((ISelectionListener) listener);
-				}
-			}
-
-			if (!targetedListeners.isEmpty()) {
-				ESelectionService selectionService = (ESelectionService) rootContext
-						.get(ESelectionService.class.getName());
-				for (Entry<String, ListenerList> entry : targetedListeners.entrySet()) {
-					String partId = entry.getKey();
-					for (Object listener : entry.getValue().getListeners()) {
-						selectionService.removeSelectionListener(partId,
-								(ISelectionListener) listener);
-					}
-				}
-			}
-		}
-
 		genericListeners.clear();
 		targetedListeners.clear();
 
@@ -112,61 +87,22 @@ public class SelectionServiceImpl implements ESelectionService {
 				.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
 						eventHandler);
 
-		// individual services don't need to track active parts
-		if (isMasterService()) {
-			for (MPart part : partService.getParts()) {
-				track(part);
-			}
+		for (MPart part : partService.getParts()) {
+			track(part);
 		}
-	}
-
-	/**
-	 * Returns whether this selection service is one that should be tracking the selection of other
-	 * parts or not.
-	 * 
-	 * @return <code>true</code> if this service monitors the selection changes of multiple parts
-	 */
-	private boolean isMasterService() {
-		IEclipseContext rootContext = serviceRoot.getContext();
-		if (rootContext == context) {
-			return true;
-		}
-
-		IEclipseContext parent = rootContext.getParent();
-		while (parent != null) {
-			if (parent == context) {
-				return true;
-			}
-			parent = parent.getParent();
-		}
-		return false;
 	}
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) final MPart part) {
 		if ((part != null) && (activePart != part)) {
 			activePart = part;
-			if (isMasterService()) {
-				IEclipseContext partContext = part.getContext();
-				// only notify listeners if the part actually posts selections
-				if (partContext.containsKey(OUT_SELECTION)) {
-					Object selection = partContext.get(OUT_SELECTION);
-					notifyListeners(part, selection);
-				}
-				track(part);
-			} else {
-				IEclipseContext partContext = part.getContext();
-				// only alter if there is something of interest, if a part doesn't post a selection
-				// then the workbench window's selection should be unchanged
-				if (partContext.containsKey(OUT_SELECTION)) {
-					Object selection = partContext.getLocal(OUT_SELECTION);
-					serviceRoot.getContext().set(IServiceConstants.ACTIVE_SELECTION, selection);
-
-					if (isMasterService()) {
-						context.set(IServiceConstants.ACTIVE_SELECTION, selection);
-					}
-				}
+			IEclipseContext partContext = part.getContext();
+			// only notify listeners if the part actually posts selections
+			if (partContext.containsKey(OUT_SELECTION)) {
+				Object selection = partContext.get(OUT_SELECTION);
+				notifyListeners(part, selection);
 			}
+			track(part);
 		}
 	}
 
@@ -189,7 +125,6 @@ public class SelectionServiceImpl implements ESelectionService {
 	}
 
 	private void notifyListeners(MPart part, Object selection) {
-		serviceRoot.getContext().set(IServiceConstants.ACTIVE_SELECTION, selection);
 		context.set(IServiceConstants.ACTIVE_SELECTION, selection);
 
 		for (Object listener : genericListeners.getListeners()) {
@@ -218,10 +153,6 @@ public class SelectionServiceImpl implements ESelectionService {
 				private boolean initial = true;
 
 				public boolean changed(IEclipseContext context) {
-					if (serviceRoot == null) {
-						// see bug 320791
-						return false;
-					}
 					Object selection = context.get(OUT_SELECTION);
 					if (initial) {
 						initial = false;
@@ -241,25 +172,21 @@ public class SelectionServiceImpl implements ESelectionService {
 		}
 	}
 
+	void internalSetSelection(Object selection) {
+		if (selection != null) {
+			context.set(IServiceConstants.ACTIVE_SELECTION, selection);
+		} else {
+			context.remove(IServiceConstants.ACTIVE_SELECTION);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.e4.ui.selection.ESelectionService#setSelection(java.lang.Object)
 	 */
 	public void setSelection(Object selection) {
-		if (selection != null) {
-			context.set(OUT_SELECTION, selection);
-
-			if (isMasterService() || (activePart != null && activePart.getContext() == context)) {
-				serviceRoot.getContext().set(IServiceConstants.ACTIVE_SELECTION, selection);
-			}
-		} else {
-			context.remove(OUT_SELECTION);
-
-			if (isMasterService() || (activePart != null && activePart.getContext() == context)) {
-				serviceRoot.getContext().remove(IServiceConstants.ACTIVE_SELECTION);
-			}
-		}
+		throw new UnsupportedOperationException("Cannot set the selection of a window"); //$NON-NLS-1$
 	}
 
 	/*
@@ -284,13 +211,6 @@ public class SelectionServiceImpl implements ESelectionService {
 	 * .ISelectionListener)
 	 */
 	public void addSelectionListener(ISelectionListener listener) {
-		IEclipseContext rootContext = serviceRoot.getContext();
-		if (rootContext != context) {
-			ESelectionService selectionService = (ESelectionService) rootContext
-					.get(ESelectionService.class.getName());
-			selectionService.addSelectionListener(listener);
-		}
-
 		genericListeners.add(listener);
 	}
 
@@ -304,13 +224,6 @@ public class SelectionServiceImpl implements ESelectionService {
 	public void removeSelectionListener(ISelectionListener listener) {
 		// we may have been destroyed already, see bug 310113
 		if (context != null) {
-			IEclipseContext rootContext = serviceRoot.getContext();
-			if (rootContext != context) {
-				ESelectionService selectionService = (ESelectionService) rootContext
-						.get(ESelectionService.class.getName());
-				selectionService.removeSelectionListener(listener);
-			}
-
 			genericListeners.remove(listener);
 		}
 	}
@@ -322,13 +235,6 @@ public class SelectionServiceImpl implements ESelectionService {
 	 * org.eclipse.e4.ui.selection.ISelectionListener)
 	 */
 	public void addSelectionListener(String partId, ISelectionListener listener) {
-		IEclipseContext rootContext = serviceRoot.getContext();
-		if (rootContext != context) {
-			ESelectionService selectionService = (ESelectionService) rootContext
-					.get(ESelectionService.class.getName());
-			selectionService.addSelectionListener(partId, listener);
-		}
-
 		ListenerList listeners = targetedListeners.get(partId);
 		if (listeners == null) {
 			listeners = new ListenerList();
@@ -345,14 +251,7 @@ public class SelectionServiceImpl implements ESelectionService {
 	 */
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
 		// we may have been destroyed already, see bug 310113
-		if (serviceRoot != null && context != null) {
-			IEclipseContext rootContext = serviceRoot.getContext();
-			if (rootContext != context) {
-				ESelectionService selectionService = (ESelectionService) rootContext
-						.get(ESelectionService.class.getName());
-				selectionService.removeSelectionListener(partId, listener);
-			}
-
+		if (context != null) {
 			ListenerList listeners = targetedListeners.get(partId);
 			if (listeners != null) {
 				listeners.remove(listener);
