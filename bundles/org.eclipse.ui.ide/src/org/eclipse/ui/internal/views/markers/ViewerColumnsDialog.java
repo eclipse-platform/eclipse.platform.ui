@@ -152,12 +152,18 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 */
 	Control createUpDownBtt(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(1, true);
+		GridLayout compositeLayout = new GridLayout();
+		compositeLayout.marginHeight = 0;
+		compositeLayout.marginWidth = 0;
+		composite.setLayout(compositeLayout);
+		composite.setLayoutData(new GridData(SWT.NONE, SWT.FILL, false, true));
+		
+		Composite bttArea = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
-		composite.setLayout(layout);
-		GridData gridData = new GridData(GridData.FILL_VERTICAL);
-		composite.setLayoutData(gridData);
-		upButton = new Button(composite, SWT.PUSH);
+		bttArea.setLayout(layout);
+		bttArea.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false, true));
+		upButton = new Button(bttArea, SWT.PUSH);
 		upButton.setText(JFaceResources.getString("ConfigureColumnsDialog_up")); //$NON-NLS-1$
 		upButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -168,7 +174,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		((GridData)upButton.getLayoutData()).verticalIndent = tableLabelSize.y;
 		upButton.setEnabled(false);
 
-		downButton = new Button(composite, SWT.PUSH);
+		downButton = new Button(bttArea, SWT.PUSH);
 		downButton.setText(JFaceResources
 				.getString("ConfigureColumnsDialog_down")); //$NON-NLS-1$
 		downButton.addListener(SWT.Selection, new Listener() {
@@ -178,7 +184,7 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 		});
 		setButtonLayoutData(downButton);
 		downButton.setEnabled(false);
-		return composite;
+		return bttArea;
 	}
 
 	/**
@@ -344,12 +350,18 @@ abstract class ViewerColumnsDialog extends ViewerSettingsAndStatusDialog {
 	 * @return {@link Control}
 	 */
 	Control createMoveButtons(Composite parent) {
-		Composite bttArea = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(1, true);
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout compositeLayout = new GridLayout();
+		compositeLayout.marginHeight = 0;
+		compositeLayout.marginWidth = 0;
+		composite.setLayout(compositeLayout);
+		composite.setLayoutData(new GridData(SWT.NONE, SWT.FILL, false, true));
+
+		Composite bttArea = new Composite(composite, SWT.NONE);
+		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		bttArea.setLayout(layout);
-		GridData gridData = new GridData(GridData.FILL_VERTICAL);
-		bttArea.setLayoutData(gridData);
+		bttArea.setLayoutData(new GridData(SWT.NONE, SWT.CENTER, false, true));
 
 		toVisibleBtt = new Button(bttArea, SWT.PUSH);
 		toVisibleBtt.setText(MarkerMessages.MarkerPreferences_MoveRight);
