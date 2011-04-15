@@ -3205,7 +3205,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		perspective.turnOnActionSets((IActionSetDescriptor[]) toAdd
 				.toArray(new IActionSetDescriptor[toAdd.size()]));
 		perspective.turnOffActionSets((IActionSetDescriptor[]) toRemove
-				.toArray(new IActionSetDescriptor[toAdd.size()]));
+				.toArray(new IActionSetDescriptor[toRemove.size()]));
 
 		// Menu  and Toolbar Items
 		requiresUpdate |= updateHiddenElements(menuItems, perspective.getHiddenMenuItems());
