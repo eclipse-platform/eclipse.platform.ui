@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -1040,6 +1041,56 @@ public class ESelectionServiceTest extends TestCase {
 
 		partService.activate(partA);
 		assertEquals(o, injectPart.selection);
+	}
+
+	public void testBug343003() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		perspective.getChildren().add(partA);
+		perspective.setSelectedElement(partA);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		window.getContext().get(EPartService.class).activate(partA);
+
+		ESelectionService selectionServiceA = partA.getContext().get(
+				ESelectionService.class);
+		SelectionListener listener = new SelectionListener();
+		selectionServiceA.addSelectionListener("partB", listener); //$NON-NLS-1$
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partB.setElementId("partB");
+		window.getSharedElements().add(partB);
+
+		MPlaceholder placeholder = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholder.setRef(partB);
+		partB.setCurSharedRef(placeholder);
+		perspective.getChildren().add(placeholder);
+
+		Object o = new Object();
+		ESelectionService selectionServiceB = partB.getContext().get(
+				ESelectionService.class);
+		selectionServiceB.setSelection(o);
+
+		assertEquals(partB, listener.getPart());
+		assertEquals(o, listener.getSelection());
 	}
 
 	private void initialize(IEclipseContext applicationContext,

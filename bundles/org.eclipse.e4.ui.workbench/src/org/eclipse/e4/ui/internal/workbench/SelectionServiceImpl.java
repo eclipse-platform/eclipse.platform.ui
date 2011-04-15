@@ -23,11 +23,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.model.application.ui.MContext;
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.e4.ui.workbench.modeling.ISelectionListener;
@@ -41,22 +41,6 @@ public class SelectionServiceImpl implements ESelectionService {
 	private ListenerList genericListeners = new ListenerList();
 	private Map<String, ListenerList> targetedListeners = new HashMap<String, ListenerList>();
 	private Set<IEclipseContext> tracked = new HashSet<IEclipseContext>();
-
-	@Inject
-	private IEclipseContext context;
-
-	@Inject
-	private EPartService partService;
-
-	/**
-	 * This is the specific implementation. TODO: generalize it
-	 */
-	@Inject
-	@Named(EPartService.PART_SERVICE_ROOT)
-	private MContext serviceRoot;
-
-	@Inject
-	private IEventBroker eventBroker;
 
 	private EventHandler eventHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -72,6 +56,27 @@ public class SelectionServiceImpl implements ESelectionService {
 	};
 
 	private MPart activePart;
+
+	private IEclipseContext context;
+
+	private EPartService partService;
+
+	private MWindow window;
+
+	private EModelService modelService;
+
+	private IEventBroker eventBroker;
+
+	@Inject
+	SelectionServiceImpl(MWindow window, IEclipseContext context, EPartService partService,
+			EModelService modelService, IEventBroker eventBroker) {
+		super();
+		this.context = context;
+		this.partService = partService;
+		this.window = window;
+		this.modelService = modelService;
+		this.eventBroker = eventBroker;
+	}
 
 	@PreDestroy
 	void preDestroy() {
@@ -107,21 +112,8 @@ public class SelectionServiceImpl implements ESelectionService {
 	}
 
 	private boolean isInContainer(MPart part) {
-		return isInContainer((MElementContainer<?>) serviceRoot, part);
-	}
-
-	private boolean isInContainer(MElementContainer<?> container, MPart part) {
-		for (Object object : container.getChildren()) {
-			if (object == part) {
-				return true;
-			} else if (object instanceof MElementContainer<?>) {
-				if (isInContainer((MElementContainer<?>) object, part)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
+		return modelService.findElements(window, part.getElementId(), MPart.class, null).contains(
+				part);
 	}
 
 	private void notifyListeners(MPart part, Object selection) {
