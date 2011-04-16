@@ -10,6 +10,8 @@
  */
 package org.eclipse.e4.ui.model.application.commands.impl;
 
+import org.eclipse.e4.ui.model.LocalizationHelper;
+
 import java.util.Collection;
 import java.util.List;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
@@ -212,6 +214,22 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		category = newCategory;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.COMMAND__CATEGORY, oldCategory, category));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
+	public String getLocalizedCommandName() {
+		return LocalizationHelper.getLocalizedFeature(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
+	public String getLocalizedDescription() {
+		return LocalizationHelper.getLocalizedFeature(CommandsPackageImpl.Literals.COMMAND__DESCRIPTION, this);
 	}
 
 	/**

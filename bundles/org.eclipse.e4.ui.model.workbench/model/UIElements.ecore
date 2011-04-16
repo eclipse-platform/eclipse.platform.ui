@@ -75,6 +75,8 @@
           eType="#//commands/BindingContext"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Command" eSuperTypes="#//ApplicationElement">
+      <eOperations name="getLocalizedCommandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="commandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
@@ -114,6 +116,8 @@
     <eClassifiers xsi:type="ecore:EDataType" name="ParameterizedCommand" instanceClassName="org.eclipse.core.commands.ParameterizedCommand"
         serializable="false"/>
     <eClassifiers xsi:type="ecore:EClass" name="Category" eSuperTypes="#//ApplicationElement">
+      <eOperations name="getLocalizedName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -242,6 +246,7 @@
             eType="#//commands/Parameter" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuElement" abstract="true" eSuperTypes="#//ui/UIElement #//ui/UILabel">
+        <eOperations name="getLocalizedMnemonics" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="mnemonics" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MenuItem" abstract="true" eSuperTypes="#//ui/menu/Item #//ui/menu/MenuElement"/>
@@ -342,6 +347,7 @@
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic"
         nsPrefix="basic">
       <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//ui/UIElement #//ui/basic/PartSashContainerElement #//ui/basic/StackElement #//Contribution #//ui/Context #//ui/UILabel #//commands/HandlerContainer #//ui/Dirtyable #//commands/Bindings #//ui/basic/WindowElement">
+        <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
             eType="#//ui/menu/Menu" containment="true"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ui/menu/ToolBar"
@@ -435,6 +441,7 @@
     <eSubpackages name="basic" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/descriptor/basic"
         nsPrefix="basic">
       <eClassifiers xsi:type="ecore:EClass" name="PartDescriptor" eSuperTypes="#//ApplicationElement #//ui/UILabel #//commands/HandlerContainer #//commands/Bindings">
+        <eOperations name="getLocalizedDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="allowMultiple" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"

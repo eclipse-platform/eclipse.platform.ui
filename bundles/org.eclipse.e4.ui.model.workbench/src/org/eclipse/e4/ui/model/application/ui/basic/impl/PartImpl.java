@@ -654,6 +654,14 @@ public class PartImpl extends UIElementImpl implements MPart {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	public String getLocalizedDescription() {
+		return LocalizationHelper.getLocalizedFeature(BasicPackageImpl.Literals.PART__DESCRIPTION, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
 	public String getLocalizedLabel() {
 		return LocalizationHelper.getLocalizedLabel(this);		
 	}

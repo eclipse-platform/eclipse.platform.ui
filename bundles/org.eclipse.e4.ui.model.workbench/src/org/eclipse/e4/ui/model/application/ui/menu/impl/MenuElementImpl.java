@@ -222,6 +222,17 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalizedMnemonics() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 */
 	public String getLocalizedLabel() {
 		return LocalizationHelper.getLocalizedLabel(this);

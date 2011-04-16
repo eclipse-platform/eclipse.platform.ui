@@ -10,6 +10,8 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
+import org.eclipse.e4.ui.model.LocalizationHelper;
+
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.emf.common.notify.Notification;
@@ -88,6 +90,15 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 		mnemonics = newMnemonics;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MenuPackageImpl.MENU_ITEM__MNEMONICS, oldMnemonics, mnemonics));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getLocalizedMnemonics() {
+		return LocalizationHelper.getLocalizedFeature(MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS, this);
 	}
 
 	/**

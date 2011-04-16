@@ -571,6 +571,14 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 */
+	public String getLocalizedDescription() {
+		return LocalizationHelper.getLocalizedFeature(BasicPackageImpl.Literals.PART_DESCRIPTOR__DESCRIPTION, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
 	public String getLocalizedLabel() {
 		return LocalizationHelper.getLocalizedFeature(UiPackageImpl.Literals.UI_LABEL__LABEL, this);
 	}

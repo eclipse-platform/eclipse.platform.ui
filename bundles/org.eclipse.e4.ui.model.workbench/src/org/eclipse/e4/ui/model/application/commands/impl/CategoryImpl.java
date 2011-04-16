@@ -10,6 +10,8 @@
  */
 package org.eclipse.e4.ui.model.application.commands.impl;
 
+import org.eclipse.e4.ui.model.LocalizationHelper;
+
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.emf.common.notify.Notification;
@@ -130,6 +132,22 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 		description = newDescription;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, CommandsPackageImpl.CATEGORY__DESCRIPTION, oldDescription, description));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
+	public String getLocalizedName() {
+		return LocalizationHelper.getLocalizedFeature(CommandsPackageImpl.Literals.CATEGORY__NAME, this);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 */
+	public String getLocalizedDescription() {
+		return LocalizationHelper.getLocalizedFeature(CommandsPackageImpl.Literals.CATEGORY__DESCRIPTION, this);
 	}
 
 	/**

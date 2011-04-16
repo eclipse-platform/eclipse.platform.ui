@@ -79,4 +79,20 @@ public interface MCategory extends MApplicationElement {
 	 */
 	void setDescription(String value);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	String getLocalizedName();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	String getLocalizedDescription();
+
 } // MCategory

@@ -122,4 +122,20 @@ public interface MCommand extends MApplicationElement {
 	 */
 	void setCategory(MCategory value);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	String getLocalizedCommandName();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	String getLocalizedDescription();
+
 } // MCommand

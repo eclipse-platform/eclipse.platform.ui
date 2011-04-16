@@ -131,4 +131,12 @@ public interface MPart extends MUIElement, MPartSashContainerElement, MStackElem
 	 */
 	void setDescription(String value);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	String getLocalizedDescription();
+
 } // MPart

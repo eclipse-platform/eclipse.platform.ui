@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: MTestPackage.java,v 1.8 2011/01/10 16:04:46 obesedin Exp $
+ * $Id: MTestPackage.java,v 1.9 2011/01/14 19:24:47 obesedin Exp $
  */
 package org.eclipse.e4.ui.tests.model.test;
 
@@ -89,6 +89,24 @@ public interface MTestPackage extends EPackage {
 	 * @ordered
 	 */
 	int TEST_HARNESS__CONTRIBUTOR_URI = ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__TRANSIENT_DATA = ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__CLONABLE_SNIPPETS = ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS;
 
 	/**
 	 * The feature id for the '<em><b>Command Name</b></em>' attribute. <!--
