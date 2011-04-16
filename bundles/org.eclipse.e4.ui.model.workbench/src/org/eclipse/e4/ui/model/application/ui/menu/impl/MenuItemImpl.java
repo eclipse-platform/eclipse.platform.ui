@@ -10,11 +10,13 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
@@ -98,7 +100,9 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 	 * @generated
 	 */
 	public String getLocalizedMnemonics() {
-		return LocalizationHelper.getLocalizedFeature(MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS, this);
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -189,6 +193,36 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MMenuElement.class) {
+			switch (baseOperationID) {
+				case MenuPackageImpl.MENU_ELEMENT___GET_LOCALIZED_MNEMONICS: return MenuPackageImpl.MENU_ITEM___GET_LOCALIZED_MNEMONICS;
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case MenuPackageImpl.MENU_ITEM___GET_LOCALIZED_MNEMONICS:
+				return getLocalizedMnemonics();
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

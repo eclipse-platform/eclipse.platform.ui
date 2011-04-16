@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl;
@@ -17,6 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
@@ -462,6 +464,39 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MUILabel.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_LABEL: return MenuPackageImpl.ITEM___GET_LOCALIZED_LABEL;
+				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_TOOLTIP: return MenuPackageImpl.ITEM___GET_LOCALIZED_TOOLTIP;
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case MenuPackageImpl.ITEM___GET_LOCALIZED_LABEL:
+				return getLocalizedLabel();
+			case MenuPackageImpl.ITEM___GET_LOCALIZED_TOOLTIP:
+				return getLocalizedTooltip();
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

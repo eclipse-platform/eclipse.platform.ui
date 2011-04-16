@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.commands.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 
 import java.util.Collection;
@@ -335,6 +336,22 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 				return category != null;
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case CommandsPackageImpl.COMMAND___GET_LOCALIZED_COMMAND_NAME:
+				return getLocalizedCommandName();
+			case CommandsPackageImpl.COMMAND___GET_LOCALIZED_DESCRIPTION:
+				return getLocalizedDescription();
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

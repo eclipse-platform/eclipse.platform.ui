@@ -7,7 +7,7 @@
     nonNLSMarkers="true" rootExtendsInterface="" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container"
     suppressEMFTypes="true" suppressEMFMetaData="true" featureMapWrapperInternalInterface=""
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
-    interfaceNamePattern="M{0}">
+    interfaceNamePattern="M{0}" operationReflection="true">
   <foreignModel>UIElements.ecore</foreignModel>
   <genPackages prefix="Application" basePackage="org.eclipse.e4.ui.model" disposableProviderFactory="true"
       ecorePackage="UIElements.ecore#/">
@@ -61,6 +61,8 @@
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//commands/Command/parameters"/>
         <genFeatures notify="false" createChild="false" propertySortChoices="true"
             ecoreFeature="ecore:EReference UIElements.ecore#//commands/Command/category"/>
+        <genOperations ecoreOperation="UIElements.ecore#//commands/Command/getLocalizedCommandName"/>
+        <genOperations ecoreOperation="UIElements.ecore#//commands/Command/getLocalizedDescription"/>
       </genClasses>
       <genClasses ecoreClass="UIElements.ecore#//commands/CommandParameter">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/CommandParameter/name"/>
@@ -89,6 +91,8 @@
       <genClasses ecoreClass="UIElements.ecore#//commands/Category">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Category/name"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//commands/Category/description"/>
+        <genOperations ecoreOperation="UIElements.ecore#//commands/Category/getLocalizedName"/>
+        <genOperations ecoreOperation="UIElements.ecore#//commands/Category/getLocalizedDescription"/>
       </genClasses>
     </nestedGenPackages>
     <nestedGenPackages prefix="Ui" basePackage="org.eclipse.e4.ui.model.application"
@@ -174,6 +178,7 @@
         <genClasses image="false" ecoreClass="UIElements.ecore#//ui/menu/MenuElement"
             labelFeature="#//application/ui/UILabel/label">
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/menu/MenuElement/mnemonics"/>
+          <genOperations ecoreOperation="UIElements.ecore#//ui/menu/MenuElement/getLocalizedMnemonics"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/MenuItem" labelFeature="#//application/ui/UILabel/label"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/menu/MenuSeparator" labelFeature="#//application/ui/UILabel/label"/>
@@ -240,6 +245,7 @@
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/Part/toolbar"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Part/closeable"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/basic/Part/description"/>
+          <genOperations ecoreOperation="UIElements.ecore#//ui/basic/Part/getLocalizedDescription"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/InputPart" labelFeature="#//application/Contribution/contributionURI"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/PartStack"/>
@@ -289,6 +295,7 @@
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/dirtyable"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/contributionURI"/>
           <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//descriptor/basic/PartDescriptor/description"/>
+          <genOperations ecoreOperation="UIElements.ecore#//descriptor/basic/PartDescriptor/getLocalizedDescription"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//descriptor/basic/PartDescriptorContainer">
           <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//descriptor/basic/PartDescriptorContainer/descriptors"/>

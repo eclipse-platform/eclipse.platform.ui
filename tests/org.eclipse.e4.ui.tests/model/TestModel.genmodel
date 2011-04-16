@@ -4,7 +4,7 @@
     modelPluginID="org.eclipse.e4.ui.tests" modelName="TestModel" rootExtendsInterface=""
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
     usedGenPackages="../../org.eclipse.e4.ui.model.workbench/model/UIElements.genmodel#//application"
-    interfaceNamePattern="M{0}">
+    interfaceNamePattern="M{0}" operationReflection="true">
   <foreignModel>TestModel.ecore</foreignModel>
   <genPackages prefix="Test" basePackage="org.eclipse.e4.ui.tests.model" disposableProviderFactory="true"
       ecorePackage="TestModel.ecore#/">

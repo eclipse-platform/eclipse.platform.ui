@@ -10,11 +10,13 @@
  */
 package org.eclipse.e4.ui.model.application.commands.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import org.eclipse.e4.ui.model.LocalizationHelper;
 
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
@@ -216,6 +218,22 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case CommandsPackageImpl.CATEGORY___GET_LOCALIZED_NAME:
+				return getLocalizedName();
+			case CommandsPackageImpl.CATEGORY___GET_LOCALIZED_DESCRIPTION:
+				return getLocalizedDescription();
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

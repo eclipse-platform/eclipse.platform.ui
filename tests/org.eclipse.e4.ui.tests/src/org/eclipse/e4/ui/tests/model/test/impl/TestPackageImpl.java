@@ -2,7 +2,7 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestPackageImpl.java,v 1.2 2010/04/16 17:28:39 pwebster Exp $
+ * $Id: TestPackageImpl.java,v 1.3 2010/05/14 19:39:11 emoffatt Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
@@ -185,7 +185,7 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 		g1 = createEGenericType(theUiPackage.getDirtyable());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
 
-		// Initialize classes and features; add operations and parameters
+		// Initialize classes, features, and operations; add parameters
 		initEClass(testHarnessEClass, MTestHarness.class, "TestHarness", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource

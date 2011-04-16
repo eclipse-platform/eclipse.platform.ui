@@ -2,10 +2,11 @@
  * <copyright>
  * </copyright>
  *
- * $Id: TestHarnessImpl.java,v 1.11 2011/02/09 00:13:44 pwebster Exp $
+ * $Id: TestHarnessImpl.java,v 1.12 2011/04/16 10:39:14 tschindl Exp $
  */
 package org.eclipse.e4.ui.tests.model.test.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -1715,6 +1716,88 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 			}
 		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == MCommand.class) {
+			switch (baseOperationID) {
+				case CommandsPackageImpl.COMMAND___GET_LOCALIZED_COMMAND_NAME: return MTestPackage.TEST_HARNESS___GET_LOCALIZED_COMMAND_NAME;
+				case CommandsPackageImpl.COMMAND___GET_LOCALIZED_DESCRIPTION: return MTestPackage.TEST_HARNESS___GET_LOCALIZED_DESCRIPTION;
+				default: return -1;
+			}
+		}
+		if (baseClass == MContext.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MContribution.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MUIElement.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.UI_ELEMENT___GET_LOCALIZED_ACCESSIBILITY_PHRASE: return MTestPackage.TEST_HARNESS___GET_LOCALIZED_ACCESSIBILITY_PHRASE;
+				default: return -1;
+			}
+		}
+		if (baseClass == MElementContainer.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MParameter.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MInput.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MUILabel.class) {
+			switch (baseOperationID) {
+				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_LABEL: return MTestPackage.TEST_HARNESS___GET_LOCALIZED_LABEL;
+				case UiPackageImpl.UI_LABEL___GET_LOCALIZED_TOOLTIP: return MTestPackage.TEST_HARNESS___GET_LOCALIZED_TOOLTIP;
+				default: return -1;
+			}
+		}
+		if (baseClass == MDirtyable.class) {
+			switch (baseOperationID) {
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case MTestPackage.TEST_HARNESS___GET_LOCALIZED_LABEL:
+				return getLocalizedLabel();
+			case MTestPackage.TEST_HARNESS___GET_LOCALIZED_TOOLTIP:
+				return getLocalizedTooltip();
+			case MTestPackage.TEST_HARNESS___GET_LOCALIZED_ACCESSIBILITY_PHRASE:
+				return getLocalizedAccessibilityPhrase();
+			case MTestPackage.TEST_HARNESS___GET_LOCALIZED_COMMAND_NAME:
+				return getLocalizedCommandName();
+			case MTestPackage.TEST_HARNESS___GET_LOCALIZED_DESCRIPTION:
+				return getLocalizedDescription();
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**
