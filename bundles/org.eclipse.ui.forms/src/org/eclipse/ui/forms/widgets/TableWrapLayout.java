@@ -369,7 +369,7 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 		int fixedPart = leftMargin + rightMargin + (numColumns - 1)
 				* horizontalSpacing;
 		int D = maxWidth - minWidth;
-		int W = tableWidth - fixedPart - minWidth;
+		int W = tableWidth - minWidth;
 		int widths[] = new int[numColumns];
 		int rem = 0;
 		for (int i = 0; i < numColumns; i++) {
