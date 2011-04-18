@@ -54,12 +54,9 @@ public class ReflectionUtils {
 		return null;
 	}
 
-	public static Object callMethod(Object object, String name, Object args[]) {
+	public static Object callMethod(Object object, String name, Class types[],
+			Object args[]) {
 		try {
-			Class types[] = new Class[args.length];
-			for (int i = 0; i < args.length; i++) {
-				types[i] = args[i].getClass();
-			}
 			Method method = null;
 			Class clazz = object.getClass();
 			NoSuchMethodException ex = null;
@@ -91,6 +88,14 @@ public class ReflectionUtils {
 			EclipseTest.fail(e.getMessage());
 		}
 		return null;
+	}
+
+	public static Object callMethod(Object object, String name, Object args[]) {
+		Class types[] = new Class[args.length];
+		for (int i = 0; i < args.length; i++) {
+			types[i] = args[i].getClass();
+		}
+		return callMethod(object, name, types, args);
 	}
 
 	public static Object getField(Object object, String name) {

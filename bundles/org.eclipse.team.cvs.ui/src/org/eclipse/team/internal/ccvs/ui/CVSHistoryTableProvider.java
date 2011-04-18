@@ -19,6 +19,7 @@ import java.util.Date;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -644,11 +645,51 @@ public class CVSHistoryTableProvider {
 	}
 
 	private ColumnLayoutData[] getWeightData(int[] widths) {
+		boolean onlyZeroes = true;
+		for (int i = 0; i < widths.length; i++) {
+			if (widths[i] > 0) {
+				onlyZeroes = false;
+			}
+		}
 		ColumnLayoutData[] ret = new ColumnLayoutData[widths.length];
 		for (int i = 0; i < widths.length; i++) {
-			ret[i] = new ColumnPixelData(widths[i] < 0 ? 60 : widths[i]);
+			if (onlyZeroes) {
+				// use same weight for all columns
+				ret[i] = new ColumnWeightData(10, true);
+			} else {
+				if (widths[i] < 0)
+					ret[i] = new ColumnPixelData(getWidthForColumn(i));
+				else
+					ret[i] = new ColumnPixelData(widths[i]);
+			}
 		}
 		return ret;
+	}
+
+	private int getWidthForColumn(int i) {
+		// see #createColumns
+		int chars = 4;
+		switch (i) {
+		case COL_REVISIONID:
+			chars += TeamUIMessages.GenericHistoryTableProvider_Revision.length();
+			break;
+		case COL_BRANCHES:
+			chars += CVSUIMessages.HistoryView_branches.length();
+			break;
+		case  COL_TAGS:
+			chars += CVSUIMessages.HistoryView_tags.length();
+			break;
+		case COL_DATE:
+			chars += TeamUIMessages.GenericHistoryTableProvider_RevisionTime.length();
+			break;
+		case COL_AUTHOR:
+			chars += TeamUIMessages.GenericHistoryTableProvider_Author.length();
+			break;
+		case COL_COMMENT:
+			chars += TeamUIMessages.GenericHistoryTableProvider_Comment.length();
+			break;
+		} 
+		return new PixelConverter(viewer.getTree()).convertWidthInCharsToPixels(chars);
 	}
 
 	public void saveColumnLayout() {
