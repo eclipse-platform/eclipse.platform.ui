@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,13 @@ public class CVSHistoryFilterDialog extends TrayDialog {
 
 	public CVSHistoryFilterDialog(Shell shell) {
 		super(shell);
+		setHelpAvailable(false); // Disable help controls - F1 will still work
 	}
 
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(CVSUIMessages.HistoryFilterDialog_title);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, IHelpContextIds.HISTORY_FILTER_DIALOG);
 	}
 
 	protected Control createDialogArea(Composite parent) {
@@ -95,8 +97,6 @@ public class CVSHistoryFilterDialog extends TrayDialog {
 
 		initializeValues();
 
-		// set F1 help
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(topLevel, IHelpContextIds.HISTORY_FILTER_DIALOG);
 		Dialog.applyDialogFont(parent);
 		return topLevel;
 	}
