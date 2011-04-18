@@ -2302,7 +2302,7 @@ void setButtonBounds(GC gc) {
 		}
 	}
 	if (minMaxTb != null && minMaxTb.getItemCount() == 0) {
-		removeTabControl(minMaxTb);
+		removeTabControl(minMaxTb, false);
 		minMaxTb.dispose();
 		minMaxTb = null;
 	}
