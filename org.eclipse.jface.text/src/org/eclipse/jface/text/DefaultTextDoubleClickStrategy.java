@@ -172,7 +172,7 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * The locale specific word break iterator.
 	 * @since 3.7
 	 */
-	private BreakIterator fWordBreakIterator= BreakIterator.getWordInstance();
+	private BreakIterator fWordBreakIterator;
 
 	/**
 	 * The POSIX word break iterator.
@@ -183,14 +183,13 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * 
 	 * @since 3.7
 	 */
-	private BreakIterator fPosixWordBreakIterator= BreakIterator.getWordInstance(new Locale("en", "US", "POSIX")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private BreakIterator fPOSIXWordBreakIterator;
 
 
 	/**
 	 * Creates a new default text double click strategy.
 	 */
 	public DefaultTextDoubleClickStrategy() {
-		super();
 	}
 
 	/*
@@ -237,7 +236,36 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 	 * @since 3.5
 	 */
 	protected IRegion findWord(IDocument document, int offset) {
-		return findWord(document, offset, fWordBreakIterator);
+		return findWord(document, offset, getWordBreakIterator());
+	}
+
+	/**
+	 * Returns the locale specific word break iterator.
+	 * 
+	 * @return the locale specific word break iterator
+	 * @since 3.7
+	 */
+	private BreakIterator getWordBreakIterator() {
+		if (fWordBreakIterator == null)
+			fWordBreakIterator= BreakIterator.getWordInstance();
+		return fWordBreakIterator;
+	}
+
+	/**
+	 * Returns the POSIX word break iterator.
+	 * 
+	 * <p>
+	 * Used to workaround ICU bug not treating '.' as word boundary, see
+	 * http://bugs.icu-project.org/trac/ticket/8371 for details.
+	 * </p>
+	 * 
+	 * @return the POSIX word break iterator.
+	 * @since 3.7
+	 */
+	private BreakIterator getPOSIXWordBreakIterator() {
+		if (fPOSIXWordBreakIterator == null)
+			fPOSIXWordBreakIterator= BreakIterator.getWordInstance(new Locale("en", "US", "POSIX")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return fPOSIXWordBreakIterator;
 	}
 
 	/**
@@ -285,8 +313,8 @@ public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy 
 		int length= end - start;
 		try {
 			// Workaround for ICU bug not treating '.' as word boundary, see http://bugs.icu-project.org/trac/ticket/8371 for details.
-			if (fPosixWordBreakIterator != wordBreakIterator && document.get(start, length).indexOf('.') != -1) {
-				IRegion wordRegion= findWord(document, offset, fPosixWordBreakIterator);
+			if (fPOSIXWordBreakIterator != wordBreakIterator && document.get(start, length).indexOf('.') != -1) {
+				IRegion wordRegion= findWord(document, offset, getPOSIXWordBreakIterator());
 				if (wordRegion != null) {
 					int wordStart= wordRegion.getOffset();
 					int wordEnd= wordStart + wordRegion.getLength();
