@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URI;
 import java.util.Hashtable;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -244,5 +244,40 @@ public class UnifiedTreeTest extends LocalStoreTest {
 
 		/* if the hash table is empty, we walked through all resources */
 		assertTrue("2.0", set.isEmpty());
+	}
+
+	/**
+	 * Regression test for 342968 - Resource layers asks IFileTree for info of linked resources
+	 */
+	public void test342968() throws CoreException {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("test");
+		ensureExistsInWorkspace(project, true);
+		project.open(getMonitor());
+
+		IProjectDescription description = project.getDescription();
+		URI projectLocation = Test342968FileSystem.getTestUriFor(EFS.getLocalFileSystem().fromLocalFile(new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile(), "test")).toURI());
+		description.setLocationURI(projectLocation);
+
+		project.delete(false, false, null);
+
+		project.create(description, IResource.NONE, null);
+		project.open(getMonitor());
+
+		assertTrue(project.getLocationURI().equals(projectLocation));
+
+		IFolder link = project.getFolder("link");
+
+		File file = new File(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile(), "link");
+		file.mkdir();
+
+		link.createLink(EFS.getLocalFileSystem().fromLocalFile(file).toURI(), IResource.NONE, null);
+
+		IFile rf = link.getFile("fileTest342968.txt");
+		rf.create(new ByteArrayInputStream("test342968".getBytes()), false, null);
+		assertTrue("1.0", rf.exists());
+
+		project.refreshLocal(IResource.DEPTH_INFINITE, null);
+
+		assertTrue("2.0", rf.exists());
 	}
 }

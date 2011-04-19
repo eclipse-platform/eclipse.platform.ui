@@ -564,4 +564,10 @@
       </run>
    </runtime>
 </extension>
+   <extension
+         point="org.eclipse.core.filesystem.filesystems">
+      <filesystem scheme="test342968">
+         <run class="org.eclipse.core.tests.internal.localstore.Test342968FileSystem"/>
+      </filesystem>
+   </extension>
 </plugin>

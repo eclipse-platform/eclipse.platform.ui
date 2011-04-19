@@ -340,7 +340,12 @@ public class UnifiedTree {
 	protected IFileInfo[] getLocalList(UnifiedTreeNode node) {
 		try {
 			final IFileStore store = node.getStore();
-			IFileInfo[] list = fileTree != null ? fileTree.getChildInfos(store) : store.childInfos(EFS.NONE, null);
+			IFileInfo[] list;
+			if (fileTree != null && (fileTree.getTreeRoot().equals(store) || fileTree.getTreeRoot().isParentOf(store) ))
+				list = fileTree.getChildInfos(store);
+			else
+				list = store.childInfos(EFS.NONE, null);
+			
 			if (list == null || list.length == 0)
 				return NO_CHILDREN;
 			list = ((Resource) node.getResource()).filterChildren(list, false);
