@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Kai Nacke - Fix for Bug 202382
  *     Bryan Hunt - Fix for Bug 245457
+ *     Didier Villevalois - Fix for Bug 178534 
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -361,13 +362,12 @@ public class ExpandableComposite extends Canvas {
 					y += VSPACE;
 			}
 			if (expanded) {
-				int areaWidth = clientArea.width - marginWidth - marginWidth
-						- thmargin - thmargin;
+				int areaWidth = clientArea.width - marginWidth - thmargin;
 				int cx = marginWidth + thmargin;
 				if ((expansionStyle & CLIENT_INDENT) != 0) {
 					cx = x;
-					areaWidth -= x;
 				}
+				areaWidth -= cx;
 				if (client != null) {
 					Point dsize = null;
 					Control desc = getDescriptionControl();
