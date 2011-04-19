@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,13 +31,10 @@ public class SynchronizeModelElementSorter extends ResourceSorter {
 	public int compare(Viewer viewer, Object o1, Object o2) {
 		IResource resource1 = getResource(o1);
 		IResource resource2 = getResource(o2);
-		int result;
-		if (resource1 != null && resource2 != null) {
-			result = super.compare(viewer, resource1, resource2);
-		} else {
-			result = super.compare(viewer, o1, o2);
-		}
-		return result;
+		Object objectToCompare1 = resource1==null ? o1 : resource1;
+		Object objectToCompare2 = resource2==null ? o2 : resource2;
+		
+		return super.compare(viewer, objectToCompare1, objectToCompare2);
 	}
 
 	protected IResource getResource(Object obj) {

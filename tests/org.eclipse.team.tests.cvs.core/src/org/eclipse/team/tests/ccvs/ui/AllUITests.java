@@ -36,6 +36,7 @@ public class AllUITests extends EclipseTest {
 		suite.addTest(CVSProjectSetImportTest.suite());
 		suite.addTest(CreatePatchTest.suite());
 		suite.addTest(CVSHisoryTableProviderTest.suite());
+		suite.addTest(PatchTreeTest.suite());
 		return suite;
 	}
 
