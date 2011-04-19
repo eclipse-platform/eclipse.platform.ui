@@ -645,15 +645,15 @@ public class CVSHistoryTableProvider {
 	}
 
 	private ColumnLayoutData[] getWeightData(int[] widths) {
-		boolean onlyZeroes = true;
+		boolean reset = true;
 		for (int i = 0; i < widths.length; i++) {
 			if (widths[i] > 0) {
-				onlyZeroes = false;
+				reset = false;
 			}
 		}
 		ColumnLayoutData[] ret = new ColumnLayoutData[widths.length];
 		for (int i = 0; i < widths.length; i++) {
-			if (onlyZeroes) {
+			if (reset) {
 				// use same weight for all columns
 				ret[i] = new ColumnWeightData(10, true);
 			} else {

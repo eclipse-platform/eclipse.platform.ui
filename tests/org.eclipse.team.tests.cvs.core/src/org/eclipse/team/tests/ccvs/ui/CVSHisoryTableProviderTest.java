@@ -176,6 +176,41 @@ public class CVSHisoryTableProviderTest extends EclipseTest {
 		}
 	}
 
+	public void testHiddenColumn() throws Exception {
+		Display display = Display.getCurrent();
+		Shell shell = new Shell(display);
+		Composite composite = new Composite(shell, SWT.NONE);
+		composite.setLayout(new FillLayout());
+
+		CVSHistoryTableProvider provider = new CVSHistoryTableProvider();
+		// provider.settings = createDialogSettings(...);
+		ReflectionUtils.setField(
+				provider,
+				"settings",
+				createDialogSettings(provider, new int[] { 100, 0, 100, 100,
+						100, 100 }));
+		TreeViewer treeViewer = provider.createTree(composite);
+		Tree tree = treeViewer.getTree();
+		Layout layout = tree.getLayout();
+
+		// layout.getColumns(tree);
+		Item[] items = (Item[]) ReflectionUtils.callMethod(layout,
+				"getColumns", new Class[] { Composite.class },
+				new Object[] { tree });
+		assertEquals(6, items.length);
+
+		// List columns = layout.columns;
+		List/* <ColumnLayoutData> */columns = (List) ReflectionUtils.getField(
+				layout, "columns");
+		ColumnPixelData[] columnsArray = (ColumnPixelData[]) columns.toArray(new ColumnPixelData[0]);
+		assertEquals(100, columnsArray[0].width);
+		assertEquals(0, columnsArray[1].width); // keep user settings
+		assertEquals(100, columnsArray[2].width);
+		assertEquals(100, columnsArray[3].width);
+		assertEquals(100, columnsArray[4].width);
+		assertEquals(100, columnsArray[5].width);
+	}
+
 	private IDialogSettings createDialogSettings(
 			CVSHistoryTableProvider provider, int[] widths) {
 		String sectionName = (String) ReflectionUtils.getField(provider,
