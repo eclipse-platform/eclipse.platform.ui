@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Eike Stepper    - bug 343228
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -19,6 +20,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -49,9 +51,11 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	
 	/**
 	 * Constructor
-	 * @param parent
-	 * @param treeStyle
-	 * @param filter
+	 * @param parent the parent {@link Composite}
+	 * @param treeStyle the style
+	 * @param filter the initial filter pattern
+	 * @param group the launch group to open on
+	 * @param filters the initial group of filters
 	 */
 	public LaunchConfigurationFilteredTree(Composite parent, int treeStyle, PatternFilter filter, ILaunchGroup group, ViewerFilter[] filters) {
 		super(parent, treeStyle, filter, true);
@@ -66,7 +70,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	 */
 	protected TreeViewer doCreateTreeViewer(Composite cparent, int style) {
 		treeViewer = new LaunchConfigurationViewer(cparent, style);
-		treeViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
+		treeViewer.setLabelProvider(new DecoratingLabelProvider(DebugUITools.newDebugModelPresentation(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		treeViewer.setComparator(new WorkbenchViewerComparator());
 		treeViewer.setContentProvider(new LaunchConfigurationTreeContentProvider(fLaunchGroup.getMode(), cparent.getShell()));
 		treeViewer.addFilter(new LaunchGroupFilter(fLaunchGroup));
@@ -108,7 +112,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	/**
 	 * Handle help events locally rather than deferring to WorkbenchHelp.  This
 	 * allows help specific to the selected config type to be presented.
-	 * 
+	 * @param evt the {@link HelpEvent}
 	 */
 	protected void handleHelpRequest(HelpEvent evt) {
 		if (getViewer().getTree() != evt.getSource()) {
