@@ -649,6 +649,7 @@ public class CVSHistoryTableProvider {
 		for (int i = 0; i < widths.length; i++) {
 			if (widths[i] > 0) {
 				reset = false;
+				break;
 			}
 		}
 		ColumnLayoutData[] ret = new ColumnLayoutData[widths.length];
