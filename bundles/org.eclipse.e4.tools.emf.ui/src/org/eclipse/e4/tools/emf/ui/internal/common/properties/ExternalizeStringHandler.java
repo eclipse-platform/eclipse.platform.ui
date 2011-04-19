@@ -20,11 +20,14 @@ import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.Translation;
-import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
+import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -76,7 +79,9 @@ public class ExternalizeStringHandler {
 
 			Composite container = (Composite) super.createDialogArea(parent);
 			Table t = new Table(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK);
-			t.setLayoutData(new GridData(GridData.FILL_BOTH));
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.heightHint = t.getItemHeight() * 15;
+			t.setLayoutData(gd);
 			t.setHeaderVisible(true);
 			t.setLinesVisible(true);
 
@@ -147,16 +152,27 @@ public class ExternalizeStringHandler {
 
 			List<String> ids = new ArrayList<String>();
 
+			List<EStructuralFeature> translatedFeatures = new ArrayList<EStructuralFeature>();
+			translatedFeatures.add(UiPackageImpl.Literals.UI_LABEL__LABEL);
+			translatedFeatures.add(UiPackageImpl.Literals.UI_LABEL__TOOLTIP);
+			translatedFeatures.add(CommandsPackageImpl.Literals.COMMAND__COMMAND_NAME);
+			translatedFeatures.add(CommandsPackageImpl.Literals.COMMAND__DESCRIPTION);
+			translatedFeatures.add(CommandsPackageImpl.Literals.CATEGORY__NAME);
+			translatedFeatures.add(CommandsPackageImpl.Literals.CATEGORY__DESCRIPTION);
+			translatedFeatures.add(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals.PART__DESCRIPTION);
+			translatedFeatures.add(BasicPackageImpl.Literals.PART_DESCRIPTOR__DESCRIPTION);
+			translatedFeatures.add(MenuPackageImpl.Literals.MENU_ELEMENT__MNEMONICS);
+
 			while (it.hasNext()) {
 				EObject o = it.next();
-				if (o instanceof MUILabel) {
-					MUILabel l = (MUILabel) o;
-					if (l.getLabel() != null && l.getLabel().startsWith("%")) { //$NON-NLS-1$
-						ids.add(l.getLabel());
-					}
 
-					if (l.getTooltip() != null && l.getTooltip().startsWith("%")) { //$NON-NLS-1$
-						ids.add(l.getTooltip());
+				for (EAttribute a : o.eClass().getEAllAttributes()) {
+					if (translatedFeatures.contains(a)) {
+						String v = (String) o.eGet(a);
+
+						if (v != null && v.startsWith("%")) { //$NON-NLS-1$
+							ids.add(v);
+						}
 					}
 				}
 			}
@@ -169,18 +185,15 @@ public class ExternalizeStringHandler {
 			it = EcoreUtil.getAllContents(list);
 			while (it.hasNext()) {
 				EObject o = it.next();
-				if (o instanceof MUILabel) {
-					MUILabel l = (MUILabel) o;
-					if (l.getLabel() != null && l.getLabel().trim().length() != 0 && !l.getLabel().startsWith("%")) { //$NON-NLS-1$
-						String id = findId(ids, o.eClass().getName().toLowerCase() + ".label"); //$NON-NLS-1$
-						entries.add(new Entry(o, UiPackageImpl.Literals.UI_LABEL__LABEL, id, l.getLabel()));
-						ids.add(id);
-					}
 
-					if (l.getTooltip() != null && l.getTooltip().trim().length() != 0 && !l.getTooltip().startsWith("%")) { //$NON-NLS-1$
-						String id = findId(ids, o.eClass().getName().toLowerCase() + ".tooltip"); //$NON-NLS-1$
-						entries.add(new Entry(o, UiPackageImpl.Literals.UI_LABEL__TOOLTIP, id, l.getTooltip()));
-						ids.add(id);
+				for (EAttribute a : o.eClass().getEAllAttributes()) {
+					if (translatedFeatures.contains(a)) {
+						String v = (String) o.eGet(a);
+						if (v != null && v.trim().length() > 0 && !v.startsWith("%")) { //$NON-NLS-1$
+							String id = findId(ids, o.eClass().getName().toLowerCase() + "." + a.getName().toLowerCase()); //$NON-NLS-1$
+							entries.add(new Entry(o, a, id, v));
+							ids.add(id);
+						}
 					}
 				}
 			}
@@ -206,7 +219,7 @@ public class ExternalizeStringHandler {
 				try {
 					IFile f = getBasePropertyFile();
 
-					StringBuilder b = new StringBuilder(System.getProperty("line.separator"));
+					StringBuilder b = new StringBuilder(System.getProperty("line.separator")); //$NON-NLS-1$
 					for (Object o : els) {
 						Entry e = (Entry) o;
 						b.append(e.key + " = " + e.value + System.getProperty("line.separator")); //$NON-NLS-1$//$NON-NLS-2$

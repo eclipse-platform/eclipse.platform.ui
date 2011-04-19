@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -49,6 +50,7 @@ import org.eclipse.emf.databinding.edit.EMFEditProperties;
 import org.eclipse.emf.databinding.edit.IEMFEditListProperty;
 import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.edit.command.AddCommand;
@@ -713,17 +715,29 @@ public class ControlFactory {
 	}
 
 	public static String getLocalizedLabel(ProjectOSGiTranslationProvider translationProvider, MUILabel element, String locale) {
+		return getLocalizedValue(translationProvider, (MApplicationElement) element, UiPackageImpl.Literals.UI_LABEL__LABEL, UiPackageImpl.Literals.UI_LABEL___GET_LOCALIZED_LABEL, locale);
+	}
+
+	public static String getLocalizedValue(ProjectOSGiTranslationProvider translationProvider, MApplicationElement element, EStructuralFeature feature, EOperation operation, String locale) {
+		EObject eo = (EObject) element;
 		if (translationProvider == null) {
-			if (element.getLocalizedLabel() != null && element.getLocalizedLabel().trim().length() > 0) {
-				return element.getLocalizedLabel();
+			try {
+				String value = (String) eo.eInvoke(operation, null);
+				if (value != null && value.trim().length() > 0) {
+					return value;
+				}
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
-		if (element.getLabel() != null && element.getLabel().trim().length() > 0) {
-			String label = element.getLabel();
-			return tr(translationProvider, locale, label);
+		String value = (String) eo.eGet(feature);
+		if (value != null && value.trim().length() > 0) {
+			return tr(translationProvider, locale, value);
 		}
 		return null;
+
 	}
 
 	public static String tr(ProjectOSGiTranslationProvider translationProvider, String locale, String label) {
