@@ -318,7 +318,7 @@ public final class Team {
 								// change the value only to disabled
 								if (!enabled) {
 									pIgnore.put(pattern,
-											Boolean.FALSE.toString());
+											Boolean.FALSE);
 								}
 							}
 						}
