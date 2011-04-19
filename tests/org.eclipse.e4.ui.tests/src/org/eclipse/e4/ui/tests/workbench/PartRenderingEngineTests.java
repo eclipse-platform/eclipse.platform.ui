@@ -2472,6 +2472,73 @@ public class PartRenderingEngineTests extends TestCase {
 		assertFalse(logged);
 	}
 
+	public void testBug343305() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		part.setToolbar(toolBar);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspectiveA = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveA);
+		perspectiveStack.setSelectedElement(perspectiveA);
+
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspectiveA.getChildren().add(partStackA);
+		perspectiveA.setSelectedElement(partStackA);
+
+		MPlaceholder placeholderA = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderA.setRef(part);
+		part.setCurSharedRef(placeholderA);
+		partStackA.getChildren().add(placeholderA);
+		partStackA.setSelectedElement(placeholderA);
+
+		MPerspective perspectiveB = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspectiveB);
+
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspectiveB.getChildren().add(partStackB);
+		perspectiveB.setSelectedElement(partStackB);
+
+		MPlaceholder placeholderB = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholderB.setToBeRendered(false);
+		placeholderB.setRef(part);
+		partStackB.getChildren().add(placeholderB);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.switchPerspective(perspectiveB);
+		partService.switchPerspective(perspectiveA);
+
+		Control control = (Control) toolBar.getWidget();
+		Control parent = (Control) partStackA.getWidget();
+		assertEquals(parent, control.getParent());
+
+		partStackB.setToBeRendered(false);
+		assertEquals(parent, control.getParent());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);

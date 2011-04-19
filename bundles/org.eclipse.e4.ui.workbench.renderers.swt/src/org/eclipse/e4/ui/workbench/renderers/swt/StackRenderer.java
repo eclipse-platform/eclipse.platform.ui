@@ -440,7 +440,15 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		} else {
 			if (child instanceof MPlaceholder) {
-				child = ((MPlaceholder) child).getRef();
+				MPlaceholder placeholder = (MPlaceholder) child;
+				child = placeholder.getRef();
+
+				if (child.getCurSharedRef() != placeholder) {
+					// if this placeholder isn't currently managing this
+					// element, no need to do anything about its toolbar, just
+					// return here
+					return;
+				}
 			}
 
 			if (child instanceof MPart) {
