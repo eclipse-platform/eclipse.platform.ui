@@ -1878,6 +1878,7 @@ void onPaint(Event event) {
 }
 
 void onResize(Event event) {
+	if (inDispose) return;
 	if (ignoreResize) return;
 	if (updateItems()) redrawTabs();
 	
@@ -2667,10 +2668,12 @@ public void setMaximized(boolean maximize) {
 	if (this.maximized == maximize) return;
 	if (maximize && this.minimized) setMinimized(false);
 	this.maximized = maximize;
-	if (maxImage != null) maxImage.dispose();
-	maxImage = createButtonImage(getDisplay(), CTabFolderRenderer.PART_MAX_BUTTON);
-	maxItem.setImage(maxImage);
-	maxItem.setToolTipText(maximized ? SWT.getMessage("SWT_Restore") : SWT.getMessage("SWT_Maximize")); //$NON-NLS-1$ //$NON-NLS-2$
+	if (minMaxTb != null && maxItem != null) {
+		if (maxImage != null) maxImage.dispose();
+		maxImage = createButtonImage(getDisplay(), CTabFolderRenderer.PART_MAX_BUTTON);
+		maxItem.setImage(maxImage);
+		maxItem.setToolTipText(maximized ? SWT.getMessage("SWT_Restore") : SWT.getMessage("SWT_Maximize")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }
 /**
  * Marks the receiver's minimize button as visible if the argument is <code>true</code>,
@@ -2710,10 +2713,12 @@ public void setMinimized(boolean minimize) {
 	if (this.minimized == minimize) return;
 	if (minimize && this.maximized) setMaximized(false);
 	this.minimized = minimize;
-	if (minImage != null) minImage.dispose();
-	minImage = createButtonImage(getDisplay(), CTabFolderRenderer.PART_MIN_BUTTON);
-	minItem.setImage(minImage);
-	minItem.setToolTipText(minimized ? SWT.getMessage("SWT_Restore") : SWT.getMessage("SWT_Minimize")); //$NON-NLS-1$ //$NON-NLS-2$
+	if (minMaxTb != null && minItem != null) {
+		if (minImage != null) minImage.dispose();
+		minImage = createButtonImage(getDisplay(), CTabFolderRenderer.PART_MIN_BUTTON);
+		minItem.setImage(minImage);
+		minItem.setToolTipText(minimized ? SWT.getMessage("SWT_Restore") : SWT.getMessage("SWT_Minimize")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 }
 
 /**
