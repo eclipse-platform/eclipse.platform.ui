@@ -531,7 +531,7 @@ public class PerspectiveSwitcher {
 				} else {
 					Image image = items[i].getImage();
 					if (image != null) {
-						items[i].setText("");
+						items[i].setText(""); //$NON-NLS-1$
 						items[i].setToolTipText(persp.getLocalizedLabel());
 					}
 				}
@@ -599,8 +599,10 @@ public class PerspectiveSwitcher {
 		r.dispose();
 		clipping.dispose();
 		// // gc.fillRectangle(bounds);
-		// Rectangle mappedBounds = e.display.map(comp, comp.getParent(), bounds);
-		// ((Composite) toolParent).drawBackground(gc, bounds.x, bounds.y, bounds.width,
+		// Rectangle mappedBounds = e.display.map(comp, comp.getParent(),
+		// bounds);
+		// ((Composite) toolParent).drawBackground(gc, bounds.x, bounds.y,
+		// bounds.width,
 		// bounds.height, mappedBounds.x, mappedBounds.y);
 
 	}

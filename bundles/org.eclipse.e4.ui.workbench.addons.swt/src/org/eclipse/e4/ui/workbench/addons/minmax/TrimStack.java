@@ -60,16 +60,20 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.osgi.service.event.EventHandler;
 
 /**
  *
  */
 public class TrimStack {
-	private static Image restoreImage;
+
+	private static final String LAYOUT_ICON_URI = "platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/icons/full/obj16/layout_co.gif"; //$NON-NLS-1$
+
+	private static final String RESTORE_ICON_URI = "platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/icons/full/etool16/fastview_restore.gif"; //$NON-NLS-1$
+
+	private Image layoutImage;
+
+	private Image restoreImage;
 
 	private ToolBar trimStackTB;
 
@@ -278,7 +282,7 @@ public class TrimStack {
 			createPopupMenu();
 
 		ToolItem restoreBtn = new ToolItem(trimStackTB, SWT.PUSH);
-		restoreBtn.setImage(getRestoreImage(parent.getDisplay()));
+		restoreBtn.setImage(getRestoreImage());
 		restoreBtn.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				minimizedElement.getTags().remove(MinMaxAddon.MINIMIZED);
@@ -296,6 +300,16 @@ public class TrimStack {
 	void destroy() {
 		for (Image image : imageMap.values()) {
 			image.dispose();
+		}
+
+		if (layoutImage != null) {
+			layoutImage.dispose();
+			layoutImage = null;
+		}
+
+		if (restoreImage != null) {
+			restoreImage.dispose();
+			restoreImage = null;
 		}
 	}
 
@@ -359,9 +373,8 @@ public class TrimStack {
 		if (minimizedElement instanceof MPlaceholder) {
 			if (trimStackTB.getItemCount() == 1) {
 				ToolItem ti = new ToolItem(trimStackTB, SWT.PUSH);
-				ImageDescriptor desc = WorkbenchImages
-						.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE);
-				ti.setImage(desc.createImage());
+				ti.setToolTipText(Messages.TrimStack_SharedAreaTooltip);
+				ti.setImage(getLayoutImage());
 				ti.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e) {
 						showStack(!isShowing);
@@ -465,7 +478,7 @@ public class TrimStack {
 		trimStackTB.setMenu(trimStackMenu);
 
 		MenuItem closeItem = new MenuItem(trimStackMenu, SWT.NONE);
-		closeItem.setText(WorkbenchMessages.WorkbenchWindow_close);
+		closeItem.setText(Messages.TrimStack_CloseText);
 		closeItem.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				MUIElement element = (MUIElement) selectedToolItem.getData();
@@ -617,10 +630,18 @@ public class TrimStack {
 		return SWT.TOP | SWT.LEFT;
 	}
 
-	private Image getRestoreImage(Display display) {
+	private Image getLayoutImage() {
+		if (layoutImage == null) {
+			layoutImage = resUtils.imageDescriptorFromURI(URI.createURI(LAYOUT_ICON_URI))
+					.createImage();
+		}
+		return layoutImage;
+	}
+
+	private Image getRestoreImage() {
 		if (restoreImage == null) {
-			restoreImage = WorkbenchImages
-					.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_TRIMPART);
+			restoreImage = resUtils.imageDescriptorFromURI(URI.createURI(RESTORE_ICON_URI))
+					.createImage();
 		}
 		return restoreImage;
 	}

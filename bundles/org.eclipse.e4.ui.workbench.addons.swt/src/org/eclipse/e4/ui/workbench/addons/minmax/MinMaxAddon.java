@@ -43,7 +43,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPageLayout;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -51,6 +50,13 @@ import org.osgi.service.event.EventHandler;
  * Addon supporting standard drag and drop management
  */
 public class MinMaxAddon {
+
+	/**
+	 * The identifier for the shared area in the Eclipse Platform. This value should be identical to
+	 * the value defined in org.eclipse.ui.IPageLayout.ID_EDITOR_AREA.
+	 */
+	private static final String ID_EDITOR_AREA = "org.eclipse.ui.editorss"; //$NON-NLS-1$
+
 	private static String trimURI = "platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.TrimStack"; //$NON-NLS-1$
 
 	static String ID_SUFFIX = "(minimized)"; //$NON-NLS-1$
@@ -194,8 +200,8 @@ public class MinMaxAddon {
 				}
 
 				// Find the editor 'area'
-				MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(
-						IPageLayout.ID_EDITOR_AREA, curPersp);
+				MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA,
+						curPersp);
 				adjustCTFButtons(eaPlaceholder);
 			}
 
@@ -412,8 +418,7 @@ public class MinMaxAddon {
 		}
 
 		// Find the editor 'area'
-		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA,
-				persp);
+		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA, persp);
 		if (element != eaPlaceholder) {
 			eaPlaceholder.getTags().add(MINIMIZED_BY_ZOOM);
 			eaPlaceholder.getTags().add(MINIMIZED);
@@ -436,8 +441,7 @@ public class MinMaxAddon {
 		}
 
 		// Find the editor 'area'
-		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA,
-				persp);
+		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA, persp);
 		if (element != eaPlaceholder) {
 			eaPlaceholder.getTags().remove(MINIMIZED);
 		}

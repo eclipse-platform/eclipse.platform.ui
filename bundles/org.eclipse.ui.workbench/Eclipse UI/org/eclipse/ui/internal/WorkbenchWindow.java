@@ -609,7 +609,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		switcherControl.setToBeRendered(getWindowConfigurer().getShowPerspectiveBar());
 		switcherControl.setElementId("PerspectiveSwitcher"); //$NON-NLS-1$
 		switcherControl
-				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
+				.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
 
 		trimBar.getChildren().add(spacerControl);
 		trimBar.getChildren().add(searchControl);
