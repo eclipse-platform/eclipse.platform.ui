@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -381,7 +381,7 @@ public class ProjectContentsLocationArea {
 	/**
 	 * Return the path on the location field.
 	 * 
-	 * @return String
+	 * @return the path or the field's text if the path is invalid
 	 */
 	private String getPathFromLocationField() {
 		URI fieldURI;
@@ -390,7 +390,8 @@ public class ProjectContentsLocationArea {
 		} catch (URISyntaxException e) {
 			return locationPathField.getText();
 		}
-		return fieldURI.getPath();
+		String path= fieldURI.getPath();
+		return path != null ? path : locationPathField.getText();
 	}
 
 	/**
