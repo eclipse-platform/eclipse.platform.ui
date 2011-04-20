@@ -146,6 +146,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	
 	static final String SECONDARY_ID_HEADER = "3x-secondary:"; //$NON-NLS-1$
 
+	// HACK!! Constants are defined in MinMaxAddon
+	private static final String EAMinimizedHack = "Minimized"; //$NON-NLS-1$
+	private static final String EAMaximizedHack = "Maximized"; //$NON-NLS-1$
+	private static final String EAMinimizedByZoomHack = "MinimizedByZoom"; //$NON-NLS-1$
+
 	class E4PartListener implements org.eclipse.e4.ui.workbench.modeling.IPartListener {
 
 		public void partActivated(MPart part) {
@@ -3280,19 +3285,46 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     }
 
+	private MUIElement getActiveElement(IWorkbenchPartReference ref) {
+		MUIElement element = null;
+
+		MPerspective curPersp = modelService.getActivePerspective(window);
+		MPlaceholder eaPH = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA, curPersp);
+		MPart model = ((WorkbenchPartReference) ref).getModel();
+		MPlaceholder placeholder = model.getCurSharedRef();
+
+		switch (modelService.getElementLocation(placeholder == null ? model : placeholder)) {
+		case EModelService.IN_ACTIVE_PERSPECTIVE:
+			MUIElement parent = placeholder == null ? model.getParent() : placeholder.getParent();
+			if (parent instanceof MPartStack) {
+				element = parent;
+			}
+			break;
+		case EModelService.IN_SHARED_AREA:
+			element = eaPH;
+			break;
+		}
+		return element;
+	}
+    
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#setPartState(org.eclipse.ui.
 	 * IWorkbenchPartReference, int)
 	 */
-    public void setPartState(IWorkbenchPartReference ref, int state) {
-		// FIXME compat setPartState
-		E4Util.unsupported("setPartState"); //$NON-NLS-1$
-    }
-
-
-    
+	public void setPartState(IWorkbenchPartReference ref, int iState) {
+		MUIElement element = getActiveElement(ref);
+		String state = null;
+		
+		if (iState == STATE_MINIMIZED) {
+			state = EAMinimizedHack;
+		} else if (iState == STATE_MAXIMIZED) {
+			state = EAMaximizedHack;
+		}
+		setPartState(element, state);
+	}
+	
     /*
 	 * (non-Javadoc)
 	 * 
@@ -3300,10 +3332,36 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * IWorkbenchPartReference)
 	 */
     public int getPartState(IWorkbenchPartReference ref) {
-		// FIXME compat getPartState
-		return STATE_RESTORED;
+		int state = STATE_RESTORED;
+		MUIElement element = getActiveElement(ref);
+
+		if (element != null) {
+			if (element.getTags().contains(EAMinimizedHack)) {
+				state = STATE_MINIMIZED;
+			} else if (element.getTags().contains(EAMaximizedHack)) {
+				state = STATE_MAXIMIZED;
+			}
+		}
+		return state;
 	}
 
+	// if the state is null, then we'll just restore the view
+	private void setPartState(MUIElement element, String state) {
+		if (element != null) {
+			element.getTags().remove(EAMinimizedByZoomHack);
+			if (EAMinimizedHack.equals(state)) {
+				element.getTags().remove(EAMaximizedHack);
+				element.getTags().add(EAMinimizedHack);
+			} else if (EAMaximizedHack.equals(state)) {
+				element.getTags().remove(EAMinimizedHack);
+				element.getTags().add(EAMaximizedHack);
+			} else {
+				element.getTags().remove(EAMinimizedHack);
+				element.getTags().remove(EAMaximizedHack);
+			}
+		}
+	}
+	
     /**
      * updateActionBars method comment.
      */
@@ -3327,32 +3385,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 * IWorkbenchPartReference)
 	 */
 	public void toggleZoom(IWorkbenchPartReference ref) {
-		MPerspective curPersp = modelService.getActivePerspective(window);
-		MPlaceholder eaPH = (MPlaceholder) modelService.find(IPageLayout.ID_EDITOR_AREA, curPersp);
-
-		// HACK!! Constant is defined in MinMaxAddon
-		String EAMaximizedHack = "Maximized"; //$NON-NLS-1$
-
-		MPart model = ((WorkbenchPartReference) ref).getModel();
-		MPlaceholder placeholder = model.getCurSharedRef();
-		switch (modelService.getElementLocation(placeholder == null ? model : placeholder)) {
-		case EModelService.IN_ACTIVE_PERSPECTIVE:
-			MUIElement parent = placeholder == null ? model.getParent() : placeholder.getParent();
-			if (parent instanceof MPartStack) {
-				if (parent.getTags().contains(EAMaximizedHack)) {
-					parent.getTags().remove(EAMaximizedHack);
-				} else {
-					parent.getTags().add(EAMaximizedHack);
-				}
+		MUIElement element = getActiveElement(ref);
+		if (element != null) {
+			String state = null;
+			if (!element.getTags().contains(EAMaximizedHack)) {
+				state = EAMaximizedHack;
 			}
-			break;
-		case EModelService.IN_SHARED_AREA:
-			if (eaPH.getTags().contains(EAMaximizedHack)) {
-				eaPH.getTags().remove(EAMaximizedHack);
-			} else {
-				eaPH.getTags().add(EAMaximizedHack);
-			}
-			break;
+			this.setPartState(element, state);
 		}
 	}
 
