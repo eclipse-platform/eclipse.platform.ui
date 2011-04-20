@@ -174,7 +174,7 @@ public interface IExtension {
 	 * @deprecated IPluginDescriptor is not part of the new runtime and its function
 	 * has been split over several parts of the new runtime.  This method
 	 * is not available (returns <tt>null</tt>) if the compatibility layer is not installed.  Use getNamespace()
-	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
+	 * to get the symbolic id of the declaring plug-in.  See {@link IPluginDescriptor} to see how to 
 	 * update your use-cases.
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor() throws InvalidRegistryObjectException;
