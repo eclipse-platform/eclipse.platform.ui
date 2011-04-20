@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,8 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
         processEvents();
         
        	tagIfNecessary("UI - Open/Close " + view1.getTitle(), Dimension.ELAPSED_PROCESS);
+       	if ("org.eclipse.ui.views.BookmarkView".equals(viewId))
+       		setDegradationComment("The test results are influenced by the test machine setup. See bug 340136.");
         	
 		for (int j = 0; j < 100; j++) {
 
