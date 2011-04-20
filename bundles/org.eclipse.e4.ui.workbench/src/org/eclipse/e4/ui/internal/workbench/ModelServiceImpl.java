@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -79,6 +80,7 @@ public class ModelServiceImpl implements EModelService {
 
 	private <T> void findElementsRecursive(MUIElement searchRoot, String id,
 			Class<? extends T> type, List<String> tagsToMatch, List<T> elements, int searchFlags) {
+		Assert.isLegal(searchRoot != null);
 		if (searchFlags == 0)
 			return;
 

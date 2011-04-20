@@ -130,7 +130,7 @@ public interface EModelService {
 	 * @param id
 	 *            The id to search for, must not be null
 	 * @param searchRoot
-	 *            The element at which to start the search
+	 *            The element at which to start the search, must not be null
 	 * @return The first element with a matching id or <code>null</code> if one is not found
 	 */
 	public MUIElement find(String id, MUIElement searchRoot);

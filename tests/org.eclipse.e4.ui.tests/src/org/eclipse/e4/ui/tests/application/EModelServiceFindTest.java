@@ -203,6 +203,35 @@ public class EModelServiceFindTest extends TestCase {
 		assertEquals(badIdAndTypeAndTags.size(), 0);
 	}
 
+	public void testFindElements_NullCheck() {
+		MApplication application = createApplication();
+		EModelService modelService = (EModelService) application.getContext()
+				.get(EModelService.class.getName());
+		assertNotNull(modelService);
+
+		try {
+			modelService.find("a", null);
+			fail("An exception should have prevented a null parameter to find(*)");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+
+		try {
+			modelService.findElements(null, null, null, null);
+			fail("An exception should have prevented a null parameter to findElements(*)");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+
+		try {
+			modelService.findElements(null, null, null, null,
+					EModelService.ANYWHERE);
+			fail("An exception should have prevented a null parameter to findElements(*)");
+		} catch (IllegalArgumentException e) {
+			// expected
+		}
+	}
+
 	public void testBug314685() {
 		MApplication application = createApplication();
 		application.setContext(applicationContext);
