@@ -45,7 +45,8 @@ public class ModelElementTest extends TestCase {
 			if (classifier instanceof EClass) {
 				EClass c = (EClass) classifier;
 				if (!c.isInterface()
-						&& c != ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP) {
+						&& c != ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP
+						&& c != ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP) {
 					if (!MApplicationElement.class.isAssignableFrom(c
 							.getInstanceClass())) {
 						failedClasses.add(c);
@@ -79,6 +80,7 @@ public class ModelElementTest extends TestCase {
 			if (classifier instanceof EClass) {
 				EClass c = (EClass) classifier;
 				if (c != ApplicationPackageImpl.Literals.STRING_TO_STRING_MAP
+						&& c != ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP
 						&& c != ApplicationPackageImpl.Literals.APPLICATION_ELEMENT
 						&& !c.isInterface()) {
 					if (c.getESuperTypes().size() == 0

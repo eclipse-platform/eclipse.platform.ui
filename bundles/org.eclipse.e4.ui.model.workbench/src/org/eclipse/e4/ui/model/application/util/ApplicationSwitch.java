@@ -134,6 +134,12 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case ApplicationPackageImpl.STRING_TO_OBJECT_MAP: {
+				@SuppressWarnings("unchecked") Map.Entry<String, Object> stringToObjectMap = (Map.Entry<String, Object>)theEObject;
+				T1 result = caseStringToObjectMap(stringToObjectMap);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -210,6 +216,21 @@ public class ApplicationSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseAddon(MAddon object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>String To Object Map</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>String To Object Map</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseStringToObjectMap(Map.Entry<String, Object> object) {
 		return null;
 	}
 

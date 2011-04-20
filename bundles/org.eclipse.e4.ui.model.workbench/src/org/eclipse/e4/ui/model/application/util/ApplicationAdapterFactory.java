@@ -109,6 +109,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createAddonAdapter();
 			}
 			@Override
+			public Adapter caseStringToObjectMap(Map.Entry<String, Object> object) {
+				return createStringToObjectMapAdapter();
+			}
+			@Override
 			public Adapter caseUIElement(MUIElement object) {
 				return createUIElementAdapter();
 			}
@@ -235,6 +239,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createAddonAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link java.util.Map.Entry <em>String To Object Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see java.util.Map.Entry
+	 * @generated
+	 */
+	public Adapter createStringToObjectMapAdapter() {
 		return null;
 	}
 

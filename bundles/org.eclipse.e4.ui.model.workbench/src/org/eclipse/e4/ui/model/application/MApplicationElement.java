@@ -24,8 +24,8 @@ import java.util.Map;
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getContributorURI <em>Contributor URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getClonableSnippets <em>Clonable Snippets</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}</li>
  * </ul>
  * </p>
  *
@@ -99,29 +99,20 @@ public interface MApplicationElement {
 	void setContributorURI(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Transient Data</b></em>' attribute.
+	 * Returns the value of the '<em><b>Transient Data</b></em>' map.
+	 * The key is of type {@link java.lang.String},
+	 * and the value is of type {@link java.lang.Object},
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Transient Data</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Transient Data</em>' attribute.
-	 * @see #setTransientData(Map)
-	 * @model transient="true"
+	 * @return the value of the '<em>Transient Data</em>' map.
+	 * @model mapType="org.eclipse.e4.ui.model.application.StringToObjectMap<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EJavaObject>" transient="true"
 	 * @generated
 	 */
 	Map<String, Object> getTransientData();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Transient Data</em>' attribute.
-	 * @see #getTransientData()
-	 * @generated
-	 */
-	void setTransientData(Map<String, Object> value);
 
 	/**
 	 * Returns the value of the '<em><b>Clonable Snippets</b></em>' containment reference list.

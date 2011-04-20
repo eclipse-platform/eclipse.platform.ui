@@ -32,14 +32,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tags" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributorURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="transientData" transient="true">
-      <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
-        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-      </eGenericType>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="clonableSnippets" upperBound="-1"
         eType="#//ApplicationElement" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="transientData" upperBound="-1"
+        eType="#//StringToObjectMap" transient="true" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Contribution" abstract="true" eSuperTypes="#//ApplicationElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="contributionURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -49,6 +45,10 @@
         eType="#//StringToStringMap" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Addon" eSuperTypes="#//Contribution"/>
+  <eClassifiers xsi:type="ecore:EClass" name="StringToObjectMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+  </eClassifiers>
   <eSubpackages name="commands" nsURI="http://www.eclipse.org/ui/2010/UIModel/application/commands"
       nsPrefix="commands">
     <eClassifiers xsi:type="ecore:EClass" name="BindingTableContainer" abstract="true"

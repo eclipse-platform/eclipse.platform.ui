@@ -222,15 +222,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -238,6 +229,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -555,15 +555,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int INPUT_PART__CONTRIBUTOR_URI = PART__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int INPUT_PART__TRANSIENT_DATA = PART__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -571,6 +562,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int INPUT_PART__CLONABLE_SNIPPETS = PART__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int INPUT_PART__TRANSIENT_DATA = PART__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -897,15 +897,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_STACK__CONTRIBUTOR_URI = UiPackageImpl.GENERIC_STACK__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_STACK__TRANSIENT_DATA = UiPackageImpl.GENERIC_STACK__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -913,6 +904,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_STACK__CLONABLE_SNIPPETS = UiPackageImpl.GENERIC_STACK__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_STACK__TRANSIENT_DATA = UiPackageImpl.GENERIC_STACK__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1077,15 +1077,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_SASH_CONTAINER__CONTRIBUTOR_URI = UiPackageImpl.GENERIC_TILE__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER__TRANSIENT_DATA = UiPackageImpl.GENERIC_TILE__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1093,6 +1084,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER__CLONABLE_SNIPPETS = UiPackageImpl.GENERIC_TILE__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER__TRANSIENT_DATA = UiPackageImpl.GENERIC_TILE__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1266,15 +1266,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1282,6 +1273,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int WINDOW__CLONABLE_SNIPPETS = UiPackageImpl.ELEMENT_CONTAINER__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1599,15 +1599,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIMMED_WINDOW__CONTRIBUTOR_URI = WINDOW__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIMMED_WINDOW__TRANSIENT_DATA = WINDOW__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1615,6 +1606,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIMMED_WINDOW__CLONABLE_SNIPPETS = WINDOW__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIMMED_WINDOW__TRANSIENT_DATA = WINDOW__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1941,15 +1941,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIM_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1957,6 +1948,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_ELEMENT__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -2103,15 +2103,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int PART_SASH_CONTAINER_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int PART_SASH_CONTAINER_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2119,6 +2110,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int PART_SASH_CONTAINER_ELEMENT__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int PART_SASH_CONTAINER_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -2265,15 +2265,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int WINDOW_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int WINDOW_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2281,6 +2272,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int WINDOW_ELEMENT__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int WINDOW_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -2427,15 +2427,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int TRIM_BAR__CONTRIBUTOR_URI = UiPackageImpl.GENERIC_TRIM_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TRIM_BAR__TRANSIENT_DATA = UiPackageImpl.GENERIC_TRIM_CONTAINER__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2443,6 +2434,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int TRIM_BAR__CLONABLE_SNIPPETS = UiPackageImpl.GENERIC_TRIM_CONTAINER__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TRIM_BAR__TRANSIENT_DATA = UiPackageImpl.GENERIC_TRIM_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -2616,15 +2616,6 @@ public class BasicPackageImpl extends EPackageImpl {
 	public static final int STACK_ELEMENT__CONTRIBUTOR_URI = UiPackageImpl.UI_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int STACK_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2632,6 +2623,15 @@ public class BasicPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int STACK_ELEMENT__CLONABLE_SNIPPETS = UiPackageImpl.UI_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STACK_ELEMENT__TRANSIENT_DATA = UiPackageImpl.UI_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.

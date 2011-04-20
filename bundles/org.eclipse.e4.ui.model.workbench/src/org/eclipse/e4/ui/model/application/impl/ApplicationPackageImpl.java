@@ -163,22 +163,22 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION_ELEMENT__CONTRIBUTOR_URI = 2;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int APPLICATION_ELEMENT__TRANSIENT_DATA = 3;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_ELEMENT__CLONABLE_SNIPPETS = 4;
+	public static final int APPLICATION_ELEMENT__CLONABLE_SNIPPETS = 3;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION_ELEMENT__TRANSIENT_DATA = 4;
 
 	/**
 	 * The number of structural features of the '<em>Element</em>' class.
@@ -236,15 +236,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__CONTRIBUTOR_URI = UiPackageImpl.ELEMENT_CONTAINER__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int APPLICATION__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -252,6 +243,15 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int APPLICATION__CLONABLE_SNIPPETS = UiPackageImpl.ELEMENT_CONTAINER__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPLICATION__TRANSIENT_DATA = UiPackageImpl.ELEMENT_CONTAINER__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -552,15 +552,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int CONTRIBUTION__CONTRIBUTOR_URI = APPLICATION_ELEMENT__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONTRIBUTION__TRANSIENT_DATA = APPLICATION_ELEMENT__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -568,6 +559,15 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int CONTRIBUTION__CLONABLE_SNIPPETS = APPLICATION_ELEMENT__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONTRIBUTION__TRANSIENT_DATA = APPLICATION_ELEMENT__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -652,15 +652,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int ADDON__CONTRIBUTOR_URI = CONTRIBUTION__CONTRIBUTOR_URI;
 
 	/**
-	 * The feature id for the '<em><b>Transient Data</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	public static final int ADDON__TRANSIENT_DATA = CONTRIBUTION__TRANSIENT_DATA;
-
-	/**
 	 * The feature id for the '<em><b>Clonable Snippets</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -668,6 +659,15 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @ordered
 	 */
 	public static final int ADDON__CLONABLE_SNIPPETS = CONTRIBUTION__CLONABLE_SNIPPETS;
+
+	/**
+	 * The feature id for the '<em><b>Transient Data</b></em>' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ADDON__TRANSIENT_DATA = CONTRIBUTION__TRANSIENT_DATA;
 
 	/**
 	 * The feature id for the '<em><b>Contribution URI</b></em>' attribute.
@@ -715,6 +715,52 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int ADDON_OPERATION_COUNT = CONTRIBUTION_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.StringToObjectMapImpl <em>String To Object Map</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.StringToObjectMapImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getStringToObjectMap()
+	 * @generated
+	 */
+	public static final int STRING_TO_OBJECT_MAP = 5;
+
+	/**
+	 * The feature id for the '<em><b>Key</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STRING_TO_OBJECT_MAP__KEY = 0;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STRING_TO_OBJECT_MAP__VALUE = 1;
+
+	/**
+	 * The number of structural features of the '<em>String To Object Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STRING_TO_OBJECT_MAP_FEATURE_COUNT = 2;
+
+	/**
+	 * The number of operations of the '<em>String To Object Map</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	public static final int STRING_TO_OBJECT_MAP_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -722,7 +768,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	public static final int IECLIPSE_CONTEXT = 5;
+	public static final int IECLIPSE_CONTEXT = 6;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -758,6 +804,13 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass addonEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass stringToObjectMapEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -993,16 +1046,16 @@ public class ApplicationPackageImpl extends EPackageImpl {
 
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}'.
+	 * Returns the meta object for the map '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData <em>Transient Data</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Transient Data</em>'.
+	 * @return the meta object for the map '<em>Transient Data</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationElement#getTransientData()
 	 * @see #getApplicationElement()
 	 * @generated
 	 */
-	public EAttribute getApplicationElement_TransientData() {
-		return (EAttribute)applicationElementEClass.getEStructuralFeatures().get(3);
+	public EReference getApplicationElement_TransientData() {
+		return (EReference)applicationElementEClass.getEStructuralFeatures().get(4);
 	}
 
 
@@ -1016,7 +1069,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	public EReference getApplicationElement_ClonableSnippets() {
-		return (EReference)applicationElementEClass.getEStructuralFeatures().get(4);
+		return (EReference)applicationElementEClass.getEStructuralFeatures().get(3);
 	}
 
 
@@ -1084,6 +1137,49 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class '{@link java.util.Map.Entry <em>String To Object Map</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>String To Object Map</em>'.
+	 * @see java.util.Map.Entry
+	 * @model keyDataType="org.eclipse.emf.ecore.EString"
+	 *        valueDataType="org.eclipse.emf.ecore.EJavaObject"
+	 * @generated
+	 */
+	public EClass getStringToObjectMap() {
+		return stringToObjectMapEClass;
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Key</em>'.
+	 * @see java.util.Map.Entry
+	 * @see #getStringToObjectMap()
+	 * @generated
+	 */
+	public EAttribute getStringToObjectMap_Key() {
+		return (EAttribute)stringToObjectMapEClass.getEStructuralFeatures().get(0);
+	}
+
+
+	/**
+	 * Returns the meta object for the attribute '{@link java.util.Map.Entry <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see java.util.Map.Entry
+	 * @see #getStringToObjectMap()
+	 * @generated
+	 */
+	public EAttribute getStringToObjectMap_Value() {
+		return (EAttribute)stringToObjectMapEClass.getEStructuralFeatures().get(1);
+	}
+
+
+	/**
 	 * Returns the meta object for data type '{@link org.eclipse.e4.core.contexts.IEclipseContext <em>IEclipse Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1139,8 +1235,8 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__ELEMENT_ID);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TAGS);
 		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__CONTRIBUTOR_URI);
-		createEAttribute(applicationElementEClass, APPLICATION_ELEMENT__TRANSIENT_DATA);
 		createEReference(applicationElementEClass, APPLICATION_ELEMENT__CLONABLE_SNIPPETS);
+		createEReference(applicationElementEClass, APPLICATION_ELEMENT__TRANSIENT_DATA);
 
 		contributionEClass = createEClass(CONTRIBUTION);
 		createEAttribute(contributionEClass, CONTRIBUTION__CONTRIBUTION_URI);
@@ -1148,6 +1244,10 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEReference(contributionEClass, CONTRIBUTION__PERSISTED_STATE);
 
 		addonEClass = createEClass(ADDON);
+
+		stringToObjectMapEClass = createEClass(STRING_TO_OBJECT_MAP);
+		createEAttribute(stringToObjectMapEClass, STRING_TO_OBJECT_MAP__KEY);
+		createEAttribute(stringToObjectMapEClass, STRING_TO_OBJECT_MAP__VALUE);
 
 		// Create data types
 		iEclipseContextEDataType = createEDataType(IECLIPSE_CONTEXT);
@@ -1230,13 +1330,8 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		initEAttribute(getApplicationElement_ElementId(), ecorePackage.getEString(), "elementId", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_Tags(), ecorePackage.getEString(), "tags", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getApplicationElement_ContributorURI(), ecorePackage.getEString(), "contributorURI", null, 0, 1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		g1 = createEGenericType(ecorePackage.getEMap());
-		g2 = createEGenericType(ecorePackage.getEString());
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(ecorePackage.getEJavaObject());
-		g1.getETypeArguments().add(g2);
-		initEAttribute(getApplicationElement_TransientData(), g1, "transientData", null, 0, 1, MApplicationElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getApplicationElement_ClonableSnippets(), this.getApplicationElement(), null, "clonableSnippets", null, 0, -1, MApplicationElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getApplicationElement_TransientData(), this.getStringToObjectMap(), null, "transientData", null, 0, -1, MApplicationElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(contributionEClass, MContribution.class, "Contribution", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContribution_ContributionURI(), ecorePackage.getEString(), "contributionURI", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1244,6 +1339,10 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		initEReference(getContribution_PersistedState(), this.getStringToStringMap(), null, "persistedState", null, 0, -1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(addonEClass, MAddon.class, "Addon", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(stringToObjectMapEClass, Map.Entry.class, "StringToObjectMap", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getStringToObjectMap_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getStringToObjectMap_Value(), ecorePackage.getEJavaObject(), "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Initialize data types
 		initEDataType(iEclipseContextEDataType, IEclipseContext.class, "IEclipseContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1360,12 +1459,12 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		public static final EAttribute APPLICATION_ELEMENT__CONTRIBUTOR_URI = eINSTANCE.getApplicationElement_ContributorURI();
 
 		/**
-		 * The meta object literal for the '<em><b>Transient Data</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Transient Data</b></em>' map feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		public static final EAttribute APPLICATION_ELEMENT__TRANSIENT_DATA = eINSTANCE.getApplicationElement_TransientData();
+		public static final EReference APPLICATION_ELEMENT__TRANSIENT_DATA = eINSTANCE.getApplicationElement_TransientData();
 
 		/**
 		 * The meta object literal for the '<em><b>Clonable Snippets</b></em>' containment reference list feature.
@@ -1418,6 +1517,32 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass ADDON = eINSTANCE.getAddon();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.StringToObjectMapImpl <em>String To Object Map</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.StringToObjectMapImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getStringToObjectMap()
+		 * @generated
+		 */
+		public static final EClass STRING_TO_OBJECT_MAP = eINSTANCE.getStringToObjectMap();
+
+		/**
+		 * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute STRING_TO_OBJECT_MAP__KEY = eINSTANCE.getStringToObjectMap_Key();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final EAttribute STRING_TO_OBJECT_MAP__VALUE = eINSTANCE.getStringToObjectMap_Value();
 
 		/**
 		 * The meta object literal for the '<em>IEclipse Context</em>' data type.

@@ -17,12 +17,15 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl.Container;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EcoreEMap;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -35,8 +38,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getElementId <em>Element Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTags <em>Tags</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getContributorURI <em>Contributor URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTransientData <em>Transient Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getClonableSnippets <em>Clonable Snippets</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl#getTransientData <em>Transient Data</em>}</li>
  * </ul>
  * </p>
  *
@@ -94,16 +97,6 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	protected String contributorURI = CONTRIBUTOR_URI_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getTransientData() <em>Transient Data</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTransientData()
-	 * @generated
-	 * @ordered
-	 */
-	protected Map<String, Object> transientData;
-
-	/**
 	 * The cached value of the '{@link #getClonableSnippets() <em>Clonable Snippets</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -112,6 +105,16 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * @ordered
 	 */
 	protected EList<MApplicationElement> clonableSnippets;
+
+	/**
+	 * The cached value of the '{@link #getTransientData() <em>Transient Data</em>}' map.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTransientData()
+	 * @generated
+	 * @ordered
+	 */
+	protected EMap<String, Object> transientData;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -191,19 +194,10 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 	 * @generated
 	 */
 	public Map<String, Object> getTransientData() {
-		return transientData;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTransientData(Map<String, Object> newTransientData) {
-		Map<String, Object> oldTransientData = transientData;
-		transientData = newTransientData;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA, oldTransientData, transientData));
+		if (transientData == null) {
+			transientData = new EcoreEMap<String,Object>(ApplicationPackageImpl.Literals.STRING_TO_OBJECT_MAP, StringToObjectMapImpl.class, this, ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA);
+		}
+		return transientData.map();
 	}
 
 	/**
@@ -228,6 +222,8 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 		switch (featureID) {
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
 				return ((InternalEList<?>)getClonableSnippets()).basicRemove(otherEnd, msgs);
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
+				return ((InternalEList<?>)((EMap.InternalMapView<String, Object>)getTransientData()).eMap()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -246,10 +242,11 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return getTags();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				return getContributorURI();
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
-				return getTransientData();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
 				return getClonableSnippets();
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
+				if (coreType) return ((EMap.InternalMapView<String, Object>)getTransientData()).eMap();
+				else return getTransientData();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -273,12 +270,12 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				setContributorURI((String)newValue);
 				return;
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
-				setTransientData((Map<String, Object>)newValue);
-				return;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
 				getClonableSnippets().clear();
 				getClonableSnippets().addAll((Collection<? extends MApplicationElement>)newValue);
+				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
+				((EStructuralFeature.Setting)((EMap.InternalMapView<String, Object>)getTransientData()).eMap()).set(newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -301,11 +298,11 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				setContributorURI(CONTRIBUTOR_URI_EDEFAULT);
 				return;
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
-				setTransientData((Map<String, Object>)null);
-				return;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
 				getClonableSnippets().clear();
+				return;
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
+				getTransientData().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -325,10 +322,10 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 				return tags != null && !tags.isEmpty();
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CONTRIBUTOR_URI:
 				return CONTRIBUTOR_URI_EDEFAULT == null ? contributorURI != null : !CONTRIBUTOR_URI_EDEFAULT.equals(contributorURI);
-			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
-				return transientData != null;
 			case ApplicationPackageImpl.APPLICATION_ELEMENT__CLONABLE_SNIPPETS:
 				return clonableSnippets != null && !clonableSnippets.isEmpty();
+			case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
+				return transientData != null && !transientData.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -349,8 +346,6 @@ public abstract class ApplicationElementImpl extends Container implements MAppli
 		result.append(tags);
 		result.append(", contributorURI: "); //$NON-NLS-1$
 		result.append(contributorURI);
-		result.append(", transientData: "); //$NON-NLS-1$
-		result.append(transientData);
 		result.append(')');
 		return result.toString();
 	}
