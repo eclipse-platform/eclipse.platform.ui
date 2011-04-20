@@ -307,6 +307,8 @@ public class ModelEditor {
 			};
 			context.set(ProjectOSGiTranslationProvider.class, translationProvider);
 		}
+		labelFeaturePaths.add(FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__TO_BE_RENDERED));
+		labelFeaturePaths.add(FeaturePath.fromList(UiPackageImpl.Literals.UI_ELEMENT__VISIBLE));
 	}
 
 	@PostConstruct
