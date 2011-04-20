@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -18,10 +19,12 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
+import org.eclipse.e4.ui.workbench.UIEvents.UIElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -65,15 +68,42 @@ public class AreaRenderer extends SWTPartRenderer {
 		}
 	};
 
+	private EventHandler widgetListener = new EventHandler() {
+		public void handleEvent(Event event) {
+			final MUIElement changedElement = (MUIElement) event
+					.getProperty(EventTags.ELEMENT);
+			if (!(changedElement instanceof MPartStack))
+				return;
+
+			MArea areaModel = findArea(changedElement);
+			if (areaModel != null)
+				synchCTFState(areaModel);
+		}
+
+		private MArea findArea(MUIElement element) {
+			MUIElement parent = element.getParent();
+			while (parent != null) {
+				if (parent instanceof MArea)
+					return (MArea) parent;
+				parent = parent.getParent();
+			}
+			return null;
+		}
+	};
+
 	@PostConstruct
 	void init() {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				itemUpdater);
+		eventBroker
+				.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+						UIElement.WIDGET), widgetListener);
 	}
 
 	@PreDestroy
 	void contextDisposed() {
 		eventBroker.unsubscribe(itemUpdater);
+		eventBroker.unsubscribe(widgetListener);
 	}
 
 	public Object createWidget(final MUIElement element, Object parent) {
@@ -95,6 +125,34 @@ public class AreaRenderer extends SWTPartRenderer {
 		Composite curComp = (Composite) areaModel.getWidget();
 		Composite parentComp = curComp.getParent();
 		CTabFolder ctf = new CTabFolder(parentComp, SWT.BORDER | SWT.SINGLE);
+
+		// Find the stack in the area that used to have the min/max state
+		List<MPartStack> stacks = modelService.findElements(areaModel, null,
+				MPartStack.class, null);
+		MPartStack curStack = null;
+		for (MPartStack stack : stacks) {
+			if (stack.isToBeRendered()
+					&& stack.getWidget() instanceof CTabFolder) {
+				CTabFolder stackCTF = (CTabFolder) stack.getWidget();
+				if (stackCTF.getMinimizeVisible()
+						|| stackCTF.getMaximizeVisible()) {
+					curStack = stack;
+					break;
+				}
+			}
+		}
+
+		// ...and copy over its min/max state
+		if (curStack != null) {
+			CTabFolder curCTF = (CTabFolder) curStack.getWidget();
+			ctf.setMinimizeVisible(curCTF.getMinimizeVisible());
+			ctf.setMaximizeVisible(curCTF.getMaximizeVisible());
+			ctf.setMinimized(curCTF.getMinimized());
+			ctf.setMaximized(curCTF.getMaximized());
+
+			curCTF.setMinimizeVisible(false);
+			curCTF.setMaximizeVisible(false);
+		}
 
 		CTabItem cti = new CTabItem(ctf, SWT.NONE);
 		if (areaModel.getLabel() != null)
@@ -120,12 +178,44 @@ public class AreaRenderer extends SWTPartRenderer {
 			innerComp.setParent(ctf.getParent());
 			cti.setControl(null);
 
+			// OK now copy over the min/max state of the area stack to the
+			// remaining part stack
+			List<MPartStack> stacks = modelService.findElements(areaModel,
+					null, MPartStack.class, null);
+			for (MPartStack stack : stacks) {
+				if (stack.isToBeRendered()
+						&& stack.getWidget() instanceof CTabFolder) {
+					CTabFolder stackCTF = (CTabFolder) stack.getWidget();
+					stackCTF.setMinimizeVisible(ctf.getMinimizeVisible());
+					stackCTF.setMaximizeVisible(ctf.getMaximizeVisible());
+					stackCTF.setMinimized(ctf.getMinimized());
+					stackCTF.setMaximized(ctf.getMaximized());
+				}
+			}
+
 			ctf.setData(AbstractPartRenderer.OWNING_ME, null);
 			ctf.dispose();
 
 			bindWidget(areaModel, innerComp);
 			innerComp.setVisible(true);
+			innerComp.getParent().layout(true, true);
 		}
+	}
+
+	private void synchCTFState(MArea areaModel) {
+		List<MPartStack> stacks = modelService.findElements(areaModel, null,
+				MPartStack.class, null);
+		int count = 0;
+		for (MPartStack stack : stacks) {
+			if (stack.isToBeRendered())
+				count++;
+		}
+
+		// If there's more than one stack visible we use a CTF
+		if (count > 1)
+			ensureCTF(areaModel);
+		else
+			ensureComposite(areaModel);
 	}
 
 	/*
@@ -142,15 +232,14 @@ public class AreaRenderer extends SWTPartRenderer {
 		if (!(parentElement instanceof MArea))
 			return null;
 
-		// If we're hosting an MPSC then we should show the CTF
-		if (element instanceof MPartSashContainer) {
-			ensureCTF((MArea) parentElement);
-			CTabFolder ctf = (CTabFolder) parentElement.getWidget();
+		MArea areaModel = (MArea) parentElement;
+		synchCTFState(areaModel);
+
+		if (areaModel.getWidget() instanceof CTabFolder) {
+			CTabFolder ctf = (CTabFolder) areaModel.getWidget();
 			return ctf.getItem(0).getControl();
 		}
 
-		// Otherwise we should show only the composite
-		ensureComposite((MArea) parentElement);
 		return parentElement.getWidget();
 	}
 }

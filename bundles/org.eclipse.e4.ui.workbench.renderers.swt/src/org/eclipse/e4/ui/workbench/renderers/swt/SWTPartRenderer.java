@@ -86,9 +86,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	public void bindWidget(MUIElement me, Object widget) {
-		// Create a bi-directional link between the widget and the model
-		me.setWidget(widget);
-
 		if (widget instanceof Widget) {
 			((Widget) widget).setData(OWNING_ME, me);
 
@@ -106,6 +103,9 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 				}
 			});
 		}
+
+		// Create a bi-directional link between the widget and the model
+		me.setWidget(widget);
 	}
 
 	public Object unbindWidget(MUIElement me) {
