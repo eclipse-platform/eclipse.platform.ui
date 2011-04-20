@@ -394,7 +394,8 @@ public class MinMaxAddon {
 
 		List<String> maxTag = new ArrayList<String>();
 		maxTag.add(MAXIMIZED);
-		List<MUIElement> curMax = modelService.findElements(persp, null, MUIElement.class, maxTag);
+		List<MUIElement> curMax = modelService.findElements(persp == null ? win : persp, null,
+				MUIElement.class, maxTag);
 		if (curMax.size() > 0) {
 			for (MUIElement maxElement : curMax) {
 				if (maxElement == element)
@@ -403,8 +404,8 @@ public class MinMaxAddon {
 			}
 		}
 
-		List<MPartStack> stacks = modelService.findElements(persp, null, MPartStack.class, null,
-				EModelService.PRESENTATION);
+		List<MPartStack> stacks = modelService.findElements(persp == null ? win : persp, null,
+				MPartStack.class, null, EModelService.PRESENTATION);
 		for (MPartStack theStack : stacks) {
 			if (theStack == element)
 				continue;
@@ -418,8 +419,9 @@ public class MinMaxAddon {
 		}
 
 		// Find the editor 'area'
-		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA, persp);
-		if (element != eaPlaceholder) {
+		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA,
+				persp == null ? win : persp);
+		if (element != eaPlaceholder && eaPlaceholder != null) {
 			eaPlaceholder.getTags().add(MINIMIZED_BY_ZOOM);
 			eaPlaceholder.getTags().add(MINIMIZED);
 		}
@@ -441,8 +443,9 @@ public class MinMaxAddon {
 		}
 
 		// Find the editor 'area'
-		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA, persp);
-		if (element != eaPlaceholder) {
+		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA,
+				persp == null ? win : persp);
+		if (element != eaPlaceholder && eaPlaceholder != null) {
 			eaPlaceholder.getTags().remove(MINIMIZED);
 		}
 
