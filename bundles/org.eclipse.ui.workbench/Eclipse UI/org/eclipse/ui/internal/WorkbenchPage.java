@@ -2391,6 +2391,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 	}
 
+	private List<MPartStack> getPartStacks(MPerspective perspective) {
+		if (perspective == null) {
+			return Collections.emptyList();
+		}
+		return modelService.findElements(perspective, null, MPartStack.class, null);
+	}
+
 	private EventHandler selectionHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			MUIElement changedElement = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -2414,10 +2421,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			List<MPart> hiddenParts = new ArrayList<MPart>();
 			List<MPart> visibleParts = new ArrayList<MPart>();
 
-			List<MPartStack> oldStacks = modelService.findElements(oldPersp, null,
-					MPartStack.class, null);
-			List<MPartStack> newStacks = modelService.findElements(newPersp, null,
-					MPartStack.class, null);
+			List<MPartStack> oldStacks = getPartStacks(oldPersp);
+			List<MPartStack> newStacks = getPartStacks(newPersp);
 
 			for (MPartStack oldStack : oldStacks) {
 				MStackElement element = oldStack.getSelectedElement();
