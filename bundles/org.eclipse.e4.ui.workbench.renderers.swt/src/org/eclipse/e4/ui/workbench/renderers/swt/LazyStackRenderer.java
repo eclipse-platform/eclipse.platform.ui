@@ -229,6 +229,11 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 						.getContainingContext(ph)
 						.get(IPresentationEngine.class);
 
+				MToolBar tbModel = part.getToolbar();
+				if (tbModel != null) {
+					tbModel.setVisible(true);
+				}
+
 				// Dispose the existing toolbar
 				if (ctf.getTopRight() != null) {
 					Control curTB = ctf.getTopRight();
@@ -243,7 +248,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					}
 				}
 
-				MToolBar tbModel = part.getToolbar();
 				if (tbModel != null) {
 					Control c = (Control) renderer.createGui(tbModel, ctf,
 							part.getContext());

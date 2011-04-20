@@ -64,6 +64,7 @@ public class PartRenderingEngineTests extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		logged = false;
 		appContext = E4Application.createDefaultContext();
 		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
 				PartRenderingEngine.engineURI);
@@ -81,6 +82,16 @@ public class PartRenderingEngineTests extends TestCase {
 			wb.close();
 		}
 		appContext.dispose();
+	}
+
+	private void checkLog() {
+		try {
+			// sleep a bit because notifications are done on another thread
+			Thread.sleep(100);
+		} catch (Exception e) {
+			// ignored
+		}
+		assertFalse(logged);
 	}
 
 	public void testCreateViewBug298415() {
@@ -2467,9 +2478,8 @@ public class PartRenderingEngineTests extends TestCase {
 
 		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
 		partStack.getChildren().add(partC);
-		// sleep a bit because notifications are done on another thread
-		Thread.sleep(50);
-		assertFalse(logged);
+
+		checkLog();
 	}
 
 	public void testBug343305() {
@@ -2537,6 +2547,55 @@ public class PartRenderingEngineTests extends TestCase {
 
 		partStackB.setToBeRendered(false);
 		assertEquals(parent, control.getParent());
+	}
+
+	public void testBug343442() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
+		part.setToolbar(toolBar);
+
+		MPerspectiveStack perspectiveStack = AdvancedFactoryImpl.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+		window.setSelectedElement(perspectiveStack);
+
+		MPerspective perspective = AdvancedFactoryImpl.eINSTANCE
+				.createPerspective();
+		perspectiveStack.getChildren().add(perspective);
+		perspectiveStack.setSelectedElement(perspective);
+
+		MPartStack partStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		perspective.getChildren().add(partStack);
+		perspective.setSelectedElement(partStack);
+
+		MPlaceholder placeholder = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholder.setRef(part);
+		part.setCurSharedRef(placeholder);
+		partStack.getChildren().add(placeholder);
+		partStack.setSelectedElement(placeholder);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		partStack.getChildren().remove(placeholder);
+		partStack.getChildren().add(placeholder);
+		partStack.setSelectedElement(placeholder);
+
+		assertEquals(partStack.getWidget(),
+				((Control) toolBar.getWidget()).getParent());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
