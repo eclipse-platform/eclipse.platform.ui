@@ -475,6 +475,7 @@ public class MinMaxAddon {
 			MTrimBar bar = modelService.getTrim(window, side);
 
 			bar.getChildren().add(trimStack);
+			bar.setVisible(true);
 
 			// get the parent trim bar, see bug 320756
 			if (bar.getWidget() == null) {
@@ -488,6 +489,7 @@ public class MinMaxAddon {
 		} else {
 			// get the parent trim bar, see bug 320756
 			MUIElement parent = trimStack.getParent();
+			parent.setVisible(true);
 			if (parent.getWidget() == null) {
 				// ask it to be rendered
 				parent.setToBeRendered(true);
