@@ -48,7 +48,23 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 	@Inject
 	private Logger logger;
 
-	private MUIElement partToActivate;
+	private MPart partToActivate;
+
+	private Listener activationListener = new Listener() {
+		public void handleEvent(Event event) {
+			// we only want to activate the part if the activated widget is
+			// actually bound to a model element
+			MPart part = (MPart) event.widget.getData(OWNING_ME);
+			if (part != null) {
+				try {
+					partToActivate = part;
+					activate(partToActivate);
+				} finally {
+					partToActivate = null;
+				}
+			}
+		}
+	};
 
 	public Object createWidget(final MUIElement element, Object parent) {
 		if (!(element instanceof MPart) || !(parent instanceof Composite))
@@ -211,16 +227,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		}
 		Widget widget = (Widget) me.getWidget();
 		if (widget instanceof Composite) {
-			((Composite) widget).addListener(SWT.Activate, new Listener() {
-				public void handleEvent(Event event) {
-					try {
-						partToActivate = me;
-						activate((MPart) me);
-					} finally {
-						partToActivate = null;
-					}
-				}
-			});
+			widget.addListener(SWT.Activate, activationListener);
 		}
 
 	}
