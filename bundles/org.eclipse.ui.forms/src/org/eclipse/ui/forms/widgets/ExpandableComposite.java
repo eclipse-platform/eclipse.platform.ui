@@ -818,10 +818,14 @@ public class ExpandableComposite extends Canvas {
 	 * @see #getText()
 	 */
 	public void setText(String title) {
-		if (textLabel instanceof Label)
+		if (textLabel instanceof Label) {
 			((Label) textLabel).setText(title);
-		else if (textLabel instanceof Hyperlink)
+		} else if (textLabel instanceof Hyperlink) {
 			((Hyperlink) textLabel).setText(title);
+		} else {
+			return;
+		}
+		layout();
 	}
 
 	/**
