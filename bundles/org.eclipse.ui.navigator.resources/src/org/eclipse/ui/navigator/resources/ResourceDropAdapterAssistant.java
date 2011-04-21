@@ -218,7 +218,6 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(
 				currentTransfer)) {
 			resources = getSelectedResources();
-			aDropTargetEvent.detail = DND.DROP_NONE;
 		} else if (ResourceTransfer.getInstance().isSupportedType(
 				currentTransfer)) {
 			resources = (IResource[]) aDropTargetEvent.data;
