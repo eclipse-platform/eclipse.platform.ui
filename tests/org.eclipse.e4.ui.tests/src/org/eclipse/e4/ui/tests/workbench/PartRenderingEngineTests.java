@@ -2598,6 +2598,33 @@ public class PartRenderingEngineTests extends TestCase {
 				((Control) toolBar.getWidget()).getParent());
 	}
 
+	public void testBug343524() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MTrimmedWindow window = BasicFactoryImpl.eINSTANCE
+				.createTrimmedWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
+		window.getTrimBars().add(trimBar);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(trimBar.getWidget());
+
+		trimBar.setToBeRendered(false);
+		assertNull(trimBar.getWidget());
+
+		trimBar.setToBeRendered(true);
+		assertNotNull(trimBar.getWidget());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);

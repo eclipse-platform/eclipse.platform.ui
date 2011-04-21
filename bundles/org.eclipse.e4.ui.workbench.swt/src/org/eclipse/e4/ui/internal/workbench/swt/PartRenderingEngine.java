@@ -104,7 +104,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			MElementContainer<?> parent = changedElement.getParent();
 
 			// Handle Detached Windows
-			if (parent == null && changedElement instanceof MWindow) {
+			if (parent == null) {
 				parent = (MElementContainer<?>) ((EObject) changedElement)
 						.eContainer();
 			}
