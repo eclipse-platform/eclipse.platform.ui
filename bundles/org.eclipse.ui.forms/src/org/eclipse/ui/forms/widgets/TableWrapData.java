@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -173,14 +173,14 @@ public final class TableWrapData {
 	public TableWrapData(int align, int valign, int rowspan, int colspan) {
 		if (align != LEFT && align != CENTER && align != RIGHT && align != FILL
 				&& align != FILL_GRAB)
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, "align"); //$NON-NLS-1$
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, " \"align\""); //$NON-NLS-1$
 		if (valign != TOP && valign != MIDDLE && valign != BOTTOM
 				&& valign != FILL && valign != FILL_GRAB)
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, "valign"); //$NON-NLS-1$
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, " \"valign\""); //$NON-NLS-1$
 		if (rowspan < 1)
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, "rowspan"); //$NON-NLS-1$
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, " \"rowspan\""); //$NON-NLS-1$
 		if (colspan < 1)
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, "colspan"); //$NON-NLS-1$
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, null, " \"colspan\""); //$NON-NLS-1$
 		if (align == FILL_GRAB) {
 			this.align = FILL;
 			grabHorizontal = true;
