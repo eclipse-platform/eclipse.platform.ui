@@ -16,7 +16,9 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.swt.graphics.Point;
 
 /**
  *
@@ -48,6 +50,16 @@ public class PartDragAgent extends DragAgent {
 
 		// Drag a complete stack
 		if (info.curElement instanceof MPartStack && info.itemElement == null) {
+			// Only allow a drag to start if we're a CTabFolder
+			if (!(info.curElement.getWidget() instanceof CTabFolder))
+				return null;
+
+			// Only allow a drag to start if we're inside the 'tab area' of the CTF
+			CTabFolder ctf = (CTabFolder) info.curElement.getWidget();
+			Point ctfPos = ctf.getDisplay().map(null, ctf, info.cursorPos);
+			if (ctfPos.y > ctf.getTabHeight())
+				return null;
+
 			// Prevent dragging 'No Move' stacks
 			if (info.curElement.getTags().contains(IPresentationEngine.NO_MOVE))
 				return null;
