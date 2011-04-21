@@ -19,6 +19,7 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -42,6 +43,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  *
@@ -236,6 +238,54 @@ public class ModelServiceImpl implements EModelService {
 	 */
 	public IEclipseContext getContainingContext(MUIElement element) {
 		return ModelUtils.getContainingContext(element);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneElement(org.eclipse.e4.ui.model.
+	 * application.ui.MUIElement, java.lang.String)
+	 */
+	public MUIElement cloneElement(MUIElement element, String cloneId, boolean saveAsSnippet) {
+		EObject eObj = (EObject) element;
+		MUIElement clone = (MUIElement) EcoreUtil.copy(eObj);
+		clone.setElementId(cloneId);
+
+		if (saveAsSnippet) {
+			MUIElement topWin = getTopLevelWindowFor(element);
+			if (topWin != null) {
+				MUIElement appElement = topWin.getParent();
+				MApplication app = (MApplication) appElement;
+				app.getClonableSnippets().add(clone);
+			}
+		}
+
+		return clone;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.modeling.EModelService#cloneSnippet(org.eclipse.e4.ui.model.
+	 * application.MApplication, java.lang.String)
+	 */
+	public MUIElement cloneSnippet(MApplication app, String snippetId) {
+		if (snippetId == null || snippetId.length() == 0)
+			return null;
+
+		MApplicationElement appElement = null;
+		for (MApplicationElement snippet : app.getClonableSnippets()) {
+			if (snippetId.equals(snippet.getElementId())) {
+				appElement = snippet;
+				break;
+			}
+		}
+		if (appElement == null)
+			return null;
+
+		EObject eObj = (EObject) appElement;
+		MUIElement element = (MUIElement) EcoreUtil.copy(eObj);
+		return element;
 	}
 
 	/*

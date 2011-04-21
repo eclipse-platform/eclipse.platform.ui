@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.workbench.modeling;
 
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
@@ -155,6 +156,32 @@ public interface EModelService {
 	 *            The element to bring to the top
 	 */
 	public void bringToTop(MUIElement element);
+
+	/**
+	 * Clones the element, creating a deep copy of its structure.
+	 * 
+	 * @param element
+	 *            The element to clone
+	 * @param cloneId
+	 *            The id to give the newly coned element
+	 * @param saveAsSnippet
+	 *            iff <code>true</code> saves the newly created clone into the app's
+	 *            'clonableSnippets' list
+	 * @return The newly cloned element
+	 */
+	public MUIElement cloneElement(MUIElement element, String cloneId, boolean saveAsSnippet);
+
+	/**
+	 * If a snippet with the given id exists a clone is created and returned. returns
+	 * <code>null</code> if no snippet can be found.
+	 * 
+	 * @param app
+	 *            The application whose snippets are to be used
+	 * @param snippetId
+	 *            The element id of the snippet to clone
+	 * @return The cloned snippet or <code>null</code> if no snippet with the given id can be found
+	 */
+	public MUIElement cloneSnippet(MApplication app, String snippetId);
 
 	/**
 	 * Return the count of the children whose 'toBeRendered' flag is true
