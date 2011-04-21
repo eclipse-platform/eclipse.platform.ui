@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -56,6 +55,8 @@ public class PresentationPerformanceTestSuite extends TestSuite {
 
     private void addTests(String presentationId) {
         AbstractPresentationFactory factory = WorkbenchPlugin.getDefault().getPresentationFactory(presentationId);
+        
+        boolean r21Presentation = "org.eclipse.ui.internal.r21presentationFactory".equals(presentationId);
 
         addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
         addTest(new PresentationInactivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
@@ -63,9 +64,7 @@ public class PresentationPerformanceTestSuite extends TestSuite {
         addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5, false));
         addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5, false));
         addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1, false));
-        if(presentationId.equals(IWorkbenchConstants.DEFAULT_PRESENTATION_ID))
-        	addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1, true));
-        else
+        if(r21Presentation)
         	addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1, false));
 
         addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 100, "large folder creation"));
@@ -74,7 +73,8 @@ public class PresentationPerformanceTestSuite extends TestSuite {
         addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
         addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
         addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1));
-        addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
+        if (r21Presentation)
+        	addTest(new PresentationCreateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
         
         addTest(new PresentationSelectTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 100));
         addTest(new PresentationSelectTest(factory, PresentationFactoryUtil.ROLE_VIEW, 100));
@@ -82,12 +82,14 @@ public class PresentationPerformanceTestSuite extends TestSuite {
         addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5));
         addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5));
         addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1));
-        addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
+        if(r21Presentation)
+        	addTest(new PresentationActivateTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1));
         
         addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_EDITOR, 5)));
         addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_VIEW, 5)));
         addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1)));
-        addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1)));
+        if (r21Presentation)
+        	addTest(new ResizeTest(new PresentationWidgetFactory(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1)));
         
     }
     
