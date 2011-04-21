@@ -121,7 +121,7 @@ public class MinMaxAddon {
 			while (parentElement != null && !(parentElement instanceof MArea))
 				parentElement = parentElement.getParent();
 
-			return parentElement != null ? parentElement : element;
+			return parentElement != null ? parentElement.getCurSharedRef() : element;
 		}
 
 		public void mouseDoubleClick(MouseEvent e) {
