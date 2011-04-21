@@ -324,12 +324,12 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			}
 		}
 		if (toShow.size() > 0) {
-			String msg = may ? CVSMessages.ThePatchMayNotContainAllTheChanges
-					: CVSMessages.ThePatchDoesNotContainAllTheChanges;
+			String msg = may ? CVSUIMessages.DiffOperation_ThePatchMayNotContainAllTheChanges
+					: CVSUIMessages.DiffOperation_ThePatchDoesNotContainAllTheChanges;
 			status = new MultiStatus(CVSProviderPlugin.ID,
 					CVSStatus.SERVER_ERROR,
-					(IStatus[]) toShow.toArray(new IStatus[0]), msg, null);
-			CVSUIPlugin.openError(getShell(), null, null, status,
+					(IStatus[]) toShow.toArray(new IStatus[0]), CVSUIMessages.DiffOperation_ErrorsOccurredWhileCreatingThePatch, null);
+			CVSUIPlugin.openError(getShell(), this.getTaskName(), msg, status,
 					CVSUIPlugin.PERFORM_SYNC_EXEC
 							| CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
 		}
@@ -402,7 +402,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 				lines++;
 			}
 		} catch (IOException e) {
-			throw CVSException.wrapException(file.getIResource(), NLS.bind(CVSMessages.CVSTeamProvider_errorAddingFileToDiff, new String[] { pathString }), e); 
+			throw CVSException.wrapException(file.getIResource(), NLS.bind(CVSUIMessages.DiffOperation_ErrorAddingFileToDiff, new String[] { pathString }), e);
 		} finally {
 			try {
 				fileReader.close();
@@ -466,7 +466,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			printStream.print(linePrefix);
 			readLastLine(fileReader, printStream);
 		} catch (IOException e) {
-			throw CVSException.wrapException(file.getIResource(), NLS.bind(CVSMessages.CVSTeamProvider_errorAddingFileToDiff, new String[] { pathString }), e); 
+			throw CVSException.wrapException(file.getIResource(), NLS.bind(CVSUIMessages.DiffOperation_ErrorAddingFileToDiff, new String[] { pathString }), e);
 		} finally  {
 			try {
 				fileReader.close();

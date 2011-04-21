@@ -81,7 +81,6 @@ public class CVSMessages extends NLS {
 	public static String CVSTeamProvider_overlappingFileDeletion;
 	public static String CVSTeamProvider_errorGettingWatchEdit;
 	public static String CVSTeamProvider_errorSettingWatchEdit;
-	public static String CVSTeamProvider_errorAddingFileToDiff;
 	public static String CVSTeamProvider_updatingFolder;
     public static String CVSCoreFileModificationValidator_editJob;
 
@@ -259,8 +258,6 @@ public class CVSMessages extends NLS {
 	public static String CVSFileSystem_FetchTree;
 	public static String CVSURI_InvalidURI;
 	public static String ThePatchDoesNotContainChangesFor_0;
-	public static String ThePatchDoesNotContainAllTheChanges;
-	public static String ThePatchMayNotContainAllTheChanges;
 
 	static {
 		// load message values from bundle file

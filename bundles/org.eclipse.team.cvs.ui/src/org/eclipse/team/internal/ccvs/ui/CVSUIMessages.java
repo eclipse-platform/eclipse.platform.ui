@@ -74,8 +74,12 @@ public class CVSUIMessages extends NLS {
 	public static String CVSPreferencesPage_54;
 	public static String CVSPreferencesPage_55;
 	public static String CVSPreferencesPage_QuickDiffAnnotate;
+	public static String DiffOperation_ThePatchDoesNotContainAllTheChanges;
+	public static String DiffOperation_ThePatchMayNotContainAllTheChanges;
 	public static String DiffOperation_CreatePatchConflictMessage;
 	public static String DiffOperation_CreatePatchConflictTitle;
+	public static String DiffOperation_ErrorsOccurredWhileCreatingThePatch;
+	public static String DiffOperation_ErrorAddingFileToDiff;
 	public static String GenerateDiffFileWizard_11;
 	public static String GenerateDiffFileWizard_12;
 	public static String PasswordManagementPreferencePage_2;
