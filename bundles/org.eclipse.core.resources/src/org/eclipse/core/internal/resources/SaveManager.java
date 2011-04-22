@@ -39,7 +39,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		@Override
 		public synchronized Object put(Object key, Object value) {
 			Object prev = super.put(key, value);
-			if (ROOT_SEQUENCE_NUMBER_KEY.equals(key)) {
+			if (prev != null && ROOT_SEQUENCE_NUMBER_KEY.equals(key)) {
 				int prevSeqNum = new Integer((String) prev).intValue();
 				int currSeqNum = new Integer((String) value).intValue();
 				if (prevSeqNum > currSeqNum) {
