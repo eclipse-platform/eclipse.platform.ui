@@ -30,6 +30,31 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 
 public class SaveManager implements IElementInfoFlattener, IManager, IStringPoolParticipant {
+	class MasterTable extends Properties {
+		private static final long serialVersionUID = 1L;
+
+		/* (non-Javadoc)
+		 * @see java.util.Hashtable#put(java.lang.Object, java.lang.Object)
+		 */
+		@Override
+		public synchronized Object put(Object key, Object value) {
+			Object prev = super.put(key, value);
+			if (ROOT_SEQUENCE_NUMBER_KEY.equals(key)) {
+				int prevSeqNum = new Integer((String) prev).intValue();
+				int currSeqNum = new Integer((String) value).intValue();
+				if (prevSeqNum > currSeqNum) {
+					//revert last put operation
+					super.put(key, prev);
+					//notify about the problem, do not throw exception but add the exception to know where it occurred
+					String message = "Cannot set lower sequence number for root (previous: " + prevSeqNum + ", new: " + currSeqNum + "). Ignoring the new value."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Policy.log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, new IllegalArgumentException(message)));
+				}
+			}
+			return prev;
+		}
+	}
+
+	protected static final String ROOT_SEQUENCE_NUMBER_KEY = Path.ROOT.toString() + LocalMetaArea.F_TREE;
 	protected static final String CLEAR_DELTA_PREFIX = "clearDelta_"; //$NON-NLS-1$
 	protected static final String DELTA_EXPIRATION_PREFIX = "deltaExpiration_"; //$NON-NLS-1$
 	protected static final int DONE_SAVING = 3;
@@ -51,7 +76,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected static final String SAVE_NUMBER_PREFIX = "saveNumber_"; //$NON-NLS-1$
 	protected static final int SAVING = 2;
 	protected ElementTree lastSnap;
-	protected Properties masterTable;
+	protected MasterTable masterTable;
 
 	/**
 	 * A flag indicating that a save operation is occurring.  This is a signal
@@ -789,7 +814,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	protected void restoreMasterTable() throws CoreException {
 		long start = System.currentTimeMillis();
-		masterTable = new Properties();
+		masterTable = new MasterTable();
 		IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
 		java.io.File target = location.toFile();
 		if (!target.exists()) {
@@ -1198,6 +1223,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		long start = System.currentTimeMillis();
 		java.io.File target = location.toFile();
 		try {
+			validateMasterTableBeforeSave(target);
 			SafeChunkyOutputStream output = new SafeChunkyOutputStream(target);
 			try {
 				masterTable.store(output, "master table"); //$NON-NLS-1$
@@ -1517,6 +1543,28 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		String key = DELTA_EXPIRATION_PREFIX + pluginId;
 		if (!masterTable.containsKey(key))
 			masterTable.setProperty(key, Long.toString(System.currentTimeMillis()));
+	}
+
+	private void validateMasterTableBeforeSave(java.io.File target) throws IOException {
+		if (target.exists()) {
+			MasterTable previousMasterTable = new MasterTable();
+			SafeChunkyInputStream input = new SafeChunkyInputStream(target);
+			try {
+				previousMasterTable.load(input);
+				String stringValue = previousMasterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY);
+				// if there was a full save, then there must be a non-null entry for root
+				if (stringValue != null) {
+					int valueInFile = new Integer(stringValue).intValue();
+					int valueInMemory = new Integer(masterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY)).intValue();
+					// new master table must have greater or equal sequence number for root
+					// otherwise throw an exception to not desynchronize master table on disk
+					String message = "Cannot set lower sequence number for root (previous: " + valueInFile + ", new: " + valueInMemory + "). Location: " + target.getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Assert.isLegal(valueInMemory >= valueInFile, message);
+				}
+			} finally {
+				input.close();
+			}
+		}
 	}
 
 	/**
