@@ -73,6 +73,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -2388,10 +2389,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	private void installAreaDropSupport(Control control) {
 		if (!dndSupportInstalled) {
 			WorkbenchWindowConfigurer configurer = legacyWindow.getWindowConfigurer();
-			DropTarget dropTarget = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY
-					| DND.DROP_LINK);
-			dropTarget.setTransfer(configurer.getTransfers());
-			dropTarget.addDropListener(configurer.getDropTargetListener());
+			DropTargetListener dropTargetListener = configurer.getDropTargetListener();
+			if (dropTargetListener != null) {
+				DropTarget dropTarget = new DropTarget(control, DND.DROP_DEFAULT | DND.DROP_COPY
+						| DND.DROP_LINK);
+				dropTarget.setTransfer(configurer.getTransfers());
+				dropTarget.addDropListener(dropTargetListener);
+			}
 			dndSupportInstalled = true;
 		}
 	}
