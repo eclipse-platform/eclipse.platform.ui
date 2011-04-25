@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!--
-    Copyright (c) 2005, 2010 IBM Corporation and others.
+    Copyright (c) 2005, 2011 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@
       </description>
       <subitem label="Help-&gt;Dynamic Help" skip="false">
       </subitem>
-      <subitem label="Verify that there’s an index tab at the bottom left. Click on it to open the index." skip="false">
+      <subitem label="Verify that there’s a hyperlink titled index at the top. Click on it to open the index.led index at teh top. Click on it to open the index." skip="false">
       </subitem>
       <subitem label="Verify that there is a text box with a DISPLAY button to the right and that there is a list of keywords." skip="false">
       </subitem>
