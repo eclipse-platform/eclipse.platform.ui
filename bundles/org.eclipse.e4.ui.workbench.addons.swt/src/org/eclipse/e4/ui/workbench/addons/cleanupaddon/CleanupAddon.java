@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.workbench.addons.cleanupaddon;
 
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -24,6 +25,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
@@ -290,11 +292,24 @@ public class CleanupAddon {
 	}
 
 	boolean isLastEditorStack(MUIElement element) {
-		MUIElement parent = element.getParent();
-		if (!(parent instanceof MArea))
+		if (!(element instanceof MPartStack))
 			return false;
 
+		// is it in the shared area?
+		MUIElement parent = element.getParent();
+		while (parent != null && !(parent instanceof MArea))
+			parent = parent.getParent();
+		if (parent == null)
+			return false;
+
+		// OK, it's in the area, is it the last TBR one ?
 		MArea area = (MArea) parent;
-		return modelService.countRenderableChildren(area) == 1;
+		List<MPartStack> stacks = modelService.findElements(area, null, MPartStack.class, null);
+		int count = 0;
+		for (MPartStack stack : stacks) {
+			if (stack.isToBeRendered())
+				count++;
+		}
+		return count < 2;
 	}
 }
