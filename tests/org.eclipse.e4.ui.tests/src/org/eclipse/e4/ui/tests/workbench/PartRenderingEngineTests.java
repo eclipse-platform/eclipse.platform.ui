@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.tests.workbench;
 
 import junit.framework.TestCase;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -37,6 +38,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.addons.cleanupaddon.CleanupAddon;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
@@ -92,6 +94,12 @@ public class PartRenderingEngineTests extends TestCase {
 			// ignored
 		}
 		assertFalse(logged);
+	}
+
+	private void spinEventLoop() {
+		while (Display.getCurrent().readAndDispatch()) {
+			// spin the event loop
+		}
 	}
 
 	public void testCreateViewBug298415() {
@@ -2623,6 +2631,65 @@ public class PartRenderingEngineTests extends TestCase {
 
 		trimBar.setToBeRendered(true);
 		assertNotNull(trimBar.getWidget());
+	}
+
+	public void testBug332463() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MArea area = AdvancedFactoryImpl.eINSTANCE.createArea();
+		window.getChildren().add(area);
+		window.setSelectedElement(area);
+
+		MPartSashContainer sashContainer = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		area.getChildren().add(sashContainer);
+		area.setSelectedElement(sashContainer);
+
+		MPartStack partStackA = BasicFactoryImpl.eINSTANCE.createPartStack();
+		sashContainer.getChildren().add(partStackA);
+		sashContainer.setSelectedElement(partStackA);
+
+		MPart partA = BasicFactoryImpl.eINSTANCE.createPart();
+		partStackA.getChildren().add(partA);
+		partStackA.setSelectedElement(partA);
+
+		MPart partB = BasicFactoryImpl.eINSTANCE.createPart();
+		partStackA.getChildren().add(partB);
+		partStackA.setSelectedElement(partB);
+
+		MPartStack partStackB = BasicFactoryImpl.eINSTANCE.createPartStack();
+		sashContainer.getChildren().add(partStackB);
+		sashContainer.setSelectedElement(partStackB);
+
+		MPart partC = BasicFactoryImpl.eINSTANCE.createPart();
+		partStackB.getChildren().add(partC);
+		partStackB.setSelectedElement(partC);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		ContextInjectionFactory.make(CleanupAddon.class, appContext);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.hidePart(partB);
+		spinEventLoop();
+
+		partService.hidePart(partA, true);
+		spinEventLoop();
+
+		partService.hidePart(partC, true);
+		spinEventLoop();
+
+		assertNotNull(area.getWidget());
+		assertTrue(area.isToBeRendered());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {
