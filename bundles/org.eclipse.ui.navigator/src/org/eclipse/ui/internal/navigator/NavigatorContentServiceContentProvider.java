@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer, Wind River
  *       bug 261031 [CommonNavigator] IPipelinedContentProvider getParent() returning the suggested parent is not ignored
+ *     William Chen, chenwmw@gmail.com 
+ *       bug 343721 getParent of NavigatorContentServiceContentProvider does not return expected node.
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
@@ -295,10 +297,6 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 						if (overridingExtensions.length > 0) {
 							parent[0] = pipelineParent(anElement, overridingExtensions, parent);
 						}
-
-						if (parent[0] != null) {
-							return;
-						}
 					}
 				}
 
@@ -308,6 +306,10 @@ public class NavigatorContentServiceContentProvider implements ITreeContentProvi
 									foundExtension.getDescriptor().getId(), anElement }), e);
 				}
 			});
+
+			if (parent[0] != null) {
+				return parent[0];
+			}
 		}
 		return parent[0];
 	}
