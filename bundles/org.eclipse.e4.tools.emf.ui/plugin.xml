@@ -9,5 +9,11 @@
             uri="css/default.css">
       </stylesheet>
    </extension>
+   <extension
+         point="org.eclipse.equinox.preferences.preferences">
+      <initializer
+            class="org.eclipse.e4.tools.emf.ui.internal.PreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

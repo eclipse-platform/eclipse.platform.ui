@@ -169,6 +169,7 @@ import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
@@ -197,6 +198,7 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -969,6 +971,48 @@ public class ModelEditor {
 
 		registerEditor(FragmentPackageImpl.Literals.MODEL_FRAGMENTS, ContextInjectionFactory.make(ModelFragmentsEditor.class, context));
 		registerEditor(FragmentPackageImpl.Literals.STRING_MODEL_FRAGMENT, ContextInjectionFactory.make(StringModelFragment.class, context));
+	}
+
+	@Inject
+	public void setNotVisibleColor(@Preference("notVisibleColor") String color) {
+		RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_VISIBLE_KEY);
+
+		if (current == null || !current.equals(color)) {
+			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_KEY, StringConverter.asRGB(color, new RGB(200, 200, 200)));
+		}
+
+		if (viewer != null) {
+			viewer.refresh();
+			viewer.getControl().redraw();
+		}
+	}
+
+	@Inject
+	public void setNotRenderedColor(@Preference("notRenderedColor") String color) {
+		RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_RENDERED_KEY);
+
+		if (current == null || !current.equals(color)) {
+			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_RENDERED_KEY, StringConverter.asRGB(color, new RGB(200, 200, 200)));
+		}
+
+		if (viewer != null) {
+			viewer.refresh();
+			viewer.getControl().redraw();
+		}
+	}
+
+	@Inject
+	public void setNotVisibleRenderedColor(@Preference("notVisibleAndRenderedColor") String color) {
+		RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY);
+
+		if (current == null || !current.equals(color)) {
+			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY, StringConverter.asRGB(color, new RGB(200, 200, 200)));
+		}
+
+		if (viewer != null) {
+			viewer.refresh();
+			viewer.getControl().redraw();
+		}
 	}
 
 	public void registerEditor(EClass eClass, AbstractComponentEditor editor) {

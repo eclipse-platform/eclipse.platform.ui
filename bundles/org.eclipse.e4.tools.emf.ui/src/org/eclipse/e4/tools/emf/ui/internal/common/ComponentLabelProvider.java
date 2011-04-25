@@ -22,27 +22,42 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.TextStyle;
 
 public class ComponentLabelProvider extends StyledCellLabelProvider {
 
 	private ModelEditor editor;
 
-	private static final String NOT_RENDERED_KEY = "NOT_RENDERED_STYLER";//$NON-NLS-1$
+	public static final String NOT_RENDERED_KEY = "NOT_RENDERED_STYLER";//$NON-NLS-1$
+
+	public static final String NOT_VISIBLE_KEY = "NOT_VISIBLE_KEY";//$NON-NLS-1$
+
+	public static final String NOT_VISIBLE_AND_RENDERED_KEY = "NOT_VISIBLE_AND_RENDERED_KEY";//$NON-NLS-1$
 
 	private Font font;
 
 	private Messages Messages;
 
-	private static Styler NOT_RENDERED_STYLER = new Styler() {
-		{
-			JFaceResources.getColorRegistry().put(NOT_RENDERED_KEY, new RGB(200, 200, 200));
+	private static Styler BOTH_STYLER = new Styler() {
+		@Override
+		public void applyStyles(TextStyle textStyle) {
+			textStyle.foreground = JFaceResources.getColorRegistry().get(NOT_VISIBLE_AND_RENDERED_KEY);
+			textStyle.strikeout = true;
 		}
+	};
 
+	private static Styler NOT_RENDERED_STYLER = new Styler() {
 		@Override
 		public void applyStyles(TextStyle textStyle) {
 			textStyle.foreground = JFaceResources.getColorRegistry().get(NOT_RENDERED_KEY);
+			textStyle.strikeout = true;
+		}
+	};
+
+	private static Styler NOT_VISIBLE_STYLER = new Styler() {
+		@Override
+		public void applyStyles(TextStyle textStyle) {
+			textStyle.foreground = JFaceResources.getColorRegistry().get(NOT_VISIBLE_KEY);
 		}
 	};
 
@@ -63,9 +78,13 @@ public class ComponentLabelProvider extends StyledCellLabelProvider {
 				Styler styler = null;
 
 				if (o instanceof MUIElement) {
-					if (!((MUIElement) o).isVisible()) {
+
+					if (!((MUIElement) o).isVisible() && !((MUIElement) o).isToBeRendered()) {
+						label += "<" + Messages.ComponentLabelProvider_invisible + "/" + Messages.ComponentLabelProvider_notrendered + ">"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+						styler = BOTH_STYLER;
+					} else if (!((MUIElement) o).isVisible()) {
 						label += "<" + Messages.ComponentLabelProvider_invisible + ">"; //$NON-NLS-1$//$NON-NLS-2$
-						styler = NOT_RENDERED_STYLER;
+						styler = NOT_VISIBLE_STYLER;
 					} else if (!((MUIElement) o).isToBeRendered()) {
 						label += "<" + Messages.ComponentLabelProvider_notrendered + ">"; //$NON-NLS-1$ //$NON-NLS-2$
 						styler = NOT_RENDERED_STYLER;
