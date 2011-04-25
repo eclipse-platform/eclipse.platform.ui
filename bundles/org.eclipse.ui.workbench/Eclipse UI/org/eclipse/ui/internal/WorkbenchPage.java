@@ -3414,7 +3414,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				.size()];
 		int count = 0;
 		for (MPerspective persp : perspectiveStack.getChildren()) {
-			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(persp.getElementId());
+			String perspectiveId = persp.getElementId();
+			IPerspectiveDescriptor desc = registry.findPerspectiveWithId(perspectiveId);
+			if (desc == null) {
+				desc = new PerspectiveDescriptor(perspectiveId, persp.getLabel());
+			}
 			descs[count++] = desc;
 		}
 		return descs;

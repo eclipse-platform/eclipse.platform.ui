@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,6 +44,10 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	private ImageDescriptor image;
 	private IConfigurationElement element;
 
+	public PerspectiveDescriptor(String id, String label) {
+		this(id, label, null);
+	}
+
 	PerspectiveDescriptor(String id, String label, IConfigurationElement element) {
 		this.id = id;
 		this.label = label;
@@ -85,15 +89,12 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		if (image == null) {
+			image = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
 			if (element != null) {
 				String icon = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 				if (icon != null) {
-					image = AbstractUIPlugin.imageDescriptorFromPlugin(element
-							.getNamespaceIdentifier(), icon);
-				}
-				if (image == null) {
-					image = WorkbenchImages
-							.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
+					image = AbstractUIPlugin.imageDescriptorFromPlugin(
+							element.getNamespaceIdentifier(), icon);
 				}
 			}
 		}
