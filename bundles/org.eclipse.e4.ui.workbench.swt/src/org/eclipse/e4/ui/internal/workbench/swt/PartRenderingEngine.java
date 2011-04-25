@@ -348,10 +348,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 					elementCtrl.moveBelow(prevCtrl);
 				else
 					elementCtrl.moveAbove(null);
-				return;
+				break;
 			} else if (kid.getWidget() instanceof Control) {
 				prevCtrl = (Control) kid.getWidget();
 			}
+		}
+
+		Object widget = parent.getWidget();
+		if (widget instanceof Composite) {
+			((Composite) widget).layout(new Control[] { elementCtrl });
 		}
 	}
 
