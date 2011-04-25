@@ -16,11 +16,13 @@ package org.eclipse.ui.internal.views.markers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -72,6 +74,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	private static final String SELECTED_FILTER_GROUP = "SELECTED_FILTER_GROUP"; //$NON-NLS-1$
+	private static final String PREV_SELECTED_ELEMENTS = "PREV_SELECTED_ELEMENTS"; //$NON-NLS-1$
 
 	private Collection filterGroups;
 
@@ -99,7 +102,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	private Collection configAreas;
 	private Label limitsLabel;
 	
-	private Object[] previouslyChecked;
+	private Object[] previouslyChecked = new Object[0];
 
 	/**
 	 * Create a new instance of the receiver on builder.
@@ -677,6 +680,25 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 			}
 		}
 
+		String[] selectedElementNames = settings
+				.getArray(PREV_SELECTED_ELEMENTS);
+		List selectedElements = new ArrayList();
+
+		if (selectedElementNames != null) {
+			for (int i = 0; i < selectedElementNames.length; i++) {
+				Iterator filterGroupIterator = filterGroups.iterator();
+				while (filterGroupIterator.hasNext()) {
+					MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filterGroupIterator
+							.next();
+					if (Util.equals(group.getName(), selectedElementNames[i])) {
+						selectedElements.add(group);
+						break;
+					}
+				}
+			}
+			previouslyChecked = selectedElements.toArray();
+		}
+
 		if (selectedGroup != null) {
 			return new StructuredSelection(selectedGroup);
 		}
@@ -770,11 +792,18 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	 * Save the dialog settings for the receiver.
 	 */
 	private void saveDialogSettings() {
+		
 		IDialogSettings settings = getDialogSettings();
 
 		if (selectedFilterGroup != null)
 			settings.put(SELECTED_FILTER_GROUP, selectedFilterGroup.getName());
 
+		String[] selectedNames = new String[previouslyChecked.length];
+		for (int i = 0; i < selectedNames.length; i++) {
+			selectedNames[i] = ((MarkerFieldFilterGroup)previouslyChecked[i]).getName();
+		}
+		settings.put(PREV_SELECTED_ELEMENTS, selectedNames);
+		
 	}
 
 	private void updateButtonEnablement(MarkerFieldFilterGroup group) {
