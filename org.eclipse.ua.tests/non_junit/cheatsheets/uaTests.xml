@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+     Copyright (c) 2011 IBM Corporation and others.
+     All rights reserved. This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License v1.0
+     which accompanies this distribution, and is available at
+     http://www.eclipse.org/legal/epl-v10.html
+    
+     Contributors:
+         IBM Corporation - initial API and implementation
+ -->
 <compositeCheatsheet name="User Assistance Test Suite">
    <taskGroup kind="set" name="All Tests" skip="false">
       <intro>
@@ -7,7 +17,7 @@
       <onCompletion>
          All tests have been completed.
       </onCompletion>
-      <taskGroup kind="set" name="Help Tests" skip="false">
+      <taskGroup kind="set" id="helptests" name="Help Tests" skip="false">
          <intro>
             This cheatsheet contains the non JUnit help tests
          </intro>
@@ -212,7 +222,7 @@ Performing simple searching.
             </task>
          </taskGroup>
       </taskGroup>
-      <taskGroup name="Cheat Sheet Tests" skip="false">
+      <taskGroup id="cheatsheettests" name="Cheat Sheet Tests" skip="false">
          <intro>
             <p>This composite cheat sheet contains the UI tests for cheat sheets.</p>
          <p>To begin testing right click on this task in the explorer and restart all tasks. 
@@ -334,7 +344,7 @@ Performing simple searching.
             </task>
          </taskGroup>
       </taskGroup>
-      <taskGroup kind="set" name="Other Tests" skip="false">
+      <taskGroup kind="set" id="othertests" name="Other Tests" skip="false">
          <intro>
             Tests for Help Menu etc
          </intro>
@@ -352,5 +362,18 @@ Performing simple searching.
             </param>
          </task>
       </taskGroup>
+      <task kind="cheatsheet" name="All Tests Complete" skip="false">
+          <dependsOn task = "helptests"/>
+          <dependsOn task = "cheatsheettests"/>
+          <dependsOn task = "othertests"/>
+         <intro>
+            <b>Introduction</b>
+         </intro>
+         <onCompletion>
+            <b>Conclusion</b>
+         </onCompletion>
+         <param name="path" value="tasks/allcomplete.xml">
+         </param>
+      </task>
    </taskGroup>
 </compositeCheatsheet>
