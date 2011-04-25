@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,10 +34,10 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	
 	// the following fields are set by the threads that attempt sync/asyncs
 	// during startup.
-	public static Boolean syncWithDisplayAccess = null;
-	public static Boolean asyncWithDisplayAccess = null;
-	public static Boolean syncWithoutDisplayAccess = null;
-	public static Boolean asyncWithoutDisplayAccess = null;
+	public static volatile Boolean syncWithDisplayAccess = null;
+	public static volatile Boolean asyncWithDisplayAccess = null;
+	public static volatile Boolean syncWithoutDisplayAccess = null;
+	public static volatile Boolean asyncWithoutDisplayAccess = null;
 	
 	private static boolean started = false;
 

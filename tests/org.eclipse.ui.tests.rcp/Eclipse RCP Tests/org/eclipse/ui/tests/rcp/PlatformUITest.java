@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,12 +26,6 @@ public class PlatformUITest extends TestCase {
 		suite.addTest(new PlatformUITest("testCreateDisplay"));
 		suite.addTest(new PlatformUITest("testCreateAndRunWorkbench"));
 		suite.addTest(new PlatformUITest("testCreateAndRunWorkbenchWithExceptionOnStartup"));
-		suite.addTest(new PlatformUITest("testStartupThreading"));
-		suite.addTest(new PlatformUITest("testDisplayAccess_sync"));
-		suite.addTest(new PlatformUITest("testDisplayAccess_async"));
-		suite.addTest(new PlatformUITest("testWithoutDisplayAccess_sync"));
-		suite.addTest(new PlatformUITest("testWithoutDisplayAccess_async"));
-		suite.addTest(new PlatformUITest("testDisplayAccessInUIThreadAllowed"));
 		return suite;
 	}
 
@@ -69,6 +63,34 @@ public class PlatformUITest extends TestCase {
         assertTrue(wa.checkComplete);
         display.dispose();
         assertTrue(display.isDisposed());
+
+		assertEquals("Async run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
+				Boolean.FALSE,
+				RCPTestWorkbenchAdvisor.asyncDuringStartup);
+
+	    // the following four asserts test the various combinations of Thread +
+		// DisplayAccess + a/sync exec. Anything without a call to DisplayAccess
+		// should be deferred until after startup.
+		assertEquals(
+				"Sync from qualified thread did not run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
+				Boolean.TRUE,
+				RCPTestWorkbenchAdvisor.syncWithDisplayAccess);
+    	assertEquals(
+				"Async from qualified thread did not run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
+				Boolean.TRUE,
+				RCPTestWorkbenchAdvisor.asyncWithDisplayAccess);
+		assertEquals(
+				"Sync from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
+				Boolean.FALSE,
+				RCPTestWorkbenchAdvisor.syncWithoutDisplayAccess);
+       	assertEquals(
+				"Async from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
+				Boolean.FALSE,
+				RCPTestWorkbenchAdvisor.asyncWithoutDisplayAccess);
+       	
+		assertFalse(
+				"DisplayAccess.accessDisplayDuringStartup() in UI thread did not result in exception.",
+				RCPTestWorkbenchAdvisor.displayAccessInUIThreadAllowed);
     }
     
     /**
@@ -91,69 +113,6 @@ public class PlatformUITest extends TestCase {
         assertFalse(PlatformUI.isWorkbenchRunning());
         display.dispose();
         assertTrue(display.isDisposed());
-    }
-    
-    public void testStartupThreading() {
-		assertNotNull(
-				"No display during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				RCPTestWorkbenchAdvisor.asyncDuringStartup);
-
-		assertEquals(
-				"Async run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.FALSE,
-				RCPTestWorkbenchAdvisor.asyncDuringStartup);
-	}
-    // the following four methods test the various combinations of Thread +
-	// DisplayAccess + a/sync exec. Anything without a call to DisplayAccess
-	// should be deferred until after startup.
-    public void testDisplayAccess_sync() {
-    	assertNotNull(
-				"No display during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				RCPTestWorkbenchAdvisor.syncWithDisplayAccess);
-
-		assertEquals(
-				"Sync from qualified thread did not run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.TRUE,
-				RCPTestWorkbenchAdvisor.syncWithDisplayAccess);
-    }
-    
-    public void testDisplayAccess_async() {    
-    	assertNotNull(
-				"No display during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				RCPTestWorkbenchAdvisor.asyncWithDisplayAccess);
-    	
-    	assertEquals(
-				"Async from qualified thread did not run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.TRUE,
-				RCPTestWorkbenchAdvisor.asyncWithDisplayAccess);
-    }
-    
-    public void testWithoutDisplayAccess_sync() {
-    	assertNotNull(
-				"No display during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				RCPTestWorkbenchAdvisor.syncWithoutDisplayAccess);
-    	
-		assertEquals(
-				"Sync from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.FALSE,
-				RCPTestWorkbenchAdvisor.syncWithoutDisplayAccess);
-    }
-    
-    public void testWithoutDisplayAccess_async() { 
-       	assertNotNull(
-				"No display during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				RCPTestWorkbenchAdvisor.asyncWithoutDisplayAccess);
-       	
-       	assertEquals(
-				"Async from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
-				Boolean.FALSE,
-				RCPTestWorkbenchAdvisor.asyncWithoutDisplayAccess);
-    }
-    
-    public void testDisplayAccessInUIThreadAllowed() {
-		assertFalse(
-				"DisplayAccess.accessDisplayDuringStartup() in UI thread did not result in exception.",
-				RCPTestWorkbenchAdvisor.displayAccessInUIThreadAllowed);
 	}
 }
 
