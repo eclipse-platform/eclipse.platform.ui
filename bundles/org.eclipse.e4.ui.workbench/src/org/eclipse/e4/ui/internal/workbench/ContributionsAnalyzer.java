@@ -56,10 +56,13 @@ public final class ContributionsAnalyzer {
 	public static void gatherTrimContributions(MTrimBar trimModel,
 			List<MTrimContribution> trimContributions, String elementId,
 			ArrayList<MTrimContribution> toContribute, ExpressionContext eContext) {
+		if (elementId == null || elementId.length() == 0) {
+			return;
+		}
 		for (MTrimContribution contribution : trimContributions) {
 			String parentId = contribution.getParentId();
 			boolean filtered = isFiltered(trimModel, contribution);
-			if (filtered || !parentId.equals(elementId) || !contribution.isToBeRendered()) {
+			if (filtered || !elementId.equals(parentId) || !contribution.isToBeRendered()) {
 				continue;
 			}
 			toContribute.add(contribution);
@@ -73,10 +76,13 @@ public final class ContributionsAnalyzer {
 	public static void XXXgatherToolBarContributions(final MToolBar toolbarModel,
 			final List<MToolBarContribution> toolbarContributionList, final String id,
 			final ArrayList<MToolBarContribution> toContribute) {
+		if (id == null || id.length() == 0) {
+			return;
+		}
 		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
 			String parentID = toolBarContribution.getParentId();
 			boolean filtered = isFiltered(toolbarModel, toolBarContribution);
-			if (filtered || !parentID.equals(id) || !toolBarContribution.isToBeRendered()) {
+			if (filtered || !id.equals(parentID) || !toolBarContribution.isToBeRendered()) {
 				continue;
 			}
 			toContribute.add(toolBarContribution);
@@ -86,10 +92,13 @@ public final class ContributionsAnalyzer {
 	public static void gatherToolBarContributions(final MToolBar toolbarModel,
 			final List<MToolBarContribution> toolbarContributionList, final String id,
 			final ArrayList<MToolBarContribution> toContribute, final ExpressionContext eContext) {
+		if (id == null || id.length() == 0) {
+			return;
+		}
 		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
 			String parentID = toolBarContribution.getParentId();
 			boolean filtered = isFiltered(toolbarModel, toolBarContribution);
-			if (filtered || !parentID.equals(id) || !toolBarContribution.isToBeRendered()) {
+			if (filtered || !id.equals(parentID) || !toolBarContribution.isToBeRendered()) {
 				continue;
 			}
 			toContribute.add(toolBarContribution);
@@ -141,6 +150,9 @@ public final class ContributionsAnalyzer {
 			final List<MMenuContribution> menuContributionList, final String id,
 			final ArrayList<MMenuContribution> toContribute, final ExpressionContext eContext,
 			boolean includePopups) {
+		if (id == null || id.length() == 0) {
+			return;
+		}
 		boolean menuBar = (((MUIElement) ((EObject) menuModel).eContainer()) instanceof MWindow);
 		for (MMenuContribution menuContribution : menuContributionList) {
 			String parentID = menuContribution.getParentId();
