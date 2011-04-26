@@ -157,7 +157,10 @@ public class CTabFolder extends Composite {
 	ToolItem minItem;
 	Image maxImage;
 	Image minImage;
-	Image restorImage;
+	boolean hoverTb;
+	Rectangle hoverRect = new Rectangle(0,0,0,0);
+	boolean hovering;
+	boolean hoverTimerRunning;
 	
 	boolean showChevron = false;
 	Menu showMenu;
@@ -267,6 +270,7 @@ void init(int style) {
 				case SWT.MouseDown:        onMouse(event);	break;
 				case SWT.MouseEnter:       onMouse(event);	break;
 				case SWT.MouseExit:        onMouse(event);	break;
+				case SWT.MouseHover:	   onMouse(event); break;
 				case SWT.MouseMove:        onMouse(event); break;
 				case SWT.MouseUp:          onMouse(event); break;
 				case SWT.Paint:            onPaint(event);	break;
@@ -287,6 +291,7 @@ void init(int style) {
 		SWT.MouseDown,
 		SWT.MouseEnter, 
 		SWT.MouseExit, 
+		SWT.MouseHover,
 		SWT.MouseMove,
 		SWT.MouseUp,
 		SWT.Paint,
@@ -448,7 +453,7 @@ Rectangle[] computeControlBounds (Point size, boolean[][] position) {
 		int alignment = controlAlignments[i];
 		if ((alignment & SWT.LEAD) != 0) {
 			rects[i].width = ctrlSize.x;
-			rects[i].height = Math.max(tabHeight - 1, ctrlSize.y);
+			rects[i].height = getControlHeight(ctrlSize);
 			rects[i].x = x;
 			rects[i].y = getControlY(size, rects, borderBottom, borderTop, i);
 			x += ctrlSize.x;
@@ -479,7 +484,7 @@ Rectangle[] computeControlBounds (Point size, boolean[][] position) {
 				Point ctrlSize = tabControlSize[i];
 				x -= ctrlSize.x;
 				rects[i].width = ctrlSize.x;
-				rects[i].height = Math.min(tabHeight - 1, ctrlSize.y);
+				rects[i].height = getControlHeight(ctrlSize);
 				rects[i].x = x;
 				rects[i].y = getControlY(size, rects, borderBottom, borderTop, i);
 				if ((alignment & (SWT.FILL | SWT.WRAP)) != 0) availableWidth -= ctrlSize.x; 
@@ -493,19 +498,19 @@ Rectangle[] computeControlBounds (Point size, boolean[][] position) {
 				if ((alignment & (SWT.FILL | SWT.WRAP)) == 0) {
 					x -= ctrlSize.x;
 					rects[i].width = ctrlSize.x;
-					rects[i].height = Math.min(tabHeight - 1, ctrlSize.y);
+					rects[i].height = getControlHeight(ctrlSize);
 					rects[i].x = x;
 					rects[i].y = getControlY(size, rects, borderBottom, borderTop, i);
 				} else if (((alignment & (SWT.WRAP)) != 0 && ctrlSize.x < availableWidth)) {
 					x -= ctrlSize.x;
 					rects[i].width = ctrlSize.x;
-					rects[i].height = Math.min(tabHeight - 1, ctrlSize.y);
+					rects[i].height = getControlHeight(ctrlSize);
 					rects[i].x = x;
 					rects[i].y = getControlY(size, rects, borderBottom, borderTop, i);
 					availableWidth -= ctrlSize.x;
 				} else if ((alignment & (SWT.FILL)) != 0 && (alignment & (SWT.WRAP)) == 0) {
 					rects[i].width = 0;
-					rects[i].height = Math.min(tabHeight - 1, ctrlSize.y);
+					rects[i].height = getControlHeight(ctrlSize);
 					rects[i].x = x;
 					rects[i].y = getControlY(size, rects, borderBottom, borderTop, i);
 				} else {
@@ -554,8 +559,8 @@ Rectangle[] computeControlBounds (Point size, boolean[][] position) {
 	availableWidth = bodyWidth;
 	int maxHeight = 0;
 	for (int i = 0; i < controls.length; i++) {
+		Point ctrlSize = tabControlSize[i];
 		if (overflow[i]) {
-			Point ctrlSize = tabControlSize[i];
 			if (availableWidth > ctrlSize.x) {
 				x -= ctrlSize.x;
 				rects[i].width = ctrlSize.x;
@@ -600,6 +605,10 @@ Rectangle[] computeControlBounds (Point size, boolean[][] position) {
 	
 	if (position != null) position[0] = overflow;
 	return rects;
+}
+
+int getControlHeight(Point ctrlSize) {
+	return fixedTabHeight == SWT.DEFAULT ?  Math.max(tabHeight - 1, ctrlSize.y) : ctrlSize.y;
 }
 /*
 * This class was not intended to be subclassed but this restriction
@@ -1630,6 +1639,37 @@ void onMouse(Event event) {
 			}
 			break;
 		}
+		case SWT.MouseHover:
+			if (hoverTb && hoverRect.contains(x, y)) {
+				hovering = true;
+				updateItems();
+				hoverTimerRunning = true;
+				event.display.timerExec(2000, new Runnable() {
+					public void run() {
+						if (isDisposed()) return;
+						if (hovering) {
+							Display display = getDisplay();
+							Control c = display.getCursorControl();
+							boolean reschedule = false;
+							if (c != null) {
+								for (int i = 0; i < controls.length; i++) {
+									if (c.equals(controls[i])) {
+										reschedule = true;
+										break;
+									} 
+								}
+							}
+							if (reschedule && hoverTimerRunning) {
+								display.timerExec(2000, this);
+							} else {
+								hovering = false;
+								updateItems();
+							}
+						}
+					}
+				});
+			}
+			break;
 		case SWT.MouseDown: {
 			if (event.button != 1) return;
 			CTabItem item = null;
@@ -1875,6 +1915,17 @@ void onPaint(Event event) {
 	gc.setFont(gcFont);
 	gc.setForeground(gcForeground);
 	gc.setBackground(gcBackground);	
+	
+	if (hoverTb) {
+		Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BORDER, SWT.NONE, 0, 0, 0, 0);
+		int x = getSize().x - (trim.width + trim.x);
+		hoverRect = new Rectangle(x - 16 - SPACING, 2, 16, getTabHeight() - 2);
+		gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		gc.fillRectangle(hoverRect);
+	}
+	gc.setFont(gcFont);
+	gc.setForeground(gcForeground);
+	gc.setBackground(gcBackground);
 }
 
 void onResize(Event event) {
@@ -1896,14 +1947,21 @@ void onResize(Event event) {
 			int y1 = Math.min(size.y, oldSize.y);
 			if (size.y != oldSize.y) y1 -= trim.height + trim.y - marginHeight;
 			int x2 = Math.max(size.x, oldSize.x);
-			int y2 = Math.max(size.y, oldSize.y);		
+			int y2 = Math.max(size.y, oldSize.y);	
 			redraw(0, y1, x2, y2 - y1, false);
 			redraw(x1, 0, x2 - x1, y2, false);
+			if (hoverTb) {
+				redraw(hoverRect.x, hoverRect.y, hoverRect.width, hoverRect.height, false);
+			} 
 		}
 	}
 	oldSize = size;
 }
 void onSelection(Event event) {
+	if (hovering) {
+		hovering = false;
+		updateItems();
+	}
 	if (event.widget == maxItem) {
 		CTabFolderEvent e = new CTabFolderEvent(this);
 		e.widget = CTabFolder.this;
@@ -2326,16 +2384,51 @@ void setButtonBounds(GC gc) {
 			chevronItem.setImage(chevronImage);
 		} 
     }
-	Rectangle[] rects = computeControlBounds(size, null);
+
+	boolean[][] overflow = new boolean[1][0];
+	Rectangle[] rects = computeControlBounds(size, overflow);
+	if (fixedTabHeight != SWT.DEFAULT) {
+		int height = fixedTabHeight;
+		if (!hovering) {
+			hoverTb = false;
+			Rectangle tabBounds = this.getBounds();
+			for (int i = 0; i < rects.length; i++) {
+				if (!(overflow[0][i])) {
+					if (rects[i].height > height) {
+						hoverTb = true;
+						break;
+					}
+				}
+			}
+			if (hoverTb) {
+				for (int i = 0; i < rects.length; i++) {
+					if (!(overflow[0][i])) {
+						if (rects[i].height > height) {
+							rects[i].x = tabBounds.width + 20;
+						}
+					}
+				}
+			}
+		}
+	}
+	int headerHeight = 0;
+	for (int i = 0; i < rects.length; i++) {
+		if (!overflow[0][i]) headerHeight = Math.max(rects[i].height, headerHeight);
+	}
 	boolean changed = false;
 	ignoreResize = true;
 	for (int i = 0; i < controls.length; i++) {
-		controls[i].setBounds(rects[i]);
+		if (overflow[0][i]) {
+			controls[i].setBounds(rects[i]);
+		} else {
+			controls[i].setBounds(rects[i].x, rects[i].y, rects[i].width, headerHeight);
+			controls[i].moveAbove(null);
+		}
 		if (!changed && !rects[i].equals(controlRects[i])) changed = true;
 	}
 	ignoreResize = false;
 	controlRects = rects;
-	if (changed) updateBkImages();
+	if (changed || hovering) updateBkImages();
 }
 public void setFont(Font font) {
 	checkWidget();
@@ -3173,7 +3266,8 @@ public void setSingle(boolean single) {
 }
 
 int getControlY(Point size, Rectangle[] rects, int borderBottom, int borderTop, int i) {
-	return onBottom ? size.y - 1 - borderBottom - tabHeight + (tabHeight - rects[i].height)/2 : 1 + borderTop + (tabHeight - rects[i].height)/2;
+	int center = fixedTabHeight != SWT.DEFAULT ? 0 : (tabHeight - rects[i].height)/2;
+	return onBottom ? size.y - 1 - borderBottom - tabHeight + center : 1 + borderTop + center;
 }
 
 /**
@@ -3538,23 +3632,30 @@ void updateBkImages() {
 	if (controls != null && controls.length > 0) {
 		for (int i = 0; i < controls.length; i++) {
 			Control control = controls[i];
-			if (control instanceof Composite) ((Composite) control).setBackgroundMode(SWT.INHERIT_DEFAULT);
-			Rectangle bounds = control.getBounds();
-			if (bounds.y > getTabHeight() || gradientColors == null) {
-				control.setBackgroundImage(null);
-				control.setBackground(getBackground());
+			if (hovering) {
+				if (control instanceof Composite) ((Composite) control).setBackgroundMode(SWT.INHERIT_NONE);
+				if (control.getBackgroundImage() == null) {
+					control.setBackground(getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+				}
 			} else {
-				bounds.width = 10;
-				bounds.y = -bounds.y;
-				bounds.height -= 2*bounds.y - 1;
-				bounds.x = 0;
-				if (controlBkImages[i] != null) controlBkImages[i].dispose();
-				controlBkImages[i] = new Image(control.getDisplay(), bounds);
-				GC gc = new GC(controlBkImages[i]);
-				renderer.drawBackground(gc, bounds, 0);
-				gc.dispose();
-				control.setBackground(null);
-				control.setBackgroundImage(controlBkImages[i]);
+				if (control instanceof Composite) ((Composite) control).setBackgroundMode(SWT.INHERIT_DEFAULT);
+				Rectangle bounds = control.getBounds();
+				if (bounds.y > getTabHeight() || gradientColors == null) {
+					control.setBackgroundImage(null);
+					control.setBackground(getBackground());
+				} else {
+					bounds.width = 10;
+					bounds.y = -bounds.y;
+					bounds.height -= 2*bounds.y - 1;
+					bounds.x = 0;
+					if (controlBkImages[i] != null) controlBkImages[i].dispose();
+					controlBkImages[i] = new Image(control.getDisplay(), bounds);
+					GC gc = new GC(controlBkImages[i]);
+					renderer.drawBackground(gc, bounds, 0);
+					gc.dispose();
+					control.setBackground(null);
+					control.setBackgroundImage(controlBkImages[i]);
+				}
 			}
 		}
 		
