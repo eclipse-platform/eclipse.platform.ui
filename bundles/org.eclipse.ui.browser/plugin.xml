@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-    Copyright (c) 2005, 2010 IBM Corporation and others.
+    Copyright (c) 2005, 2011 IBM Corporation and others.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -162,6 +162,7 @@
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
          <location>Program Files\mozilla.org\Firefox\firefox.exe</location>
          <location>Program Files\Mozilla Firefox\firefox.exe</location>
+         <location>Program Files (x86)\Mozilla Firefox\firefox.exe</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.ie"
