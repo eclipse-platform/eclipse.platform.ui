@@ -168,6 +168,7 @@ public class AreaRenderer extends SWTPartRenderer {
 
 		curComp.setData(AbstractPartRenderer.OWNING_ME, null);
 		bindWidget(areaModel, ctf);
+		ctf.getParent().layout(null, SWT.ALL | SWT.DEFER | SWT.CHANGED);
 	}
 
 	private void ensureComposite(MArea areaModel) {
