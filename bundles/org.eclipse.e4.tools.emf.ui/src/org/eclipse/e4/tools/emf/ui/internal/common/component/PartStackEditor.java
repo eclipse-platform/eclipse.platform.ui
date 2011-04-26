@@ -272,7 +272,7 @@ public class PartStackEditor extends AbstractComponentEditor {
 				}
 			});
 			childrenDropDown.setInput(new EClass[] { BasicPackageImpl.Literals.PART, BasicPackageImpl.Literals.INPUT_PART, AdvancedPackageImpl.Literals.PLACEHOLDER });
-			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART_SASH_CONTAINER));
+			childrenDropDown.setSelection(new StructuredSelection(BasicPackageImpl.Literals.PART));
 
 			b = new Button(buttonComp, SWT.PUSH | SWT.FLAT);
 			b.setImage(createImage(ResourceProvider.IMG_Obj16_table_add));
