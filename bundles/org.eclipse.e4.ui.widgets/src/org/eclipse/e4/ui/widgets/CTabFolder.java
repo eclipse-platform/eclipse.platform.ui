@@ -3634,9 +3634,8 @@ void updateBkImages() {
 			Control control = controls[i];
 			if (hovering) {
 				if (control instanceof Composite) ((Composite) control).setBackgroundMode(SWT.INHERIT_NONE);
-				if (control.getBackgroundImage() == null) {
-					control.setBackground(getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-				}
+				control.setBackgroundImage(null);
+				control.setBackground(getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			} else {
 				if (control instanceof Composite) ((Composite) control).setBackgroundMode(SWT.INHERIT_DEFAULT);
 				Rectangle bounds = control.getBounds();
