@@ -80,19 +80,19 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		fShell.open();
 	}
 
-	void destroyViewer() {
+	void destroyViewer() throws InterruptedException {
 		fListener.dispose();
 		fViewer.getPresentationContext().dispose();
 		// Close the shell.
 		fShell.close();
 		while (!fShell.isDisposed()) {
 			if (!fDisplay.readAndDispatch()) {
-				fDisplay.sleep();
+				Thread.sleep(0);
 			}
 		}
 	}
 
-	void recreateViewer() {
+	void recreateViewer() throws InterruptedException {
 		destroyViewer();
 		createViewer();
 	}
@@ -211,7 +211,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 
 	}
 
-	private TestModel makeModel(MyColumnPresentation cp, String rootSufffix) {
+	private TestModel makeModel(MyColumnPresentation cp, String rootSufffix) throws InterruptedException {
 		MyModel model = new MyModel(cp);
 		model.setRoot(new TestElement(model, "root" + rootSufffix, new TestElement[] {
 				new TestElement(model, "1", true, true, new TestElement[0]),
@@ -224,7 +224,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		fViewer.setInput(model.getRootElement());
 		while (!fListener.isFinished()) {
 			if (!fDisplay.readAndDispatch()) {
-				fDisplay.sleep();
+				Thread.sleep(0);
 			}
 		}
 		model.validateData(fViewer, TreePath.EMPTY);
@@ -239,9 +239,9 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	 * average of tree width / number of visible columns, which is the logic
 	 * in InternalTreeModelViewer.
 	 */
-	public void testInitialColumnAverageWidth() {
+	public void testInitialColumnAverageWidth() throws InterruptedException {
         // Try to wait for the shell painting to settle
-        if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         fResized = false;
 	    
 		MyColumnPresentation colPre = new MyColumnPresentation();
@@ -270,9 +270,9 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	 * Also, we verify that the initial columns width is the width computed by
 	 * the IColumnPresentation2 implementation.
 	 */
-	public void testInitialColumnWidth() {
+	public void testInitialColumnWidth() throws InterruptedException {
         // Try to wait for the shell painting to settle
-        if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         fResized = false;
 
         MyColumnPresentation2 colPre = new MyColumnPresentation2();
@@ -299,7 +299,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	 * is not used when there are user settings inside the viewer which are
 	 * created from user resizing columns.
 	 */
-	public void testRespectUserSettings() {
+	public void testRespectUserSettings() throws InterruptedException {
 		MyColumnPresentation2 colPre = new MyColumnPresentation2();
 		makeModel(colPre, "m2");
 		TreeColumn[] columns = fViewer.getTree().getColumns();
@@ -327,13 +327,13 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 		fViewer.setShowColumns(false);
 		do {
 			if (!fDisplay.readAndDispatch()) {
-				fDisplay.sleep();
+				Thread.sleep(0);
 			}
 		} while (fViewer.getTree().getColumns().length > 0);
 		fViewer.setShowColumns(true);
 		do {
 			if (!fDisplay.readAndDispatch()) {
-				fDisplay.sleep();
+				Thread.sleep(0);
 			}
 		} while (fViewer.getTree().getColumns().length != newWidths.length);
 		// verify user resized widths are used instead of the initial widths from IColumnPresentation2
@@ -349,7 +349,7 @@ public class ColumnPresentationTests extends TestCase implements ITestModelUpdat
 	 * is not used when there are user settings inside the viewer which are
 	 * restored from memento, e.g., restoring workspace, etc.
 	 */
-	public void testRespectMemento() {
+	public void testRespectMemento() throws InterruptedException {
 		MyColumnPresentation2 colPre = new MyColumnPresentation2();
 		makeModel(colPre, "m2");
 		TreeColumn[] columns = fViewer.getTree().getColumns();

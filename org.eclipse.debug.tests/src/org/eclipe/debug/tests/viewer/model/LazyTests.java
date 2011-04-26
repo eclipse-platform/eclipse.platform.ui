@@ -69,7 +69,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
 
     protected void runTest() throws Throwable {
@@ -108,7 +108,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
      * not automatically materialized.
      * (bug 305739 and bug 304277)
      */
-    public void testExpandLargeSubTree() {
+    public void testExpandLargeSubTree() throws InterruptedException {
         // Create test model with lots of children.
         TestModel model = largeSubtreeModel(1000); 
         
@@ -117,7 +117,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         // Populate initial view content
         fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, true); 
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Create delta to expand the "1" element.
         TestElement rootElement = model.getRootElement();
@@ -141,7 +141,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         model.postDelta(rootDelta);
 
         while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE | LABEL_UPDATES_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
 
     /**
@@ -149,7 +149,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
      * then selected and replaced, that no extra elements are retrieved.
      * (bug 304277 comment #24, and bug 305739 comment #9).
      */
-    public void testReplaceAndSelectInSubTreeTree() {
+    public void testReplaceAndSelectInSubTreeTree() throws InterruptedException {
         // Create test model with lots of children.
         TestModel model = largeSubtreeModel(1000); 
         
@@ -165,7 +165,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         fListener.setFailOnRedundantUpdates(false);
         fViewer.setInput(model.getRootElement());
         fListener.addLabelUpdate(model.findElement("1.0"));
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | LABEL_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | LABEL_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Set selection so that the initial selection is not empty
         fViewer.setSelection(new TreeSelection(new TreePath[] { model.findElement("1.0")} ));
@@ -191,7 +191,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         model.postDelta(rootDelta);
 
         while (!fListener.isFinished(MODEL_CHANGED_COMPLETE |  LABEL_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
 
         Assert.assertEquals(((IStructuredSelection)fViewer.getSelection()).getFirstElement(), _1_0_newElement);
@@ -199,7 +199,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
 
     /**
      */
-    public void testContentRefresh() {
+    public void testContentRefresh() throws InterruptedException {
         // Create test model with lots of children.
         TestModel model = largeSubtreeModel(1000); 
         
@@ -209,7 +209,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         // Populate initial view content
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true); 
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Turn off autoexpand
         fViewer.setAutoExpandLevel(0);
@@ -218,7 +218,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
         fListener.reset();
         fListener.setFailOnRedundantUpdates(false);
         fViewer.reveal(model.findElement("1"), 500);
-        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         
         // Create delta to refresh the "1" element.
         TestElement rootElement = model.getRootElement();
@@ -249,7 +249,7 @@ abstract public class LazyTests extends TestCase implements ITestModelUpdatesLis
             model.postDelta(rootDelta);
     
             while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-                if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+                if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
     }
 

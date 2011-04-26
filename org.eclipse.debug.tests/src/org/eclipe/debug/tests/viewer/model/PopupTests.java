@@ -81,13 +81,13 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
 
     /**
      * This test verifies that content updates are still being performed. 
      */
-    public void testRefreshStruct() {
+    public void testRefreshStruct() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
         TestModel model = TestModel.simpleSingleLevel();
@@ -98,7 +98,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
@@ -113,14 +113,14 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         
         fListener.reset(elementPath, element, -1, true, false); 
         model.postDelta(delta);
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
     /**
      * This test verifies that expand and select updates are being ignored.
      */
-    public void testExpandAndSelect() {
+    public void testExpandAndSelect() throws InterruptedException {
         TestModel model = TestModel.simpleMultiLevel();
         
         // Create the listener
@@ -128,7 +128,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Create the delta
@@ -161,7 +161,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
                     break;
                 }
             }
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
         model.validateData(fViewer, TreePath.EMPTY, true);
 
@@ -180,7 +180,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
     
 
     
-    public void testPreserveExpandedOnSubTreeContent() {
+    public void testPreserveExpandedOnSubTreeContent() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -192,7 +192,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Turn off auto-expansion
@@ -218,7 +218,7 @@ abstract public class PopupTests extends TestCase implements ITestModelUpdatesLi
         // Post the sub-tree update
         model.postDelta(rootDelta);
         while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);

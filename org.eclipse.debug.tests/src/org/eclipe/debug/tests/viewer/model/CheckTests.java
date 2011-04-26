@@ -68,7 +68,7 @@ abstract public class CheckTests extends TestCase {
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
 
     protected void runTest() throws Throwable {
@@ -79,7 +79,7 @@ abstract public class CheckTests extends TestCase {
         }
     }
 
-    public void testSimpleSingleLevel() {
+    public void testSimpleSingleLevel() throws InterruptedException {
         // Create the model with test data
         TestModel model = TestModel.simpleSingleLevel();
 
@@ -96,12 +96,12 @@ abstract public class CheckTests extends TestCase {
         fViewer.setInput(model.getRootElement());
         
         // Wait for the updates to complete.
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
-    public void testSimpleMultiLevel() {
+    public void testSimpleMultiLevel() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
         TestModel model = TestModel.simpleMultiLevel();
@@ -111,7 +111,7 @@ abstract public class CheckTests extends TestCase {
         
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         model.validateData(fViewer, TreePath.EMPTY);
     }
@@ -126,7 +126,7 @@ abstract public class CheckTests extends TestCase {
 //        fViewer.setInput(model.getRootElement());
 //        
 //        // Wait for the updates to complete and validate.
-//        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+//        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 //        model.validateData(fViewer, TreePath.EMPTY);
 //        
 //        InternalTreeModelViewer treeViewer = ((InternalTreeModelViewer)fViewer); 
@@ -146,7 +146,7 @@ abstract public class CheckTests extends TestCase {
 //        Assert.assertTrue(element.getChecked() != initialCheckState);
 //    }
 
-    public void testUpdateCheck() {
+    public void testUpdateCheck() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
         TestModel model = TestModel.simpleSingleLevel();
@@ -157,7 +157,7 @@ abstract public class CheckTests extends TestCase {
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
@@ -169,7 +169,7 @@ abstract public class CheckTests extends TestCase {
         fListener.reset(elementPath, element, -1, true, false); 
         model.postDelta(delta);
         while (!fListener.isFinished(TestModelUpdatesListener.LABEL_COMPLETE | TestModelUpdatesListener.MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
     }
 

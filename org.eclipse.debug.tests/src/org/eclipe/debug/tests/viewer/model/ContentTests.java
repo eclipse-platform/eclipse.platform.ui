@@ -76,7 +76,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
 
     protected void runTest() throws Throwable {
@@ -87,7 +87,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         }
     }
     
-    public void testSimpleSingleLevel() {
+    public void testSimpleSingleLevel() throws InterruptedException {
         // Create the model with test data
         TestModel model = TestModel.simpleSingleLevel();
 
@@ -104,12 +104,12 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         fViewer.setInput(model.getRootElement());
         
         // Wait for the updates to complete.
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
-    public void testSimpleMultiLevel() {
+    public void testSimpleMultiLevel() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
         TestModel model = TestModel.simpleMultiLevel();
@@ -119,7 +119,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         
         fViewer.setInput(model.getRootElement());
 
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         model.validateData(fViewer, TreePath.EMPTY);
     }
@@ -175,7 +175,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
      * use data from stale updates to populate the viewer.<br>
      * See bug 210027
      */
-    public void testLabelUpdatesCompletedOutOfSequence1() {
+    public void testLabelUpdatesCompletedOutOfSequence1() throws InterruptedException {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
         
@@ -188,7 +188,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
         List firstUpdates = model.fCapturedUpdates;
         model.fCapturedUpdates = new ArrayList(2);
@@ -199,7 +199,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
         
         // Complete the second set of children updates
@@ -214,7 +214,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
             capturedUpdate.done();
         }
 
-        while (!fListener.isFinished(CHILDREN_UPDATES)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(CHILDREN_UPDATES)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);
@@ -228,7 +228,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
      * updates.<br> 
      * See bug 210027
      */
-    public void testLabelUpdatesCompletedOutOfSequence2() {
+    public void testLabelUpdatesCompletedOutOfSequence2() throws InterruptedException {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureLabelUpdates = true;
         
@@ -241,7 +241,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
         List firstUpdates = model.fCapturedUpdates;
         model.fCapturedUpdates = new ArrayList(2);
@@ -254,7 +254,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (model.fCapturedUpdates.size() < model.getRootElement().fChildren.length) {
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
         
         // Complete the second set of children updates
@@ -269,7 +269,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
             capturedUpdate.done();
         }
 
-        while (!fListener.isFinished(CHILDREN_UPDATES)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(CHILDREN_UPDATES)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);
@@ -284,7 +284,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
      * point, then this test should be re-enabled.<br>
      * See bug 210027
      */
-    public void _x_testChildrenUpdatesCompletedOutOfSequence() {
+    public void _x_testChildrenUpdatesCompletedOutOfSequence() throws InterruptedException {
         TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
         model.fCaptureChildrenUpdates = true;
         
@@ -297,7 +297,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         // Wait for view to start retrieving content.
         fViewer.setInput(model.getRootElement());
         while (!areCapturedChildrenUpdatesComplete(model.fCapturedUpdates, model.getRootElement().fChildren.length)) {
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
         IChildrenUpdate[] firstUpdates = (IChildrenUpdate[])model.fCapturedUpdates.toArray(new IChildrenUpdate[0]);
         model.fCapturedUpdates.clear();
@@ -310,7 +310,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false); 
         model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
         while (!areCapturedChildrenUpdatesComplete(model.fCapturedUpdates, model.getRootElement().fChildren.length)) {
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
         
         // Complete the second set of children updates
@@ -323,7 +323,7 @@ abstract public class ContentTests extends TestCase implements ITestModelUpdates
             firstUpdates[i].done();
         }
 
-        while (!fListener.isFinished(CHILDREN_UPDATES)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(CHILDREN_UPDATES)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         
         // Check viewer data
         model.validateData(fViewer, TreePath.EMPTY);

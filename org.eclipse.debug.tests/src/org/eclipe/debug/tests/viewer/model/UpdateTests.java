@@ -66,7 +66,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
                 
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
 
     protected void runTest() throws Throwable {
@@ -83,7 +83,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
      * - replaces the list of elements with a shorter list of elements
      * - refreshes the viewer
      */
-    public void testRemoveElements() {
+    public void testRemoveElements() throws InterruptedException {
         TestModel model = TestModel.simpleSingleLevel();
         fViewer.setAutoExpandLevel(-1);
 
@@ -92,7 +92,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
@@ -112,7 +112,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         fListener.reset(rootPath, root, -1, false, false);
         
         model.postDelta(new ModelDelta(root, IModelDelta.CONTENT));
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
@@ -122,7 +122,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
      * - sets a list of children to one of the elements
      * - refreshes the viewer
      */
-    public void testAddNewChildren() {
+    public void testAddNewChildren() throws InterruptedException {
         TestModel model = TestModel.simpleSingleLevel();
         fViewer.setAutoExpandLevel(-1);
 
@@ -131,7 +131,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
@@ -153,26 +153,26 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
 
         // Refresh the viewer
         model.postDelta(new ModelDelta(rootElement, IModelDelta.CONTENT));
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
     
-    private void removeElement(TestModel model, int index, boolean validate) {
+    private void removeElement(TestModel model, int index, boolean validate) throws InterruptedException {
         ModelDelta delta = model.removeElementChild(TreePath.EMPTY, index);
         
         // Remove delta should generate no new updates, but we still need to wait for the event to
         // be processed.
         fListener.reset();
         model.postDelta(delta);
-        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         if (validate) {
             model.validateData(fViewer, TreePath.EMPTY);        
         }
     }
     
-    private void addElement(TestModel model, String label, int position, boolean validate) {
+    private void addElement(TestModel model, String label, int position, boolean validate) throws InterruptedException {
         ModelDelta delta = model.addElementChild(TreePath.EMPTY, null, position, new TestElement(model, label, new TestElement[0]));
         
         // Remove delta should generate no new updates, but we still need to wait for the event to
@@ -182,14 +182,14 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         
         if (validate) {
             while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE)) 
-                if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+                if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
             model.validateData(fViewer, TreePath.EMPTY);                
         } else {
-            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
     }
 
-    private void insertElement(TestModel model, String label, int position, boolean validate) {
+    private void insertElement(TestModel model, String label, int position, boolean validate)  throws InterruptedException {
         ModelDelta delta = model.insertElementChild(TreePath.EMPTY, position, new TestElement(model, label, new TestElement[0]));
         
         // Remove delta should generate no new updates, but we still need to wait for the event to
@@ -199,14 +199,14 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
         
         if (validate) {
             while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE | LABEL_UPDATES_COMPLETE)) 
-                if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+                if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
             model.validateData(fViewer, TreePath.EMPTY);                
         } else {
-            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         }
     }
 
-    public void testRepeatedAddRemoveElement() {
+    public void testRepeatedAddRemoveElement() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         TestModel model = TestModel.simpleSingleLevel();
@@ -217,7 +217,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
         
         // Update the model
@@ -238,7 +238,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
      * <br>
      * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304066">bug 304066</a> 
      */
-    public void _X_testContentPlusAddRemoveUpdateRaceConditionsElement() {
+    public void _X_testContentPlusAddRemoveUpdateRaceConditionsElement() throws InterruptedException {
         TestModel model = TestModel.simpleSingleLevel();
         fViewer.setAutoExpandLevel(-1);
 
@@ -247,7 +247,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
 
         // Create a listener to listen only to a children count update for the root. 
@@ -261,7 +261,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
             childrenCountUpdateListener.addChildreCountUpdate(TreePath.EMPTY);
             model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
             // Wait until the delta is processed
-            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
             
             removeElement(model, 5, false);
             removeElement(model, 4, false);
@@ -273,7 +273,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
             // Wait until the children count update is completed using the count from 
             // before elements were removed.
             while (!childrenCountUpdateListener.isFinished(CHILD_COUNT_UPDATES)) 
-                if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+                if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
             
             insertElement(model, "1 - " + pass, 0, false);
             insertElement(model, "2 - " + pass, 1, false);
@@ -283,7 +283,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
             insertElement(model, "6 - " + pass, 5, false);
             
             while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
-                if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+                if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
             model.validateData(fViewer, TreePath.EMPTY);                
 
         }
@@ -297,7 +297,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
      * due to a remove event from the model.
      * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#rescheduleUpdates
      */
-    public void testRescheduleUpdates() {
+    public void testRescheduleUpdates() throws InterruptedException {
         TestModel model = TestModel.simpleSingleLevel();
         fViewer.setAutoExpandLevel(-1);
 
@@ -306,7 +306,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
 
         for (int i = 0; i < 5; i++) {
@@ -317,7 +317,7 @@ abstract public class UpdateTests extends TestCase implements ITestModelUpdatesL
             model.postDelta(new ModelDelta(rootElement, IModelDelta.CONTENT));
     
             // Wait for the delta to be processed.
-            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILD_COUNT_UPDATES)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     
             // Update the model
             removeElement(model, 0, true);

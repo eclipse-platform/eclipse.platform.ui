@@ -66,7 +66,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
     
     protected void runTest() throws Throwable {
@@ -84,7 +84,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
      */
     abstract protected int getTestModelDepth();
     
-    public void testRefreshStruct() {
+    public void testRefreshStruct() throws InterruptedException {
         TestModel model = new TestModel();
         model.setRoot( new TestElement(model, "root", new TestElement[0] ) ); 
         model.setElementChildren(TreePath.EMPTY, makeModelElements(model, getTestModelDepth(), "model"));
@@ -96,7 +96,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
 
         Performance perf = Performance.getDefault();
@@ -113,7 +113,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
                 while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-                    if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+                    if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
                 model.validateData(fViewer, TreePath.EMPTY);
                 meter.stop();
                 System.gc();
@@ -126,7 +126,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
         }
     }
 
-    public void testRefreshStructReplaceElements() {
+    public void testRefreshStructReplaceElements() throws InterruptedException {
         TestModel model = new TestModel();
         model.setRoot( new TestElement(model, "root", new TestElement[0] ) ); 
         model.setElementChildren(TreePath.EMPTY, makeModelElements(model, getTestModelDepth(), "model"));
@@ -138,7 +138,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
 
         Performance perf = Performance.getDefault();
@@ -154,7 +154,7 @@ abstract public class PerformanceTests extends TestCase implements ITestModelUpd
                 meter.start();
                 model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
                 while (!fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-                    if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+                    if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
                 model.validateData(fViewer, TreePath.EMPTY);
                 meter.stop();
                 System.gc();

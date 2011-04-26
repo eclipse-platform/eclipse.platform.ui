@@ -70,7 +70,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
 
     private static class SelectionListener implements ISelectionChangedListener {
@@ -81,12 +81,12 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         }
     }
 
-    private TestModel makeMultiLevelModel() {
+    private TestModel makeMultiLevelModel() throws InterruptedException {
         TestModel model = TestModel.simpleMultiLevel();
         fViewer.setAutoExpandLevel(-1);
         fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY);
         return model;
     }
@@ -97,7 +97,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
      * - verify that selection chagned listener is called
      * - verify that the selection is in the viewer is correct 
      */
-    public void testSimpleSetSelection() {
+    public void testSimpleSetSelection() throws InterruptedException {
         // Create the model and populate the view.
         TestModel model = makeMultiLevelModel();
         
@@ -120,7 +120,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
      * from being set and verify that a FORCE flag can override the selection
      * policy.
      */
-    public void testSelectionPolicy() {
+    public void testSelectionPolicy() throws InterruptedException {
         // Create the model and populate the view.
         final TestModel model = makeMultiLevelModel();
         
@@ -165,7 +165,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         delta_3_3_3.setFlags(IModelDelta.SELECT);
         fViewer.updateViewer(baseDelta);
         while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         assertEquals(selection_3_3_1, fViewer.getSelection());
 
         // Add the *force* flag to the selection delta and update viewer again.
@@ -173,7 +173,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         delta_3_3_3.setFlags(IModelDelta.SELECT | IModelDelta.FORCE);
         fViewer.updateViewer(baseDelta);
         while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         assertEquals(selection_3_3_3, fViewer.getSelection());
     }
 
@@ -185,7 +185,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
      * - update the view with remove delta
      * -> The selection should be re-set to empty.
      */
-    public void testSelectRemove() {
+    public void testSelectRemove() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         // Create the model and populate the view.
@@ -213,7 +213,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         fListener.reset(); 
         model.postDelta(delta);
         while (!fListener.isFinished(TestModelUpdatesListener.MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Check to make sure the selection was made
         //assertTrue(listener.fEvents.size() == 1);
@@ -231,7 +231,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
      * - then refresh the view.
      * -> The selection should be re-set to empty.
      */
-    public void testSelectRemoveRefreshStruct() {
+    public void testSelectRemoveRefreshStruct() throws InterruptedException {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         // Create the model and populate the view.
@@ -261,7 +261,7 @@ abstract public class SelectionTests extends TestCase implements ITestModelUpdat
         // Refresh the viewer
         model.postDelta( new ModelDelta(model.getRootElement(), IModelDelta.CONTENT) );
         while (!fListener.isFinished(TestModelUpdatesListener.ALL_UPDATES_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Check to make sure the selection was made
         // Commented out until JFace bug 219887 is fixed.

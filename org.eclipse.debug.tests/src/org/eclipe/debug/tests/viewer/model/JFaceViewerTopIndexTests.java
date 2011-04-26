@@ -69,7 +69,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         
         // Close the shell and exit.
         fShell.close();
-        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fShell.isDisposed()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
     }
 
     protected void runTest() throws Throwable {
@@ -92,7 +92,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
      * Restore REVEAL on simple model with elements without children.
      * 
      */
-    public void testRestoreTopIndex() {
+    public void testRestoreTopIndex() throws InterruptedException {
         TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
     	TestModel model = new TestModel();
@@ -113,7 +113,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
         
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
         
         // Stop forcing view updates. 
@@ -138,12 +138,12 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
 
         fViewer.setInput(null);
         while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Set the viewer input back to the model to trigger RESTORE operation. 
         fListener.reset(false, false);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         while (fDisplay.readAndDispatch ()) {}
         // check if REVEAL was restored OK
@@ -158,7 +158,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
      * 
      * See bug 324100
      */
-    public void testRestoreTopAndExpand() {
+    public void testRestoreTopAndExpand() throws InterruptedException {
         TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
         TestModel model = new TestModel();
@@ -188,7 +188,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
         
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Expand first element
@@ -207,7 +207,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         model.postDelta(rootDelta);
 
         while (!fListener.isFinished(CONTENT_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Validate that the first node is expanded
         Assert.assertTrue(getCTargetViewer().getExpandedState(firstElemPath) == true);
@@ -231,12 +231,12 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         fListener.reset(true, false);
         fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Set the viewer input back to the model
         fListener.reset(false, false);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         while (fDisplay.readAndDispatch ()) {}
         // check if REVEAL was restored OK
@@ -251,7 +251,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
      * 
      * See bug 324100
      */
-    public void testRestoreTopTriggersExpand() {
+    public void testRestoreTopTriggersExpand() throws InterruptedException {
         TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
         TestModel model = new TestModel();
@@ -283,7 +283,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
         
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         int indexLastElem = elements.length-1;
@@ -313,12 +313,12 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
 
         fViewer.setInput(null);
         while (!fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Set the viewer input back to the model.
         fListener.reset(false, false);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         while (fDisplay.readAndDispatch ()) {}
         // check if REVEAL was restored OK
@@ -332,7 +332,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
      * This test verifies that canceling a reveal pending state delta is 
      * properly handled when a new reveal delta is received from the model.
      */
-    public void testRestoreRevealAfterRevealCancel() {
+    public void testRestoreRevealAfterRevealCancel() throws InterruptedException {
         TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = TestModel.simpleMultiLevel();
 
@@ -344,7 +344,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
         
         // Stop autopopulating the view.
@@ -357,7 +357,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // Trigger save of state.
         fListener.reset();
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) Thread.sleep(0);
 
         // Set input back to root element.
         // Note: Wait only for the processing of the delta and the start of state restore, not for all updates
@@ -366,7 +366,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         fListener.addUpdates(fViewer, elementPath, model.getElement(elementPath), 1, STATE_UPDATES);
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | STATE_UPDATES)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Update the viewer with new selection delta to something new in the view
         ModelDelta revealDelta = model.makeElementDelta(model.findElement("2.1"), IModelDelta.REVEAL);
@@ -375,17 +375,17 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         fListener.reset();
         model.postDelta(revealDelta);
         while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CONTENT_UPDATES_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         
         // Clear view then reset it again.
         fListener.reset();
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) Thread.sleep(0);
 
         autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished(STATE_RESTORE_COMPLETE)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         autopopulateAgent.dispose();
     }
 
@@ -394,7 +394,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
      * This test verifies that canceling a reveal pending state delta is 
      * properly handled when a new reveal delta is received from the model.
      */
-    public void testRestoreRevealAfterRevealCancel2() {
+    public void testRestoreRevealAfterRevealCancel2() throws InterruptedException {
     	if (Platform.getOS().equals(Platform.OS_MACOSX)) {
     		// skip this test on Mac - see bug 327557
     		return;
@@ -410,7 +410,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
         
         // Stop auto-populating and auto-expanding the view.
@@ -424,7 +424,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // Trigger save of state.
         fListener.reset();
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) Thread.sleep(0);
 
         // Set input back to root element.
         // Note: Wait only for the processing of the delta and the start of state restore, not for all updates
@@ -435,7 +435,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         fListener.addUpdates(fViewer, elementPath, model.getElement(elementPath), 0, STATE_UPDATES);
         fViewer.setInput(model.getRootElement());
         while (!fListener.isFinished(STATE_UPDATES)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Update the viewer with new selection delta to something new in the view
         TreePath pathToBeRevealed = model.findElement("2.1");
@@ -451,7 +451,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // Wait for the second model delta to process
         model.postDelta(revealDelta);
         while (!fListener.isFinished(MODEL_CHANGED_COMPLETE | CHILDREN_UPDATES | LABEL_UPDATES)) 
-            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+            if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // check if REVEAL was triggered by the delta and not by the 
         // state restore operation
@@ -468,7 +468,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
      * 
      * See bug 324100
      */
-    public void testRestoreDeepTreeAndReveal() {
+    public void testRestoreDeepTreeAndReveal() throws InterruptedException {
         TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
         TestModel model = TestModel.simpleDeepMultiLevel();
@@ -481,7 +481,7 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
         
-        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
         model.validateData(fViewer, TreePath.EMPTY, true);
 
         // Stop forcing view updates. 
@@ -501,13 +501,13 @@ public class JFaceViewerTopIndexTests extends TestCase implements ITestModelUpda
         fListener.reset(true, false);
         fListener.addStateUpdates(getCTargetViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);        
         fViewer.setInput(null);
-        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_SAVE_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         // Set the viewer input back to the model
         fListener.reset(false, false);
         fListener.addUpdates(getCTargetViewer(), originalTopPath, (TestElement)originalTopPath.getLastSegment(), 0, STATE_UPDATES);
         fViewer.setInput(model.getRootElement());
-        while (!fListener.isFinished(STATE_UPDATES | CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        while (!fListener.isFinished(STATE_UPDATES | CONTENT_UPDATES_COMPLETE)) if (!fDisplay.readAndDispatch ()) Thread.sleep(0);
 
         while (fDisplay.readAndDispatch ()) {}
         // check if REVEAL was restored OK
