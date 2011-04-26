@@ -357,11 +357,11 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 				IWorkingSetManager workingSetManager = workbenchWindow.getWorkbench()
 						.getWorkingSetManager();
 				IWorkingSet aggregate = workingSetManager.getWorkingSet(setId);
-				if (aggregate == null) {
-					aggregate = workingSetManager.createAggregateWorkingSet(setId,
-							WorkbenchMessages.WorkbenchPage_workingSet_multi_label, typedResult);
-					workingSetManager.addWorkingSet(aggregate);
-				}
+				if (aggregate != null)
+					workingSetManager.removeWorkingSet(aggregate);
+				aggregate = workingSetManager.createAggregateWorkingSet(setId,
+						WorkbenchMessages.WorkbenchPage_workingSet_multi_label, typedResult);
+				workingSetManager.addWorkingSet(aggregate);
 				setSelection(new IWorkingSet[] { aggregate });
 				setResult(Collections.singletonList(aggregate));
 			}
