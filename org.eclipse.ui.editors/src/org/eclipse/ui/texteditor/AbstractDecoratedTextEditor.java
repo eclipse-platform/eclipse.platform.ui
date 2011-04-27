@@ -47,6 +47,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -1453,6 +1455,23 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			IColumnSupport columnSupport= (IColumnSupport)getAdapter(IColumnSupport.class);
 			columnSupport.setColumnVisible(lineNumberColumnDescriptor, isLineNumberRulerVisible() || isPrefQuickDiffAlwaysOn());
 		}
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.StatusTextEditor#handleEditorInputChanged()
+	 * @since 3.7
+	 */
+	protected void handleEditorInputChanged() {
+		final IDocumentProvider provider= getDocumentProvider();
+		IEditorInput input= getEditorInput();
+		if (provider != null && input != null) {
+			if (!provider.isDeleted(input) && !isDirty() && input.getAdapter(IFile.class) != null) {
+				IEclipsePreferences pref= InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
+				if (pref != null && (pref.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, false) || pref.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false)))
+					return;
+			}
+		}
+		super.handleEditorInputChanged();
 	}
 
 	/**
