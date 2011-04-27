@@ -1223,7 +1223,6 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		long start = System.currentTimeMillis();
 		java.io.File target = location.toFile();
 		try {
-			validateMasterTableBeforeSave(target);
 			SafeChunkyOutputStream output = new SafeChunkyOutputStream(target);
 			try {
 				masterTable.store(output, "master table"); //$NON-NLS-1$
@@ -1543,28 +1542,6 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		String key = DELTA_EXPIRATION_PREFIX + pluginId;
 		if (!masterTable.containsKey(key))
 			masterTable.setProperty(key, Long.toString(System.currentTimeMillis()));
-	}
-
-	private void validateMasterTableBeforeSave(java.io.File target) throws IOException {
-		if (target.exists()) {
-			MasterTable previousMasterTable = new MasterTable();
-			SafeChunkyInputStream input = new SafeChunkyInputStream(target);
-			try {
-				previousMasterTable.load(input);
-				String stringValue = previousMasterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY);
-				// if there was a full save, then there must be a non-null entry for root
-				if (stringValue != null) {
-					int valueInFile = new Integer(stringValue).intValue();
-					int valueInMemory = new Integer(masterTable.getProperty(ROOT_SEQUENCE_NUMBER_KEY)).intValue();
-					// new master table must have greater or equal sequence number for root
-					// otherwise throw an exception to not desynchronize master table on disk
-					String message = "Cannot set lower sequence number for root (previous: " + valueInFile + ", new: " + valueInMemory + "). Location: " + target.getAbsolutePath(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					Assert.isLegal(valueInMemory >= valueInFile, message);
-				}
-			} finally {
-				input.close();
-			}
-		}
 	}
 
 	/**
