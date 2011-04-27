@@ -1640,7 +1640,8 @@ void onMouse(Event event) {
 			break;
 		}
 		case SWT.MouseHover:
-			if (hoverTb && hoverRect.contains(x, y)) {
+		case SWT.MouseDown: {
+			if (hoverTb && hoverRect.contains(x, y) && !hovering) {
 				hovering = true;
 				updateItems();
 				hoverTimerRunning = true;
@@ -1668,9 +1669,8 @@ void onMouse(Event event) {
 						}
 					}
 				});
+				return;
 			}
-			break;
-		case SWT.MouseDown: {
 			if (event.button != 1) return;
 			CTabItem item = null;
 			if (single) {
