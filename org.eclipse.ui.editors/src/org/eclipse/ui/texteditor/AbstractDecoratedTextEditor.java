@@ -1467,7 +1467,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (provider != null && input != null) {
 			if (!provider.isDeleted(input) && !isDirty() && input.getAdapter(IFile.class) != null) {
 				IEclipsePreferences pref= InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES);
-				if (pref != null && (pref.getBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, false) || pref.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false)))
+				if (pref != null && pref.getBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false))
 					return;
 			}
 		}
