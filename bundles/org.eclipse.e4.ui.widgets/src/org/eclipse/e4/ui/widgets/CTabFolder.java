@@ -594,7 +594,7 @@ Rectangle[] computeControlBounds (Point size, boolean[][] position) {
 		while (i < priority.length && items[priority[i]].showing) {
 			lastIndex = Math.max(lastIndex, priority[i++]);
 		}
-		if (lastIndex == -1) lastIndex = firstIndex;
+		if (lastIndex == -1) lastIndex = selectedIndex;
 		if (lastIndex != -1) {
 			CTabItem lastItem = items[lastIndex];
 			int w = lastItem.x + lastItem.width + SPACING;
