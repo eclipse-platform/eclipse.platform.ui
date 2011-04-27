@@ -352,23 +352,34 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 	}
 
-	private MUIElement getLastContainer(MUIElement element) {
+	private MUIElement getLastElement(MUIElement element) {
 		if (element instanceof MElementContainer<?>) {
 			MElementContainer<?> container = (MElementContainer<?>) element;
 			List<?> children = container.getChildren();
-			return children.isEmpty() ? container : getLastContainer((MUIElement) children
+			return children.isEmpty() ? container : getLastElement((MUIElement) children
 					.get(children.size() - 1));
 		}
-		return element.getParent();
+
+		MUIElement parent = element.getParent();
+		return parent == perspModel ? element : parent;
 	}
 
-	private MElementContainer<?> getLastContainer() {
+	/**
+	 * Returns the element that is the deepest and last element of the
+	 * containers underneath the current perspective. If this element's parent
+	 * is the perspective itself, the element will be returned. The perspective
+	 * will only be returned if the perspective itself has no children.
+	 * 
+	 * @return the parent of the final element in the recursion chain of
+	 *         children, or the element itself if its parent is the perspective,
+	 *         or the perspective if the perspective itself has no children
+	 */
+	private MUIElement getLastElement() {
 		List<MPartSashContainerElement> children = perspModel.getChildren();
 		if (children.isEmpty()) {
 			return perspModel;
 		}
-		MUIElement element = getLastContainer(children.get(children.size() - 1));
-		return element instanceof MElementContainer ? (MElementContainer<?>) element : perspModel;
+		return getLastElement(children.get(children.size() - 1));
 	}
 
 	private MPartStack insertStack(String stackId, int relationship,
@@ -377,7 +388,7 @@ public class ModeledPageLayout implements IPageLayout {
 		if (refModel == null) {
 			WorkbenchPlugin.log(NLS.bind(WorkbenchMessages.PageLayout_missingRefPart, refId));
 			MPartStack stack = createStack(stackId, visible);
-			insert(stack, getLastContainer(), plRelToSwt(relationship), ratio);
+			insert(stack, getLastElement(), plRelToSwt(relationship), ratio);
 			return stack;
 		}
 		// If the 'refModel' is -not- a stack then find one
