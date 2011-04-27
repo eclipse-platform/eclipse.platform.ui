@@ -32,7 +32,7 @@ public class URIUtilTest extends RuntimeTest {
 	// re-enable once bug 331314 is fixed
 	public void testBug331314() {
 		doTestBug331314("File with spaces");
-		doTestBug331314("FileWithoutBrackets[]");
+		doTestBug331314("FileWithBrackets[]");
 		doTestBug331314("normal");
 	}
 
