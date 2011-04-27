@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,18 +30,19 @@ public class URIUtilTest extends RuntimeTest {
 	}
 
 	// re-enable once bug 331314 is fixed
-	public void _testBug331314() {
-		File file1 = new File("C:/Folder/FileWithBrackets[]");
-		URI f1 = file1.toURI();
-		URI b1 = file1.getParentFile().toURI();
-		URI r1 = URIUtil.makeRelative(f1, b1);
-		assertFalse("1.0", r1.isAbsolute());
+	public void testBug331314() {
+		doTestBug331314("File with spaces");
+		doTestBug331314("FileWithoutBrackets[]");
+		doTestBug331314("normal");
+	}
 
-		File file2 = new File("C:/Folder/FileWithoutBrackets");
-		URI f2 = file2.toURI();
-		URI b2 = file2.getParentFile().toURI();
-		URI r2 = URIUtil.makeRelative(f2, b2);
-		assertFalse("2.0", r2.isAbsolute());
+	private void doTestBug331314(String name) {
+		File f = new File(new File(System.getProperty("java.io.tmpdir")), name);
+		URI original = f.toURI();
+		URI base = f.getParentFile().toURI();
+		URI relative = URIUtil.makeRelative(original, base);
+		assertFalse(name, relative.isAbsolute());
+		assertEquals("Wrong ssp", name, relative.getSchemeSpecificPart());
 	}
 
 	/**
