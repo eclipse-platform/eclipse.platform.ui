@@ -119,6 +119,7 @@ public class CocoaUIHandler {
 			'C', 'T', '\0' };
 
 	SWTCocoaEnhancerDelegate delegate;
+	private long delegateJniRef;
 
 	protected MCommand closeDialogCommand;
 
@@ -145,12 +146,84 @@ public class CocoaUIHandler {
 	private EventHandler menuContributionListener;
 	private EventHandler commandListener;
 
+	/**
+	 * 
+	 */
+	private void registerSelectors() {
+		try {
+			if (sel_toolbarButtonClicked_ == 0) {
+				sel_toolbarButtonClicked_ = registerName("toolbarButtonClicked:"); //$NON-NLS-1$
+				setupDelegateClass();
+			}
+		} catch (Exception e) {
+			// theoretically, one of
+			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+			// not expected to happen at all.
+			log(e);
+		}
+	}
+
+	@SuppressWarnings("restriction")
+	private void setupDelegateClass() throws SecurityException,
+			NoSuchMethodException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchFieldException {
+		// TODO: These should either move out of Display or be accessible to
+		// this class.
+		byte[] types = { '*', '\0' };
+		int size = C.PTR_SIZEOF, align = C.PTR_SIZEOF == 4 ? 2 : 3;
+
+		Class<?> clazz = CocoaUIHandler.class;
+
+		proc3Args = new Callback(clazz, "actionProc", 3); //$NON-NLS-1$
+		// call getAddress
+		Method getAddress = Callback.class
+				.getMethod("getAddress", new Class[0]); //$NON-NLS-1$
+		Object object = getAddress.invoke(proc3Args, null);
+		long proc3 = convertToLong(object);
+		if (proc3 == 0)
+			SWT.error(SWT.ERROR_NO_MORE_CALLBACKS);
+
+		// call objc_allocateClassPair
+		Field field = OS.class.getField("class_NSObject"); //$NON-NLS-1$
+		Object fieldObj = field.get(OS.class);
+		object = invokeMethod(
+				OS.class,
+				"objc_allocateClassPair", new Object[] { fieldObj, "SWTCocoaEnhancerDelegate", wrapPointer(0) }); //$NON-NLS-1$ //$NON-NLS-2$
+		long cls = convertToLong(object);
+
+		invokeMethod(OS.class, "class_addIvar", new Object[] { //$NON-NLS-1$
+				wrapPointer(cls), SWT_OBJECT, wrapPointer(size),
+						new Byte((byte) align), types });
+
+		// Add the action callback
+		invokeMethod(
+				OS.class,
+				"class_addMethod", new Object[] { wrapPointer(cls), wrapPointer(sel_toolbarButtonClicked_), wrapPointer(proc3), "@:@" }); //$NON-NLS-1$ //$NON-NLS-2$
+		invokeMethod(OS.class, "objc_registerClassPair", //$NON-NLS-1$
+				new Object[] { wrapPointer(cls) });
+	}
+
+	@SuppressWarnings("restriction")
+	private long registerName(String name) throws IllegalArgumentException,
+			SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException {
+		Class<OS> clazz = OS.class;
+		Object object = invokeMethod(clazz,
+				"sel_registerName", new Object[] { name }); //$NON-NLS-1$
+		return convertToLong(object);
+	}
+
 	/** Initialize the handler */
 	@PostConstruct
 	public void init() {
+		registerSelectors();
+
 		final Display display = Display.getDefault();
 		display.syncExec(new Runnable() {
 			public void run() {
+				allocateDelegate(display);
+
 				hookApplicationMenu();
 				hookWorkbenchListeners();
 				processModelMenus();
@@ -166,6 +239,64 @@ public class CocoaUIHandler {
 				}
 			}
 		});
+	}
+
+	/**
+	 * @param display
+	 */
+	protected void allocateDelegate(Display display) {
+		try {
+			delegate = new SWTCocoaEnhancerDelegate();
+			delegate.alloc().init();
+			// call OS.NewGlobalRef
+			Method method = OS.class.getMethod(
+					"NewGlobalRef", new Class[] { Object.class }); //$NON-NLS-1$
+			Object object = method.invoke(OS.class,
+					new Object[] { CocoaUIHandler.this });
+			delegateJniRef = convertToLong(object);
+		} catch (Exception e) {
+			// theoretically, one of
+			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+			// not expected to happen at all.
+			log(e);
+		}
+		if (delegateJniRef == 0)
+			SWT.error(SWT.ERROR_NO_HANDLES);
+
+		try {
+			Field idField = SWTCocoaEnhancerDelegate.class.getField("id"); //$NON-NLS-1$
+			Object idValue = idField.get(delegate);
+			invokeMethod(OS.class, "object_setInstanceVariable", //$NON-NLS-1$
+					new Object[] { idValue, SWT_OBJECT,
+							wrapPointer(delegateJniRef) });
+			display.disposeExec(new Runnable() {
+				public void run() {
+					// TODO Auto-generated method stub
+					if (delegateJniRef != 0) {
+						try {
+							invokeMethod(
+									OS.class,
+									"DeleteGlobalRef", new Object[] { wrapPointer(delegateJniRef) }); //$NON-NLS-1$
+						} catch (Exception e) {
+							// theoretically, one of
+							// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+							// not expected to happen at all.
+							log(e);
+						}
+					}
+					delegateJniRef = 0;
+
+					if (delegate != null)
+						delegate.release();
+					delegate = null;
+				}
+			});
+		} catch (Exception e) {
+			// theoretically, one of
+			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+			// not expected to happen at all.
+			log(e);
+		}
 	}
 
 	/** Unconfigure the handler */
@@ -346,6 +477,7 @@ public class CocoaUIHandler {
 			return;
 		}
 		redirectHandledMenuItems(window.getMainMenu());
+
 		// only add the button when either the cool bar or perspective bar
 		// is initially visible. This is so that RCP applications can choose to
 		// use this fragment without fear that their explicitly invisible bars
@@ -360,17 +492,20 @@ public class CocoaUIHandler {
 			}
 		}
 
+		// It would also be worth checking if there's a command defined
+		// for COMMAND_ID_TOGGLE_COOLBAR
 		if (trimInitiallyVisible) {
+			Shell shell = ((Control) window.getWidget()).getShell();
+			NSWindow nsWindow = shell.view.window();
 			// Add an empty, hidden tool bar to the window. Without this the
-			// tool bar button at the top right of the window will not appear
-			// even when setShowsToolbarButton(true) is called.
+			// tool bar button at the top right of the window will not
+			// appear even when setShowsToolbarButton(true) is called.
+			// Unfortunately cannot just call shell.getToolBar() as it
+			// allocates a properly-sized toolbar
 			NSToolbar dummyBar = new NSToolbar();
 			dummyBar.alloc();
 			dummyBar.initWithIdentifier(NSString.stringWith("SWTToolbar")); //$NON-NLS-1$
 			dummyBar.setVisible(false);
-
-			Shell shell = ((Control) window.getWidget()).getShell();
-			NSWindow nsWindow = shell.view.window();
 			nsWindow.setToolbar(dummyBar);
 			dummyBar.release();
 			nsWindow.setShowsToolbarButton(true);
@@ -459,7 +594,7 @@ public class CocoaUIHandler {
 			if (item != null) {
 				item.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						if(!runCommand(commandId)) {
+						if (!runCommand(commandId)) {
 							runAction(commandId);
 						}
 					}
@@ -769,6 +904,18 @@ public class CocoaUIHandler {
 					name, resultPtr });
 			return new long[] { resultPtr[0] };
 		}
+	}
+
+	private long convertToLong(Object object) {
+		if (object instanceof Integer) {
+			Integer i = (Integer) object;
+			return i.longValue();
+		}
+		if (object instanceof Long) {
+			Long l = (Long) object;
+			return l.longValue();
+		}
+		return 0;
 	}
 
 	private static Object invokeMethod(Class<?> clazz, String methodName,
