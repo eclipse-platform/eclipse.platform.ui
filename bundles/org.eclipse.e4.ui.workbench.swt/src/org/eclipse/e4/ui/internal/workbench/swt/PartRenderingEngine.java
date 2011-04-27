@@ -338,8 +338,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 	protected void fixZOrder(MUIElement element) {
 		MElementContainer<MUIElement> parent = element.getParent();
 		if (parent == null) {
-			parent = (MElementContainer<MUIElement>) ((EObject) element)
-					.eContainer();
+			Object container = ((EObject) element).eContainer();
+			if (container instanceof MElementContainer<?>) {
+				parent = (MElementContainer<MUIElement>) container;
+			}
 		}
 		if (parent == null || !(element.getWidget() instanceof Control))
 			return;
