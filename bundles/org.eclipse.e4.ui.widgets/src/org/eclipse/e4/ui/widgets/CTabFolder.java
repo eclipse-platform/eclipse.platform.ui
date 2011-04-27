@@ -3891,9 +3891,7 @@ public CTabItem getVisibleItem (int flags) {
 
 int getWrappedHeight (Point size) {
 	boolean[][] positions = new boolean[1][];
-	GC gc = new GC(this);
 	Rectangle[] rects = computeControlBounds(size, positions);
-	gc.dispose();
 	int minY = Integer.MAX_VALUE, maxY = 0, wrapHeight = 0;
 	for (int i = 0; i < rects.length; i++) {
 		if (positions[0][i]) {
