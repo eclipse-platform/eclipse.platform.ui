@@ -1654,10 +1654,16 @@ void onMouse(Event event) {
 							boolean reschedule = false;
 							if (c != null) {
 								for (int i = 0; i < controls.length; i++) {
-									if (c.equals(controls[i])) {
-										reschedule = true;
-										break;
-									} 
+									Control temp = c;
+									do {
+										if (temp.equals(controls[i])) {
+											reschedule = true;
+										} else {
+											temp = temp.getParent();
+											if (temp == null || temp.equals(CTabFolder.this)) break;
+										}
+									} while (!reschedule);
+									if (reschedule) break;
 								}
 							}
 							if (reschedule && hoverTimerRunning) {
