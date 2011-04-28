@@ -353,14 +353,16 @@ public class CTabRendering extends CTabFolderRenderer {
 			points[index++] = selectionX1 = circX - radius;
 			points[index++] = selectionY1 = bounds.y + bounds.height;
 		} else {
-			points[index++] = shadowEnabled ? SIDE_DROP_WIDTH : 0
-					+ INNER_KEYLINE + OUTER_KEYLINE;
-			points[index++] = bounds.y + bounds.height;
-
+			if (active) {
+				points[index++] = shadowEnabled ? SIDE_DROP_WIDTH : 0
+						+ INNER_KEYLINE + OUTER_KEYLINE;
+				points[index++] = bounds.y + bounds.height;
+			}
 			points[index++] = selectionX1 = bounds.x;
 			points[index++] = selectionY1 = bounds.y + bounds.height;
 		}
 		int[] ltt = drawCircle(circX, circY, radius, LEFT_TOP);
+		int startX = ltt[6];
 		for (int i = 0; i < ltt.length / 2; i += 2) {
 			int tmp = ltt[i];
 			ltt[i] = ltt[ltt.length - i - 2];
@@ -374,6 +376,7 @@ public class CTabRendering extends CTabFolderRenderer {
 
 		int[] rt = drawCircle(circX + width - (radius * 2), circY, radius,
 				RIGHT_TOP);
+		int endX = rt[rt.length - 4];
 		for (int i = 0; i < rt.length / 2; i += 2) {
 			int tmp = rt[i];
 			rt[i] = rt[rt.length - i - 2];
@@ -388,11 +391,12 @@ public class CTabRendering extends CTabFolderRenderer {
 		points[index++] = selectionX2 = bounds.width + circX - radius;
 		points[index++] = selectionY2 = bounds.y + bounds.height;
 
-		points[index++] = parent.getSize().x
-				- (shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE
-						+ OUTER_KEYLINE);
-		points[index++] = bounds.y + bounds.height;
-
+		if (active) {
+			points[index++] = parent.getSize().x
+					- (shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE
+							+ OUTER_KEYLINE);
+			points[index++] = bounds.y + bounds.height;
+		}
 		gc.setClipping(0, bounds.y, parent.getSize().x
 				- (shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE
 						+ OUTER_KEYLINE), bounds.y + bounds.height);// bounds.height
@@ -409,15 +413,20 @@ public class CTabRendering extends CTabFolderRenderer {
 		if (tabOutlineColor == null)
 			tabOutlineColor = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
 		gc.setForeground(tabOutlineColor);
-		if (active)
-			gc.drawPolyline(tmpPoints);
+//		if (active)
+		gc.drawPolyline(tmpPoints);
 		Rectangle rect = null;
 		gc.setClipping(rect);
+	
 
-		if (outerKeyline == null)
-			outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
-		gc.setForeground(outerKeyline);
-		gc.drawPolyline(shape);
+		if (active) {
+			if (outerKeyline == null)
+				outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_RED);
+			gc.setForeground(outerKeyline);
+			gc.drawPolyline(shape);
+		} else {
+			gc.drawLine(startX, 0, endX, 0);
+		}
 	}
 
 	void drawUnselectedTab(int itemIndex, GC gc, Rectangle bounds, int state) {
