@@ -21,16 +21,7 @@ import org.eclipe.debug.tests.launching.LaunchManagerTests;
 import org.eclipe.debug.tests.launching.RefreshTabTests;
 import org.eclipe.debug.tests.view.memory.MemoryRenderingTests;
 import org.eclipe.debug.tests.viewer.model.ChildrenUpdateTests;
-import org.eclipe.debug.tests.viewer.model.ColumnPresentationTests;
 import org.eclipe.debug.tests.viewer.model.FilterTransformTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerCheckTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerContentTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerDeltaTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerLazyTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerSelectionTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerStateTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerTopIndexTests;
-import org.eclipe.debug.tests.viewer.model.JFaceViewerUpdateTests;
 import org.eclipe.debug.tests.viewer.model.PresentationContextTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerContentTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerDeltaTests;
@@ -60,16 +51,9 @@ public class AutomatedSuite extends TestSuite {
 	 * Constructs the automated test suite. Adds all tests. 
 	 */
 	public AutomatedSuite() {
-		// JFace viewer tests
-		addTest(new TestSuite(JFaceViewerCheckTests.class));
-		addTest(new TestSuite(JFaceViewerContentTests.class));
-		addTest(new TestSuite(JFaceViewerDeltaTests.class));
-		addTest(new TestSuite(JFaceViewerSelectionTests.class));
-		addTest(new TestSuite(JFaceViewerStateTests.class));
-		addTest(new TestSuite(JFaceViewerUpdateTests.class));
-        addTest(new TestSuite(JFaceViewerLazyTests.class));
-        addTest(new TestSuite(JFaceViewerTopIndexTests.class));
-        addTest(new TestSuite(ColumnPresentationTests.class));
+	    // Note: jface viewer tests were moved out of nightly tests 
+	    // due to frequent problems on nightly build machines. 
+	    // (Bug 343308). 
 		
 		// Virtual viewer tests
 		addTest(new TestSuite(VirtualViewerDeltaTests.class));
