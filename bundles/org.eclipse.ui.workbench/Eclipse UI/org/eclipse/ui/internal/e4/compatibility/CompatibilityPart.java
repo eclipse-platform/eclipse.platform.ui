@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.SaveableHelper;
+import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -267,6 +268,11 @@ public abstract class CompatibilityPart {
 		});
 	}
 
+	public void deactivateActionBars(boolean forceHide) {
+		PartSite site = getReference().getSite();
+		site.deactivateActionBars(forceHide);
+	}
+
 	@PreDestroy
 	void destroy() {
 		if (!alreadyDisposed) {
@@ -284,6 +290,7 @@ public abstract class CompatibilityPart {
 	void disposeSite() {
 		PartSite site = getReference().getSite();
 		if (site != null) {
+			deactivateActionBars(site instanceof ViewSite);
 			site.dispose();
 		}
 	}
