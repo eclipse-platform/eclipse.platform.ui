@@ -206,7 +206,7 @@ public class ModeledPageLayout implements IPageLayout {
 	public IFolderLayout createFolder(String folderId, int relationship,
 			float ratio, String refId) {
 		MPartStack stack = insertStack(folderId, relationship, ratio, refId,
-				true);
+				false);
 		return new ModeledFolderLayout(this, application, stack);
 	}
 
