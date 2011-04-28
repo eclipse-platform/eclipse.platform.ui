@@ -16,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Collection;
 import java.util.Map;
 import java.util.ResourceBundle;
 import org.eclipse.core.commands.CommandManager;
@@ -27,7 +26,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.ui.bindings.internal.BindingCopies;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -144,7 +142,7 @@ public class KeyController {
 				final Scheme copy = bindingManager.getScheme(scheme.getId());
 				copy.define(scheme.getName(), scheme.getDescription(), scheme
 						.getParentId());
-				if (definedSchemes[i] == bindingService.getActiveScheme()) {
+				if (definedSchemes[i].getId().equals(bindingService.getActiveScheme().getId())) {
 					modelActiveScheme = copy;
 				}
 			}
@@ -154,6 +152,7 @@ public class KeyController {
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
 							"Keys page found an undefined scheme", e)); //$NON-NLS-1$
 		}
+		
 		bindingManager.setLocale(bindingService.getLocale());
 		bindingManager.setPlatform(bindingService.getPlatform());
 		bindingManager.setBindings(bindingService.getBindings());
@@ -425,15 +424,8 @@ public class KeyController {
 	 */
 	public void saveBindings(IBindingService bindingService) {
 		try {
-
-			Collection<Binding> activeBindingsCollection = fBindingManager
-					.getActiveBindingsDisregardingContextFlat();
-			Binding[] activeBindingsArray = activeBindingsCollection
-					.toArray(new Binding[activeBindingsCollection.size()]);
-
-			bindingService.savePreferences(fBindingManager.getActiveScheme(), activeBindingsArray);
-			// bindingService.savePreferences(fBindingManager.getActiveScheme(),fBindingManager.getBindings());
-
+			bindingService.savePreferences(fBindingManager.getActiveScheme(),
+					fBindingManager.getBindings());
 		} catch (IOException e) {
 			logPreferenceStoreException(e);
 		}
@@ -485,7 +477,6 @@ public class KeyController {
 			fBindingManager.setActiveScheme(defaultScheme);
 		} catch (final NotDefinedException e) {
 			// At least we tried....
-			e.printStackTrace();
 		}
 
 		// Restore any User defined bindings
@@ -495,18 +486,6 @@ public class KeyController {
 				fBindingManager.removeBinding(bindings[i]);
 			}
 		}
-		// Re-add the deactivated SYSTEM bindings
-		bindings = BindingCopies.getInactiveSysBindings();
-		for (int i = 0; i < bindings.length; i++) {
-			fBindingManager.addBinding(bindings[i]);
-		}
-		// reset the binding copies
-		BindingCopies.init();
-
-		// set the binding manager's bindings array our copy of the system
-		// bindings
-		// fBindingManager.setBindings(BindingCopies.getSystemBindings().toArray(
-		// new Binding[BindingCopies.getSystemBindings().size()]));
 
 		bindingModel.refresh(contextModel);
 		saveBindings(bindingService);

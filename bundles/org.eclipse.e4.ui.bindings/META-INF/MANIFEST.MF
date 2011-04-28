@@ -17,6 +17,8 @@ Import-Package: javax.annotation;version="1.0.0",
  org.eclipse.jface.bindings,
  org.eclipse.jface.bindings.keys,
  org.eclipse.jface.bindings.keys.formatting,
+ org.eclipse.jface.dialogs,
+ org.eclipse.jface.window,
  org.osgi.framework;version="1.5.0"
 Require-Bundle: org.eclipse.swt;bundle-version="3.6.0",
  org.eclipse.core.commands;bundle-version="3.5.0",

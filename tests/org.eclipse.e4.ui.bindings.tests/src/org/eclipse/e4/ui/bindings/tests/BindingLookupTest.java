@@ -2,6 +2,8 @@ package org.eclipse.e4.ui.bindings.tests;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -473,8 +475,10 @@ public class BindingLookupTest extends TestCase {
 	private Binding createDefaultBinding(EBindingService bs,
 			TriggerSequence sequence, ParameterizedCommand command,
 			String contextId) {
-		return bs.createBinding(sequence, command, "org.eclipse.ui.defaultAcceleratorConfiguration",
-				contextId, null, null, Binding.SYSTEM);
+		Map<String, String> attrs = new HashMap<String,String>();
+		attrs.put("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");
+		
+		return bs.createBinding(sequence, command, contextId, attrs);
 	}
 
 }

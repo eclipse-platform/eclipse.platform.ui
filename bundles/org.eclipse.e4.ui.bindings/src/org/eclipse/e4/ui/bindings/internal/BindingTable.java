@@ -84,12 +84,12 @@ public class BindingTable {
 			return strokeCount;
 		}
 	};
-
 	private Context tableId;
 	private ArrayList<Binding> bindings = new ArrayList<Binding>();
 	private Map<TriggerSequence, Binding> bindingsByTrigger = new HashMap<TriggerSequence, Binding>();
 	private Map<ParameterizedCommand, ArrayList<Binding>> bindingsByCommand = new HashMap<ParameterizedCommand, ArrayList<Binding>>();
 	private Map<TriggerSequence, ArrayList<Binding>> bindingsByPrefix = new HashMap<TriggerSequence, ArrayList<Binding>>();
+	private Map<TriggerSequence, ArrayList<Binding>> conflicts = new HashMap<TriggerSequence, ArrayList<Binding>>();
 
 	/**
 	 * @param context
@@ -106,30 +106,76 @@ public class BindingTable {
 		return tableId.getId();
 	}
 
+	public Collection<Binding> getConflicts() {
+		Collection<Binding> conflictsList = new ArrayList<Binding>();
+		for (TriggerSequence key : conflicts.keySet()) {
+			ArrayList<Binding> conflictsForTrigger = conflicts.get(key);
+			if (conflictsForTrigger != null) {
+				conflictsList.addAll(conflictsForTrigger);
+			}
+		}
+		return conflictsList;
+	}
+
+	// checks both the active bindings and conflicts list
+	public Collection<Binding> getConflictsFor(TriggerSequence triggerSequence) {
+		return conflicts.get(triggerSequence);
+	}
+
 	public void addBinding(Binding binding) {
 		if (!getId().equals(binding.getContextId())) {
 			throw new IllegalArgumentException("Binding context " + binding.getContextId() //$NON-NLS-1$
 					+ " does not match " + getId()); //$NON-NLS-1$
 		}
-		bindings.add(binding);
-		bindingsByTrigger.put(binding.getTriggerSequence(), binding);
 
-		ArrayList<Binding> sequences = bindingsByCommand.get(binding.getParameterizedCommand());
-		if (sequences == null) {
-			sequences = new ArrayList<Binding>();
-			bindingsByCommand.put(binding.getParameterizedCommand(), sequences);
+		Binding conflict;
+		ArrayList<Binding> conflictsList;
+		boolean isConflict = false;
+
+		// if this binding conflicts with one other active binding
+		if (bindingsByTrigger.containsKey(binding.getTriggerSequence())) {
+			// remove the active binding and put it in the conflicts map
+			conflict = bindingsByTrigger.get(binding.getTriggerSequence());
+			removeBinding(conflict);
+			conflictsList = new ArrayList<Binding>();
+			conflictsList.add(conflict);
+			conflicts.put(binding.getTriggerSequence(), conflictsList);
+			isConflict = true;
 		}
-		sequences.add(binding);
-		Collections.sort(sequences, BEST_SEQUENCE);
+		// if this trigger is already in the conflicts map
+		if (conflicts.containsKey(binding.getTriggerSequence())
+				&& conflicts.get(binding.getTriggerSequence()).size() > 0) {
 
-		TriggerSequence[] prefs = binding.getTriggerSequence().getPrefixes();
-		for (int i = 1; i < prefs.length; i++) {
-			ArrayList<Binding> bindings = bindingsByPrefix.get(prefs[i]);
-			if (bindings == null) {
-				bindings = new ArrayList<Binding>();
-				bindingsByPrefix.put(prefs[i], bindings);
+			// add this binding to the conflicts map
+			conflictsList = conflicts.get(binding.getTriggerSequence());
+			if (!conflictsList.contains(binding)) {
+				conflictsList.add(binding);
 			}
+			isConflict = true;
+		}
+
+		// if there are no conflicts, then add to the table
+		if (!isConflict) {
 			bindings.add(binding);
+			bindingsByTrigger.put(binding.getTriggerSequence(), binding);
+
+			ArrayList<Binding> sequences = bindingsByCommand.get(binding.getParameterizedCommand());
+			if (sequences == null) {
+				sequences = new ArrayList<Binding>();
+				bindingsByCommand.put(binding.getParameterizedCommand(), sequences);
+			}
+			sequences.add(binding);
+			Collections.sort(sequences, BEST_SEQUENCE);
+
+			TriggerSequence[] prefs = binding.getTriggerSequence().getPrefixes();
+			for (int i = 1; i < prefs.length; i++) {
+				ArrayList<Binding> bindings = bindingsByPrefix.get(prefs[i]);
+				if (bindings == null) {
+					bindings = new ArrayList<Binding>();
+					bindingsByPrefix.put(prefs[i], bindings);
+				}
+				bindings.add(binding);
+			}
 		}
 	}
 
@@ -138,18 +184,34 @@ public class BindingTable {
 			throw new IllegalArgumentException("Binding context " + binding.getContextId() //$NON-NLS-1$
 					+ " does not match " + getId()); //$NON-NLS-1$
 		}
+		ArrayList<Binding> conflictBindings = conflicts.get(binding.getTriggerSequence());
 
-		bindings.remove(binding);
-		bindingsByTrigger.remove(binding.getTriggerSequence());
-		ArrayList<Binding> sequences = bindingsByCommand.get(binding.getParameterizedCommand());
+		// if this binding is in the conflicts map, then remove it
+		if (!bindingsByTrigger.containsKey(binding.getTriggerSequence())
+				&& conflictBindings != null) {
 
-		if (sequences != null) {
-			sequences.remove(binding);
-		}
-		TriggerSequence[] prefs = binding.getTriggerSequence().getPrefixes();
-		for (int i = 1; i < prefs.length; i++) {
-			ArrayList<Binding> bindings = bindingsByPrefix.get(prefs[i]);
+			conflictBindings.remove(binding);
+
+			// if there is only one binding left in the list, then it's not really a conflict
+			// binding anymore and can be re-added to the binding table
+			if (conflictBindings.size() == 1) {
+				Binding bindingToReAdd = conflictBindings.remove(0);
+				addBinding(bindingToReAdd);
+			}
+
+		} else {
 			bindings.remove(binding);
+			bindingsByTrigger.remove(binding.getTriggerSequence());
+			ArrayList<Binding> sequences = bindingsByCommand.get(binding.getParameterizedCommand());
+
+			if (sequences != null) {
+				sequences.remove(binding);
+			}
+			TriggerSequence[] prefs = binding.getTriggerSequence().getPrefixes();
+			for (int i = 1; i < prefs.length; i++) {
+				ArrayList<Binding> bindings = bindingsByPrefix.get(prefs[i]);
+				bindings.remove(binding);
+			}
 		}
 	}
 

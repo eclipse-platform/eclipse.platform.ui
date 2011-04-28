@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.e4.ui.bindings.internal.BindingCopies;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -481,10 +480,6 @@ public final class BindingPersistence extends PreferencePersistence {
 			final BindingManager bindingManager, final CommandManager commandService) {
 		List warningsToLog = new ArrayList(1);
 
-		// flag to deactivate a SYSTEM binding
-		boolean flagDeactivate = false;
-		int bindingType = Binding.USER;
-
 		if (preferences != null) {
 			final IMemento[] preferenceMementos = preferences
 					.getChildren(TAG_KEY_BINDING);
@@ -580,40 +575,11 @@ public final class BindingPersistence extends PreferencePersistence {
 							warningsToLog, command);
 				}
 
-				// see if this is actually a USER binding or a default SYSTEM
-				// binding that the user deactivated
-				String isDeactivatedSystemBinding = readOptional(memento, ATT_DELETED);
-				if (isDeactivatedSystemBinding != null && isDeactivatedSystemBinding.equals("true")) { //$NON-NLS-1$
-					flagDeactivate = true;
-				}
-
-				if (flagDeactivate) {
-					bindingType = Binding.SYSTEM;
-				} else {
-					bindingType = Binding.USER;
-				}
-
 				final Binding binding = new KeyBinding(keySequence,
-						parameterizedCommand, schemeId, contextId, locale, platform, null, bindingType);
-
-				if (flagDeactivate) {
-					BindingCopies.addInactiveSysBinding(binding);
-				} else {
-					bindingManager.addBinding(binding);
-				}
-
-				// reset flag
-				flagDeactivate = false;
+						parameterizedCommand, schemeId, contextId, locale,
+						platform, null, Binding.USER);
+				bindingManager.addBinding(binding);
 			}
-		}
-
-		Binding[] sysBindingsToRemove = BindingCopies.getInactiveSysBindings();
-		for (int i = 0; i < sysBindingsToRemove.length; i++) {
-			// bindingManager.removeBinding(sysBindingsToRemove[i]);
-			bindingManager.removeBindings(sysBindingsToRemove[i].getTriggerSequence(),
-					sysBindingsToRemove[i].getSchemeId(), sysBindingsToRemove[i].getContextId(),
-					sysBindingsToRemove[i].getLocale(), sysBindingsToRemove[i].getPlatform(), null,
-					sysBindingsToRemove[i].getType());
 		}
 
 		// If there were any warnings, then log them now.
@@ -1097,15 +1063,14 @@ public final class BindingPersistence extends PreferencePersistence {
 	 * 
 	 * @param activeScheme
 	 *            The scheme which should be persisted; may be <code>null</code>.
-	 * @param activeUserBindings
+	 * @param bindings
 	 *            The bindings which should be persisted; may be
 	 *            <code>null</code>
 	 * @throws IOException
 	 *             If something happens while trying to write to the workbench
 	 *             preference store.
 	 */
-	static final void write(final Scheme activeScheme, final Binding[] activeUserBindings,
-			Binding[] inactiveSystemBindings)
+	static final void write(final Scheme activeScheme, final Binding[] bindings)
 			throws IOException {
 		// Print out debugging information, if requested.
 		if (DEBUG) {
@@ -1123,23 +1088,12 @@ public final class BindingPersistence extends PreferencePersistence {
 		if (activeScheme != null) {
 			writeActiveSchemeToPreferences(xmlMemento, activeScheme);
 		}
-		// write all active USER Bindings
-		if (activeUserBindings != null) {
-			final int bindingsLength = activeUserBindings.length;
+		if (bindings != null) {
+			final int bindingsLength = bindings.length;
 			for (int i = 0; i < bindingsLength; i++) {
-				final Binding binding = activeUserBindings[i];
-				if (binding.getParameterizedCommand() != null && binding.getType() == Binding.USER) {
-					writeBindingToPreferences(xmlMemento, binding, false);
-				}
-			}
-		}
-		// write all deactivated SYSTEM bindings so that we know which default
-		// bindings to disable on the next startup
-		if (inactiveSystemBindings != null) {
-			for (int i = 0; i < inactiveSystemBindings.length; i++) {
-				final Binding inactiveSystemBinding = inactiveSystemBindings[i];
-				if (inactiveSystemBinding.getType() == Binding.SYSTEM) {
-					writeBindingToPreferences(xmlMemento, inactiveSystemBinding, true);
+				final Binding binding = bindings[i];
+				if (binding.getType() == Binding.USER) {
+					writeBindingToPreferences(xmlMemento, binding);
 				}
 			}
 		}
@@ -1216,7 +1170,7 @@ public final class BindingPersistence extends PreferencePersistence {
 	 *            The binding to write; must not be <code>null</code>.
 	 */
 	private static final void writeBindingToPreferences(final IMemento parent,
-			final Binding binding, boolean inactiveSystemBinding) {
+			final Binding binding) {
 		final IMemento element = parent.createChild(TAG_KEY_BINDING);
 		element.putString(ATT_CONTEXT_ID, binding.getContextId());
 		final ParameterizedCommand parameterizedCommand = binding
@@ -1229,11 +1183,6 @@ public final class BindingPersistence extends PreferencePersistence {
 				.toString());
 		element.putString(ATT_LOCALE, binding.getLocale());
 		element.putString(ATT_PLATFORM, binding.getPlatform());
-		if (inactiveSystemBinding) {
-			element.putString(ATT_DELETED, "true"); //$NON-NLS-1$
-		} else {
-			element.putString(ATT_DELETED, "false"); //$NON-NLS-1$
-		}
 		if (parameterizedCommand != null) {
 			final Map parameterizations = parameterizedCommand
 					.getParameterMap();
@@ -1277,7 +1226,6 @@ public final class BindingPersistence extends PreferencePersistence {
 			final CommandManager commandManager) {
 		this.bindingManager = bindingManager;
 		this.commandManager = commandManager;
-		BindingCopies.init();
 	}
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {

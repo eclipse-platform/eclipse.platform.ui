@@ -11,10 +11,6 @@
 
 package org.eclipse.e4.ui.workbench.swt.util;
 
-import org.eclipse.e4.ui.model.application.commands.MBindingContext;
-
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +26,6 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.e4.ui.bindings.internal.BindingCopies;
 import org.eclipse.e4.ui.bindings.internal.BindingTable;
 import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.internal.workbench.Activator;
@@ -84,7 +79,6 @@ public class BindingProcessingAddon {
 	@PostConstruct
 	public void init() {
 		defineBindingTables();
-		cleanTables();
 		activateContexts(application);
 		registerModelListeners();
 	}
@@ -111,71 +105,6 @@ public class BindingProcessingAddon {
 				activateContexts(e);
 			}
 		}
-	}
-
-	// goes through the entire active bindings list and replaces SYSTEM
-	// bindings with any USER bindings that were persisted
-	private void cleanTables() {
-		ArrayList<Binding> dirtyBindings = new ArrayList<Binding>();
-		Binding dirtyBinding;
-
-		Binding[] userBindings = BindingCopies.getUserDefinedBindings();
-		Binding curr;
-
-		// go through all USER bindings and check if there is an "equal" SYSTEM
-		// binding
-		for (int i = 0; i < userBindings.length; i++) {
-			curr = userBindings[i];
-
-			// they should all be USER bindings, but double check anyway
-			if (curr.getType() == Binding.USER) {
-				dirtyBinding = checkDirty(curr);
-
-				// if the SYSTEM binding is marked as dirty, then throw it in a
-				// list and we'll remove it later
-				if (dirtyBinding != null) {
-					dirtyBindings.add(dirtyBinding);
-				}
-			}
-		}
-
-		//System.out.println("@@@ dirty bindings -> " + dirtyBindings.size());
-
-		// go through the list of bindings that are marked as dirty (if any) and
-		// remove them from the BindingTableManager
-		for (int i = 0; i < dirtyBindings.size(); i++) {
-			dirtyBinding = dirtyBindings.get(i);
-			bindingTables.getTable(dirtyBinding.getContextId()).removeBinding(
-					dirtyBinding);
-		}
-	}
-
-	private Binding checkDirty(Binding b) {
-		Collection<Binding> activeBindings = bindingTables.getActiveBindings();
-		Iterator<Binding> iter = activeBindings.iterator();
-		Binding curr;
-		Binding dirtyBinding = null;
-
-		while (iter.hasNext() && dirtyBinding == null) {
-			curr = iter.next();
-
-			// make sure we're only comparing SYSTEM bindings so that we don't
-			// remove the wrong ones, and make sure the bindings we're comparing
-			// actually have a command
-			if (curr.getType() == Binding.SYSTEM
-					&& curr.getParameterizedCommand() != null
-					&& b.getParameterizedCommand() != null) {
-				if (curr.getContextId().equals(b.getContextId())
-						&& curr.getParameterizedCommand().equals(
-								b.getParameterizedCommand())
-						&& curr.getSchemeId().equals(b.getSchemeId())) {
-
-					// mark this binding as dirty, and it will be removed
-					dirtyBinding = curr;
-				}
-			}
-		}
-		return dirtyBinding;
 	}
 
 	private void defineBindingTables() {
@@ -213,13 +142,28 @@ public class BindingProcessingAddon {
 				binding.getCommand(), binding.getParameters(),
 				binding.getKeySequence(), binding);
 		if (keyBinding != null) {
-			// if (keyBinding.getType() == Binding.USER)
 			bindingTable.addBinding(keyBinding);
 		}
 	}
 
 	private Binding createBinding(Context bindingContext, MCommand cmdModel,
 			List<MParameter> modelParms, String keySequence, MKeyBinding binding) {
+		Binding keyBinding = null;
+
+		if (binding.getTransientData()
+				.get(EBindingService.MODEL_TO_BINDING_KEY) != null) {
+			try {
+				keyBinding = (Binding) binding.getTransientData().get(
+						EBindingService.MODEL_TO_BINDING_KEY);
+				return keyBinding;
+			} catch (ClassCastException cce) {
+				System.err
+						.println("Invalid type stored in transient data with the key "
+								+ EBindingService.MODEL_TO_BINDING_KEY);
+				return null;
+			}
+		}
+
 		if (cmdModel == null) {
 			Activator.log(IStatus.ERROR, "binding with no command: " + binding); //$NON-NLS-1$
 			return null;
@@ -235,27 +179,36 @@ public class BindingProcessingAddon {
 				cmdModel.getElementId(), parameters);
 		TriggerSequence sequence = null;
 		sequence = bindingService.createSequence(keySequence);
-		Binding keyBinding = null;
+
 		if (cmd == null || sequence == null) {
 			System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
 		} else {
 			try {
-				int bindingType = Binding.SYSTEM;
+				String schemeId = null;
+				String locale = null;
+				String platform = null;
 
-				// go thru the copied list of USER defined bindings to see if
-				// this particular binding being created matches any of them
-				if (BindingCopies.isUserBinding(sequence, cmd,
-						"org.eclipse.ui.defaultAcceleratorConfiguration",
-						bindingContext.getId())) {
-					bindingType = Binding.USER;
+				Map<String, String> attrs = new HashMap<String, String>();
+				List<String> tags = binding.getTags();
+				for (String tag : tags) {
+					// remember to skip the ':' in each tag!
+					if (tag.startsWith(EBindingService.SCHEME_ID_ATTR_TAG)) {
+						schemeId = tag.substring(9);
+						attrs.put(EBindingService.SCHEME_ID_ATTR_TAG, schemeId);
+					} else if (tag.startsWith(EBindingService.LOCALE_ATTR_TAG)) {
+						locale = tag.substring(7);
+						attrs.put(EBindingService.LOCALE_ATTR_TAG, locale);
+					} else if (tag
+							.startsWith(EBindingService.PLATFORM_ATTR_TAG)) {
+						platform = tag.substring(9);
+						attrs.put(EBindingService.PLATFORM_ATTR_TAG, platform);
+					} else if (tag.startsWith(EBindingService.TYPE_ATTR_TAG)) {
+						// system bindings won't pass this attr
+						attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
+					}
 				}
-
-				// TODO: NEED TO CHANGE THIS!!!
-				keyBinding = bindingService
-						.createBinding(
-								sequence,
-								cmd,
-								"org.eclipse.ui.defaultAcceleratorConfiguration", bindingContext.getId(), null, null, bindingType); //$NON-NLS-1$
+				keyBinding = bindingService.createBinding(sequence, cmd,
+						bindingContext.getId(), attrs);
 			} catch (IllegalArgumentException e) {
 				Activator.trace(Policy.DEBUG_MENUS,
 						"failed to create: " + binding, e); //$NON-NLS-1$
@@ -266,11 +219,19 @@ public class BindingProcessingAddon {
 		return keyBinding;
 	}
 
-	private void updateBinding(MKeyBinding binding, boolean add) {
+	private void updateBinding(MKeyBinding binding, boolean add, Object eObj) {
 		Object parentObj = ((EObject) binding).eContainer();
 		if (!(parentObj instanceof MBindingTable)) {
+			// the link will already be broken for removes, so we'll try this
+			if (eObj instanceof MBindingTable) {
+				parentObj = eObj;
+			}
+		}
+
+		if (parentObj == null) {
 			return;
 		}
+
 		MBindingTable bt = (MBindingTable) parentObj;
 		final Context bindingContext = contextManager.getContext(bt
 				.getBindingContext().getElementId());
@@ -331,21 +292,31 @@ public class BindingProcessingAddon {
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					Object oldObj = event
 							.getProperty(UIEvents.EventTags.OLD_VALUE);
+
+					// adding a binding
 					if (UIEvents.EventTypes.ADD.equals(event
 							.getProperty(UIEvents.EventTags.TYPE))
 							&& newObj instanceof MKeyBinding) {
+
 						MKeyBinding binding = (MKeyBinding) newObj;
-						updateBinding(binding, true);
-					} else if (UIEvents.EventTypes.REMOVE.equals(event
+						updateBinding(binding, true, elementObj);
+					}
+					// removing a binding
+					else if (UIEvents.EventTypes.REMOVE.equals(event
 							.getProperty(UIEvents.EventTags.TYPE))
 							&& oldObj instanceof MKeyBinding) {
+
 						MKeyBinding binding = (MKeyBinding) oldObj;
-						updateBinding(binding, false);
+						updateBinding(binding, false, elementObj);
 					}
 				} else if (elementObj instanceof MKeyBinding) {
 					MKeyBinding binding = (MKeyBinding) elementObj;
+
 					String attrName = (String) event
 							.getProperty(UIEvents.EventTags.ATTNAME);
+
+					// System.out.println("MKeyBinding." + attrName + ": "
+					// + event.getProperty(UIEvents.EventTags.TYPE));
 					if (UIEvents.EventTypes.SET.equals(event
 							.getProperty(UIEvents.EventTags.TYPE))) {
 						Object oldObj = event
@@ -354,15 +325,15 @@ public class BindingProcessingAddon {
 							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
 									.copy((EObject) binding);
 							oldBinding.setCommand((MCommand) oldObj);
-							updateBinding(oldBinding, false);
-							updateBinding(binding, true);
+							updateBinding(oldBinding, false, null);
+							updateBinding(binding, true, null);
 						} else if (UIEvents.KeySequence.KEYSEQUENCE
 								.equals(attrName)) {
 							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
 									.copy((EObject) binding);
 							oldBinding.setKeySequence((String) oldObj);
-							updateBinding(oldBinding, false);
-							updateBinding(binding, true);
+							updateBinding(oldBinding, false, null);
+							updateBinding(binding, true, null);
 						}
 					} else if (UIEvents.KeyBinding.PARAMETERS.equals(attrName)) {
 						if (UIEvents.EventTypes.ADD.equals(event
@@ -372,8 +343,8 @@ public class BindingProcessingAddon {
 							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
 									.copy((EObject) binding);
 							oldBinding.getParameters().remove(newObj);
-							updateBinding(oldBinding, false);
-							updateBinding(binding, true);
+							updateBinding(oldBinding, false, null);
+							updateBinding(binding, true, null);
 						} else if (UIEvents.EventTypes.REMOVE.equals(event
 								.getProperty(UIEvents.EventTags.TYPE))) {
 							Object oldObj = event
@@ -381,8 +352,21 @@ public class BindingProcessingAddon {
 							MKeyBinding oldBinding = (MKeyBinding) EcoreUtil
 									.copy((EObject) binding);
 							oldBinding.getParameters().add((MParameter) oldObj);
-							updateBinding(oldBinding, false);
-							updateBinding(binding, true);
+							updateBinding(oldBinding, false, null);
+							updateBinding(binding, true, null);
+						}
+					}
+					// if we've updated the tags for an MKeyBinding
+					else if (UIEvents.ApplicationElement.TAGS.equals(attrName)) {
+						List<String> tags = binding.getTags();
+						// if we added a deleted tag to the MKeyBinding, then
+						// remove it from the runtime binding tables
+						if (tags.contains(EBindingService.DELETED_BINDING_TAG)) {
+							updateBinding(binding, false, elementObj);
+						}
+						// else we're adding the binding to the runtime tables
+						else {
+							updateBinding(binding, true, elementObj);
 						}
 					}
 				}
@@ -399,6 +383,8 @@ public class BindingProcessingAddon {
 				UIEvents.KeyBinding.PARAMETERS), additionHandler);
 		broker.subscribe(UIEvents.buildTopic(UIEvents.KeySequence.TOPIC,
 				UIEvents.KeySequence.KEYSEQUENCE), additionHandler);
+		broker.subscribe(UIEvents.buildTopic(UIEvents.ApplicationElement.TOPIC,
+				UIEvents.ApplicationElement.TAGS), additionHandler);
 
 		contextHandler = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -414,6 +400,10 @@ public class BindingProcessingAddon {
 		};
 		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC,
 				UIEvents.Context.CONTEXT), contextHandler);
+	}
+
+	private boolean hasDeletedTag(List<String> tags) {
+		return tags.contains(EBindingService.DELETED_BINDING_TAG);
 	}
 
 	private void unregsiterModelListeners() {

@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,7 +33,9 @@ import org.eclipse.jface.bindings.keys.ParseException;
  *
  */
 public class BindingServiceImpl implements EBindingService {
-	static final String ACTIVE_CONTEXTS = "activeContexts"; //$NON-NLS-1$
+
+	final static String ACTIVE_CONTEXTS = "activeContexts"; //$NON-NLS-1$
+	final static String USER_TYPE = "user"; //$NON-NLS-1$
 
 	@Inject
 	private IEclipseContext context;
@@ -50,13 +53,32 @@ public class BindingServiceImpl implements EBindingService {
 	 * 
 	 * @see org.eclipse.e4.ui.bindings.EBindingService#createBinding(org.eclipse.jface.bindings.
 	 * TriggerSequence, org.eclipse.core.commands.ParameterizedCommand, java.lang.String,
-	 * java.lang.String)
+	 * java.lang.String, java.util.Map)
 	 */
 	public Binding createBinding(TriggerSequence sequence, ParameterizedCommand command,
-			String schemeId, String contextId, String locale, String platform, int bindingType) {
+			String contextId, Map<String, String> attributes) {
 
-		return new KeyBinding((KeySequence) sequence, command, schemeId, contextId, locale,
-				platform, null, bindingType);
+		String schemeId = DEFAULT_SCHEME_ID;
+		String locale = null;
+		String platform = null;
+		int bindingType = Binding.SYSTEM;
+
+		if (sequence != null && !sequence.isEmpty() && contextId != null) {
+			if (attributes != null) {
+				String tmp = attributes.get(SCHEME_ID_ATTR_TAG);
+				if (tmp != null && tmp.length() > 0) {
+					schemeId = tmp;
+				}
+				locale = attributes.get(LOCALE_ATTR_TAG);
+				platform = attributes.get(PLATFORM_ATTR_TAG);
+				if (USER_TYPE.equals(attributes.get(TYPE_ATTR_TAG))) {
+					bindingType = Binding.USER;
+				}
+			}
+			return new KeyBinding((KeySequence) sequence, command, schemeId, contextId, locale,
+					platform, null, bindingType);
+		}
+		return null;
 	}
 
 	/*
@@ -70,7 +92,6 @@ public class BindingServiceImpl implements EBindingService {
 		String contextId = binding.getContextId();
 		BindingTable table = manager.getTable(contextId);
 		if (table == null) {
-			System.err.println("No binding table for " + contextId); //$NON-NLS-1$
 			return;
 		}
 		table.addBinding(binding);
@@ -114,7 +135,11 @@ public class BindingServiceImpl implements EBindingService {
 	 * TriggerSequence)
 	 */
 	public Collection<Binding> getConflictsFor(TriggerSequence sequence) {
-		return null;
+		return manager.getConflictsFor(contextSet, sequence);
+	}
+
+	public Collection<Binding> getAllConflicts() {
+		return manager.getAllConflicts();
 	}
 
 	/*
@@ -163,6 +188,10 @@ public class BindingServiceImpl implements EBindingService {
 		return sequences;
 	}
 
+	public Collection<Binding> getBindingsFor(ParameterizedCommand command) {
+		return manager.getBindingsFor(contextSet, command);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -201,6 +230,10 @@ public class BindingServiceImpl implements EBindingService {
 			contexts.add(contextManager.getContext(id));
 		}
 		contextSet = manager.createContextSet(contexts);
+	}
+
+	public Collection<Binding> getActiveBindings() {
+		return manager.getActiveBindings();
 	}
 
 }

@@ -11,15 +11,15 @@
 
 package org.eclipse.ui.internal;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.ui.bindings.internal.BindingCopies;
+import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.model.application.commands.MBindingTable;
@@ -44,8 +44,6 @@ public class BindingToModelProcessor {
 	private Map<String, MCommand> commands = new HashMap<String, MCommand>();
 	private Map<String, MBindingTable> tables = new HashMap<String, MBindingTable>();
 
-
-
 	@Execute
 	void process(final MApplication application) {
 		gatherContexts(application.getRootContext());
@@ -61,11 +59,19 @@ public class BindingToModelProcessor {
 		BindingManager bindingManager = new BindingManager(contextManager, commandManager);
 		BindingPersistence persistence = new BindingPersistence(bindingManager, commandManager);
 		persistence.read();
-		Iterator i = bindingManager.getActiveBindingsDisregardingContextFlat().iterator();
-		while (i.hasNext()) {
-			Binding binding = (Binding) i.next();
+
+		// we'll make this available, although I doubt we have a use for it
+		application.getTags().add(
+				EBindingService.ACTIVE_SCHEME_TAG + ':' + bindingManager.getActiveScheme().getId());
+
+		Collection activeBindingsForScheme = bindingManager
+				.getActiveBindingsDisregardingContextFlat();
+
+		for (Object obj : activeBindingsForScheme) {
+			Binding binding = (Binding) obj;
 			addBinding(application, binding);
 		}
+
 		persistence.dispose();
 	}
 
@@ -80,14 +86,9 @@ public class BindingToModelProcessor {
 
 	public final void addBinding(final MApplication application, final Binding binding) {
 
-		if (binding.getType() == Binding.USER) {
-			BindingCopies.addUserBinding(binding);
-		}
-
 		MBindingTable table = tables.get(binding.getContextId());
 		if (table == null) {
 			table = createTable(application, binding.getContextId());
-
 		}
 		final MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
 		ParameterizedCommand parmCmd = binding.getParameterizedCommand();
@@ -106,6 +107,27 @@ public class BindingToModelProcessor {
 			p.setValue((String) entry.getValue());
 			keyBinding.getParameters().add(p);
 		}
+
+		List<String> tags = keyBinding.getTags();
+		// just add the 'schemeId' tag if it's anything other than the default
+		// scheme id
+		if (binding.getSchemeId() != null
+				&& !binding.getSchemeId().equals(
+						org.eclipse.ui.keys.IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID)) {
+			tags.add(EBindingService.SCHEME_ID_ATTR_TAG + ":" + binding.getSchemeId()); //$NON-NLS-1$
+		}
+		if (binding.getLocale() != null) {
+			tags.add(EBindingService.LOCALE_ATTR_TAG + ":" + binding.getLocale()); //$NON-NLS-1$
+		}
+		if (binding.getPlatform() != null) {
+			tags.add(EBindingService.PLATFORM_ATTR_TAG + ":" + binding.getPlatform()); //$NON-NLS-1$
+		}
+		// just add the 'type' tag if it's a user binding
+		if (binding.getType() == Binding.USER) {
+			tags.add(EBindingService.TYPE_ATTR_TAG + ":user"); //$NON-NLS-1$
+		}
+
+		keyBinding.getTransientData().put(EBindingService.MODEL_TO_BINDING_KEY, binding);
 		table.getBindings().add(keyBinding);
 	}
 

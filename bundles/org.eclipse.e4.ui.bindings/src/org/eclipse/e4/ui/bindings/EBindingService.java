@@ -11,6 +11,7 @@
 package org.eclipse.e4.ui.bindings;
 
 import java.util.Collection;
+import java.util.Map;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -18,11 +19,17 @@ import org.eclipse.jface.bindings.TriggerSequence;
 public interface EBindingService {
 
 	public static final String DIALOG_CONTEXT_ID = "org.eclipse.ui.contexts.dialog"; //$NON-NLS-1$
+	public static final String DEFAULT_SCHEME_ID = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
+	public static final String MODEL_TO_BINDING_KEY = "binding"; //$NON-NLS-1$
+	public static final String ACTIVE_SCHEME_TAG = "activeSchemeId"; //$NON-NLS-1$
+	public static final String SCHEME_ID_ATTR_TAG = "schemeId"; //$NON-NLS-1$
+	public static final String LOCALE_ATTR_TAG = "locale"; //$NON-NLS-1$
+	public static final String PLATFORM_ATTR_TAG = "platform"; //$NON-NLS-1$
+	public static final String TYPE_ATTR_TAG = "type"; //$NON-NLS-1$
+	public static final String DELETED_BINDING_TAG = "deleted"; //$NON-NLS-1$
 
-	// TODO perhaps use a map of attributes for things
-	// that aren't important to the model
-	Binding createBinding(TriggerSequence sequence, ParameterizedCommand command, String schemeId,
-			String contextId, String locale, String platform, int bindingType);
+	Binding createBinding(TriggerSequence sequence, ParameterizedCommand command, String contextId,
+			Map<String, String> attributes);
 
 	void activateBinding(Binding binding);
 
@@ -31,6 +38,8 @@ public interface EBindingService {
 	TriggerSequence createSequence(String sequence);
 
 	Collection<Binding> getConflictsFor(TriggerSequence sequence);
+
+	Collection<Binding> getAllConflicts();
 
 	Binding getPerfectMatch(TriggerSequence trigger);
 
@@ -43,4 +52,8 @@ public interface EBindingService {
 	Collection<TriggerSequence> getSequencesFor(ParameterizedCommand command);
 
 	Collection<Binding> getPartialMatches(TriggerSequence sequence);
+
+	Collection<Binding> getActiveBindings();
+
+	Collection<Binding> getBindingsFor(ParameterizedCommand cmd);
 }

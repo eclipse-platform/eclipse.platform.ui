@@ -11,20 +11,20 @@
 package org.eclipse.ui.internal.keys;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.e4.ui.bindings.internal.BindingCopies;
-import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
@@ -42,7 +42,7 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.util.Util;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.e4.compatibility.E4Util;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -67,13 +67,10 @@ public final class BindingService implements IBindingService {
 	private ECommandService commandService;
 
 	@Inject
+	private CommandManager commandManager;
+
+	@Inject
 	private BindingManager manager;
-
-	@Inject
-	private CommandManager cmdManager;
-
-	@Inject
-	private BindingTableManager bindingTableManager;
 
 	@Inject
 	@Optional
@@ -87,12 +84,7 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
-		for (Runnable r : bindingsToRemove) {
-			r.run();
-		}
-		for (MBindingTable table : tablesToRemove) {
-			application.getBindingTables().remove(table);
-		}
+
 	}
 
 	/*
@@ -247,9 +239,9 @@ public final class BindingService implements IBindingService {
 		if (prefixesLength == 0) {
 			return Collections.EMPTY_MAP;
 		}
-		
+
 		Collection<Binding> partialMatches = bindingService.getPartialMatches(trigger);
-		Map<TriggerSequence,Object> prefixTable = new HashMap<TriggerSequence, Object>();
+		Map<TriggerSequence, Object> prefixTable = new HashMap<TriggerSequence, Object>();
 		for (Binding binding : partialMatches) {
 			for (int i = 0; i < prefixesLength; i++) {
 				final TriggerSequence prefix = prefixes[i];
@@ -332,12 +324,8 @@ public final class BindingService implements IBindingService {
 	 * @see org.eclipse.ui.keys.IBindingService#openKeyAssistDialog()
 	 */
 	public void openKeyAssistDialog() {
-		// TODO compat openKeyAssistDialog
-		E4Util.unsupported("openKeyAssistDialog"); //$NON-NLS-1$
+		dispatcher.openMultiKeyAssistShell();
 	}
-
-	private ArrayList<MBindingTable> tablesToRemove = new ArrayList<MBindingTable>();
-	private ArrayList<Runnable> bindingsToRemove = new ArrayList<Runnable>();
 
 	/*
 	 * (non-Javadoc)
@@ -347,27 +335,8 @@ public final class BindingService implements IBindingService {
 	 * .ui.commands.ICommandService)
 	 */
 	public void readRegistryAndPreferences(ICommandService commandService) {
-
-
-		// TODO: shouldn't be using BindingPersistence here, but if we don't,
-		// then the keys pref page will crash when loading!
-		BindingPersistence bindingPersistence = new BindingPersistence(manager, cmdManager);
-		bindingPersistence.reRead();
-
-		Collection<Binding> bindings = bindingTableManager.getActiveBindings();
-		manager.setBindings(bindings.toArray(new Binding[bindings.size()]));
-
-		// BindingPersistence reader = new BindingPersistence(manager,
-		// commandService);
-		// reader.reRead();
-		// Iterator i =
-		// manager.getActiveBindingsDisregardingContextFlat().iterator();
-		// while (i.hasNext()) {
-		// Binding binding = (Binding) i.next();
-		// addBinding(binding);
-		// }
-
-		bindingPersistence.dispose();
+		BindingPersistence bp = new BindingPersistence(manager, commandManager);
+		bp.read();
 	}
 
 	private MCommand findCommand(String id) {
@@ -379,6 +348,17 @@ public final class BindingService implements IBindingService {
 		return null;
 	}
 
+	private void saveLegacyPreferences(Scheme activeScheme, Binding[] bindings) throws IOException {
+		BindingPersistence.write(activeScheme, bindings);
+		try {
+			manager.setActiveScheme(activeScheme);
+		} catch (final NotDefinedException e) {
+			WorkbenchPlugin.log("The active scheme is not currently defined.", //$NON-NLS-1$
+					WorkbenchPlugin.getStatus(e));
+		}
+		manager.setBindings(bindings);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -387,107 +367,74 @@ public final class BindingService implements IBindingService {
 	 * .bindings.Scheme, org.eclipse.jface.bindings.Binding[])
 	 */
 	public void savePreferences(Scheme activeScheme, Binding[] bindings) throws IOException {
+		saveLegacyPreferences(activeScheme, bindings);
 
-		Collection<Binding> activeBindings = bindingTableManager.getActiveBindings();
-		Binding[] activeBindingsArray = activeBindings.toArray(new Binding[activeBindings.size()]);
+		// save the active scheme to the model
+		writeSchemeToModel(activeScheme);
 
-		Binding b;
+		// weeds out any of the deleted system bindings using the binding
+		// manager
+		HashSet<Binding> activeBindings = new HashSet<Binding>(
+				manager.getActiveBindingsDisregardingContextFlat());
 
-		Collection<Binding> activeUserBindings = new ArrayList<Binding>();
-
-		boolean madeChanges = false; // flag to actually save the prefs
-
-		// go through the list of active bindings (from the BTM) and DEACTIVATE
-		// any bindings that are not included in the list of bindings passed
-		// from the new keys pref page
-		for (int i = 0; i < activeBindingsArray.length; i++) {
-			b = getEqualBinding(bindings, activeBindingsArray[i]);
-
-			// if we didn't find the binding, then it wasn't included in the
-			// list passed from the new keys pref page, so this binding needs to
-			// be deactivated
-			if (b == null) {
-				bindingService.deactivateBinding(activeBindingsArray[i]);
-
-				// make sure we keep this binding manager consistent with the
-				// BTM since the keys pref page will read off this
-				manager.removeBinding(activeBindingsArray[i]);
-
-				// if we're deactivating a SYSTEM binding, then keep it in the
-				// list of bindings to write to xml, but make sure it gets
-				// flagged as disabled
-				if (activeBindingsArray[i].getType() == Binding.SYSTEM) {
-					// inactiveSystemBindings.add(activeBindingsArray[i]);
-					BindingCopies.addInactiveSysBinding(activeBindingsArray[i]);
+		// get all of the (active) model bindings that point to the actual runtime
+		// bindings
+		HashMap<Binding, MKeyBinding> bindingToKey = new HashMap<Binding, MKeyBinding>();
+		for (MBindingTable table : application.getBindingTables()) {
+			for (MKeyBinding modelBinding : table.getBindings()) {
+				final Object obj = modelBinding.getTransientData().get(
+						EBindingService.MODEL_TO_BINDING_KEY);
+				if (obj instanceof Binding) {
+					bindingToKey.put((Binding) obj, modelBinding);
 				}
-
-				// flag that changes were made to the bindings so that we need
-				// to save
-				madeChanges = true;
 			}
 		}
 
-		// go though the list of bindings passed from the new keys pref page and
-		// ACTIVATE the NEW bindings added
-		for (int i = 0; i < bindings.length; i++) {
-			b = getEqualBinding(activeBindingsArray, bindings[i]);
-
-			// if we didn't find the binding, that means it's a new one, so
-			// let's activate it (as long as the command isn't null)
-			if (b == null && bindings[i].getParameterizedCommand() != null) {
-
-				bindingService.activateBinding(bindings[i]);
-
-				// make sure we keep this binding manager consistent with the
-				// BTM since the keys pref page will read off this
-				manager.addBinding(bindings[i]);
-
-				// flag that changes were made to the bindings, so we need
-				// to persist them
-				madeChanges = true;
-
-				// Since the binding persistence only writes out active USER
-				// bindings and deactivated SYSTEM bindings, there's no point in
-				// sending the entire bindings list and searching USER bindings.
-				if (bindings[i].getType() == Binding.USER) {
-					activeUserBindings.add(bindings[i]);
-				} else {
-					BindingCopies.removeInactiveSysBinding(bindings[i]);
+		// go through each of the (active) bindings in the model to see if there are any
+		// bindings that we should remove
+		final HashSet<Binding> deleted = new HashSet<Binding>(bindingToKey.keySet());
+		deleted.removeAll(activeBindings);
+		for (Binding binding : deleted) {
+			if (binding.getType() == Binding.USER) {
+				removeBinding(binding);
+			} else {
+				final MKeyBinding model = bindingToKey.get(binding);
+				if (!model.getTags().contains(EBindingService.DELETED_BINDING_TAG)) {
+					model.getTags().add(EBindingService.DELETED_BINDING_TAG);
 				}
-
-				// since we've activated a new binding, we need to see if it's
-				// replacing one of the old bindings (in which case the old
-				// binding needs to be deactivated)
-				// ... but not right now
-			}
-			// else if the binding was already activated AND it's a USER
-			// binding, then we'll need to persist it as well
-			else if (bindings[i].getType() == Binding.USER) {
-				activeUserBindings.add(bindings[i]);
-				madeChanges = true;
 			}
 		}
-
-		// if we made any changes, then they need to be persisted
-		if (madeChanges) {
-			// BindingPersistence.write(activeScheme, bindings);
-			BindingPersistence.write(activeScheme,
-					activeUserBindings.toArray(new Binding[activeUserBindings.size()]),
-					BindingCopies.getInactiveSysBindings());
-			// TODO: these numbers don't make sense... dig a litter deeper
+		
+		// go through each of the active bindings (from the binding manager) to
+		// see if there are any bindings that we should add to the runtime
+		for (Binding binding : activeBindings) {
+			final MKeyBinding model = bindingToKey.get(binding);
+			// if we found the binding but it's marked as deleted, then just
+			// remove the deleted tag
+			if (model != null) {
+				if (model.getTags().contains(EBindingService.DELETED_BINDING_TAG)) {
+					model.getTags().remove(EBindingService.DELETED_BINDING_TAG);
+				}
+			} else {
+				addBinding(binding);
+			}
 		}
-
 	}
 
-	private Binding getEqualBinding(Binding[] bindings, Binding target) {
-		Binding theBinding = null;
 
-		for (int i = 0; i < bindings.length && theBinding == null; i++) {
-			if (bindings[i].equals(target)) {
-				theBinding = bindings[i];
+	private void writeSchemeToModel(Scheme activeScheme) {
+		List<String> tags = application.getTags();
+		boolean found = false;
+		// replace the old scheme id
+		Iterator<String> i = tags.iterator();
+		while (i.hasNext() && !found) {
+			String tag = i.next();
+			if (tag.startsWith(EBindingService.ACTIVE_SCHEME_TAG)) {
+				i.remove();
+				found = true;
 			}
 		}
-		return theBinding;
+		tags.add(EBindingService.ACTIVE_SCHEME_TAG + ":" + activeScheme.getId()); //$NON-NLS-1$
 	}
 
 	/*
@@ -508,7 +455,7 @@ public final class BindingService implements IBindingService {
 	 * org.eclipse.ui.keys.IBindingService#getConflictsFor(org.eclipse.jface
 	 * .bindings.TriggerSequence)
 	 */
-	public Collection getConflictsFor(TriggerSequence sequence) {
+	public Collection<Binding> getConflictsFor(TriggerSequence sequence) {
 		return bindingService.getConflictsFor(sequence);
 	}
 
@@ -565,29 +512,46 @@ public final class BindingService implements IBindingService {
 	 *            The binding to be added; must not be <code>null</code>.
 	 */
 	public final void addBinding(final Binding binding) {
-		MBindingTable table = null;
+		MBindingTable table = getMTable(binding.getContextId());
+		MKeyBinding keyBinding = createMKeyBinding(binding);
+		if (keyBinding != null) {
+			table.getBindings().add(keyBinding);
+		}
+	}
+
+	/**
+	 * @param contextId
+	 * @return
+	 */
+	private MBindingTable getMTable(String contextId) {
 		for (MBindingTable bt : application.getBindingTables()) {
-			if (bt.getBindingContext().getElementId().equals(binding.getContextId())) {
-				table = bt;
-				break;
+			if (bt.getBindingContext().getElementId().equals(contextId)) {
+				return bt;
 			}
 		}
-		if (table == null) {
-			table = CommandsFactoryImpl.eINSTANCE.createBindingTable();
-			tablesToRemove.add(table);
-			table.setBindingContext(getBindingContext(binding.getContextId()));
-			table.setElementId(binding.getContextId());
-			application.getBindingTables().add(table);
-		}
+		// create a new table if we couldn't find one
+		MBindingTable table = CommandsFactoryImpl.eINSTANCE.createBindingTable();
+		table.setBindingContext(getBindingContext(contextId));
+		table.setElementId(contextId);
+		application.getBindingTables().add(table);
+		return table;
+
+	}
+
+
+	private MKeyBinding createMKeyBinding(Binding binding) {
 		final MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
+
 		ParameterizedCommand parmCmd = binding.getParameterizedCommand();
 
 		MCommand cmd = findCommand(parmCmd.getId());
 		if (cmd == null) {
-			return;
+			return null;
 		}
 		keyBinding.setCommand(cmd);
+		// keyBinding.setKeySequence(binding.getTriggerSequence().format());
 		keyBinding.setKeySequence(binding.getTriggerSequence().format());
+
 		for (Object obj : parmCmd.getParameterMap().entrySet()) {
 			Map.Entry entry = (Map.Entry) obj;
 			MParameter p = CommandsFactoryImpl.eINSTANCE.createParameter();
@@ -596,15 +560,69 @@ public final class BindingService implements IBindingService {
 			p.setValue((String) entry.getValue());
 			keyBinding.getParameters().add(p);
 		}
-		table.getBindings().add(keyBinding);
-		if (!tablesToRemove.contains(table)) {
-			final MBindingTable theTable = table;
-			bindingsToRemove.add(new Runnable() {
-				public void run() {
-					theTable.getBindings().remove(keyBinding);
-				}
-			});
+
+		List<String> tags = keyBinding.getTags();
+		// just add the 'schemeId' tag if the binding is for anything other than
+		// the default scheme
+		if (binding.getSchemeId() != null
+				&& !binding.getSchemeId().equals(BindingPersistence.getDefaultSchemeId())) {
+			tags.add(EBindingService.SCHEME_ID_ATTR_TAG + ":" + binding.getSchemeId()); //$NON-NLS-1$
 		}
+		if (binding.getLocale() != null) {
+			tags.add(EBindingService.LOCALE_ATTR_TAG + ":" + binding.getLocale()); //$NON-NLS-1$
+		}
+		if (binding.getPlatform() != null) {
+			tags.add(EBindingService.PLATFORM_ATTR_TAG + ":" + binding.getPlatform()); //$NON-NLS-1$
+		}
+		// just add the 'type' tag if it's a user binding
+		if (binding.getType() == Binding.USER) {
+			tags.add(EBindingService.TYPE_ATTR_TAG + ":user"); //$NON-NLS-1$
+		}
+		keyBinding.getTransientData().put(EBindingService.MODEL_TO_BINDING_KEY, binding);
+		return keyBinding;
+	}
+
+	private MKeyBinding findMKeyBinding(MBindingTable table, Binding binding) {
+		List<MKeyBinding> mBindings = table.getBindings();
+
+		String bindingSchemeId = binding.getSchemeId() == null ? IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID
+				: binding.getSchemeId();
+
+		if (binding.getParameterizedCommand() != null) {
+			String commandId = binding.getParameterizedCommand().getId();
+
+			for (MKeyBinding curr : mBindings) {
+				Binding transientBinding = (Binding) curr.getTransientData().get(
+						EBindingService.MODEL_TO_BINDING_KEY);
+				if (transientBinding != null) {
+					if (binding.equals(transientBinding)) {
+						return curr;
+					}
+					continue;
+				}
+				// check equality
+				if (curr.getKeySequence().equals(binding.getTriggerSequence().format())
+						&& curr.getCommand() != null
+						&& curr.getCommand().getElementId().equals(commandId)) {
+
+					String schemeId = IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID;
+					List<String> tags = curr.getTags();
+					// grab the scheme id from the tags
+					for (String tag : tags) {
+						if (tag.startsWith(EBindingService.SCHEME_ID_ATTR_TAG)) {
+							schemeId = tag.substring(9);
+							break;
+						}
+					}
+					// if the scheme ids are the same, then we found the
+					// MKeyBinding
+					if (schemeId.equals(bindingSchemeId)) {
+						return curr;
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -615,6 +633,7 @@ public final class BindingService implements IBindingService {
 	 *            The binding to be removed; must not be <code>null</code>.
 	 */
 	public final void removeBinding(final Binding binding) {
+		MKeyBinding mKeyBinding;
 		MBindingTable table = null;
 		for (MBindingTable bt : application.getBindingTables()) {
 			if (bt.getBindingContext().getElementId().equals(binding.getContextId())) {
@@ -625,30 +644,36 @@ public final class BindingService implements IBindingService {
 		if (table == null) {
 			return;
 		}
-		final MKeyBinding keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
-		ParameterizedCommand parmCmd = binding.getParameterizedCommand();
 
-		MCommand cmd = findCommand(parmCmd.getId());
-		if (cmd == null) {
-			return;
+		// if we're removing a user binding, just remove it from the model and
+		// the listeners will take care of removing the binding from the runtime
+		// system
+		if (binding.getType() == Binding.USER) {
+			mKeyBinding = this.findMKeyBinding(table, binding);
+			if (mKeyBinding != null) {
+				table.getBindings().remove(mKeyBinding);
+			}
 		}
-		keyBinding.setCommand(cmd);
-		keyBinding.setKeySequence(binding.getTriggerSequence().format());
-		for (Object obj : parmCmd.getParameterMap().entrySet()) {
-			Map.Entry entry = (Map.Entry) obj;
-			MParameter p = CommandsFactoryImpl.eINSTANCE.createParameter();
-			p.setElementId((String) entry.getKey());
-			p.setName((String) entry.getKey());
-			p.setValue((String) entry.getValue());
-			keyBinding.getParameters().add(p);
+		// if we're removing a system binding, then find the model binding, add
+		// a 'deleted' tag, and explicitly remove the binding from the runtime
+		// system
+		else {
+			mKeyBinding = this.findMKeyBinding(table, binding);
+			if (mKeyBinding != null) {
+				mKeyBinding.getTags().add(EBindingService.DELETED_BINDING_TAG);
+			}
 		}
-		table.getBindings().remove(keyBinding);
-		// if we need to be clean:
-		manager.removeBinding(binding);
 	}
 
 	public BindingManager getBindingManager() {
 		return manager;
 	}
 
+	public Collection<Binding> getActiveBindings() {
+		return bindingService.getActiveBindings();
+	}
+
+	public WorkbenchKeyboard getKeyboard() {
+		return new WorkbenchKeyboard(dispatcher);
+	}
 }

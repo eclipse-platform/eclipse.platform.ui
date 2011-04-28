@@ -1,5 +1,8 @@
 package org.eclipse.e4.ui.bindings.tests;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
@@ -98,7 +101,11 @@ public class KeyDispatcherTest extends TestCase {
 
 	private Binding createDefaultBinding(EBindingService bs,
 			TriggerSequence sequence, ParameterizedCommand command) {
-		return bs.createBinding(sequence, command, "org.eclipse.ui.defaultAcceleratorConfiguration", ID_WINDOW, null, null, Binding.SYSTEM);
+		
+		Map<String, String> attrs = new HashMap<String,String>();
+		attrs.put("schemeId", "org.eclipse.ui.defaultAcceleratorConfiguration");
+		
+		return bs.createBinding(sequence, command, ID_WINDOW, attrs);		
 	}
 
 	@Override
