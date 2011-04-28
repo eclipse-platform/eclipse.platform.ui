@@ -13,12 +13,17 @@ package org.eclipse.e4.ui.tests.application;
 import javax.inject.Inject;
 import javax.inject.Named;
 import junit.framework.TestCase;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
 import org.eclipse.e4.ui.internal.workbench.UIEventPublisher;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
@@ -1093,9 +1098,52 @@ public class ESelectionServiceTest extends TestCase {
 		assertEquals(o, listener.getSelection());
 	}
 
+	public void testBug343984() throws Exception {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getChildren().add(part);
+		window.setSelectedElement(part);
+
+		initialize(applicationContext, application);
+		applicationContext.set(UISynchronize.class, new JobUISynchronizeImpl());
+		getEngine().createGui(window);
+
+		IEclipseContext context = part.getContext();
+		Bug343984Listener listener = new Bug343984Listener();
+		listener.context = context;
+		ESelectionService selectionService = context
+				.get(ESelectionService.class);
+		selectionService.addSelectionListener(listener);
+
+		selectionService.setSelection(new Object());
+		Thread.sleep(1000);
+		assertTrue(listener.success);
+
+		listener.reset();
+		selectionService.setSelection(new Object());
+		Thread.sleep(1000);
+		assertTrue(listener.success);
+	}
+
 	private void initialize(IEclipseContext applicationContext,
 			MApplication application) {
 		applicationContext.set(MApplication.class.getName(), application);
+		applicationContext.set(UISynchronize.class, new UISynchronize() {
+			@Override
+			public void syncExec(Runnable runnable) {
+				runnable.run();
+			}
+
+			@Override
+			public void asyncExec(final Runnable runnable) {
+				runnable.run();
+			}
+		});
 		application.setContext(applicationContext);
 		E4Workbench.processHierarchy(application);
 		((Notifier) application).eAdapters().add(
@@ -1125,5 +1173,54 @@ public class ESelectionServiceTest extends TestCase {
 			return selection;
 		}
 
+	}
+
+	static class Bug343984Listener implements ISelectionListener {
+
+		IEclipseContext context;
+		int count = 0;
+		boolean success = false;
+
+		public void reset() {
+			count = 0;
+			success = false;
+		}
+
+		public void selectionChanged(MPart part, Object selection) {
+			if (count > 0) {
+				success = false;
+				return;
+			}
+
+			success = true;
+			count++;
+
+			context.get("a");
+			context.set("a", new Object());
+
+			context.get("b");
+			context.set("b", new Object());
+		}
+
+	}
+
+	static class JobUISynchronizeImpl extends UISynchronize {
+		@Override
+		public void syncExec(Runnable runnable) {
+			runnable.run();
+		}
+
+		@Override
+		public void asyncExec(final Runnable runnable) {
+			Job job = new Job("") {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					runnable.run();
+					return Status.OK_STATUS;
+				}
+			};
+			job.setPriority(Job.INTERACTIVE);
+			job.schedule();
+		}
 	}
 }
