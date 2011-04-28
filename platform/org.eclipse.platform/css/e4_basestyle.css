@@ -12,6 +12,7 @@
     outer-keyline-color: #FFFFFF;
 	inner-keyline-color: #FFFFFF;
 	padding: 0px 9px 10px;
+	tab-outline: #B6BCCC;
 }
 
 .MPartStack.active {
