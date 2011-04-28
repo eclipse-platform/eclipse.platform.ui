@@ -23,6 +23,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -41,6 +42,9 @@ public class SelectionServiceImpl implements ESelectionService {
 	private ListenerList genericListeners = new ListenerList();
 	private Map<String, ListenerList> targetedListeners = new HashMap<String, ListenerList>();
 	private Set<IEclipseContext> tracked = new HashSet<IEclipseContext>();
+
+	@Inject
+	UISynchronize synchService;
 
 	private EventHandler eventHandler = new EventHandler() {
 		public void handleEvent(Event event) {
@@ -145,7 +149,7 @@ public class SelectionServiceImpl implements ESelectionService {
 				private boolean initial = true;
 
 				public boolean changed(IEclipseContext context) {
-					Object selection = context.get(OUT_SELECTION);
+					final Object selection = context.get(OUT_SELECTION);
 					if (initial) {
 						initial = false;
 						if (selection == null) {
@@ -154,9 +158,17 @@ public class SelectionServiceImpl implements ESelectionService {
 					}
 
 					if (activePart == part) {
-						notifyListeners(part, selection);
+						synchService.asyncExec(new Runnable() {
+							public void run() {
+								notifyListeners(part, selection);
+							}
+						});
 					} else {
-						notifyTargetedListeners(part, selection);
+						synchService.asyncExec(new Runnable() {
+							public void run() {
+								notifyTargetedListeners(part, selection);
+							}
+						});
 					}
 					return true;
 				}
