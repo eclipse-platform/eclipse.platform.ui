@@ -156,6 +156,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 
     private static final String RESTART = "restart"; //$NON-NLS-1$
 
+    private static final int BREADCRUMB_TRIGGER_HEIGHT_DEFAULT = 30; // pixels
+    
     private static final int BREADCRUMB_TRIGGER_RANGE = 5; // pixels
     
     private static final int BREADCRUMB_STICKY_RANGE = 20; // pixels
@@ -753,6 +755,11 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
     */
    private void autoSelectViewPage(Composite parent) {
        int breadcrumbHeight = fBreadcrumbPage.getHeight();
+       // Breadcrumb may report size 0 if it hasn't been shown yet.
+       // Bug 335536.
+       if (breadcrumbHeight == 0) {
+           breadcrumbHeight = BREADCRUMB_TRIGGER_HEIGHT_DEFAULT;
+       }
        if (parent.getClientArea().height < breadcrumbHeight + BREADCRUMB_TRIGGER_RANGE) {
            showBreadcrumbPage();
        } 
