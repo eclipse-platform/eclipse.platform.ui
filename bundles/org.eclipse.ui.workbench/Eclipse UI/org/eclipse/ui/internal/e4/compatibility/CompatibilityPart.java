@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -21,9 +22,17 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
+import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -257,6 +266,8 @@ public abstract class CompatibilityPart {
 				case IWorkbenchPartConstants.PROP_TITLE:
 					part.setLabel(computeLabel());
 					part.setTooltip(wrapped.getTitleToolTip());
+
+					updateImages(part);
 					break;
 				case IWorkbenchPartConstants.PROP_DIRTY:
 					if (wrapped instanceof ISaveablePart) {
@@ -266,6 +277,34 @@ public abstract class CompatibilityPart {
 				}
 			}
 		});
+	}
+
+	private void updateImages(MPart part) {
+		// Try to update the image if we're using a CTF
+		EModelService ms = part.getContext().get(EModelService.class);
+		MWindow topWin = ms.getTopLevelWindowFor(part);
+		List<MPlaceholder> partRefs = ms.findElements(topWin, part.getElementId(),
+				MPlaceholder.class, null);
+		for (MUIElement ref : partRefs) {
+			MUIElement refParent = ref.getParent();
+			if (!(refParent instanceof MPartStack))
+				continue;
+
+			if (!(refParent.getWidget() instanceof CTabFolder))
+				continue;
+
+			CTabFolder ctf = (CTabFolder) refParent.getWidget();
+			if (ctf.isDisposed())
+				continue;
+
+			CTabItem[] items = ctf.getItems();
+			for (CTabItem item : items) {
+				if (item.getData(AbstractPartRenderer.OWNING_ME) == ref) {
+					item.setImage(wrapped.getTitleImage());
+					ctf.getDisplay().update();
+				}
+			}
+		}
 	}
 
 	public void deactivateActionBars(boolean forceHide) {
