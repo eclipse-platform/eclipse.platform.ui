@@ -61,12 +61,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.internal.C;
 import org.eclipse.swt.internal.Callback;
-import org.eclipse.swt.internal.cocoa.NSButton;
-import org.eclipse.swt.internal.cocoa.NSControl;
-import org.eclipse.swt.internal.cocoa.NSString;
-import org.eclipse.swt.internal.cocoa.NSToolbar;
-import org.eclipse.swt.internal.cocoa.NSWindow;
-import org.eclipse.swt.internal.cocoa.OS;
+import org.eclipse.swt.internal.gtk.OS;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -89,10 +84,6 @@ import org.osgi.service.event.EventHandler;
  * @since 1.0
  */
 public class CocoaUIHandler {
-	/**
-	 * 
-	 */
-	private static final String DEFAULT_ACCELERATOR_CONFIGURATION = "org.eclipse.ui.defaultAcceleratorConfiguration"; //$NON-NLS-1$
 	protected static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
 	protected static final String HOST_ID = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
 	protected static final String CLASS_URI = "platform:/plugin/" //$NON-NLS-1$  
@@ -370,8 +361,7 @@ public class CocoaUIHandler {
 		ParameterizedCommand cmd = commandService.createCommand(
 				COMMAND_ID_CLOSE_DIALOG, null);
 		Binding binding = bindingService.createBinding(sequence, cmd,
-				DEFAULT_ACCELERATOR_CONFIGURATION,
-				EBindingService.DIALOG_CONTEXT_ID, null, null, Binding.SYSTEM);
+				EBindingService.DIALOG_CONTEXT_ID, null);
 		bindingService.deactivateBinding(binding);
 		bindingService.activateBinding(binding);
 	}
