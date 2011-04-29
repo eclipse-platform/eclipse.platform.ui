@@ -43,7 +43,7 @@ public class CTabRendering extends CTabFolderRenderer {
 	static final String E4_TOOLBAR_ACTIVE_IMAGE = "org.eclipse.e4.renderer.toolbar_background_active_image"; //$NON-NLS-1$
 	static final String E4_TOOLBAR_INACTIVE_IMAGE = "org.eclipse.e4.renderer.toolbar_background_inactive_image"; //$NON-NLS-1$
 
-	static int[] shape;
+	int[] shape;
 
 	Image shadowImage, toolbarActiveImage, toolbarInactiveImage;
 
@@ -413,7 +413,7 @@ public class CTabRendering extends CTabFolderRenderer {
 		if (tabOutlineColor == null)
 			tabOutlineColor = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
 		gc.setForeground(tabOutlineColor);
-//		if (active)
+		// if (active)
 		gc.drawPolyline(tmpPoints);
 		Rectangle rect = null;
 		gc.setClipping(rect);
@@ -601,9 +601,9 @@ public class CTabRendering extends CTabFolderRenderer {
 	}
 
 	void drawShadow(final Display display, Rectangle bounds, GC gc) {
-		if (shadowImage == null)
-			createShadow(display, false);
-
+		if (shadowImage == null) {
+			createShadow(display, true);
+		}
 		int x = bounds.x;
 		int y = bounds.y;
 		int SIZE = shadowImage.getBounds().width / 3;
