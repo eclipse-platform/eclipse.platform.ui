@@ -13,11 +13,13 @@
 	inner-keyline-color: #FFFFFF;
 	padding: 0px 9px 10px;
 	tab-outline: #B6BCCC;
+	shadow-visible: true;
 }
 
 .MPartStack.active {
 	inner-keyline-color: #FFFFFF;
 	tab-outline: #B6BCCC;
+	shadow-visible: true;
 }
 
 #PerspectiveSwitcher {

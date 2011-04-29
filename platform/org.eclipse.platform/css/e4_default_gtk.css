@@ -40,7 +40,7 @@
    padding: 0px 5px 7px;
 }
 
-#org-eclipse-ui-editorss .MPartStack {
+CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
    shadow-visible: false;
 }
 
