@@ -684,7 +684,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			}
 			
 			public void focusLost(FocusEvent e){
-				fSelectionProvider.setActiveProvider(null);
+			    // Do not reset the selection provider with the provider proxy.
+			    // This should allow toolbar actions to remain active when the view
+			    // is de-activated but still visible.
+			    // Bug 316850.
 				setAction(SELECT_ALL_ACTION, null);
 				setAction(COPY_ACTION,null);
 				setAction(FIND_ACTION, null);
@@ -710,6 +713,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		return variablesViewer;
 	}
 
+	
+	
 	/**
 	 * Returns the active debug context for this view based on the view's 
 	 * site IDs.
