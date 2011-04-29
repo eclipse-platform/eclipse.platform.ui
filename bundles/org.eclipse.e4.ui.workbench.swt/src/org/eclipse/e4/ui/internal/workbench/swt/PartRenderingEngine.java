@@ -362,7 +362,18 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		Object widget = parent.getWidget();
 		if (widget instanceof Composite) {
-			((Composite) widget).layout(new Control[] { elementCtrl });
+			Composite composite = (Composite) widget;
+			if (composite.getShell() == elementCtrl.getShell()) {
+				Composite temp = elementCtrl.getParent();
+				while (temp != composite) {
+					if (temp == null) {
+						return;
+					}
+					temp = temp.getParent();
+				}
+
+				composite.layout(new Control[] { elementCtrl });
+			}
 		}
 	}
 
