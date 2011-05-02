@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009,2010 IBM Corporation and others.
+ * Copyright (c) 2009,2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -141,6 +141,12 @@ public class UIEvents {
 		public static final String CONTRIBUTIONURI = "contributionURI"; //$NON-NLS-1$
 		public static final String OBJECT = "object"; //$NON-NLS-1$
 		public static final String PERSISTEDSTATE = "persistedState"; //$NON-NLS-1$
+	}
+
+	public static interface StringToObjectMap {
+		public static final String TOPIC = UITopicBase + "/application/StringToObjectMap"; //$NON-NLS-1$
+		public static final String KEY = "key"; //$NON-NLS-1$
+		public static final String VALUE = "value"; //$NON-NLS-1$
 	}
 
 	public static interface StringToStringMap {
