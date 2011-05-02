@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,32 +20,27 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -58,7 +54,12 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.window.IShellProvider;
-
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -86,6 +87,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
+import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -96,10 +98,12 @@ import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.part.NullEditorInput;
+import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.tweaklets.TabBehaviour;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.MultiEditor;
@@ -122,6 +126,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * </ol>
  */
 public class EditorManager implements IExtensionChangeHandler {
+
 	EditorAreaHelper editorPresentation;
 
 	WorkbenchWindow window;
@@ -141,6 +146,10 @@ public class EditorManager implements IExtensionChangeHandler {
 	// Handler for the pin editor keyboard shortcut
 	private IHandlerActivation pinEditorHandlerActivation = null;
 
+	// determines if a prompt is shown when opening large files
+	private long maxFileSize = 0;
+	private boolean checkDocumentSize;
+	
 	static final String RESOURCES_TO_SAVE_MESSAGE = WorkbenchMessages.EditorManager_saveResourcesMessage;
 
 	static final String SAVE_RESOURCES_TITLE = WorkbenchMessages.EditorManager_saveResourcesTitle;
@@ -157,7 +166,14 @@ public class EditorManager implements IExtensionChangeHandler {
 		this.page = workbenchPage;
 		this.editorPresentation = pres;
 
+		initMaxFileSize();
 		page.getExtensionTracker().registerHandler(this, null);
+	}
+
+	private void initMaxFileSize() {
+		IPreferenceStore preferenceStore = PrefUtil.getInternalPreferenceStore();
+		maxFileSize = preferenceStore.getLong(IPreferenceConstants.LARGE_DOC_SIZE_FOR_EDITORS);
+		checkDocumentSize = maxFileSize != 0;
 	}
 
 	/**
@@ -628,15 +644,25 @@ public class EditorManager implements IExtensionChangeHandler {
 			throw new IllegalArgumentException();
 		}
 
-		IEditorRegistry reg = getEditorRegistry();
-		EditorDescriptor desc = (EditorDescriptor) reg.findEditor(editorId);
+		IEditorDescriptor desc = null;
+		if (isLargeDocument(input)) {
+			desc = getAlternateEditor();
+			if (desc == null) {
+				// the user pressed cancel in the editor selection dialog
+				return null;
+			}
+		} else {
+			desc = getEditorRegistry().findEditor(editorId);
+		}
+
 		if (desc == null) {
 			throw new PartInitException(NLS.bind(
 					WorkbenchMessages.EditorManager_unknownEditorIDMessage,
 					editorId));
 		}
 
-		IEditorReference result = openEditorFromDescriptor(desc, input, editorState);
+		IEditorReference result = openEditorFromDescriptor(
+				(EditorDescriptor) desc, input, editorState);
 		return result;
 	}
 
@@ -1652,4 +1678,52 @@ public class EditorManager implements IExtensionChangeHandler {
 				.getPreferenceStore();
 		return store.getBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS);
 	}
+	
+	private static IEditorDescriptor getAlternateEditor() {
+
+		Shell shell = ProgressManagerUtil.getDefaultParent();
+		EditorSelectionDialog dialog = new EditorSelectionDialog(shell) {
+			protected IDialogSettings getDialogSettings() {
+				IDialogSettings result = new DialogSettings(
+						"EditorSelectionDialog"); //$NON-NLS-1$
+				result.put(EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL,
+						true);
+				return result;
+			}
+		};
+		IProduct product = Platform.getProduct();
+		String productName = null;
+		if (product != null) {
+			productName = product.getName();
+		}
+		if (productName == null) {
+			productName = WorkbenchMessages.AboutDialog_defaultProductName;
+		}
+		dialog.setMessage(NLS.bind(
+				WorkbenchMessages.EditorManager_largeDocumentWarning,
+				productName));
+
+		if (dialog.open() == Window.OK)
+			return dialog.getSelectedEditor();
+		return null;
+	}
+
+	boolean isLargeDocument(IEditorInput editorInput) {
+
+		if (!checkDocumentSize)
+			return false;
+
+		if (!(editorInput instanceof IPathEditorInput))
+			return false; // we know nothing about it
+
+		try {
+			IPath path = ((IPathEditorInput) editorInput).getPath();
+			File file = new File(path.toOSString());
+			return file.length() > maxFileSize;
+		} catch (Exception e) {
+			// ignore exceptions
+			return false;
+		}
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -574,6 +574,7 @@ public class WorkbenchMessages extends NLS {
     public static String EditorManager_create_element_returned_null;
     public static String EditorManager_wrong_createElement_result;
     public static String EditorManager_backgroundSaveJobName;
+    public static String EditorManager_largeDocumentWarning;
     
 	public static String EditorPane_pinEditor;
 
