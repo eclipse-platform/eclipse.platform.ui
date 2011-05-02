@@ -440,6 +440,7 @@ public class CVSUIMessages extends NLS {
 	public static String HistoryFilterDialog_showMatching;
 	public static String HistoryFilterDialog_matchingAny;
 	public static String HistoryFilterDialog_matchingAll;
+	public static String HistoryFilterDialog_branchName;
 	public static String HistoryFilterDialog_author;
 	public static String HistoryFilterDialog_comment;
 	public static String HistoryFilterDialog_fromDate;

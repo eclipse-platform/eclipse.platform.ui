@@ -1606,7 +1606,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					//Update the history (if it exists) to reflect the new
 					//counts
 					if (historyFilter != null){
-						CVSHistoryFilter tempFilter = new CVSHistoryFilter(historyFilter.author, historyFilter.comment, historyFilter.fromDate, historyFilter.toDate, historyFilter.isOr);
+						CVSHistoryFilter tempFilter = new CVSHistoryFilter(historyFilter.branchName, historyFilter.author, historyFilter.comment, historyFilter.fromDate, historyFilter.toDate, historyFilter.isOr);
 						showFilter(tempFilter);
 					}
 					
