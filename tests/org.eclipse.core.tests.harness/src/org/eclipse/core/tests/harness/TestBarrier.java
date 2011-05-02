@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,6 +73,7 @@ public class TestBarrier {
 	 * @param status the status that the calling thread should wait for
 	 */
 	private static void doWaitForStatus(int[] statuses, int index, int status, int timeout) {
+		long start = System.currentTimeMillis();
 		int i = 0;
 		while (statuses[index] != status) {
 			try {
@@ -83,7 +84,8 @@ public class TestBarrier {
 				//ignore
 			}
 			//sanity test to avoid hanging tests
-			Assert.assertTrue("Timeout waiting for status to change from " + getStatus(statuses[index]) + " to " + getStatus(status), i++ < timeout);
+			long elapsed = System.currentTimeMillis()-start;
+			Assert.assertTrue("Timeout after " + elapsed + "ms waiting for status to change from " + getStatus(statuses[index]) + " to " + getStatus(status), i++ < timeout);
 		}
 	}
 
