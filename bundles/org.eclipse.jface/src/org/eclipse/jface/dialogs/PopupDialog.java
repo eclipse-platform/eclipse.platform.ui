@@ -76,9 +76,15 @@ public class PopupDialog extends Window {
 	/**
 	 * 
 	 */
-	private static final GridDataFactory LAYOUTDATA_GRAB_BOTH = GridDataFactory
-			.fillDefaults().grab(true, true);
+	private static GridDataFactory grabBothGridDataFactory;
 
+	private static GridDataFactory getGrabBothGridData() {
+		if (grabBothGridDataFactory == null) {
+			grabBothGridDataFactory = GridDataFactory.fillDefaults().grab(true, true);
+		}
+		return grabBothGridDataFactory;
+	}
+	
 	/**
 	 * The dialog settings key name for stored dialog x location.
 	 */
@@ -293,9 +299,15 @@ public class PopupDialog extends Window {
 	/**
 	 * 
 	 */
-	private static final GridLayoutFactory POPUP_LAYOUT_FACTORY = GridLayoutFactory
-			.fillDefaults().margins(POPUP_MARGINWIDTH, POPUP_MARGINHEIGHT)
-			.spacing(POPUP_HORIZONTALSPACING, POPUP_VERTICALSPACING);
+	private static GridLayoutFactory popupLayoutFactory;
+	private static GridLayoutFactory getPopupLayout() {
+		if (popupLayoutFactory == null) {
+			popupLayoutFactory = GridLayoutFactory.fillDefaults()
+					.margins(POPUP_MARGINWIDTH, POPUP_MARGINHEIGHT)
+					.spacing(POPUP_HORIZONTALSPACING, POPUP_VERTICALSPACING);
+		}
+		return popupLayoutFactory;
+	}
 
 	/**
 	 * The dialog's toolbar for the move and resize capabilities.
@@ -676,8 +688,8 @@ public class PopupDialog extends Window {
 	 */
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		POPUP_LAYOUT_FACTORY.applyTo(composite);
-		LAYOUTDATA_GRAB_BOTH.applyTo(composite);
+		getPopupLayout().applyTo(composite);
+		getGrabBothGridData().applyTo(composite);
 
 		// Title area
 		if (hasTitleArea()) {
@@ -689,7 +701,7 @@ public class PopupDialog extends Window {
 		// Create a grid data layout data if one was not provided.
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=118025
 		if (dialogArea.getLayoutData() == null) {
-			LAYOUTDATA_GRAB_BOTH.applyTo(dialogArea);
+			getGrabBothGridData().applyTo(dialogArea);
 		}
 
 		// Info field
@@ -730,8 +742,8 @@ public class PopupDialog extends Window {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		POPUP_LAYOUT_FACTORY.applyTo(composite);
-		LAYOUTDATA_GRAB_BOTH.applyTo(composite);
+		getPopupLayout().applyTo(composite);
+		getGrabBothGridData().applyTo(composite);
 		return composite;
 	}
 
@@ -802,7 +814,7 @@ public class PopupDialog extends Window {
 	protected Control createTitleMenuArea(Composite parent) {
 
 		Composite titleAreaComposite = new Composite(parent, SWT.NONE);
-		POPUP_LAYOUT_FACTORY.copy().numColumns(2).applyTo(titleAreaComposite);
+		getPopupLayout().copy().numColumns(2).applyTo(titleAreaComposite);
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true,
 				false).applyTo(titleAreaComposite);
 
