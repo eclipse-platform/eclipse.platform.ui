@@ -163,7 +163,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * reads and concurrent writes, write access to the tree is governed
 	 * by {@link WorkManager}.
 	 */
-	protected ElementTree tree;
+	protected volatile ElementTree tree;
 
 	/**
 	 * This field is used to control access to the workspace tree during
@@ -440,13 +440,40 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	private void buildInternal(IBuildConfiguration[] configs, int trigger, boolean buildReferences, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
-		final ISchedulingRule rule = getRuleFactory().buildRule();
+		// Bug 343256 use a relaxed scheduling rule if the config we're building uses a relaxed rule.
+		// Otherwise fall-back to WR.
+		boolean relaxed = false;
+		if (Job.getJobManager().currentRule() == null && configs.length > 0) {
+			relaxed = true;
+			for (IBuildConfiguration config : configs) {
+				ISchedulingRule requested = getBuildManager().getRule(config, trigger, null, null);
+				if (requested != null && requested.contains(getRoot())) {
+					relaxed = false;
+					break;
+				}
+			}
+		}
+
+		// PRE + POST_BUILD, and the build itself are allowed to modify resources, so require the current thread's scheduling rule
+		// to either contain the WR or be null. Therefore, if not null, ensure it contains the WR rule...
+		final ISchedulingRule buildRule = getRuleFactory().buildRule();
+		final ISchedulingRule rule = relaxed ? null : buildRule;
 		try {
 			monitor.beginTask("", Policy.opWork); //$NON-NLS-1$
 			try {
-				prepareOperation(rule, monitor);
-				beginOperation(true);
-				aboutToBuild(this, trigger);
+				try {
+					// Must run the PRE_BUILD with the WRule held before acquiring WS lock
+					// Can remove this if we run notifications without the WS lock held: bug 249951
+					prepareOperation(rule == null ? buildRule : rule, monitor);
+					beginOperation(true);
+					aboutToBuild(this, trigger);
+				} finally {
+					if (rule == null) {
+						endOperation(buildRule, false, monitor);
+						prepareOperation(rule, monitor);
+						beginOperation(false);
+					}
+				}
 				IStatus result;
 				try {
 
@@ -485,6 +512,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 					result = getBuildManager().build(configs, requestedConfigs, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
 				} finally {
+					// Run the POST_BUILD with the WRule held
+					if (rule == null) {
+						endOperation(rule, false, monitor);
+						prepareOperation(buildRule, monitor);
+						beginOperation(false);							
+					}
 					//must fire POST_BUILD if PRE_BUILD has occurred
 					broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
 				}
@@ -494,7 +527,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//building may close the tree, but we are still inside an operation so open it
 				if (tree.isImmutable())
 					newWorkingTree();
-				endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+				// Rule will be the build-rule from the POST_BUILD refresh
+				endOperation(buildRule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
 			}
 		} finally {
 			monitor.done();

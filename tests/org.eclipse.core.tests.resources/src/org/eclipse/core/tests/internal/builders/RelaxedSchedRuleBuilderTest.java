@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
-import java.util.Map;
+import java.io.ByteArrayInputStream;
+import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.internal.builders.TestBuilder.BuilderRuleCallback;
 
@@ -205,4 +205,269 @@ public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
 		tb2.waitForStatus(TestBarrier.STATUS_DONE);
 	}
 
+	private HashSet<ISchedulingRule> getRulesAsSet(ISchedulingRule rule) {
+		HashSet<ISchedulingRule> rules = new HashSet<ISchedulingRule>();
+		if (rule == null)
+			return rules;
+		if (rule instanceof MultiRule)
+			rules.addAll(Arrays.asList(((MultiRule) rule).getChildren()));
+		else
+			rules.add(rule);
+		return rules;
+	}
+
+	/**
+	 * As the builder is run with a relaxed scheduling rule, we ensure that any changes made before
+	 * the build is actually run are present in the delta.
+	 * Acquiring the scheduling rule must be done outside of the WS lock, so this tests that
+	 * a change which sneaks in during the window or the build thread acquiring its scheduling 
+	 * rule, is correctly present in the builder's delta.
+	 * @throws Exception
+	 */
+	public void testBuilderDeltaUsingRelaxedRuleBug343256() throws Exception {
+		String name = "testBuildDeltaUsingRelaxedRuleBug343256";
+		setAutoBuilding(false);
+		final IProject project = getWorkspace().getRoot().getProject(name);
+		final IFile foo = project.getFile("foo");
+		create(project, false);
+
+		IProjectDescription desc = project.getDescription();
+		desc.setBuildSpec(new ICommand[] {createCommand(desc, EmptyDeltaBuilder.BUILDER_NAME, "Project1Build1")});
+		project.setDescription(desc, getMonitor());
+
+		// Ensure the builder is instantiated
+		project.build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+
+		final TestBarrier tb1 = new TestBarrier(TestBarrier.STATUS_WAIT_FOR_START);
+
+		// Create a builder set a null scheduling rule
+		EmptyDeltaBuilder builder = EmptyDeltaBuilder.getInstance();
+
+		// Set the rule call-back
+		builder.setRuleCallback(new BuilderRuleCallback() {
+
+			boolean called = false;
+
+			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map args) {
+				// Remove once Bug 331187 is fixed.
+				// Currently #getRule is called twice when building a specific build configuration (so as to minimized change in 
+				// 3.7 end-game.  As this test is trying to provoke a bug in the window between fetching a rule and applying it
+				// to the build, we don't want to run the first time #getRule is called (in Workspace#build)
+				if (!called) {
+					called = true;
+					return project;
+				}
+				// REMOVE
+				tb1.setStatus(TestBarrier.STATUS_START);
+				tb1.waitForStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
+				try {
+					// Give the resource modification time be queued
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					fail();
+				}
+				return project;
+			}
+
+			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
+				// shared scheduling rule
+				assertTrue(Job.getJobManager().currentRule().equals(project));
+				// assert that the delta contains the file foo
+				IResourceDelta delta = getDelta(project);
+				assertNotNull("1.1", delta);
+				assertTrue("1.2", delta.getAffectedChildren().length == 1);
+				assertTrue("1.3", delta.getAffectedChildren()[0].getResource().equals(foo));
+				tb1.setStatus(TestBarrier.STATUS_DONE);
+				return super.build(kind, args, monitor);
+			}
+		});
+
+		// Run the incremental build
+		Job j = new Job("IProject.build()") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					getWorkspace().build(new IBuildConfiguration[] {project.getActiveBuildConfig()}, IncrementalProjectBuilder.INCREMENTAL_BUILD, true, monitor);
+				} catch (CoreException e) {
+					fail();
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		j.schedule();
+
+		// Wait for the build to transition to getRule
+		tb1.waitForStatus(TestBarrier.STATUS_START);
+		// Modify a file in the project
+		j = new Job("IProject.build()") {
+			protected IStatus run(IProgressMonitor monitor) {
+				tb1.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
+				ensureExistsInWorkspace(foo, new ByteArrayInputStream(new byte[0]));
+				return Status.OK_STATUS;
+			}
+		};
+		j.schedule();
+		tb1.waitForStatus(TestBarrier.STATUS_DONE);
+	}
+
+	/**
+	 * Tests for regression in running the build with reduced scheduling rules.
+	 * @throws Exception
+	 */
+	public void testBug343256() throws Exception {
+		String name = "testBug343256";
+		setAutoBuilding(false);
+		final IProject project = getWorkspace().getRoot().getProject(name);
+		create(project, false);
+
+		IProjectDescription desc = project.getDescription();
+		desc.setBuildSpec(new ICommand[] {createCommand(desc, EmptyDeltaBuilder.BUILDER_NAME, "Project1Build1"), createCommand(desc, EmptyDeltaBuilder2.BUILDER_NAME, "Project1Build2")});
+		project.setDescription(desc, getMonitor());
+
+		// Ensure the builder is instantiated
+		project.build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
+
+		final TestBarrier tb1 = new TestBarrier(TestBarrier.STATUS_WAIT_FOR_START);
+		final TestBarrier tb2 = new TestBarrier(TestBarrier.STATUS_WAIT_FOR_START);
+
+		// Scheduling rules to returng from #getRule
+		final ISchedulingRule[] getRules = new ISchedulingRule[2];
+		final ISchedulingRule[] buildRules = new ISchedulingRule[2];
+
+		// Create a builder set a null scheduling rule
+		EmptyDeltaBuilder builder = EmptyDeltaBuilder.getInstance();
+		EmptyDeltaBuilder2 builder2 = EmptyDeltaBuilder2.getInstance();
+
+		// Set the rule call-back
+		builder.setRuleCallback(new BuilderRuleCallback() {
+			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map args) {
+				tb1.waitForStatus(TestBarrier.STATUS_START);
+				return getRules[0];
+			}
+
+			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
+				HashSet<ISchedulingRule> h1 = getRulesAsSet(Job.getJobManager().currentRule());
+				HashSet<ISchedulingRule> h2 = getRulesAsSet(buildRules[0]);
+				// shared scheduling rule
+				assertTrue(h1.equals(h2));
+				tb1.setStatus(TestBarrier.STATUS_DONE);
+				return super.build(kind, args, monitor);
+			}
+		});
+		// Set the rule call-back
+		builder2.setRuleCallback(new BuilderRuleCallback() {
+			public ISchedulingRule getRule(String name, IncrementalProjectBuilder builder, int trigger, Map<String, String> args) {
+				tb2.waitForStatus(TestBarrier.STATUS_START);
+				return getRules[1];
+			}
+
+			public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
+				HashSet<ISchedulingRule> h1 = getRulesAsSet(Job.getJobManager().currentRule());
+				HashSet<ISchedulingRule> h2 = getRulesAsSet(buildRules[1]);
+				assertTrue(h1.equals(h2));
+				tb2.setStatus(TestBarrier.STATUS_DONE);
+				return super.build(kind, args, monitor);
+			}
+		});
+
+		Job j;
+
+		// Enable for Bug 331187 
+		//		// IProject.build()
+		//		j = new Job("IProject.build()") {
+		//			protected IStatus run(IProgressMonitor monitor) {
+		//				try {
+		//					project.build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+		//				} catch (CoreException e) {
+		//					fail(e.toString());
+		//				}
+		//				return Status.OK_STATUS;
+		//			}
+		//		};
+		//		invokeTestBug343256(project, getRules, buildRules, tb1, tb2, j);
+
+		//		// IWorkspace.build()
+		//		j = new Job("IWorkspace.build()") {
+		//			protected IStatus run(IProgressMonitor monitor) {
+		//				try {
+		//					getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+		//				} catch (CoreException e) {
+		//					fail(e.toString());
+		//				}
+		//				return Status.OK_STATUS;
+		//			}
+		//		};
+		//		invokeTestBug343256(project, getRules, buildRules, tb1, tb2, j);
+
+		// IWorkspace.build(IBuildConfiguration[],...)
+		j = new Job("IWorkspace.build(IBuildConfiguration[],...)") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					getWorkspace().build(new IBuildConfiguration[] {project.getActiveBuildConfig()}, IncrementalProjectBuilder.FULL_BUILD, true, monitor);
+				} catch (CoreException e) {
+					fail(e.toString());
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		invokeTestBug343256(project, getRules, buildRules, tb1, tb2, j);
+
+		// Test Auto-build
+		//		j = new Job("Auto-build") {
+		//			protected IStatus run(IProgressMonitor monitor) {
+		//				try {
+		//					getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
+		//				} catch (CoreException e) {
+		//					fail(e.toString());
+		//				}
+		//				return Status.OK_STATUS;
+		//			}
+		//		};
+		//		// Auto-build
+		//		setAutoBuilding(true);
+		//		// Wait for the build to transition
+		//		invokeTestBug343256(project, getRules, buildRules, tb1, tb2, j);
+	}
+
+	/**
+	 * Helper method do invoke a set of tests on Bug343256 using the different sets of builder API
+	 */
+	private void invokeTestBug343256(IProject project, ISchedulingRule[] getRules, ISchedulingRule[] buildRules, TestBarrier tb1, TestBarrier tb2, Job j) {
+		// Test 1 - build project sched rule
+		getRules[0] = getRules[1] = project;
+		buildRules[0] = buildRules[1] = new MultiRule(new ISchedulingRule[] {getRules[0]});
+		tb1.setStatus(TestBarrier.STATUS_START);
+		tb2.setStatus(TestBarrier.STATUS_START);
+		j.schedule();
+		tb1.waitForStatus(TestBarrier.STATUS_DONE);
+		tb2.waitForStatus(TestBarrier.STATUS_DONE);
+
+		// Test 2 - build null rule
+		getRules[0] = getRules[1] = null;
+		buildRules[0] = buildRules[1] = null;
+		tb1.setStatus(TestBarrier.STATUS_START);
+		tb2.setStatus(TestBarrier.STATUS_START);
+		j.schedule();
+		tb1.waitForStatus(TestBarrier.STATUS_DONE);
+		tb2.waitForStatus(TestBarrier.STATUS_DONE);
+
+		// Test 3 - build mixed projects
+		getRules[0] = buildRules[0] = project;
+		getRules[1] = buildRules[1] = getWorkspace().getRoot().getProject("other");
+		tb1.setStatus(TestBarrier.STATUS_START);
+		tb2.setStatus(TestBarrier.STATUS_START);
+		j.schedule();
+		tb1.waitForStatus(TestBarrier.STATUS_DONE);
+		tb2.waitForStatus(TestBarrier.STATUS_DONE);
+
+		// Test 4 - build project + null
+		getRules[0] = buildRules[0] = project;
+		getRules[1] = buildRules[1] = null;
+		// TODO: Fixed in Bug 331187 ; BuildManager#getRule is pessimistic when there's a mixed resource and null rule
+		buildRules[0] = buildRules[1] = getWorkspace().getRoot();
+		tb1.setStatus(TestBarrier.STATUS_START);
+		tb2.setStatus(TestBarrier.STATUS_START);
+		j.schedule();
+		tb1.waitForStatus(TestBarrier.STATUS_DONE);
+		tb2.waitForStatus(TestBarrier.STATUS_DONE);
+	}
 }

@@ -26,6 +26,8 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	 * A test specific call-back which can be ticked on #getRule(...) & #build(...)
 	 */
 	public static class BuilderRuleCallback {
+		private IncrementalProjectBuilder builder;
+
 		public BuilderRuleCallback() {
 		}
 
@@ -41,6 +43,10 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 		 */
 		public IProject[] build(int kind, Map<String, String> args, IProgressMonitor monitor) throws CoreException {
 			return new IProject[0];
+		}
+
+		public IResourceDelta getDelta(IProject project) {
+			return builder.getDelta(project);
 		}
 	}
 
@@ -101,6 +107,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 		logPluginLifecycleEvent(getBuildId());
 		if (ruleCallBack == null)
 			return new IProject[0];
+		ruleCallBack.builder = this;
 		return ruleCallBack.build(kind, args, monitor);
 	}
 
@@ -111,6 +118,7 @@ public abstract class TestBuilder extends IncrementalProjectBuilder {
 	public ISchedulingRule getRule(int trigger, Map<String, String> args) {
 		if (ruleCallBack == null)
 			return super.getRule(trigger, args);
+		ruleCallBack.builder = this;
 		return ruleCallBack.getRule(name, this, trigger, args);
 	}
 

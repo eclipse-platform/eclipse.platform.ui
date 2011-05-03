@@ -14,11 +14,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-
-import org.eclipse.core.resources.IBuildConfiguration;
-
 import java.util.*;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
@@ -169,6 +164,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			// For incremental builds, grab a pointer to the current state before computing the delta
 			currentTree = ((trigger == IncrementalProjectBuilder.FULL_BUILD) || clean) ? null : workspace.getElementTree();
 			int depth = -1;
+			ISchedulingRule rule = null;
 			try {
 				//short-circuit if none of the projects this builder cares about have changed.
 				if (!needsBuild(currentBuilder, trigger)) {
@@ -177,6 +173,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					monitor.done();
 					return;
 				}
+				rule = builder.getRule(trigger, args);
 				String name = currentBuilder.getLabel();
 				String message;
 				if (name != null)
@@ -185,13 +182,27 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					message = NLS.bind(Messages.events_invoking_1, builder.getProject().getFullPath());
 				monitor.subTask(message);
 				hookStartBuild(builder, trigger);
+				// Make the current tree immutable before releasing the WS lock
+				if (rule != null && currentTree != null)
+					workspace.newWorkingTree();
 				//release workspace lock while calling builders
 				depth = getWorkManager().beginUnprotected();
+				// Acquire the rule required for running this builder
+				if (rule != null) {
+					Job.getJobManager().beginRule(rule, monitor);
+					// Now that we've acquired the rule, changes may have been made concurrently, ensure we're pointing at the 
+					// correct currentTree so delta contains concurrent changes made in areas guarded by the scheduling rule
+					if (currentTree != null)
+						currentTree = workspace.getElementTree();
+				}
 				//do the build
 				SafeRunner.run(getSafeRunnable(trigger, args, status, monitor));
 			} finally {
+				// Re-acquire the WS lock, then release the scheduling rule
 				if (depth >= 0)
 					getWorkManager().endUnprotected(depth);
+				if (rule != null)
+					Job.getJobManager().endRule(rule);
 				// Be sure to clean up after ourselves.
 				if (clean || currentBuilder.wasForgetStateRequested()) {
 					currentBuilder.setLastBuiltTree(null);
