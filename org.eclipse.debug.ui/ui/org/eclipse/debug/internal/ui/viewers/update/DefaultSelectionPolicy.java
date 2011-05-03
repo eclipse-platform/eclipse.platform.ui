@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Pawel Piech (Wind River) - added a breadcrumb mode to Debug view (Bug 252677)
+ *     Pawel Piech (Wind River) - Bug fixing
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
@@ -35,7 +35,7 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 	 * Constructs a new selection policy for the given debug
 	 * element.
 	 * 
-	 * @param element
+	 * @param element the backing debug element
 	 */
 	public DefaultSelectionPolicy(IDebugElement element) {
 		fDebugElement = element;
@@ -99,10 +99,15 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 		return false;
 	}
 	
+	/**
+	 * Returns if the selection should remain on the given selection
+	 * @param element the element to check
+	 * @return <code>true</code> if the selection should remain on the given element <code>false</code> otherwise
+	 */
 	protected boolean isSticky(Object element) {
 		if (element instanceof IStackFrame) {
 			IStackFrame frame = (IStackFrame) element;
-			return frame.isSuspended();
+			return frame.isSuspended() || frame.isStepping();
 		}
 		return false;
 	}
@@ -112,7 +117,11 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
      * currently selected element was removed from the model.  Instead of leaving the 
      * selection empty, attempt to select the parent element instead.
      * 
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#handleInvalidSelection(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection)
+     * @param selection the selection to replace
+     * @param newSelection the selection to use if the given selection is not an {@link ITreeSelection}
+     * @return the replaced selection or <code>newSelection</code> if the given selection is not an {@link ITreeSelection}
+     * 
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#replaceInvalidSelection(ISelection, ISelection)
      */
     public ISelection replaceInvalidSelection(ISelection selection, ISelection newSelection) {
         if (selection instanceof ITreeSelection) {
