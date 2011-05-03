@@ -28,11 +28,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -644,15 +642,13 @@ public class EditorManager implements IExtensionChangeHandler {
 			throw new IllegalArgumentException();
 		}
 
-		IEditorDescriptor desc = null;
-		if (isLargeDocument(input)) {
+		IEditorDescriptor desc= getEditorRegistry().findEditor(editorId);
+		if (desc != null && !desc.isOpenExternal() && isLargeDocument(input)) {
 			desc = getAlternateEditor();
 			if (desc == null) {
 				// the user pressed cancel in the editor selection dialog
 				return null;
 			}
-		} else {
-			desc = getEditorRegistry().findEditor(editorId);
 		}
 
 		if (desc == null) {
@@ -1691,17 +1687,7 @@ public class EditorManager implements IExtensionChangeHandler {
 				return result;
 			}
 		};
-		IProduct product = Platform.getProduct();
-		String productName = null;
-		if (product != null) {
-			productName = product.getName();
-		}
-		if (productName == null) {
-			productName = WorkbenchMessages.AboutDialog_defaultProductName;
-		}
-		dialog.setMessage(NLS.bind(
-				WorkbenchMessages.EditorManager_largeDocumentWarning,
-				productName));
+		dialog.setMessage(WorkbenchMessages.EditorManager_largeDocumentWarning);
 
 		if (dialog.open() == Window.OK)
 			return dialog.getSelectedEditor();
