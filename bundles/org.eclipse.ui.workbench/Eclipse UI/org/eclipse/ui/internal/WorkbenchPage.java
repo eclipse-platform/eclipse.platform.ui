@@ -1406,10 +1406,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 		MPerspectiveStack perspectiveStack = modelService.findElements(window, null,
 				MPerspectiveStack.class, null).get(0);
-		MPerspective perspective = perspectiveStack.getSelectedElement();
-		while (perspective != null && !perspectiveStack.getChildren().isEmpty()) {
-			modelService.removePerspectiveModel(perspective, window);
-			perspective = perspectiveStack.getSelectedElement();
+		MPerspective current = perspectiveStack.getSelectedElement();
+		for (Object perspective : perspectiveStack.getChildren().toArray()) {
+			if (perspective != current) {
+				modelService.removePerspectiveModel((MPerspective) perspective, window);
+			}
+		}
+
+		if (current != null) {
+			modelService.removePerspectiveModel(current, window);
 		}
 
 		viewReferences.clear();
