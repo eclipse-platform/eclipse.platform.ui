@@ -756,7 +756,7 @@ public boolean getBorderVisible() {
 }
 ToolBar getChevron() {
 	if (chevronTb == null) {
-		chevronTb = new ToolBar(this, SWT.NONE);
+		chevronTb = new ToolBar(this, SWT.FLAT);
 		addTabControl(chevronTb, SWT.TRAIL, -1, false);
 	}
 	if (chevronItem == null) {
@@ -2325,7 +2325,7 @@ void setButtonBounds(GC gc) {
 	Display display = getDisplay();
 	if (showMax) {
 		if (minMaxTb == null) {
-			minMaxTb = new ToolBar(this, SWT.NONE);
+			minMaxTb = new ToolBar(this, SWT.FLAT);
 			addTabControl(minMaxTb, SWT.TRAIL, 0, false);
 		}
 		if (maxItem == null) {
@@ -2347,7 +2347,7 @@ void setButtonBounds(GC gc) {
 	// min button
 	if (showMin) {
 		if (minMaxTb == null) {
-			minMaxTb = new ToolBar(this, SWT.NONE);
+			minMaxTb = new ToolBar(this, SWT.FLAT);
 			addTabControl(minMaxTb, SWT.TRAIL, 0, false);
 		}
 		if (minItem == null) {
