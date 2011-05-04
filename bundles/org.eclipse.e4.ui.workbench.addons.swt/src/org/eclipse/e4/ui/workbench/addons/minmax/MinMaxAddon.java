@@ -414,7 +414,7 @@ public class MinMaxAddon {
 	}
 
 	void maximize(final MUIElement element) {
-		MWindow win = modelService.getTopLevelWindowFor(element);
+		MWindow win = getWindowFor(element);
 		MPerspective persp = modelService.getActivePerspective(win);
 
 		List<String> maxTag = new ArrayList<String>();
@@ -435,6 +435,10 @@ public class MinMaxAddon {
 			if (theStack == element)
 				continue;
 
+			// Exclude stacks in DW's
+			if (getWindowFor(theStack) != win)
+				continue;
+
 			int loc = modelService.getElementLocation(theStack);
 			if (loc != EModelService.IN_SHARED_AREA && theStack.getWidget() != null
 					&& !theStack.getTags().contains(MINIMIZED)) {
@@ -444,14 +448,37 @@ public class MinMaxAddon {
 		}
 
 		// Find the editor 'area'
-		MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA,
-				persp == null ? win : persp);
-		if (element != eaPlaceholder && eaPlaceholder != null) {
-			eaPlaceholder.getTags().add(MINIMIZED_BY_ZOOM);
-			eaPlaceholder.getTags().add(MINIMIZED);
+		if (persp != null) {
+			MPlaceholder eaPlaceholder = (MPlaceholder) modelService.find(ID_EDITOR_AREA, persp);
+			if (element != eaPlaceholder && eaPlaceholder != null) {
+				eaPlaceholder.getTags().add(MINIMIZED_BY_ZOOM);
+				eaPlaceholder.getTags().add(MINIMIZED);
+			}
 		}
 
 		adjustCTFButtons(element);
+	}
+
+	/**
+	 * Return the MWindow containing this element (if any). This may either be a 'top level' window
+	 * -or- a detached window. This allows the min.max code to only affect elements in the window
+	 * containing the element.
+	 * 
+	 * @param element
+	 *            The element to check
+	 * 
+	 * @return the window containing the element.
+	 */
+	private MWindow getWindowFor(MUIElement element) {
+		MUIElement parent = element.getParent();
+
+		// We rely here on the fact that a DW's 'getParent' will return
+		// null since it's not in the 'children' hierarchy
+		while (parent != null && !(parent instanceof MWindow))
+			parent = parent.getParent();
+
+		// A detached window will end up with getParent() == null
+		return (MWindow) parent;
 	}
 
 	void unzoom(final MUIElement element) {
@@ -478,7 +505,7 @@ public class MinMaxAddon {
 	}
 
 	private void createTrim(MUIElement element) {
-		MTrimmedWindow window = (MTrimmedWindow) modelService.getTopLevelWindowFor(element);
+		MTrimmedWindow window = (MTrimmedWindow) getWindowFor(element);
 		Shell winShell = (Shell) window.getWidget();
 
 		// Is there already a TrimControl there ?

@@ -211,6 +211,10 @@ public class CleanupAddon {
 					if ((Object) parent instanceof MPerspective)
 						return;
 
+					// Always leave Window's in the presentation
+					if ((Object) parent instanceof MWindow)
+						return;
+
 					// If there are no more 'visible' children then make the parent go away too
 					boolean makeInvisible = true;
 					for (MUIElement kid : parent.getChildren()) {
