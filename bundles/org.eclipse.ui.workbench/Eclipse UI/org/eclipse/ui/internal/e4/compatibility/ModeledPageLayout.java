@@ -491,6 +491,7 @@ public class ModeledPageLayout implements IPageLayout {
 				break;
 			}
 
+			psc.setToBeRendered(relTo.isToBeRendered() || toInsert.isToBeRendered());
 			return;
 		}
 
