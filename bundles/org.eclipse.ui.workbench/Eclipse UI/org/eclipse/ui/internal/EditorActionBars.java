@@ -177,7 +177,10 @@ public class EditorActionBars extends SubActionBars2 {
 			if (coolBarManager instanceof SubContributionManager) {
 				SubContributionManager subManager = (SubContributionManager) coolBarManager;
 				IContributionManager manager = subManager.getParent();
-				if (manager instanceof ContributionManager) {
+				if (manager instanceof CoolBarToTrimManager) {
+					CoolBarToTrimManager trimManager = (CoolBarToTrimManager) manager;
+					trimManager.remove(toolBarContributionItem);
+				} else if (manager instanceof ContributionManager) {
 					final IContributionItem replacementItem = new PlaceholderContributionItem(
 							toolBarContributionItem);
 					boolean succeeded = ((ContributionManager) manager).replaceItem(replacementItem

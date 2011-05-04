@@ -104,10 +104,11 @@ public class ActionSet {
 		IConfigurationElement[] actions = configElement
 				.getChildren(IWorkbenchRegistryConstants.TAG_ACTION);
 		if (actions.length > 0) {
-			for (int i = actions.length; i > 0; i--) {
-				IConfigurationElement element = actions[i - 1];
-				addContribution(idContrib, menuContributions, element, false, MAIN_MENU);
-				addToolBarContribution(idContrib, toolBarContributions, trimContributions, element,
+			for (int i = 0; i < actions.length; i++) {
+				IConfigurationElement up = actions[i];
+				IConfigurationElement down = actions[actions.length - 1 - i];
+				addContribution(idContrib, menuContributions, down, false, MAIN_MENU);
+				addToolBarContribution(idContrib, toolBarContributions, trimContributions, up,
 						MAIN_TOOLBAR);
 			}
 		}
@@ -322,6 +323,7 @@ public class ActionSet {
 		final String elementId = MenuHelper.getId(element);
 		if (idContrib != null && idContrib.length() > 0) {
 			toolBarContribution.setElementId(idContrib + "/" + elementId); //$NON-NLS-1$
+			toolBarContribution.getTags().add("ActionSet::" + idContrib); //$NON-NLS-1$
 		} else {
 			toolBarContribution.setElementId(elementId);
 		}

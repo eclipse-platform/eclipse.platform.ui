@@ -253,9 +253,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 					// NOTE: createGui will call 'childAdded' if successful
 					Object w = createGui(added);
 					if (w instanceof Control && !(w instanceof Shell)) {
+						final Control ctrl = (Control) w;
 						fixZOrder(added);
-						((Control) w).getShell().layout(
-								new Control[] { (Control) w }, SWT.DEFER);
+						if (!ctrl.isDisposed()) {
+							ctrl.getShell().layout(new Control[] { ctrl },
+									SWT.DEFER);
+						}
 					}
 				} else {
 					if (renderer != null)

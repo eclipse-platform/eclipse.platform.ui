@@ -51,16 +51,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -69,7 +64,6 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
-import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.AbstractGroupMarker;
@@ -78,17 +72,14 @@ import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.internal.provisional.action.CoolBarManager2;
-import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -210,7 +201,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private WWinActionBars actionBars;
 
-	private boolean updateDisabled = true;
+	private boolean updateDisabled = false;
 
 	private boolean closing = false;
 
@@ -578,14 +569,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	void populateTopTrimContributions() {
-		if (getTopTrim() != null) {
-			throw new IllegalStateException("The top trim is already set"); //$NON-NLS-1$
-		}
-		MTrimBar trimBar = BasicFactoryImpl.eINSTANCE.createTrimBar();
-		trimBar.setElementId(MAIN_TOOLBAR_ID);
+		getCoolBarManager2().update(true);
 
-		fill(trimBar, getCoolBarManager2());
-
+		final MTrimBar trimBar = getTopTrim();
 		// TODO why aren't these added as trim contributions
 		// that would remove everything from this method except the fill(*)
 		MToolControl spacerControl = MenuFactoryImpl.eINSTANCE.createToolControl();
@@ -622,9 +608,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		workbenchTrimElements.add(glueControl);
 		workbenchTrimElements.add(switcherControl);
 
-		// and now add it to the model, start the rendering
-		List<MTrimBar> trimBars = model.getTrimBars();
-		trimBars.add(0, trimBar);
+
 	}
 
 	private void populateStandardTrim(MTrimBar bottomTrim) {
@@ -821,106 +805,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		}
 	}
 
-	private void fill(MTrimBar container, IContributionManager manager) {
-		for (IContributionItem item : manager.getItems()) {
-			if (item instanceof IToolBarContributionItem) {
-				IToolBarManager manager2 = ((IToolBarContributionItem) item).getToolBarManager();
-				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-				toolBar.setElementId(item.getId());
-				fill(toolBar, manager2);
-				toolBar.setToBeRendered(shouldBeRendered(toolBar));
-				container.getChildren().add(toolBar);
-				workbenchTrimElements.add(toolBar);
-			} else if (item instanceof IContributionManager) {
-				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-				toolBar.setElementId(item.getId());
-				fill(toolBar, (IContributionManager) item);
-				toolBar.setToBeRendered(shouldBeRendered(toolBar));
-				container.getChildren().add(toolBar);
-				workbenchTrimElements.add(toolBar);
-			} else if (item instanceof AbstractGroupMarker) {
-				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
-				separator.setToBeRendered(item.isVisible());
-				separator.setElementId(item.getId());
 
-				MToolBar toolBar = MenuFactoryImpl.eINSTANCE.createToolBar();
-				toolBar.setElementId(item.getId());
-				toolBar.getChildren().add(separator);
-				toolBar.setToBeRendered(shouldBeRendered(toolBar));
-				container.getChildren().add(toolBar);
-				workbenchTrimElements.add(toolBar);
-			}
-		}
-	}
 
-	/**
-	 * Returns the TBR state given a toolBar model element. This will only show
-	 * (TBR == true) MToolBars that have at least one visible non-separator.
-	 * 
-	 * @param toolBar
-	 *            The MToolbar to analyze
-	 * 
-	 * @return The expected TBR state for this toolbar
-	 */
-	private boolean shouldBeRendered(MToolBar toolBar) {
-		for (MUIElement tbElement : toolBar.getChildren()) {
-			if (!(tbElement instanceof MToolBarSeparator) && tbElement.isToBeRendered())
-				return true;
-		}
 
-		return false;
-	}
-
-	private void fill(MToolBar container, IContributionManager manager) {
-		ToolBarManagerRenderer renderer = (ToolBarManagerRenderer) rendererFactory.getRenderer(
-				container, null);
-		if (manager instanceof ToolBarManager) {
-			renderer.linkModelToManager(container, (ToolBarManager) manager);
-		}
-
-		for (IContributionItem item : manager.getItems()) {
-			if (item instanceof IToolBarContributionItem) {
-				IToolBarManager manager2 = ((IToolBarContributionItem) item).getToolBarManager();
-				fill(container, manager2);
-			} else if (item instanceof IContributionManager) {
-				fill(container, (IContributionManager) item);
-			} else if (item instanceof CommandContributionItem) {
-				CommandContributionItem cci = (CommandContributionItem) item;
-				MToolItem toolItem = MenuHelper.createToolItem(application, cci);
-				manager.remove(item);
-				if (toolItem != null) {
-					container.getChildren().add(toolItem);
-				}
-			} else if (item instanceof AbstractGroupMarker) {
-				MToolBarSeparator separator = MenuFactoryImpl.eINSTANCE.createToolBarSeparator();
-				separator.setToBeRendered(item.isVisible());
-				separator.setVisible(item.isVisible());
-				separator.setElementId(item.getId());
-				container.getChildren().add(separator);
-				manager.remove(item);
-			} else if (item instanceof ActionContributionItem) {
-				IAction action = ((ActionContributionItem) item).getAction();
-				if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
-					MOpaqueToolItem toolItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
-					toolItem.setElementId(item.getId());
-					container.getChildren().add(toolItem);
-					renderer.linkModelToContribution(toolItem, item);
-				} else {
-					MToolItem toolItem = MenuHelper.createToolItem(application,
-							(ActionContributionItem) item);
-					manager.remove(item);
-					if (toolItem != null) {
-						container.getChildren().add(toolItem);
-					}
-				}
-			} else {
-				MOpaqueToolItem toolItem = MenuFactoryImpl.eINSTANCE.createOpaqueToolItem();
-				toolItem.setElementId(item.getId());
-				container.getChildren().add(toolItem);
-				renderer.linkModelToContribution(toolItem, item);
-			}
-		}
-	}
 
 	public static String getId(IConfigurationElement element) {
 		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
@@ -1735,6 +1622,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (updateDisabled || updatesDeferred()) {
 			return;
 		}
+		getCoolBarManager2().update(true);
 	}
 
 	/**
@@ -2252,14 +2140,20 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		return statusLineManager;
 	}
 
-	CoolBarManager2 cm2 = new CoolBarManager2();
+	private CoolBarManager2 oldCBM = new CoolBarManager2();
+	private CoolBarToTrimManager coolbarToTrim;
 
 	public ICoolBarManager getCoolBarManager2() {
-		return cm2;
+		if (coolbarToTrim == null) {
+			coolbarToTrim = new CoolBarToTrimManager(application, model, workbenchTrimElements,
+					rendererFactory);
+		}
+		return coolbarToTrim;
 	}
 
 	public CoolBarManager getCoolBarManager() {
-		return cm2;
+		new Exception("Bad call to getCoolBarManager()").printStackTrace(); //$NON-NLS-1$
+		return oldCBM;
 	}
 
 	MenuManager menuManager = new MenuManager("MenuBar", "org.eclipse.ui.main.menu"); //$NON-NLS-1$//$NON-NLS-2$

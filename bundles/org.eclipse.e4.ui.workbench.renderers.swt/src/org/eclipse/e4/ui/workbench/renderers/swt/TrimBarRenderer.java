@@ -143,6 +143,22 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		addTrimContributions(trimModel, toContribute, ctx, eContext);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#childRendered
+	 * (org.eclipse.e4.ui.model.application.ui.MElementContainer,
+	 * org.eclipse.e4.ui.model.application.ui.MUIElement)
+	 */
+	@Override
+	public void childRendered(MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
+		super.childRendered(parentElement, element);
+		Object downCast = parentElement;
+		layoutTrim((MTrimBar) downCast);
+	}
+
 	@Override
 	public void hideChild(MElementContainer<MUIElement> parentElement,
 			MUIElement child) {
@@ -219,6 +235,7 @@ public class TrimBarRenderer extends SWTPartRenderer {
 								for (MTrimElement child : toRemove) {
 									child.setToBeRendered(rc);
 								}
+								layoutTrim(trimModel);
 								return true;
 							}
 						});

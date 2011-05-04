@@ -40,6 +40,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.UIEvents.ElementContainer;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.AbstractGroupMarker;
@@ -212,6 +213,22 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			}
 		}
 	};
+
+	private EventHandler childAdditionUpdater = new EventHandler() {
+		public void handleEvent(Event event) {
+			// Ensure that this event is for a MMenuItem
+			if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBar))
+				return;
+			MToolBar toolbarModel = (MToolBar) event
+					.getProperty(UIEvents.EventTags.ELEMENT);
+			String eventType = (String) event
+					.getProperty(UIEvents.EventTags.TYPE);
+			if (UIEvents.EventTypes.ADD.equals(eventType)) {
+				Object obj = toolbarModel;
+				processContents((MElementContainer<MUIElement>) obj);
+			}
+		}
+	};
 	private Image viewMenuImage;
 
 	@PostConstruct
@@ -225,6 +242,8 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 						UIEvents.Item.ENABLED), enabledUpdater);
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC),
 				toBeRenderedUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(ElementContainer.TOPIC,
+				ElementContainer.CHILDREN), childAdditionUpdater);
 
 		context.set(ToolBarManagerRenderer.class, this);
 
@@ -236,6 +255,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(selectionUpdater);
 		eventBroker.unsubscribe(enabledUpdater);
 		eventBroker.unsubscribe(toBeRenderedUpdater);
+		eventBroker.unsubscribe(childAdditionUpdater);
 	}
 
 	/*
@@ -722,6 +742,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public void childRendered(MElementContainer<MUIElement> parentElement,
 			MUIElement element) {
 		super.childRendered(parentElement, element);
+		processContents(parentElement);
 		ToolBar toolbar = (ToolBar) getUIContainer(element);
 		if (toolbar != null && !toolbar.isDisposed()) {
 			toolbar.getShell().layout(new Control[] { toolbar }, SWT.DEFER);
