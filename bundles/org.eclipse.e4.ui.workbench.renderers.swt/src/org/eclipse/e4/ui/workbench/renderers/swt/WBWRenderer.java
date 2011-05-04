@@ -23,7 +23,9 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -109,6 +111,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	private EventHandler shellUpdater;
 	private EventHandler visibilityHandler;
 	private EventHandler sizeHandler;
+	private EventHandler childHandler;
 
 	public WBWRenderer() {
 		super();
@@ -131,9 +134,7 @@ public class WBWRenderer extends SWTPartRenderer {
 				parent = ph.getParent();
 			}
 			if (parent instanceof MPartStack) {
-				parent.getTags().remove("active"); //$NON-NLS-1$
-				if (parent.getWidget() != null)
-					setCSSInfo(parent, parent.getWidget());
+				styleStack((MPartStack) parent, false);
 			} else {
 				if (activePart.getWidget() != null)
 					setCSSInfo(activePart, activePart.getWidget());
@@ -150,12 +151,21 @@ public class WBWRenderer extends SWTPartRenderer {
 				parent = ph.getParent();
 			}
 			if (parent instanceof MPartStack && parent.getWidget() != null) {
-				parent.getTags().add("active"); //$NON-NLS-1$
-				setCSSInfo(parent, parent.getWidget());
+				styleStack((MPartStack) parent, true);
 			} else if (activePart.getWidget() != null) {
 				setCSSInfo(activePart, activePart.getWidget());
 			}
 		}
+	}
+
+	private void styleStack(MPartStack stack, boolean active) {
+		if (!active)
+			stack.getTags().remove("active"); //$NON-NLS-1$
+		else
+			stack.getTags().add("active"); //$NON-NLS-1$
+
+		if (stack.getWidget() != null)
+			setCSSInfo(stack, stack.getWidget());
 	}
 
 	private void closeDetachedWindow(MWindow window) {
@@ -297,6 +307,40 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC),
 				sizeHandler);
+
+		childHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				// Track additions/removals of the active part and keep its
+				// stack styled correctly
+				Object changedObj = event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				if (!(changedObj instanceof MPartStack))
+					return;
+				MPartStack stack = (MPartStack) changedObj;
+
+				String eventType = (String) event
+						.getProperty(UIEvents.EventTags.TYPE);
+				if (UIEvents.EventTypes.ADD.equals(eventType)) {
+					MUIElement added = (MUIElement) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					if (added == activePart) {
+						styleStack(stack, true);
+					}
+				} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
+					Activator.trace(Policy.DEBUG_RENDERER,
+							"Child Removed", null); //$NON-NLS-1$
+					MUIElement removed = (MUIElement) event
+							.getProperty(UIEvents.EventTags.OLD_VALUE);
+					if (removed == activePart) {
+						styleStack(stack, false);
+					}
+				}
+			}
+		};
+
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.CHILDREN), childHandler);
 	}
 
 	@PreDestroy
@@ -304,6 +348,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		eventBroker.unsubscribe(shellUpdater);
 		eventBroker.unsubscribe(visibilityHandler);
 		eventBroker.unsubscribe(sizeHandler);
+		eventBroker.unsubscribe(childHandler);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {

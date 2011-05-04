@@ -405,12 +405,16 @@ public interface EModelService {
 
 	/**
 	 * This method ensures that there will never be two placeholders for the same referenced element
-	 * visible in the presentation at the same time. It does this by removing placeholders which are
+	 * visible in the presentation at the same time. It does this by hiding placeholders which are
 	 * contained in any MPerspective if there is a placeholder for the element in any 'shared' area
-	 * (i.e. visible regardless of which perspective is visible.
+	 * (i.e. visible regardless of which perspective is visible) by setting its 'toBeRendered' state
+	 * to <code>false</code>.
 	 * 
 	 * @param window
+	 *            The window to modify
 	 * @param perspective
+	 *            if non-null specifies the specific perspective to modify, otherwise all
+	 *            perspectives in the window are checked
 	 */
-	public void removeLocalPlaceholders(MWindow window, MPerspective perspective);
+	public void hideLocalPlaceholders(MWindow window, MPerspective perspective);
 }

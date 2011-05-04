@@ -269,7 +269,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (newLocation == EModelService.IN_SHARED_AREA
 						|| newLocation == EModelService.OUTSIDE_PERSPECTIVE) {
 					MWindow topWin = modelService.getTopLevelWindowFor(added);
-					modelService.removeLocalPlaceholders(topWin, null);
+					modelService.hideLocalPlaceholders(topWin, null);
 				}
 			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$

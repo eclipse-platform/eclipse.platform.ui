@@ -42,6 +42,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
@@ -368,11 +369,27 @@ public class ModelServiceImpl implements EModelService {
 	 */
 	public MPlaceholder findPlaceholderFor(MWindow window, MUIElement element) {
 		List<MPlaceholder> phList = findPerspectiveElements(window, null, MPlaceholder.class, null);
+		List<MPlaceholder> elementRefs = new ArrayList<MPlaceholder>();
 		for (MPlaceholder ph : phList) {
 			if (ph.getRef() == element)
-				return ph;
+				elementRefs.add(ph);
 		}
-		return null;
+
+		if (elementRefs.size() == 0)
+			return null;
+
+		if (elementRefs.size() == 1)
+			return elementRefs.get(0);
+
+		// If there is more than one placeholder then return the one in the shared area
+		for (MPlaceholder refPh : elementRefs) {
+			int loc = getElementLocation(refPh);
+			if ((loc & IN_SHARED_AREA) != 0)
+				return refPh;
+		}
+
+		// Just return the first one
+		return elementRefs.get(0);
 	}
 
 	/*
@@ -717,6 +734,19 @@ public class ModelServiceImpl implements EModelService {
 		}
 		persp.getWindows().clear();
 
+		// Remove any views (Placeholders) from the shared area
+		EPartService ps = window.getContext().get(EPartService.class);
+		List<MArea> areas = findElements(window, null, MArea.class, null);
+		if (areas.size() == 1) {
+			MArea area = areas.get(0);
+			List<MPlaceholder> phList = findElements(area, null, MPlaceholder.class, null);
+			for (MPlaceholder ph : phList) {
+				ps.hidePart((MPart) ph.getRef());
+
+				ph.getParent().getChildren().remove(ph);
+			}
+		}
+
 		// Remove any minimized stacks for this perspective
 		List<MTrimBar> bars = findElements(window, null, MTrimBar.class, null);
 		List<MToolControl> toRemove = new ArrayList<MToolControl>();
@@ -875,7 +905,7 @@ public class ModelServiceImpl implements EModelService {
 	 * .ui.model.application.ui.basic.MWindow,
 	 * org.eclipse.e4.ui.model.application.ui.advanced.MPerspective)
 	 */
-	public void removeLocalPlaceholders(MWindow window, MPerspective perspective) {
+	public void hideLocalPlaceholders(MWindow window, MPerspective perspective) {
 		List<MPlaceholder> globals = findElements(window, null, MPlaceholder.class, null,
 				OUTSIDE_PERSPECTIVE | IN_SHARED_AREA);
 
@@ -892,8 +922,8 @@ public class ModelServiceImpl implements EModelService {
 			for (MPlaceholder local : locals) {
 				for (MPlaceholder global : globals) {
 					if (global.getRef() == local.getRef()) {
+						local.setToBeRendered(false);
 						MElementContainer<MUIElement> localParent = local.getParent();
-						local.getParent().getChildren().remove(local);
 						setStackVisibility(localParent);
 					}
 				}

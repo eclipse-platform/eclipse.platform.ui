@@ -2797,6 +2797,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (desc == null)
 			return;
 
+		modelService.resetPerspectiveModel(persp, window);
+
 		// send out reset notification
 		legacyWindow.firePerspectiveChanged(this, desc, CHANGE_RESET);
 
@@ -2811,8 +2813,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
 		reader.extendLayout(getExtensionTracker(), desc.getId(), modelLayout);
 
-		// Remove placeholders for parts that exist in the 'global' areas
-		modelService.removeLocalPlaceholders(window, dummyPerspective);
+		// Hide placeholders for parts that exist in the 'global' areas
+		modelService.hideLocalPlaceholders(window, dummyPerspective);
 
 		List<MPart> dirtyParts = new ArrayList<MPart>();
 		// compare all of the parts between the original and the current
@@ -2874,8 +2876,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				}
 			}
 		}
-
-		modelService.resetPerspectiveModel(persp, window);
 
 		int dCount = dummyPerspective.getChildren().size();
 		while (dummyPerspective.getChildren().size() > 0) {
@@ -3127,8 +3127,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			legacyWindow.firePerspectiveDeactivated(this, lastPerspective);
 		}
 
-		// Remove placeholders for parts that exist in the 'global' areas
-		modelService.removeLocalPlaceholders(window, modelPerspective);
+		// Hide placeholders for parts that exist in the 'global' areas
+		modelService.hideLocalPlaceholders(window, modelPerspective);
 
 		// add it to the stack
 		perspectives.getChildren().add(modelPerspective);
