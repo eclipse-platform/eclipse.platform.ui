@@ -41,7 +41,10 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.contexts.SlaveContextService;
+import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -143,6 +146,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	private SlavePartService partService;
 
 	private SlaveSelectionService selectionService;
+
+	private SlaveContextService contextService;
 
 	protected ArrayList menuExtenders;
 
@@ -286,6 +291,16 @@ public abstract class PartSite implements IWorkbenchPartSite {
 				return selectionService;
 			}
 		});
+		e4Context.set(IContextService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (contextService == null) {
+					contextService = new SlaveContextService(context.getParent().get(
+							IContextService.class), new ActivePartExpression(part));
+				}
+				return contextService;
+			}
+		});
 	}
 
 	/**
@@ -329,6 +344,10 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 		if (selectionService != null) {
 			selectionService.dispose();
+		}
+
+		if (contextService != null) {
+			contextService.dispose();
 		}
 
 		if (serviceLocator != null) {

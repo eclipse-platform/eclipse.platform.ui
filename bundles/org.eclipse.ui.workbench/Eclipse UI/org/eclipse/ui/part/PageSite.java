@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -24,9 +25,12 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
+import org.eclipse.ui.internal.contexts.NestableContextService;
+import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.part.IPageSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
@@ -72,6 +76,8 @@ public class PageSite implements IPageSite, INestable {
 	private SubActionBars subActionBars;
 
 	private IEclipseContext e4Context;
+
+	private NestableContextService contextService;
 
 	/**
 	 * Creates a new sub view site of the given parent view site.
@@ -123,6 +129,17 @@ public class PageSite implements IPageSite, INestable {
 		// consideration during handler lookups
 		IHandlerService handlerService = new LegacyHandlerService(e4Context);
 		e4Context.set(IHandlerService.class, handlerService);
+
+		e4Context.set(IContextService.class.getName(), new ContextFunction() {
+			@Override
+			public Object compute(IEclipseContext context) {
+				if (contextService == null) {
+					contextService = new NestableContextService(context.getParent().get(
+							IContextService.class), new ActivePartExpression(parentSite.getPart()));
+				}
+				return contextService;
+			}
+		});
 	}
 
 	/**
@@ -146,6 +163,11 @@ public class PageSite implements IPageSite, INestable {
 			menuExtenders = null;
 		}
 		subActionBars.dispose();
+
+		if (contextService != null) {
+			contextService.dispose();
+		}
+
 		serviceLocator.dispose();
 		e4Context.dispose();
 	}
@@ -234,6 +256,10 @@ public class PageSite implements IPageSite, INestable {
 	public void activate() {
 		e4Context.activate();
 		serviceLocator.activate();
+
+		if (contextService != null) {
+			contextService.activate();
+		}
 	}
 
 	/*
@@ -244,6 +270,10 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void deactivate() {
+		if (contextService != null) {
+			contextService.deactivate();
+		}
+
 		serviceLocator.deactivate();
 		e4Context.deactivate();
 	}
