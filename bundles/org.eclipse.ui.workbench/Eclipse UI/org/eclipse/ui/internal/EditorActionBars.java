@@ -397,7 +397,9 @@ public class EditorActionBars extends SubActionBars2 {
 			IContributionItem[] items = coolItemToolBarMgr.getItems();
 			for (int i = 0; i < items.length; i++) {
 				IContributionItem item = items[i];
-				item.update(IContributionManagerOverrides.P_ENABLED);
+				if (item != null) {
+					item.update(IContributionManagerOverrides.P_ENABLED);
+				}
 			}
 		}
 	}

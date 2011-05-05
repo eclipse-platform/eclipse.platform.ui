@@ -806,8 +806,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				marker = new GroupMarker(itemModel.getElementId());
 			}
 		}
-		addToManager(parentManager, itemModel, marker);
-		linkModelToContribution(itemModel, marker);
+		if (marker != null) {
+			addToManager(parentManager, itemModel, marker);
+			linkModelToContribution(itemModel, marker);
+		}
 	}
 
 	/**

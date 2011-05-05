@@ -586,6 +586,9 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 				container, null);
 
 		for (IContributionItem item : manager.getItems()) {
+			if (item == null) {
+				continue;
+			}
 			if (renderer.getToolElement(item) != null) {
 				continue;
 			}
