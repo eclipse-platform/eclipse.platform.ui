@@ -86,20 +86,20 @@ public class ReplaceRefactoring extends Refactoring {
 
 		private MatchGroup[] fMatchGroups;
 		private Match[] fMatches;
+
+		private Map/*<URI,ArrayList<Match>*/ fIgnoredMatches;
 		private final FileSearchResult fResult;
 		private final boolean fIsRemove;
 
-		public SearchResultUpdateChange(FileSearchResult result, MatchGroup[] matchGroups, boolean isRemove) {
-			fResult= result;
+		public SearchResultUpdateChange(FileSearchResult result, MatchGroup[] matchGroups, Map ignoredMatches) {
+			this(result, null, ignoredMatches, true);
 			fMatchGroups= matchGroups;
-			fMatches= null;
-			fIsRemove= isRemove;
 		}
 
-		public SearchResultUpdateChange(FileSearchResult result, Match[] matches, boolean isRemove) {
+		private SearchResultUpdateChange(FileSearchResult result, Match[] matches, Map ignoredMatches, boolean isRemove) {
 			fResult= result;
 			fMatches= matches;
-			fMatchGroups= null;
+			fIgnoredMatches= ignoredMatches;
 			fIsRemove= isRemove;
 		}
 
@@ -124,7 +124,20 @@ public class ReplaceRefactoring extends Refactoring {
 				for (int i= 0; i < fMatchGroups.length; i++) {
 					MatchGroup curr= fMatchGroups[i];
 					if (curr.group.isEnabled()) {
-						matches.add(curr.match);
+						FileMatch match= curr.match;
+						matches.add(match);
+
+						if (fIgnoredMatches == null)
+							continue;
+
+						// Add matches that we removed before starting the refactoring
+						IFile file= match.getFile();
+						URI uri= file.getLocationURI();
+						if (uri != null) {
+							ArrayList ignoredMatches= (ArrayList)fIgnoredMatches.get(uri);
+							if (ignoredMatches != null)
+								matches.addAll(ignoredMatches);
+						}
 					}
 				}
 				fMatches= (Match[]) matches.toArray(new Match[matches.size()]);
@@ -140,7 +153,7 @@ public class ReplaceRefactoring extends Refactoring {
 			} else {
 				fResult.addMatches(matches);
 			}
-			return new SearchResultUpdateChange(fResult, matches, !fIsRemove);
+			return new SearchResultUpdateChange(fResult, matches, fIgnoredMatches, !fIsRemove);
 		}
 
 	}
@@ -150,9 +163,13 @@ public class ReplaceRefactoring extends Refactoring {
 	private final FileSearchResult fResult;
 	private final Object[] fSelection;
 
-	private HashMap/*<IFile,Set<Match>*/ fMatches;
+	private final HashMap/*<IFile,Set<Match>*/ fMatches;
 
-	private Map fAffectedLocations;
+	/** Map that keeps already collected locations. */
+	private final Map/*<URI,IFile>*/fAlreadyCollected;
+
+	/** Map that keeps ignored matches (can be null). */
+	private Map/*<URI,ArrayList<Match>*/ fIgnoredMatches;
 
 	private String fReplaceString;
 
@@ -165,7 +182,7 @@ public class ReplaceRefactoring extends Refactoring {
 		fSelection= selection;
 
 		fMatches= new HashMap();
-		fAffectedLocations= new HashMap(selection != null ? selection.length : result.getElements().length);
+		fAlreadyCollected= new HashMap(selection != null ? selection.length : result.getElements().length);
 
 		fReplaceString= null;
 	}
@@ -213,7 +230,7 @@ public class ReplaceRefactoring extends Refactoring {
 			FileMatch[] matches= lineElement.getMatches(fResult);
 			for (int i= 0; i < matches.length; i++) {
 				FileMatch fileMatch= matches[i];
-				if (!isAlreadyCollected(fileMatch)) {
+				if (isMatchToBeIncluded(fileMatch)) {
 					getBucket(fileMatch.getFile()).add(fileMatch);
 				}
 			}
@@ -229,7 +246,7 @@ public class ReplaceRefactoring extends Refactoring {
 				Collection bucket= null;
 				for (int i= 0; i < matches.length; i++) {
 					FileMatch fileMatch= (FileMatch) matches[i];
-					if (!isAlreadyCollected(fileMatch)) {
+					if (isMatchToBeIncluded(fileMatch)) {
 						if (bucket == null) {
 							bucket= getBucket((IFile)object);
 						}
@@ -257,19 +274,41 @@ public class ReplaceRefactoring extends Refactoring {
 		return !fMatches.isEmpty();
 	}
 
-	private boolean isAlreadyCollected(FileMatch match) {
+	/**
+	 * Checks whether the match should be included. Also collects ignored matches whose
+	 * file is linked to an already collected match.
+	 * 
+	 * @param match the match
+	 * @return <code>true</code> iff the match should be included
+	 * @since 3.7
+	 */
+	private boolean isMatchToBeIncluded(FileMatch match) {
 		IFile file= match.getFile();
 		URI uri= file.getLocationURI();
 		if (uri == null)
-			return false;
+			return true;
 
-		for (Iterator iter= fAffectedLocations.keySet().iterator(); iter.hasNext();) {
-			if (URIUtil.equals((URI)iter.next(), uri))
-				return !file.equals(fAffectedLocations.get(uri));
+		for (Iterator iter= fAlreadyCollected.keySet().iterator(); iter.hasNext();) {
+			if (URIUtil.equals((URI)iter.next(), uri)) {
+				if (file.equals(fAlreadyCollected.get(uri)))
+					return true; // another FileMatch for an IFile which already had matches
+
+				if (fIgnoredMatches == null)
+					fIgnoredMatches= new HashMap();
+
+				ArrayList matches= (ArrayList)fIgnoredMatches.get(uri);
+				if (matches == null) {
+					matches= new ArrayList();
+					fIgnoredMatches.put(uri, matches);
+				}
+				matches.add(match);
+
+				return false;
+			}
 		}
 
-		fAffectedLocations.put(uri, file);
-		return false;
+		fAlreadyCollected.put(uri, file);
+		return true;
 	}
 
 	private Collection getBucket(IFile file) {
@@ -342,7 +381,7 @@ public class ReplaceRefactoring extends Refactoring {
 			return RefactoringStatus.createFatalErrorStatus(SearchMessages.ReplaceRefactoring_error_no_changes);
 		}
 
-		compositeChange.add(new SearchResultUpdateChange(fResult, (MatchGroup[]) matchGroups.toArray(new MatchGroup[matchGroups.size()]), true));
+		compositeChange.add(new SearchResultUpdateChange(fResult, (MatchGroup[])matchGroups.toArray(new MatchGroup[matchGroups.size()]), fIgnoredMatches));
 
 		fChange= compositeChange;
 		return resultingStatus;
