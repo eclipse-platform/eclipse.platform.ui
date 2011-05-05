@@ -539,6 +539,11 @@
       <serviceSelector
             filter="(other.info=org.eclipse.help)">
       </serviceSelector>
+      <servlet
+            alias="/counter.html"
+            class="org.eclipse.ua.tests.browser.servlet.CounterServlet"
+            httpcontextId="org.eclipse.help.webapp.help">
+      </servlet>
    </extension>
    <extension
          point="org.eclipse.equinox.http.registry.resources">
