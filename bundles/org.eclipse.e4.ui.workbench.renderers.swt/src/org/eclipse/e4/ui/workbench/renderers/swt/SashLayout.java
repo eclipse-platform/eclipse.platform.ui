@@ -20,11 +20,11 @@ import org.eclipse.swt.widgets.Shell;
 
 public class SashLayout extends Layout {
 
-	int marginLeft = 2;
-	int marginRight = 2;
-	int marginTop = 2;
-	int marginBottom = 2;
-	int sashWidth = 5;
+	int marginLeft = 0;
+	int marginRight = 0;
+	int marginTop = 0;
+	int marginBottom = 0;
+	int sashWidth = 4;
 
 	MUIElement root;
 	private Composite host;
