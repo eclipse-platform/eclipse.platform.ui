@@ -1244,6 +1244,12 @@
             id="org.eclipse.ui.navigate.expandAll"
             name="%command.expandAll.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.handlers.ActiveContextInfoHandler"
+            id="org.eclipse.ui.activeContextInfo"
+            name="%activeContextInfo.name">
+      </command>
    </extension>
    
    <extension
