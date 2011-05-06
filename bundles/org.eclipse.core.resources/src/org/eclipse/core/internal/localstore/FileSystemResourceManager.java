@@ -752,22 +752,24 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 
 	public InputStream read(IFile target, boolean force, IProgressMonitor monitor) throws CoreException {
 		IFileStore store = getStore(target);
-		final IFileInfo fileInfo = store.fetchInfo();
-		if (!fileInfo.exists()) {
-			asyncRefresh(target);
-			if (!force) {
-				String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
-				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+		if (lightweightAutoRefreshEnabled || !force) {
+			final IFileInfo fileInfo = store.fetchInfo();
+			if (!fileInfo.exists()) {
+				asyncRefresh(target);
+				if (!force) {
+					String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
+					throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+				}
 			}
-		}
-		ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
-		int flags = ((Resource) target).getFlags(info);
-		((Resource) target).checkExists(flags, true);
-		if (fileInfo.getLastModified() != info.getLocalSyncInfo()) {
-			asyncRefresh(target);
-			if (!force) {
-				String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
-				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
+			ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
+			int flags = ((Resource) target).getFlags(info);
+			((Resource) target).checkExists(flags, true);
+			if (fileInfo.getLastModified() != info.getLocalSyncInfo()) {
+				asyncRefresh(target);
+				if (!force) {
+					String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
+					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
+				}
 			}
 		}
 		return store.openInputStream(EFS.NONE, monitor);
