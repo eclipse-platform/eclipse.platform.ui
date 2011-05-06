@@ -44,6 +44,8 @@ import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.ErrorEditorPart;
+import org.eclipse.ui.internal.ErrorViewPart;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.ViewSite;
@@ -181,6 +183,10 @@ public abstract class CompatibilityPart {
 	}
 
 	private String computeLabel() {
+		if (wrapped instanceof ErrorEditorPart || wrapped instanceof ErrorViewPart) {
+			return getReference().getTitle();
+		}
+		
 		if (wrapped instanceof IWorkbenchPart2) {
 			String label = ((IWorkbenchPart2) wrapped).getPartName();
 			return Util.safeString(label);
