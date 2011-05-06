@@ -29,11 +29,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -160,8 +160,7 @@ public class EditorSelectionDialog extends Dialog {
 		((GridLayout) contents.getLayout()).numColumns = 2;
 
 		// begin the layout
-		Text textLabel = new Text(contents, SWT.WRAP);
-		textLabel.setEditable(false);
+		Label textLabel = new Label(contents, SWT.WRAP);
 		textLabel.setText(message);
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
