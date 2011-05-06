@@ -290,6 +290,40 @@ public class URIUtilTest extends RuntimeTest {
 		assertEquals("1.0", expectedResolved, resolved);
 	}
 
+	/**
+	 * Tests for {@link URIUtil#append(URI, String)} when dealing with paths containing brackets.
+	 * @throws URISyntaxException 
+	 */
+	public void testAppendWithBrackets() throws URISyntaxException {
+		//append a simple string
+		URI base = new URI("http://example.com/base/");
+		URI result = URIUtil.append(base, "file[with brackets].txt");
+		assertEquals("1.0", "http://example.com/base/file%5Bwith%20brackets%5D.txt", result.toString());
+		assertEquals("1.1", "/base/file[with brackets].txt", result.getPath());
+
+		//append a relative path
+		result = URIUtil.append(base, "some/path/file[with brackets].txt");
+		assertEquals("2.0", "http://example.com/base/some/path/file%5Bwith%20brackets%5D.txt", result.toString());
+		assertEquals("2.1", "/base/some/path/file[with brackets].txt", result.getPath());
+
+		//simple string where base has no trailing separator
+		base = new URI("http://example.com/base");
+		result = URIUtil.append(base, "file[with brackets].txt");
+		assertEquals("3.0", "http://example.com/base/file%5Bwith%20brackets%5D.txt", result.toString());
+		assertEquals("3.1", "/base/file[with brackets].txt", result.getPath());
+
+		//append a path where base has no trailing separator
+		result = URIUtil.append(base, "some/path/file[with brackets].txt");
+		assertEquals("4.0", "http://example.com/base/some/path/file%5Bwith%20brackets%5D.txt", result.toString());
+		assertEquals("4.1", "/base/some/path/file[with brackets].txt", result.getPath());
+
+		//TODO opaque URI
+		//		URI opaque = new URI("opaque:something/opaque/");
+		//		result = URIUtil.append(opaque, "some/path/file[with brackets].txt");
+		//		assertEquals("5.0", "opaque:something/opaque/some/path/file%5Bwith%20brackets%5D.txt", result.toString());
+		//		assertEquals("5.1", null, result.getPath());
+	}
+
 	public void testBug286339() throws URISyntaxException {
 
 		//single letter server path
