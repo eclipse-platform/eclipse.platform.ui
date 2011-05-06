@@ -794,6 +794,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 */
 	private void processSeparator(ToolBarManager parentManager,
 			MToolBarSeparator itemModel) {
+		IContributionItem ici = getContribution(itemModel);
+		if (ici != null) {
+			return;
+		}
 		AbstractGroupMarker marker = null;
 		if (itemModel.isVisible()) {
 			marker = new Separator();
@@ -815,6 +819,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 */
 	private void processToolControl(ToolBarManager parentManager,
 			MToolControl itemModel) {
+		IContributionItem ici = getContribution(itemModel);
+		if (ici != null) {
+			return;
+		}
 		final IEclipseContext lclContext = getContext(itemModel);
 		ToolControlContribution ci = ContextInjectionFactory.make(
 				ToolControlContribution.class, lclContext);
@@ -830,6 +838,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 */
 	private void processDirectItem(ToolBarManager parentManager,
 			MDirectToolItem itemModel) {
+		IContributionItem ici = getContribution(itemModel);
+		if (ici != null) {
+			return;
+		}
 		final IEclipseContext lclContext = getContext(itemModel);
 		DirectContributionItem ci = ContextInjectionFactory.make(
 				DirectContributionItem.class, lclContext);
