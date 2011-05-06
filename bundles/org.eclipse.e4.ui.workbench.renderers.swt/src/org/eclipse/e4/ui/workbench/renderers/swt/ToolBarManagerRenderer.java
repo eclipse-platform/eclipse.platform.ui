@@ -684,9 +684,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			parent = tb.getParent();
 		}
 		boolean cleanUp = tb == null || tb.isDisposed();
-		if (!cleanUp) {
-			cleanUp = tb.getItemCount() == 0 || hasOnlySeparators(tb);
-		}
 		if (cleanUp) {
 			if (tb != null && !tb.isDisposed() && !needsViewMenu(element)) {
 				tb.dispose();
