@@ -389,7 +389,7 @@ public final class EditorSelectionDialog extends Dialog {
 			TableItem ti = new TableItem(editorTable, SWT.NULL);
 			ti.setData(editor);
 			ti.setText(editor.getLabel());
-			Image image = editor.getImageDescriptor().createImage();
+			Image image = (Image) resourceManager.get(editor.getImageDescriptor());
 			ti.setImage(image);
 
 			// need to pass an array to setSelection -- 1FSKYVO: SWT:ALL -
