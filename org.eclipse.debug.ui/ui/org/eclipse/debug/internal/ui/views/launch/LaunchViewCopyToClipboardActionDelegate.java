@@ -15,7 +15,6 @@ import org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionD
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -30,10 +29,11 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
         if (view.isBreadcrumbVisible()) {
             ISelection selection = getSelection();
             if (selection instanceof ITreeSelection && getViewer() instanceof InternalTreeModelViewer) {
-                if (selection.isEmpty()) {
-                    selection = new TreeSelection(TreePath.EMPTY);
+                TreePath path = TreePath.EMPTY;
+                if (!selection.isEmpty()) {
+                    path = ((ITreeSelection)selection).getPaths()[0];
                 }
-                return getSelectedItems((InternalTreeModelViewer)getViewer(), ((ITreeSelection)selection).getPaths()[0]);
+                return getSelectedItems((InternalTreeModelViewer)getViewer(), path);
             }
             return new TreeItem[0];
         } else {
