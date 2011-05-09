@@ -1584,16 +1584,23 @@
             id="org.eclipse.debug.ui.properties.defaultLaunchConfigurations"
             name="%DefaultLaunchConfigurationsPropPage.name"
             >
-         <filter
-               name="open"
-               value="true">
-         </filter>
          <enabledWhen>
-            <and>
+            <or>
                <adapt
                      type="org.eclipse.core.resources.IResource">
+                  <not>
+                     <instanceof
+                           value="org.eclipse.core.resources.IProject">
+                     </instanceof>
+                  </not>
                </adapt>
-            </and>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+                  <test
+                        property="org.eclipse.core.resources.open">
+                  </test>
+               </adapt>
+            </or>
          </enabledWhen>
       </page>
    </extension>
