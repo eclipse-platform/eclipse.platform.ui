@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2010 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1860,5 +1860,69 @@ public class FilteredResourceTest extends ResourceTest {
 		IFile file_A_txt = folder.getFile("A.txt");
 		assertTrue("9.0", file_A_txt.exists());
 		assertTrue("10.0", existingProject.getWorkspace().validateFiltered(file_A_txt).isOK());
+	}
+
+	/**
+	 * Regression test for bug 343914
+	 */
+	public void test343914() {
+		String subProjectName = "subProject";
+		IPath subProjectLocation = existingProject.getLocation().append(subProjectName);
+
+		try {
+			FileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, subProjectName);
+			existingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS | IResourceFilterDescription.FILES | IResourceFilterDescription.INHERITABLE, matcherDescription, 0, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		IPath fileLocation = subProjectLocation.append("file.txt");
+
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IFile result = root.getFileForLocation(fileLocation);
+
+		assertTrue("2.0", result == null);
+
+		IFile[] results = root.findFilesForLocation(fileLocation);
+
+		assertTrue("2.1", results.length == 0);
+
+		IPath containerLocation = subProjectLocation.append("folder");
+		IContainer resultContainer = root.getContainerForLocation(containerLocation);
+
+		assertTrue("2.2", resultContainer == null);
+
+		IContainer[] resultsContainer = root.findContainersForLocation(containerLocation);
+
+		assertTrue("2.3", resultsContainer.length == 0);
+
+		IProject subProject = root.getProject(subProjectName);
+
+		IProjectDescription newProjectDescription = getWorkspace().newProjectDescription(subProjectName);
+		newProjectDescription.setLocation(subProjectLocation);
+
+		try {
+			subProject.create(newProjectDescription, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		result = root.getFileForLocation(fileLocation);
+
+		assertTrue("3.0", result != null);
+		assertEquals("3.1", subProject, result.getProject());
+
+		results = root.findFilesForLocation(fileLocation);
+		assertTrue("3.2", results.length == 1);
+		assertEquals("3.3", subProject, results[0].getProject());
+
+		resultContainer = root.getContainerForLocation(containerLocation);
+
+		assertTrue("3.4", resultContainer != null);
+		assertEquals("3.5", subProject, resultContainer.getProject());
+
+		resultsContainer = root.findContainersForLocation(containerLocation);
+
+		assertTrue("3.6", resultsContainer.length == 1);
+		assertEquals("3.7", subProject, resultsContainer[0].getProject());
 	}
 }

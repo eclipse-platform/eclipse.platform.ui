@@ -53,6 +53,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * The workspace paths of {@link IResource#HIDDEN} project and resources
 	 * located in {@link IResource#HIDDEN} projects won't be added to the result.
 	 * </p>
+	 * 
 	 */
 	protected ArrayList<IPath> allPathsForLocation(URI inputLocation) {
 		URI canonicalLocation = FileUtil.canonicalURI(inputLocation);
@@ -193,6 +194,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended),
 	 * the result will omit any hidden member resources.
 	 * </p>
+	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters.
+	 * </p>
 	 * 
 	 * @param location
 	 *        the file system location
@@ -214,7 +219,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			//replace the path in the list with the appropriate resource type
 			IResource resource = resourceFor((IPath)result.get(i), files);
 
-			if (resource == null || (((memberFlags & IContainer.INCLUDE_HIDDEN) == 0) && resource.isHidden(IResource.CHECK_ANCESTORS)) 
+			if (resource == null || ((Resource) resource).isFiltered() || (((memberFlags & IContainer.INCLUDE_HIDDEN) == 0) && resource.isHidden(IResource.CHECK_ANCESTORS)) 
 					|| (((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0) && resource.isTeamPrivateMember(IResource.CHECK_ANCESTORS)))
 				resource = null;
 
@@ -251,10 +256,42 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * <code>IProject</code> is returned.  Otherwise, the returned object
 	 * is a <code>IFolder</code>.  This method does NOT check the existence
 	 * of a folder in the given location. Location cannot be null.
+	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters. If all resources 
+	 * are omitted, the result may be null.
+	 * </p>
 	 */
 	public IContainer containerForLocation(IPath location) {
-		IPath path = pathForLocation(location);
-		return path == null ? null : (IContainer) resourceFor(path, false);
+		return (IContainer) resourceForLocation(location, false); 
+	}
+
+	/**
+	 * Returns the resource corresponding to the given location.  The
+	 * "files" parameter is used for paths of two or more segments.  If true,
+	 * a file is returned, otherwise a folder is returned.  Returns null if files is true
+	 * and the path is not of sufficient length. Also returns null if the resource is 
+	 * filtered out by resource filters
+	 */
+	private IResource resourceForLocation(IPath location, boolean files) {
+		if (workspace.getRoot().getLocation().equals(location)) {
+			if (!files)
+				return resourceFor(Path.ROOT, false);
+			return null;
+		}
+		IProject[] projects = getWorkspace().getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			IPath projectLocation = project.getLocation();
+			if (projectLocation != null && projectLocation.isPrefixOf(location)) {
+				int segmentsToRemove = projectLocation.segmentCount();
+				IPath path = project.getFullPath().append(location.removeFirstSegments(segmentsToRemove));
+				IResource resource = resourceFor(path, files);
+				if (resource != null && !((Resource)resource).isFiltered())
+					return resource;
+			}
+		}
+		return null;
 	}
 
 	public void copy(IResource target, IResource destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
@@ -425,10 +462,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	 * Returns an IFile for the given file system location or null if there
 	 * is no mapping for this path. This method does NOT check the existence
 	 * of a file in the given location. Location cannot be null.
+	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters. If all resources 
+	 * are omitted, the result may be null.
+	 * </p>
 	 */
 	public IFile fileForLocation(IPath location) {
-		IPath path = pathForLocation(location);
-		return path == null ? null : (IFile) resourceFor(path, true);
+		return (IFile) resourceForLocation(location, true);
 	}
 
 	/**
@@ -724,25 +765,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	public void move(IResource source, IFileStore destination, int flags, IProgressMonitor monitor) throws CoreException {
 		//TODO figure out correct semantics for case where destination exists on disk
 		getStore(source).move(destination, EFS.NONE, monitor);
-	}
-
-	/**
-	 * Returns a resource path to the given local location. Returns null if
-	 * it is not under a project's location.
-	 */
-	protected IPath pathForLocation(IPath location) {
-		if (workspace.getRoot().getLocation().equals(location))
-			return Path.ROOT;
-		IProject[] projects = getWorkspace().getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			IPath projectLocation = project.getLocation();
-			if (projectLocation != null && projectLocation.isPrefixOf(location)) {
-				int segmentsToRemove = projectLocation.segmentCount();
-				return project.getFullPath().append(location.removeFirstSegments(segmentsToRemove));
-			}
-		}
-		return null;
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {

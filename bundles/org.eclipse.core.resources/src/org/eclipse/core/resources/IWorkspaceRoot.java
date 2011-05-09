@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -100,6 +100,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * result will omit resources within team private members or hidden
 	 * containers.
 	 * </p>
+	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters.
+	 * </p>
 	 * 
 	 * @param location
 	 *        a path in the local file system
@@ -136,6 +140,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * containers.
 	 * </p>
 	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters.
+	 * </p>
+	 * <p>
 	 * This is a convenience method, fully equivalent to
 	 * <code>findContainersForLocationURI(location, IResource.NONE)</code>.
 	 * </p>
@@ -165,6 +173,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * {@link #INCLUDE_HIDDEN} flag is not specified (recommended), the result
 	 * will omit any hidden member resources.
 	 * </p>
+	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters.
+	 * </p>
 	 * 
 	 * @param location
 	 *        a URI path into some file system
@@ -189,6 +201,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * result will omit resources within team private member or hidden
 	 * containers.
 	 * </p>
+	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters.
+	 * </p>
 	 * 
 	 * @param location
 	 *        a path in the local file system
@@ -208,6 +224,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * The result will omit any team private member and hidden resources. The
 	 * result will omit resources within team private member or hidden
 	 * containers.
+	 * </p>
+	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters.
 	 * </p>
 	 * <p>
 	 * This is a convenience method, fully equivalent to
@@ -240,6 +260,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * {@link #INCLUDE_HIDDEN} flag is not specified (recommended), the result
 	 * will omit any hidden member resources.
 	 * </p>
+	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters.
+	 * </p>
 	 * 
 	 * @param location
 	 *        a URI path into some file system
@@ -271,6 +295,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * location of the platform working location.
 	 * </p>
 	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters.
+	 * </p>
+	 * <p>
 	 * Warning: This method ignores linked resources and their children.  Since
 	 * linked resources may overlap other resources, a unique mapping from a
 	 * file system location to a single resource is not guaranteed.  To find all 
@@ -293,6 +321,10 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * <p>
 	 * This method returns null when the given file system location is not under
 	 * the location of any existing project in the workspace.
+	 * </p>
+	 * <p>
+	 * The result will also omit resources that are explicitly excluded 
+	 * from the workspace according to existing resource filters.
 	 * </p>
 	 * <p>
 	 * Warning: This method ignores linked resources and their children.  Since
