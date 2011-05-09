@@ -715,14 +715,28 @@
             class="org.eclipse.ui.internal.ide.dialogs.ResourceFilterPage"
             id="org.eclipse.ui.propertypages.resource.filters"
             name="%PropertyPages.resource.filters">
-         <filter
-               name="open"
-               value="true">
-         </filter>
          <enabledWhen>
-            <adapt type="org.eclipse.core.resources.IResource">
-            	<instanceof value="org.eclipse.core.resources.IContainer"/>
-            </adapt>
+            <or>
+               <adapt
+                     type="org.eclipse.core.resources.IResource">
+                  <and>
+                     <instanceof
+                           value="org.eclipse.core.resources.IContainer">
+                     </instanceof>
+                     <not>
+                        <instanceof
+                              value="org.eclipse.core.resources.IProject">
+                        </instanceof>
+                     </not>
+                  </and>
+               </adapt>
+               <adapt
+                     type="org.eclipse.core.resources.IProject">
+                  <test
+                        property="org.eclipse.core.resources.open">
+                  </test>
+               </adapt>
+            </or>
          </enabledWhen>
       </page>
       <page
