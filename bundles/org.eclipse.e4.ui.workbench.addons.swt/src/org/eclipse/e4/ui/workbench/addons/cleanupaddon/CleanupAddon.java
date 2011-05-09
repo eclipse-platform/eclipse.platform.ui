@@ -80,14 +80,17 @@ public class CleanupAddon {
 						public void run() {
 							// Remove it from the display if no visible children
 							int tbrCount = modelService.toBeRenderedCount(container);
-							if (tbrCount == 0 && !isLastEditorStack(container)) {
+
+							// Cache the value since setting the TBR may change the result
+							boolean lastStack = isLastEditorStack(container);
+							if (tbrCount == 0 && !lastStack) {
 								container.setToBeRendered(false);
 							}
 
 							// Remove it from the model if it has no children at all
 							if (container.getChildren().size() == 0) {
 								MElementContainer<MUIElement> parent = container.getParent();
-								if (parent != null && !isLastEditorStack(container)) {
+								if (parent != null && !lastStack) {
 									container.setToBeRendered(false);
 									parent.getChildren().remove(container);
 								} else if (container instanceof MWindow) {
@@ -268,7 +271,8 @@ public class CleanupAddon {
 				if (visCount == 0) {
 					Display.getCurrent().asyncExec(new Runnable() {
 						public void run() {
-							theContainer.setToBeRendered(false);
+							if (!isLastEditorStack(theContainer))
+								theContainer.setToBeRendered(false);
 						}
 					});
 				}
