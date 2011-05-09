@@ -98,10 +98,10 @@ abstract class DragAgent {
 	 * original location in the model.
 	 */
 	public void cancelDrag() {
-		if (dragElement.getParent() != null)
-			dragElement.getParent().getChildren().remove(dragElement);
-		originalParent.getChildren().add(originalIndex, dragElement);
-		dndManager.getModelService().bringToTop(dragElement);
+		// if (dragElement.getParent() != null)
+		// dragElement.getParent().getChildren().remove(dragElement);
+		// originalParent.getChildren().add(originalIndex, dragElement);
+		// dndManager.getModelService().bringToTop(dragElement);
 	}
 
 	/**

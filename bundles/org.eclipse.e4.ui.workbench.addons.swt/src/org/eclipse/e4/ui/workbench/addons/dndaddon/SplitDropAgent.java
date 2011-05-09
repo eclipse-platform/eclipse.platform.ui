@@ -12,7 +12,9 @@
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
@@ -21,6 +23,7 @@ import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -36,6 +39,10 @@ public class SplitDropAgent extends DropAgent {
 	private int curDockLocation = NOWHERE;
 
 	private Rectangle ctfBounds;
+
+	private MUIElement outerRelTo;
+	private Rectangle ocBounds;
+	private boolean outerDock;
 
 	/**
 	 * @param modelService
@@ -83,6 +90,26 @@ public class SplitDropAgent extends DropAgent {
 		clientBounds = Display.getCurrent().map(dropCTF, null, clientBounds);
 		ctfBounds = dropCTF.getBounds();
 		ctfBounds = Display.getCurrent().map(dropCTF.getParent(), null, ctfBounds);
+
+		// Find the root of the dropStack's sash structure
+		outerRelTo = dropStack.getParent();
+		if (outerRelTo instanceof MPartSashContainer) {
+			while (outerRelTo != null && !(outerRelTo.getWidget() instanceof Composite))
+				outerRelTo = outerRelTo.getParent();
+		}
+
+		// If the relTo is in the MArea then use its 'curSharedRef'
+		if (outerRelTo instanceof MArea) {
+			outerRelTo = outerRelTo.getCurSharedRef();
+		} else if (outerRelTo instanceof MPartSashContainer) {
+			MUIElement relToParent = outerRelTo.getParent();
+			if (relToParent instanceof MArea) {
+				outerRelTo = relToParent.getCurSharedRef();
+			}
+		}
+		Composite outerComposite = (Composite) outerRelTo.getWidget();
+		ocBounds = outerComposite.getBounds();
+		ocBounds = Display.getCurrent().map(outerComposite.getParent(), null, ocBounds);
 	}
 
 	/*
@@ -122,8 +149,9 @@ public class SplitDropAgent extends DropAgent {
 		if (!clientBounds.contains(info.cursorPos))
 			return false;
 
+		boolean curOuter = outerDock;
 		int dockLocation = getDockLocation(info);
-		if (dockLocation == curDockLocation)
+		if (dockLocation == curDockLocation && curOuter == outerDock)
 			return true;
 
 		curDockLocation = dockLocation;
@@ -136,7 +164,6 @@ public class SplitDropAgent extends DropAgent {
 				dndManager.setHostBounds(dockBounds);
 			}
 			dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_HAND));
-			dndManager.frameRect(dockBounds);
 		} else {
 			unDock(dragElement);
 			dndManager.setCursor(Display.getCurrent().getSystemCursor(SWT.CURSOR_NO));
@@ -150,21 +177,62 @@ public class SplitDropAgent extends DropAgent {
 	 * @return
 	 */
 	private Rectangle getDockBounds(int location) {
-		Rectangle bounds = new Rectangle(ctfBounds.x, ctfBounds.y, ctfBounds.width,
-				ctfBounds.height);
+		if (!outerDock) {
+			Rectangle bounds = new Rectangle(ctfBounds.x, ctfBounds.y, ctfBounds.width,
+					ctfBounds.height);
+			dndManager.frameRect(ctfBounds);
 
-		if (location == EModelService.ABOVE) {
-			bounds.height /= 2;
-		} else if (location == EModelService.BELOW) {
-			bounds.height /= 2;
-			bounds.y += bounds.height;
-		} else if (location == EModelService.LEFT_OF) {
-			bounds.width /= 2;
-		} else if (location == EModelService.RIGHT_OF) {
-			bounds.width /= 2;
-			bounds.x += bounds.width;
+			if (location == EModelService.ABOVE) {
+				bounds.height /= 2;
+			} else if (location == EModelService.BELOW) {
+				bounds.height /= 2;
+				bounds.y += bounds.height;
+			} else if (location == EModelService.LEFT_OF) {
+				bounds.width /= 2;
+			} else if (location == EModelService.RIGHT_OF) {
+				bounds.width /= 2;
+				bounds.x += bounds.width;
+			}
+
+			bounds.x += 8;
+			bounds.y += 8;
+			bounds.width -= 16;
+			bounds.height -= 16;
+			dndManager.addFrame(bounds);
+		} else {
+			Rectangle bounds = new Rectangle(ocBounds.x, ocBounds.y, ocBounds.width,
+					ocBounds.height);
+			int splitWidth = (int) (bounds.width * 0.34);
+			int splitHeight = (int) (bounds.height * 0.34);
+			if (location == EModelService.ABOVE) {
+				Rectangle topRect = new Rectangle(bounds.x, bounds.y, bounds.width, splitHeight);
+				Rectangle bottomRect = new Rectangle(bounds.x, bounds.y + splitHeight + 3,
+						bounds.width, bounds.height - splitHeight - 3);
+				dndManager.frameRect(topRect);
+				dndManager.frameRect(bottomRect);
+			} else if (location == EModelService.BELOW) {
+				Rectangle topRect = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height
+						- splitHeight);
+				Rectangle bottomRect = new Rectangle(bounds.x, bounds.y + bounds.height
+						- splitHeight + 8, bounds.width, splitHeight - 8);
+				dndManager.frameRect(topRect);
+				dndManager.addFrame(bottomRect);
+			} else if (location == EModelService.LEFT_OF) {
+				Rectangle leftRect = new Rectangle(bounds.x, bounds.y, splitWidth, bounds.height);
+				Rectangle rightRect = new Rectangle(bounds.x + splitWidth + 8, bounds.y,
+						bounds.width - splitWidth - 8, bounds.height);
+				dndManager.frameRect(leftRect);
+				dndManager.addFrame(rightRect);
+			} else if (location == EModelService.RIGHT_OF) {
+				Rectangle leftRect = new Rectangle(bounds.x, bounds.y, bounds.width - splitWidth,
+						bounds.height);
+				Rectangle rightRect = new Rectangle(bounds.x + bounds.width - splitWidth + 8,
+						bounds.y, splitWidth - 8, bounds.height);
+				dndManager.frameRect(leftRect);
+				dndManager.addFrame(rightRect);
+			}
 		}
-		return bounds;
+		return null;
 	}
 
 	/**
@@ -172,6 +240,26 @@ public class SplitDropAgent extends DropAgent {
 	 * @return
 	 */
 	private int getDockLocation(DnDInfo info) {
+		// Are we close to the 'outerBounds' ?
+		if (info.cursorPos.x - ocBounds.x < 30) {
+			outerDock = true;
+			return EModelService.LEFT_OF;
+		}
+		if ((ocBounds.x + ocBounds.width) - info.cursorPos.x < 30) {
+			outerDock = true;
+			return EModelService.RIGHT_OF;
+		}
+		if (info.cursorPos.y - ocBounds.y < 30) {
+			outerDock = true;
+			return EModelService.ABOVE;
+		}
+		if ((ocBounds.y + ocBounds.height) - info.cursorPos.y < 30) {
+			outerDock = true;
+			return EModelService.BELOW;
+		}
+
+		outerDock = false;
+
 		int dx = info.cursorPos.x - clientBounds.x;
 		int dy = info.cursorPos.y - clientBounds.y;
 		int dxr = (clientBounds.x + clientBounds.width) - info.cursorPos.x;
@@ -196,6 +284,10 @@ public class SplitDropAgent extends DropAgent {
 		MPartSashContainerElement relTo = dropStack;
 		MPartStack toInsert;
 
+		if (outerDock) {
+			relTo = (MPartSashContainerElement) outerRelTo;
+		}
+
 		if (dragElement instanceof MPartStack) {
 			toInsert = (MPartStack) dragElement;
 		} else {
@@ -206,11 +298,12 @@ public class SplitDropAgent extends DropAgent {
 			toInsert.setSelectedElement(stackElement);
 		}
 
+		int ratio = outerDock ? 34 : 50; // an 'outer' dock should take less real estate
 		MUIElement relToParent = relTo.getParent();
-		dndManager.getModelService().insert(toInsert, relTo, where, 50);
+		dndManager.getModelService().insert(toInsert, relTo, where, ratio);
 
 		// Force the new sash to have the same weight as the original element
-		if (relTo.getParent() != relToParent)
+		if (relTo.getParent() != relToParent && !outerDock)
 			relTo.getParent().setContainerData(weight);
 		dndManager.update();
 

@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.graphics.Point;
 
 /**
@@ -87,5 +88,19 @@ public class PartDragAgent extends DragAgent {
 		super.dragStart(element, info);
 		if (dndManager.getFeedbackStyle() != DnDManager.SIMPLE)
 			dndManager.hostElement(element, 16, 10);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.ui.workbench.addons.dndaddon.DragAgent#dragFinished()
+	 */
+	@Override
+	public void dragFinished() {
+		if (dragElement instanceof MPart) {
+			EPartService ps = dndManager.getDragWindow().getContext().get(EPartService.class);
+			ps.activate((MPart) dragElement);
+		}
+		super.dragFinished();
 	}
 }
