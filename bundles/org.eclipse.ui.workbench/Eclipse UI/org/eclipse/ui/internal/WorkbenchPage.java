@@ -236,7 +236,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		activationList.add(0, part);
 		updateActivePartSources(part);
 		updateActiveEditorSources(part);
-		updateShowInSources(part);
 
 		Object client = part.getObject();
 		if (client instanceof CompatibilityPart) {
@@ -364,7 +363,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		updateActionSets(calculateActionSets(getWorkbenchPart(part), editor));
 	}
 
-	private void updateShowInSources(MPart part) {
+	public void updateShowInSources(MPart part) {
+
 		IWorkbenchPart workbenchPart = getWorkbenchPart(part);
 		ShowInContext context = getContext(workbenchPart);
 		if (context != null) {

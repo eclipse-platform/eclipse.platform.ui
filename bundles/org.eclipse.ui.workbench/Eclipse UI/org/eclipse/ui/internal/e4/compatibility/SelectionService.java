@@ -71,6 +71,10 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 				IWorkbenchPart workbenchPart = ((CompatibilityPart) client).getPart();
 				notifyListeners(part.getElementId(), workbenchPart, (ISelection) selection);
 			}
+
+			if (page != null) {
+				page.updateShowInSources(part);
+			}
 		}
 	};
 
