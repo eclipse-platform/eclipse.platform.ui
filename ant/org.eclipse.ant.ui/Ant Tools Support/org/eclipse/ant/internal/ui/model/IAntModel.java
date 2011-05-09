@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,6 +79,16 @@ public interface IAntModel {
      */
     IFile getFile();
 
+    /**
+     * Returns the encoding from the backing {@link IAntModel}. If the model is <code>null</code>
+     * or the encoding cannot be computed from the location backing the model, <code>UTF-8</code> 
+     * is returned
+     * 
+     * @return the encoding
+     * @since 3.7
+     */
+    String getEncoding();
+    
     /**
      * Handles a <code>BuildException</code> that occurred during parsing.
      * @param be the build exception that occurred

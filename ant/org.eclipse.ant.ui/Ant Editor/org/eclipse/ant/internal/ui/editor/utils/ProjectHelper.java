@@ -62,7 +62,7 @@ public class ProjectHelper extends ProjectHelper2 {
 	private static FileUtils fu= null;
     
 	/**
-	 * The buildfile that is to be parsed. Must be set if parsing is to
+	 * The build file that is to be parsed. Must be set if parsing is to
 	 * be successful.
 	 */
 	private File buildFile= null;
@@ -553,7 +553,12 @@ public class ProjectHelper extends ProjectHelper2 {
                 stream = new FileInputStream(buildFile);
                 inputSource = new InputSource(stream);
         	} else if (source instanceof String) {
-        		stream = new ByteArrayInputStream(((String)source).getBytes("UTF-8")); //$NON-NLS-1$
+        		IAntModel model = getAntModel();
+        		String encoding = IAntCoreConstants.UTF_8;
+        		if(model != null) {
+        			encoding = model.getEncoding();
+        		}
+        		stream = new ByteArrayInputStream(((String)source).getBytes(encoding));
         		inputSource = new InputSource(stream);
         	}
         	
@@ -607,7 +612,7 @@ public class ProjectHelper extends ProjectHelper2 {
         }
     }
 
-	/**
+    /**
 	 * Sets the buildfile that is about to be parsed or <code>null</code> if
 	 * parsing has completed.
 	 * 

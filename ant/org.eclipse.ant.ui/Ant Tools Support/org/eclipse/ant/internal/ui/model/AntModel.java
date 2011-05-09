@@ -13,6 +13,7 @@
 package org.eclipse.ant.internal.ui.model;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -61,7 +62,10 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.text.BadLocationException;
@@ -89,6 +93,7 @@ public class AntModel implements IAntModel {
     private AntElementNode fLastNode;
     private AntElementNode fNodeBeingResolved;
     private int fNodeBeingResolvedIndex= -1;
+    private String fEncoding = null;
     
     private Map fEntityNameToPath;
     
@@ -199,6 +204,7 @@ public class AntModel implements IAntModel {
     	if(helper == null) {
     		ProjectHelperRepository.getInstance().registerProjectHelper(ProjectHelper.class);
     	}
+    	computeEncoding();
     }
     
     /**
@@ -265,6 +271,7 @@ public class AntModel implements IAntModel {
             IntrospectionHelper.getHelper(projectNode.getProject(), Small.class);
             projectNode.getProject().fireBuildFinished(null);
         }
+        fEncoding = null;
     }
 
     /* (non-Javadoc)
@@ -1837,4 +1844,52 @@ public class AntModel implements IAntModel {
      */
     class Small {
     }
+
+    /**
+     * Compute the encoding for the backing build file
+     * 
+     * @since 3.7
+     */
+    void computeEncoding() { 
+    	try {
+			IFile file = getFile();
+			if(file != null) {
+				fEncoding = getFile().getCharset(true);
+				return;
+			}
+		} catch (CoreException e) {
+			//do nothing. default to UTF-8 
+		}
+		//try the file buffer manager - likely an external file
+		IPath path = getLocationProvider().getLocation();
+		if(path != null) {
+			File buildfile = path.toFile();
+			FileReader reader = null;
+			try {
+				reader = new FileReader(buildfile);
+				QualifiedName[] options= new QualifiedName[] {IContentDescription.CHARSET};
+				IContentDescription desc = Platform.getContentTypeManager().getDescriptionFor(reader,  buildfile.getName(), options);
+				if(desc != null) {
+					fEncoding = desc.getCharset();
+					return;
+				}
+			}
+			catch(IOException ioe) {}
+			finally {
+				if(reader != null) {
+					try {
+						reader.close();
+					} catch (IOException e) {}
+				}
+			}
+		}
+		fEncoding = IAntCoreConstants.UTF_8;
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getEncoding()
+	 */
+	public String getEncoding() {
+		return fEncoding;
+	}
 }

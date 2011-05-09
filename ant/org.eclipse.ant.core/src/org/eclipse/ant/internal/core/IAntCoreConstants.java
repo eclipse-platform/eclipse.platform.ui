@@ -115,4 +115,13 @@ public interface IAntCoreConstants {
 	 * @since org.eclipse.ant.core 3.2.200
 	 */
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
+
+	/**
+	 * Constant for the encoding <code>UTF-8</code>
+	 * <br><br>
+	 * Value is: <code>UTF-8</code>
+	 * 
+	 * @since org.eclipse.ant.core 3.3.0
+	 */
+	public static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 }
