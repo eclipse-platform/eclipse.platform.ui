@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
@@ -105,6 +106,8 @@ public class SplitDropAgent extends DropAgent {
 			MUIElement relToParent = outerRelTo.getParent();
 			if (relToParent instanceof MArea) {
 				outerRelTo = relToParent.getCurSharedRef();
+			} else if (relToParent instanceof MPerspective) {
+				outerRelTo = relToParent.getParent(); // PerspectiveStack
 			}
 		}
 		Composite outerComposite = (Composite) outerRelTo.getWidget();
