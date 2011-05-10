@@ -185,7 +185,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
         super.dispose();
 
         // remove ourselves as a selection and registry listener
-        getSite().getPage().removePostSelectionListener(this);
+        getSite().getPage().removeSelectionListener(this);
         RegistryFactory.getRegistry().removeListener(this);
         
         currentPart = null;
@@ -244,7 +244,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * Method declared on IViewPart.
      */
     public void init(IViewSite site) throws PartInitException {
-   		site.getPage().addPostSelectionListener(this);
+   		site.getPage().addSelectionListener(this);
    		super.init(site);
     }
 
