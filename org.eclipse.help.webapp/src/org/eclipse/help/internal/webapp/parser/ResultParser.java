@@ -45,6 +45,10 @@ public class ResultParser extends DefaultHandler {
 		parser.parse(in, this);
 	}
 	
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
 	public ArrayList getItems()
 	{
 		return items;

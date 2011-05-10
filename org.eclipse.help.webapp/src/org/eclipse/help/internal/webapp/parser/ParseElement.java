@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.parser;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -81,6 +83,11 @@ public class ParseElement {
 				buff.append(JSonHelper.NEWLINE + space + JSonHelper.SPACE);
 				buff.append(key);
 				buff.append(JSonHelper.COLON);
+				try {
+					val = URLEncoder.encode(val, "UTF-8"); //$NON-NLS-1$
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
 				buff.append(JSonHelper.getQuotes(val));
 				buff.append(JSonHelper.COMMA);
 			}

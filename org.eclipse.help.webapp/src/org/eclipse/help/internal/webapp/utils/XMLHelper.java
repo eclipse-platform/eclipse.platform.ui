@@ -36,6 +36,7 @@ public final class XMLHelper {
 	public static final String ELEMENT_INDEX			= "index"; //$NON-NLS-1$
 	public static final String ELEMENT_INDEX_CONTRIBUTIONS	= "indexContributions"; //$NON-NLS-1$
 	public static final String ELEMENT_TOC_CONTRIBUTIONS	= "tocContributions"; //$NON-NLS-1$
+	public static final String ELEMENT_NUMERIC_PATH			= "numeric_path"; //$NON-NLS-1$
 	
 	public static final String CATEGORY_HREF			= "categoryHref"; //$NON-NLS-1$
 }

@@ -49,13 +49,20 @@ public class TocFragmentParser extends ResultParser {
 	public void startElement(String uri, 
 			String lname, String name, Attributes attrs) {
 		
-		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE))
-		{
+		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE) 
+				|| name.equalsIgnoreCase(XMLHelper.ELEMENT_NUMERIC_PATH)) {
+			
 			tagLevel++;
 			
 			if (tagLevel == level) {
 				properties = new Properties();
-				properties.put(JSonHelper.PROPERTY_NAME, JSonHelper.TOPIC);
+				if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NUMERIC_PATH)) {
+					setLabel(""); //$NON-NLS-1$
+					properties.put(JSonHelper.PROPERTY_NAME, JSonHelper.NUMERIC_PATH);
+				}
+				else
+					properties.put(JSonHelper.PROPERTY_NAME, JSonHelper.TOPIC);
+				
 				for (int i = 0; i < attrs.getLength(); i++) {
 					String qname = attrs.getQName(i);
 					String val = attrs.getValue(i);
@@ -76,11 +83,17 @@ public class TocFragmentParser extends ResultParser {
 
 	public void endElement(String uri, String lname, String name) {
 
-		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE))
+		if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NODE) 
+				|| name.equalsIgnoreCase(XMLHelper.ELEMENT_NUMERIC_PATH))
 		{
 			if (tagLevel == level && properties != null ) {
 				
-				properties.setProperty("type", "toc"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (name.equalsIgnoreCase(XMLHelper.ELEMENT_NUMERIC_PATH)) {
+					properties.setProperty("id", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+					properties.setProperty("type", "topic"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				else
+					properties.setProperty("type", "toc"); //$NON-NLS-1$ //$NON-NLS-2$
 				
 				ParseElement element = new ParseElement(properties);
 				items.add(element);

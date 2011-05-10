@@ -48,6 +48,7 @@ public final class JSonHelper {
 	public static final String PROPERTY_NAME	= "propertyName"; //$NON-NLS-1$
 	public static final String INDEX			= "Index"; //$NON-NLS-1$
 	public static final String TOPIC			= "Topic"; //$NON-NLS-1$
+	public static final String NUMERIC_PATH		= "NumericPath"; //$NON-NLS-1$
 	
 	public static String getQuotes(String str){
 		return ((str != null)?QUOTE + str + QUOTE:""); //$NON-NLS-1$
