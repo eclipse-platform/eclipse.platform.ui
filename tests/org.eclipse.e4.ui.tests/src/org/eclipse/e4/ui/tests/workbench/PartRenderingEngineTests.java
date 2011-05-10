@@ -2550,11 +2550,13 @@ public class PartRenderingEngineTests extends TestCase {
 		partService.switchPerspective(perspectiveA);
 
 		Control control = (Control) toolBar.getWidget();
+		Control stackIntermediate = control.getParent();
 		Control parent = (Control) partStackA.getWidget();
-		assertEquals(parent, control.getParent());
+		assertEquals(parent, stackIntermediate.getParent());
 
 		partStackB.setToBeRendered(false);
-		assertEquals(parent, control.getParent());
+		stackIntermediate = control.getParent();
+		assertEquals(parent, stackIntermediate.getParent());
 	}
 
 	public void testBug343442() {

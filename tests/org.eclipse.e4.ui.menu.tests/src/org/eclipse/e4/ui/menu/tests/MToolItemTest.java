@@ -112,10 +112,8 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		Composite intermediate = (Composite) renderer
-				.createWidget(file, parent);
+		ToolBar toolbar = (ToolBar) renderer.createWidget(file, parent);
 
-		ToolBar toolbar = getToolBar(intermediate);
 		assertNotNull(toolbar);
 		Object obj = file;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
@@ -175,10 +173,8 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		Composite intermediate = (Composite) renderer.createWidget(
-				toolbarModel, parent);
+		ToolBar toolbar = (ToolBar) renderer.createWidget(toolbarModel, parent);
 
-		ToolBar toolbar = getToolBar(intermediate);
 		assertNotNull(toolbar);
 		Object obj = toolbarModel;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
@@ -222,10 +218,8 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		Composite intermediate = (Composite) renderer
-				.createWidget(file, parent);
+		ToolBar toolbar = (ToolBar) renderer.createWidget(file, parent);
 
-		ToolBar toolbar = getToolBar(intermediate);
 		assertNotNull(toolbar);
 		Object obj = file;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
@@ -290,10 +284,8 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		Composite intermediate = (Composite) renderer
-				.createWidget(file, parent);
+		ToolBar toolbar = (ToolBar) renderer.createWidget(file, parent);
 
-		ToolBar toolbar = getToolBar(intermediate);
 		assertNotNull(toolbar);
 		Object obj = file;
 		renderer.processContents((MElementContainer<MUIElement>) obj);
@@ -334,10 +326,8 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		Composite intermediate = (Composite) renderer
-				.createWidget(file, parent);
+		ToolBar toolbar = (ToolBar) renderer.createWidget(file, parent);
 
-		ToolBar toolbar = getToolBar(intermediate);
 		assertNotNull(toolbar);
 		Object obj = file;
 		renderer.processContents((MElementContainer<MUIElement>) obj);

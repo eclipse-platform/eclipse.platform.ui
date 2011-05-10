@@ -33,7 +33,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private PerspectiveStackRenderer perspStackRenderer;
 	private PerspectiveRenderer perspRenderer;
 	private SashRenderer partSashRenderer;
-	private StackRenderer stackRenderer;
+	private LazyStackRenderer stackRenderer;
 	private TrimBarRenderer trimBarRenderer;
 	private ToolControlRenderer toolControlRenderer;
 	private WBWRenderer wbwRenderer;

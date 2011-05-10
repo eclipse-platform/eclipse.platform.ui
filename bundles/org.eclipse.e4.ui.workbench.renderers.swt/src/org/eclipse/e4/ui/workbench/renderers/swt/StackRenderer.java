@@ -51,7 +51,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -68,16 +67,11 @@ public class StackRenderer extends LazyStackRenderer {
 	private static final String SHELL_CLOSE_EDITORS_MENU = "shell_close_editors_menu"; //$NON-NLS-1$
 	private static final String STACK_SELECTED_PART = "stack_selected_part"; //$NON-NLS-1$
 
-	Image viewMenuImage;
-
 	@Inject
 	IStylingEngine stylingEngine;
 
 	@Inject
 	IEventBroker eventBroker;
-
-	@Inject
-	IPresentationEngine renderer;
 
 	private EventHandler itemUpdater;
 
@@ -432,9 +426,11 @@ public class StackRenderer extends LazyStackRenderer {
 				if (!curTB.isDisposed()) {
 					MUIElement tbME = (MUIElement) curTB
 							.getData(AbstractPartRenderer.OWNING_ME);
-					if (tbME instanceof MToolBar)
-						tbME.setVisible(false);
-					else
+					if (tbME instanceof MToolBar) {
+						// tbME.setVisible(false);
+						curTB.setVisible(false);
+						curTB.moveBelow(null);
+					} else
 						curTB.dispose();
 				}
 			}
@@ -454,7 +450,7 @@ public class StackRenderer extends LazyStackRenderer {
 			if (child instanceof MPart) {
 				MToolBar toolbar = ((MPart) child).getToolbar();
 				if (toolbar != null) {
-					toolbar.setVisible(false);
+					// toolbar.setVisible(false);
 				}
 			}
 		}
@@ -570,9 +566,11 @@ public class StackRenderer extends LazyStackRenderer {
 			if (!curTB.isDisposed()) {
 				MUIElement tbME = (MUIElement) curTB
 						.getData(AbstractPartRenderer.OWNING_ME);
-				if (tbME instanceof MToolBar)
-					tbME.setVisible(false);
-				else
+				if (tbME instanceof MToolBar) {
+					// tbME.setVisible(false);
+					curTB.setVisible(false);
+					curTB.moveBelow(null);
+				} else
 					curTB.dispose();
 			}
 		}
@@ -581,7 +579,8 @@ public class StackRenderer extends LazyStackRenderer {
 		MPart part = (MPart) ((element instanceof MPart) ? element
 				: ((MPlaceholder) element).getRef());
 		MMenu viewMenu = getViewMenu(part);
-		MToolBar toolbar = part.getToolbar();
+		final MToolBar partToolbar = part.getToolbar();
+		MToolBar toolbar = partToolbar;
 		if (toolbar == null) {
 			if (viewMenu != null) {
 				toolbar = MenuFactoryImpl.eINSTANCE.createToolBar();
@@ -590,12 +589,17 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		}
 
-		if (part.getToolbar() != null && part.getToolbar().isToBeRendered()) {
-			part.getToolbar().setVisible(true);
-			Control c = (Control) renderer.createGui(part.getToolbar(), ctf,
-					part.getContext());
-			ctf.setTopRight(c, SWT.RIGHT | SWT.WRAP);
-			ctf.layout();
+		if (partToolbar != null && partToolbar.isToBeRendered()) {
+			partToolbar.setVisible(true);
+			final Composite intermediate = createIntermediate(part,
+					partToolbar, viewMenu, ctf);
+			if (intermediate != null && !intermediate.isDisposed()) {
+				intermediate.setVisible(true);
+				intermediate.moveAbove(null);
+				intermediate.pack();
+				ctf.setTopRight(intermediate, SWT.RIGHT | SWT.WRAP);
+				ctf.layout();
+			}
 		}
 
 		ctf.addMenuDetectListener(new MenuDetectListener() {
@@ -756,17 +760,5 @@ public class StackRenderer extends LazyStackRenderer {
 			if (partService.savePart(otherPart, true))
 				partService.hidePart(otherPart);
 		}
-	}
-
-	private MMenu getViewMenu(MPart part) {
-		if (part.getMenus() == null) {
-			return null;
-		}
-		for (MMenu menu : part.getMenus()) {
-			if (menu.getTags().contains(TAG_VIEW_MENU) && menu.isToBeRendered()) {
-				return menu;
-			}
-		}
-		return null;
 	}
 }

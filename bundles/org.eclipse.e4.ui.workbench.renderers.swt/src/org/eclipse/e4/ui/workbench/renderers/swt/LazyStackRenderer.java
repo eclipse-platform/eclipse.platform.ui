@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
@@ -23,13 +24,32 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -44,6 +64,10 @@ import org.osgi.service.event.EventHandler;
  * 
  */
 public abstract class LazyStackRenderer extends SWTPartRenderer {
+	public static final String TAG_VIEW_MENU = "ViewMenu"; //$NON-NLS-1$
+	static final String TOOL_BAR_MANAGER_RENDERER_VIEW_MENU = "StackRenderer.viewMenu"; //$NON-NLS-1$
+	static final String TOOL_BAR_INTERMEDIATE = "StackRenderer.intermediate"; //$NON-NLS-1$
+
 	private EventHandler lazyLoader = new EventHandler() {
 		public void handleEvent(Event event) {
 			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -67,7 +91,11 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			if (stack.getSelectedElement() != null)
 				lsr.showTab(stack.getSelectedElement());
 		}
-	};;
+	};
+	Image viewMenuImage;
+
+	@Inject
+	IPresentationEngine renderer;
 
 	public LazyStackRenderer() {
 		super();
@@ -151,10 +179,10 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			if (ref instanceof MPart && ph.getParent() != null
 					&& ph.getParent().getWidget() instanceof CTabFolder) {
 				// Reparent the existing Toolbar
-				MPart part = (MPart) ref;
+				// MPart part = (MPart) ref;
 				CTabFolder ctf = (CTabFolder) ph.getParent().getWidget();
-				IPresentationEngine renderer = part.getContext().get(
-						IPresentationEngine.class);
+				// IPresentationEngine renderer = part.getContext().get(
+				// IPresentationEngine.class);
 
 				// Dispose the existing toolbar
 				if (ctf.getTopRight() != null) {
@@ -163,9 +191,11 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					if (!curTB.isDisposed()) {
 						MUIElement tbME = (MUIElement) curTB
 								.getData(AbstractPartRenderer.OWNING_ME);
-						if (tbME instanceof MToolBar)
-							renderer.removeGui(tbME);
-						else
+						if (tbME instanceof MToolBar) {
+							// renderer.removeGui(tbME);
+							curTB.setVisible(false);
+							curTB.moveBelow(null);
+						} else
 							curTB.dispose();
 					}
 				}
@@ -225,14 +255,11 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				// Reparent the existing Toolbar
 				MPart part = (MPart) ref;
 				CTabFolder ctf = (CTabFolder) ph.getParent().getWidget();
-				IPresentationEngine renderer = modelService
-						.getContainingContext(ph)
-						.get(IPresentationEngine.class);
+				// IPresentationEngine renderer = modelService
+				// .getContainingContext(ph)
+				// .get(IPresentationEngine.class);
 
 				MToolBar tbModel = part.getToolbar();
-				if (tbModel != null) {
-					tbModel.setVisible(true);
-				}
 
 				// Dispose the existing toolbar
 				if (ctf.getTopRight() != null) {
@@ -241,18 +268,28 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					if (!curTB.isDisposed()) {
 						MUIElement tbME = (MUIElement) curTB
 								.getData(AbstractPartRenderer.OWNING_ME);
-						if (tbME instanceof MToolBar)
-							renderer.removeGui(tbME);
-						else
+						if (tbME instanceof MToolBar) {
+							// tbME.setVisible(false);
+							curTB.setVisible(false);
+							curTB.moveBelow(null);
+						} else
 							curTB.dispose();
 					}
 				}
 
 				if (tbModel != null) {
-					Control c = (Control) renderer.createGui(tbModel, ctf,
-							part.getContext());
-					ctf.setTopRight(c, SWT.RIGHT | SWT.WRAP);
-					ctf.layout();
+					tbModel.setVisible(true);
+					MMenu viewMenu = getViewMenu(part);
+					final Composite intermediate = createIntermediate(part,
+							tbModel, viewMenu, ctf);
+
+					if (intermediate != null && !intermediate.isDisposed()) {
+						intermediate.setVisible(true);
+						intermediate.moveAbove(null);
+						intermediate.pack();
+						ctf.setTopRight(intermediate, SWT.RIGHT | SWT.WRAP);
+						ctf.layout();
+					}
 				}
 			}
 
@@ -312,5 +349,165 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 				}
 			}
 		}
+	}
+
+	protected Composite createIntermediate(MPart part, MUIElement tbModel,
+			MMenu viewMenu, Composite parent) {
+		Composite tbi = (Composite) tbModel.getTransientData().get(
+				TOOL_BAR_INTERMEDIATE);
+		if (tbi != null && !tbi.isDisposed()) {
+			tbi.setParent(parent);
+			return tbi;
+		}
+		final Composite intermediate = new Composite((Composite) parent,
+				SWT.NONE);
+		intermediate.setData(AbstractPartRenderer.OWNING_ME, tbModel);
+		int orientation = SWT.HORIZONTAL;
+		RowLayout layout = RowLayoutFactory.fillDefaults().wrap(false)
+				.spacing(0).type(orientation).create();
+		layout.marginLeft = 3;
+		layout.center = true;
+		intermediate.setLayout(layout);
+		tbModel.getTransientData().put(TOOL_BAR_INTERMEDIATE, intermediate);
+		Control c = (Control) renderer.createGui(tbModel, intermediate,
+				part.getContext());
+		if (c == null) {
+			intermediate.dispose();
+		} else {
+			c.addListener(SWT.Dispose, new Listener() {
+				public void handleEvent(org.eclipse.swt.widgets.Event event) {
+					intermediate.dispose();
+				}
+			});
+			if (viewMenu != null) {
+				addMenuButton(part, intermediate, viewMenu);
+			}
+		}
+		return intermediate;
+	}
+
+	protected MMenu getViewMenu(MPart part) {
+		if (part.getMenus() == null) {
+			return null;
+		}
+		for (MMenu menu : part.getMenus()) {
+			if (menu.getTags().contains(TAG_VIEW_MENU) && menu.isToBeRendered()) {
+				return menu;
+			}
+		}
+		return null;
+	}
+
+	protected void addMenuButton(MPart part, Composite intermediate, MMenu menu) {
+		ToolBar tb = new ToolBar(intermediate, SWT.FLAT | SWT.RIGHT);
+		tb.setData(TOOL_BAR_MANAGER_RENDERER_VIEW_MENU);
+		ToolItem ti = new ToolItem(tb, SWT.PUSH);
+		ti.setImage(getViewMenuImage());
+		ti.setHotImage(null);
+		ti.setToolTipText("View Menu"); //$NON-NLS-1$
+		ti.setData("theMenu", menu); //$NON-NLS-1$
+		ti.setData("thePart", part); //$NON-NLS-1$
+
+		ti.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				showMenu((ToolItem) e.widget);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				showMenu((ToolItem) e.widget);
+			}
+		});
+	}
+
+	/**
+	 * @param item
+	 */
+	protected void showMenu(ToolItem item) {
+		// Create the UI for the menu
+		final MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
+		Menu menu = null;
+		Object obj = menuModel.getWidget();
+		if (obj instanceof Menu) {
+			menu = (Menu) obj;
+		}
+		if (menu == null || menu.isDisposed()) {
+			MPart part = (MPart) item.getData("thePart"); //$NON-NLS-1$
+			Control ctrl = (Control) part.getWidget();
+			final Menu tmpMenu = (Menu) renderer.createGui(menuModel,
+					ctrl.getShell(), part.getContext());
+			menu = tmpMenu;
+			if (tmpMenu != null) {
+				ctrl.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						if (!tmpMenu.isDisposed()) {
+							tmpMenu.dispose();
+						}
+					}
+				});
+			}
+		}
+		if (menu == null) {
+			return;
+		}
+
+		// ...and Show it...
+		Rectangle ib = item.getBounds();
+		Point displayAt = item.getParent().toDisplay(ib.x, ib.y + ib.height);
+		menu.setLocation(displayAt);
+		menu.setVisible(true);
+
+		Display display = Display.getCurrent();
+		while (!menu.isDisposed() && menu.isVisible()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+		if (menu.getData() instanceof MenuManager) {
+			MenuManager manager = (MenuManager) menu.getData();
+			manager.dispose();
+		} else {
+			menu.dispose();
+		}
+	}
+
+	private Image getViewMenuImage() {
+		if (viewMenuImage == null) {
+			Display d = Display.getCurrent();
+
+			Image viewMenu = new Image(d, 16, 16);
+			Image viewMenuMask = new Image(d, 16, 16);
+
+			Display display = Display.getCurrent();
+			GC gc = new GC(viewMenu);
+			GC maskgc = new GC(viewMenuMask);
+			gc.setForeground(display
+					.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+			gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+			int[] shapeArray = new int[] { 6, 1, 15, 1, 11, 5, 10, 5 };
+			gc.fillPolygon(shapeArray);
+			gc.drawPolygon(shapeArray);
+
+			Color black = display.getSystemColor(SWT.COLOR_BLACK);
+			Color white = display.getSystemColor(SWT.COLOR_WHITE);
+
+			maskgc.setBackground(black);
+			maskgc.fillRectangle(0, 0, 16, 16);
+
+			maskgc.setBackground(white);
+			maskgc.setForeground(white);
+			maskgc.fillPolygon(shapeArray);
+			maskgc.drawPolygon(shapeArray);
+			gc.dispose();
+			maskgc.dispose();
+
+			ImageData data = viewMenu.getImageData();
+			data.transparentPixel = data.getPixel(0, 0);
+
+			viewMenuImage = new Image(d, viewMenu.getImageData(),
+					viewMenuMask.getImageData());
+			viewMenu.dispose();
+			viewMenuMask.dispose();
+		}
+		return viewMenuImage;
 	}
 }
