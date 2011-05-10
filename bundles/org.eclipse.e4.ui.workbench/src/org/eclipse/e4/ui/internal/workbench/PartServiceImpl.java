@@ -83,9 +83,17 @@ public class PartServiceImpl implements EPartService {
 						&& getParts().contains(selectedPart)) {
 					MPlaceholder placeholder = selectedPart.getCurSharedRef();
 					// ask the renderer to create this part
-					engine.createGui(placeholder == null ? selectedPart : placeholder);
-					firePartVisible(selectedPart);
-					firePartBroughtToTop(selectedPart);
+					if (placeholder == null) {
+						if (selectedPart.getParent().getRenderer() != null) {
+							engine.createGui(selectedPart);
+							firePartVisible(selectedPart);
+							firePartBroughtToTop(selectedPart);
+						}
+					} else if (placeholder.getParent().getRenderer() != null) {
+						engine.createGui(placeholder);
+						firePartVisible(selectedPart);
+						firePartBroughtToTop(selectedPart);
+					}
 				}
 			}
 		}

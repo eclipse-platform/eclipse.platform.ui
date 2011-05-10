@@ -304,6 +304,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				placeholders.add(placeholder);
 			}
 		}
+		element.setRenderer(this);
 		return null;
 	}
 
