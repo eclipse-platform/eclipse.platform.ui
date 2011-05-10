@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,8 @@ import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -71,12 +71,13 @@ public class CompatibilityView extends CompatibilityPart {
 		// instantiated before they are
 		IActionBars actionBars = ((IViewPart) legacyPart).getViewSite().getActionBars();
 		ToolBarManager tbm = (ToolBarManager) actionBars.getToolBarManager();
-		ToolBar tb = tbm.createControl(parent);
+		Composite toolBarParent = new Composite(parent, SWT.NONE);
+		tbm.createControl(toolBarParent);
 
 		super.createPartControl(legacyPart, parent);
 
 		// dispose the tb, it will be re-created when the tab is shown
-		tb.dispose();
+		toolBarParent.dispose();
 
 		IEclipseContext context = getModel().getContext();
 		IRendererFactory rendererFactory = context.get(IRendererFactory.class);

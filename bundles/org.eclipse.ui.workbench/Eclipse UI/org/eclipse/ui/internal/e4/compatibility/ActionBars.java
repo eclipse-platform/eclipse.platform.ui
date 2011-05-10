@@ -83,6 +83,9 @@ public class ActionBars extends SubActionBars {
 					}
 				} else {
 					tbm.update(true);
+					if (!tbCtrl.isDisposed()) {
+						tbCtrl.getParent().pack();
+					}
 				}
 			} else {
 				toolbarManager.update(false);
