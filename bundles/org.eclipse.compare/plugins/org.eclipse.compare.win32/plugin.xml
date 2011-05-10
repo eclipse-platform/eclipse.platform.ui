@@ -27,7 +27,7 @@
     <extension
          point="org.eclipse.core.contenttype.contentTypes">
       <content-type
-            file-extensions="doc"
+            file-extensions="doc, docx"
             id="org.eclipse.compare.wordDoc"
             name="%wordDocumentContentTypeName">
       </content-type>
