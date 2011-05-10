@@ -402,10 +402,6 @@ public class BindingProcessingAddon {
 				UIEvents.Context.CONTEXT), contextHandler);
 	}
 
-	private boolean hasDeletedTag(List<String> tags) {
-		return tags.contains(EBindingService.DELETED_BINDING_TAG);
-	}
-
 	private void unregsiterModelListeners() {
 		broker.unsubscribe(additionHandler);
 		broker.unsubscribe(additionHandler);

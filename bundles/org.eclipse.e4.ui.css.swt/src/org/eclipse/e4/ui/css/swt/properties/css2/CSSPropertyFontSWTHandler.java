@@ -11,23 +11,18 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
-import org.eclipse.e4.ui.widgets.CTabFolder;
-import org.eclipse.e4.ui.widgets.CTabItem;
-
-import org.eclipse.e4.ui.css.swt.dom.ItemElement;
-
-import org.w3c.dom.css.CSSPrimitiveValue;
-
-import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
-
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler2;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
+import org.eclipse.e4.ui.css.swt.dom.ItemElement;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.e4.ui.css.swt.properties.custom.CTabETabHelper;
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;

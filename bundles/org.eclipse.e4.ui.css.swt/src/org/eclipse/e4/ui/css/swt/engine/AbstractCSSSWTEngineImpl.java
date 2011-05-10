@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.css.swt.engine;
 
 import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
-import org.eclipse.e4.ui.css.swt.dom.SWTElementProvider;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTColorConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTCursorConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTFontConverterImpl;

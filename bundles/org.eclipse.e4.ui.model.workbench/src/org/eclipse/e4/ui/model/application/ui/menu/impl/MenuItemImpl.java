@@ -11,8 +11,6 @@
 package org.eclipse.e4.ui.model.application.ui.menu.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.e4.ui.model.LocalizationHelper;
-
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.emf.common.notify.Notification;

@@ -11,10 +11,9 @@
 package org.eclipse.e4.ui.model.application.commands.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.e4.ui.model.LocalizationHelper;
-
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.commands.MCategory;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;

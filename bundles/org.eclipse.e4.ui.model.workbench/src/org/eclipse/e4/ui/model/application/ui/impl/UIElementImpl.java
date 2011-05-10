@@ -11,8 +11,6 @@
 package org.eclipse.e4.ui.model.application.ui.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.e4.ui.model.LocalizationHelper;
-
 import org.eclipse.e4.ui.model.application.impl.ApplicationElementImpl;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MExpression;

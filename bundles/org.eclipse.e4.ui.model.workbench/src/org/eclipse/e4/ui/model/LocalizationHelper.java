@@ -10,16 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.model;
 
-import org.eclipse.emf.ecore.EObject;
-
-import org.eclipse.emf.ecore.EStructuralFeature;
-
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.internal.ModelUtils;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 
 /**
  * This class provides set of utility method that can be useful in typical

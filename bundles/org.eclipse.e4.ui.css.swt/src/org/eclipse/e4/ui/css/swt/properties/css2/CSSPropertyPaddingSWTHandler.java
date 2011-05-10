@@ -30,11 +30,6 @@ public class CSSPropertyPaddingSWTHandler extends
 
 	public final static ICSSPropertyPaddingHandler INSTANCE = new CSSPropertyPaddingSWTHandler();
 	
-	private final static int TOP = 0;
-	private final static int RIGHT = 1;
-	private final static int BOTTOM = 2;
-	private final static int LEFT = 3;
-
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);

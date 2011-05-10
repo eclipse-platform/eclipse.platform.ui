@@ -1,15 +1,13 @@
 package org.eclipse.e4.ui.css.swt.properties.custom;
 
 import java.lang.reflect.Method;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabFolderRenderer;
 import org.eclipse.swt.graphics.Color;
-
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSValue;
-
-import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
 
 public class CSSPropertyShadowColorHandler extends AbstractCSSPropertySWTHandler {
 

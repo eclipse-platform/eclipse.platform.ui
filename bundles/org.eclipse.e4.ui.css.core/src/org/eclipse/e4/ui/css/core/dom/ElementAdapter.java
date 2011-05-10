@@ -10,21 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom;
 
-import org.eclipse.e4.ui.css.core.impl.engine.AbstractCSSEngine;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSExtendedPropertiesImpl;
 import org.w3c.dom.Attr;
