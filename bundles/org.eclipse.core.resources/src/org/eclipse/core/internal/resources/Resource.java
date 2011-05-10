@@ -2047,6 +2047,16 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public boolean isFilteredWithException(boolean throwExeception) throws CoreException {
 		if (isLinked() || isVirtual())
 			return false;
+		
+		Project project = (Project) getProject();
+		if (project == null)
+			return false;
+		final ProjectDescription description = project.internalGetDescription();
+		if (description == null)
+			return false;
+		if (description.getFilters() == null)
+			return false;
+
 		Resource currentResource = this;
 		while (currentResource != null && currentResource.getParent() != null) {
 			Resource parent = (Resource) currentResource.getParent();
@@ -2055,7 +2065,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				FileInfo fileInfo = new FileInfo(store.getName());
 				fileInfo.setDirectory(currentResource.getType() == IResource.FOLDER);
 				if (fileInfo != null) {
-					IFileInfo[] filtered = parent.filterChildren(new IFileInfo[] {fileInfo}, throwExeception);
+					IFileInfo[] filtered = parent.filterChildren(project, description, new IFileInfo[] {fileInfo}, throwExeception);
 					if (filtered.length == 0)
 						return true;
 				}
@@ -2072,6 +2082,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		final ProjectDescription description = project.internalGetDescription();
 		if (description == null)
 			return list;
+		return filterChildren(project, description, list, throwException);
+	}
+	
+	private IFileInfo[] filterChildren(Project project, ProjectDescription description, IFileInfo[] list, boolean throwException) throws CoreException {
 		IPath relativePath = getProjectRelativePath();
 		LinkedList<Filter> currentIncludeFilters = new LinkedList<Filter>();
 		LinkedList<Filter> currentExcludeFilters = new LinkedList<Filter>();
