@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ant.core">
+<schema targetNamespace="org.eclipse.ant.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ant.core" id="antTasks" name="Ant Tasks"/>
@@ -20,6 +20,11 @@ request that the declaring plug-in load the specified class.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="antTask" minOccurs="0" maxOccurs="unbounded"/>
@@ -65,7 +70,7 @@ request that the declaring plug-in load the specified class.
          <attribute name="uri" type="string">
             <annotation>
                <documentation>
-                   The uri that this definition should live in. Only used if using Ant newer than 1.6.
+                  The uri that this definition should live in. Only used if using Ant newer than 1.6.
                </documentation>
             </annotation>
          </attribute>
@@ -111,6 +116,7 @@ for the library containing the task.
       </complexType>
    </element>
 
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -124,8 +130,10 @@ for the library containing the task.
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
+In the above example the &lt;code&gt;antSupport.jar&lt;/code&gt; must be created using an Ant project builder. For more information about creating project builders and how they work, please refer to the following help topics: &lt;b&gt;Contributing tasks and types&lt;/b&gt;, &lt;b&gt;Ant buildfiles as project builders&lt;/b&gt; and &lt;b&gt;Creating a project builder Ant buildfile&lt;/b&gt;
       </documentation>
    </annotation>
+
 
    <annotation>
       <appInfo>
@@ -142,7 +150,7 @@ eclipse.incrementalBuild and eclipse.refreshLocal.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
