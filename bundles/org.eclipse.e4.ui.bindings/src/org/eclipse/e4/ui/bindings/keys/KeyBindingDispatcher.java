@@ -25,6 +25,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.internal.KeyAssistDialog;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
@@ -49,6 +51,9 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  */
 public class KeyBindingDispatcher {
+
+	private KeyAssistDialog keyAssistDialog = null;
+
 	/**
 	 * A display filter for handling key bindings. This filter can either be enabled or disabled. If
 	 * disabled, the filter does not process incoming events. The filter starts enabled.
@@ -120,8 +125,8 @@ public class KeyBindingDispatcher {
 	 * @return The set of nearly matching key strokes. It is never <code>null</code>, but may be
 	 *         empty.
 	 */
-	public static List generatePossibleKeyStrokes(Event event) {
-		final List keyStrokes = new ArrayList(3);
+	public static List<KeyStroke> generatePossibleKeyStrokes(Event event) {
+		final List<KeyStroke> keyStrokes = new ArrayList<KeyStroke>(3);
 
 		/*
 		 * If this is not a keyboard event, then there are no key strokes. This can happen if we are
@@ -170,7 +175,7 @@ public class KeyBindingDispatcher {
 	 *            <code>null</code>.
 	 * @return <code>true</code> if the key is an out-of-order key; <code>false</code> otherwise.
 	 */
-	private static boolean isOutOfOrderKey(List keyStrokes) {
+	private static boolean isOutOfOrderKey(List<KeyStroke> keyStrokes) {
 		// Compare to see if one of the possible key strokes is out of order.
 		final KeyStroke[] outOfOrderKeyStrokes = outOfOrderKeys.getKeyStrokes();
 		final int outOfOrderKeyStrokesLength = outOfOrderKeyStrokes.length;
@@ -236,8 +241,8 @@ public class KeyBindingDispatcher {
 	 * command manager. If there is a handler and it is enabled, then it tries the actual execution.
 	 * Execution failures are logged. When this method completes, the key binding state is reset.
 	 * 
-	 * @param binding
-	 *            The binding that should be executed; should not be <code>null</code>.
+	 * @param parameterizedCommand
+	 *            The command that should be executed; should not be <code>null</code>.
 	 * @param trigger
 	 *            The triggering event; may be <code>null</code>.
 	 * @return <code>true</code> if there was a handler; <code>false</code> otherwise.
@@ -252,25 +257,39 @@ public class KeyBindingDispatcher {
 		// Reset the key binding state (close window, clear status line, etc.)
 		resetState(false);
 
-		// Dispatch to the handler.
 		final EHandlerService handlerService = getHandlerService();
 		final Command command = parameterizedCommand.getCommand();
+
 		final boolean commandDefined = command.isDefined();
-		final boolean commandEnabled = handlerService.canExecute(parameterizedCommand);
-		boolean commandHandled = HandlerServiceImpl.lookUpHandler(context, command.getId()) != null;
+		boolean commandEnabled;
+		boolean commandHandled;
+
+		commandEnabled = handlerService.canExecute(parameterizedCommand);
+		commandHandled = HandlerServiceImpl.lookUpHandler(context, command.getId()) != null;
 
 		if (!commandEnabled && commandHandled && commandDefined) {
+			if (keyAssistDialog != null) {
+				keyAssistDialog.clearRememberedState();
+			}
 			return true;
 		}
-		try {
-			handlerService.executeHandler(parameterizedCommand);
-		} catch (final Exception e) {
-			commandHandled = false;
-			if (logger != null) {
-				logger.error(e);
+		if (commandEnabled) {
+			try {
+				handlerService.executeHandler(parameterizedCommand);
+			} catch (final Exception e) {
+				commandHandled = false;
+				if (logger != null) {
+					logger.error(e);
+				}
+			}
+			/*
+			 * Now that the command has executed (and had the opportunity to use the remembered
+			 * state of the dialog), it is safe to delete that information.
+			 */
+			if (keyAssistDialog != null) {
+				keyAssistDialog.clearRememberedState();
 			}
 		}
-
 		return (commandDefined && commandHandled);
 	}
 
@@ -300,7 +319,7 @@ public class KeyBindingDispatcher {
 		}
 
 		// Allow special key out-of-order processing.
-		List keyStrokes = generatePossibleKeyStrokes(event);
+		List<KeyStroke> keyStrokes = generatePossibleKeyStrokes(event);
 		if (isOutOfOrderKey(keyStrokes)) {
 			Widget widget = event.widget;
 			if ((event.character == SWT.DEL)
@@ -335,7 +354,6 @@ public class KeyBindingDispatcher {
 					widget.addListener(SWT.KeyDown, outOfOrderListener);
 					outOfOrderListener.setActive(event.time);
 				}
-
 			}
 
 			/*
@@ -398,7 +416,7 @@ public class KeyBindingDispatcher {
 	 * @param sequence
 	 *            The new key sequence for the state; should not be <code>null</code>.
 	 */
-	private void incrementState(KeySequence sequence) {
+	private void incrementState(final KeySequence sequence) {
 		state = sequence;
 		// Record the starting time.
 		startTime = System.currentTimeMillis();
@@ -408,7 +426,8 @@ public class KeyBindingDispatcher {
 			public void run() {
 				if ((System.currentTimeMillis() > (myStartTime - DELAY))
 						&& (startTime == myStartTime)) {
-					openMultiKeyAssistShell();
+					Collection<Binding> partialMatches = bindingService.getPartialMatches(sequence);
+					openKeyAssistShell(partialMatches);
 				}
 			}
 		});
@@ -421,8 +440,23 @@ public class KeyBindingDispatcher {
 	 * executions.
 	 */
 	public final void openMultiKeyAssistShell() {
-		// TODO: we need some kind of multi binding assistence.
-		resetState(true);
+		if (keyAssistDialog == null) {
+			keyAssistDialog = new KeyAssistDialog(context, this, state);
+		}
+		if (keyAssistDialog.getShell() == null) {
+			keyAssistDialog.setParentShell(getDisplay().getActiveShell());
+		}
+		keyAssistDialog.open();
+	}
+
+	public final void openKeyAssistShell(final Collection<Binding> bindings) {
+		if (keyAssistDialog == null) {
+			keyAssistDialog = new KeyAssistDialog(context, this, state);
+		}
+		if (keyAssistDialog.getShell() == null) {
+			keyAssistDialog.setParentShell(getDisplay().getActiveShell());
+		}
+		keyAssistDialog.open(bindings);
 	}
 
 	/**
@@ -447,14 +481,19 @@ public class KeyBindingDispatcher {
 		return getBindingService().isPerfectMatch(keySequence);
 	}
 
-	public boolean press(List potentialKeyStrokes, Event event) {
+	/**
+	 * @param potentialKeyStrokes
+	 * @param event
+	 * @return
+	 */
+	public boolean press(List<KeyStroke> potentialKeyStrokes, Event event) {
 		KeySequence errorSequence = null;
-		// Collection errorMatch = null;
+		Collection<Binding> errorMatch = null;
 
 		KeySequence sequenceBeforeKeyStroke = state;
-		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
+		for (Iterator<KeyStroke> iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
 			KeySequence sequenceAfterKeyStroke = KeySequence.getInstance(sequenceBeforeKeyStroke,
-					(KeyStroke) iterator.next());
+					iterator.next());
 			if (isPartialMatch(sequenceAfterKeyStroke)) {
 				incrementState(sequenceAfterKeyStroke);
 				return true;
@@ -467,26 +506,27 @@ public class KeyBindingDispatcher {
 					return true;
 				}
 
-				// } else if ((keyAssistDialog != null)
-				// && (keyAssistDialog.getShell() != null)
-				// && ((event.keyCode == SWT.ARROW_DOWN) || (event.keyCode == SWT.ARROW_UP)
-				// || (event.keyCode == SWT.ARROW_LEFT)
-				// || (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR)
-				// || (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
-				// // We don't want to swallow keyboard navigation keys.
-				// return false;
+			} else if ((keyAssistDialog != null)
+					&& (keyAssistDialog.getShell() != null)
+					&& ((event.keyCode == SWT.ARROW_DOWN) || (event.keyCode == SWT.ARROW_UP)
+							|| (event.keyCode == SWT.ARROW_LEFT)
+							|| (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR)
+							|| (event.keyCode == SWT.PAGE_UP) || (event.keyCode == SWT.PAGE_DOWN))) {
+				// We don't want to swallow keyboard navigation keys.
+				return false;
 
 			} else {
-				Collection match = getBindingService().getConflictsFor(sequenceAfterKeyStroke);
-				if (match != null) {
+				Collection<Binding> matches = getBindingService().getConflictsFor(
+						sequenceAfterKeyStroke);
+				if (matches != null && !matches.isEmpty()) {
 					errorSequence = sequenceAfterKeyStroke;
+					errorMatch = matches;
 				}
 			}
 		}
-
 		resetState(true);
 		if (sequenceBeforeKeyStroke.isEmpty() && errorSequence != null) {
-			// openKeyAssistShell(errorMatch);
+			openKeyAssistShell(errorMatch);
 		}
 		return !sequenceBeforeKeyStroke.isEmpty();
 	}
@@ -508,7 +548,7 @@ public class KeyBindingDispatcher {
 	 * @param event
 	 *            The event to process; must not be <code>null</code>.
 	 */
-	void processKeyEvent(List keyStrokes, Event event) {
+	void processKeyEvent(List<KeyStroke> keyStrokes, Event event) {
 		// Dispatch the keyboard shortcut, if any.
 		boolean eatKey = false;
 		if (!keyStrokes.isEmpty()) {
@@ -530,8 +570,13 @@ public class KeyBindingDispatcher {
 		}
 	}
 
-	private void resetState(boolean b) {
+	private void resetState(boolean clearRememberedState) {
+		startTime = Long.MAX_VALUE;
 		state = KeySequence.getInstance();
+		closeMultiKeyAssistShell();
+		if (keyAssistDialog != null && clearRememberedState) {
+			keyAssistDialog.clearRememberedState();
+		}
 	}
 
 	final public KeySequence getBuffer() {
@@ -542,4 +587,17 @@ public class KeyBindingDispatcher {
 	public void setContext(IEclipseContext context) {
 		this.context = context;
 	}
+
+	/**
+	 * Closes the multi-stroke key binding assistant shell, if it exists and isn't already disposed.
+	 */
+	private void closeMultiKeyAssistShell() {
+		if (keyAssistDialog != null) {
+			final Shell shell = keyAssistDialog.getShell();
+			if ((shell != null) && (!shell.isDisposed()) && (shell.isVisible())) {
+				keyAssistDialog.close(true);
+			}
+		}
+	}
+
 }
