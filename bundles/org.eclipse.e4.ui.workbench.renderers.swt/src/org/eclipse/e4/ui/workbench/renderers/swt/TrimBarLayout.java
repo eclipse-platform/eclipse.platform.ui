@@ -195,6 +195,9 @@ public class TrimBarLayout extends Layout {
 		int curX = bounds.x;
 		int curY = bounds.y;
 		for (Control ctrl : curLine.ctrls) {
+			if (ctrl.isDisposed()) {
+				continue;
+			}
 			Point ctrlSize = curLine.sizeMap.get(ctrl);
 			boolean zeroSize = ctrlSize.x == 0 && ctrlSize.y == 0;
 

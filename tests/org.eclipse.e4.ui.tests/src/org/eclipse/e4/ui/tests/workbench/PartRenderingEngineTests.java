@@ -2276,7 +2276,7 @@ public class PartRenderingEngineTests extends TestCase {
 		control = (Control) toolBar.getWidget();
 		assertNotNull(control);
 		assertFalse(control.isDisposed());
-		assertEquals(limboShell, control.getShell());
+		assertFalse(control.isVisible());
 
 		partService.switchPerspective(perspectiveB);
 		partService.hidePart(part);
@@ -2604,8 +2604,9 @@ public class PartRenderingEngineTests extends TestCase {
 		partStack.getChildren().add(placeholder);
 		partStack.setSelectedElement(placeholder);
 
-		assertEquals(partStack.getWidget(),
-				((Control) toolBar.getWidget()).getParent());
+		// stack renderers place a Composite between the CTF and the toolbar
+		assertEquals(partStack.getWidget(), ((Control) toolBar.getWidget())
+				.getParent().getParent());
 	}
 
 	public void testBug343524() {
