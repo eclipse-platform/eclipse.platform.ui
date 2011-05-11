@@ -79,6 +79,8 @@ public class PageSite implements IPageSite, INestable {
 
 	private NestableContextService contextService;
 
+	private boolean active = false;
+
 	/**
 	 * Creates a new sub view site of the given parent view site.
 	 * 
@@ -206,7 +208,11 @@ public class PageSite implements IPageSite, INestable {
 	}
 
 	public final Object getService(final Class key) {
-		return serviceLocator.getService(key);
+		Object service = serviceLocator.getService(key);
+		if (active && service instanceof INestable) {
+			((INestable) service).activate();
+		}
+		return service;
 	}
 
 	/*
@@ -254,6 +260,7 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void activate() {
+		active = true;
 		e4Context.activate();
 		serviceLocator.activate();
 
@@ -270,6 +277,7 @@ public class PageSite implements IPageSite, INestable {
 	 * @since 3.2
 	 */
 	public void deactivate() {
+		active = false;
 		if (contextService != null) {
 			contextService.deactivate();
 		}
