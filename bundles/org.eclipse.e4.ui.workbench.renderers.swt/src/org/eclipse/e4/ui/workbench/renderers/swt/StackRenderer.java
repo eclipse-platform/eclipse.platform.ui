@@ -427,9 +427,9 @@ public class StackRenderer extends LazyStackRenderer {
 					MUIElement tbME = (MUIElement) curTB
 							.getData(AbstractPartRenderer.OWNING_ME);
 					if (tbME instanceof MToolBar) {
-						// tbME.setVisible(false);
 						curTB.setVisible(false);
 						curTB.moveBelow(null);
+						//tbME.setVisible(false);
 					} else
 						curTB.dispose();
 				}
@@ -567,9 +567,9 @@ public class StackRenderer extends LazyStackRenderer {
 				MUIElement tbME = (MUIElement) curTB
 						.getData(AbstractPartRenderer.OWNING_ME);
 				if (tbME instanceof MToolBar) {
-					// tbME.setVisible(false);
 					curTB.setVisible(false);
 					curTB.moveBelow(null);
+					//tbME.setVisible(false);
 				} else
 					curTB.dispose();
 			}

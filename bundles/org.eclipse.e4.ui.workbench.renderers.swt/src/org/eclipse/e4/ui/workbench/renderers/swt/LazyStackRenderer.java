@@ -192,9 +192,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 						MUIElement tbME = (MUIElement) curTB
 								.getData(AbstractPartRenderer.OWNING_ME);
 						if (tbME instanceof MToolBar) {
-							// renderer.removeGui(tbME);
 							curTB.setVisible(false);
 							curTB.moveBelow(null);
+							//tbME.setVisible(false);
 						} else
 							curTB.dispose();
 					}
@@ -269,9 +269,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 						MUIElement tbME = (MUIElement) curTB
 								.getData(AbstractPartRenderer.OWNING_ME);
 						if (tbME instanceof MToolBar) {
-							// tbME.setVisible(false);
 							curTB.setVisible(false);
 							curTB.moveBelow(null);
+							//tbME.setVisible(false);
 						} else
 							curTB.dispose();
 					}
