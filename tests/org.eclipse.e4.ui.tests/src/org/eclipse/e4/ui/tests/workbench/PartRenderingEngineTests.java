@@ -2276,7 +2276,7 @@ public class PartRenderingEngineTests extends TestCase {
 		control = (Control) toolBar.getWidget();
 		assertNotNull(control);
 		assertFalse(control.isDisposed());
-		assertFalse(control.isVisible());
+		assertEquals(limboShell, control.getShell());
 
 		partService.switchPerspective(perspectiveB);
 		partService.hidePart(part);
