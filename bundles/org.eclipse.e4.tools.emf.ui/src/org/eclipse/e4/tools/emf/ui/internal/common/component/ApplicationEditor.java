@@ -395,7 +395,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 				handler.setElementId(prefix + "handlers." + handlerPage.idField.getText().trim()); //$NON-NLS-1$
 			}
 
-			if (!application.getBindingTables().isEmpty()) {
+			if (application.getBindingTables().size() != 0) {
 				if (keyPage.keyField.getText().trim().length() > 0 && !keyPage.bindtableViewer.getSelection().isEmpty()) {
 					keyBinding = CommandsFactoryImpl.eINSTANCE.createKeyBinding();
 					keyBinding.setKeySequence(keyPage.keyField.getText().trim());
@@ -543,7 +543,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		@Override
 		public boolean isPageComplete() {
-			if (keyField.getText().trim().isEmpty()) {
+			if (keyField.getText().trim().length() == 0) {
 				return true;
 			} else {
 				return !bindtableViewer.getSelection().isEmpty();
@@ -632,7 +632,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		@Override
 		public boolean isPageComplete() {
-			if (labelField.getText().trim().isEmpty() && iconField.getText().trim().isEmpty()) {
+			if (labelField.getText().trim().length() == 0 && iconField.getText().trim().length() == 0) {
 				return true;
 			} else {
 				return !menuViewer.getSelection().isEmpty();
@@ -721,7 +721,7 @@ public class ApplicationEditor extends AbstractComponentEditor {
 
 		@Override
 		public boolean isPageComplete() {
-			if (labelField.getText().trim().isEmpty() && iconField.getText().trim().isEmpty()) {
+			if (labelField.getText().trim().length() == 0 && iconField.getText().trim().length() == 0) {
 				return true;
 			} else {
 				return !toolbarViewer.getSelection().isEmpty();
