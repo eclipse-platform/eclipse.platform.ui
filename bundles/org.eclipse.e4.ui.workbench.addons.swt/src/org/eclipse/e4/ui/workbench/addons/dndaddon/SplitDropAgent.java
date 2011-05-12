@@ -59,20 +59,33 @@ public class SplitDropAgent extends DropAgent {
 		if (!(dragElement instanceof MStackElement) && !(dragElement instanceof MPartStack))
 			return false;
 
-		if (!(info.curElement instanceof MStackElement))
-			return false;
+		dropStack = null;
 
-		// Detect placeholders
-		MUIElement parent = info.curElement.getParent();
-		if (info.curElement instanceof MPart && info.curElement.getCurSharedRef() != null)
-			parent = info.curElement.getCurSharedRef().getParent();
+		// Hack! allow splitting the 'empty' editor area stack
+		if (info.curElement instanceof MPartStack) {
+			MPartStack stack = (MPartStack) info.curElement;
+			if (dndManager.getModelService().isLastEditorStack(stack))
+				dropStack = stack;
+		}
 
-		if (!(parent instanceof MPartStack) || !(parent.getWidget() instanceof CTabFolder))
-			return false;
+		if (dropStack == null) {
+			if (!(info.curElement instanceof MStackElement)
+					&& !dndManager.getModelService().isLastEditorStack(info.curElement))
+				return false;
 
-		dropStack = (MPartStack) parent;
+			// Detect placeholders
+			MUIElement parent = info.curElement.getParent();
+			if (info.curElement instanceof MPart && info.curElement.getCurSharedRef() != null)
+				parent = info.curElement.getCurSharedRef().getParent();
+
+			if (!(parent instanceof MPartStack) || !(parent.getWidget() instanceof CTabFolder))
+				return false;
+
+			dropStack = (MPartStack) parent;
+		}
+
 		weight = dropStack.getContainerData();
-		dropCTF = (CTabFolder) parent.getWidget();
+		dropCTF = (CTabFolder) dropStack.getWidget();
 
 		return true;
 	}

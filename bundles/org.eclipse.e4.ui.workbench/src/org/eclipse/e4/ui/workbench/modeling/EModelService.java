@@ -417,4 +417,15 @@ public interface EModelService {
 	 *            perspectives in the window are checked
 	 */
 	public void hideLocalPlaceholders(MWindow window, MPerspective perspective);
+
+	/**
+	 * Returns <code>true</code> iff the supplied element represents the single visible element in
+	 * the shared area. This method is used to test for this condition since (by convention) there
+	 * must be at least one stack in the shared area at all times.
+	 * 
+	 * @param stack
+	 *            The element to test
+	 * @return <code>true</code> iff the element is the last visible stack
+	 */
+	public boolean isLastEditorStack(MUIElement stack);
 }

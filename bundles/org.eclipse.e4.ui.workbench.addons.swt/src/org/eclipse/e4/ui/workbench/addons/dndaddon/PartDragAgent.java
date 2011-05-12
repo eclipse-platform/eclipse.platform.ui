@@ -12,10 +12,9 @@
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
+import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -38,43 +37,45 @@ public class PartDragAgent extends DragAgent {
 	 */
 	@Override
 	public MUIElement getElementToDrag(DnDInfo info) {
+		if (!(info.curElement instanceof MPartStack))
+			return null;
+
+		MPartStack stack = (MPartStack) info.curElement;
+
 		// Drag a part that is in a stack
-		if (info.curElement instanceof MPartStack
-				&& (info.itemElement instanceof MPlaceholder || info.itemElement instanceof MPart)) {
+		if (info.itemElement instanceof MStackElement) {
 			// Prevent dragging 'No Move' parts
 			if (info.itemElement.getTags().contains(IPresentationEngine.NO_MOVE))
 				return null;
 
-			dragElement = info.itemElement;
-			return info.itemElement;
+			int tbrCount = dndManager.getModelService().countRenderableChildren(stack);
+			if (tbrCount > 1 || dndManager.getModelService().isLastEditorStack(stack)) {
+				dragElement = info.itemElement;
+				return info.itemElement;
+			}
 		}
 
 		// Drag a complete stack
-		if (info.curElement instanceof MPartStack && info.itemElement == null) {
-			// Only allow a drag to start if we're a CTabFolder
-			if (!(info.curElement.getWidget() instanceof CTabFolder))
-				return null;
+		// Only allow a drag to start if we're a CTabFolder
+		if (!(stack.getWidget() instanceof CTabFolder))
+			return null;
 
-			// Only allow a drag to start if we're inside the 'tab area' of the CTF
-			CTabFolder ctf = (CTabFolder) info.curElement.getWidget();
-			Point ctfPos = ctf.getDisplay().map(null, ctf, info.cursorPos);
-			if (ctfPos.y > ctf.getTabHeight())
-				return null;
+		// Only allow a drag to start if we're inside the 'tab area' of the CTF
+		CTabFolder ctf = (CTabFolder) stack.getWidget();
+		Point ctfPos = ctf.getDisplay().map(null, ctf, info.cursorPos);
+		if (ctfPos.y > ctf.getTabHeight())
+			return null;
 
-			// Prevent dragging 'No Move' stacks
-			if (info.curElement.getTags().contains(IPresentationEngine.NO_MOVE))
-				return null;
+		// Prevent dragging 'No Move' stacks
+		if (stack.getTags().contains(IPresentationEngine.NO_MOVE))
+			return null;
 
-			// Prevent dragging the last stack out of the shared area
-			MUIElement parent = info.curElement.getParent();
-			if (parent instanceof MArea)
-				return null;
+		// Prevent dragging the last stack out of the shared area
+		if (dndManager.getModelService().isLastEditorStack(stack))
+			return null;
 
-			dragElement = info.curElement;
-			return info.curElement;
-		}
-
-		return null;
+		dragElement = info.curElement;
+		return info.curElement;
 	}
 
 	/*

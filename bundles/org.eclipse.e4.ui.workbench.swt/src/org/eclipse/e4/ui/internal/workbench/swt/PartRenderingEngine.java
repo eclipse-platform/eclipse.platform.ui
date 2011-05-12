@@ -261,7 +261,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 						}
 					}
 				} else {
-					if (renderer != null)
+					if (renderer != null && added.isToBeRendered())
 						renderer.childRendered(changedElement, added);
 				}
 

@@ -12,6 +12,7 @@
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -43,23 +44,34 @@ public class StackDropAgent extends DropAgent {
 
 	@Override
 	public boolean canDrop(MUIElement dragElement, DnDInfo info) {
-		if (!(dragElement instanceof MStackElement))
+		// We only except stack elements and whole stacks
+		if (!(dragElement instanceof MStackElement) && !(dragElement instanceof MPartStack))
 			return false;
 
-		if (info.curElement instanceof MPartStack
-				&& info.curElement.getWidget() instanceof CTabFolder) {
-			Rectangle areaRect = getTabAreaRect((CTabFolder) info.curElement.getWidget());
-			boolean inArea = areaRect.contains(info.cursorPos);
-			if (inArea) {
-				tabArea = areaRect;
-				dropStack = (MPartStack) info.curElement;
-				dropCTF = (CTabFolder) dropStack.getWidget();
-				createInsertRects();
-			}
-			return inArea;
-		}
+		// We have to be over a stack ourselves
+		if (!(info.curElement instanceof MPartStack))
+			return false;
 
-		return false;
+		MPartStack stack = (MPartStack) info.curElement;
+
+		// We only work for CTabFolders
+		if (!(stack.getWidget() instanceof CTabFolder))
+			return false;
+
+		// We can't drop stacks onto itself
+		if (stack == dragElement)
+			return false;
+
+		// only allow dropping into the the area
+		Rectangle areaRect = getTabAreaRect((CTabFolder) stack.getWidget());
+		boolean inArea = areaRect.contains(info.cursorPos);
+		if (inArea) {
+			tabArea = areaRect;
+			dropStack = (MPartStack) info.curElement;
+			dropCTF = (CTabFolder) dropStack.getWidget();
+			createInsertRects();
+		}
+		return inArea;
 	}
 
 	private Rectangle getTabAreaRect(CTabFolder theCTF) {
@@ -175,7 +187,7 @@ public class StackDropAgent extends DropAgent {
 				itemBounds = Display.getCurrent().map(dropCTF, null, itemBounds);
 				dndManager.frameRect(itemBounds);
 			} else {
-				Rectangle fr = tabArea;
+				Rectangle fr = new Rectangle(tabArea.x, tabArea.y, tabArea.width, tabArea.height);
 				fr.width = 2;
 				dndManager.frameRect(fr);
 			}
@@ -197,7 +209,7 @@ public class StackDropAgent extends DropAgent {
 	private void dock(MUIElement dragElement, int dropIndex) {
 		// Adjust the index if necessary
 		int elementIndex = dropStack.getChildren().indexOf(dragElement);
-		if (elementIndex != -1) {
+		if (elementIndex != -1 && !(dragElement instanceof MPartStack)) {
 			// Get the index of this CTF entry
 			Control dragCtrl = (Control) dragElement.getWidget();
 			for (CTabItem cti : dropCTF.getItems()) {
@@ -209,13 +221,31 @@ public class StackDropAgent extends DropAgent {
 			}
 		}
 
-		if (dragElement.getParent() != null)
-			dragElement.getParent().getChildren().remove(dragElement);
-		if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size())
-			dropStack.getChildren().add(dropIndex, (MStackElement) dragElement);
-		else
-			dropStack.getChildren().add((MStackElement) dragElement);
-		dropStack.setSelectedElement((MStackElement) dragElement);
+		if (dragElement instanceof MStackElement) {
+			if (dragElement.getParent() != null)
+				dragElement.getParent().getChildren().remove(dragElement);
+			if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size())
+				dropStack.getChildren().add(dropIndex, (MStackElement) dragElement);
+			else
+				dropStack.getChildren().add((MStackElement) dragElement);
+
+			// (Re)active the element being dropped
+			dropStack.setSelectedElement((MStackElement) dragElement);
+		} else {
+			MPartStack stack = (MPartStack) dragElement;
+			MStackElement curSel = stack.getSelectedElement();
+			List<MStackElement> kids = stack.getChildren();
+			while (kids.size() > 0) {
+				MStackElement lastChild = kids.remove(kids.size() - 1);
+				if (dropIndex >= 0 && dropIndex < dropStack.getChildren().size())
+					dropStack.getChildren().add(dropIndex, lastChild);
+				else
+					dropStack.getChildren().add(lastChild);
+			}
+
+			// (Re)active the element being dropped
+			dropStack.setSelectedElement(curSel);
+		}
 	}
 
 	/**

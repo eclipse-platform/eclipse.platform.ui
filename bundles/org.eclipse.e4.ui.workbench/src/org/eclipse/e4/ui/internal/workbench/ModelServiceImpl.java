@@ -943,4 +943,33 @@ public class ModelServiceImpl implements EModelService {
 		}
 		parent.setToBeRendered(false);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.modeling.EModelService#isLastEditorStack(org.eclipse.e4.ui.model
+	 * .application.ui.MUIElement)
+	 */
+	public boolean isLastEditorStack(MUIElement stack) {
+		if (!(stack instanceof MPartStack))
+			return false;
+
+		// is it in the shared area?
+		MUIElement parent = stack.getParent();
+		while (parent != null && !(parent instanceof MArea))
+			parent = parent.getParent();
+		if (parent == null)
+			return false;
+
+		// OK, it's in the area, is it the last TBR one ?
+		MArea area = (MArea) parent;
+		List<MPartStack> stacks = findElements(area, null, MPartStack.class, null);
+		int count = 0;
+		for (MPartStack aStack : stacks) {
+			if (aStack.isToBeRendered())
+				count++;
+		}
+		return count < 2;
+	}
 }

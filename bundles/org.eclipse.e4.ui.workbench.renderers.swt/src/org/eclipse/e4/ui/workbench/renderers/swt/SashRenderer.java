@@ -33,7 +33,7 @@ public class SashRenderer extends SWTPartRenderer {
 	private IEventBroker eventBroker;
 
 	private static final int UNDEFINED_WEIGHT = -1;
-	private static final int DEFAULT_WEIGHT = 100;
+	private static final int DEFAULT_WEIGHT = 5000;
 
 	private EventHandler sashOrientationHandler;
 	private EventHandler sashWeightHandler;
