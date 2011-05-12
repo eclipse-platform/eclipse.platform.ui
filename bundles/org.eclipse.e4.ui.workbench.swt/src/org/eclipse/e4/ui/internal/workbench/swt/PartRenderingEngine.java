@@ -478,7 +478,33 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return builder.toString();
 	}
 
-	public Object createGui(MUIElement element, Object parentWidget,
+	public Object createGui(final MUIElement element,
+			final Object parentWidget, final IEclipseContext parentContext) {
+		final Object[] gui = { null };
+		// wrap the handling in a SafeRunner so that exceptions do not prevent
+		// the renderer from processing other elements
+		SafeRunner.run(new ISafeRunnable() {
+			public void handleException(Throwable e) {
+				if (e instanceof Error) {
+					// errors are deadly, we shouldn't ignore these
+					throw (Error) e;
+				} else {
+					// log exceptions otherwise
+					if (logger != null) {
+						String message = "Exception occurred while rendering: {0}"; //$NON-NLS-1$
+						logger.error(e, NLS.bind(message, element));
+					}
+				}
+			}
+
+			public void run() throws Exception {
+				gui[0] = safeCreateGui(element, parentWidget, parentContext);
+			}
+		});
+		return gui[0];
+	}
+
+	public Object safeCreateGui(MUIElement element, Object parentWidget,
 			IEclipseContext parentContext) {
 		if (!element.isToBeRendered())
 			return null;
@@ -606,7 +632,32 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return modelService.getContainingContext(parent);
 	}
 
-	public Object createGui(MUIElement element) {
+	public Object createGui(final MUIElement element) {
+		final Object[] gui = { null };
+		// wrap the handling in a SafeRunner so that exceptions do not prevent
+		// the renderer from processing other elements
+		SafeRunner.run(new ISafeRunnable() {
+			public void handleException(Throwable e) {
+				if (e instanceof Error) {
+					// errors are deadly, we shouldn't ignore these
+					throw (Error) e;
+				} else {
+					// log exceptions otherwise
+					if (logger != null) {
+						String message = "Exception occurred while rendering: {0}"; //$NON-NLS-1$
+						logger.error(e, NLS.bind(message, element));
+					}
+				}
+			}
+
+			public void run() throws Exception {
+				gui[0] = safeCreateGui(element);
+			}
+		});
+		return gui[0];
+	}
+
+	private Object safeCreateGui(MUIElement element) {
 		// Obtain the necessary parent widget
 		Object parent = null;
 		MUIElement parentME = element.getParent();
@@ -635,7 +686,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					.eContainer());
 		}
 
-		return createGui(element, parent, parentContext);
+		return safeCreateGui(element, parent, parentContext);
 	}
 
 	private Shell getLimboShell() {
