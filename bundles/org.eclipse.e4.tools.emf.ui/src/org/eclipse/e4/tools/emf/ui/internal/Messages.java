@@ -604,4 +604,5 @@ public class Messages {
 	public String ObjectViewer_Tooltip_InjectionKey;
 	public String ObjectViewer_Script;
 
+	public String CommandWizard_ShellTitle;
 }

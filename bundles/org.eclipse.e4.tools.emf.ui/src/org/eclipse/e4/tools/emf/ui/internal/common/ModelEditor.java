@@ -156,9 +156,9 @@ import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.CommandParameter;
+import org.eclipse.emf.edit.command.DeleteCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
-import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -602,16 +602,9 @@ public class ModelEditor {
 							addSeparator = true;
 							manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
 								public void run() {
-									if (o.eContainingFeature().isMany()) {
-										Command cmd = RemoveCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o.eContainer(), o.eContainingFeature(), o);
-										if (cmd.canExecute()) {
-											ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
-										}
-									} else {
-										Command cmd = SetCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o.eContainer(), o.eContainingFeature(), null);
-										if (cmd.canExecute()) {
-											ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
-										}
+									Command cmd = DeleteCommand.create(ModelEditor.this.modelProvider.getEditingDomain(), o);
+									if (cmd.canExecute()) {
+										ModelEditor.this.modelProvider.getEditingDomain().getCommandStack().execute(cmd);
 									}
 								}
 							});

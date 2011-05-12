@@ -39,6 +39,7 @@ import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.emf.edit.domain.AdapterFactoryEditingDomain;
 import org.eclipse.emf.edit.domain.EditingDomain;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;
+import org.eclipse.emf.edit.provider.ReflectiveItemProviderAdapterFactory;
 
 public class XMIModelResource implements IModelResource {
 	private EditingDomain editingDomain;
@@ -49,6 +50,8 @@ public class XMIModelResource implements IModelResource {
 
 	public XMIModelResource(URI uri) {
 		ComposedAdapterFactory adapterFactory = new ComposedAdapterFactory(ComposedAdapterFactory.Descriptor.Registry.INSTANCE);
+		adapterFactory.addAdapterFactory(new ReflectiveItemProviderAdapterFactory());
+
 		ResourceSet resourceSet = new ResourceSetImpl();
 		BasicCommandStack commandStack = new BasicCommandStack();
 		commandStack.addCommandStackListener(new CommandStackListener() {
