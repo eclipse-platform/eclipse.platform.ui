@@ -52,7 +52,6 @@ import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -94,6 +93,7 @@ public class PerspectiveSwitcher {
 	private ToolBar psTB;
 	private Composite comp;
 	private Image backgroundImage;
+	private Image perspectiveImage;
 
 	Color borderColor, curveColor;
 	Control toolParent;
@@ -208,6 +208,11 @@ public class PerspectiveSwitcher {
 
 	@PreDestroy
 	void cleanUp() {
+		if (perspectiveImage != null) {
+			perspectiveImage.dispose();
+			perspectiveImage = null;
+		}
+
 		eventBroker.unsubscribe(toBeRenderedHandler);
 		eventBroker.unsubscribe(childrenHandler);
 		eventBroker.unsubscribe(selectionHandler);
@@ -274,7 +279,7 @@ public class PerspectiveSwitcher {
 		});
 
 		final ToolItem createItem = new ToolItem(psTB, SWT.PUSH);
-		createItem.setImage(getOpenPerspectiveImage(psTB.getDisplay()));
+		createItem.setImage(getOpenPerspectiveImage());
 		createItem.setToolTipText(WorkbenchMessages.OpenPerspectiveDialogAction_tooltip);
 		createItem.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -298,10 +303,13 @@ public class PerspectiveSwitcher {
 		}
 	}
 
-	private Image getOpenPerspectiveImage(Display display) {
-		ImageDescriptor desc = WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE);
-		return desc.createImage();
+	private Image getOpenPerspectiveImage() {
+		if (perspectiveImage == null || perspectiveImage.isDisposed()) {
+			ImageDescriptor desc = WorkbenchImages
+					.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE);
+			perspectiveImage = desc.createImage();
+		}
+		return perspectiveImage;
 	}
 
 	MPerspectiveStack getPerspectiveStack() {
