@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
@@ -468,6 +469,17 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 			final MTrimElement child = children.get(i);
 			final Object obj = child.getTransientData().get(OBJECT);
 			if (obj != null && obj.equals(item)) {
+				if (child instanceof MToolBarElement) {
+					renderer.clearModelToContribution((MToolBarElement) child, item);
+				}
+
+				if (child instanceof MToolBar && item instanceof IToolBarContributionItem) {
+					IToolBarManager parent = ((IToolBarContributionItem) item).getToolBarManager();
+					if (parent instanceof ToolBarManager) {
+						renderer.clearModelToManager((MToolBar) child, (ToolBarManager) parent);
+					}
+				}
+				
 				children.remove(i);
 				return (IContributionItem) obj;
 			}
