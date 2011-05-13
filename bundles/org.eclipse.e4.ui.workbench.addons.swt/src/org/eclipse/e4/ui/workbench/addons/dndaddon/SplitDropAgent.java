@@ -84,6 +84,10 @@ public class SplitDropAgent extends DropAgent {
 			dropStack = (MPartStack) parent;
 		}
 
+		// Can't split a stack with itself
+		if (dragElement == dropStack)
+			return false;
+
 		weight = dropStack.getContainerData();
 		dropCTF = (CTabFolder) dropStack.getWidget();
 
@@ -306,6 +310,7 @@ public class SplitDropAgent extends DropAgent {
 
 		if (dragElement instanceof MPartStack) {
 			toInsert = (MPartStack) dragElement;
+			toInsert.getParent().getChildren().remove(toInsert);
 		} else {
 			// wrap it in a stack if it's a part
 			MStackElement stackElement = (MStackElement) dragElement;
