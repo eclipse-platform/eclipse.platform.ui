@@ -84,10 +84,6 @@ public class SplitDropAgent extends DropAgent {
 			dropStack = (MPartStack) parent;
 		}
 
-		// Can't split a stack with itself
-		if (dragElement == dropStack)
-			return false;
-
 		weight = dropStack.getContainerData();
 		dropCTF = (CTabFolder) dropStack.getWidget();
 
@@ -173,6 +169,9 @@ public class SplitDropAgent extends DropAgent {
 		int dockLocation = getDockLocation(info);
 		if (dockLocation == curDockLocation && curOuter == outerDock)
 			return true;
+
+		if (dropStack == dragElement && !outerDock)
+			return false;
 
 		curDockLocation = dockLocation;
 
