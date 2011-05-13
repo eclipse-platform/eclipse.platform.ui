@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.keys;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -77,6 +78,8 @@ public final class BindingService implements IBindingService {
 	private KeyBindingDispatcher dispatcher;
 
 	private Map<String, MBindingContext> bindingContexts = new HashMap<String, MBindingContext>();
+
+	private String[] activeSchemeIds;
 
 	/*
 	 * (non-Javadoc)
@@ -371,6 +374,7 @@ public final class BindingService implements IBindingService {
 
 		// save the active scheme to the model
 		writeSchemeToModel(activeScheme);
+		activeSchemeIds = getSchemeIds(activeScheme.getId());
 
 		// weeds out any of the deleted system bindings using the binding
 		// manager
@@ -409,16 +413,108 @@ public final class BindingService implements IBindingService {
 		// see if there are any bindings that we should add to the runtime
 		for (Binding binding : activeBindings) {
 			final MKeyBinding model = bindingToKey.get(binding);
-			// if we found the binding but it's marked as deleted, then just
-			// remove the deleted tag
-			if (model != null) {
-				if (model.getTags().contains(EBindingService.DELETED_BINDING_TAG)) {
-					model.getTags().remove(EBindingService.DELETED_BINDING_TAG);
+			MKeyBinding toAddModel = model;
+			Binding toAddBinding = binding;
+
+			// if we've switched schemes then we need to check to see if we
+			// should override any of the old bindings
+			final Binding conflict = bindingService.getPerfectMatch(binding.getTriggerSequence());
+
+			if (conflict != null && conflict.getContextId().equals(binding.getContextId())) {
+				final int rc = compareTo(conflict, binding);
+				if (rc < 0) {
+					// we need to delete the existing binding
+					final MKeyBinding conflictModel = bindingToKey.get(conflict);
+					if (conflict.getType() == Binding.USER) {
+						removeBinding(conflict);
+					} else if (conflictModel != null) {
+						if (!conflictModel.getTags().contains(EBindingService.DELETED_BINDING_TAG)) {
+							conflictModel.getTags().add(EBindingService.DELETED_BINDING_TAG);
+						}
+					}
+				} else if (rc > 0) {
+					// the existing binding is correct
+					// we need to delete the new binding
+					if (binding.getType() == Binding.USER) {
+						removeBinding(binding);
+					} else if (model != null) {
+						if (!model.getTags().contains(EBindingService.DELETED_BINDING_TAG)) {
+							model.getTags().add(EBindingService.DELETED_BINDING_TAG);
+						}
+					}
+					// make sure we don't re-add them
+					toAddModel = null;
+					toAddBinding = null;
 				}
-			} else {
-				addBinding(binding);
+			}
+			if (toAddModel != null) {
+				if (toAddModel.getTags().contains(EBindingService.DELETED_BINDING_TAG)) {
+					toAddModel.getTags().remove(EBindingService.DELETED_BINDING_TAG);
+				}
+			} else if (toAddBinding != null) {
+				addBinding(toAddBinding);
+			}
+
+		}
+	}
+
+	private final String[] getSchemeIds(String schemeId) {
+		final List<String> strings = new ArrayList<String>();
+		while (schemeId != null) {
+			strings.add(schemeId);
+			try {
+				schemeId = getScheme(schemeId).getParentId();
+			} catch (final NotDefinedException e) {
+				return new String[0];
 			}
 		}
+
+		return strings.toArray(new String[strings.size()]);
+	}
+
+	/*
+	 * Copied from
+	 * org.eclipse.jface.bindings.BindingManager.compareSchemes(String, String)
+	 * 
+	 * Returns an in based on scheme 1 < scheme 2
+	 */
+	private final int compareSchemes(final String schemeId1, final String schemeId2) {
+		if (activeSchemeIds == null) {
+			return 0;
+		}
+		if (!schemeId2.equals(schemeId1)) {
+			for (int i = 0; i < activeSchemeIds.length; i++) {
+				final String schemePointer = activeSchemeIds[i];
+				if (schemeId2.equals(schemePointer)) {
+					return 1;
+				} else if (schemeId1.equals(schemePointer)) {
+					return -1;
+				}
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Compare 2 bindings, taking into account Scheme and type.
+	 * 
+	 * @param current
+	 *            the existing binding
+	 * @param addition
+	 *            the incoming binding
+	 * @return an int indicating current > addition
+	 */
+	private int compareTo(Binding current, Binding addition) {
+		final Scheme s1 = manager.getScheme(current.getSchemeId());
+		final Scheme s2 = manager.getScheme(addition.getSchemeId());
+		if (!s1.equals(s2)) {
+			int rc = compareSchemes(s1.getId(), s2.getId());
+			if (rc != 0) {
+				// this is because the compare is inverted
+				return rc > 0 ? -1 : 1;
+			}
+		}
+		return current.getType() - addition.getType();
 	}
 
 

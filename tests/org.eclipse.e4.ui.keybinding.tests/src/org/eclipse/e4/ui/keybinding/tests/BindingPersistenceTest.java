@@ -507,6 +507,47 @@ public final class BindingPersistenceTest extends UITestCase {
 
 	// the 'paste' key binding overrides the 'redo' key binding on Windows
 	// platforms
+	public void testPasteAndRedoBindingEmacs() throws Exception {
+		ICommandService commandService = (ICommandService) fWorkbench
+				.getAdapter(ICommandService.class);
+		IBindingService bindingService = (IBindingService) fWorkbench
+				.getAdapter(IBindingService.class);
+
+		final Scheme emacsScheme = bindingService.getScheme(EMACS_SCHEME_ID);
+		assertNotNull(emacsScheme);
+		final Scheme defaultScheme = bindingService
+				.getScheme(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID);
+		assertNotNull(defaultScheme);
+
+		final Binding[] originalBindings = bindingService.getBindings();
+		bindingService.savePreferences(emacsScheme, originalBindings);
+
+		ParameterizedCommand pasteCmd = new ParameterizedCommand(
+				commandService
+						.getCommand(IWorkbenchCommandConstants.EDIT_PASTE),
+				null);
+		ParameterizedCommand redoCmd = new ParameterizedCommand(
+				commandService.getCommand(IWorkbenchCommandConstants.EDIT_REDO),
+				null);
+
+		final KeySequence keyCtrlY = KeySequence.getInstance("CTRL+Y");
+
+		final Binding pasteBinding = bindingService.getPerfectMatch(keyCtrlY);
+		assertNotNull(pasteBinding);
+		assertEquals(pasteCmd, pasteBinding.getParameterizedCommand());
+		assertEquals(EMACS_SCHEME_ID, pasteBinding.getSchemeId());
+
+		// reset the scheme
+		bindingService.savePreferences(defaultScheme, originalBindings);
+		final Binding redoBinding = bindingService.getPerfectMatch(keyCtrlY);
+		assertNotNull(redoBinding);
+		assertEquals(redoCmd, redoBinding.getParameterizedCommand());
+		assertEquals(IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
+				redoBinding.getSchemeId());
+	}
+
+	// the 'paste' key binding overrides the 'redo' key binding and can be
+	// put back
 	public void testPasteBindingEmacs() throws Exception {
 		ICommandService commandService = (ICommandService) fWorkbench
 				.getAdapter(ICommandService.class);
