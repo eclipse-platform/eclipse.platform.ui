@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import java.net.URL;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.IShellProvider;
@@ -349,16 +351,25 @@ public class ProgressManagerUtil {
 	 * @return Shell
 	 */
 	public static Shell getNonModalShell() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (window == null) {
-			IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-					.getWorkbenchWindows();
-			if (windows.length > 0)
-				return windows[0].getShell();
-		} else
-			return window.getShell();
-
+		MApplication application = (MApplication) PlatformUI.getWorkbench().getService(
+				MApplication.class);
+		if (application == null) {
+			// better safe than sorry
+			return null;
+		}
+		MWindow window = application.getSelectedElement();
+		if (window != null) {
+			Object widget = window.getWidget();
+			if (widget instanceof Shell) {
+				return (Shell) widget;
+			}
+		}
+		for (MWindow child : application.getChildren()) {
+			Object widget = child.getWidget();
+			if (widget instanceof Shell) {
+				return (Shell) widget;
+			}
+		}
 		return null;
 	}
 
