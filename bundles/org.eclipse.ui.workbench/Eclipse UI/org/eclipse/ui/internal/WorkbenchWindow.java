@@ -540,6 +540,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		partService.setPage(page);
 
+		getShell().setData(this);
 		trackShellActivation();
 	}
 
