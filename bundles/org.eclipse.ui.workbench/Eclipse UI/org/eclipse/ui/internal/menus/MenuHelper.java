@@ -569,6 +569,7 @@ public class MenuHelper {
 				CommandContributionItemParameter data = cci.getData();
 				MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
 				menuItem.setCommand(command);
+				menuItem.setContributorURI(command.getContributorURI());
 				if (data.label != null) {
 					menuItem.setLabel(data.label);
 				} else {
@@ -597,6 +598,7 @@ public class MenuHelper {
 				CommandContributionItemParameter data = cci.getData();
 				MHandledToolItem toolItem = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
 				toolItem.setCommand(command);
+				toolItem.setContributorURI(command.getContributorURI());
 
 				String iconURI = null;
 				if (data.icon != null) {
@@ -632,6 +634,7 @@ public class MenuHelper {
 				if (id.equals(command.getElementId())) {
 					MHandledToolItem toolItem = MenuFactoryImpl.eINSTANCE.createHandledToolItem();
 					toolItem.setCommand(command);
+					toolItem.setContributorURI(command.getContributorURI());
 
 					String iconURI = getIconURI(action.getImageDescriptor());
 					if (iconURI == null) {
