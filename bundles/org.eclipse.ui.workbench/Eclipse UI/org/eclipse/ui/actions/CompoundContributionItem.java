@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 
 /**
  * A compound contribution is a contribution item consisting of a
@@ -27,12 +25,9 @@ import org.eclipse.swt.widgets.MenuItem;
  */
 public abstract class CompoundContributionItem extends ContributionItem {
 
-    private boolean dirty = true;
-
     private IMenuListener menuListener = new IMenuListener() {
         public void menuAboutToShow(IMenuManager manager) {
             manager.markDirty();
-            dirty = true;
         }
     };
     
@@ -61,11 +56,6 @@ public abstract class CompoundContributionItem extends ContributionItem {
         if (index == -1) {
 			index = menu.getItemCount();
 		}
-        if (!dirty && menu.getParentItem() != null) {
-            // insert a dummy item so that the parent item is not disabled
-            new MenuItem(menu, SWT.NONE, index);
-            return;
-        }
         
         IContributionItem[] items = getContributionItemsToFill();
 		if (index > menu.getItemCount()) {
@@ -81,7 +71,6 @@ public abstract class CompoundContributionItem extends ContributionItem {
             int numAdded = newItemCount - oldItemCount;
             index += numAdded;
         }
-        dirty = false;
     }
     
     /**
@@ -109,7 +98,7 @@ public abstract class CompoundContributionItem extends ContributionItem {
      * @see org.eclipse.jface.action.ContributionItem#isDirty()
      */
     public boolean isDirty() {
-        return dirty;
+		return true;
     }
     
     /* (non-Javadoc)
