@@ -441,18 +441,16 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			return false;
 		}
 		if (menuBar) {
-			if (menuContribution.getVisibleWhen() != null) {
-				final IEclipseContext parentContext = modelService
-						.getContainingContext(menuModel);
-				parentContext.runAndTrack(new RunAndTrack() {
-					@Override
-					public boolean changed(IEclipseContext context) {
-						record.updateVisibility(parentContext.getActiveLeaf());
-						manager.update(true);
-						return true;
-					}
-				});
-			}
+			final IEclipseContext parentContext = modelService
+					.getContainingContext(menuModel);
+			parentContext.runAndTrack(new RunAndTrack() {
+				@Override
+				public boolean changed(IEclipseContext context) {
+					record.updateVisibility(parentContext.getActiveLeaf());
+					manager.update(true);
+					return true;
+				}
+			});
 		}
 		return true;
 	}

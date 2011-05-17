@@ -350,6 +350,7 @@ public class MenuHelper {
 				text = text.substring(0, idx) + '&' + text.substring(idx);
 			}
 		}
+		element.setVisibleWhen(getVisibleWhen(menuAddition));
 		element.setIconURI(MenuHelper
 				.getIconUrl(menuAddition, IWorkbenchRegistryConstants.ATT_ICON));
 		element.setLabel(Util.safeString(text));
