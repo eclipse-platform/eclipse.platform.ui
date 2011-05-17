@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.help.base" version="2">
     <resource path="META-INF/MANIFEST.MF">
-        <filter id="923795461">
+        <filter id="927989779">
             <message_arguments>
-                <message_argument value="3.6.0.qualifier"/>
-                <message_argument value="3.5.3.v201101120800"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Suppress API errors which result from changes to classes reexported from Lucene" id="927989779">
-            <message_arguments>
-                <message_argument value="3.6.0.qualifier"/>
+                <message_argument value="3.6.0"/>
                 <message_argument value="org.apache.lucene"/>
             </message_arguments>
         </filter>
