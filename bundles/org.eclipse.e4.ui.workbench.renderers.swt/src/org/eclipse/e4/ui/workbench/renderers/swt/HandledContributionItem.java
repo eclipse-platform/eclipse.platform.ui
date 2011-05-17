@@ -218,6 +218,15 @@ public class HandledContributionItem extends ContributionItem {
 				}
 				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
+						final IEclipseContext lclContext = getContext(model);
+						if (lclContext == null) {
+							return;
+						}
+						EHandlerService service = lclContext
+								.get(EHandlerService.class);
+						if (service == null) {
+							return;
+						}
 						model.setEnabled(canExecuteItem());
 						update();
 					}
@@ -565,7 +574,7 @@ public class HandledContributionItem extends ContributionItem {
 		}
 		final IEclipseContext lclContext = getContext(model);
 		EHandlerService service = lclContext.get(EHandlerService.class);
-		return service.canExecute(cmd);
+		return service == null ? false : service.canExecute(cmd);
 	}
 
 	public void setParent(IContributionManager parent) {
