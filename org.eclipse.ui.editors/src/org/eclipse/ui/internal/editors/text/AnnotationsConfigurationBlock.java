@@ -609,9 +609,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			// scale down to icon size
 			copy= new Image(Display.getCurrent(), data.scaledTo(SIZE, SIZE));
 
-	    } else if (data.height == SIZE && data.width == SIZE) {
-	    	// nothing to scale, simply copy
-	        copy= new Image(image.getDevice(), image, SWT.IMAGE_COPY);
+		} else if (data.height == SIZE && data.width == SIZE) {
+			// nothing to scale, return the image
+			return image;
 
 		} else {
 			// don't scale up, but rather copy into the middle and mark everything else transparent
