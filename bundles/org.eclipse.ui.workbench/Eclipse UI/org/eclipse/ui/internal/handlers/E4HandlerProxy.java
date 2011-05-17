@@ -17,6 +17,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandler2;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
@@ -43,7 +44,9 @@ public class E4HandlerProxy {
 
 	@CanExecute
 	public boolean canExecute(IEclipseContext context) {
-		// TODO we can do more here.
+		if (handler instanceof IHandler2) {
+			((IHandler2) handler).setEnabled(new ExpressionContext(context));
+		}
 		return handler.isEnabled();
 	}
 

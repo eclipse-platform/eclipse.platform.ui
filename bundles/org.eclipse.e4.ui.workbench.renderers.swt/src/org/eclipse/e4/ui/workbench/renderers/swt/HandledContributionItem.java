@@ -6,10 +6,14 @@ import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
@@ -57,6 +61,10 @@ public class HandledContributionItem extends ContributionItem {
 	private Widget widget;
 	private Listener menuItemListener;
 	private LocalResourceManager localResourceManager;
+
+	@Inject
+	@Optional
+	private Logger logger;
 
 	@Inject
 	private ECommandService commandService;
@@ -200,6 +208,35 @@ public class HandledContributionItem extends ContributionItem {
 		widget = item;
 		model.setWidget(widget);
 		widget.setData(AbstractPartRenderer.OWNING_ME, model);
+		final Display display = widget.getDisplay();
+		display.timerExec(500, new Runnable() {
+			boolean logged = false;
+
+			public void run() {
+				if (widget == null || widget.isDisposed()) {
+					return;
+				}
+				SafeRunner.run(new ISafeRunnable() {
+					public void run() throws Exception {
+						model.setEnabled(canExecuteItem());
+						update();
+					}
+
+					public void handleException(Throwable exception) {
+						if (!logged) {
+							logged = true;
+							if (logger != null) {
+								logger.error(
+										exception,
+										"Internal error during tool item enablement updating, this is only logged once per tool item."); //$NON-NLS-1$
+							}
+						}
+					}
+				});
+				// repeat until disposed
+				display.timerExec(500, this);
+			}
+		});
 
 		update(null);
 		updateIcons();
