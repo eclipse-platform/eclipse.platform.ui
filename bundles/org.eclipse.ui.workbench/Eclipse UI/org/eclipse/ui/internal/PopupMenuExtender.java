@@ -30,6 +30,9 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MOpaqueMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
@@ -543,7 +546,50 @@ public class PopupMenuExtender implements IMenuListener2,
 			IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
 			AbstractPartRenderer obj = factory.getRenderer(menuModel, null);
 			if (obj instanceof MenuManagerRenderer) {
-				((MenuManagerRenderer) obj).clearModelToManager(menuModel, menu);
+				MenuManagerRenderer renderer = (MenuManagerRenderer) obj;
+				unlink(renderer, menuModel);
+				renderer.clearModelToManager(menuModel, menu);
+			}
+		}
+	}
+
+	/**
+	 * Unlink all contribution items from the given model menu.
+	 * 
+	 * @param renderer
+	 *            the renderer that is holding the links
+	 * @param menu
+	 *            the model menu whose children should have its items unlinked
+	 *            from their corresponding contribution items
+	 */
+	private void unlink(MenuManagerRenderer renderer, MMenu menu) {
+		for (MMenuElement menuElement : menu.getChildren()) {
+			if (menuElement instanceof MOpaqueMenuItem) {
+				MOpaqueMenuItem opaqueMenuItem = (MOpaqueMenuItem) menuElement;
+				Object item = opaqueMenuItem.getOpaqueItem();
+				if (item instanceof IContributionItem) {
+					renderer.clearModelToContribution(opaqueMenuItem, (IContributionItem) item);
+					opaqueMenuItem.setOpaqueItem(null);
+				}
+			} else if (menuElement instanceof MOpaqueMenuSeparator) {
+				MOpaqueMenuSeparator opaqueMenuItem = (MOpaqueMenuSeparator) menuElement;
+				Object item = opaqueMenuItem.getOpaqueItem();
+				if (item instanceof IContributionItem) {
+					renderer.clearModelToContribution(opaqueMenuItem, (IContributionItem) item);
+					opaqueMenuItem.setOpaqueItem(null);
+				}
+			} else if (menuElement instanceof MMenu) {
+				MMenu subMenu = (MMenu) menuElement;
+				unlink(renderer, subMenu);
+				MenuManager manager = renderer.getManager(subMenu);
+				if (manager != null) {
+					renderer.clearModelToManager(subMenu, manager);
+				}
+			} else {
+				IContributionItem contribution = renderer.getContribution(menuElement);
+				if (contribution != null) {
+					renderer.clearModelToContribution(menuElement, contribution);
+				}
 			}
 		}
 	}
