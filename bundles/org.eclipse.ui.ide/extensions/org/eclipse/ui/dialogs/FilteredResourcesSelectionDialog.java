@@ -976,7 +976,7 @@ public class FilteredResourcesSelectionDialog extends
 			int lastPatternDot = filenamePattern.lastIndexOf('.');
 			if (lastPatternDot != -1) {
 				char last = filenamePattern.charAt(filenamePattern.length() - 1);
-				if (last != ' ' && last != '<') {
+				if (last != ' ' && last != '<' && getMatchRule() != SearchPattern.RULE_EXACT_MATCH) {
 					namePattern = new SearchPattern();
 					namePattern.setPattern(filenamePattern.substring(0, lastPatternDot));
 					extensionPattern = new SearchPattern();
