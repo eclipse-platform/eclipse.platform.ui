@@ -2497,7 +2497,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		return mpart == null ? false : partService.isPartVisible(mpart);
     }
     
-	private MUIElement findSharedArea() {
+	public MUIElement findSharedArea() {
 		MPerspective perspective = getPerspectiveStack().getSelectedElement();
 		return perspective == null ? null : modelService.find(IPageLayout.ID_EDITOR_AREA,
 				perspective);
