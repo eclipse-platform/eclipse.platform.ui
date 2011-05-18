@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -234,4 +234,17 @@ public interface IPreferenceConstants {
 	 */
 	public static final String USE_32_THREADING = "use32Threading"; //$NON-NLS-1$
 
+	/**
+	 * This preference is the threshold value to determine whether a document is
+	 * large or not. When the user tries to open a file larger than the
+	 * threshold, then EditorSelectionDialog will be opened, suggesting the user
+	 * to open with an external editor.
+	 * <p>
+	 * This preference is a <code>long</code> value that represents the
+	 * threshold in bytes. The default value is <code>0</code> meaning no
+	 * prompting on editor opening.
+	 * </p>
+	 * @since 3.7
+	 */
+	public static final String LARGE_DOC_SIZE_FOR_EDITORS = "LARGE_DOC_SIZE_FOR_EDITORS"; //$NON-NLS-1$
 }
