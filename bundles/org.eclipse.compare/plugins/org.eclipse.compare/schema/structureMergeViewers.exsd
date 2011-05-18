@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.compare" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.compare" id="structureMergeViewers" name="StructureMerge Viewers"/>
+         <meta.schema plugin="org.eclipse.compare" id="structureMergeViewers" name="Structure Merge Viewers"/>
       </appInfo>
       <documentation>
          This extension point allows a plug-in to register compare/merge 
@@ -170,7 +170,7 @@ viewer for zip archives.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2009 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
