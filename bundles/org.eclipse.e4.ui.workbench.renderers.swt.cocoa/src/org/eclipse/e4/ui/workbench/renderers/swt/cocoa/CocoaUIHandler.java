@@ -89,11 +89,6 @@ import org.osgi.service.event.EventHandler;
  * @since 1.0
  */
 public class CocoaUIHandler {
-	protected static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
-	protected static final String HOST_ID = "org.eclipse.e4.ui.workbench.renderers.swt"; //$NON-NLS-1$
-	protected static final String CLASS_URI = "platform:/plugin/" //$NON-NLS-1$  
-			+ HOST_ID + "/" + CocoaUIHandler.class.getName(); //$NON-NLS-1$
-
 	// these constants are defined in IWorkbenchCommandConstants
 	// but reproduced here to support pure-e4 apps
 	private static final String COMMAND_ID_ABOUT = "org.eclipse.ui.help.aboutAction"; //$NON-NLS-1$
@@ -344,7 +339,9 @@ public class CocoaUIHandler {
 		}
 		closeDialogCommand = CommandsFactoryImpl.eINSTANCE.createCommand();
 		closeDialogCommand.setElementId(COMMAND_ID_CLOSE_DIALOG);
-		closeDialogCommand.setCommandName(COMMAND_ID_CLOSE_DIALOG);
+		closeDialogCommand.setCommandName("%command.closeDialog.name"); //$NON-NLS-1$
+		closeDialogCommand.setDescription("%command.closeDialog.desc"); //$NON-NLS-1$
+		closeDialogCommand.setContributorURI(CocoaUIProcessor.FRAGMENT_ID);
 		app.getCommands().add(closeDialogCommand);
 	}
 
@@ -355,8 +352,8 @@ public class CocoaUIHandler {
 		}
 		handler = CommandsFactoryImpl.eINSTANCE.createHandler();
 		handler.setCommand(closeDialogCommand);
-		handler.setContributionURI("platform:/plugin/" + HOST_ID + "/" //$NON-NLS-1$ //$NON-NLS-2$
-				+ CloseDialogHandler.class.getName());
+		handler.setContributionURI(CocoaUIProcessor.HOST_URI
+				+ "/" + CloseDialogHandler.class.getName());//$NON-NLS-1$
 		app.getHandlers().add(handler);
 	}
 
@@ -375,7 +372,8 @@ public class CocoaUIHandler {
 		// StatusUtil.handleStatus(e, StatusManager.LOG);
 		statusReporter
 				.get()
-				.report(new Status(IStatus.WARNING, FRAGMENT_ID,
+				.report(new Status(IStatus.WARNING,
+						CocoaUIProcessor.FRAGMENT_ID,
 						"Exception occurred during CocoaUI processing", e), StatusReporter.LOG); //$NON-NLS-1$
 	}
 
@@ -589,8 +587,8 @@ public class CocoaUIHandler {
 			if (item != null) {
 				item.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						if (!runCommand(commandId)) {
-							runAction(commandId);
+						if (runCommand(commandId) || runAction(commandId)) {
+							e.doit = false;
 						}
 					}
 				});
@@ -650,55 +648,61 @@ public class CocoaUIHandler {
 	/**
 	 * Locate an action (a menu item, actually) with the given id in the current
 	 * menu bar and run it.
+	 * 
+	 * @param actionId
+	 *            the action to find
+	 * @return true if an action was found, false otherwise
 	 */
-	private void runAction(String actionId) {
+	private boolean runAction(String actionId) {
 		MWindow window = app.getSelectedElement();
-		if (window != null) {
-			MMenu topMenu = window.getMainMenu();
-			MMenuItem item = findAction(actionId, topMenu);
-			if (item != null && item.isEnabled()) {
-				try {
-					// disable the about and prefs items -- they shouldn't be
-					// able to be run when another item is being triggered
-					final Display display = Display.getDefault();
-					Menu appMenuBar = display.getMenuBar();
-					if (appMenuBar == null) {
-						return;
-					}
-					MenuItem aboutItem = findMenuItemById(appMenuBar,
-							SWT.ID_ABOUT);
-					boolean aboutEnabled = true;
-					if (aboutItem != null) {
-						aboutEnabled = aboutItem.getEnabled();
-						aboutItem.setEnabled(false);
-					}
-					MenuItem prefsItem = findMenuItemById(appMenuBar,
-							SWT.ID_PREFERENCES);
-					boolean prefsEnabled = true;
-					if (prefsItem != null) {
-						prefsEnabled = prefsItem.getEnabled();
-						prefsItem.setEnabled(false);
-					}
+		if (window == null) {
+			return false;
+		}
+		MMenu topMenu = window.getMainMenu();
+		MMenuItem item = findAction(actionId, topMenu);
+		if (item == null || !item.isEnabled()) {
+			return false;
+		}
+		try {
+			// disable the about and prefs items -- they shouldn't be
+			// able to be run when another item is being triggered
+			final Display display = Display.getDefault();
+			MenuItem aboutItem = null;
+			boolean aboutEnabled = true;
+			MenuItem prefsItem = null;
+			boolean prefsEnabled = true;
 
-					try {
-						simulateMenuSelection(item);
-					} finally {
-						if (prefsItem != null) {
-							prefsItem.setEnabled(prefsEnabled);
-						}
-						if (aboutItem != null) {
-							aboutItem.setEnabled(aboutEnabled);
-						}
-					}
-				} catch (Exception e) {
-					// theoretically, one of
-					// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
-					// not expected to happen at all.
-					log(e);
+			Menu appMenuBar = display.getMenuBar();
+			if (appMenuBar != null) {
+				aboutItem = findMenuItemById(appMenuBar, SWT.ID_ABOUT);
+				if (aboutItem != null) {
+					aboutEnabled = aboutItem.getEnabled();
+					aboutItem.setEnabled(false);
+				}
+				prefsItem = findMenuItemById(appMenuBar, SWT.ID_PREFERENCES);
+				if (prefsItem != null) {
+					prefsEnabled = prefsItem.getEnabled();
+					prefsItem.setEnabled(false);
 				}
 			}
+			try {
+				simulateMenuSelection(item);
+			} finally {
+				if (prefsItem != null) {
+					prefsItem.setEnabled(prefsEnabled);
+				}
+				if (aboutItem != null) {
+					aboutItem.setEnabled(aboutEnabled);
+				}
+			}
+		} catch (Exception e) {
+			// theoretically, one of
+			// SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
+			// not expected to happen at all.
+			log(e);
+			// return false?
 		}
-
+		return true;
 	}
 
 	private void simulateMenuSelection(MMenuItem item) {
@@ -733,7 +737,7 @@ public class CocoaUIHandler {
 					.get()
 					.report(new Status(
 							IStatus.WARNING,
-							FRAGMENT_ID,
+							CocoaUIProcessor.FRAGMENT_ID,
 							"Unhandled menu type: " + item.getClass() + ": " + item), //$NON-NLS-1$ //$NON-NLS-2$ $NON-NLS-2$
 					StatusReporter.LOG);
 		}
@@ -753,15 +757,19 @@ public class CocoaUIHandler {
 	 * @return true if the command was found, false otherwise
 	 */
 	private boolean runCommand(String commandId) {
-		if (handlerService != null) {
-			ParameterizedCommand cmd = commandService.createCommand(commandId,
-					Collections.emptyMap());
-			if (cmd != null) {
-				handlerService.executeHandler(cmd);
-				return true;
-			}
+		if (commandService == null || handlerService == null) {
+			return false;
 		}
-		return false;
+		ParameterizedCommand cmd = commandService.createCommand(commandId,
+				Collections.emptyMap());
+		if (cmd == null) {
+			return false;
+		}
+		// Unfortunately there's no way to check if a handler was available...
+		// EHandlerService#executeHandler() returns null if a handler cannot be
+		// found, but the handler itself could also return null too.
+		handlerService.executeHandler(cmd);
+		return true;
 	}
 
 	/**
