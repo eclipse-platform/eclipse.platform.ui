@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.debug.ui" id="toggleBreakpointsTargetFactories" name="toggleBreakpointsTargetFactories"/>
+         <meta.schema plugin="org.eclipse.debug.ui" id="toggleBreakpointsTargetFactories" name="Toggle Breakpoints Target Factories"/>
       </appinfo>
       <documentation>
          This extension point provides a mechanism for contributing breakpoint toggle action targets which can be registered for specific editors, debug models, or files.
@@ -152,7 +152,7 @@
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2007 Wind River Systems and others.&lt;br&gt;
+         Copyright (c) 2007, 2011 Wind River Systems and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Eclipse Public License v1.0
 which accompanies this distribution, and is available at
