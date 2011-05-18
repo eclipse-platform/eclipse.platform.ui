@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.debug.core">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.core" id="launchers" name="Launcher (Obsolete)"/>
+         <meta.schema plugin="org.eclipse.debug.core" id="launchers" name="Launcher"/>
       </appInfo>
       <documentation>
          This extension point has been replaced by the launchConfigurationTypes extension point. Extensions of this type are obsolete as of release 2.0 and are ignored. This extension point was used to contribute launchers. 
@@ -219,7 +219,7 @@ implements &lt;samp&gt;org.eclipse.debug.ui.ILaunchWizard&lt;/samp&gt;.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2011 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
