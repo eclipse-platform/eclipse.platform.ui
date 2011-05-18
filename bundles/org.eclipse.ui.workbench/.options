@@ -1,7 +1,0 @@
-# Debugging options for the org.eclipse.ui.workbench plugin.
-
-# Turn on debugging for the org.eclipse.ui.workbench plugin.
-org.eclipse.ui.workbench/debug=false
-
-# Turn on tracing of e4 development messages
-org.eclipse.ui.workbench/debug/e4=false

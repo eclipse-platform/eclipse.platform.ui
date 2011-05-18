@@ -756,7 +756,7 @@ public boolean getBorderVisible() {
 }
 ToolBar getChevron() {
 	if (chevronTb == null) {
-		chevronTb = new ToolBar(this, SWT.NONE);
+		chevronTb = new ToolBar(this, SWT.FLAT);
 		addTabControl(chevronTb, SWT.TRAIL, -1, false);
 	}
 	if (chevronItem == null) {
@@ -2325,7 +2325,7 @@ void setButtonBounds(GC gc) {
 	Display display = getDisplay();
 	if (showMax) {
 		if (minMaxTb == null) {
-			minMaxTb = new ToolBar(this, SWT.NONE);
+			minMaxTb = new ToolBar(this, SWT.FLAT);
 			addTabControl(minMaxTb, SWT.TRAIL, 0, false);
 		}
 		if (maxItem == null) {
@@ -2347,7 +2347,7 @@ void setButtonBounds(GC gc) {
 	// min button
 	if (showMin) {
 		if (minMaxTb == null) {
-			minMaxTb = new ToolBar(this, SWT.NONE);
+			minMaxTb = new ToolBar(this, SWT.FLAT);
 			addTabControl(minMaxTb, SWT.TRAIL, 0, false);
 		}
 		if (minItem == null) {
@@ -3675,38 +3675,6 @@ String _getToolTip(int x, int y) {
 	}
 	return item.getToolTipText();
 }
-
-/**
- * When smooth scrolling is enabled (see {@link #setSmoothScroll(boolean)}), 
- * showItem will scroll the given item into either the first or last tab visible
- * (this is controlled by the passed in flags <code>SWT.TRAIL</code> or 
- * <code>SWT.LEAD</code>).
- * 
- * @param item the item to show
- * @param flags <code>SWT.LEAD</code> or <code>SWT.TRAIL</code>
- * 
- * @since 3.7
- */
-public void showItem (CTabItem item, int flags /*TRAIL, LEAD*/) {
-	SWT.error (SWT.ERROR_NOT_IMPLEMENTED, null, "");
-}
-
-/**
-* Enables scrolling to an item when {@link #showItem(CTabItem)} is called
-* 
-* @param enabled 
-* 
-* @exception SWTException <ul>
-*    <li>ERROR_THREAD_INVALID_ACCESS when called from the wrong thread</li>
-*    <li>ERROR_WIDGET_DISPOSED when the widget has been disposed</li>
-* </ul>
-* 
-* @since 3.7
-*/
-public void setSmoothScroll(boolean enabled) {
-	SWT.error (SWT.ERROR_NOT_IMPLEMENTED, null, "");
-}
-
 /**
 * Set a control that can appear to the left or to the right of the folder tabs.
 * This method can also be used instead of #setTopRight(Control). To remove a tab
@@ -3863,36 +3831,6 @@ void removeTabControl (Control control, boolean update) {
 		updateItems();
 		redraw();
 	}
-}
-
-/**
- * Return the visible item for the specified flags.
- * <p>
- * The parameter <code>flags</code> should be either:
- * <dl>
- * <dt><b>SWT.LEAD</b></dt>
- * <dd>return the first visible item</dd>
- * <dt><b>SWT.TRAIL</b></dt>
- * <dd>return the last visible item</dd>
- * </dl>
- * </p>
- * 
- * @param flags the flags specifying which item to return
- * @return the item for the specified flags
- * 
- * @exception IllegalArgumentException <ul>
- *    <li>ERROR_INVALID_RANGE - if the index is out of range</li>
- * </ul>
- * @exception SWTException <ul>
- *    <li>ERROR_THREAD_INVALID_ACCESS when called from the wrong thread</li>
- *    <li>ERROR_WIDGET_DISPOSED when the widget has been disposed</li>
- * </ul>
- * 
- * @since 3.7
- */
-public CTabItem getVisibleItem (int flags) {
-	SWT.error (SWT.ERROR_NOT_IMPLEMENTED, null, "");
-	return null;
 }
 
 int getWrappedHeight (Point size) {
