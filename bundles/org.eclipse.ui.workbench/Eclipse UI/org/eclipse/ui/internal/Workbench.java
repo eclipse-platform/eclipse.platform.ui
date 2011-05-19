@@ -1138,6 +1138,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return null;
 		}
 
+		// rendering engine not available, can't make workbench windows, see bug
+		// 320932
+		if (e4Context.get(IPresentationEngine.class) == null) {
+			return null;
+		}
+
 		MWindow activeWindow = application.getSelectedElement();
 		if (activeWindow == null && !application.getChildren().isEmpty()) {
 			activeWindow = application.getChildren().get(0);
