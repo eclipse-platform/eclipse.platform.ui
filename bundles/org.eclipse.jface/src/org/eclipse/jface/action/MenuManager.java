@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * </p>
  */
 public class MenuManager extends ContributionManager implements IMenuManager {
+	private static final String MANAGER_KEY = "org.eclipse.jface.action.MenuManager.managerKey"; //$NON-NLS-1$
 
     /**
      * The menu id.
@@ -174,6 +175,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     public Menu createContextMenu(Control parent) {
         if (!menuExist()) {
             menu = new Menu(parent);
+            menu.setData(MANAGER_KEY, this);
             initializeMenu();
         }
         return menu;
@@ -191,6 +193,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     public Menu createMenuBar(Decorations parent) {
         if (!menuExist()) {
             menu = new Menu(parent, SWT.BAR);
+            menu.setData(MANAGER_KEY, this);
             update(false);
         }
         return menu;
@@ -275,6 +278,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 
             if (!menuExist()) {
 				menu = new Menu(parent);
+				menu.setData(MANAGER_KEY, this);
 			}
 
             menuItem.setMenu(menu);
