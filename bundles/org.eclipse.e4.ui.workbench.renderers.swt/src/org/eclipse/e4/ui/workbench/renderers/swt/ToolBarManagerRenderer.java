@@ -28,11 +28,9 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
@@ -41,18 +39,23 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.ElementContainer;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -62,6 +65,7 @@ import org.osgi.service.event.EventHandler;
  */
 public class ToolBarManagerRenderer extends SWTPartRenderer {
 
+	private static final String TOOL_BAR_MANAGER_RENDERER_DRAG_HANDLE = "ToolBarManagerRenderer.dragHandle"; //$NON-NLS-1$
 	private Map<MToolBar, ToolBarManager> modelToManager = new HashMap<MToolBar, ToolBarManager>();
 	private Map<ToolBarManager, MToolBar> managerToModel = new HashMap<ToolBarManager, MToolBar>();
 
@@ -154,6 +158,9 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 						.getParent();
 				if (parent != null) {
 					parent.markDirty();
+					parent.update(true);
+					// MUIElement tbModel = itemModel.getParent();
+					// disposeToolbarIfNecessary((MToolBar) tbModel);
 					ToolBar tb = parent.getControl();
 					if (tb != null && !tb.isDisposed()) {
 						tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
@@ -249,12 +256,41 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			return null;
 
 		final MToolBar toolbarModel = (MToolBar) element;
-		// Composite intermediate = createIntermediate(toolbarModel,
-		// (Composite) parent);
-		final ToolBar toolbar = createToolbar(toolbarModel, (Composite) parent);
-		// setupMenuButton(toolbarModel, intermediate);
+		Composite intermediate = createIntermediate(toolbarModel,
+				(Composite) parent);
+		createToolbar(toolbarModel, intermediate);
 		processContribution(toolbarModel);
-		return toolbar;
+		return intermediate;
+	}
+
+	/**
+	 * @param toolbarModel
+	 * @param parent
+	 * @return an intermediate composite or simply the parent.
+	 */
+	private Composite createIntermediate(MToolBar toolbarModel, Composite parent) {
+		Composite intermediate = new Composite((Composite) parent, SWT.NONE);
+		intermediate.setData(AbstractPartRenderer.OWNING_ME, toolbarModel);
+		int orientation = getOrientation(toolbarModel);
+		RowLayout layout = RowLayoutFactory.fillDefaults().wrap(false)
+				.spacing(0).type(orientation).create();
+		layout.marginLeft = 3;
+		layout.center = true;
+		intermediate.setLayout(layout);
+		if (needsDragHandle(toolbarModel)) {
+			ToolBar separatorToolBar = new ToolBar(intermediate, orientation
+					| SWT.WRAP | SWT.FLAT | SWT.RIGHT);
+			separatorToolBar.setData(TOOL_BAR_MANAGER_RENDERER_DRAG_HANDLE);
+			ToolItem ti = new ToolItem(separatorToolBar, SWT.SEPARATOR);
+			ti.setWidth(0);
+		}
+		return intermediate;
+	}
+
+	private boolean needsDragHandle(MToolBar toolbarModel) {
+		// Only if it's in the trim
+		return toolbarModel != null
+				&& ((EObject) toolbarModel).eContainer() instanceof MTrimBar;
 	}
 
 	/**
@@ -302,7 +338,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	 * @param existingSeparatorNames
 	 * @return <code>true</code> if the contribution was successfuly processed
 	 */
-	private boolean processAddition(MToolBar toolbarModel,
+	private boolean processAddition(final MToolBar toolbarModel,
 			final ToolBarManager manager, MToolBarContribution contribution) {
 		final ToolBarContributionRecord record = new ToolBarContributionRecord(
 				toolbarModel, contribution, this);
@@ -317,6 +353,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				public boolean changed(IEclipseContext context) {
 					record.updateVisibility(parentContext.getActiveLeaf());
 					manager.update(true);
+					// disposeToolbarIfNecessary(toolbarModel);
 					return true;
 				}
 			});
@@ -452,21 +489,23 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		return null;
 	}
 
-	MMenu getViewMenu(MPart part) {
-		if (part.getMenus() == null) {
-			return null;
-		}
-		for (MMenu menu : part.getMenus()) {
-			if (menu.getTags().contains(StackRenderer.TAG_VIEW_MENU)) {
-				return menu;
+	boolean hasOnlySeparators(ToolBar toolbar) {
+		ToolItem[] children = toolbar.getItems();
+		for (ToolItem toolItem : children) {
+			if ((toolItem.getStyle() & SWT.SEPARATOR) == 0) {
+				return false;
+			} else if (toolItem.getControl() != null
+					&& toolItem.getControl().getData(OWNING_ME) instanceof MToolControl) {
+				return false;
 			}
 		}
-		return null;
+		return true;
 	}
 
 	@Override
 	public void postProcess(MUIElement element) {
 		super.postProcess(element);
+		disposeToolbarIfNecessary((MToolBar) element);
 		ToolBar tb = getToolbarFrom(element.getWidget());
 		if (tb != null && !tb.isDisposed()) {
 			tb.setVisible(true);
@@ -474,6 +513,29 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			tb.getShell().layout(
 					new Control[] { (Control) element.getWidget() });
 		}
+	}
+
+	/**
+	 * @param element
+	 */
+	private void disposeToolbarIfNecessary(final MToolBar element) {
+		Display.getCurrent().asyncExec(new Runnable() {
+			public void run() {
+				doDisposeToolbarIfNecessary(element);
+			}
+		});
+	}
+
+	/**
+	 * @param element
+	 */
+	private void doDisposeToolbarIfNecessary(MToolBar element) {
+		ToolBar tb = getToolbarFrom(element.getWidget());
+		boolean cleanUp = tb == null || tb.isDisposed();
+		if (!cleanUp) {
+			cleanUp = tb.getItemCount() == 0 || hasOnlySeparators(tb);
+		}
+		element.setVisible(!cleanUp);
 	}
 
 	@Override
@@ -530,9 +592,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	}
 
 	private ToolBar findToolbar(Composite intermediate) {
-		if (intermediate instanceof ToolBar) {
-			return (ToolBar) intermediate;
-		}
 		for (Control child : intermediate.getChildren()) {
 			if (child.getData() instanceof ToolBarManager) {
 				return (ToolBar) child;

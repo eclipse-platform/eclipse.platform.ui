@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
-import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -27,19 +26,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
-import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
-import org.eclipse.jface.layout.RowLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  *
@@ -79,7 +70,6 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	}
 
 	private HashMap<MTrimBar, ArrayList<ArrayList<MTrimElement>>> pendingCleanup = new HashMap<MTrimBar, ArrayList<ArrayList<MTrimElement>>>();
-	static final String TRIM_BAR_MANAGER_RENDERER_DRAG_HANDLE = "TrimBarRenderer.dragHandle"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -130,42 +120,12 @@ public class TrimBarRenderer extends SWTPartRenderer {
 		default:
 			return null;
 		}
-		processContents(trimModel);
 		result.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				cleanUp(trimModel);
 			}
 		});
 		return result;
-	}
-
-	/**
-	 * @param trimModel
-	 */
-	private void processContents(MTrimBar trimModel) {
-		IEclipseContext ctx = getContext(trimModel);
-		ExpressionContext eContext = new ExpressionContext(ctx);
-		ArrayList<MTrimContribution> toContribute = new ArrayList<MTrimContribution>();
-		ContributionsAnalyzer.gatherTrimContributions(trimModel,
-				application.getTrimContributions(), trimModel.getElementId(),
-				toContribute, eContext);
-		addTrimContributions(trimModel, toContribute, ctx, eContext);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer#childRendered
-	 * (org.eclipse.e4.ui.model.application.ui.MElementContainer,
-	 * org.eclipse.e4.ui.model.application.ui.MUIElement)
-	 */
-	@Override
-	public void childRendered(MElementContainer<MUIElement> parentElement,
-			MUIElement element) {
-		super.childRendered(parentElement, element);
-		Object downCast = parentElement;
-		layoutTrim((MTrimBar) downCast);
 	}
 
 	@Override
@@ -185,67 +145,19 @@ public class TrimBarRenderer extends SWTPartRenderer {
 	 * (org.eclipse.e4.ui.model.application.MPart)
 	 */
 	@Override
-	public void processContents(MElementContainer<MUIElement> container) {
-		if (!(((MUIElement) container) instanceof MTrimBar))
+	public void processContents(MElementContainer<MUIElement> me) {
+		if (!(((MUIElement) me) instanceof MTrimBar))
 			return;
-
-		// Process any contents of the newly created ME
-		List<MUIElement> parts = container.getChildren();
-		final Composite parent = (Composite) container.getWidget();
-		if (parts != null) {
-			// loading a legacy app will add children to the window while it is
-			// being rendered.
-			// this is *not* the correct place for this
-			// hope that the ADD event will pick up the new part.
-			IPresentationEngine renderer = (IPresentationEngine) context
-					.get(IPresentationEngine.class.getName());
-			MUIElement[] plist = parts.toArray(new MUIElement[parts.size()]);
-			for (int i = 0; i < plist.length; i++) {
-				MUIElement childME = plist[i];
-				final Composite intermediate = createIntermediate(childME,
-						parent);
-				final Object newObj = renderer.createGui(childME, intermediate,
-						null);
-				if (newObj == null) {
-					intermediate.dispose();
-				} else {
-					((Widget) newObj).addListener(SWT.Dispose, new Listener() {
-						public void handleEvent(Event event) {
-							intermediate.dispose();
-						}
-					});
-				}
-			}
-		}
-	}
-
-	private Composite createIntermediate(MUIElement toolbarModel,
-			Composite parent) {
-		Composite intermediate = new Composite((Composite) parent, SWT.NONE);
-		intermediate.setData(AbstractPartRenderer.OWNING_ME, toolbarModel);
-		int orientation = getOrientation(toolbarModel);
-		RowLayout layout = RowLayoutFactory.fillDefaults().wrap(false)
-				.spacing(0).type(orientation).create();
-		layout.marginLeft = 3;
-		layout.center = true;
-		intermediate.setLayout(layout);
-		ToolBar separatorToolBar = new ToolBar(intermediate, orientation
-				| SWT.WRAP | SWT.FLAT | SWT.RIGHT);
-		separatorToolBar.setData(TRIM_BAR_MANAGER_RENDERER_DRAG_HANDLE);
-		new ToolItem(separatorToolBar, SWT.SEPARATOR);
-		return intermediate;
-	}
-
-	private int getOrientation(final MUIElement element) {
-		MUIElement theParent = element.getParent();
-		if (theParent instanceof MTrimBar) {
-			MTrimBar trimContainer = (MTrimBar) theParent;
-			SideValue side = trimContainer.getSide();
-			if (side.getValue() == SideValue.LEFT_VALUE
-					|| side.getValue() == SideValue.RIGHT_VALUE)
-				return SWT.VERTICAL;
-		}
-		return SWT.HORIZONTAL;
+		super.processContents(me);
+		IEclipseContext ctx = getContext(me);
+		ExpressionContext eContext = new ExpressionContext(ctx);
+		MElementContainer<?> trimObj = me;
+		MTrimBar trimModel = (MTrimBar) trimObj;
+		ArrayList<MTrimContribution> toContribute = new ArrayList<MTrimContribution>();
+		ContributionsAnalyzer.gatherTrimContributions(trimModel,
+				application.getTrimContributions(), trimModel.getElementId(),
+				toContribute, eContext);
+		addTrimContributions(trimModel, toContribute, ctx, eContext);
 	}
 
 	private void addTrimContributions(final MTrimBar trimModel,
@@ -286,7 +198,6 @@ public class TrimBarRenderer extends SWTPartRenderer {
 								for (MTrimElement child : toRemove) {
 									child.setToBeRendered(rc);
 								}
-								layoutTrim(trimModel);
 								return true;
 							}
 						});

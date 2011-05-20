@@ -19,8 +19,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -147,20 +145,6 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 
 						// Reparent the widget
 						refCtrl.setParent(phComp);
-						if (refElement instanceof MPart) {
-							MToolBar tb = ((MPart) refElement).getToolbar();
-							if (tb != null
-									&& tb.getTransientData()
-											.containsKey(
-													LazyStackRenderer.TOOL_BAR_INTERMEDIATE)) {
-								Composite compTB = (Composite) tb
-										.getTransientData()
-										.get(LazyStackRenderer.TOOL_BAR_INTERMEDIATE);
-								if (compTB != null && !compTB.isDisposed()) {
-									compTB.setParent(phComp);
-								}
-							}
-						}
 						break;
 					}
 				} else if (currentRef != null) {
