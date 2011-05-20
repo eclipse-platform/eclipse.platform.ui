@@ -1011,7 +1011,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 			}
 		} else if (testShell != null && !testShell.isDisposed()) {
-			testShell.close();
+			Object model = testShell.getData(AbstractPartRenderer.OWNING_ME);
+			if (model instanceof MUIElement) {
+				removeGui((MUIElement) model);
+			} else {
+				testShell.close();
+			}
 		}
 	}
 
