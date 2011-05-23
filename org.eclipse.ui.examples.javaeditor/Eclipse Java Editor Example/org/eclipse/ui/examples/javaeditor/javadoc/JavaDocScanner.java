@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,8 @@ public class JavaDocScanner extends RuleBasedScanner {
 	 */
 	 public JavaDocScanner(JavaColorProvider provider) {
 		super();
+		
+		setDefaultReturnToken(new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_DEFAULT))));
 
 		IToken keyword= new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_KEYWORD)));
 		IToken tag= new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_TAG)));
