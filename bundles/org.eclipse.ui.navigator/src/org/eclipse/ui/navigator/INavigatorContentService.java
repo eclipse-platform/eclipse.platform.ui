@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ViewerSorter;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablesSource;
 
@@ -201,7 +202,8 @@ public interface INavigatorContentService {
 	INavigatorViewerDescriptor getViewerDescriptor();
 
 	/**
-	 * See <a href="#active">above</a> for the definition of <i>active</i>.
+	 * See <a href="INavigatorContentService.html#active">above</a> for the
+	 * definition of <i>active</i>.
 	 * 
 	 * @param anExtensionId
 	 *            The unqiue identifier from a content extension.
@@ -214,8 +216,9 @@ public interface INavigatorContentService {
 	boolean isActive(String anExtensionId);
 
 	/**
-	 *  See <a href="#visible">above</a> for the definition of <i>visible</i>.
-	 *  
+	 * See <a href="INavigatorContentService.html#visible">above</a> for the
+	 * definition of <i>visible</i>.
+	 * 
 	 * @param anExtensionId
 	 *            The unqiue identifier from a content extension.
 	 * @return True if and only if the given extension id is <i>visible</i> to
