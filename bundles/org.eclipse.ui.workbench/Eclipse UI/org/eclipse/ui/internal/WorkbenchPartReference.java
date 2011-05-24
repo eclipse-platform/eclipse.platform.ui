@@ -55,10 +55,6 @@ import org.osgi.service.event.EventHandler;
  */
 public abstract class WorkbenchPartReference implements IWorkbenchPartReference, ISizeProvider {
 
-	public abstract class PartPane {
-		public abstract Control getControl();
-	}
-
     /**
      * Internal property ID: Indicates that the underlying part was created
      */
