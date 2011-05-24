@@ -53,7 +53,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
@@ -500,42 +499,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public void postProcess(MUIElement element) {
-		super.postProcess(element);
-		disposeToolbarIfNecessary((MToolBar) element);
-		ToolBar tb = getToolbarFrom(element.getWidget());
-		if (tb != null && !tb.isDisposed()) {
-			tb.setVisible(true);
-			tb.getShell().layout(new Control[] { tb }, SWT.DEFER);
-			tb.getShell().layout(
-					new Control[] { (Control) element.getWidget() });
-		}
-	}
-
-	/**
-	 * @param element
-	 */
-	private void disposeToolbarIfNecessary(final MToolBar element) {
-		Display.getCurrent().asyncExec(new Runnable() {
-			public void run() {
-				doDisposeToolbarIfNecessary(element);
-			}
-		});
-	}
-
-	/**
-	 * @param element
-	 */
-	private void doDisposeToolbarIfNecessary(MToolBar element) {
-		ToolBar tb = getToolbarFrom(element.getWidget());
-		boolean cleanUp = tb == null || tb.isDisposed();
-		if (!cleanUp) {
-			cleanUp = tb.getItemCount() == 0 || hasOnlySeparators(tb);
-		}
-		element.setVisible(!cleanUp);
 	}
 
 	@Override

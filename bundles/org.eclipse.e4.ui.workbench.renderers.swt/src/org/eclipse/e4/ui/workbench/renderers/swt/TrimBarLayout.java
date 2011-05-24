@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -151,12 +152,38 @@ public class TrimBarLayout extends Layout {
 			ToolBar tb = (ToolBar) ctrl;
 			if (tb.getItemCount() == 0)
 				return new Point(0, 0);
-		} else if (ctrl instanceof Composite
-				&& ((Composite) ctrl).getChildren().length == 0) {
+		} else if (ctrl instanceof Composite && hideManagedTB((Composite) ctrl)) {
 			return new Point(0, 0);
 		}
 
 		return ctrlSize;
+	}
+
+	/**
+	 * This is a HACK ! Due to compatibility restrictions we have the case where
+	 * we <b>must</b> leave 'empty' toolbars in the trim. This code detects this
+	 * particular scenario and hides any TB's of this type...
+	 * 
+	 * @param tbComp
+	 *            The proposed composite in the trim
+	 * @return <code>true</code> iff this composite represents an empty managed
+	 *         TB.
+	 */
+	private boolean hideManagedTB(Composite tbComp) {
+		if (!(tbComp.getData(AbstractPartRenderer.OWNING_ME) instanceof MToolBar))
+			return false;
+		MToolBar tbModel = (MToolBar) tbComp
+				.getData(AbstractPartRenderer.OWNING_ME);
+		if (!(tbModel.getRenderer() instanceof ToolBarManagerRenderer))
+			return false;
+
+		Control[] kids = tbComp.getChildren();
+		if (kids.length != 2 || !(kids[1] instanceof ToolBar))
+			return false;
+
+		boolean barVisible = ((ToolBar) kids[1]).getItemCount() > 0;
+		tbComp.setVisible(barVisible);
+		return !barVisible;
 	}
 
 	protected void layout(Composite composite, boolean flushCache) {
