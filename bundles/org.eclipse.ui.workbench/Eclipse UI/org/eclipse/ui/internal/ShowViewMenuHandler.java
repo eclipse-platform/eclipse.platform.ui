@@ -71,7 +71,7 @@ public class ShowViewMenuHandler extends AbstractEvaluationHandler {
 							if (topRight instanceof Composite) {
 								for (Control child : ((Composite) topRight).getChildren()) {
 									if (child instanceof ToolBar
-											&& "StackRenderer.viewMenu".equals(child.getData())) { //$NON-NLS-1$
+											&& "ViewMenu".equals(child.getData())) { //$NON-NLS-1$
 										ToolBar tb = (ToolBar) child;
 										ToolItem ti = tb.getItem(0);
 										Event sevent = new Event();

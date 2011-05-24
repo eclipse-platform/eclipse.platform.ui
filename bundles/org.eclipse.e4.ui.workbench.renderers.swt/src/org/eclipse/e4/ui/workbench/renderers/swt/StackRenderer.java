@@ -428,7 +428,8 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// The view menu TB is not modeled so it's OWNING_ME == null
 		for (Control kid : trComp.getChildren()) {
-			if (kid.getData(OWNING_ME) == null)
+			if (kid.getData(OWNING_ME) == null
+					&& TAG_VIEW_MENU.equals(kid.getData()))
 				return (ToolBar) kid;
 		}
 		return null;
@@ -704,6 +705,7 @@ public class StackRenderer extends LazyStackRenderer {
 		ToolBar menuTB = getViewMenuTB(ctf);
 		if (menuTB == null) {
 			menuTB = new ToolBar(getTRComposite(ctf), SWT.FLAT | SWT.RIGHT);
+			menuTB.setData(TAG_VIEW_MENU);
 			ToolItem ti = new ToolItem(menuTB, SWT.PUSH);
 			ti.setImage(getViewMenuImage());
 			ti.setHotImage(null);
