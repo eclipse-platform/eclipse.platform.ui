@@ -616,6 +616,22 @@ public class StackRenderer extends LazyStackRenderer {
 				activateStack(stack);
 			}
 		});
+
+		ctf.addMenuDetectListener(new MenuDetectListener() {
+			public void menuDetected(MenuDetectEvent e) {
+				Point absolutePoint = new Point(e.x, e.y);
+				Point relativePoint = ctf.getDisplay().map(null, ctf,
+						absolutePoint);
+				CTabItem eventTabItem = ctf.getItem(relativePoint);
+				if (eventTabItem != null) {
+					MUIElement uiElement = (MUIElement) eventTabItem
+							.getData(AbstractPartRenderer.OWNING_ME);
+					MPart tabPart = (MPart) ((uiElement instanceof MPart) ? uiElement
+							: ((MPlaceholder) uiElement).getRef());
+					openMenuFor(tabPart, ctf, absolutePoint);
+				}
+			}
+		});
 	}
 
 	private boolean closePart(Widget widget) {
@@ -667,22 +683,6 @@ public class StackRenderer extends LazyStackRenderer {
 		MPart part = (MPart) ((element instanceof MPart) ? element
 				: ((MPlaceholder) element).getRef());
 		adjustTR(ctf, part);
-
-		ctf.addMenuDetectListener(new MenuDetectListener() {
-			public void menuDetected(MenuDetectEvent e) {
-				Point absolutePoint = new Point(e.x, e.y);
-				Point relativePoint = ctf.getDisplay().map(null, ctf,
-						absolutePoint);
-				CTabItem eventTabItem = ctf.getItem(relativePoint);
-				if (eventTabItem != null) {
-					MUIElement uiElement = (MUIElement) eventTabItem
-							.getData(AbstractPartRenderer.OWNING_ME);
-					MPart tabPart = (MPart) ((uiElement instanceof MPart) ? uiElement
-							: ((MPlaceholder) uiElement).getRef());
-					openMenuFor(tabPart, ctf, absolutePoint);
-				}
-			}
-		});
 	}
 
 	private void setupMenuButton(MPart part, CTabFolder ctf) {
