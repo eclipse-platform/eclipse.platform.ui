@@ -244,8 +244,6 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 							@Override
 							public void setVisible(boolean visible) {
 								super.setVisible(visible);
-								System.out.println("setting fake visibility " + visible //$NON-NLS-1$
-										+ " for TBCI " + getId()); //$NON-NLS-1$
 								model.setVisible(visible);
 							}
 						};
@@ -579,9 +577,9 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 						.getRenderer(el, null);
 				final ToolBarManager manager = renderer.getManager((MToolBar) el);
 				if (manager != null) {
-					if (!el.isVisible() || !el.isToBeRendered()) {
-						System.out.println("update(boolean force): " + el); //$NON-NLS-1$
-					}
+					// if (!el.isVisible() || !el.isToBeRendered()) {
+					//						System.out.println("update(boolean force): " + el); //$NON-NLS-1$
+					// }
 					fill((MToolBar) el, manager);
 				}
 			}
