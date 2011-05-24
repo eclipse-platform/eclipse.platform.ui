@@ -408,7 +408,7 @@ public class StackRenderer extends LazyStackRenderer {
 			trComp.setVisible(false);
 		}
 
-		trComp.pack();
+		trComp.layout();
 		ctf.layout();
 	}
 
