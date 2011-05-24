@@ -28,6 +28,8 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
 import org.eclipse.e4.ui.model.application.ui.MContext;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
@@ -37,6 +39,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
+import org.eclipse.e4.ui.workbench.swt.modeling.MenuService;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -156,6 +159,27 @@ public class MenuManagerRendererFilter implements Listener {
 		MMenu menuModel = null;
 		MenuManager menuManager = null;
 		Object obj = menu.getData(AbstractPartRenderer.OWNING_ME);
+		if (obj == null) {
+			Object tmp = menu
+					.getData("org.eclipse.jface.action.MenuManager.managerKey"); //$NON-NLS-1$
+			if (tmp instanceof MenuManager) {
+				MenuManager tmpManager = (MenuManager) tmp;
+				menuManager = tmpManager;
+				obj = renderer.getMenuModel(tmpManager);
+				if (obj instanceof MPopupMenu) {
+					MPopupMenu popupMenu = (MPopupMenu) obj;
+					if (popupMenu.getWidget() == null
+							&& menuManager.getMenu() != null) {
+						final MUIElement container = modelService
+								.getContainer(popupMenu);
+						if (container instanceof MPart) {
+							MenuService.registerMenu(menuManager.getMenu()
+									.getParent(), popupMenu, (MPart) container);
+						}
+					}
+				}
+			}
+		}
 		if (obj == null && menu.getParentItem() != null) {
 			obj = menu.getParentItem().getData(AbstractPartRenderer.OWNING_ME);
 			if (obj == null) {
