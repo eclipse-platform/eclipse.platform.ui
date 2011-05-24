@@ -15,11 +15,13 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.SubActionBars;
@@ -84,7 +86,7 @@ public class ActionBars extends SubActionBars {
 				} else {
 					tbm.update(true);
 					if (!tbCtrl.isDisposed()) {
-						tbCtrl.getParent().pack();
+						getPackParent(tbCtrl).pack();
 					}
 				}
 			} else {
@@ -92,6 +94,21 @@ public class ActionBars extends SubActionBars {
 			}
 		}
 		super.updateActionBars();
+	}
+
+	private Control getPackParent(Control control) {
+		Composite parent = control.getParent();
+		while (parent != null) {
+			if (parent instanceof CTabFolder) {
+				Control topRight = ((CTabFolder) parent).getTopRight();
+				if (topRight != null) {
+					return topRight;
+				}
+				break;
+			}
+			parent = parent.getParent();
+		}
+		return control.getParent();
 	}
 
 	boolean isSelected(MPart part) {
