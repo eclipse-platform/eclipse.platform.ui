@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,6 +36,8 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -163,7 +165,28 @@ public class SearchField {
 	private void layoutShell() {
 		Composite parent = text.getParent();
 		Rectangle tempBounds = parent.getBounds();
-		Rectangle compBounds = text.getDisplay().map(parent, null, tempBounds);
+		Display display = text.getDisplay();
+		Rectangle compBounds = display.map(parent, null, tempBounds);
+		for (Monitor monitor : display.getMonitors()) {
+			if (monitor.getBounds().contains(compBounds.x, compBounds.y)) {
+				Rectangle monitorBounds = monitor.getBounds();
+				int width = Math.max(350, compBounds.width);
+				int height = 250;
+
+				if (compBounds.x + width > monitorBounds.width) {
+					compBounds.x = monitorBounds.width - width;
+				}
+
+				if (compBounds.y + height > monitorBounds.height) {
+					compBounds.y = compBounds.y - tempBounds.height - height;
+				}
+
+				shell.setBounds(compBounds.x, compBounds.y + compBounds.height, width, height);
+				shell.layout();
+				return;
+			}
+		}
+
 		Rectangle monitorBounds = text.getMonitor().getBounds();
 		int width = Math.max(350, compBounds.width);
 		int height = 250;
