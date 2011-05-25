@@ -112,7 +112,12 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		ToolBar toolbar = (ToolBar) renderer.createWidget(file, parent);
+		Composite intermediate = (Composite) renderer
+				.createWidget(file, parent);
+		assertNotNull(intermediate);
+		Control[] childTB = intermediate.getChildren();
+		assertTrue(childTB.length > 0);
+		ToolBar toolbar = (ToolBar) childTB[0];
 
 		assertNotNull(toolbar);
 		Object obj = file;
@@ -173,7 +178,12 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		ToolBar toolbar = (ToolBar) renderer.createWidget(toolbarModel, parent);
+		Composite intermediate = (Composite) renderer.createWidget(
+				toolbarModel, parent);
+		assertNotNull(intermediate);
+		Control[] childTB = intermediate.getChildren();
+		assertTrue(childTB.length > 0);
+		ToolBar toolbar = (ToolBar) childTB[0];
 
 		assertNotNull(toolbar);
 		Object obj = toolbarModel;
@@ -218,7 +228,12 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		ToolBar toolbar = (ToolBar) renderer.createWidget(file, parent);
+		Composite intermediate = (Composite) renderer
+				.createWidget(file, parent);
+		assertNotNull(intermediate);
+		Control[] childTB = intermediate.getChildren();
+		assertTrue(childTB.length > 0);
+		ToolBar toolbar = (ToolBar) childTB[0];
 
 		assertNotNull(toolbar);
 		Object obj = file;
@@ -284,7 +299,12 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		ToolBar toolbar = (ToolBar) renderer.createWidget(file, parent);
+		Composite intermediate = (Composite) renderer
+				.createWidget(file, parent);
+		assertNotNull(intermediate);
+		Control[] childTB = intermediate.getChildren();
+		assertTrue(childTB.length > 0);
+		ToolBar toolbar = (ToolBar) childTB[0];
 
 		assertNotNull(toolbar);
 		Object obj = file;
@@ -326,7 +346,12 @@ public class MToolItemTest extends TestCase {
 				.get(ToolBarManagerRenderer.class);
 		Shell shell = new Shell();
 		Composite parent = new Composite(shell, SWT.NONE);
-		ToolBar toolbar = (ToolBar) renderer.createWidget(file, parent);
+		Composite intermediate = (Composite) renderer
+				.createWidget(file, parent);
+		assertNotNull(intermediate);
+		Control[] childTB = intermediate.getChildren();
+		assertTrue(childTB.length > 0);
+		ToolBar toolbar = (ToolBar) childTB[0];
 
 		assertNotNull(toolbar);
 		Object obj = file;
