@@ -280,6 +280,10 @@ public abstract class CompatibilityPart {
 						((MDirtyable) part).setDirty(((ISaveablePart) wrapped).isDirty());
 					}
 					break;
+				case IWorkbenchPartConstants.PROP_INPUT:
+					WorkbenchPartReference ref = getReference();
+					((WorkbenchPage) ref.getSite().getPage()).firePartInputChanged(ref);
+					break;
 				}
 			}
 		});

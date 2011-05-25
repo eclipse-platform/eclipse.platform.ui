@@ -3936,6 +3936,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 	}
 
+	public void firePartInputChanged(final IWorkbenchPartReference partReference) {
+		for (final Object listener : partListener2List.getListeners()) {
+			SafeRunner.run(new SafeRunnable() {
+				public void run() throws Exception {
+					((IPartListener2) listener).partInputChanged(partReference);
+				}
+			});
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
