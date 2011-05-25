@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,12 +16,18 @@ import java.lang.reflect.InvocationTargetException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -138,7 +144,8 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 	 * This tests tests that the cvs update command is sent properly with the two -j options to merge
 	 * contents between two revisions into the workspaoce.
 	 */
-	public void test46007() throws InvocationTargetException, InterruptedException, CVSException, CoreException, IOException {
+	// TODO: disabled until bug 346948 can be resolved
+	public void _test46007() throws InvocationTargetException, InterruptedException, CVSException, CoreException, IOException {
 		// Create a test project
 		IProject project = createProject("test46007", new String[] { "file1.txt" });
 		appendText(project.getFile("file1.txt"), "dummy", true);
