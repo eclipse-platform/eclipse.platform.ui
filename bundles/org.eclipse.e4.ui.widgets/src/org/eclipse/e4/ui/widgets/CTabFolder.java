@@ -1926,8 +1926,15 @@ void onPaint(Event event) {
 		Rectangle trim = renderer.computeTrim(CTabFolderRenderer.PART_BORDER, SWT.NONE, 0, 0, 0, 0);
 		int x = getSize().x - (trim.width + trim.x);
 		hoverRect = new Rectangle(x - 16 - SPACING, 2, 16, getTabHeight() - 2);
-		gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-		gc.fillRectangle(hoverRect);
+		gc.setForeground(gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		x = hoverRect.x;
+		int y = hoverRect.y;
+		gc.setBackground(gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
+		gc.fillRectangle(x + hoverRect.width - 6, y, 5, 5);
+		gc.drawRectangle(x + hoverRect.width - 6, y, 5, 5);
+		gc.drawLine(x + hoverRect.width - 6, y+2, x + hoverRect.width - 6 + 5, y + 2);
+		gc.fillRectangle(x, y, 5 , 2);
+		gc.drawRectangle(x, y, 5 , 2);
 	}
 	gc.setFont(gcFont);
 	gc.setForeground(gcForeground);
@@ -3641,7 +3648,7 @@ void updateBkImages() {
 			if (hovering) {
 				if (control instanceof Composite) ((Composite) control).setBackgroundMode(SWT.INHERIT_NONE);
 				control.setBackgroundImage(null);
-				control.setBackground(getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+				control.setBackground(getBackground());
 			} else {
 				if (control instanceof Composite) ((Composite) control).setBackgroundMode(SWT.INHERIT_DEFAULT);
 				Rectangle bounds = control.getBounds();
