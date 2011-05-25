@@ -2456,8 +2456,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				initOK[0] = init();
 
 			}
-			// drop the splash screen now that a workbench window is up
-			Platform.endSplash();
 
 			// let the advisor run its start up code
 			if (initOK[0]) {
