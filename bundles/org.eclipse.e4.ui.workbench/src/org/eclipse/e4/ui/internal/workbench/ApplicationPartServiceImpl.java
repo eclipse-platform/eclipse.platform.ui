@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 IBM Corporation and others.
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,9 @@ public class ApplicationPartServiceImpl implements EPartService {
 		EPartService activeWindowPartService = activeWindowContext.get(EPartService.class);
 		if (activeWindowPartService == null) {
 			throw new IllegalStateException("Active window context is invalid"); //$NON-NLS-1$
+		}
+		if (activeWindowPartService == this) {
+			throw new IllegalStateException("Application does not have an active window"); //$NON-NLS-1$
 		}
 		return activeWindowPartService;
 	}
