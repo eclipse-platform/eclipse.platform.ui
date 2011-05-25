@@ -10,12 +10,14 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
@@ -57,6 +59,10 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class HandledContributionItem extends ContributionItem {
+	/**
+	 * 
+	 */
+	private static final String HCI_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
 	private MHandledItem model;
 	private Widget widget;
 	private Listener menuItemListener;
@@ -227,7 +233,7 @@ public class HandledContributionItem extends ContributionItem {
 						if (service == null) {
 							return;
 						}
-						model.setEnabled(canExecuteItem());
+						model.setEnabled(canExecuteItem(null));
 						update();
 					}
 
@@ -481,8 +487,8 @@ public class HandledContributionItem extends ContributionItem {
 				}
 				model.setSelected(selection);
 			}
-			if (canExecuteItem()) {
-				executeItem();
+			if (canExecuteItem(event)) {
+				executeItem(event);
 			}
 		}
 	}
@@ -554,7 +560,7 @@ public class HandledContributionItem extends ContributionItem {
 		return null;
 	}
 
-	private void executeItem() {
+	private void executeItem(Event trigger) {
 		ParameterizedCommand cmd = model.getWbCommand();
 		if (cmd == null) {
 			return;
@@ -562,19 +568,34 @@ public class HandledContributionItem extends ContributionItem {
 		final IEclipseContext lclContext = getContext(model);
 		EHandlerService service = (EHandlerService) lclContext
 				.get(EHandlerService.class.getName());
-		lclContext.set(MItem.class.getName(), model);
-		service.executeHandler(cmd);
-		lclContext.remove(MItem.class.getName());
+		final IEclipseContext staticContext = EclipseContextFactory
+				.create(HCI_STATIC_CONTEXT);
+		if (trigger != null) {
+			staticContext.set(Event.class, trigger);
+		}
+		ContributionsAnalyzer.populateModelInterfaces(model, staticContext,
+				model.getClass().getInterfaces());
+		service.executeHandler(cmd, staticContext);
 	}
 
-	private boolean canExecuteItem() {
+	private boolean canExecuteItem(Event trigger) {
 		ParameterizedCommand cmd = model.getWbCommand();
 		if (cmd == null) {
 			return false;
 		}
 		final IEclipseContext lclContext = getContext(model);
 		EHandlerService service = lclContext.get(EHandlerService.class);
-		return service == null ? false : service.canExecute(cmd);
+		if (service == null) {
+			return false;
+		}
+		final IEclipseContext staticContext = EclipseContextFactory
+				.create(HCI_STATIC_CONTEXT);
+		if (trigger != null) {
+			staticContext.set(Event.class, trigger);
+		}
+		ContributionsAnalyzer.populateModelInterfaces(model, staticContext,
+				model.getClass().getInterfaces());
+		return service.canExecute(cmd, staticContext);
 	}
 
 	public void setParent(IContributionManager parent) {

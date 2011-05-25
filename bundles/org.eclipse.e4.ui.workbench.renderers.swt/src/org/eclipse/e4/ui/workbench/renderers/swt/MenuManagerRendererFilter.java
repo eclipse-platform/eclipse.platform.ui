@@ -24,6 +24,7 @@ import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
@@ -32,7 +33,6 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
@@ -48,6 +48,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 public class MenuManagerRendererFilter implements Listener {
+	private static final String MMRF_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
+
 	public static final String NUL_MENU_ITEM = "(None Applicable)"; //$NON-NLS-1$
 
 	private static final String TMP_ORIGINAL_CONTEXT = "MenuServiceFilter.original.context"; //$NON-NLS-1$
@@ -311,15 +313,22 @@ public class MenuManagerRendererFilter implements Listener {
 				ParameterizedCommand cmd = ((MHandledMenuItem) element)
 						.getWbCommand();
 				if (cmd != null) {
+					MHandledMenuItem item = (MHandledMenuItem) element;
+					final IEclipseContext staticContext = EclipseContextFactory
+							.create(MMRF_STATIC_CONTEXT);
+					ContributionsAnalyzer.populateModelInterfaces(item,
+							staticContext, item.getClass().getInterfaces());
 					((MHandledMenuItem) element).setEnabled(handlerService
-							.canExecute(cmd));
+							.canExecute(cmd, staticContext));
 				}
 			} else if (element instanceof MDirectMenuItem) {
 				MDirectMenuItem contrib = (MDirectMenuItem) element;
 				if (contrib.getObject() != null) {
+					MDirectMenuItem item = (MDirectMenuItem) element;
 					IEclipseContext staticContext = EclipseContextFactory
-							.create();
-					staticContext.set(MItem.class, contrib);
+							.create(MMRF_STATIC_CONTEXT);
+					ContributionsAnalyzer.populateModelInterfaces(item,
+							staticContext, item.getClass().getInterfaces());
 					Object rc = ContextInjectionFactory.invoke(
 							contrib.getObject(), CanExecute.class, evalContext,
 							staticContext, Boolean.TRUE);
@@ -373,7 +382,11 @@ public class MenuManagerRendererFilter implements Listener {
 		final IEclipseContext lclContext = modelService
 				.getContainingContext(item);
 		EHandlerService service = lclContext.get(EHandlerService.class);
-		item.setEnabled(service.canExecute(cmd));
+		final IEclipseContext staticContext = EclipseContextFactory
+				.create(MMRF_STATIC_CONTEXT);
+		ContributionsAnalyzer.populateModelInterfaces(item, staticContext, item
+				.getClass().getInterfaces());
+		item.setEnabled(service.canExecute(cmd, staticContext));
 	}
 
 	public void cleanUp(final Menu menu, MMenu menuModel,

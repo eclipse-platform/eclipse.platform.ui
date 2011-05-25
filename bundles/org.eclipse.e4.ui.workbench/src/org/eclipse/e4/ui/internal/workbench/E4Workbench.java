@@ -224,7 +224,8 @@ public class E4Workbench implements IWorkbench {
 				+ parentContext.toString() + ", " + contextModel + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
 		// fill in the interfaces, so MContributedPart.class.getName() will
 		// return the model element, for example.
-		populateModelInterfaces(contextModel, context, contextModel.getClass().getInterfaces());
+		ContributionsAnalyzer.populateModelInterfaces(contextModel, context, contextModel
+				.getClass().getInterfaces());
 
 		// declares modifiable variables from the model
 		List<String> containedProperties = contextModel.getVariables();
@@ -234,17 +235,6 @@ public class E4Workbench implements IWorkbench {
 
 		contextModel.setContext(context);
 		return context;
-	}
-
-	private static void populateModelInterfaces(MContext contextModel, IEclipseContext context,
-			Class<?>[] interfaces) {
-		for (Class<?> intf : interfaces) {
-			Activator.trace(Policy.DEBUG_CONTEXTS, "Adding " + intf.getName() + " for " //$NON-NLS-1$ //$NON-NLS-2$
-					+ contextModel.getClass().getName(), null);
-			context.set(intf.getName(), contextModel);
-
-			populateModelInterfaces(contextModel, context, intf.getInterfaces());
-		}
 	}
 
 	/*

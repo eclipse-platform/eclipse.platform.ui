@@ -26,6 +26,10 @@ import org.eclipse.e4.core.di.annotations.Execute;
  *
  */
 public class HandlerServiceImpl implements EHandlerService {
+	/**
+	 * 
+	 */
+	private static final String TMP_STATIC_CONTEXT = "tmp-staticContext"; //$NON-NLS-1$
 	public final static String H_ID = "handler::"; //$NON-NLS-1$
 	public final static String PARM_MAP = "parmMap::"; //$NON-NLS-1$
 
@@ -53,21 +57,19 @@ public class HandlerServiceImpl implements EHandlerService {
 	}
 
 	/**
-	 * Create a temporary static context, to be used for the execution.
+	 * Fill in a temporary static context for execution.
 	 * 
 	 * @param command
 	 * @return a context not part of the normal hierarchy
 	 */
-	private IEclipseContext createContextWithParms(ParameterizedCommand command) {
-		IEclipseContext tmpContext = EclipseContextFactory.create(PARM_MAP);
+	private void addParms(ParameterizedCommand command, IEclipseContext staticContext) {
 		final Map parms = command.getParameterMap();
 		Iterator i = parms.entrySet().iterator();
 		while (i.hasNext()) {
 			Map.Entry entry = (Map.Entry) i.next();
-			tmpContext.set((String) entry.getKey(), entry.getValue());
+			staticContext.set((String) entry.getKey(), entry.getValue());
 		}
-		tmpContext.set(PARM_MAP, parms);
-		return tmpContext;
+		staticContext.set(PARM_MAP, parms);
 	}
 
 	/*
@@ -77,6 +79,10 @@ public class HandlerServiceImpl implements EHandlerService {
 	 * ParameterizedCommand)
 	 */
 	public boolean canExecute(ParameterizedCommand command) {
+		return canExecute(command, EclipseContextFactory.create(TMP_STATIC_CONTEXT));
+	}
+
+	public boolean canExecute(ParameterizedCommand command, IEclipseContext staticContext) {
 		String commandId = command.getId();
 		Object handler = lookUpHandler(context, commandId);
 		if (handler == null) {
@@ -84,7 +90,7 @@ public class HandlerServiceImpl implements EHandlerService {
 		}
 
 		final IEclipseContext executionContext = getExecutionContext();
-		IEclipseContext staticContext = createContextWithParms(command);
+		addParms(command, staticContext);
 		Boolean result = ((Boolean) ContextInjectionFactory.invoke(handler, CanExecute.class,
 				executionContext, staticContext, Boolean.TRUE));
 		return result.booleanValue();
@@ -107,6 +113,10 @@ public class HandlerServiceImpl implements EHandlerService {
 	 * ParameterizedCommand)
 	 */
 	public Object executeHandler(ParameterizedCommand command) {
+		return executeHandler(command, EclipseContextFactory.create(TMP_STATIC_CONTEXT));
+	}
+
+	public Object executeHandler(ParameterizedCommand command, IEclipseContext staticContext) {
 		String commandId = command.getId();
 		Object handler = lookUpHandler(context, commandId);
 		if (handler == null) {
@@ -114,7 +124,7 @@ public class HandlerServiceImpl implements EHandlerService {
 		}
 
 		final IEclipseContext executionContext = getExecutionContext();
-		IEclipseContext staticContext = createContextWithParms(command);
+		addParms(command, staticContext);
 		Object rc = ContextInjectionFactory.invoke(handler, CanExecute.class, executionContext,
 				staticContext, Boolean.TRUE);
 		if (Boolean.FALSE.equals(rc))

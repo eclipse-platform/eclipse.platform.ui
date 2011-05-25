@@ -18,20 +18,21 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -39,6 +40,8 @@ import org.eclipse.swt.widgets.MenuItem;
  * Create a contribute part.
  */
 public class HandledMenuItemRenderer extends MenuItemRenderer {
+
+	private static final String HMI_STATIC_CONTEXT = "HMIR-staticContext"; //$NON-NLS-1$
 
 	@Inject
 	Logger logger;
@@ -89,7 +92,12 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 		}
 		final IEclipseContext lclContext = getContext(itemModel);
 		EHandlerService service = lclContext.get(EHandlerService.class);
-		itemModel.setEnabled(service.canExecute(cmd));
+		final IEclipseContext staticContext = EclipseContextFactory
+				.create(HMI_STATIC_CONTEXT);
+		ContributionsAnalyzer.populateModelInterfaces(itemModel, staticContext,
+				itemModel.getClass().getInterfaces());
+
+		itemModel.setEnabled(service.canExecute(cmd, staticContext));
 		newItem.setEnabled(itemModel.isEnabled());
 	}
 
@@ -138,20 +146,22 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 			final MHandledItem item = (MHandledItem) me;
 			final IEclipseContext lclContext = getContext(me);
 			MenuItem mi = (MenuItem) me.getWidget();
-			mi.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
+			mi.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event e) {
 					EHandlerService service = (EHandlerService) lclContext
 							.get(EHandlerService.class.getName());
 					ParameterizedCommand cmd = item.getWbCommand();
 					if (cmd == null) {
 						return;
 					}
-					lclContext.set(MItem.class.getName(), item);
-					service.executeHandler(cmd);
-					lclContext.remove(MItem.class.getName());
-				}
-
-				public void widgetDefaultSelected(SelectionEvent e) {
+					final IEclipseContext staticContext = EclipseContextFactory
+							.create(HMI_STATIC_CONTEXT);
+					if (e != null) {
+						staticContext.set(Event.class, e);
+					}
+					ContributionsAnalyzer.populateModelInterfaces(item,
+							staticContext, item.getClass().getInterfaces());
+					service.executeHandler(cmd, staticContext);
 				}
 			});
 		}

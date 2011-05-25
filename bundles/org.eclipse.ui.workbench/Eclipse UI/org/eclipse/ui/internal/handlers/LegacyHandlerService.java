@@ -35,6 +35,7 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.ContextFunction;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
@@ -362,7 +363,12 @@ public class LegacyHandlerService implements IHandlerService {
 			throws ExecutionException, NotDefinedException, NotEnabledException,
 			NotHandledException {
 		EHandlerService hs = eclipseContext.get(EHandlerService.class);
-		return hs.executeHandler(command);
+		IEclipseContext staticContext = null;
+		if (event != null) {
+			staticContext = EclipseContextFactory.create();
+			staticContext.set(Event.class, event);
+		}
+		return hs.executeHandler(command, staticContext);
 	}
 
 	/*
@@ -376,12 +382,18 @@ public class LegacyHandlerService implements IHandlerService {
 	public Object executeCommandInContext(ParameterizedCommand command, Event event,
 			IEvaluationContext context) throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
+		IEclipseContext staticContext = null;
 		if (context instanceof ExpressionContext) {
-			EHandlerService hs = (EHandlerService) ((ExpressionContext) context).eclipseContext
-					.get(EHandlerService.class.getName());
-			return hs.executeHandler(command);
+			staticContext = ((ExpressionContext) context).eclipseContext;
+		} else {
+			staticContext = EclipseContextFactory.create();
+			if (event != null) {
+				staticContext.set(Event.class, event);
+			}
+			staticContext.set(IEvaluationContext.class, context);
 		}
-		return executeCommand(command, event);
+		EHandlerService hs = eclipseContext.get(EHandlerService.class);
+		return hs.executeHandler(command, staticContext);
 	}
 
 	/*

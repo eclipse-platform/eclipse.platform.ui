@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.commands;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
-
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 
 /**
  */
@@ -26,4 +25,8 @@ public interface EHandlerService {
 	public Object executeHandler(ParameterizedCommand command);
 
 	public boolean canExecute(ParameterizedCommand command);
+
+	public Object executeHandler(ParameterizedCommand command, IEclipseContext staticContext);
+
+	public boolean canExecute(ParameterizedCommand command, IEclipseContext staticContext);
 }

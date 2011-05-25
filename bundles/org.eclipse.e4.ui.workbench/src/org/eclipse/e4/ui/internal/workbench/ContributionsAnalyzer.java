@@ -20,6 +20,7 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.internal.expressions.ReferenceExpression;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
@@ -709,4 +710,14 @@ public final class ContributionsAnalyzer {
 		trace("mergeContributions: final size: " + result.size(), null); //$NON-NLS-1$
 	}
 
+	public static void populateModelInterfaces(Object modelObject, IEclipseContext context,
+			Class<?>[] interfaces) {
+		for (Class<?> intf : interfaces) {
+			Activator.trace(Policy.DEBUG_CONTEXTS, "Adding " + intf.getName() + " for " //$NON-NLS-1$ //$NON-NLS-2$
+					+ modelObject.getClass().getName(), null);
+			context.set(intf.getName(), modelObject);
+
+			populateModelInterfaces(modelObject, context, intf.getInterfaces());
+		}
+	}
 }

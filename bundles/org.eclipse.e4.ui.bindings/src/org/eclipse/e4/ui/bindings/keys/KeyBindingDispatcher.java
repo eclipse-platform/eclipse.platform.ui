@@ -21,6 +21,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
@@ -260,11 +261,14 @@ public class KeyBindingDispatcher {
 		final EHandlerService handlerService = getHandlerService();
 		final Command command = parameterizedCommand.getCommand();
 
+		final IEclipseContext staticContext = EclipseContextFactory.create("keys-staticContext"); //$NON-NLS-1$
+		staticContext.set(Event.class, trigger);
+
 		final boolean commandDefined = command.isDefined();
 		boolean commandEnabled;
 		boolean commandHandled;
 
-		commandEnabled = handlerService.canExecute(parameterizedCommand);
+		commandEnabled = handlerService.canExecute(parameterizedCommand, staticContext);
 		commandHandled = HandlerServiceImpl.lookUpHandler(context, command.getId()) != null;
 
 		if (!commandEnabled && commandHandled && commandDefined) {
@@ -275,7 +279,7 @@ public class KeyBindingDispatcher {
 		}
 		if (commandEnabled) {
 			try {
-				handlerService.executeHandler(parameterizedCommand);
+				handlerService.executeHandler(parameterizedCommand, staticContext);
 			} catch (final Exception e) {
 				commandHandled = false;
 				if (logger != null) {

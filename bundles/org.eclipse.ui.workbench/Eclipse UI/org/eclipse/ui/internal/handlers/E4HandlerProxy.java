@@ -18,6 +18,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandler2;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
@@ -26,6 +27,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -43,20 +45,25 @@ public class E4HandlerProxy {
 	}
 
 	@CanExecute
-	public boolean canExecute(IEclipseContext context) {
+	public boolean canExecute(IEclipseContext context, @Optional IEvaluationContext staticContext) {
 		if (handler instanceof IHandler2) {
-			((IHandler2) handler).setEnabled(new ExpressionContext(context));
+			((IHandler2) handler).setEnabled(staticContext == null ? new ExpressionContext(context)
+					: staticContext);
 		}
 		return handler.isEnabled();
 	}
 
 	@Execute
 	public Object execute(IEclipseContext context,
-			@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms) {
+			@Optional @Named(HandlerServiceImpl.PARM_MAP) Map parms, @Optional Event trigger,
+			@Optional IEvaluationContext staticContext) {
 		Activator.trace(Policy.DEBUG_CMDS, "execute " + command + " and " //$NON-NLS-1$ //$NON-NLS-2$
 				+ handler + " with: " + context, null); //$NON-NLS-1$
-		ExpressionContext legacy = new ExpressionContext(context);
-		ExecutionEvent event = new ExecutionEvent(command, parms, null, legacy);
+		IEvaluationContext appContext = staticContext;
+		if (appContext == null) {
+			appContext = new ExpressionContext(context);
+		}
+		ExecutionEvent event = new ExecutionEvent(command, parms, trigger, appContext);
 		try {
 			return handler.execute(event);
 		} catch (ExecutionException e) {

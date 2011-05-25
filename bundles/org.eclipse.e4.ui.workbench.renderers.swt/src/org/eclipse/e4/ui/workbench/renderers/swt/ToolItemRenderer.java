@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
@@ -31,6 +32,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.Activator;
+import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.internal.workbench.Policy;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -67,6 +69,8 @@ import org.osgi.service.event.EventHandler;
  * Create a contribute part.
  */
 public class ToolItemRenderer extends SWTPartRenderer {
+
+	private static final String TIR_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
 
 	@Inject
 	Logger logger;
@@ -363,7 +367,13 @@ public class ToolItemRenderer extends SWTPartRenderer {
 							if (cmd == null) {
 								return;
 							}
-							item.setEnabled(service.canExecute(cmd));
+							final IEclipseContext staticContext = EclipseContextFactory
+									.create(TIR_STATIC_CONTEXT);
+							ContributionsAnalyzer.populateModelInterfaces(item,
+									staticContext, item.getClass()
+											.getInterfaces());
+							item.setEnabled(service.canExecute(cmd,
+									staticContext));
 						}
 
 						public void handleException(Throwable exception) {
@@ -394,9 +404,11 @@ public class ToolItemRenderer extends SWTPartRenderer {
 									null);
 							return;
 						}
-						lclContext.set(MItem.class.getName(), item);
-						service.executeHandler(cmd);
-						lclContext.remove(MItem.class.getName());
+						final IEclipseContext staticContext = EclipseContextFactory
+								.create(TIR_STATIC_CONTEXT);
+						ContributionsAnalyzer.populateModelInterfaces(item,
+								staticContext, item.getClass().getInterfaces());
+						service.executeHandler(cmd, staticContext);
 					}
 				}
 
