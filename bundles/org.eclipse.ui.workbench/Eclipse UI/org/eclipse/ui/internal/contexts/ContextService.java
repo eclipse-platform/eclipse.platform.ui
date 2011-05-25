@@ -22,6 +22,7 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.widgets.Shell;
@@ -29,6 +30,7 @@ import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * <p>
@@ -58,6 +60,9 @@ public final class ContextService implements IContextService {
 
 	@Inject
 	private IEclipseContext eclipseContext;
+
+	@Inject
+	private UISynchronize synchService;
 
 	/**
 	 * The persistence class for this context service.
@@ -116,13 +121,19 @@ public final class ContextService implements IContextService {
 			}
 			ExpressionContext ctx = new ExpressionContext(eclipseContext.getActiveLeaf());
 			try {
-				if (expression.evaluate(ctx) != EvaluationResult.FALSE) {
-					contextService.activateContext(contextId);
-				} else {
-					contextService.deactivateContext(contextId);
-				}
+				final boolean shouldActivate = expression.evaluate(ctx) != EvaluationResult.FALSE;
+				synchService.asyncExec(new Runnable() {
+					public void run() {
+						if (shouldActivate) {
+							contextService.activateContext(contextId);
+						} else {
+							contextService.deactivateContext(contextId);
+						}
+					}
+				});
 			} catch (CoreException e) {
-				contextService.deactivateContext(contextId);
+				// contextService.deactivateContext(contextId);
+				WorkbenchPlugin.log("Failed to update " + contextId, e); //$NON-NLS-1$
 			}
 			return updating;
 		}
