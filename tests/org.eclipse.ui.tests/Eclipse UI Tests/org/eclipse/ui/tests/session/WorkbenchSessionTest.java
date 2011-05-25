@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.session;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.ZipFile;
@@ -24,6 +25,8 @@ import org.eclipse.core.tests.session.SessionTestSuite;
 import org.eclipse.core.tests.session.Setup;
 import org.eclipse.core.tests.session.SetupManager;
 import org.eclipse.core.tests.session.SetupManager.SetupException;
+import org.eclipse.jface.util.Util;
+import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.FileTool;
 
@@ -98,6 +101,18 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 					base.setEclipseArgument(key, value);
 				}
 			}
+			
+			// <== Kludge for the bug 345127. Force spawned VM to be 32 bit
+			// if we are in a 32bit Eclipse
+			if (Util.isCocoa()) {
+				String arch = System.getProperty("osgi.arch");
+				if (Constants.ARCH_X86.equals(arch)) {
+					Map vmArguments = new HashMap(1);
+					vmArguments.put("d32", null);
+					base.setVMArguments(vmArguments);
+				}
+			}
+			// ==> End of kludge for the bug 345127.
 		} catch (Exception e) {
 			throw SetupManager.getInstance().new SetupException(e.getMessage(),
 					e);
