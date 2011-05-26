@@ -502,15 +502,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	}
 
 	@Override
-	public void disposeWidget(MUIElement element) {
-		Object widget = element.getWidget();
-		if (widget instanceof Control) {
-			// hide ourselves from the user interface
-			((Control) widget).setVisible(false);
-		}
-	}
-
-	@Override
 	public void hideChild(MElementContainer<MUIElement> parentElement,
 			MUIElement child) {
 		super.hideChild(parentElement, child);

@@ -478,6 +478,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 					}
 				}
 				
+				children.get(i).setToBeRendered(false);
 				children.remove(i);
 				return (IContributionItem) obj;
 			}
