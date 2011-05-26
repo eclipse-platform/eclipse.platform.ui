@@ -590,10 +590,17 @@ public class StackRenderer extends LazyStackRenderer {
 		MouseListener mouseListener = new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
+				CTabItem item = ctf.getItem(new Point(e.x, e.y));
+				if (item == null)
+					return;
+
 				if (e.button == 2) {
-					CTabItem item = ctf.getItem(new Point(e.x, e.y));
-					if (item != null) {
-						closePart(item);
+					closePart(item);
+				} else if (e.button == 1) {
+					MUIElement ele = (MUIElement) item.getData(OWNING_ME);
+					if (ele.getParent().getSelectedElement() == ele) {
+						Control ctrl = (Control) ele.getWidget();
+						ctrl.setFocus();
 					}
 				}
 			}
