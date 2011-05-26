@@ -363,9 +363,8 @@ public class LegacyHandlerService implements IHandlerService {
 			throws ExecutionException, NotDefinedException, NotEnabledException,
 			NotHandledException {
 		EHandlerService hs = eclipseContext.get(EHandlerService.class);
-		IEclipseContext staticContext = null;
+		IEclipseContext staticContext = EclipseContextFactory.create();
 		if (event != null) {
-			staticContext = EclipseContextFactory.create();
 			staticContext.set(Event.class, event);
 		}
 		return hs.executeHandler(command, staticContext);
