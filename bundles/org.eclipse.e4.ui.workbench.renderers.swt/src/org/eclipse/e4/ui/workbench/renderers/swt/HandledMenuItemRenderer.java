@@ -97,7 +97,11 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 		ContributionsAnalyzer.populateModelInterfaces(itemModel, staticContext,
 				itemModel.getClass().getInterfaces());
 
-		itemModel.setEnabled(service.canExecute(cmd, staticContext));
+		try {
+			itemModel.setEnabled(service.canExecute(cmd, staticContext));
+		} finally {
+			staticContext.dispose();
+		}
 		newItem.setEnabled(itemModel.isEnabled());
 	}
 
@@ -161,7 +165,11 @@ public class HandledMenuItemRenderer extends MenuItemRenderer {
 					}
 					ContributionsAnalyzer.populateModelInterfaces(item,
 							staticContext, item.getClass().getInterfaces());
-					service.executeHandler(cmd, staticContext);
+					try {
+						service.executeHandler(cmd, staticContext);
+					} finally {
+						staticContext.dispose();
+					}
 				}
 			});
 		}

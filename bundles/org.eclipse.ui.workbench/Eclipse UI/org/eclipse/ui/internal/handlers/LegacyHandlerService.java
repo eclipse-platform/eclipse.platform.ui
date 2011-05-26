@@ -367,7 +367,11 @@ public class LegacyHandlerService implements IHandlerService {
 		if (event != null) {
 			staticContext.set(Event.class, event);
 		}
-		return hs.executeHandler(command, staticContext);
+		try {
+			return hs.executeHandler(command, staticContext);
+		} finally {
+			staticContext.dispose();
+		}
 	}
 
 	/*
@@ -382,17 +386,27 @@ public class LegacyHandlerService implements IHandlerService {
 			IEvaluationContext context) throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException {
 		IEclipseContext staticContext = null;
+		boolean disposeContext = false;
 		if (context instanceof ExpressionContext) {
-			staticContext = ((ExpressionContext) context).eclipseContext;
+			// create a child context so that the primary context doesn't get
+			// populated by parameters by the EHS
+			staticContext = ((ExpressionContext) context).eclipseContext.createChild();
 		} else {
 			staticContext = EclipseContextFactory.create();
+			disposeContext = true;
 			if (event != null) {
 				staticContext.set(Event.class, event);
 			}
 			staticContext.set(IEvaluationContext.class, context);
 		}
 		EHandlerService hs = eclipseContext.get(EHandlerService.class);
-		return hs.executeHandler(command, staticContext);
+		try {
+			return hs.executeHandler(command, staticContext);
+		} finally {
+			if (disposeContext) {
+				staticContext.dispose();
+			}
+		}
 	}
 
 	/*

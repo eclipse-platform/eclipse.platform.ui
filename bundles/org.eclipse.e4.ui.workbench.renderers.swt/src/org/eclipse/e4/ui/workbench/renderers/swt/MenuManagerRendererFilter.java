@@ -318,8 +318,12 @@ public class MenuManagerRendererFilter implements Listener {
 							.create(MMRF_STATIC_CONTEXT);
 					ContributionsAnalyzer.populateModelInterfaces(item,
 							staticContext, item.getClass().getInterfaces());
-					((MHandledMenuItem) element).setEnabled(handlerService
-							.canExecute(cmd, staticContext));
+					try {
+						((MHandledMenuItem) element).setEnabled(handlerService
+								.canExecute(cmd, staticContext));
+					} finally {
+						staticContext.dispose();
+					}
 				}
 			} else if (element instanceof MDirectMenuItem) {
 				MDirectMenuItem contrib = (MDirectMenuItem) element;
@@ -329,11 +333,15 @@ public class MenuManagerRendererFilter implements Listener {
 							.create(MMRF_STATIC_CONTEXT);
 					ContributionsAnalyzer.populateModelInterfaces(item,
 							staticContext, item.getClass().getInterfaces());
-					Object rc = ContextInjectionFactory.invoke(
-							contrib.getObject(), CanExecute.class, evalContext,
-							staticContext, Boolean.TRUE);
-					if (rc instanceof Boolean) {
-						contrib.setEnabled((Boolean) rc);
+					try {
+						Object rc = ContextInjectionFactory.invoke(
+								contrib.getObject(), CanExecute.class,
+								evalContext, staticContext, Boolean.TRUE);
+						if (rc instanceof Boolean) {
+							contrib.setEnabled((Boolean) rc);
+						}
+					} finally {
+						staticContext.dispose();
 					}
 				}
 			}
@@ -386,7 +394,11 @@ public class MenuManagerRendererFilter implements Listener {
 				.create(MMRF_STATIC_CONTEXT);
 		ContributionsAnalyzer.populateModelInterfaces(item, staticContext, item
 				.getClass().getInterfaces());
-		item.setEnabled(service.canExecute(cmd, staticContext));
+		try {
+			item.setEnabled(service.canExecute(cmd, staticContext));
+		} finally {
+			staticContext.dispose();
+		}
 	}
 
 	public void cleanUp(final Menu menu, MMenu menuModel,

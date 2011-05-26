@@ -323,6 +323,7 @@ public class ModelServiceImpl implements EModelService {
 				IEclipseContext ctxt = EclipseContextFactory.create();
 				ctxt.set("show", true); //$NON-NLS-1$
 				ContextInjectionFactory.invoke(trimCtrl.getObject(), Execute.class, ctxt);
+				ctxt.dispose();
 			}
 		}
 
@@ -761,18 +762,19 @@ public class ModelServiceImpl implements EModelService {
 			}
 		}
 
+		IEclipseContext ctxt = EclipseContextFactory.create();
+		ctxt.set("show", false); //$NON-NLS-1$
 		for (MToolControl toolControl : toRemove) {
 			// Close any open fast view
 			if (toolControl.getObject() != null
 					&& toolControl.getObject().getClass().getName().contains("TrimStack")) { //$NON-NLS-1$
-				IEclipseContext ctxt = EclipseContextFactory.create();
-				ctxt.set("show", false); //$NON-NLS-1$
 				ContextInjectionFactory.invoke(toolControl.getObject(), Execute.class, ctxt);
 			}
 
 			toolControl.setToBeRendered(false);
 			toolControl.getParent().getChildren().remove(toolControl);
 		}
+		ctxt.dispose();
 	}
 
 	public void removePerspectiveModel(MPerspective persp, MWindow window) {

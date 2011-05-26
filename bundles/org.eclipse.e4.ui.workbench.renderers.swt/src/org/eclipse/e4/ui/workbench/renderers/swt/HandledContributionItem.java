@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2011 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.HashMap;
@@ -575,7 +585,11 @@ public class HandledContributionItem extends ContributionItem {
 		}
 		ContributionsAnalyzer.populateModelInterfaces(model, staticContext,
 				model.getClass().getInterfaces());
-		service.executeHandler(cmd, staticContext);
+		try {
+			service.executeHandler(cmd, staticContext);
+		} finally {
+			staticContext.dispose();
+		}
 	}
 
 	private boolean canExecuteItem(Event trigger) {
@@ -595,7 +609,11 @@ public class HandledContributionItem extends ContributionItem {
 		}
 		ContributionsAnalyzer.populateModelInterfaces(model, staticContext,
 				model.getClass().getInterfaces());
-		return service.canExecute(cmd, staticContext);
+		try {
+			return service.canExecute(cmd, staticContext);
+		} finally {
+			staticContext.dispose();
+		}
 	}
 
 	public void setParent(IContributionManager parent) {

@@ -372,8 +372,12 @@ public class ToolItemRenderer extends SWTPartRenderer {
 							ContributionsAnalyzer.populateModelInterfaces(item,
 									staticContext, item.getClass()
 											.getInterfaces());
-							item.setEnabled(service.canExecute(cmd,
-									staticContext));
+							try {
+								item.setEnabled(service.canExecute(cmd,
+										staticContext));
+							} finally {
+								staticContext.dispose();
+							}
 						}
 
 						public void handleException(Throwable exception) {

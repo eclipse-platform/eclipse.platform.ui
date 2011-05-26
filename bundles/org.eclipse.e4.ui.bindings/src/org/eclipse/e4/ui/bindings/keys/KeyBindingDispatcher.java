@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -268,31 +268,35 @@ public class KeyBindingDispatcher {
 		boolean commandEnabled;
 		boolean commandHandled;
 
-		commandEnabled = handlerService.canExecute(parameterizedCommand, staticContext);
-		commandHandled = HandlerServiceImpl.lookUpHandler(context, command.getId()) != null;
+		try {
+			commandEnabled = handlerService.canExecute(parameterizedCommand, staticContext);
+			commandHandled = HandlerServiceImpl.lookUpHandler(context, command.getId()) != null;
 
-		if (!commandEnabled && commandHandled && commandDefined) {
-			if (keyAssistDialog != null) {
-				keyAssistDialog.clearRememberedState();
+			if (!commandEnabled && commandHandled && commandDefined) {
+				if (keyAssistDialog != null) {
+					keyAssistDialog.clearRememberedState();
+				}
+				return true;
 			}
-			return true;
-		}
-		if (commandEnabled) {
-			try {
-				handlerService.executeHandler(parameterizedCommand, staticContext);
-			} catch (final Exception e) {
-				commandHandled = false;
-				if (logger != null) {
-					logger.error(e);
+			if (commandEnabled) {
+				try {
+					handlerService.executeHandler(parameterizedCommand, staticContext);
+				} catch (final Exception e) {
+					commandHandled = false;
+					if (logger != null) {
+						logger.error(e);
+					}
+				}
+				/*
+				 * Now that the command has executed (and had the opportunity to use the remembered
+				 * state of the dialog), it is safe to delete that information.
+				 */
+				if (keyAssistDialog != null) {
+					keyAssistDialog.clearRememberedState();
 				}
 			}
-			/*
-			 * Now that the command has executed (and had the opportunity to use the remembered
-			 * state of the dialog), it is safe to delete that information.
-			 */
-			if (keyAssistDialog != null) {
-				keyAssistDialog.clearRememberedState();
-			}
+		} finally {
+			staticContext.dispose();
 		}
 		return (commandDefined && commandHandled);
 	}

@@ -32,7 +32,7 @@ public interface EHandlerService {
 	 * @param command
 	 *            Must not be <code>null</code>
 	 * @param staticContext
-	 *            Must not be <code>null</code>
+	 *            Must not be <code>null</code>. You must dispose your context when you are done.
 	 * @return the command return value.
 	 */
 	public Object executeHandler(ParameterizedCommand command, IEclipseContext staticContext);
@@ -43,7 +43,7 @@ public interface EHandlerService {
 	 * @param command
 	 *            Must not be <code>null</code>.
 	 * @param staticContext
-	 *            Must not be <code>null</code>.
+	 *            Must not be <code>null</code>. You must dispose your context when you are done.
 	 * @return true if the command can be executed.
 	 */
 	public boolean canExecute(ParameterizedCommand command, IEclipseContext staticContext);

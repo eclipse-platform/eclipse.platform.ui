@@ -79,7 +79,12 @@ public class HandlerServiceImpl implements EHandlerService {
 	 * ParameterizedCommand)
 	 */
 	public boolean canExecute(ParameterizedCommand command) {
-		return canExecute(command, EclipseContextFactory.create(TMP_STATIC_CONTEXT));
+		final IEclipseContext staticContext = EclipseContextFactory.create(TMP_STATIC_CONTEXT);
+		try {
+			return canExecute(command, staticContext);
+		} finally {
+			staticContext.dispose();
+		}
 	}
 
 	public boolean canExecute(ParameterizedCommand command, IEclipseContext staticContext) {
@@ -113,7 +118,12 @@ public class HandlerServiceImpl implements EHandlerService {
 	 * ParameterizedCommand)
 	 */
 	public Object executeHandler(ParameterizedCommand command) {
-		return executeHandler(command, EclipseContextFactory.create(TMP_STATIC_CONTEXT));
+		final IEclipseContext staticContext = EclipseContextFactory.create(TMP_STATIC_CONTEXT);
+		try {
+			return executeHandler(command, staticContext);
+		} finally {
+			staticContext.dispose();
+		}
 	}
 
 	public Object executeHandler(ParameterizedCommand command, IEclipseContext staticContext) {
