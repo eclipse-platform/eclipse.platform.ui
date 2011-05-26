@@ -130,6 +130,8 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.IShowInSource;
@@ -2019,37 +2021,60 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		List<EditorReference> references = getCurrentEditorReferences();
 		return references.toArray(new IEditorReference[references.size()]);
 	}
+	
+	public IEditorReference[] getSortedEditors() {
+		IWorkbenchPartReference[] parts = getSortedParts(true, false);
+		IEditorReference[] editors = new IEditorReference[parts.length];
+		System.arraycopy(parts, 0, editors, 0, parts.length);
+		return editors;
+	}
 
 	public IWorkbenchPartReference[] getSortedParts() {
+		return getSortedParts(true, true);
+	}
+
+	private IWorkbenchPartReference[] getSortedParts(boolean editors, boolean views) {
+		if (!editors && !views) {
+			return new IWorkbenchPartReference[0];
+		}
+
 		List<IWorkbenchPartReference> sortedReferences = new ArrayList<IWorkbenchPartReference>();
 		IViewReference[] viewReferences = getViewReferences();
 		List<EditorReference> editorReferences = getCurrentEditorReferences();
 
 		activationLoop: for (MPart part : activationList) {
+			if (views) {
+				for (IViewReference ref : viewReferences) {
+					if (((ViewReference) ref).getModel() == part) {
+						sortedReferences.add(ref);
+						continue activationLoop;
+					}
+				}
+			}
+
+			if (editors) {
+				for (EditorReference ref : editorReferences) {
+					if (ref.getModel() == part) {
+						sortedReferences.add(ref);
+						break;
+					}
+				}
+			}
+		}
+
+		if (views) {
 			for (IViewReference ref : viewReferences) {
-				if (((ViewReference) ref).getModel() == part) {
+				if (!sortedReferences.contains(ref)) {
 					sortedReferences.add(ref);
-					continue activationLoop;
 				}
 			}
+		}
 
+		if (editors) {
 			for (EditorReference ref : editorReferences) {
-				if (ref.getModel() == part) {
+				if (!sortedReferences.contains(ref)) {
 					sortedReferences.add(ref);
-					break;
 				}
-			}
-		}
-
-		for (IViewReference ref : viewReferences) {
-			if (!sortedReferences.contains(ref)) {
-				sortedReferences.add(ref);
-			}
-		}
-
-		for (EditorReference ref : editorReferences) {
-			if (!sortedReferences.contains(ref)) {
-				sortedReferences.add(ref);
 			}
 		}
 
@@ -2669,6 +2694,31 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
 			recordEditor(input, descriptor);
 			return editor;
+		} else if (descriptor.isInternal()) {
+			// look for an editor to reuse
+			EditorReference reusableEditorRef = (EditorReference) ((TabBehaviour) Tweaklets
+					.get(TabBehaviour.KEY)).findReusableEditor(this);
+			if (reusableEditorRef != null) {
+				IEditorPart reusableEditor = reusableEditorRef.getEditor(false);
+				if (editorId.equals(reusableEditorRef.getId())
+						&& reusableEditor instanceof IReusableEditor) {
+					// reusable editors that share the same id are okay
+					recordEditor(input, descriptor);
+					reuseEditor((IReusableEditor) reusableEditor, input);
+
+					MPart editor = reusableEditorRef.getModel();
+					partService.showPart(editor, PartState.VISIBLE);
+					if (activate) {
+						partService.activate(editor);
+					} else {
+						updateActiveEditorSources(editor);
+					}
+					return reusableEditor;
+				}
+				// should have saved already if necessary, close this editor, a
+				// new one will be opened
+				closeEditor(reusableEditorRef, false);
+			}
 		} else if (descriptor.isOpenExternal()) {
 			openExternalEditor(descriptor, input);
 			// no editor parts for external editors, return null

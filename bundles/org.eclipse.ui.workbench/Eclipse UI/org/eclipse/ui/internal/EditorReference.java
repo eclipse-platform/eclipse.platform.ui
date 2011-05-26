@@ -236,16 +236,6 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.IEditorReference#isPinned()
-	 */
-	public boolean isPinned() {
-		// FIXME compat implement pinning
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.IEditorReference#getEditorInput()
 	 */
 	public IEditorInput getEditorInput() throws PartInitException {
