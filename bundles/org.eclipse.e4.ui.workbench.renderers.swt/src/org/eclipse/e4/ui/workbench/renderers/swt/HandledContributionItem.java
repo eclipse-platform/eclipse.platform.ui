@@ -215,8 +215,6 @@ public class HandledContributionItem extends ContributionItem {
 		}
 		item.setData(this);
 
-		hookCheckListener();
-
 		item.addListener(SWT.Dispose, getItemListener());
 		item.addListener(SWT.Selection, getItemListener());
 		item.addListener(SWT.DefaultSelection, getItemListener());
@@ -265,6 +263,7 @@ public class HandledContributionItem extends ContributionItem {
 
 		update(null);
 		updateIcons();
+		hookCheckListener();
 	}
 
 	private void hookCheckListener() {
