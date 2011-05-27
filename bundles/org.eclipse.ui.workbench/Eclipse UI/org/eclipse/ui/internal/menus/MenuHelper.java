@@ -43,6 +43,7 @@ import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -58,6 +59,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionDelegate;
@@ -475,6 +478,52 @@ public class MenuHelper {
 			item.setType(ItemType.PUSH);
 		} else if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
 			item.setType(ItemType.CHECK);
+			IContextFunction generator = new ContextFunction() {
+				private ActionDescriptor descriptor = null;
+
+				private ActionDescriptor getDescriptor(IWorkbenchWindow window) {
+					if (descriptor == null) {
+						descriptor = new ActionDescriptor(element, ActionDescriptor.T_WORKBENCH,
+								window);
+					}
+					return descriptor;
+				}
+
+				@Override
+				public Object compute(IEclipseContext context) {
+					IWorkbenchWindow window = context.get(IWorkbenchWindow.class);
+					if (window == null) {
+						return null;
+					}
+					final MHandledItem model = context.get(MHandledItem.class);
+					if (model == null) {
+						return null;
+					}
+					ActionDescriptor desc = getDescriptor(window);
+					final IAction action = desc.getAction();
+					final IPropertyChangeListener propListener = new IPropertyChangeListener() {
+						public void propertyChange(PropertyChangeEvent event) {
+							if (IAction.CHECKED.equals(event.getProperty())) {
+								boolean checked = false;
+								if (event.getNewValue() instanceof Boolean) {
+									checked = ((Boolean) event.getNewValue()).booleanValue();
+								}
+								model.setSelected(checked);
+							}
+						}
+					};
+					action.addPropertyChangeListener(propListener);
+					Runnable obj = new Runnable() {
+						@Execute
+						public void run() {
+							action.removePropertyChangeListener(propListener);
+						}
+					};
+					model.setSelected(action.isChecked());
+					return obj;
+				}
+			};
+			item.getTransientData().put(ItemType.CHECK.toString(), generator);
 		} else if (IWorkbenchRegistryConstants.STYLE_RADIO.equals(style)) {
 			item.setType(ItemType.RADIO);
 		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {

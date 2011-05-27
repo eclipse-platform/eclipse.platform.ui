@@ -69,9 +69,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class HandledContributionItem extends ContributionItem {
-	/**
-	 * 
-	 */
+	private static final String DISPOSABLE_CHECK = "IDisposable"; //$NON-NLS-1$
 	private static final String HCI_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
 	private MHandledItem model;
 	private Widget widget;
@@ -217,6 +215,8 @@ public class HandledContributionItem extends ContributionItem {
 		}
 		item.setData(this);
 
+		hookCheckListener();
+
 		item.addListener(SWT.Dispose, getItemListener());
 		item.addListener(SWT.Selection, getItemListener());
 		item.addListener(SWT.DefaultSelection, getItemListener());
@@ -265,6 +265,37 @@ public class HandledContributionItem extends ContributionItem {
 
 		update(null);
 		updateIcons();
+	}
+
+	private void hookCheckListener() {
+		if (model.getType() != ItemType.CHECK) {
+			return;
+		}
+		Object obj = model.getTransientData().get(ItemType.CHECK.toString());
+		if (obj instanceof IContextFunction) {
+			IEclipseContext context = getContext(model);
+			IContextFunction func = (IContextFunction) obj;
+			try {
+				context.set(MHandledItem.class, model);
+				obj = func.compute(context);
+				if (obj != null) {
+					model.getTransientData().put(DISPOSABLE_CHECK, obj);
+				}
+			} finally {
+				context.remove(MHandledItem.class);
+			}
+		}
+	}
+
+	private void unhookCheckListener() {
+		if (model.getType() != ItemType.CHECK) {
+			return;
+		}
+		final Object obj = model.getTransientData().remove(DISPOSABLE_CHECK);
+		if (obj == null) {
+			return;
+		}
+		((Runnable) obj).run();
 	}
 
 	private void updateVisible() {
@@ -459,6 +490,7 @@ public class HandledContributionItem extends ContributionItem {
 
 	private void handleWidgetDispose(Event event) {
 		if (event.widget == widget) {
+			unhookCheckListener();
 			widget.removeListener(SWT.Selection, getItemListener());
 			widget.removeListener(SWT.Dispose, getItemListener());
 			widget.removeListener(SWT.DefaultSelection, getItemListener());
