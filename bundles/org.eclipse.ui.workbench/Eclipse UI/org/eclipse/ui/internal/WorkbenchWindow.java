@@ -70,6 +70,7 @@ import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ICoolBarManager;
@@ -795,11 +796,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				MMenuSeparator separator = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
 				separator.setVisible(item.isVisible());
 				separator.setElementId(item.getId());
+				if (item instanceof GroupMarker) {
+					separator.getTags().add(MenuManagerRenderer.GROUP_MARKER);
+				}
 				menu.getChildren().add(separator);
 				manager.remove(item);
 			} else {
 				MOpaqueMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createOpaqueMenuItem();
 				menuItem.setElementId(item.getId());
+				menuItem.setVisible(item.isVisible());
 				menu.getChildren().add(menuItem);
 				renderer.linkModelToContribution(menuItem, item);
 			}

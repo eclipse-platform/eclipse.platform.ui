@@ -35,6 +35,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -249,6 +250,7 @@ public class MenuAdditionCacheEntry {
 		element.setElementId(name);
 		if (!MenuHelper.isSeparatorVisible(sepAddition)) {
 			element.setVisible(false);
+			element.getTags().add(MenuManagerRenderer.GROUP_MARKER);
 		}
 		return element;
 	}

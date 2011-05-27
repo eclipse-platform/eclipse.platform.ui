@@ -73,6 +73,7 @@ import org.osgi.service.event.EventHandler;
  */
 public class MenuManagerRenderer extends SWTPartRenderer {
 	private static final String NO_LABEL = "UnLabled"; //$NON-NLS-1$
+	public static final String GROUP_MARKER = "org.eclipse.jface.action.GroupMarker.GroupMarker(String)"; //$NON-NLS-1$
 
 	private Map<MMenu, MenuManager> modelToManager = new HashMap<MMenu, MenuManager>();
 	private Map<MenuManager, MMenu> managerToModel = new HashMap<MenuManager, MMenu>();
@@ -615,13 +616,17 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 			return;
 		}
 		AbstractGroupMarker marker = null;
-		if (itemModel.isVisible()) {
-			marker = new Separator();
-			marker.setId(itemModel.getElementId());
-		} else {
+		if (itemModel.getTags().contains(GROUP_MARKER)
+				|| !itemModel.isVisible()) {
 			if (itemModel.getElementId() != null) {
 				marker = new GroupMarker(itemModel.getElementId());
 			}
+		} else {
+			marker = new Separator();
+			marker.setId(itemModel.getElementId());
+		}
+		if (marker == null) {
+			return;
 		}
 		addToManager(menuManager, itemModel, marker);
 		linkModelToContribution(itemModel, marker);

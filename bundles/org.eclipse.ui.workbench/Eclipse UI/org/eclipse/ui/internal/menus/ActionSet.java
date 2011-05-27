@@ -41,6 +41,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.services.EContextService;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
@@ -273,8 +274,9 @@ public class ActionSet {
 		menuContribution.setParentId(parentId);
 		menuContribution.setPositionInParent("after=additions"); //$NON-NLS-1$
 		MMenuElement sep = MenuFactoryImpl.eINSTANCE.createMenuSeparator();
+		sep.getTags().add(MenuManagerRenderer.GROUP_MARKER);
+		sep.setVisible(false);
 		sep.setElementId(group);
-		sep.setVisible(true);
 		menuContribution.getChildren().add(sep);
 		contributions.add(menuContribution);
 	}
@@ -411,6 +413,7 @@ public class ActionSet {
 			sep.setElementId(name);
 			if ("groupMarker".equals(tag)) { //$NON-NLS-1$
 				sep.setVisible(false);
+				sep.getTags().add(MenuManagerRenderer.GROUP_MARKER);
 			}
 			menuContribution.getChildren().add(sep);
 		}
