@@ -257,6 +257,7 @@ public abstract class CompatibilityPart {
 
 		part.setLabel(computeLabel());
 		part.setTooltip(wrapped.getTitleToolTip());
+		updateImages(part);
 
 		if (wrapped instanceof ISaveablePart) {
 			part.setDirty(((ISaveablePart) wrapped).isDirty());
