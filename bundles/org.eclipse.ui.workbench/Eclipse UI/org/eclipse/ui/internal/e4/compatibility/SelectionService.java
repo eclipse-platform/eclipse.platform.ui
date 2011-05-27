@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -115,6 +116,11 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 			ISelectionProvider selectionProvider = activePart.getSite().getSelectionProvider();
 			if (selectionProvider != null) {
 				selectionProvider.removeSelectionChangedListener(this);
+
+				if (selectionProvider instanceof IPostSelectionProvider) {
+					((IPostSelectionProvider) selectionProvider)
+							.removePostSelectionChangedListener(this);
+				}
 			}
 			activePart = null;
 		}
@@ -128,6 +134,11 @@ public class SelectionService implements ISelectionChangedListener, ISelectionSe
 						.getSelectionProvider();
 				if (selectionProvider != null) {
 					selectionProvider.addSelectionChangedListener(this);
+
+					if (selectionProvider instanceof IPostSelectionProvider) {
+						((IPostSelectionProvider) selectionProvider)
+								.addPostSelectionChangedListener(this);
+					}
 				}
 
 				activePart = workbenchPart;
