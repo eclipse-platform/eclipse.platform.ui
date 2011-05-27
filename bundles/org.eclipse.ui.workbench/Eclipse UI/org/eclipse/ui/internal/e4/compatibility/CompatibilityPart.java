@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -25,14 +24,11 @@ import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
-import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -289,33 +285,31 @@ public abstract class CompatibilityPart {
 		});
 	}
 
-	private void updateImages(MPart part) {
+	void updateTabImages(MUIElement element) {
 		// Try to update the image if we're using a CTF
-		EModelService ms = part.getContext().get(EModelService.class);
-		MWindow topWin = ms.getTopLevelWindowFor(part);
-		List<MPlaceholder> partRefs = ms.findElements(topWin, part.getElementId(),
-				MPlaceholder.class, null);
-		for (MUIElement ref : partRefs) {
-			MUIElement refParent = ref.getParent();
-			if (!(refParent instanceof MPartStack))
-				continue;
+		MUIElement refParent = element.getParent();
+		if (!(refParent instanceof MPartStack)) {
+			return;
+		}
 
-			if (!(refParent.getWidget() instanceof CTabFolder))
-				continue;
+		if (!(refParent.getWidget() instanceof CTabFolder)) {
+			return;
+		}
 
-			CTabFolder ctf = (CTabFolder) refParent.getWidget();
-			if (ctf.isDisposed())
-				continue;
+		CTabFolder ctf = (CTabFolder) refParent.getWidget();
+		if (ctf.isDisposed()) {
+			return;
+		}
 
-			CTabItem[] items = ctf.getItems();
-			for (CTabItem item : items) {
-				if (item.getData(AbstractPartRenderer.OWNING_ME) == ref) {
-					item.setImage(wrapped.getTitleImage());
-					ctf.getDisplay().update();
-				}
+		CTabItem[] items = ctf.getItems();
+		for (CTabItem item : items) {
+			if (item.getData(AbstractPartRenderer.OWNING_ME) == element) {
+				item.setImage(wrapped.getTitleImage());
 			}
 		}
 	}
+
+	abstract void updateImages(MPart part);
 
 	public void deactivateActionBars(boolean forceHide) {
 		PartSite site = getReference().getSite();
