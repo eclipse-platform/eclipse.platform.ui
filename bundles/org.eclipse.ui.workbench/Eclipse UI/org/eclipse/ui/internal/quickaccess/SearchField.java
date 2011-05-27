@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -33,6 +34,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -162,44 +164,73 @@ public class SearchField {
 		});
 	}
 
-	private void layoutShell() {
-		Composite parent = text.getParent();
-		Rectangle tempBounds = parent.getBounds();
-		Display display = text.getDisplay();
-		Rectangle compBounds = display.map(parent, null, tempBounds);
-		for (Monitor monitor : display.getMonitors()) {
-			if (monitor.getBounds().contains(compBounds.x, compBounds.y)) {
-				Rectangle monitorBounds = monitor.getBounds();
-				int width = Math.max(350, compBounds.width);
-				int height = 250;
+	/**
+	 * This method was copy/pasted from JFace.
+	 * 
+	 * @see org.eclipse.jface.window.Window#getClosestMonitor(Display, Point)
+	 */
+	private static Monitor getClosestMonitor(Display toSearch, Point toFind) {
+		int closest = Integer.MAX_VALUE;
 
-				if (compBounds.x + width > monitorBounds.width) {
-					compBounds.x = monitorBounds.width - width;
-				}
+		Monitor[] monitors = toSearch.getMonitors();
+		Monitor result = monitors[0];
 
-				if (compBounds.y + height > monitorBounds.height) {
-					compBounds.y = compBounds.y - tempBounds.height - height;
-				}
+		for (int idx = 0; idx < monitors.length; idx++) {
+			Monitor current = monitors[idx];
 
-				shell.setBounds(compBounds.x, compBounds.y + compBounds.height, width, height);
-				shell.layout();
-				return;
+			Rectangle clientArea = current.getClientArea();
+
+			if (clientArea.contains(toFind)) {
+				return current;
+			}
+
+			int distance = Geometry.distanceSquared(Geometry.centerPoint(clientArea), toFind);
+			if (distance < closest) {
+				closest = distance;
+				result = current;
 			}
 		}
 
-		Rectangle monitorBounds = text.getMonitor().getBounds();
+		return result;
+	}
+
+	/**
+	 * This method was copy/pasted from JFace.
+	 * 
+	 * @see org.eclipse.jface.window.Window#getConstrainedShellBounds(Display,
+	 *      Rectangle)
+	 */
+	private Rectangle getConstrainedShellBounds(Display display, Rectangle preferredSize) {
+		Rectangle result = new Rectangle(preferredSize.x, preferredSize.y, preferredSize.width,
+				preferredSize.height);
+
+		Monitor mon = getClosestMonitor(display, Geometry.centerPoint(result));
+
+		Rectangle bounds = mon.getClientArea();
+
+		if (result.height > bounds.height) {
+			result.height = bounds.height;
+		}
+
+		if (result.width > bounds.width) {
+			result.width = bounds.width;
+		}
+
+		result.x = Math.max(bounds.x, Math.min(result.x, bounds.x + bounds.width - result.width));
+		result.y = Math.max(bounds.y, Math.min(result.y, bounds.y + bounds.height - result.height));
+
+		return result;
+	}
+
+	void layoutShell() {
+		Display display = text.getDisplay();
+		Composite parent = text.getParent();
+		Rectangle tempBounds = parent.getBounds();
+		Rectangle compBounds = display.map(parent, null, tempBounds);
 		int width = Math.max(350, compBounds.width);
 		int height = 250;
-
-		if (compBounds.x + width > monitorBounds.width) {
-			compBounds.x = monitorBounds.width - width;
-		}
-
-		if (compBounds.y + height > monitorBounds.height) {
-			compBounds.y = compBounds.y - tempBounds.height - height;
-		}
-
-		shell.setBounds(compBounds.x, compBounds.y + compBounds.height, width, height);
+		shell.setBounds(getConstrainedShellBounds(display, new Rectangle(compBounds.x, compBounds.y
+				+ compBounds.height, width, height)));
 		shell.layout();
 	}
 
