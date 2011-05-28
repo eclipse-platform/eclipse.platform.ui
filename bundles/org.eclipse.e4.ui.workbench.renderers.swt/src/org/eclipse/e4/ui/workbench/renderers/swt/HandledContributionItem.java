@@ -70,6 +70,7 @@ import org.eclipse.swt.widgets.Widget;
 
 public class HandledContributionItem extends ContributionItem {
 	private static final String DISPOSABLE_CHECK = "IDisposable"; //$NON-NLS-1$
+	private static final String WW_SUPPORT = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$
 	private static final String HCI_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
 	private MHandledItem model;
 	private Widget widget;
@@ -273,15 +274,14 @@ public class HandledContributionItem extends ContributionItem {
 		Object obj = model.getTransientData().get(ItemType.CHECK.toString());
 		if (obj instanceof IContextFunction) {
 			IEclipseContext context = getContext(model);
+			IEclipseContext staticContext = EclipseContextFactory.create();
+			staticContext.set(MHandledItem.class, model);
+			staticContext.set(WW_SUPPORT, context.get(WW_SUPPORT));
+
 			IContextFunction func = (IContextFunction) obj;
-			try {
-				context.set(MHandledItem.class, model);
-				obj = func.compute(context);
-				if (obj != null) {
-					model.getTransientData().put(DISPOSABLE_CHECK, obj);
-				}
-			} finally {
-				context.remove(MHandledItem.class);
+			obj = func.compute(staticContext);
+			if (obj != null) {
+				model.getTransientData().put(DISPOSABLE_CHECK, obj);
 			}
 		}
 	}
