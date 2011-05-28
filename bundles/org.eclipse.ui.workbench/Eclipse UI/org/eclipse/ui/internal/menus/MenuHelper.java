@@ -479,14 +479,8 @@ public class MenuHelper {
 		} else if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
 			item.setType(ItemType.CHECK);
 			IContextFunction generator = new ContextFunction() {
-				private ActionDescriptor descriptor = null;
-
 				private ActionDescriptor getDescriptor(IWorkbenchWindow window) {
-					if (descriptor == null) {
-						descriptor = new ActionDescriptor(element, ActionDescriptor.T_WORKBENCH,
-								window);
-					}
-					return descriptor;
+					return new ActionDescriptor(element, ActionDescriptor.T_WORKBENCH, window);
 				}
 
 				@Override
