@@ -283,6 +283,7 @@ public class HandledContributionItem extends ContributionItem {
 			if (obj != null) {
 				model.getTransientData().put(DISPOSABLE_CHECK, obj);
 			}
+			staticContext.dispose();
 		}
 	}
 
