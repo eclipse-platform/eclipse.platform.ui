@@ -75,6 +75,9 @@ public class MinMaxAddon {
 	@Inject
 	private IEclipseContext context;
 
+	// Allow 'local' changes to the tags
+	private boolean ignoreTagChanges = false;
+
 	private CTabFolder2Adapter CTFButtonListener = new CTabFolder2Adapter() {
 		private MUIElement getElementToChange(CTabFolderEvent event) {
 			CTabFolder ctf = (CTabFolder) event.widget;
@@ -236,6 +239,9 @@ public class MinMaxAddon {
 
 	private EventHandler tagChangeListener = new EventHandler() {
 		public void handleEvent(Event event) {
+			if (ignoreTagChanges)
+				return;
+
 			Object changedObj = event.getProperty(EventTags.ELEMENT);
 			String eventType = (String) event.getProperty(UIEvents.EventTags.TYPE);
 			String tag = (String) event.getProperty(UIEvents.EventTags.NEW_VALUE);
@@ -425,7 +431,9 @@ public class MinMaxAddon {
 			for (MUIElement maxElement : curMax) {
 				if (maxElement == element)
 					continue;
+				ignoreTagChanges = true;
 				maxElement.getTags().remove(MAXIMIZED);
+				ignoreTagChanges = false;
 			}
 		}
 
