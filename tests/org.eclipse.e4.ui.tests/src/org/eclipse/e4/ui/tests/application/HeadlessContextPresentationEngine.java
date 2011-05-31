@@ -17,12 +17,14 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.Activator;
 import org.eclipse.e4.ui.internal.workbench.Policy;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.ui.MContext;
@@ -39,6 +41,7 @@ import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
+import org.eclipse.emf.ecore.EObject;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -205,6 +208,18 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			return null;
 		}
 
+		MUIElement parent = element.getParent();
+		if (!(parent instanceof MApplication)) {
+			// if the element is not under the application, it should have a
+			// parent widget
+			Assert.isNotNull(parentWidget);
+		}
+
+		element.setRenderer(this);
+
+		Object widget = new Object();
+		element.setWidget(widget);
+
 		if (element instanceof MContext) {
 			MContext mcontext = (MContext) element;
 			IEclipseContext createdContext = mcontext.getContext();
@@ -304,8 +319,7 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 				placeholders.add(placeholder);
 			}
 		}
-		element.setRenderer(this);
-		return null;
+		return widget;
 	}
 
 	/*
@@ -316,7 +330,17 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	 * .e4.ui.model.application.MUIElement)
 	 */
 	public Object createGui(MUIElement element) {
-		return createGui(element, null, getParentContext(element));
+		MUIElement placeholder = element.getCurSharedRef();
+		if (placeholder != null) {
+			return createGui(element, placeholder.getWidget(),
+					getParentContext(element));
+		}
+
+		MUIElement parent = element.getParent();
+		if (parent == null) {
+			parent = (MUIElement) ((EObject) element).eContainer();
+		}
+		return createGui(element, parent.getWidget(), getParentContext(element));
 	}
 
 	public void removeGui(MUIElement element) {

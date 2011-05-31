@@ -913,27 +913,35 @@ public class PartServiceImpl implements EPartService {
 			}
 			return addedPart;
 		case CREATE:
-			addedPart.setToBeRendered(true);
 			MPlaceholder placeholder = addedPart.getCurSharedRef();
 			if (placeholder != null) {
-				placeholder.setToBeRendered(true);
-				engine.createGui(placeholder);
-
-				MElementContainer<MUIElement> parent = placeholder.getParent();
-				if (parent.getChildren().size() == 1) {
-					parent.setSelectedElement(placeholder);
-				}
+				addedPart.setToBeRendered(true);
+				createElement(placeholder);
 			} else {
-				engine.createGui(addedPart);
-
-				MElementContainer<MUIElement> parent = addedPart.getParent();
-				if (parent.getChildren().size() == 1) {
-					parent.setSelectedElement(addedPart);
-				}
+				createElement(addedPart);
 			}
 			return addedPart;
 		}
 		return addedPart;
+	}
+
+	private void createElement(MUIElement element) {
+		// render this element
+		element.setToBeRendered(true);
+		// render all of its parents
+		MElementContainer<MUIElement> parent = element.getParent();
+		while (parent != null) {
+			parent.setToBeRendered(true);
+			parent = parent.getParent();
+		}
+		// ask the engine to create the element
+		engine.createGui(element);
+
+		parent = element.getParent();
+		if (parent.getChildren().size() == 1) {
+			// if we're the only child, set ourselves as the selected element
+			parent.setSelectedElement(element);
+		}
 	}
 
 	public void requestActivation() {

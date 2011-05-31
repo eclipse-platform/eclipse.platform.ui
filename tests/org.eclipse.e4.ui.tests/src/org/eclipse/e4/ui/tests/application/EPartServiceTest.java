@@ -3470,6 +3470,37 @@ public class EPartServiceTest extends TestCase {
 		testShowPart_Bug331047(PartState.ACTIVATE);
 	}
 
+	public void testShowPart_Bug347837() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		window.getSharedElements().add(part);
+
+		MPartSashContainer partSashContainer = BasicFactoryImpl.eINSTANCE
+				.createPartSashContainer();
+		partSashContainer.setToBeRendered(false);
+		window.getChildren().add(partSashContainer);
+
+		MPlaceholder placeholder = AdvancedFactoryImpl.eINSTANCE
+				.createPlaceholder();
+		placeholder.setToBeRendered(false);
+		placeholder.setRef(part);
+		part.setCurSharedRef(placeholder);
+		partSashContainer.getChildren().add(placeholder);
+
+		initialize(applicationContext, application);
+		getEngine().createGui(window);
+
+		EPartService partService = window.getContext().get(EPartService.class);
+		partService.showPart(part, PartState.CREATE);
+		assertNotNull(part.getContext());
+	}
+
 	public void testHidePart_PartInAnotherWindow() {
 		MApplication application = createApplication(
 				new String[] { "partInWindow1" },
