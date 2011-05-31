@@ -16,7 +16,16 @@ import java.util.LinkedList;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -43,10 +52,13 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.swt.IFocusService;
 
 public class SearchField {
 
@@ -80,6 +92,8 @@ public class SearchField {
 		text = new Text(comp, SWT.SEARCH | SWT.ICON_SEARCH);
 		GridDataFactory.fillDefaults().hint(130, SWT.DEFAULT).applyTo(text);
 		text.setMessage(QuickAccessMessages.QuickAccess_EnterSearch);
+
+		hookUpSelectAll();
 
 		final CommandProvider commandProvider = new CommandProvider();
 		QuickAccessProvider[] providers = new QuickAccessProvider[] { new PreviousPicksProvider(),
@@ -162,6 +176,52 @@ public class SearchField {
 				}
 			}
 		});
+	}
+
+	private void hookUpSelectAll() {
+		final IEclipseContext windowContext = window.getContext();
+		IFocusService focus = windowContext.get(IFocusService.class);
+		focus.addFocusTracker(text, SearchField.class.getName());
+
+		Expression focusExpr = new Expression() {
+			@Override
+			public void collectExpressionInfo(ExpressionInfo info) {
+				info.addVariableNameAccess(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME);
+			}
+
+			@Override
+			public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+				return EvaluationResult.valueOf(SearchField.class.getName().equals(
+						context.getVariable(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME)));
+			}
+		};
+
+		IHandlerService whService = windowContext.get(IHandlerService.class);
+		whService.activateHandler(IWorkbenchCommandConstants.EDIT_SELECT_ALL,
+				new AbstractHandler() {
+					public Object execute(ExecutionEvent event) throws ExecutionException {
+						text.selectAll();
+						return null;
+					}
+				}, focusExpr);
+		whService.activateHandler(IWorkbenchCommandConstants.EDIT_CUT, new AbstractHandler() {
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				text.cut();
+				return null;
+			}
+		}, focusExpr);
+		whService.activateHandler(IWorkbenchCommandConstants.EDIT_COPY, new AbstractHandler() {
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				text.copy();
+				return null;
+			}
+		}, focusExpr);
+		whService.activateHandler(IWorkbenchCommandConstants.EDIT_PASTE, new AbstractHandler() {
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				text.paste();
+				return null;
+			}
+		}, focusExpr);
 	}
 
 	/**

@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.handlers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -80,10 +81,18 @@ public class LegacyHandlerService implements IHandlerService {
 		@Override
 		public Object compute(IEclipseContext context) {
 
-			List<HandlerActivation> handlerActivations = (List<HandlerActivation>) context
-					.get(LEGACY_H_ID + commandId);
+			HashSet<HandlerActivation> activationSet = new HashSet<HandlerActivation>();
+			IEclipseContext current = context;
+			while (current != null) {
+				List<HandlerActivation> handlerActivations = (List<HandlerActivation>) current
+						.getLocal(LEGACY_H_ID + commandId);
+				if (handlerActivations != null) {
+					activationSet.addAll(handlerActivations);
+				}
+				current = current.getParent();
+			}
 
-			if (handlerActivations == null) {
+			if (activationSet.isEmpty()) {
 				return null;
 			}
 
@@ -91,7 +100,7 @@ public class LegacyHandlerService implements IHandlerService {
 
 			ExpressionContext legacyEvalContext = new ExpressionContext(context);
 
-			for (HandlerActivation handlerActivation : handlerActivations) {
+			for (HandlerActivation handlerActivation : activationSet) {
 				if (!handlerActivation.participating)
 					continue;
 				if (handlerActivation.evaluate(legacyEvalContext)) {
