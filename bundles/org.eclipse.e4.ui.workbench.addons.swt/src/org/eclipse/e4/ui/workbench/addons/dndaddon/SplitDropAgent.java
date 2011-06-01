@@ -112,8 +112,9 @@ public class SplitDropAgent extends DropAgent {
 				outerRelTo = outerRelTo.getParent();
 		}
 
-		// If the relTo is in the MArea then use its 'curSharedRef'
+		// If the stack is in an MArea or a Perspective then allow 'outer' docking
 		if (outerRelTo instanceof MArea) {
+			// If the relTo is in the MArea then use its 'curSharedRef'
 			outerRelTo = outerRelTo.getCurSharedRef();
 		} else if (outerRelTo instanceof MPartSashContainer) {
 			MUIElement relToParent = outerRelTo.getParent();
@@ -121,11 +122,20 @@ public class SplitDropAgent extends DropAgent {
 				outerRelTo = relToParent.getCurSharedRef();
 			} else if (relToParent instanceof MPerspective) {
 				outerRelTo = relToParent.getParent(); // PerspectiveStack
+			} else {
+				outerRelTo = null;
 			}
+		} else {
+			outerRelTo = null;
 		}
-		Composite outerComposite = (Composite) outerRelTo.getWidget();
-		ocBounds = outerComposite.getBounds();
-		ocBounds = Display.getCurrent().map(outerComposite.getParent(), null, ocBounds);
+
+		if (outerRelTo != null) {
+			Composite outerComposite = (Composite) outerRelTo.getWidget();
+			ocBounds = outerComposite.getBounds();
+			ocBounds = Display.getCurrent().map(outerComposite.getParent(), null, ocBounds);
+		} else {
+			ocBounds = null;
+		}
 	}
 
 	/*
@@ -254,27 +264,25 @@ public class SplitDropAgent extends DropAgent {
 		return null;
 	}
 
-	/**
-	 * @param info
-	 * @return
-	 */
 	private int getDockLocation(DnDInfo info) {
-		// Are we close to the 'outerBounds' ?
-		if (info.cursorPos.x - ocBounds.x < 30) {
-			outerDock = true;
-			return EModelService.LEFT_OF;
-		}
-		if ((ocBounds.x + ocBounds.width) - info.cursorPos.x < 30) {
-			outerDock = true;
-			return EModelService.RIGHT_OF;
-		}
-		if (info.cursorPos.y - ocBounds.y < 30) {
-			outerDock = true;
-			return EModelService.ABOVE;
-		}
-		if ((ocBounds.y + ocBounds.height) - info.cursorPos.y < 30) {
-			outerDock = true;
-			return EModelService.BELOW;
+		if (outerRelTo != null) {
+			// Are we close to the 'outerBounds' ?
+			if (info.cursorPos.x - ocBounds.x < 30) {
+				outerDock = true;
+				return EModelService.LEFT_OF;
+			}
+			if ((ocBounds.x + ocBounds.width) - info.cursorPos.x < 30) {
+				outerDock = true;
+				return EModelService.RIGHT_OF;
+			}
+			if (info.cursorPos.y - ocBounds.y < 30) {
+				outerDock = true;
+				return EModelService.ABOVE;
+			}
+			if ((ocBounds.y + ocBounds.height) - info.cursorPos.y < 30) {
+				outerDock = true;
+				return EModelService.BELOW;
+			}
 		}
 
 		outerDock = false;
