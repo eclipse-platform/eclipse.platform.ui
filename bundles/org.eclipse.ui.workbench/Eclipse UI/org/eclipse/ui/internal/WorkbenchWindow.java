@@ -582,6 +582,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
 		spacerControl.getTags().add(TrimBarLayout.SPACER);
 
+		MToolControl spacerGlueControl = MenuFactoryImpl.eINSTANCE.createToolControl();
+		spacerGlueControl.setElementId("Spacer Glue"); //$NON-NLS-1$
+		spacerGlueControl
+				.setContributionURI("platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.LayoutModifierToolControl"); //$NON-NLS-1$
+		spacerGlueControl.getTags().add(TrimBarLayout.GLUE);
+
 		MToolControl searchControl = MenuFactoryImpl.eINSTANCE.createToolControl();
 		searchControl.setElementId("SearchField"); //$NON-NLS-1$
 		searchControl
@@ -600,6 +606,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				.setContributionURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.e4.ui.workbench.addons.perspectiveswitcher.PerspectiveSwitcher"); //$NON-NLS-1$
 
 		trimBar.getChildren().add(spacerControl);
+		trimBar.getChildren().add(spacerGlueControl);
 		trimBar.getChildren().add(searchControl);
 		trimBar.getChildren().add(glueControl);
 		trimBar.getChildren().add(switcherControl);
