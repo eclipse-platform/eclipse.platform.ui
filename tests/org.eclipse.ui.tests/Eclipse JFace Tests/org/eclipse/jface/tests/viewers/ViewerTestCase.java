@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -35,9 +36,12 @@ public abstract class ViewerTestCase extends TestCase {
 	protected StructuredViewer fViewer;
 	protected TestElement fRootElement;
 	public TestModel fModel;
+	
+	protected boolean disableTestsBug347491 = false;
 
 	public ViewerTestCase(String name) {
 		super(name);
+		disableTestsBug347491 = Util.isCocoa();
 	}
 
 	protected void assertSelectionEquals(String message, TestElement expected) {
