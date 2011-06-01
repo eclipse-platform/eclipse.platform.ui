@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +70,40 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class HandledContributionItem extends ContributionItem {
+	static class ToolItemUpdateTimer implements Runnable {
+		Display display = Display.getCurrent();
+
+		List<HandledContributionItem> itemsToCheck = new ArrayList<HandledContributionItem>();
+
+		void registerItem(HandledContributionItem item) {
+			if (!itemsToCheck.contains(item)) {
+				itemsToCheck.add(item);
+
+				// Start the timer on the first item registered
+				if (itemsToCheck.size() == 1)
+					display.timerExec(400, this);
+			}
+		}
+
+		void removeItem(HandledContributionItem item) {
+			itemsToCheck.remove(item);
+		}
+
+		public void run() {
+
+			for (HandledContributionItem hci : itemsToCheck) {
+				hci.updateItemEnablement();
+			}
+
+			// repeat until the list goes empty
+			if (itemsToCheck.size() > 0)
+				display.timerExec(400, this);
+		}
+	}
+
+	// HACK!! local 'static' timerExec...should move out of this class post 4.1
+	static ToolItemUpdateTimer toolItemUpdater = new ToolItemUpdateTimer();
+
 	private static final String DISPOSABLE_CHECK = "IDisposable"; //$NON-NLS-1$
 	private static final String WW_SUPPORT = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$
 	private static final String HCI_STATIC_CONTEXT = "HCI-staticContext"; //$NON-NLS-1$
@@ -80,6 +115,10 @@ public class HandledContributionItem extends ContributionItem {
 	@Inject
 	@Optional
 	private Logger logger;
+
+	// We'll only ever log an error during update once to prevent spamming the
+	// log
+	private boolean logged = false;
 
 	@Inject
 	private ECommandService commandService;
@@ -97,11 +136,47 @@ public class HandledContributionItem extends ContributionItem {
 		resUtils = (ISWTResourceUtilities) utils;
 	}
 
+	private ISafeRunnable getUpdateRunner() {
+		if (updateRunner == null) {
+			updateRunner = new ISafeRunnable() {
+				public void run() throws Exception {
+					model.setEnabled(canExecuteItem(null));
+					update();
+				}
+
+				public void handleException(Throwable exception) {
+					if (!logged) {
+						logged = true;
+						if (logger != null) {
+							logger.error(
+									exception,
+									"Internal error during tool item enablement updating, this is only logged once per tool item."); //$NON-NLS-1$
+						}
+					}
+				}
+			};
+		}
+		return updateRunner;
+	}
+
+	protected void updateItemEnablement() {
+		if (!(model.getWidget() instanceof ToolItem))
+			return;
+
+		ToolItem widget = (ToolItem) model.getWidget();
+		if (widget == null || widget.isDisposed())
+			return;
+
+		SafeRunner.run(getUpdateRunner());
+	}
+
 	private IMenuListener menuListener = new IMenuListener() {
 		public void menuAboutToShow(IMenuManager manager) {
 			update(null);
 		}
 	};
+
+	private ISafeRunnable updateRunner;
 
 	public void setModel(MHandledItem item) {
 		model = item;
@@ -223,44 +298,7 @@ public class HandledContributionItem extends ContributionItem {
 		widget = item;
 		model.setWidget(widget);
 		widget.setData(AbstractPartRenderer.OWNING_ME, model);
-		final Display display = widget.getDisplay();
-		display.timerExec(500, new Runnable() {
-			boolean logged = false;
-
-			public void run() {
-				if (widget == null || widget.isDisposed()) {
-					return;
-				}
-				SafeRunner.run(new ISafeRunnable() {
-					public void run() throws Exception {
-						final IEclipseContext lclContext = getContext(model);
-						if (lclContext == null) {
-							return;
-						}
-						EHandlerService service = lclContext
-								.get(EHandlerService.class);
-						if (service == null) {
-							return;
-						}
-						model.setEnabled(canExecuteItem(null));
-						update();
-					}
-
-					public void handleException(Throwable exception) {
-						if (!logged) {
-							logged = true;
-							if (logger != null) {
-								logger.error(
-										exception,
-										"Internal error during tool item enablement updating, this is only logged once per tool item."); //$NON-NLS-1$
-							}
-						}
-					}
-				});
-				// repeat until disposed
-				display.timerExec(500, this);
-			}
-		});
+		toolItemUpdater.registerItem(this);
 
 		update(null);
 		updateIcons();
@@ -491,6 +529,7 @@ public class HandledContributionItem extends ContributionItem {
 	private void handleWidgetDispose(Event event) {
 		if (event.widget == widget) {
 			unhookCheckListener();
+			toolItemUpdater.removeItem(this);
 			widget.removeListener(SWT.Selection, getItemListener());
 			widget.removeListener(SWT.Dispose, getItemListener());
 			widget.removeListener(SWT.DefaultSelection, getItemListener());
