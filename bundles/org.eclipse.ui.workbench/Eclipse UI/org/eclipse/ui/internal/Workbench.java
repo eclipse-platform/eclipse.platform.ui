@@ -1037,9 +1037,21 @@ public final class Workbench extends EventManager implements IWorkbench {
 				if (isClosing || force) {
 					// isClosing = windowManager.close();
 					E4Util.unsupported("Need to close since no windowManager"); //$NON-NLS-1$
+					MWindow selectedWindow = application.getSelectedElement();
+					WorkbenchWindow selected = null;
 					for (IWorkbenchWindow window : getWorkbenchWindows()) {
-						((WorkbenchWindow) window).close(false);
+						WorkbenchWindow ww = (WorkbenchWindow) window;
+						if (ww.getModel() == selectedWindow) {
+							selected = ww;
+						} else {
+							((WorkbenchWindow) window).close(false);
+						}
 					}
+
+					if (selected != null) {
+						selected.close(false);
+					}
+
 					windowsClosed = true;
 				}
 			}
