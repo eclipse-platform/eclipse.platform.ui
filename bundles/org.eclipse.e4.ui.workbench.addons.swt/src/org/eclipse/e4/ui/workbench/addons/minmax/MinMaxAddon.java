@@ -432,8 +432,11 @@ public class MinMaxAddon {
 				if (maxElement == element)
 					continue;
 				ignoreTagChanges = true;
-				maxElement.getTags().remove(MAXIMIZED);
-				ignoreTagChanges = false;
+				try {
+					maxElement.getTags().remove(MAXIMIZED);
+				} finally {
+					ignoreTagChanges = false;
+				}
 			}
 		}
 
