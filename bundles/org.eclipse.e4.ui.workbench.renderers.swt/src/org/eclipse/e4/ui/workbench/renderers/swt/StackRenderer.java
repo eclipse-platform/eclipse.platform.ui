@@ -208,10 +208,14 @@ public class StackRenderer extends LazyStackRenderer {
 
 				// Do we have any stacks with place holders for the element
 				// that's changed?
-				List<MPlaceholder> refs = ElementReferenceRenderer
-						.getRenderedPlaceholders(element);
+				MWindow win = modelService.getTopLevelWindowFor(part);
+				List<MPlaceholder> refs = modelService.findElements(win, null,
+						MPlaceholder.class, null);
 				if (refs != null) {
 					for (MPlaceholder ref : refs) {
+						if (ref.getRef() != part)
+							continue;
+
 						MElementContainer<MUIElement> refParent = ref
 								.getParent();
 						// can be null, see bug 328296

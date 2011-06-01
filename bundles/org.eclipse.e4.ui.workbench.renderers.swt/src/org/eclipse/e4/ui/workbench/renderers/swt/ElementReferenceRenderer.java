@@ -19,6 +19,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -105,6 +106,15 @@ public class ElementReferenceRenderer extends SWTPartRenderer {
 		IEclipseContext curContext = modelService.getContainingContext(ph);
 
 		if (refs.size() == 0) {
+			// Ensure that the image is the 'original' image for this
+			// part. See bug 347471 for details
+			if (refElement instanceof MPart) {
+				MPart thePart = (MPart) refElement;
+				String imageURI = thePart.getIconURI();
+				thePart.setIconURI(null);
+				thePart.setIconURI(imageURI);
+			}
+
 			renderingEngine.removeGui(refElement);
 		} else {
 			// Ensure that the dispose of the element reference doesn't cascade
