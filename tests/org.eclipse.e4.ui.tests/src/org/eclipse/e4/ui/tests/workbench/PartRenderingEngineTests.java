@@ -2752,6 +2752,114 @@ public class PartRenderingEngineTests extends TestCase {
 		assertTrue(window.getWindows().contains(detachedWindow));
 	}
 
+	public void testBug348215_PartOnlyContextReparent() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.getWindows().add(detachedWindow);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		detachedWindow.getChildren().add(part);
+		detachedWindow.setSelectedElement(part);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertTrue(part.getContext() != null);
+		assertTrue(part.getContext().getParent() == detachedWindow.getContext());
+
+		detachedWindow.getChildren().remove(part);
+		window.getChildren().add(part);
+
+		assertTrue(part.getContext() != null);
+		assertTrue(part.getContext().getParent() == window.getContext());
+	}
+
+	public void testBug348215_PartContextReparent() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.getWindows().add(detachedWindow);
+
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		detachedWindow.getChildren().add(stack);
+		detachedWindow.setSelectedElement(stack);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		stack.getChildren().add(part);
+		stack.setSelectedElement(part);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertTrue(part.getContext() != null);
+		assertTrue(part.getContext().getParent() == detachedWindow.getContext());
+
+		detachedWindow.getChildren().remove(stack);
+		window.getChildren().add(stack);
+
+		assertTrue(part.getContext() != null);
+		assertTrue(part.getContext().getParent() == window.getContext());
+	}
+
+	public void testBug348215_PartPlaceholderContextReparent() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getSharedElements().add(part);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.getWindows().add(detachedWindow);
+
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		detachedWindow.getChildren().add(stack);
+		detachedWindow.setSelectedElement(stack);
+
+		MPlaceholder ph = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+		ph.setRef(part);
+		stack.getChildren().add(ph);
+		stack.setSelectedElement(ph);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertTrue(part.getContext() != null);
+		assertTrue(part.getContext().getParent() == detachedWindow.getContext());
+
+		detachedWindow.getChildren().remove(stack);
+		window.getChildren().add(stack);
+
+		assertTrue(part.getContext() != null);
+		assertTrue(part.getContext().getParent() == window.getContext());
+	}
+
 	public void testBug348069_DetachedPerspectiveWindow() {
 		MApplication application = ApplicationFactoryImpl.eINSTANCE
 				.createApplication();

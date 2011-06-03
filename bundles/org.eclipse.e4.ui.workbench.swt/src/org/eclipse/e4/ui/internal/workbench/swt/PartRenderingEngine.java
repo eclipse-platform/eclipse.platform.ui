@@ -543,6 +543,31 @@ public class PartRenderingEngine implements IPresentationEngine {
 				}
 			}
 
+			// Reparent the context (or the kid's context)
+			if (element instanceof MContext) {
+				IEclipseContext ctxt = ((MContext) element).getContext();
+				if (ctxt != null)
+					ctxt.setParent(parentContext);
+			} else {
+				List<MContext> childContexts = modelService.findElements(
+						element, null, MContext.class, null);
+				for (MContext c : childContexts) {
+					// Ensure that we only reset the context of our direct
+					// children
+					MUIElement kid = (MUIElement) c;
+					MUIElement parent = kid.getParent();
+					if (parent == null && kid.getCurSharedRef() != null)
+						parent = kid.getCurSharedRef().getParent();
+					if (parent != element)
+						continue;
+
+					if (c.getContext() != null
+							&& c.getContext().getParent() != parentContext) {
+						c.getContext().setParent(parentContext);
+					}
+				}
+			}
+
 			// Now that we have a widget let the parent (if any) know
 			if (element.getParent() instanceof MUIElement) {
 				MElementContainer<MUIElement> parentElement = element
