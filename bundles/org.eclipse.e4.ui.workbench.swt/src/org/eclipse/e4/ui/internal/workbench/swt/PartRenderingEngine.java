@@ -1005,7 +1005,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// FIXME Without this call the test-suite fails
 		cleanUp();
 		if (theApp != null) {
-			for (MWindow window : theApp.getChildren()) {
+			for (MWindow window : new ArrayList<MWindow>(theApp.getChildren())) {
 				if (window.getWidget() != null) {
 					((Shell) window.getWidget()).close();
 				}
