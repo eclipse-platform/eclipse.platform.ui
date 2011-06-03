@@ -7,7 +7,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Activator: org.eclipse.e4.examples.services.snippets.SnippetActivator
-Import-Package: javax.inject,
+Import-Package: javax.inject;version="1.0.0",
  org.osgi.framework;version="1.5.0"
 Require-Bundle: org.eclipse.equinox.app,
  org.eclipse.equinox.common;bundle-version="3.4.0",

@@ -7,7 +7,7 @@
       image="eclipse_update_120.jpg"
       license-feature="org.eclipse.license"
       license-feature-version="1.0.0.qualifier">
-      
+
    <description>
       %description
    </description>
@@ -151,7 +151,7 @@
          id="javax.annotation"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.0.qualifier"
          unpack="false"/>
 
    <plugin
@@ -224,20 +224,20 @@
          version="0.0.0"
          unpack="false"/>
 
-	<plugin
+   <plugin
          id="org.apache.commons.jxpath"
          download-size="0"
          install-size="0"
          version="1.3.0.qualifier"
          unpack="false"/>
-         
-	<plugin
+
+   <plugin
          id="org.eclipse.e4.emf.xpath"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-         
+
    <plugin
          id="org.eclipse.e4.ui.workbench.renderers.swt.cocoa"
          os="macosx"
