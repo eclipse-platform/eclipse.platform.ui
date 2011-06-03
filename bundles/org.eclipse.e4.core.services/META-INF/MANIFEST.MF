@@ -9,7 +9,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: J2SE-1.5,
  J2SE-1.4,
  CDC-1.1/Foundation-1.1
-Import-Package: javax.inject,
+Import-Package: javax.inject;version="1.0.0",
  org.eclipse.osgi.service.debug;version="1.1.0",
  org.eclipse.osgi.service.localization;version="1.1.0",
  org.osgi.framework;version="1.3.0",
