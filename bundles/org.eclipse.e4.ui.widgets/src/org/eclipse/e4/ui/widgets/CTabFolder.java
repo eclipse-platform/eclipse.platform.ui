@@ -598,7 +598,7 @@ Rectangle[] computeControlBounds (Point size, boolean[][] position) {
 		if (lastIndex != -1) {
 			CTabItem lastItem = items[lastIndex];
 			int w = lastItem.x + lastItem.width + SPACING;
-			if (!simple && lastIndex == selectedIndex) w -= renderer.curveIndent;
+			if (!simple && lastIndex == selectedIndex) w -= (renderer.curveIndent - 7);
 			rects[controls.length - 1].x = w;
 		}
 	}
