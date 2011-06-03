@@ -175,22 +175,22 @@
          os_version="6.1">
    </theme>
    <theme
-         basestylesheeturi="css/e4_classic_winxp.css"
+         basestylesheeturi="css/e4_default_gtk.css"
          id="org.eclipse.e4.ui.css.theme.e4_default"
          label="Solaris"
          os="solaris">
    </theme>
    <theme
-         basestylesheeturi="css/e4_classic_winxp.css"
+         basestylesheeturi="css/e4_default_gtk.css"
          id="org.eclipse.e4.ui.css.theme.e4_default"
          label="AIX"
-         os="aix">
+         os="AIX">
    </theme>
    <theme
          basestylesheeturi="css/e4_classic_winxp.css"
          id="org.eclipse.e4.ui.css.theme.e4_default"
          label="HPUX"
-         os="hpux">
+         os="HP-UX">
    </theme>
       </extension>
 
