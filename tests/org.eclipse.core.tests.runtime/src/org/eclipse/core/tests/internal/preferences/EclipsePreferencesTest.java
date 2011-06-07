@@ -101,6 +101,38 @@ public class EclipsePreferencesTest extends RuntimeTest {
 		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(TestScope.SCOPE);
 	}
 
+	public void testRemove() {
+		String qualifier = getUniqueString();
+		Preferences prefs = getScopeRoot().node(qualifier);
+		final String key = "key1";
+		final String value = "hello";
+		final String defaultValue = null;
+
+		// nothing there so expect the default
+		assertEquals("1.1", defaultValue, prefs.get(key, defaultValue));
+		// set a value and ensure it exists
+		prefs.put(key, value);
+		assertEquals("1.2", value, prefs.get(key, defaultValue));
+
+		// remove the node and then try to remove the key
+		try {
+			prefs.removeNode();
+		} catch (BackingStoreException e) {
+			fail("2.1", e);
+		}
+		try {
+			assertFalse("2.5", prefs.nodeExists(""));
+		} catch (BackingStoreException e) {
+			fail("2.2", e);
+		}
+		try {
+			prefs.remove(key);
+			fail("2.99");
+		} catch (IllegalStateException e) {
+			// expected
+		}
+	}
+
 	public void testString() {
 		String qualifier = getUniqueString();
 		Preferences prefs = getScopeRoot().node(qualifier);
