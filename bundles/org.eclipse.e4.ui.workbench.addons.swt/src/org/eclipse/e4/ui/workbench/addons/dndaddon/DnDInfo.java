@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.swt.events.DragDetectEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
@@ -192,6 +193,18 @@ class DnDInfo {
 		curCtrl = display.getCursorControl();
 		if (curCtrl == null)
 			return;
+
+		curElement = getModelElement(curCtrl);
+		setItemInfo();
+	}
+
+	public void update(DragDetectEvent e) {
+		reset();
+		if (!(e.widget instanceof Control))
+			return;
+		curCtrl = (Control) e.widget;
+		cursorPos = new Point(e.x, e.y);
+		cursorPos = curCtrl.getDisplay().map(curCtrl, null, cursorPos);
 
 		curElement = getModelElement(curCtrl);
 		setItemInfo();

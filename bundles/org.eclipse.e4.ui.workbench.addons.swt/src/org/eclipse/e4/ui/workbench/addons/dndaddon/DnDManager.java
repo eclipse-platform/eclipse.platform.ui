@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -20,15 +21,17 @@ import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.DragDetectEvent;
+import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.FillLayout;
@@ -38,9 +41,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tracker;
+import org.osgi.service.event.EventHandler;
 
 class DnDManager {
-	private static final int DRAG_DELTA = 8;
 	private static final Rectangle offScreenRect = new Rectangle(10000, -10000, 1, 1);
 
 	public static final int HOSTED = 1;
@@ -55,8 +58,6 @@ class DnDManager {
 	DragAgent dragAgent;
 
 	DropAgent dropAgent;
-	private Point downPos;
-	private DnDInfo downInfo;
 
 	private MWindow dragWindow;
 
@@ -64,55 +65,6 @@ class DnDManager {
 	private Control dragCtrl;
 
 	private Tracker tracker;
-
-	boolean justCancelled = false;
-
-	Listener keyListener = new Listener() {
-		public void handleEvent(Event event) {
-			if (event.character == SWT.ESC && dragAgent != null) {
-				justCancelled = true;
-				finishDrag(false);
-			}
-		}
-	};
-
-	Listener mouseButtonListener = new Listener() {
-		public void handleEvent(Event event) {
-			// Only allow left mouse drags (for now?)
-			if (event.button != 1) {
-				downPos = null;
-				return;
-			}
-
-			info.update();
-			if (event.type == SWT.MouseDown) {
-				dragAgent = getDragAgent(info);
-				if (dragAgent != null) {
-					downInfo = new DnDInfo(dragWindow);
-					downPos = new Point(event.x, event.y);
-				}
-			} else if (event.type == SWT.MouseUp) {
-				dragAgent = null;
-				downPos = null;
-			}
-		}
-	};
-
-	Listener mouseMoveListener = new Listener() {
-		public void handleEvent(Event event) {
-			if (dragAgent != null && downPos != null) {
-				Point curPos = new Point(event.x, event.y);
-				int dx = Math.abs(downPos.x - curPos.x);
-				int dy = Math.abs(downPos.y - curPos.y);
-				if (dx > DRAG_DELTA || dy > DRAG_DELTA) {
-					downPos = null;
-					justCancelled = false;
-					startDrag();
-					update();
-				}
-			}
-		}
-	};
 
 	private Shell overlayFrame;
 	private List<Rectangle> frames = new ArrayList<Rectangle>();
@@ -141,7 +93,29 @@ class DnDManager {
 		dropAgents.add(new SplitDropAgent(this));
 		dropAgents.add(new DetachedDropAgent(this));
 
-		setDisplayFilters(true);
+		// Register a 'dragDetect' against any stacks that get created
+		IEventBroker eventBroker = topLevelWindow.getContext().get(IEventBroker.class);
+		EventHandler stackWidgetHandler = new EventHandler() {
+			public void handleEvent(org.osgi.service.event.Event event) {
+				// Ensure that this event is for a MPartSashContainer
+				MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+				if (!(element instanceof MPartStack)
+						|| !(element.getWidget() instanceof CTabFolder))
+					return;
+
+				CTabFolder ctf = (CTabFolder) element.getWidget();
+				ctf.addDragDetectListener(new DragDetectListener() {
+					public void dragDetected(DragDetectEvent e) {
+						startDrag(e);
+					}
+				});
+			}
+		};
+
+		eventBroker.subscribe(
+				UIEvents.buildTopic(UIEvents.UIElement.TOPIC, UIEvents.UIElement.WIDGET),
+				stackWidgetHandler);
+
 		getDragShell().addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
@@ -166,21 +140,16 @@ class DnDManager {
 		if (overlayFrame != null && !overlayFrame.isDisposed())
 			overlayFrame.dispose();
 		overlayFrame = null;
-
-		setDisplayFilters(false);
 	}
 
-	protected void startDrag() {
-		setDisplayFilters(false);
+	protected void startDrag(DragDetectEvent e) {
+		info.update(e);
+		dragAgent = getDragAgent(info);
+		if (dragAgent == null)
+			return;
 
 		tracker = new Tracker(Display.getCurrent(), SWT.NULL);
 		tracker.setStippled(true);
-
-		tracker.addListener(SWT.MouseHover, new Listener() {
-			public void handleEvent(Event event) {
-				System.err.println("HOVER !");
-			}
-		});
 
 		tracker.addListener(SWT.Move, new Listener() {
 			public void handleEvent(final Event event) {
@@ -223,19 +192,15 @@ class DnDManager {
 		getDragShell().setCapture(true);
 
 		try {
-			dragAgent.dragStart(dragAgent.dragElement, downInfo);
-			dropAgent = getDropAgent(dragAgent.dragElement, downInfo);
+			dragAgent.dragStart(dragAgent.dragElement, info);
+			dropAgent = getDropAgent(dragAgent.dragElement, info);
 
 			// Run tracker until mouse up occurs or escape key pressed.
-			Display.getCurrent().addFilter(SWT.KeyDown, keyListener);
 			boolean performDrop = tracker.open();
-			Display.getCurrent().removeFilter(SWT.KeyDown, keyListener);
 			finishDrag(performDrop);
 		} finally {
 			getDragShell().setCursor(null);
 			getDragShell().setCapture(false);
-
-			setDisplayFilters(true);
 		}
 	}
 
@@ -275,7 +240,6 @@ class DnDManager {
 				dragHost = null;
 			}
 
-			downPos = null;
 			dragAgent = null;
 			dropAgent = null;
 		}
@@ -517,24 +481,6 @@ class DnDManager {
 				return agent;
 		}
 		return null;
-	}
-
-	public void setDisplayFilters(boolean enable) {
-		Display display = Display.getCurrent();
-		if (display.isDisposed())
-			return;
-
-		if (enable) {
-			display.addFilter(SWT.MouseMove, mouseMoveListener);
-			display.addFilter(SWT.MouseDown, mouseButtonListener);
-			display.addFilter(SWT.MouseUp, mouseButtonListener);
-			// display.addFilter(SWT.KeyDown, keyListener);
-		} else {
-			display.removeFilter(SWT.MouseMove, mouseMoveListener);
-			display.removeFilter(SWT.MouseDown, mouseButtonListener);
-			display.removeFilter(SWT.MouseUp, mouseButtonListener);
-			// display.removeFilter(SWT.KeyDown, keyListener);
-		}
 	}
 
 	/**
