@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,12 +16,19 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.filesystem.EFS;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
@@ -32,6 +39,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.resource.DeleteResourcesDescriptor;
 import org.eclipse.ltk.core.refactoring.resource.MoveResourceChange;
 import org.eclipse.ltk.core.refactoring.resource.MoveResourcesDescriptor;
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
@@ -195,7 +203,96 @@ public class ResourceRefactoringTests extends TestCase {
 		assertTrue(content2.equals(fProject.getContent(file2)));
 	}
 
+	public void testDeleteRefactoring1_bug343584() throws Exception {
+		IFolder testFolder= fProject.createFolder("test");
+		fProject.createFile(testFolder, "myFile.txt", "hello");
+		
+		IProject testProject2= ResourcesPlugin.getWorkspace().getRoot().getProject(SimpleTestProject.TEST_PROJECT_NAME + "2");
+		try {
+			testProject2.create(null);
+			testProject2.open(null);
 
+			RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
+			DeleteResourcesDescriptor descriptor= (DeleteResourcesDescriptor)contribution.createDescriptor();
+
+			descriptor.setDeleteContents(true);
+			descriptor.setResources(new IResource[] { fProject.getProject(), testProject2 });
+
+			perform(descriptor);
+
+			assertFalse(fProject.getProject().exists());
+			assertFalse(testProject2.exists());
+		} finally {
+			testProject2.delete(true, true, null);
+		}
+	}
+
+	public void testDeleteRefactoring2_bug343584() throws Exception {
+		IPath location= fProject.getProject().getLocation();
+		IFolder testFolder= fProject.createFolder("test");
+		fProject.createFile(testFolder, "myFile.txt", "hello");
+		
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		String p2Name= "p2";
+		IProjectDescription p2Description= workspace.newProjectDescription(p2Name);
+		p2Description.setLocation(location.append(p2Name));
+		IProject p2= workspace.getRoot().getProject(p2Name);
+		p2.create(p2Description, null);
+		p2.open(null);
+		IPath p2Location= p2.getLocation();
+		
+		RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
+		DeleteResourcesDescriptor descriptor= (DeleteResourcesDescriptor) contribution.createDescriptor();
+		
+		descriptor.setDeleteContents(true);
+		descriptor.setResources(new IResource[] { fProject.getProject(), p2 });
+		
+		perform(descriptor);
+		
+		assertFalse(fProject.getProject().exists());
+		assertFalse(p2.exists());
+		
+		assertFalse(location.toFile().exists());
+		assertFalse(p2Location.toFile().exists());
+	}
+	
+	public void testDeleteRefactoring3_bug343584() throws Exception {
+		IPath location= fProject.getProject().getLocation();
+		IFolder testFolder= fProject.createFolder("test");
+		IFile file= fProject.createFile(testFolder, "myFile.txt", "hello");
+		IPath fileLocation= file.getLocation();
+		
+		IWorkspace workspace= ResourcesPlugin.getWorkspace();
+		String p2Name= "p2";
+		IProjectDescription p2Description= workspace.newProjectDescription(p2Name);
+		p2Description.setLocation(location.append(p2Name));
+		IProject p2= workspace.getRoot().getProject(p2Name);
+		p2.create(p2Description, null);
+		p2.open(null);
+		IPath p2Location= p2.getLocation();
+		
+		try {
+			RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
+			DeleteResourcesDescriptor descriptor= (DeleteResourcesDescriptor) contribution.createDescriptor();
+			
+			descriptor.setDeleteContents(false);
+			descriptor.setResources(new IResource[] { fProject.getProject(), p2 });
+			
+			perform(descriptor);
+			
+			assertFalse(fProject.getProject().exists());
+			assertFalse(p2.exists());
+			
+			assertTrue(location.toFile().exists());
+			assertTrue(fileLocation.toFile().exists());
+			assertTrue(p2Location.toFile().exists());
+			
+		} finally {
+			EFS.getLocalFileSystem().getStore(location).delete(EFS.NONE, null);
+			EFS.getLocalFileSystem().getStore(p2Location).delete(EFS.NONE, null);
+		}
+	}
+	
 	private Change perform(Change change) throws CoreException {
 		PerformChangeOperation op= new PerformChangeOperation(change);
 		op.run(null);
