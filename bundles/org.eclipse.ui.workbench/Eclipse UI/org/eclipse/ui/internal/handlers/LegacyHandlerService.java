@@ -44,9 +44,12 @@ import org.eclipse.e4.ui.workbench.modeling.ExpressionContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.MakeHandlersGo;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.expressions.AndExpression;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
@@ -128,8 +131,76 @@ public class LegacyHandlerService implements IHandlerService {
 		}
 	}
 
+	private static IHandlerActivation systemHandlerActivation;
+
+	/*
+	 * We are obligated to return a non-null IHandlerActivation from our
+	 * activate calls. It is only used as a token, but must not return null from
+	 * certain methods. This token represents passing the MakeHandlerGo handler
+	 * back into the system.
+	 */
+	private static IHandlerActivation getSystemHandlerActivation(IEclipseContext context, final String cmdId) {
+		if (systemHandlerActivation == null) {
+			final IWorkbench wb = context.get(IWorkbench.class);
+
+			systemHandlerActivation = new IHandlerActivation() {
+
+				public int compareTo(Object o) {
+					return -1;
+				}
+
+				public void setResult(boolean result) {
+				}
+
+				public int getSourcePriority() {
+					return 0;
+				}
+
+				public Expression getExpression() {
+					return null;
+				}
+
+				public boolean evaluate(IEvaluationContext context) {
+					return false;
+				}
+
+				public void clearResult() {
+				}
+
+				public boolean isActive(IEvaluationContext context) {
+					return false;
+				}
+
+				public IHandlerService getHandlerService() {
+					return (IHandlerService) wb.getService(IHandlerService.class);
+				}
+
+				public IHandler getHandler() {
+					return null;
+				}
+
+				public int getDepth() {
+					return 0;
+				}
+
+				public String getCommandId() {
+					return cmdId;
+				}
+
+				public void clearActive() {
+				}
+			};
+		}
+		return systemHandlerActivation;
+	}
+
 	public static IHandlerActivation registerLegacyHandler(final IEclipseContext context,
 			String id, final String cmdId, IHandler handler, Expression activeWhen) {
+		if (handler instanceof MakeHandlersGo) {
+			final String msg = "Invalid Handler MakeHandlerGo"; //$NON-NLS-1$
+			WorkbenchPlugin.log(msg, new Exception(msg));
+			return getSystemHandlerActivation(context, cmdId);
+		}
 		ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
 		Command command = cs.getCommand(cmdId);
 		E4HandlerProxy handlerProxy = new E4HandlerProxy(command, handler);
@@ -222,6 +293,9 @@ public class LegacyHandlerService implements IHandlerService {
 	 * .handlers.IHandlerActivation)
 	 */
 	public IHandlerActivation activateHandler(IHandlerActivation activation) {
+		if (activation == systemHandlerActivation) {
+			return activation;
+		}
 		HandlerActivation handlerActivation = (HandlerActivation) activation;
 		handlerActivation.participating = true;
 		addHandlerActivation(handlerActivation);
@@ -320,7 +394,7 @@ public class LegacyHandlerService implements IHandlerService {
 	 */
 	public void deactivateHandler(IHandlerActivation activation) {
 		// null is not allowed, but some people put it anyway :( see bug 326406
-		if (activation != null) {
+		if (activation != null && activation != systemHandlerActivation) {
 			HandlerActivation eActivation = (HandlerActivation) activation;
 			eActivation.participating = false;
 			removeHandlerActivation(eActivation);

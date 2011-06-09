@@ -28,11 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.commands.contexts.ContextManagerEvent;
@@ -1787,24 +1784,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		WorkbenchPlugin.getDefault().initializeContext(e4Context);
 	}
 
-	static class MakeHandlersGo extends AbstractHandler {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands
-		 * .ExecutionEvent)
-		 */
-		public Object execute(ExecutionEvent event) throws ExecutionException {
-			org.eclipse.e4.ui.internal.workbench.Activator.trace(
-					org.eclipse.e4.ui.internal.workbench.Policy.DEBUG_CMDS,
-					"AllHandlerGo: not for executing", null); //$NON-NLS-1$
-			return null;
-		}
-
-	}
-
 	private ArrayList<MCommand> commandsToRemove = new ArrayList<MCommand>();
 	private ArrayList<MCategory> categoriesToRemove = new ArrayList<MCategory>();
 
@@ -1813,7 +1792,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		appContext.set(ICommandService.class.getName(), service);
 		service.readRegistry();
 
-		MakeHandlersGo allHandlers = new MakeHandlersGo();
+		MakeHandlersGo allHandlers = new MakeHandlersGo(this);
 
 		Command[] cmds = commandManager.getAllCommands();
 		for (int i = 0; i < cmds.length; i++) {
