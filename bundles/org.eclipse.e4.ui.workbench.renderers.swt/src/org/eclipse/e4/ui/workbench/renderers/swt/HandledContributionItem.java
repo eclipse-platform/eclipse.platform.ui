@@ -178,6 +178,8 @@ public class HandledContributionItem extends ContributionItem {
 
 	private ISafeRunnable updateRunner;
 
+	private IEclipseContext infoContext;
+
 	public void setModel(MHandledItem item) {
 		model = item;
 		setId(model.getElementId());
@@ -312,8 +314,7 @@ public class HandledContributionItem extends ContributionItem {
 		Object obj = model.getTransientData().get(ItemType.CHECK.toString());
 		if (obj instanceof IContextFunction) {
 			IEclipseContext context = getContext(model);
-			IEclipseContext staticContext = EclipseContextFactory.create();
-			staticContext.set(MHandledItem.class, model);
+			IEclipseContext staticContext = getStaticContext(null);
 			staticContext.set(WW_SUPPORT, context.get(WW_SUPPORT));
 
 			IContextFunction func = (IContextFunction) obj;
@@ -321,7 +322,6 @@ public class HandledContributionItem extends ContributionItem {
 			if (obj != null) {
 				model.getTransientData().put(DISPOSABLE_CHECK, obj);
 			}
-			staticContext.dispose();
 		}
 	}
 
@@ -530,6 +530,10 @@ public class HandledContributionItem extends ContributionItem {
 		if (event.widget == widget) {
 			unhookCheckListener();
 			toolItemUpdater.removeItem(this);
+			if (infoContext != null) {
+				infoContext.dispose();
+				infoContext = null;
+			}
 			widget.removeListener(SWT.Selection, getItemListener());
 			widget.removeListener(SWT.Dispose, getItemListener());
 			widget.removeListener(SWT.DefaultSelection, getItemListener());
@@ -641,6 +645,20 @@ public class HandledContributionItem extends ContributionItem {
 		return null;
 	}
 
+	private IEclipseContext getStaticContext(Event event) {
+		if (infoContext == null) {
+			infoContext = EclipseContextFactory.create(HCI_STATIC_CONTEXT);
+			ContributionsAnalyzer.populateModelInterfaces(model, infoContext,
+					model.getClass().getInterfaces());
+		}
+		if (event == null) {
+			infoContext.remove(Event.class);
+		} else {
+			infoContext.set(Event.class, event);
+		}
+		return infoContext;
+	}
+
 	private void executeItem(Event trigger) {
 		ParameterizedCommand cmd = model.getWbCommand();
 		if (cmd == null) {
@@ -649,18 +667,8 @@ public class HandledContributionItem extends ContributionItem {
 		final IEclipseContext lclContext = getContext(model);
 		EHandlerService service = (EHandlerService) lclContext
 				.get(EHandlerService.class.getName());
-		final IEclipseContext staticContext = EclipseContextFactory
-				.create(HCI_STATIC_CONTEXT);
-		if (trigger != null) {
-			staticContext.set(Event.class, trigger);
-		}
-		ContributionsAnalyzer.populateModelInterfaces(model, staticContext,
-				model.getClass().getInterfaces());
-		try {
-			service.executeHandler(cmd, staticContext);
-		} finally {
-			staticContext.dispose();
-		}
+		final IEclipseContext staticContext = getStaticContext(trigger);
+		service.executeHandler(cmd, staticContext);
 	}
 
 	private boolean canExecuteItem(Event trigger) {
@@ -673,18 +681,8 @@ public class HandledContributionItem extends ContributionItem {
 		if (service == null) {
 			return false;
 		}
-		final IEclipseContext staticContext = EclipseContextFactory
-				.create(HCI_STATIC_CONTEXT);
-		if (trigger != null) {
-			staticContext.set(Event.class, trigger);
-		}
-		ContributionsAnalyzer.populateModelInterfaces(model, staticContext,
-				model.getClass().getInterfaces());
-		try {
-			return service.canExecute(cmd, staticContext);
-		} finally {
-			staticContext.dispose();
-		}
+		final IEclipseContext staticContext = getStaticContext(trigger);
+		return service.canExecute(cmd, staticContext);
 	}
 
 	public void setParent(IContributionManager parent) {
