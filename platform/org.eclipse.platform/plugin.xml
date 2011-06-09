@@ -187,7 +187,7 @@
          os="aix">
    </theme>
    <theme
-         basestylesheeturi="css/e4_default_gtk.css"
+         basestylesheeturi="css/e4_classic_winxp.css"
          id="org.eclipse.e4.ui.css.theme.e4_default"
          label="HPUX"
          os="hpux">
