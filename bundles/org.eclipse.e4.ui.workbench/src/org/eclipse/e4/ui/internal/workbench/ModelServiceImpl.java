@@ -740,11 +740,27 @@ public class ModelServiceImpl implements EModelService {
 		List<MArea> areas = findElements(window, null, MArea.class, null);
 		if (areas.size() == 1) {
 			MArea area = areas.get(0);
+
+			// Strip out the placeholders in visible stacks
 			List<MPlaceholder> phList = findElements(area, null, MPlaceholder.class, null);
 			for (MPlaceholder ph : phList) {
 				ps.hidePart((MPart) ph.getRef());
 
 				ph.getParent().getChildren().remove(ph);
+			}
+
+			// Now remove any empty stacks (except for one)
+			List<MPartStack> stackList = findElements(area, null, MPartStack.class, null);
+			for (MPartStack stack : stackList) {
+				if (stack.getChildren().size() == 0 && !isLastEditorStack(stack)) {
+					// unrender this empty stack
+					stack.setToBeRendered(false);
+					MElementContainer<MUIElement> parent = stack.getParent();
+					if (parent != null) {
+						// remove it from our structure
+						parent.getChildren().remove(stack);
+					}
+				}
 			}
 		}
 
