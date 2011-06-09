@@ -748,20 +748,6 @@ public class ModelServiceImpl implements EModelService {
 
 				ph.getParent().getChildren().remove(ph);
 			}
-
-			// Now remove any empty stacks (except for one)
-			List<MPartStack> stackList = findElements(area, null, MPartStack.class, null);
-			for (MPartStack stack : stackList) {
-				if (stack.getChildren().size() == 0 && !isLastEditorStack(stack)) {
-					// unrender this empty stack
-					stack.setToBeRendered(false);
-					MElementContainer<MUIElement> parent = stack.getParent();
-					if (parent != null) {
-						// remove it from our structure
-						parent.getChildren().remove(stack);
-					}
-				}
-			}
 		}
 
 		// Remove any minimized stacks for this perspective
@@ -988,6 +974,6 @@ public class ModelServiceImpl implements EModelService {
 			if (aStack.isToBeRendered())
 				count++;
 		}
-		return count < 2;
+		return count < 2 && stack.isToBeRendered();
 	}
 }
