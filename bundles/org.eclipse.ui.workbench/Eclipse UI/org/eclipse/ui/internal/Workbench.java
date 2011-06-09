@@ -2220,20 +2220,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * (non-Javadoc) Method declared on IWorkbench.
 	 */
 	public boolean restart() {
-		try {
-			for (IWorkbenchWindow window : getWorkbenchWindows()) {
-				((WorkbenchWindow) window).setRestarting(true);
-			}
-			IPresentationEngine engine = (IPresentationEngine) application.getContext().get(
-					IPresentationEngine.SERVICE_NAME);
-			engine.stop();
-			returnCode = PlatformUI.RETURN_RESTART;
-		} finally {
-			for (IWorkbenchWindow window : getWorkbenchWindows()) {
-				((WorkbenchWindow) window).setRestarting(false);
-			}
-		}
-		return true;
+		return close(PlatformUI.RETURN_RESTART, false);
 	}
 
 

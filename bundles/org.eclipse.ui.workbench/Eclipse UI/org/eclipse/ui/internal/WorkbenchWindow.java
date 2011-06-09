@@ -242,12 +242,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private WorkbenchWindowConfigurer windowConfigurer = null;
 
 	/**
-	 * A flag used for indicating whether the workbench is in the process of
-	 * shutting down for a restart or not. See bug 312821.
-	 */
-	private boolean restarting = false;
-
-	/**
 	 * List of generic property listeners.
 	 * 
 	 * @since 3.3
@@ -419,9 +413,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		windowContext.set(IWindowCloseHandler.class.getName(), new IWindowCloseHandler() {
 			public boolean close(MWindow window) {
-				if (restarting) {
-					return WorkbenchWindow.this.close(false);
-				}
 				return getWindowAdvisor().preWindowShellClose() && WorkbenchWindow.this.close();
 			}
 		});
@@ -1108,10 +1099,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		});
 		return ret[0];
-	}
-
-	void setRestarting(boolean restarting) {
-		this.restarting = restarting;
 	}
 
 	/**
