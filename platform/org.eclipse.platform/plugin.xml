@@ -184,13 +184,13 @@
          basestylesheeturi="css/e4_default_gtk.css"
          id="org.eclipse.e4.ui.css.theme.e4_default"
          label="AIX"
-         os="AIX">
+         os="aix">
    </theme>
    <theme
          basestylesheeturi="css/e4_default_gtk.css"
          id="org.eclipse.e4.ui.css.theme.e4_default"
          label="HPUX"
-         os="HP-UX">
+         os="hpux">
    </theme>
       </extension>
 
