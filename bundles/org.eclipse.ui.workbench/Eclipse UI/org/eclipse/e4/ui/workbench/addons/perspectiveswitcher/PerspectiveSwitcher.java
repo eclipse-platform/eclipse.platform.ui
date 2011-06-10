@@ -581,7 +581,10 @@ public class PerspectiveSwitcher {
 		int[] simpleCurve = new int[] { 0, h - 1, 1, h - 1, 2, h - 2, 2, 1, 3, 0 };
 		// draw border
 		gc.setForeground(curveColor);
-		gc.setAntialias(SWT.ON);
+		gc.setAdvanced(true);
+		if (gc.getAdvanced()) {
+			gc.setAntialias(SWT.ON);
+		}
 		gc.drawPolyline(simpleCurve);
 
 		Rectangle bounds = ((Control) e.widget).getBounds();
