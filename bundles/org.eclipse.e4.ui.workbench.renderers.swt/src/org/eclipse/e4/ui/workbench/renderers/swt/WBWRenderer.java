@@ -461,18 +461,7 @@ public class WBWRenderer extends SWTPartRenderer {
 							EPartService partService = (EPartService) window
 									.getContext().get(
 											EPartService.class.getName());
-							if (partService.saveAll(true)) {
-								// unrender the window
-								window.setToBeRendered(false);
-								Object parent = ((EObject) window).eContainer();
-								if (parent instanceof MApplication) {
-									// remove it from the application
-									((MApplication) parent).getChildren()
-											.remove(window);
-								}
-								return true;
-							}
-							return false;
+							return partService.saveAll(true);
 						}
 					});
 		}
