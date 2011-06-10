@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,12 @@ import org.eclipse.jface.text.IDocument;
 
 /**
  * Scanner that exclusively uses predicate rules.
+ * <p>
+ * If a partial range is set (see {@link #setPartialRange(IDocument, int, int, String, int)} with
+ * content type that is not <code>null</code> then this scanner will first try the rules that match
+ * the given content type.
+ * </p>
+ * 
  * @since 2.0
  */
 public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implements IPartitionTokenScanner {
@@ -51,8 +57,12 @@ public class RuleBasedPartitionScanner extends BufferedRuleBasedScanner implemen
 		setPartialRange(document, offset, length, null, -1);
 	}
 
-	/*
-	 * @see IPartitionTokenScanner#setPartialRange(IDocument, int, int, String, int)
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * If the given content type is not <code>null</code> then this scanner will first try the rules
+	 * that match the given content type.
+	 * </p>
 	 */
 	public void setPartialRange(IDocument document, int offset, int length, String contentType, int partitionOffset) {
 		fContentType= contentType;
