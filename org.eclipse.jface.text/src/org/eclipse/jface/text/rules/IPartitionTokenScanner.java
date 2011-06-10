@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,11 @@ import org.eclipse.jface.text.IDocument;
 public interface IPartitionTokenScanner  extends ITokenScanner {
 
 	/**
-	 * Configures the scanner by providing access to the document range that should be scanned.
-	 * The range may no only contain complete partitions but starts at the beginning of a line in the
-	 * middle of a partition of the given content type. This requires that a partition delimiter can not
-	 * contain a line delimiter.
-	 *
+	 * Configures the scanner by providing access to the document range that should be scanned. The
+	 * range may not only contain complete partitions but starts at the beginning of a line in the
+	 * middle of a partition of the given content type. This requires that a partition delimiter can
+	 * not contain a line delimiter.
+	 * 
 	 * @param document the document to scan
 	 * @param offset the offset of the document range to scan
 	 * @param length the length of the document range to scan
