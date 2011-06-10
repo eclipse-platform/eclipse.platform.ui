@@ -558,7 +558,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					MUIElement parent = kid.getParent();
 					if (parent == null && kid.getCurSharedRef() != null)
 						parent = kid.getCurSharedRef().getParent();
-					if (parent != element)
+					if (!(element instanceof MPlaceholder) && parent != element)
 						continue;
 
 					if (c.getContext() != null
