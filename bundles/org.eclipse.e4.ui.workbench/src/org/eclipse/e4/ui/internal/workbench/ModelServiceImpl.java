@@ -745,8 +745,14 @@ public class ModelServiceImpl implements EModelService {
 			List<MPlaceholder> phList = findElements(area, null, MPlaceholder.class, null);
 			for (MPlaceholder ph : phList) {
 				ps.hidePart((MPart) ph.getRef());
-
 				ph.getParent().getChildren().remove(ph);
+			}
+
+			// Prevent shared stacks ids from clashing with the ones in the perspective
+			List<MPartStack> stacks = findElements(area, null, MPartStack.class, null);
+			for (MPartStack stack : stacks) {
+				String generatedId = "PartStack@" + Integer.toHexString(stack.hashCode()); //$NON-NLS-1$
+				stack.setElementId(generatedId);
 			}
 		}
 
