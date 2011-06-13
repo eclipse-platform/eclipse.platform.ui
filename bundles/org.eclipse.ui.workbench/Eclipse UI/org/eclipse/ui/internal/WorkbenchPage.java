@@ -2846,33 +2846,23 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		if (desc == null)
 			return;
 
-		modelService.resetPerspectiveModel(persp, window);
-
 		// send out reset notification
 		legacyWindow.firePerspectiveChanged(this, desc, CHANGE_RESET);
 
-		// instantiate a dummy perspective perspective
-		MPerspective dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
-
-		IPerspectiveFactory factory = ((PerspectiveDescriptor) desc).createFactory();
-		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService,
-				dummyPerspective, desc, this, true);
-		factory.createInitialLayout(modelLayout);
-		PerspectiveTagger.tagPerspective(dummyPerspective, modelService);
-		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
-		reader.extendLayout(getExtensionTracker(), desc.getId(), modelLayout);
-
-		// Hide placeholders for parts that exist in the 'global' areas
-		modelService.hideLocalPlaceholders(window, dummyPerspective);
+		// collect all the parts under the current perspective
+		List<MPart> perspectiveParts = modelService.findElements(persp, null, MPart.class, null);
+		// find the shared area
+		MUIElement area = findSharedArea();
+		if (area != null) {
+			// remove all editors in the shared area from the list of parts
+			perspectiveParts.removeAll(modelService.findElements(area,
+					CompatibilityEditor.MODEL_ELEMENT_ID, MPart.class, null));
+		}
 
 		List<MPart> dirtyParts = new ArrayList<MPart>();
-		// compare all of the parts between the original and the current
-		// perspective to check for dirty parts that will no longer be present
-		List<MPart> perspectiveParts = modelService.findElements(dummyPerspective, null,
-				MPart.class, null);
-		for (MPart currentPart : modelService.findElements(persp, null, MPart.class,
-				null)) {
-			if (currentPart.isDirty() && !perspectiveParts.contains(currentPart)) {
+		// iterate over the list of parts to find dirty parts
+		for (MPart currentPart : perspectiveParts) {
+			if (currentPart.isDirty()) {
 				Object object = currentPart.getObject();
 				if (object == null) {
 					continue;
@@ -2897,6 +2887,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					break;
 				case NO:
 					part.setDirty(false);
+					// not saving this part, close it
+					partService.hidePart(part);
 					break;
 				case CANCEL:
 					// not going through with it, but we're done
@@ -2917,6 +2909,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					switch (promptToSave[i]) {
 					case NO:
 						dirtyParts.get(i).setDirty(false);
+						// not saving this part, close it
+						partService.hidePart(dirtyParts.get(i));
 						break;
 					case YES:
 						partService.savePart(dirtyParts.get(i), false);
@@ -2925,6 +2919,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				}
 			}
 		}
+
+		modelService.resetPerspectiveModel(persp, window);
+
+		// instantiate a dummy perspective perspective
+		MPerspective dummyPerspective = AdvancedFactoryImpl.eINSTANCE.createPerspective();
+
+		IPerspectiveFactory factory = ((PerspectiveDescriptor) desc).createFactory();
+		ModeledPageLayout modelLayout = new ModeledPageLayout(window, modelService, partService,
+				dummyPerspective, desc, this, true);
+		factory.createInitialLayout(modelLayout);
+		PerspectiveTagger.tagPerspective(dummyPerspective, modelService);
+		PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+		reader.extendLayout(getExtensionTracker(), desc.getId(), modelLayout);
+
+		// Hide placeholders for parts that exist in the 'global' areas
+		modelService.hideLocalPlaceholders(window, dummyPerspective);
 
 		int dCount = dummyPerspective.getChildren().size();
 		while (dummyPerspective.getChildren().size() > 0) {
