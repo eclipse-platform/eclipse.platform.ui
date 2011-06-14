@@ -70,10 +70,37 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class HandledContributionItem extends ContributionItem {
-	static class ToolItemUpdateTimer implements Runnable {
+	static class RunnableRunner implements ISafeRunnable {
+		private Runnable runnable;
+
+		public void setRunnable(Runnable r) {
+			runnable = r;
+		}
+
+		public void handleException(Throwable exception) {
+			// Do not report these exceptions ATM
+		}
+
+		public void run() throws Exception {
+			runnable.run();
+		}
+
+	}
+
+	public static class ToolItemUpdateTimer implements Runnable {
 		Display display = Display.getCurrent();
+		RunnableRunner runner = new RunnableRunner();
 
 		List<HandledContributionItem> itemsToCheck = new ArrayList<HandledContributionItem>();
+		List<Runnable> windowRunnables = new ArrayList<Runnable>();
+
+		public void addWindowRunnable(Runnable r) {
+			windowRunnables.add(r);
+		}
+
+		public void removeWindowRunnable(Runnable r) {
+			windowRunnables.remove(r);
+		}
 
 		void registerItem(HandledContributionItem item) {
 			if (!itemsToCheck.contains(item)) {
@@ -90,9 +117,15 @@ public class HandledContributionItem extends ContributionItem {
 		}
 
 		public void run() {
-
 			for (HandledContributionItem hci : itemsToCheck) {
 				hci.updateItemEnablement();
+			}
+
+			Runnable[] array = new Runnable[windowRunnables.size()];
+			windowRunnables.toArray(array);
+			for (Runnable r : array) {
+				runner.setRunnable(r);
+				SafeRunner.run(runner);
 			}
 
 			// repeat until the list goes empty
@@ -102,7 +135,7 @@ public class HandledContributionItem extends ContributionItem {
 	}
 
 	// HACK!! local 'static' timerExec...should move out of this class post 4.1
-	static ToolItemUpdateTimer toolItemUpdater = new ToolItemUpdateTimer();
+	public static ToolItemUpdateTimer toolItemUpdater = new ToolItemUpdateTimer();
 
 	private static final String DISPOSABLE_CHECK = "IDisposable"; //$NON-NLS-1$
 	private static final String WW_SUPPORT = "org.eclipse.ui.IWorkbenchWindow"; //$NON-NLS-1$

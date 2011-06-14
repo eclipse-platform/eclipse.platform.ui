@@ -124,10 +124,12 @@ public final class ContextService implements IContextService {
 				final boolean shouldActivate = expression.evaluate(ctx) != EvaluationResult.FALSE;
 				synchService.asyncExec(new Runnable() {
 					public void run() {
-						if (shouldActivate) {
-							contextService.activateContext(contextId);
-						} else {
-							contextService.deactivateContext(contextId);
+						if (updating) {
+							if (shouldActivate) {
+								contextService.activateContext(contextId);
+							} else {
+								contextService.deactivateContext(contextId);
+							}
 						}
 					}
 				});

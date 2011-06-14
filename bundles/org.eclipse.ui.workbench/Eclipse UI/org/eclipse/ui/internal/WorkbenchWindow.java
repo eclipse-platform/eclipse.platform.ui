@@ -63,7 +63,9 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
+import org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRendererFilter;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.AbstractGroupMarker;
@@ -256,6 +258,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		public void handleEvent(Event event) {
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == model
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
+				HandledContributionItem.toolItemUpdater.removeWindowRunnable(menuUpdater);
+				menuUpdater = null;
+
 				removeTrimContributions();
 				removeTopTrimChildren();
 				MMenu menu = model.getMainMenu();
@@ -386,7 +391,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	@PostConstruct
 	public void setup() {
-		IEclipseContext windowContext = model.getContext();
+		final IEclipseContext windowContext = model.getContext();
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) workbench
 				.getService(IServiceLocatorCreator.class);
 		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(workbench, null,
@@ -512,18 +517,31 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		populateBottomTrimContributions();
 
 		Shell shell = (Shell) model.getWidget();
-		MMenu mainMenu = model.getMainMenu();
-		if (mainMenu == null) {
-			mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
+		if (model.getMainMenu() == null) {
+			final MMenu mainMenu = MenuFactoryImpl.eINSTANCE.createMenu();
 			mainMenu.setElementId("org.eclipse.ui.main.menu"); //$NON-NLS-1$
 
-			MenuManagerRenderer renderer = (MenuManagerRenderer) rendererFactory.getRenderer(
+			final MenuManagerRenderer renderer = (MenuManagerRenderer) rendererFactory.getRenderer(
 					mainMenu, null);
 			renderer.linkModelToManager(mainMenu, menuManager);
 			fill(renderer, mainMenu, menuManager);
 			model.setMainMenu(mainMenu);
-			Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(), model.getContext());
+			final Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(),
+					model.getContext());
 			shell.setMenuBar(menu);
+
+			menuUpdater = new Runnable() {
+				public void run() {
+					if (model.getMainMenu() == null || model.getWidget() == null
+							|| menu.isDisposed() || mainMenu.getWidget() == null) {
+						return;
+					}
+					MenuManagerRendererFilter.updateElementVisibility(mainMenu, renderer,
+							menuManager, windowContext.getActiveLeaf(), true);
+					menuManager.update(true);
+				}
+			};
+			HandledContributionItem.toolItemUpdater.addWindowRunnable(menuUpdater);
 		}
 
 		eventBroker.subscribe(
@@ -2167,6 +2185,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	}
 
 	ToolBarManager2 toolBarManager = new ToolBarManager2();
+
+	private Runnable menuUpdater;
 
 	public IToolBarManager2 getToolBarManager2() {
 		return toolBarManager;

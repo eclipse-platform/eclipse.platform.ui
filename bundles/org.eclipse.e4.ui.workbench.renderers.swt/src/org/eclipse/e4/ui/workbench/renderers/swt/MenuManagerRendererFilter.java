@@ -109,9 +109,6 @@ public class MenuManagerRendererFilter implements Listener {
 	@Inject
 	private MenuManagerRenderer renderer;
 
-	@Inject
-	private EHandlerService handlerService;
-
 	private HashMap<Menu, Runnable> pendingCleanup = new HashMap<Menu, Runnable>();
 
 	private class SafeWrapper implements ISafeRunnable {
@@ -285,7 +282,7 @@ public class MenuManagerRendererFilter implements Listener {
 	 * @param menuManager
 	 * @param evalContext
 	 */
-	private void updateElementVisibility(final MMenu menuModel,
+	public static void updateElementVisibility(final MMenu menuModel,
 			MenuManagerRenderer renderer, MenuManager menuManager,
 			final IEclipseContext evalContext, boolean recurse) {
 		final ExpressionContext exprContext = new ExpressionContext(evalContext);
@@ -312,7 +309,9 @@ public class MenuManagerRendererFilter implements Listener {
 			if (element instanceof MHandledMenuItem) {
 				ParameterizedCommand cmd = ((MHandledMenuItem) element)
 						.getWbCommand();
-				if (cmd != null) {
+				EHandlerService handlerService = evalContext
+						.get(EHandlerService.class);
+				if (cmd != null && handlerService != null) {
 					MHandledMenuItem item = (MHandledMenuItem) element;
 					final IEclipseContext staticContext = EclipseContextFactory
 							.create(MMRF_STATIC_CONTEXT);
