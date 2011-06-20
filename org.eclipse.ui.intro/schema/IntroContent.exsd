@@ -337,7 +337,7 @@ no parameters required&lt;br&gt;
 
 &lt;b&gt;runAction&lt;/b&gt; - runs the specified action&lt;br&gt;
 &lt;i&gt;class&lt;/i&gt; - the fully qualified class name of the class that implements one of &lt;code&gt;org.eclipse.ui.intro.config.IIntroAction&lt;/code&gt;,
-               &lt;code&gt;org.eclipse.jface.actino.IAction&lt;/code&gt;, or &lt;code&gt;org.eclipse.ui.IActionDelegate&lt;/code&gt;&lt;br&gt;
+               &lt;code&gt;org.eclipse.jface.action.IAction&lt;/code&gt;, or &lt;code&gt;org.eclipse.ui.IActionDelegate&lt;/code&gt;&lt;br&gt;
 &lt;i&gt;pluginId&lt;/i&gt; - The id of the plug-in which contains the class.&lt;br&gt;
 &lt;i&gt;standby (optional) = (&quot;true&quot; 
  &quot;false&quot;) &quot;false&quot;&lt;/i&gt; - indicate whether to set the intro into standby mode after executing the action&lt;br&gt;
