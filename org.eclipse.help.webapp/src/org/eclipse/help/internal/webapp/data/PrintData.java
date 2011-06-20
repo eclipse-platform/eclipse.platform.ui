@@ -53,8 +53,8 @@ public class PrintData extends RequestData {
 	private static final int defaultMaxTopics = 500;
 
 	// where to inject the section numbers
-	private static final Pattern PATTERN_HEADING = Pattern.compile("<body.*?>[\\s]*?([\\w])", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
-
+	private static final Pattern PATTERN_HEADING = Pattern.compile("<body.*?>[\\s]*?([^<\\s])", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+	
 	// to normalize external links to new base href
 	private static final Pattern PATTERN_LINK = Pattern.compile("(src|href)=\"(.*?\")", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
@@ -329,8 +329,9 @@ public class PrintData extends RequestData {
 
 	/*
 	 * Injects the sectionId into the document heading.
+	 * public static for JUnit Testing
 	 */
-	private String injectHeading(String content, String sectionId) {
+	public static String injectHeading(String content, String sectionId) {
 		Matcher matcher = PATTERN_HEADING.matcher(content);
 		if (matcher.find()) {
 			String heading = "<a id=\"section" + sectionId + "\">" + sectionId + ". </a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

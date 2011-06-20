@@ -32,6 +32,7 @@ public class AllWebappTests extends TestSuite {
 		suite.addTestSuite(UrlCoderTest.class);
 		suite.addTestSuite(UrlUtilsTests.class);
 		suite.addTestSuite(LocaleTest.class);
+		suite.addTestSuite(PrintSubtopics.class);
 		suite.addTestSuite(RestrictedTopicParameter.class);
 		suite.addTestSuite(FilterExtensionTest.class);
 		suite.addTestSuite(FragmentServletTest.class);
