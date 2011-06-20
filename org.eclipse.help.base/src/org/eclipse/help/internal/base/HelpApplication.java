@@ -133,6 +133,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 		hostPortFile.deleteOnExit();
 		FileOutputStream out = null;
 		try {
+			metadata.mkdirs();
 			out = new FileOutputStream(hostPortFile);
 			p.store(out, null);
 		} finally {
