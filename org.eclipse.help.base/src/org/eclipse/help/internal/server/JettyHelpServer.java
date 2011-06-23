@@ -114,7 +114,10 @@ public class JettyHelpServer extends HelpServer {
 	 * version is started and reads the port number
 	 */
 	protected void checkBundle() throws InvalidSyntaxException, BundleException {
-		Bundle bundle = Platform.getBundle("org.eclipse.equinox.http.registry"); //$NON-NLS-1$if (bundle != null) {
+		Bundle bundle = Platform.getBundle("org.eclipse.equinox.http.registry"); //$NON-NLS-1$
+		if (bundle == null) {
+			throw new BundleException("org.eclipse.equinox.http.registry"); //$NON-NLS-1$
+		}
 		if (bundle.getState() == Bundle.RESOLVED) {
 			bundle.start(Bundle.START_TRANSIENT);
 		}
