@@ -172,6 +172,13 @@
          <location>Program Files\Internet Explorer\iexplore.exe</location>
       </browser>
       <browser
+         id="org.eclipse.ui.browser.chrome"
+         name="%browserChrome"
+         os="Win32"
+         executable="chrome.exe">
+         <location homeRelative="true">AppData\Local\Google\Chrome\Application\chrome.exe</location>
+      </browser>
+      <browser
          id="org.eclipse.ui.browser.opera"
          name="%browserOpera"
          os="Win32"

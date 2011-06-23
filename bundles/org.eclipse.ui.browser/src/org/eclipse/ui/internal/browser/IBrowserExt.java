@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,13 @@ public interface IBrowserExt {
 	 * @return the default install locations of this browser
 	 */
 	public String[] getDefaultLocations();
+	
+    /**
+     * Determines whether a location is relative to the users home directory
+     * @param i
+     * @return true if getDefaultLocations()[i] is a location relative to the users home directory
+     */
+	public boolean isSearchHome(int i);
 	
 	/**
 	 * Checks whether the factory can work on the user system.

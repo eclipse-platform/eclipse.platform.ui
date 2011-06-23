@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -195,40 +195,72 @@ public class WebBrowserUtil {
 
 		String os = Platform.getOS();
 		File[] roots = getUsableDrives(File.listRoots());
-		int rootSize = roots.length;
-
-		// Math.min(roots.length, 2); // just check the first two drives
+		File[] home = getHomeDirectory();
 
 		IBrowserExt[] browsers = WebBrowserUIPlugin.getBrowsers();
 		int size = browsers.length;
 		for (int i = 0; i < size; i++) {
-			if (browsers[i].getDefaultLocations() != null
-					&& browsers[i].getOS().toLowerCase().indexOf(os) >= 0) {
-				for (int k = 0; k < rootSize; k++) {
-					int size2 = browsers[i].getDefaultLocations().length;
-					for (int j = 0; j < size2; j++) {
-						String location = browsers[i].getDefaultLocations()[j];
-						try {
-							File f = new File(roots[k], location);
-							if (!paths.contains(f.getAbsolutePath()
-									.toLowerCase())) {
-								if (f.exists()) {
-									BrowserDescriptor browser = new BrowserDescriptor();
-									browser.name = browsers[i].getName();
-									browser.location = f.getAbsolutePath();
-									browser.parameters = browsers[i]
-											.getParameters();
-									list.add(browser);
-									j += size2;
-								}
-							}
-						} catch (Exception e) {
-							// ignore
-						}
+			IBrowserExt browserExt = browsers[i];
+			if (browserExt.getDefaultLocations() != null
+					&& browserExt.getOS().toLowerCase().indexOf(os) >= 0) {
+				int size2 = browserExt.getDefaultLocations().length;
+				for (int j = 0; j < size2; j++) {
+					String location = browserExt.getDefaultLocations()[j];
+
+					
+					String foundBrowserPath = null;
+					
+					boolean searchHome = browserExt.isSearchHome(j);
+					File[] searchRoots = searchHome ? home : roots;
+					foundBrowserPath = locateBrowser(paths, location,
+							searchRoots);
+
+					if (foundBrowserPath != null) {
+						BrowserDescriptor descriptor = new BrowserDescriptor();
+						descriptor.name = browserExt.getName();
+						descriptor.location = foundBrowserPath;
+						descriptor.parameters = browserExt
+								.getParameters();
+						list.add(descriptor);
+						j += size2;
 					}
+
 				}
 			}
 		}
+	}
+
+	/*
+	 * Look for the file on each of the search roots
+	 */
+	private static String locateBrowser(List alreadyFoundPaths,
+			String location, File[] searchRoots) {
+		int rootSize = searchRoots.length;
+		for (int k = 0; k < rootSize; k++) {
+			try {
+				File f = new File(searchRoots[k], location);
+				String absolutePath = f.getAbsolutePath();
+				if (!alreadyFoundPaths.contains(absolutePath
+						.toLowerCase())) {
+					if (f.exists()) {
+						return absolutePath;
+					}
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+		return null;
+	}
+	
+	private static File[] getHomeDirectory() {
+		try {
+			String userHome=System.getProperty("user.home"); //$NON-NLS-1$
+			File home = new File(userHome);
+			return new File[] { home };
+		}  catch (Exception e) {
+			return new File[0];
+		}		
 	}
 
 	private static File[] getUsableDrives(File[] roots) {
