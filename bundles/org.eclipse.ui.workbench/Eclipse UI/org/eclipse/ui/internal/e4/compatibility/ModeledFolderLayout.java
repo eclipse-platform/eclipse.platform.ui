@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.ui.IFolderLayout;
@@ -31,6 +33,11 @@ public class ModeledFolderLayout extends ModeledPlaceholderFolderLayout
 		if (viewModel != null) {
 			// adding a non-placeholder to this folder, make sure the folder
 			// will be rendered
+			MUIElement parent = folderModel.getParent();
+			while (parent != null && !(parent instanceof MPerspective)) {
+				parent.setToBeRendered(true);
+				parent = parent.getParent();
+			}
 			folderModel.setToBeRendered(true);
 			folderModel.getChildren().add(viewModel);
 		}
