@@ -80,7 +80,7 @@ public class EclipseContext implements IEclipseContext {
 
 	private ArrayList<String> modifiable;
 
-	private ArrayList<Computation> waiting; // list of Computations; null for all non-root entries
+	private List<Computation> waiting; // list of Computations; null for all non-root entries
 
 	private Set<WeakReference<EclipseContext>> children = new HashSet<WeakReference<EclipseContext>>();
 
@@ -98,7 +98,7 @@ public class EclipseContext implements IEclipseContext {
 		this.strategy = strategy;
 		setParent(parent);
 		if (parent == null)
-			waiting = new ArrayList<Computation>();
+			waiting = Collections.synchronizedList(new ArrayList<Computation>());
 		if (debugAddOn != null)
 			debugAddOn.notify(this, IEclipseContextDebugger.EventType.CONSTRUCTED, null);
 	}
@@ -488,8 +488,8 @@ public class EclipseContext implements IEclipseContext {
 			parent.addWaiting(cp);
 			return;
 		}
-		if (waiting == null)
-			waiting = new ArrayList<Computation>();
+		if (waiting == null) // could happen on re-parent
+			waiting = Collections.synchronizedList(new ArrayList<Computation>());
 		waiting.add(cp);
 	}
 
