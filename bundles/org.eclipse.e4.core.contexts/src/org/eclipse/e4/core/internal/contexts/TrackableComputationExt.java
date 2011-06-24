@@ -75,13 +75,16 @@ public class TrackableComputationExt extends Computation {
 		boolean result = true;
 		try {
 			if (cachedEvent != null) {
-				if (runnable instanceof RunAndTrackExt)
+				if (runnable instanceof RunAndTrackExt) {
 					result = ((RunAndTrackExt) runnable).update(event.getContext(), event.getEventType(), event.getArguments());
-				else {
-					if (eventType == ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED)
+					if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED)
+						cachedEvent = null;
+				} else {
+					if (eventType != ContextChangeEvent.DISPOSE && eventType != ContextChangeEvent.UNINJECTED) {
 						result = runnable.changed(cachedEvent.getContext());
+						cachedEvent = null;
+					}
 				}
-				cachedEvent = null;
 			}
 			if (eventType != ContextChangeEvent.UPDATE) {
 				if (runnable instanceof RunAndTrackExt)
