@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * Copyright (c) 2009, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.e4.core.internal.tests.contexts.inject.ContextInjectionFactor
 import org.eclipse.e4.core.internal.tests.contexts.inject.ContextInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.DisposingReferencedContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.ExtraDependenciesTest;
+import org.eclipse.e4.core.internal.tests.contexts.inject.GenericsInjectionTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.GroupedUpdatesTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.InjectStaticContextTest;
 import org.eclipse.e4.core.internal.tests.contexts.inject.InjectionUpdateTest;
@@ -98,5 +99,6 @@ public class CoreTestSuite extends TestSuite {
 		addTestSuite(Bug317183Test.class);
 		addTestSuite(DependenciesLeakTest.class);
 		addTestSuite(ActivationInjectionTest.class);
+		addTestSuite(GenericsInjectionTest.class);
 	}
 }
