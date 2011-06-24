@@ -3924,12 +3924,19 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			}
 		}
 
-		if (partService.getActivePart() == null) {
+		MPart activePart = partService.getActivePart();
+		if (activePart == null) {
 			// unset active part/editor sources if no active part found
 			updateActivePartSources(null);
 			updateActiveEditorSources(null);
 		} else if (part instanceof IEditorPart) {
-			updateActiveEditorSources(findPart(getActiveEditor()));
+			// an editor got closed, update information about active editor
+			IEditorPart activeEditor = getActiveEditor();
+			if (activeEditor == null) {
+				updateActiveEditorSources(activePart);
+			} else {
+				updateActiveEditorSources(findPart(activeEditor));
+			}
 		}
 
 		if (part instanceof IPageChangeProvider) {
