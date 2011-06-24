@@ -74,6 +74,8 @@ public class InjectorImpl implements IInjector {
 	private Map<Class<?>, Method[]> methodsCache = new WeakHashMap<Class<?>, Method[]>();
 	private Map<Class<?>, Map<Method, Boolean>> isOverriddenCache = new WeakHashMap<Class<?>, Map<Method, Boolean>>();
 
+	private Set<Class<?>> classesBeingCreated = new HashSet<Class<?>>(5);
+
 	public void inject(Object object, PrimaryObjectSupplier objectSupplier) {
 		inject(object, objectSupplier, null);
 	}
@@ -268,55 +270,63 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private Object internalMake(Class<?> clazz, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier) {
-		boolean isSingleton = clazz.isAnnotationPresent(Singleton.class);
-		if (isSingleton) {
-			synchronized (singletonCache) {
-				if (singletonCache.containsKey(clazz))
-					return singletonCache.get(clazz);
-			}
-		}
+		if (classesBeingCreated.contains(clazz))
+			throw new InjectionException("Recursive reference trying to create class " + clazz.getName()); //$NON-NLS-1$
+		try {
+			classesBeingCreated.add(clazz);
 
-		Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-		// Sort the constructors by descending number of constructor arguments
-		ArrayList<Constructor<?>> sortedConstructors = new ArrayList<Constructor<?>>(constructors.length);
-		for (Constructor<?> constructor : constructors)
-			sortedConstructors.add(constructor);
-		Collections.sort(sortedConstructors, new Comparator<Constructor<?>>() {
-			public int compare(Constructor<?> c1, Constructor<?> c2) {
-				int l1 = c1.getParameterTypes().length;
-				int l2 = c2.getParameterTypes().length;
-				return l2 - l1;
-			}
-		});
-
-		for (Constructor<?> constructor : sortedConstructors) {
-			// skip private and protected constructors; allow public and package visibility
-			int modifiers = constructor.getModifiers();
-			if (((modifiers & Modifier.PRIVATE) != 0) || ((modifiers & Modifier.PROTECTED) != 0))
-				continue;
-
-			// unless this is the default constructor, it has to be tagged
-			if (!constructor.isAnnotationPresent(Inject.class) && constructor.getParameterTypes().length != 0)
-				continue;
-
-			ConstructorRequestor requestor = new ConstructorRequestor(constructor, this, objectSupplier, tempSupplier);
-			Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, true, false);
-			if (unresolved(actualArgs) != -1)
-				continue;
-			requestor.setResolvedArgs(actualArgs);
-
-			Object newInstance = requestor.execute();
-			if (newInstance != null) {
-				inject(newInstance, objectSupplier, tempSupplier);
-				if (isSingleton) {
-					synchronized (singletonCache) { // TBD this is not quite right, synch the method
-						singletonCache.put(clazz, newInstance);
-					}
+			boolean isSingleton = clazz.isAnnotationPresent(Singleton.class);
+			if (isSingleton) {
+				synchronized (singletonCache) {
+					if (singletonCache.containsKey(clazz))
+						return singletonCache.get(clazz);
 				}
-				return newInstance;
 			}
+
+			Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+			// Sort the constructors by descending number of constructor arguments
+			ArrayList<Constructor<?>> sortedConstructors = new ArrayList<Constructor<?>>(constructors.length);
+			for (Constructor<?> constructor : constructors)
+				sortedConstructors.add(constructor);
+			Collections.sort(sortedConstructors, new Comparator<Constructor<?>>() {
+				public int compare(Constructor<?> c1, Constructor<?> c2) {
+					int l1 = c1.getParameterTypes().length;
+					int l2 = c2.getParameterTypes().length;
+					return l2 - l1;
+				}
+			});
+
+			for (Constructor<?> constructor : sortedConstructors) {
+				// skip private and protected constructors; allow public and package visibility
+				int modifiers = constructor.getModifiers();
+				if (((modifiers & Modifier.PRIVATE) != 0) || ((modifiers & Modifier.PROTECTED) != 0))
+					continue;
+
+				// unless this is the default constructor, it has to be tagged
+				if (!constructor.isAnnotationPresent(Inject.class) && constructor.getParameterTypes().length != 0)
+					continue;
+
+				ConstructorRequestor requestor = new ConstructorRequestor(constructor, this, objectSupplier, tempSupplier);
+				Object[] actualArgs = resolveArgs(requestor, objectSupplier, tempSupplier, false, true, false);
+				if (unresolved(actualArgs) != -1)
+					continue;
+				requestor.setResolvedArgs(actualArgs);
+
+				Object newInstance = requestor.execute();
+				if (newInstance != null) {
+					inject(newInstance, objectSupplier, tempSupplier);
+					if (isSingleton) {
+						synchronized (singletonCache) { // TBD this is not quite right, synch the method
+							singletonCache.put(clazz, newInstance);
+						}
+					}
+					return newInstance;
+				}
+			}
+			throw new InjectionException("Could not find satisfiable constructor in " + clazz.getName()); //$NON-NLS-1$
+		} finally {
+			classesBeingCreated.remove(clazz);
 		}
-		throw new InjectionException("Could not find satisfiable constructor in " + clazz.getName()); //$NON-NLS-1$
 	}
 
 	public void resolveArguments(IRequestor requestor, boolean initial) {
