@@ -101,15 +101,16 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -124,7 +125,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
-import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
 import org.eclipse.ui.internal.e4.compatibility.SelectionService;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
@@ -426,10 +427,12 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		windowContext.set(ISaveHandler.class, new ISaveHandler() {
 			public Save promptToSave(MPart dirtyPart) {
 				Object object = dirtyPart.getObject();
-				if (object instanceof CompatibilityEditor) {
-					IEditorPart editor = ((CompatibilityEditor) object).getEditor();
-					return SaveableHelper.savePart(editor, editor, WorkbenchWindow.this, true) ? Save.NO
-							: Save.CANCEL;
+				if (object instanceof CompatibilityPart) {
+					IWorkbenchPart part = ((CompatibilityPart) object).getPart();
+					if (part instanceof ISaveablePart) {
+						return SaveableHelper.savePart((ISaveablePart) part, part,
+								WorkbenchWindow.this, true) ? Save.NO : Save.CANCEL;
+					}
 				}
 				return defaultSaveHandler.promptToSave(dirtyPart);
 			}
