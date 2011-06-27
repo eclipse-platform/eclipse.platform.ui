@@ -717,10 +717,10 @@ public class MenuHelper {
 		} else {
 			MDirectToolItem toolItem = MenuFactoryImpl.eINSTANCE.createDirectToolItem();
 			String itemId = item.getId();
-			toolItem.setElementId(itemId == null ? id : itemId);
+			toolItem.setElementId(itemId);
 			String iconURI = getIconURI(action.getImageDescriptor());
-			if (iconURI == null) {
-				iconURI = getIconURI(id, application.getContext());
+			if (iconURI == null && itemId != null) {
+				iconURI = getIconURI(itemId, application.getContext());
 				if (iconURI == null) {
 					if (action.getText() != null) {
 						toolItem.setLabel(action.getText());
@@ -894,6 +894,10 @@ public class MenuHelper {
 	}
 
 	private static String getIconURI(String commandId, IEclipseContext workbench) {
+		if (commandId == null) {
+			return null;
+		}
+
 		ICommandImageService imageService = workbench.get(ICommandImageService.class);
 		ImageDescriptor descriptor = imageService.getImageDescriptor(commandId);
 		return getIconURI(descriptor);
