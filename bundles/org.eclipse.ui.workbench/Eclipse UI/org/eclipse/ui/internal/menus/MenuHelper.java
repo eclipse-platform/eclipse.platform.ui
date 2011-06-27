@@ -719,14 +719,20 @@ public class MenuHelper {
 			String itemId = item.getId();
 			toolItem.setElementId(itemId);
 			String iconURI = getIconURI(action.getImageDescriptor());
-			if (iconURI == null && itemId != null) {
-				iconURI = getIconURI(itemId, application.getContext());
-				if (iconURI == null) {
+			if (iconURI == null) {
+				if (itemId == null) {
 					if (action.getText() != null) {
 						toolItem.setLabel(action.getText());
 					}
 				} else {
-					toolItem.setIconURI(iconURI);
+					iconURI = getIconURI(itemId, application.getContext());
+					if (iconURI == null) {
+						if (action.getText() != null) {
+							toolItem.setLabel(action.getText());
+						}
+					} else {
+						toolItem.setIconURI(iconURI);
+					}
 				}
 			} else {
 				toolItem.setIconURI(iconURI);
