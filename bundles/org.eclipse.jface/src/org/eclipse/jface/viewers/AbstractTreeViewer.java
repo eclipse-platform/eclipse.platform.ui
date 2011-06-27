@@ -13,6 +13,7 @@
  *     Michael Schneider, bug 210747
  *     Bruce Sutton, bug 221768
  *     Matthew Hall, bug 221988
+ *     Julien Desgats, bug 203950
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -88,6 +89,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @see #setAutoExpandLevel
 	 */
 	private int expandToLevel = 0;
+	
+	/**
+	 * Indicates if filters should be checked to determine expandability of
+	 * a tree node. 
+	 */
+	private boolean isExpandableCheckFilters = false;
 
 	/**
 	 * Safe runnable used to update an item.
@@ -2090,7 +2097,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * <code>hasChildren</code> on this viewer's content provider. It may be
 	 * overridden if necessary.
 	 * </p>
-	 *
+	 * @see #setExpandPreCheckFilters(boolean)
 	 * @param elementOrTreePath
 	 *            the element or path
 	 * @return <code>true</code> if the tree node representing the given
@@ -2120,11 +2127,19 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					path = new TreePath(new Object[] { element });
 				}
 			}
-			return tpcp.hasChildren(path);
+			boolean hasChildren = tpcp.hasChildren(path);
+			if (hasChildren && isExpandableCheckFilters && hasFilters()) {
+				return getFilteredChildren(path).length > 0;
+			}
+			return hasChildren;
 		}
 		if (cp instanceof ITreeContentProvider) {
 			ITreeContentProvider tcp = (ITreeContentProvider) cp;
-			return tcp.hasChildren(element);
+			boolean hasChildren = tcp.hasChildren(element);
+			if (hasChildren && isExpandableCheckFilters && hasFilters()) {
+				return getFilteredChildren(element).length > 0;
+			}
+			return hasChildren;
 		}
 		return false;
 	}
@@ -3145,4 +3160,26 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected ViewerRow getViewerRowFromItem(Widget item) {
 		return null;
 	}
+
+	/**
+	 * Instructs {@link #isExpandable(Object)} to consult filters to more accurately
+	 * determine if an item can be expanded.
+	 * <p>
+	 * Setting this value to <code>true</code> will affect performance of the tree
+	 * viewer.
+	 * </p><p>
+	 * To improve performance, by default the tree viewer does not consult filters when 
+	 * determining if a tree node could be expanded.
+	 * </p>
+	 * @param checkFilters <code>true</code> to instruct tree viewer to consult filters 
+	 * @see #isExpandable(Object)
+	 * @since 3.8
+	 */
+	public void setExpandPreCheckFilters(boolean checkFilters) {
+		if (checkFilters != isExpandableCheckFilters) {
+			this.isExpandableCheckFilters = checkFilters;
+			refresh();
+		}
+	}
+
 }
