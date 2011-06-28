@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class SafariBrowser extends DefaultBrowser {
 			url = url.substring(5);
 		}
 		
-		ArrayList tokenList = new ArrayList();
+		ArrayList<String> tokenList = new ArrayList<String>();
 		//Divide along quotation marks
 		StringTokenizer qTokenizer = new StringTokenizer(path.trim(),
 			"\"", true); //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class SafariBrowser extends DefaultBrowser {
 		// substitute %1 by url
 		boolean substituted = false;
 		for (int i = 0; i < tokenList.size(); i++) {
-			String token = (String) tokenList.get(i);
+			String token = tokenList.get(i);
 			String newToken = doSubstitutions(token, url);
 			if (newToken != null) {
 				tokenList.set(i, newToken);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import java.util.Observable;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
@@ -30,7 +31,7 @@ import org.eclipse.ui.XMLMemento;
  * 
  */
 public class BrowserManager extends Observable {
-	protected List browsers;
+	protected List<IBrowserDescriptor> browsers;
 	protected IBrowserDescriptor currentBrowser;
 	
 	private IPreferenceChangeListener pcl;
@@ -60,7 +61,7 @@ public class BrowserManager extends Observable {
 		};
 		
 
-	    InstanceScope instanceScope = new InstanceScope();
+	    IScopeContext instanceScope = InstanceScope.INSTANCE;
 	    IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
 	    prefs.addPreferenceChangeListener(pcl);
 	}
@@ -72,7 +73,7 @@ public class BrowserManager extends Observable {
 	}
 
 	protected void dispose() {
-	    InstanceScope instanceScope = new InstanceScope();
+	    IScopeContext instanceScope = InstanceScope.INSTANCE;
 		IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
 		prefs.removePreferenceChangeListener(pcl);
 	}
@@ -81,10 +82,10 @@ public class BrowserManager extends Observable {
 		return new BrowserDescriptorWorkingCopy();
 	}	
 
-	public List getWebBrowsers() {
+	public List<IBrowserDescriptor> getWebBrowsers() {
 		if (browsers == null)
 			loadBrowsers();
-		return new ArrayList(browsers);
+		return new ArrayList<IBrowserDescriptor>(browsers);
 	}
 
 	public void loadBrowsers() {
@@ -93,7 +94,7 @@ public class BrowserManager extends Observable {
 		String xmlString = Platform.getPreferencesService().getString
 		    (WebBrowserUIPlugin.PLUGIN_ID,  "browsers", null, null); //$NON-NLS-1$
 		if (xmlString != null && xmlString.length() > 0) {
-			browsers = new ArrayList();
+			browsers = new ArrayList<IBrowserDescriptor>();
 			
 			try {
 				ByteArrayInputStream in = new ByteArrayInputStream(xmlString.getBytes("utf-8")); //$NON-NLS-1$
@@ -114,7 +115,7 @@ public class BrowserManager extends Observable {
 				
 				Integer current = memento.getInteger("current"); //$NON-NLS-1$
 				if (current != null) {
-					currentBrowser = (IBrowserDescriptor) browsers.get(current.intValue()); 
+					currentBrowser = browsers.get(current.intValue()); 
 				}
 			} catch (Exception e) {
 				Trace.trace(Trace.WARNING, "Could not load browsers: " + e.getMessage()); //$NON-NLS-1$
@@ -132,7 +133,7 @@ public class BrowserManager extends Observable {
 		}
 		
 		if (currentBrowser == null && browsers.size() > 0)
-			currentBrowser = (IBrowserDescriptor) browsers.get(0);
+			currentBrowser = browsers.get(0);
 		setChanged();
 		notifyObservers();
 	}
@@ -142,7 +143,7 @@ public class BrowserManager extends Observable {
 			ignorePreferenceChanges = true;
 			XMLMemento memento = XMLMemento.createWriteRoot("web-browsers"); //$NON-NLS-1$
 
-			Iterator iterator = browsers.iterator();
+			Iterator<IBrowserDescriptor> iterator = browsers.iterator();
 			while (iterator.hasNext()) {
 				Object obj = iterator.next();
 				if (obj instanceof BrowserDescriptor) {
@@ -159,7 +160,7 @@ public class BrowserManager extends Observable {
 			StringWriter writer = new StringWriter();
 			memento.save(writer);
 			String xmlString = writer.getBuffer().toString();
-			InstanceScope instanceScope = new InstanceScope();
+			IScopeContext instanceScope = InstanceScope.INSTANCE;
 		    IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
 			prefs.put("browsers", xmlString); //$NON-NLS-1$
 			prefs.flush();
@@ -170,7 +171,7 @@ public class BrowserManager extends Observable {
 	}
 
 	protected void setupDefaultBrowsers() {
-		browsers = new ArrayList();
+		browsers = new ArrayList<IBrowserDescriptor>();
 
 		// add system browser
 		if (WebBrowserUtil.canUseSystemBrowser()) {
@@ -183,7 +184,7 @@ public class BrowserManager extends Observable {
 		
 		// by default, if internal is there, that is current, else set the first external one
 		if (!browsers.isEmpty() && currentBrowser == null)
-			currentBrowser = (IBrowserDescriptor) browsers.get(0);
+			currentBrowser = browsers.get(0);
 	}
 
 	protected void addBrowser(IBrowserDescriptor browser) {
@@ -203,7 +204,7 @@ public class BrowserManager extends Observable {
 		if (currentBrowser == null || currentBrowser.equals(browser)) {
 			currentBrowser = null;
 			if (browsers.size() > 0)
-				currentBrowser = (IBrowserDescriptor) browsers.get(0);
+				currentBrowser = browsers.get(0);
 		}
 	}
 
@@ -212,7 +213,7 @@ public class BrowserManager extends Observable {
 			loadBrowsers();
 
 		if (currentBrowser == null && browsers.size() > 0)
-			return (IBrowserDescriptor) browsers.get(0);
+			return browsers.get(0);
 		
 		return currentBrowser; 
 	}

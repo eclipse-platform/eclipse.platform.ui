@@ -135,7 +135,7 @@ public class WebBrowserView extends ViewPart implements
 			File file = path.toFile();
 			if (file.exists() && isWebFile(file.getName()))
 				try {
-					return file.toURL();
+					return file.toURI().toURL();
 				} catch (MalformedURLException e) {
 					return null;
 				}

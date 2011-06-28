@@ -191,7 +191,7 @@ public class WebBrowserUtil {
 	 * Add any supported EXTERNAL web browsers found after an arbitrary check in
 	 * specific paths
 	 */
-	public static void addFoundBrowsers(List<BrowserDescriptor> list) {
+	public static void addFoundBrowsers(List<IBrowserDescriptor> browsers2) {
 		List<String> paths = getExternalBrowserPaths();
 
 		String os = Platform.getOS();
@@ -216,7 +216,7 @@ public class WebBrowserUtil {
 						descriptor.location = foundBrowserPath;
 						descriptor.parameters = browserExt
 								.getParameters();
-						list.add(descriptor);
+						browsers2.add(descriptor);
 						j += size2;
 					}
 				}

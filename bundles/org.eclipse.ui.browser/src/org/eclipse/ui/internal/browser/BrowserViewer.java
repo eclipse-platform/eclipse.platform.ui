@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,7 +110,7 @@ public class BrowserViewer extends Composite {
 
     protected boolean loading;
 
-    protected static java.util.List history;
+    protected static java.util.List<String> history;
 
     protected Browser browser;
     
@@ -124,7 +124,7 @@ public class BrowserViewer extends Composite {
 
     protected int progressWorked = 0;
 	 
-	 protected List propertyListeners;
+	 protected List<PropertyChangeListener> propertyListeners;
 
     /**
      * Under development - do not use
@@ -473,7 +473,7 @@ public class BrowserViewer extends Composite {
 		 */
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			if (propertyListeners == null)
-				propertyListeners = new ArrayList();
+				propertyListeners = new ArrayList<PropertyChangeListener>();
 			propertyListeners.add(listener);
 		}
 
@@ -676,7 +676,7 @@ public class BrowserViewer extends Composite {
         int found = -1;
         int size = history.size();
         for (int i = 0; i < size; i++) {
-            String s = (String) history.get(i);
+            String s = history.get(i);
             if (s.equals(url)) {
                 found = i;
                 break;
