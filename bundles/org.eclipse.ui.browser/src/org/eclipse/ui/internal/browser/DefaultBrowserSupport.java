@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	static final String DEFAULT_ID_BASE = "org.eclipse.ui.defaultBrowser"; //$NON-NLS-1$
 	private static final String HELP_BROWSER_ID = "org.eclipse.help.ui"; //$NON-NLS-1$
 
-	protected HashMap browserIdMap = new HashMap();
+	protected HashMap<String, Object> browserIdMap = new HashMap<String, Object>();
 
 	protected static DefaultBrowserSupport instance;
 
@@ -58,6 +58,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			if (obj instanceof IWebBrowser)
 				browser = (IWebBrowser) obj;
 			else if (obj instanceof HashMap) {
+				@SuppressWarnings("rawtypes")
 				HashMap wmap = (HashMap) obj;
 				IWorkbenchWindow window = PlatformUI.getWorkbench()
 						.getActiveWorkbenchWindow();
@@ -139,9 +140,10 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			IWorkbenchWindow window = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow();
 			Integer key = getWindowKey(window);
-			HashMap wmap = (HashMap) browserIdMap.get(browserId);
+			@SuppressWarnings("unchecked")
+			HashMap<Integer, IWebBrowser> wmap = (HashMap<Integer, IWebBrowser>) browserIdMap.get(browserId);
 			if (wmap == null) {
-				wmap = new HashMap();
+				wmap = new HashMap<Integer, IWebBrowser>();
 				browserIdMap.put(browserId, wmap);
 			}
 			wmap.put(key, webBrowser);
@@ -179,6 +181,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			Integer key = ((InternalBrowserInstance) browser).getWindowKey();
 			Object entry = browserIdMap.get(baseId);
 			if (entry != null && entry instanceof HashMap) {
+				@SuppressWarnings("rawtypes")
 				HashMap wmap = (HashMap) entry;
 				wmap.remove(key);
 				if (wmap.isEmpty())

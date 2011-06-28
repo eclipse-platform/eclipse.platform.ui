@@ -128,7 +128,7 @@ public class WebBrowserViewDropAdapter extends DropTargetAdapter {
 				return true;
 			File f = new File(s[0]);
 			try {
-				view.setURL(f.toURL().toExternalForm());
+				view.setURL(f.toURI().toURL().toExternalForm());
 			} catch (Exception e) {
 				// TODO
 			}
