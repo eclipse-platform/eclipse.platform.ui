@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  */
 public abstract class WorkspaceJob extends InternalWorkspaceJob {
 	/**
-	 * Creates a new workspace job.
+	 * Creates a new workspace job with the specified name. The job name is
+	 * a human-readable value that is displayed to users. The name does not
+	 * need to be unique, but it must not be <code>null</code>.
+	 * 
 	 * @param name the name of the job
 	 */
 	public WorkspaceJob(String name) {
