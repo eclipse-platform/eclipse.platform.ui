@@ -720,7 +720,7 @@ public class StackRenderer extends LazyStackRenderer {
 			ToolItem ti = new ToolItem(menuTB, SWT.PUSH);
 			ti.setImage(getViewMenuImage());
 			ti.setHotImage(null);
-			ti.setToolTipText("View Menu"); //$NON-NLS-1$
+			ti.setToolTipText(SWTRenderersMessages.viewMenu);
 
 			ti.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
