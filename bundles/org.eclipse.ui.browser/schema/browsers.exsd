@@ -104,7 +104,9 @@
    <element name="location" type="string">
       <annotation>
          <documentation>
-            Default install locations. these locations should not contain the initial path, as it will be substituted with all known drives. (e.g. on Windows, a location of &quot;test.exe&quot; would look for &quot;c:\test.exe&quot;, &quot;d:\test.exe&quot;, etc. for all known drives.
+            Default install locations. These locations should not contain the initial path, as it will be substituted with all known drives. E.g. on Windows, a location of &quot;test.exe&quot; would look for &quot;c:\test.exe&quot;, &quot;d:\test.exe&quot;, etc. for all known drives.
+&lt;p&gt;
+On Windows, the path can also start with an environment variable, e.g. &quot;%%ProgramFiles%\folder\test.exe&quot;. Note the double % at the beginning to prevent localization.&lt;/p&gt;
          </documentation>
       </annotation>
    </element>
@@ -130,13 +132,13 @@
  &lt;extension point=&quot;org.eclipse.ui.browser.browsers&quot;&gt;
   &lt;browser
      id=&quot;org.eclipse.ui.browser.firefox&quot;
-     name=Firefox
+     name=&quot;Firefox&quot;
      os=&quot;Win32&quot;
      executable=&quot;firefox.exe&quot;
      factoryclass=&quot;org.eclipse.ui.internal.browser.browsers.MozillaFactory&quot;&gt;
-     &lt;location&gt;Program Files\mozilla.org\Firefox\firefox.exe&lt;/location&gt;
-     &lt;location&gt;Program Files\Mozilla Firefox\firefox.exe&lt;/location&gt;
-   &lt;/browser&gt;
+       &lt;location&gt;%%ProgramFiles%\Mozilla Firefox\firefox.exe&lt;/location&gt;
+       &lt;location&gt;%%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe&lt;/location&gt;
+  &lt;/browser&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

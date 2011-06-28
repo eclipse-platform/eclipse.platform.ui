@@ -84,26 +84,6 @@
    <extension point="org.eclipse.ui.browser.browsers">
       <!-- Linux -->
       <browser
-         id="org.eclipse.ui.browser.mozilla"
-         name="%browserMozilla"
-         os="linux,aix,hpux,solaris"
-         executable="mozilla"
-         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
-         <location>usr/bin/mozilla</location>
-         <location>usr/X11/bin/mozilla</location>
-         <location>usr/sfw/lib/mozilla/mozilla</location>
-      </browser>
-      <browser
-         id="org.eclipse.ui.browser.netscape"
-         name="%browserNetscape"
-         os="linux,aix,hpux,solaris"
-         executable="netscape"
-         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
-         <location>usr/bin/netscape</location>
-         <location>usr/X11R6/bin/netscape</location>
-         <location>usr/dt/bin/netscape</location>
-      </browser>
-      <browser
          id="org.eclipse.ui.browser.firefox"
          name="%browserFirefox"
          os="linux,aix,hpux,solaris"
@@ -130,54 +110,43 @@
       
       <!-- Windows -->
       <browser
-         id="org.eclipse.ui.browser.mozilla"
-         name="%browserMozilla"
-         os="Win32"
-         executable="mozilla.exe"
-         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
-         <location>Program Files\mozilla.org\Mozilla\mozilla.exe</location>
-      </browser>
-      <browser
-         id="org.eclipse.ui.browser.netscape7"
-         name="%browserNetscape7"
-         os="Win32"
-         executable="netsc.exe"
-         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
-         <location>Program Files\Netscape\Netscape\netscp.exe</location>
-      </browser>
-      <browser
-         id="org.eclipse.ui.browser.netscape4"
-         name="%browserNetscape4"
-         os="Win32"
-         executable="netscape.exe"
-         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
-         <location>Program Files\Netscape\Communicator\Program\netscape.exe</location>
-      </browser>
-      <browser
          id="org.eclipse.ui.browser.firefox"
          name="%browserFirefox"
          os="Win32"
          executable="firefox.exe"
          factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
-         <location>Program Files\mozilla.org\Firefox\firefox.exe</location>
-         <location>Program Files\Mozilla Firefox\firefox.exe</location>
+         <location>%%ProgramFiles%\mozilla.org\Firefox\firefox.exe</location>
+         <location>%%ProgramFiles(x86)%\mozilla.org\Firefox\firefox.exe</location>
+         <location>%%ProgramW6432%\mozilla.org\Firefox\firefox.exe</location>
+         
+         <location>%%ProgramFiles%\Mozilla Firefox\firefox.exe</location>
+         <location>%%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe</location>
+         <location>%%ProgramW6432%\Mozilla Firefox\firefox.exe</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.ie"
          name="%browserInternetExplorer"
          os="Win32"
          executable="iexplore.exe">
-         <location>Program Files\Internet Explorer\iexplore.exe</location>
+         <location>%%ProgramFiles%\Internet Explorer\iexplore.exe</location>
+         <location>%%ProgramFiles(x86)%\Internet Explorer\iexplore.exe</location>
+         <location>%%ProgramW6432%\Internet Explorer\iexplore.exe</location>
+      </browser>
+      <browser
+         id="org.eclipse.ui.browser.chrome"
+         name="%browserChrome"
+         os="Win32"
+         executable="chrome.exe">
+         <location>%%LOCALAPPDATA%\Google\Chrome\Application\chrome.exe</location>
       </browser>
       <browser
          id="org.eclipse.ui.browser.opera"
          name="%browserOpera"
          os="Win32"
          executable="opera.exe">
-         <location>Program Files\Opera7\opera.exe</location>
-         <location>
-            Program Files\Opera\opera.exe
-         </location>
+         <location>%%ProgramFiles%\Opera\opera.exe</location>
+         <location>%%ProgramFiles(x86)%\Opera\opera.exe</location>
+         <location>%%ProgramW6432%\Opera\opera.exe</location>
       </browser>
       
       <!-- Mac -->
@@ -204,14 +173,6 @@
          factoryclass="org.eclipse.ui.internal.browser.macosx.SafariBrowserFactory">
          <location>Applications/Safari.app/Contents/MacOS/Safari</location>
       </browser> -->
-      <browser
-         id="org.eclipse.ui.browser.mozilla"
-         name="%browserMozilla"
-         os="MacOSX"
-         executable="mozilla-bin"
-         factoryclass="org.eclipse.ui.internal.browser.browsers.MozillaFactory">
-         <location>Applications/Mozilla.app/Contents/MacOS/mozilla-bin</location>
-      </browser>
       <browser
          id="org.eclipse.ui.browser.ie"
          name="%browserInternetExplorer"

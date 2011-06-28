@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.program.Program;
@@ -174,12 +175,12 @@ public class WebBrowserUtil {
 		return Program.findProgram("html") != null; //$NON-NLS-1$
 	}
 
-	public static List getExternalBrowserPaths() {
-		List paths = new ArrayList();
-		Iterator iterator = BrowserManager.getInstance().getWebBrowsers()
-				.iterator();
+	public static List<String> getExternalBrowserPaths() {
+		List<String> paths = new ArrayList<String>();
+		Iterator<IBrowserDescriptor> iterator = BrowserManager.getInstance()
+				.getWebBrowsers().iterator();
 		while (iterator.hasNext()) {
-			IBrowserDescriptor wb = (IBrowserDescriptor) iterator.next();
+			IBrowserDescriptor wb = iterator.next();
 			if (wb != null && wb.getLocation() != null)
 				paths.add(wb.getLocation().toLowerCase());
 		}
@@ -190,51 +191,89 @@ public class WebBrowserUtil {
 	 * Add any supported EXTERNAL web browsers found after an arbitrary check in
 	 * specific paths
 	 */
-	public static void addFoundBrowsers(List list) {
-		List paths = getExternalBrowserPaths();
+	public static void addFoundBrowsers(List<BrowserDescriptor> list) {
+		List<String> paths = getExternalBrowserPaths();
 
 		String os = Platform.getOS();
 		File[] roots = getUsableDrives(File.listRoots());
-		int rootSize = roots.length;
-
-		// Math.min(roots.length, 2); // just check the first two drives
 
 		IBrowserExt[] browsers = WebBrowserUIPlugin.getBrowsers();
 		int size = browsers.length;
 		for (int i = 0; i < size; i++) {
-			if (browsers[i].getDefaultLocations() != null
-					&& browsers[i].getOS().toLowerCase().indexOf(os) >= 0) {
-				for (int k = 0; k < rootSize; k++) {
-					int size2 = browsers[i].getDefaultLocations().length;
-					for (int j = 0; j < size2; j++) {
-						String location = browsers[i].getDefaultLocations()[j];
-						try {
-							File f = new File(roots[k], location);
-							if (!paths.contains(f.getAbsolutePath()
-									.toLowerCase())) {
-								if (f.exists()) {
-									BrowserDescriptor browser = new BrowserDescriptor();
-									browser.name = browsers[i].getName();
-									browser.location = f.getAbsolutePath();
-									browser.parameters = browsers[i]
-											.getParameters();
-									list.add(browser);
-									j += size2;
-								}
-							}
-						} catch (Exception e) {
-							// ignore
-						}
+			IBrowserExt browserExt = browsers[i];
+			String[] locations = browserExt.getDefaultLocations();
+			if (locations != null
+					&& browserExt.getOS().toLowerCase().indexOf(os) >= 0) {
+				int size2 = locations.length;
+				for (int j = 0; j < size2; j++) {
+					String location = locations[j];
+
+					String foundBrowserPath = locateBrowser(paths, location, roots);
+
+					if (foundBrowserPath != null) {
+						BrowserDescriptor descriptor = new BrowserDescriptor();
+						descriptor.name = browserExt.getName();
+						descriptor.location = foundBrowserPath;
+						descriptor.parameters = browserExt
+								.getParameters();
+						list.add(descriptor);
+						j += size2;
 					}
 				}
 			}
 		}
 	}
 
+	/*
+	 * Look for the file on each of the search roots.
+	 * If the location starts with a Windows environment variable, expand it.
+	 */
+	private static String locateBrowser(List<String> alreadyFoundPaths,
+			String location, File[] searchRoots) {
+		int rootSize = searchRoots.length;
+
+		if (Util.isWindows() && location.startsWith("%")) { //$NON-NLS-1$
+			int envVarEnd = location.indexOf('%', 1);
+			if (envVarEnd != -1) {
+				try {
+					String expanded = System.getenv(location.substring(1, envVarEnd));
+					if (expanded != null) {
+						File f = new File(expanded + location.substring(envVarEnd + 1));
+						String absolutePath = f.getAbsolutePath();
+						if (!alreadyFoundPaths.contains(absolutePath.toLowerCase())) {
+							if (f.exists()) {
+								return absolutePath;
+							}
+						}
+						return null;
+					}
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+
+		for (int k = 0; k < rootSize; k++) {
+			try {
+				File f = new File(searchRoots[k], location);
+				String absolutePath = f.getAbsolutePath();
+				if (!alreadyFoundPaths.contains(absolutePath
+						.toLowerCase())) {
+					if (f.exists()) {
+						return absolutePath;
+					}
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+		return null;
+	}
+
 	private static File[] getUsableDrives(File[] roots) {
 		if (!Platform.getOS().equals(Platform.OS_WIN32))
 			return roots;
-		ArrayList list = new ArrayList();
+		ArrayList<File> list = new ArrayList<File>();
 		for (int i = 0; i < roots.length; i++) {
 			String path = roots[i].getAbsolutePath();
 			if (path != null
@@ -242,7 +281,7 @@ public class WebBrowserUtil {
 				continue;
 			list.add(roots[i]);
 		}
-		return (File[]) list.toArray(new File[list.size()]);
+		return list.toArray(new File[list.size()]);
 	}
 
 	/**
