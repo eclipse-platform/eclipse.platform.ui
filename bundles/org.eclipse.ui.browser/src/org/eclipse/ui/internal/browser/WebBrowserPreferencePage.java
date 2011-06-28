@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2010 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,11 +89,11 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 	class BrowserContentProvider implements IStructuredContentProvider {
 		public Object[] getElements(Object inputElement) {
-			List list = new ArrayList();
-			Iterator iterator = BrowserManager.getInstance().getWebBrowsers()
+			List<IBrowserDescriptor> list = new ArrayList<IBrowserDescriptor>();
+			Iterator<IBrowserDescriptor> iterator = BrowserManager.getInstance().getWebBrowsers()
 					.iterator();
 			while (iterator.hasNext()) {
-				IBrowserDescriptor browser = (IBrowserDescriptor) iterator
+				IBrowserDescriptor browser = iterator
 						.next();
 				list.add(browser);
 			}
@@ -305,7 +305,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 							BrowserManager manager = BrowserManager.getInstance();
 							if (browser2 == checkedBrowser) {
 								if (manager.browsers.size() > 0) {
-									checkedBrowser = (IBrowserDescriptor) manager.browsers.get(0);
+									checkedBrowser = manager.browsers.get(0);
 									tableViewer.setChecked(checkedBrowser, true);
 								}
 							}
@@ -386,7 +386,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					BrowserManager manager = BrowserManager.getInstance();
 					if (browser2 == checkedBrowser) {
 						if (manager.browsers.size() > 0) {
-							checkedBrowser = (IBrowserDescriptor) manager.browsers.get(0);
+							checkedBrowser = manager.browsers.get(0);
 							tableViewer.setChecked(checkedBrowser, true);
 						}
 					}
@@ -401,8 +401,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		data.verticalIndent = 9;
 		search.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				final List foundBrowsers = new ArrayList();
-				final List existingPaths = WebBrowserUtil
+				final List<IBrowserDescriptorWorkingCopy> foundBrowsers = new ArrayList<IBrowserDescriptorWorkingCopy>();
+				final List<String> existingPaths = WebBrowserUtil
 						.getExternalBrowserPaths();
 
 				// select a target directory for the search
@@ -421,7 +421,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 					public void run(IProgressMonitor monitor) {
 						monitor.beginTask(Messages.searchingTaskName,
 								IProgressMonitor.UNKNOWN);
-						search(rootDir, existingPaths, foundBrowsers, new HashSet(), monitor);
+						search(rootDir, existingPaths, foundBrowsers, new HashSet<String>(), monitor);
 						monitor.done();
 					}
 				};
@@ -442,16 +442,16 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				if (pm.getProgressMonitor().isCanceled())
 					return;
 
-				List browsersToCreate = foundBrowsers;
+				List<IBrowserDescriptorWorkingCopy> browsersToCreate = foundBrowsers;
 
 				if (browsersToCreate.isEmpty()) { // no browsers found
 					WebBrowserUtil.openMessage(Messages.searchingNoneFound);
 					return;
 				}
 
-				Iterator iterator = browsersToCreate.iterator();
+				Iterator<IBrowserDescriptorWorkingCopy> iterator = browsersToCreate.iterator();
 				while (iterator.hasNext()) {
-					IBrowserDescriptorWorkingCopy browser2 = (IBrowserDescriptorWorkingCopy) iterator
+					IBrowserDescriptorWorkingCopy browser2 = iterator
 							.next();
 					browser2.save();
 				}
@@ -532,8 +532,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		}
 	}
 
-	protected static void search(File directory, List existingPaths,
-			List foundBrowsers, Set directoriesVisited, IProgressMonitor monitor) {
+	protected static void search(File directory, List<String> existingPaths,
+			List<IBrowserDescriptorWorkingCopy> foundBrowsers, Set<String> directoriesVisited, IProgressMonitor monitor) {
 		if (monitor.isCanceled())
 			return;
 		try {
@@ -551,7 +551,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 				new String[] { Integer.toString(foundBrowsers.size()), directory.getAbsolutePath()}));
 		
 		String[] names = directory.list();
-		List subDirs = new ArrayList();
+		List<File> subDirs = new ArrayList<File>();
 
 		for (int i = 0; i < names.length; i++) {
 			if (monitor.isCanceled())
@@ -574,7 +574,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			}
 		}
 		while (!subDirs.isEmpty()) {
-			File subDir = (File) subDirs.remove(0);
+			File subDir = subDirs.remove(0);
 			search(subDir, existingPaths, foundBrowsers, directoriesVisited, monitor);
 			if (monitor.isCanceled()) {
 				return;

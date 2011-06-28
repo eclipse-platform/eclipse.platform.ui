@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class ImageResource {
 
 	// map of image descriptors since these
 	// will be lost by the image registry
-	private static Map imageDescriptors;
+	private static Map<String, ImageDescriptor> imageDescriptors;
 
 	private static Image[] busyImages;
 
@@ -105,7 +105,7 @@ public class ImageResource {
 	public static ImageDescriptor getImageDescriptor(String key) {
 		if (imageRegistry == null)
 			initializeImageRegistry();
-		return (ImageDescriptor) imageDescriptors.get(key);
+		return imageDescriptors.get(key);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class ImageResource {
 	 */
 	protected static void initializeImageRegistry() {
 		imageRegistry = new ImageRegistry();
-		imageDescriptors = new HashMap();
+		imageDescriptors = new HashMap<String, ImageDescriptor>();
 	
 		// load Web browser images
 		registerImage(IMG_ELCL_NAV_BACKWARD, URL_ELCL + "nav_backward.gif"); //$NON-NLS-1$

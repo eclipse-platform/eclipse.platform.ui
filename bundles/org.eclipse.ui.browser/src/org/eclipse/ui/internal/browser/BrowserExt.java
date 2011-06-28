@@ -66,7 +66,7 @@ public class BrowserExt implements IBrowserExt {
 	}
 
 	public String[] getDefaultLocations() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		IConfigurationElement[] children = element.getChildren("location"); //$NON-NLS-1$
 		if (children != null) {
 			int size = children.length;

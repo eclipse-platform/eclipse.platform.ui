@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorDescriptor;
@@ -62,11 +63,11 @@ public class WebBrowserPreference {
 	 * 
 	 * @return java.util.List
 	 */
-	public static List getInternalWebBrowserHistory() {
+	public static List<String> getInternalWebBrowserHistory() {
 		String temp = getPreferenceStore().getString(
 				PREF_INTERNAL_WEB_BROWSER_HISTORY);
 		StringTokenizer st = new StringTokenizer(temp, "|*|"); //$NON-NLS-1$
-		List l = new ArrayList();
+		List<String> l = new ArrayList<String>();
 		while (st.hasMoreTokens()) {
 			String s = st.nextToken();
 			l.add(s);
@@ -80,17 +81,17 @@ public class WebBrowserPreference {
 	 * @param list
 	 *            the history
 	 */
-	public static void setInternalWebBrowserHistory(List list) {
+	public static void setInternalWebBrowserHistory(List<String> list) {
 		StringBuffer sb = new StringBuffer();
 		if (list != null) {
-			Iterator iterator = list.iterator();
+			Iterator<String> iterator = list.iterator();
 			while (iterator.hasNext()) {
-				String s = (String) iterator.next();
+				String s = iterator.next();
 				sb.append(s);
 				sb.append("|*|"); //$NON-NLS-1$
 			}
 		}
-		InstanceScope instanceScope = new InstanceScope();
+		IScopeContext instanceScope = InstanceScope.INSTANCE;
 		IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
 		prefs.put(PREF_INTERNAL_WEB_BROWSER_HISTORY,
 				sb.toString());
@@ -140,7 +141,7 @@ public class WebBrowserPreference {
 	 *            </code>INTERNAL</code>, <code>SYSTEM</code> and <code>EXTERNAL</code>
 	 */
 	public static void setBrowserChoice(int choice) {
-		InstanceScope instanceScope = new InstanceScope();
+		IScopeContext instanceScope = InstanceScope.INSTANCE;
 		IEclipsePreferences prefs = instanceScope.getNode(WebBrowserUIPlugin.PLUGIN_ID);
 		prefs.putInt(PREF_BROWSER_CHOICE, choice);
 		try {
