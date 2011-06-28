@@ -79,15 +79,6 @@ public class BrowserExt implements IBrowserExt {
 		list.toArray(s);
 		return s;
 	}
-	
-	public boolean isSearchHome(int i) {
-		IConfigurationElement[] children = element.getChildren("location"); //$NON-NLS-1$
-		if (children != null) {
-            String searchInHome = children[i].getAttribute("homeRelative"); //$NON-NLS-1$
-			return "true".equalsIgnoreCase(searchInHome); //$NON-NLS-1$
-		}
-		return false;
-	}
 
 	protected BrowserFactory getDelegate() {
 		if (delegate == null) {

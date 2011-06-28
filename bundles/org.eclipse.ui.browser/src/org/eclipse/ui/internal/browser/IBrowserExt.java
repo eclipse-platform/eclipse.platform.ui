@@ -67,13 +67,6 @@ public interface IBrowserExt {
 	 */
 	public String[] getDefaultLocations();
 	
-    /**
-     * Determines whether a location is relative to the users home directory
-     * @param i
-     * @return true if getDefaultLocations()[i] is a location relative to the users home directory
-     */
-	public boolean isSearchHome(int i);
-	
 	/**
 	 * Checks whether the factory can work on the user system.
 	 * 
