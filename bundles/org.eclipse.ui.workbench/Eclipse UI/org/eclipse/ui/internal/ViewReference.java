@@ -147,6 +147,8 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 			String id = descriptor == null ? getModel().getElementId() : descriptor.getId();
 			throw new PartInitException(NLS.bind(WorkbenchMessages.ViewFactory_siteException, id));
 		}
+
+		legacyPart = part;
 	}
 
 	@Override
