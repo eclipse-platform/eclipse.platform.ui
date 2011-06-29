@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.jobs.LockListener;
  * </p>
  * <p>
  * The workspace as a whole is thread safe and allows one writer concurrent with
- * multiple readers. It also supports mechanisms for saving and snapshooting the
+ * multiple readers. It also supports mechanisms for saving and snapshotting the
  * current resource state.
  * </p>
  * <p>
