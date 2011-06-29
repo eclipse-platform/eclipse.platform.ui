@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.internal.expressions.ReferenceExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -25,6 +26,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
+import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
@@ -184,6 +186,21 @@ public final class ContributionsAnalyzer {
 					&& menuContribution.getTags().contains(ContributionsAnalyzer.MC_POPUP);
 		}
 		return false;
+	}
+
+	public static void collectInfo(ExpressionInfo info, MExpression exp) {
+		if (!(exp instanceof MCoreExpression)) {
+			return;
+		}
+		MCoreExpression expr = (MCoreExpression) exp;
+		Expression ref = null;
+		if (expr.getCoreExpression() instanceof Expression) {
+			ref = (Expression) expr.getCoreExpression();
+		} else {
+			ref = new ReferenceExpression(expr.getCoreExpressionId());
+			expr.setCoreExpression(ref);
+		}
+		ref.collectExpressionInfo(info);
 	}
 
 	public static boolean isVisible(MMenuContribution menuContribution, ExpressionContext eContext) {

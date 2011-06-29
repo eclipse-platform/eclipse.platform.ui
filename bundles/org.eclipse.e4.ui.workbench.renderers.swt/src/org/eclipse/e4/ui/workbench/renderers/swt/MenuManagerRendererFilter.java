@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.e4.core.commands.EHandlerService;
@@ -274,6 +275,27 @@ public class MenuManagerRendererFilter implements Listener {
 		event.type = SWT.None;
 		event.doit = false;
 		menuManager.update(false);
+	}
+
+	public static void collectInfo(ExpressionInfo info, final MMenu menuModel,
+			final MenuManagerRenderer renderer,
+			final IEclipseContext evalContext, boolean recurse) {
+		HashSet<ContributionRecord> records = new HashSet<ContributionRecord>();
+		for (MMenuElement element : menuModel.getChildren()) {
+			ContributionRecord record = renderer.getContributionRecord(element);
+			if (record != null) {
+				if (records.add(record)) {
+					record.collectInfo(info);
+				}
+			} else {
+				ContributionsAnalyzer.collectInfo(info,
+						element.getVisibleWhen());
+			}
+			if (recurse && element instanceof MMenu) {
+				MMenu childMenu = (MMenu) element;
+				collectInfo(info, childMenu, renderer, evalContext, false);
+			}
+		}
 	}
 
 	/**

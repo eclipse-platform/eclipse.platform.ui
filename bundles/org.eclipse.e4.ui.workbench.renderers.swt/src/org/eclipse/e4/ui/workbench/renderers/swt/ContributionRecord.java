@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
@@ -65,6 +66,17 @@ public class ContributionRecord {
 			item.setVisible(currentVisibility);
 		}
 		getManagerForModel().markDirty();
+	}
+
+	public void collectInfo(ExpressionInfo info) {
+		ContributionsAnalyzer.collectInfo(info,
+				menuContribution.getVisibleWhen());
+		for (MMenuElement item : generatedElements) {
+			ContributionsAnalyzer.collectInfo(info, item.getVisibleWhen());
+		}
+		for (MMenuElement item : sharedElements) {
+			ContributionsAnalyzer.collectInfo(info, item.getVisibleWhen());
+		}
 	}
 
 	public void updateIsVisible(ExpressionContext exprContext) {
