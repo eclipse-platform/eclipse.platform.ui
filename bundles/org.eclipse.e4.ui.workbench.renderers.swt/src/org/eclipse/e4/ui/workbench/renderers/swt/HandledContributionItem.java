@@ -40,6 +40,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MRenderedMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.workbench.IResourceUtilities;
@@ -424,6 +425,16 @@ public class HandledContributionItem extends ContributionItem {
 			}
 		}
 		if (text != null) {
+			if (model instanceof MMenuElement) {
+				String mnemonics = ((MMenuElement) model).getMnemonics();
+				if (mnemonics != null) {
+					int idx = text.indexOf(mnemonics);
+					if (idx != -1) {
+						text = text.substring(0, idx) + '&'
+								+ text.substring(idx);
+					}
+				}
+			}
 			if (keyBindingText == null)
 				item.setText(text);
 			else
