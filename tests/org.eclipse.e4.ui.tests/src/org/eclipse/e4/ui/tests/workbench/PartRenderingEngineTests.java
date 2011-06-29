@@ -2803,6 +2803,51 @@ public class PartRenderingEngineTests extends TestCase {
 		assertTrue(part.getContext().getParent() == window.getContext());
 	}
 
+	public void testBug349076() {
+		MApplication application = ApplicationFactoryImpl.eINSTANCE
+				.createApplication();
+
+		MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		application.setSelectedElement(window);
+
+		MPart part = BasicFactoryImpl.eINSTANCE.createPart();
+		part.setContributionURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		window.getSharedElements().add(part);
+
+		MPartStack stack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		window.getChildren().add(stack);
+		window.setSelectedElement(stack);
+
+		MPlaceholder ph = AdvancedFactoryImpl.eINSTANCE.createPlaceholder();
+		ph.setRef(part);
+		part.setCurSharedRef(ph);
+		stack.getChildren().add(ph);
+		stack.setSelectedElement(ph);
+
+		MWindow detachedWindow = BasicFactoryImpl.eINSTANCE.createWindow();
+		window.getWindows().add(detachedWindow);
+
+		MPartStack detachedStack = BasicFactoryImpl.eINSTANCE.createPartStack();
+		detachedWindow.getChildren().add(detachedStack);
+		detachedWindow.setSelectedElement(detachedStack);
+
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertTrue(part.getContext() != null);
+		assertTrue(part.getContext().getParent() == window.getContext());
+
+		stack.getChildren().remove(ph);
+		detachedStack.getChildren().add(ph);
+
+		assertTrue(part.getContext() != null);
+		assertTrue(part.getContext().getParent() == detachedWindow.getContext());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = BasicFactoryImpl.eINSTANCE.createWindow();
 		window.setHeight(300);
