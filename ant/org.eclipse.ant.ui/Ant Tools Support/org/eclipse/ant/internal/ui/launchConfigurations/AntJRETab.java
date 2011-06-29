@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
-import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
@@ -38,7 +37,6 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 
 public class AntJRETab extends JavaJRETab {
@@ -53,7 +51,6 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_JRE_TAB);
 		Composite comp= (Composite)fJREBlock.getControl();
 		((GridData)comp.getLayoutData()).grabExcessVerticalSpace= true;
 		((GridData)comp.getLayoutData()).verticalAlignment= SWT.FILL;

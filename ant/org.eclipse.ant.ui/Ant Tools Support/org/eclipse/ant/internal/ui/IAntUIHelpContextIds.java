@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@ package org.eclipse.ant.internal.ui;
 
 
 /**
- * Help context ids for the Ant ui
+ * Help context ids for the Ant UI
  * <p>
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
@@ -64,9 +64,14 @@ public interface IAntUIHelpContextIds {
 
 	//Launch configuration dialog tabs
 	public static final String ANT_MAIN_TAB = PREFIX + "ant_main_tab_context"; //$NON-NLS-1$
+	public static final String ANT_REFRESH_TAB = PREFIX + "ant_refresh_tab_context"; //$NON-NLS-1$
+	public static final String ANT_ENVIRONMENT_TAB = PREFIX + "ant_environment_tab_context"; //$NON-NLS-1$
+	public static final String ANT_COMMON_TAB = PREFIX + "ant_common_tab_context"; //$NON-NLS-1$
 	public static final String ANT_TARGETS_TAB = PREFIX + "ant_targets_tab_context"; //$NON-NLS-1$
 	public static final String ANT_PROPERTIES_TAB = PREFIX + "ant_properties_tab_context"; //$NON-NLS-1$
 	public static final String ANT_CLASSPATH_TAB = PREFIX + "ant_classpath_tab_context"; //$NON-NLS-1$
-	public static final String ANT_JRE_TAB = "ant_jre_tab_context"; //$NON-NLS-1$
+	public static final String ANT_JRE_TAB = PREFIX + "ant_jre_tab_context"; //$NON-NLS-1$
 	public static final String ANT_BUILD_TAB = PREFIX + "ant_build_tab_context"; //$NON-NLS-1$
+	public static final String ANT_BUILDER_TAB = PREFIX + "ant_builder_tab_context"; //$NON-NLS-1$
+	public static final String ANT_BUILD_OPTIONS_TAB = PREFIX + "ant_build_options_context"; //$NON-NLS-1$
 }

@@ -18,6 +18,7 @@ import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.externaltools.internal.model.BuilderCoreUtils;
@@ -40,7 +41,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 
 public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 	
@@ -196,7 +196,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
     public void createControl(Composite parent) {
         Composite mainComposite = new Composite(parent, SWT.NONE);
         setControl(mainComposite);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_BUILDER_TAB);
         
         GridLayout layout = new GridLayout();
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);

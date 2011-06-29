@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -52,16 +53,28 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
+		RefreshTab refresh = new RefreshTab();
+		refresh.setHelpContextId(IAntUIHelpContextIds.ANT_REFRESH_TAB);
+		ExternalToolsBuildTab build = new ExternalToolsBuildTab();
+		build.setHelpContextId(IAntUIHelpContextIds.ANT_BUILD_TAB);
+		AntClasspathTab classpath = new AntClasspathTab();
+		classpath.setHelpContextId(IAntUIHelpContextIds.ANT_CLASSPATH_TAB);
+		AntJRETab jre = new AntJRETab();
+		jre.setHelpContextId(IAntUIHelpContextIds.ANT_JRE_TAB);
+		AntEnvironmentTab env = new AntEnvironmentTab();
+		env.setHelpContextId(IAntUIHelpContextIds.ANT_ENVIRONMENT_TAB);
+		CommonTab common = new CommonTab();
+		common.setHelpContextId(IAntUIHelpContextIds.ANT_COMMON_TAB);
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new AntMainTab(),
-			new RefreshTab(),
-			new ExternalToolsBuildTab(),
+			refresh,
+			build,
 			new AntTargetsTab(),
-			new AntClasspathTab(),
+			classpath,
 			new AntPropertiesTab(),
-			new AntJRETab(),
-			new AntEnvironmentTab(),
-			new CommonTab()
+			jre,
+			env,
+			common
 		};
 		setTabs(tabs);
 	}
