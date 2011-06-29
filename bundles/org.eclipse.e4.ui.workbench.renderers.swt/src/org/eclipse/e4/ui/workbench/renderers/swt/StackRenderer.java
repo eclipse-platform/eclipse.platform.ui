@@ -43,6 +43,10 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.Accessible;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -729,6 +733,20 @@ public class StackRenderer extends LazyStackRenderer {
 
 				public void widgetDefaultSelected(SelectionEvent e) {
 					showMenu((ToolItem) e.widget);
+				}
+			});
+			menuTB.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+				public void getName(AccessibleEvent e) {
+					if (e.childID != ACC.CHILDID_SELF) {
+						Accessible accessible = (Accessible) e.getSource();
+						ToolBar toolBar = (ToolBar) accessible.getControl();
+						if (0 <= e.childID && e.childID < toolBar.getItemCount()) {
+							ToolItem item = toolBar.getItem(e.childID);
+							if (item != null) {
+								e.result = item.getToolTipText();
+							}
+						}
+					}
 				}
 			});
 		}
