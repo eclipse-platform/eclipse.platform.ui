@@ -35,6 +35,7 @@ import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
@@ -348,6 +349,7 @@ public class HandledContributionItem extends ContributionItem {
 		if (obj instanceof IContextFunction) {
 			IEclipseContext context = getContext(model);
 			IEclipseContext staticContext = getStaticContext(null);
+			staticContext.set(MPart.class, context.get(MPart.class));
 			staticContext.set(WW_SUPPORT, context.get(WW_SUPPORT));
 
 			IContextFunction func = (IContextFunction) obj;

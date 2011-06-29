@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
@@ -76,6 +77,7 @@ import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.OpenPreferencesAction;
 import org.eclipse.ui.internal.PluginAction;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
@@ -478,46 +480,10 @@ public class MenuHelper {
 			item.setType(ItemType.PUSH);
 		} else if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {
 			item.setType(ItemType.CHECK);
-			IContextFunction generator = new ContextFunction() {
-				private ActionDescriptor getDescriptor(IWorkbenchWindow window) {
-					return new ActionDescriptor(element, ActionDescriptor.T_WORKBENCH, window);
-				}
-
-				@Override
-				public Object compute(IEclipseContext context) {
-					IWorkbenchWindow window = context.get(IWorkbenchWindow.class);
-					if (window == null) {
-						return null;
-					}
-					final MHandledItem model = context.get(MHandledItem.class);
-					if (model == null) {
-						return null;
-					}
-					ActionDescriptor desc = getDescriptor(window);
-					final IAction action = desc.getAction();
-					final IPropertyChangeListener propListener = new IPropertyChangeListener() {
-						public void propertyChange(PropertyChangeEvent event) {
-							if (IAction.CHECKED.equals(event.getProperty())) {
-								boolean checked = false;
-								if (event.getNewValue() instanceof Boolean) {
-									checked = ((Boolean) event.getNewValue()).booleanValue();
-								}
-								model.setSelected(checked);
-							}
-						}
-					};
-					action.addPropertyChangeListener(propListener);
-					Runnable obj = new Runnable() {
-						@Execute
-						public void run() {
-							action.removePropertyChangeListener(propListener);
-						}
-					};
-					model.setSelected(action.isChecked());
-					return obj;
-				}
-			};
-			item.getTransientData().put(ItemType.CHECK.toString(), generator);
+			IContextFunction generator = createToggleFunction(element);
+			if (generator != null) {
+				item.getTransientData().put(ItemType.CHECK.toString(), generator);
+			}
 		} else if (IWorkbenchRegistryConstants.STYLE_RADIO.equals(style)) {
 			item.setType(ItemType.RADIO);
 		} else if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
@@ -594,6 +560,86 @@ public class MenuHelper {
 		}
 		item.setTooltip(getTooltip(element));
 		return item;
+	}
+
+	private static int getType(String name) {
+		if (name.equals(IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
+			return ActionDescriptor.T_WORKBENCH;
+		} else if (name.equals(IWorkbenchRegistryConstants.TAG_VIEW_CONTRIBUTION)) {
+			return ActionDescriptor.T_VIEW;
+		} else if (name.equals(IWorkbenchRegistryConstants.TAG_EDITOR_CONTRIBUTION)) {
+			return ActionDescriptor.T_EDITOR;
+		}
+		return -1;
+	}
+
+	private static IContextFunction createToggleFunction(final IConfigurationElement element) {
+		Object ice = element.getParent();
+		if (!(ice instanceof IConfigurationElement)) {
+			return null;
+		}
+
+		// identify the type of contribution that this is
+		IConfigurationElement parent = (IConfigurationElement) ice;
+		final int type = getType(parent.getName());
+		if (type == -1) {
+			// unknown, don't create a toggling function
+			return null;
+		}
+
+		IContextFunction generator = new ContextFunction() {
+			private ActionDescriptor getDescriptor(IEclipseContext context) {
+				switch (type) {
+				case ActionDescriptor.T_WORKBENCH:
+					IWorkbenchWindow window = context.get(IWorkbenchWindow.class);
+					return window == null ? null : new ActionDescriptor(element, type, window);
+				case ActionDescriptor.T_EDITOR:
+				case ActionDescriptor.T_VIEW:
+					MPart part = context.get(MPart.class);
+					if (part != null) {
+						Object object = part.getObject();
+						if (object instanceof CompatibilityPart) {
+							return new ActionDescriptor(element, type,
+									((CompatibilityPart) object).getPart());
+						}
+					}
+					return null;
+				default:
+					return null;
+				}
+			}
+
+			@Override
+			public Object compute(IEclipseContext context) {
+				final MHandledItem model = context.get(MHandledItem.class);
+				if (model == null) {
+					return null;
+				}
+				ActionDescriptor desc = getDescriptor(context);
+				final IAction action = desc.getAction();
+				final IPropertyChangeListener propListener = new IPropertyChangeListener() {
+					public void propertyChange(PropertyChangeEvent event) {
+						if (IAction.CHECKED.equals(event.getProperty())) {
+							boolean checked = false;
+							if (event.getNewValue() instanceof Boolean) {
+								checked = ((Boolean) event.getNewValue()).booleanValue();
+							}
+							model.setSelected(checked);
+						}
+					}
+				};
+				action.addPropertyChangeListener(propListener);
+				Runnable obj = new Runnable() {
+					@Execute
+					public void run() {
+						action.removePropertyChangeListener(propListener);
+					}
+				};
+				model.setSelected(action.isChecked());
+				return obj;
+			}
+		};
+		return generator;
 	}
 
 	public static MMenu createMenu(MenuManager manager) {
