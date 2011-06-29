@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,4 +34,8 @@ public interface IExternalToolsHelpContextIds {
 	//Launch configuration dialog tabs
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB = PREFIX + "builders_tab_context"; //$NON-NLS-1$
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_PROGRAM_MAIN_TAB = PREFIX + "program_main_tab_context"; //$NON-NLS-1$
+	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILD_TAB = PREFIX + "build_tab_context"; //$NON-NLS-1$
+	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB = PREFIX + "refresh_tab_context"; //$NON-NLS-1$
+	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB = PREFIX + "environment_tab_context"; //$NON-NLS-1$
+	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB = PREFIX + "common_tab_context"; //$NON-NLS-1$
 }

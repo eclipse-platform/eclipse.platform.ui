@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,9 +37,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -47,7 +49,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * which resources should be built before a build (a build scope)
  * <p>
  * This class may be instantiated; this class is not intended
- * to be subclassed.
+ * to be sub-classed.
  * </p>
  * A generalized version of AntBuildTab which was removed after the work of bug 165371
  * @since 3.4
@@ -95,13 +97,21 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 		}
 		
 	}
+	
+	/**
+	 * Constructor
+	 */
+	public ExternalToolsBuildTab() {
+		setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILD_TAB);
+	}
+	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
-		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
 		GridLayout layout = new GridLayout();
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);

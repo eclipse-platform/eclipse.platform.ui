@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsBuildTab;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 
 public class ProgramTabGroup extends AbstractLaunchConfigurationTabGroup {
 
@@ -25,12 +26,18 @@ public class ProgramTabGroup extends AbstractLaunchConfigurationTabGroup {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
+		RefreshTab refresh = new RefreshTab();
+		refresh.setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB);
+		EnvironmentTab env = new EnvironmentTab();
+		env.setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
+		CommonTab common = new CommonTab();
+		common.setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB);
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new ProgramMainTab(),
-			new RefreshTab(),
+			refresh,
 			new ExternalToolsBuildTab(),
-			new EnvironmentTab(),
-			new CommonTab()
+			env,
+			common
 		};
 		setTabs(tabs);
 	}

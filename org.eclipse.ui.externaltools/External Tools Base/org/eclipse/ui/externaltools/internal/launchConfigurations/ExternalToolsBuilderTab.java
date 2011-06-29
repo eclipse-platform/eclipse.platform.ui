@@ -81,11 +81,20 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
     private Button fAppend;
     private Button fWorkspaceBrowse;
     
+    /**
+     * Constructor
+     */
     public ExternalToolsBuilderTab() {
+    	setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB);
     }
     
+    /**
+     * Constructor
+     * @param createBuildScheduleComponent
+     */
     public ExternalToolsBuilderTab(boolean createBuildScheduleComponent) {
         fCreateBuildScheduleComponent= createBuildScheduleComponent;
+        setHelpContextId(IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB);
     }
     
 	protected SelectionListener selectionListener= new SelectionAdapter() {
@@ -103,7 +112,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
 		
 		GridLayout layout = new GridLayout();
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);

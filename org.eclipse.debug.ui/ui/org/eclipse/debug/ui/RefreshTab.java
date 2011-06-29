@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  Copyright (c) 2000, 2011 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -45,10 +45,14 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
  * which resources should be refreshed when the launch
  * terminates.
  * <p>
+ * Clients may call {@link #setHelpContextId(String)} on this tab prior to control
+ * creation to alter the default context help associated with this tab. 
+ * </p>
+ * <p>
  * This class may be instantiate.
  * </p>
  * @since 3.0
- * @noextend This class is not intended to be subclassed by clients.
+ * @noextend This class is not intended to be sub-classed by clients.
  */
 public class RefreshTab extends AbstractLaunchConfigurationTab {
 
@@ -86,12 +90,19 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	private IWorkingSet fWorkingSet;
 	
 	/**
+	 * Constructor
+	 */
+	public RefreshTab() {
+		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB);
+	}
+	
+	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), getHelpContextId());
 		
 		GridLayout layout = new GridLayout();
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
