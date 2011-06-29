@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.debug.ui.actions;
 
  
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -387,18 +388,21 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	public void runWithEvent(IAction action, Event event) {
 		if(((event.stateMask & SWT.MOD1) > 0) && (event.type != SWT.KeyDown)) {
 			ILaunchConfiguration configuration = null;
-			if(LaunchingResourceManager.isContextLaunchEnabled(getLaunchGroupIdentifier())) {
+			String groupid = getLaunchGroupIdentifier();
+			if(LaunchingResourceManager.isContextLaunchEnabled(groupid)) {
 				configuration = resolveContextConfiguration();
 			} else {
-				configuration = getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
+				configuration = getLaunchConfigurationManager().getFilteredLastLaunch(groupid);
 			}
+			ArrayList configs = new ArrayList(1);
 			if (configuration != null){
-				DebugUIPlugin.openLaunchConfigurationsDialog(
-						DebugUIPlugin.getShell(), 
-						new StructuredSelection(configuration), 
-						getLaunchGroupIdentifier(),
-						true);
+				configs.add(configuration);
 			}
+			DebugUIPlugin.openLaunchConfigurationsDialog(
+					DebugUIPlugin.getShell(), 
+					new StructuredSelection(configs), 
+					groupid,
+					true);
 			return;
 		}
 		run(action);
