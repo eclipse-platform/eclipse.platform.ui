@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -37,6 +38,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.contexts.ContextFunction;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.URIHelper;
@@ -63,7 +65,6 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
-import org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRendererFilter;
 import org.eclipse.e4.ui.workbench.renderers.swt.TrimBarLayout;
@@ -259,7 +260,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		public void handleEvent(Event event) {
 			if (event.getProperty(UIEvents.EventTags.ELEMENT) == model
 					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
-				HandledContributionItem.toolItemUpdater.removeWindowRunnable(menuUpdater);
+				// HandledContributionItem.toolItemUpdater.removeWindowRunnable(menuUpdater);
+				manageChanges = false;
+				canUpdateMenus = false;
 				menuUpdater = null;
 
 				removeTrimContributions();
@@ -535,16 +538,41 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 			menuUpdater = new Runnable() {
 				public void run() {
-					if (model.getMainMenu() == null || model.getWidget() == null
-							|| menu.isDisposed() || mainMenu.getWidget() == null) {
-						return;
+					try {
+						if (model.getMainMenu() == null || model.getWidget() == null
+								|| menu.isDisposed() || mainMenu.getWidget() == null) {
+							return;
+						}
+						MenuManagerRendererFilter.updateElementVisibility(mainMenu, renderer,
+								menuManager, windowContext.getActiveLeaf(), true);
+						menuManager.update(true);
+					} finally {
+						canUpdateMenus = true;
 					}
-					MenuManagerRendererFilter.updateElementVisibility(mainMenu, renderer,
-							menuManager, windowContext.getActiveLeaf(), true);
-					menuManager.update(true);
 				}
 			};
-			HandledContributionItem.toolItemUpdater.addWindowRunnable(menuUpdater);
+
+			RunAndTrack menuChangeManager = new RunAndTrack() {
+
+				@Override
+				public boolean changed(IEclipseContext context) {
+					ExpressionInfo info = new ExpressionInfo();
+					IEclipseContext leafContext = windowContext.getActiveLeaf();
+					MenuManagerRendererFilter.collectInfo(info, mainMenu, renderer, leafContext,
+							true);
+					// if one of these variables change, re-run the RAT
+					for (String name : info.getAccessedVariableNames()) {
+						leafContext.get(name);
+					}
+					if (canUpdateMenus && workbench.getDisplay() != null) {
+						canUpdateMenus = false;
+						workbench.getDisplay().asyncExec(menuUpdater);
+					}
+					return manageChanges;
+				}
+			};
+			windowContext.runAndTrack(menuChangeManager);
+			// HandledContributionItem.toolItemUpdater.addWindowRunnable(menuUpdater);
 		}
 
 		eventBroker.subscribe(
@@ -556,6 +584,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		getShell().setData(this);
 		trackShellActivation();
 	}
+
+	private boolean manageChanges = true;
+	private boolean canUpdateMenus = true;
 
 	private void removeTrimContributions() {
 		MTrimBar trimBar = getTopTrim();
