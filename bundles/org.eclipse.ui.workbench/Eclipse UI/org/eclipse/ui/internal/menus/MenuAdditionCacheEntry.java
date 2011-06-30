@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2006, 2011 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -376,9 +376,15 @@ public class MenuAdditionCacheEntry {
 			ICommandImageService commandImageService = application.getContext().get(
 					ICommandImageService.class);
 			ImageDescriptor descriptor = commandImageService == null ? null : commandImageService
-					.getImageDescriptor(item.getElementId());
+					.getImageDescriptor(commandId);
 			if (descriptor == null) {
-				item.setLabel(MenuHelper.getLabel(commandAddition));
+				descriptor = commandImageService == null ? null : commandImageService
+						.getImageDescriptor(item.getElementId());
+				if (descriptor == null) {
+					item.setLabel(MenuHelper.getLabel(commandAddition));
+				} else {
+					item.setIconURI(MenuHelper.getImageUrl(descriptor));
+				}
 			} else {
 				item.setIconURI(MenuHelper.getImageUrl(descriptor));
 			}
