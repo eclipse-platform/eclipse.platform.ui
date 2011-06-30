@@ -282,6 +282,7 @@ public class TrimStack {
 			createPopupMenu();
 
 		ToolItem restoreBtn = new ToolItem(trimStackTB, SWT.PUSH);
+		restoreBtn.setToolTipText(Messages.TrimStack_RestoreText);
 		restoreBtn.setImage(getRestoreImage());
 		restoreBtn.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
