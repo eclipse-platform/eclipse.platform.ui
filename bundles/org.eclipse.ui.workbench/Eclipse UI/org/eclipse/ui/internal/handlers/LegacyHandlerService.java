@@ -25,6 +25,7 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.ElementHandler;
+import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -499,9 +500,9 @@ public class LegacyHandlerService implements IHandlerService {
 	 * org.eclipse.ui.handlers.IHandlerService#createContextSnapshot(boolean)
 	 */
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
-		IEclipseContext targetContext = eclipseContext.getActiveLeaf();
 		IEvaluationContext tmpContext = getCurrentState();
-		IEvaluationContext context = new ExpressionContext(targetContext.createChild());
+		IEvaluationContext context = new EvaluationContext(null,
+				IEvaluationContext.UNDEFINED_VARIABLE);
 
 		if (includeSelection) {
 			for (String variable : SELECTION_VARIABLES) {
