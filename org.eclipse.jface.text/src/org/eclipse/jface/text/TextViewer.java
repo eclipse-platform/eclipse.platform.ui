@@ -1812,7 +1812,7 @@ public class TextViewer extends Viewer implements
 		fTextWidget.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if ((SWT.SHIFT == e.stateMask) && ('\t' == e.character))
-					e.doit= false;
+					e.doit= !fTextWidget.getEditable();
 			}
 		});
 
